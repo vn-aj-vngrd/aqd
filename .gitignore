@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Xcode local state and build output
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Local service configuration
+apps/ios/Configuration/Local.xcconfig
+.env
+.env.*
+!.env.example
+supabase/.temp/
+supabase/.branches/
