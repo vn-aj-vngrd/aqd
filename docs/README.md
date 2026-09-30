@@ -10,6 +10,8 @@ AQD is a personal digital closet for organizing owned pieces, creating outfits a
 | [Canonical vocabulary](../CONTEXT.md) | Domain terminology and relationships. |
 | [Feature specifications](features/README.md) | Feature-specific behavior, states, access rules, and acceptance IDs. |
 | [Delivery scope](V1-SCOPE.md) | Milestone outcomes and release boundaries. |
+| [Agent lifecycle](agents/LIFECYCLE.md) | Triage, specs, implementation, review, PR gates, merge, and release handoff. |
+| [Development workflow](DEVELOPMENT-WORKFLOW.md) | Local hooks, commits, CI, and automatic repository releases. |
 | [Implementation plan](IMPLEMENTATION-PLAN.md) | Readiness, dependency order, first module, and completion evidence. |
 | [Component map](COMPONENTS.md) | Existing reusable UI and the contracts needed by future slices. |
 | [User journeys](USER-FLOWS.md) | Cross-feature journeys; detailed rules stay in feature specs. |

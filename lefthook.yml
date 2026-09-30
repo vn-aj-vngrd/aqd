@@ -1,0 +1,18 @@
+pre-commit:
+  commands:
+    whitespace:
+      run: git diff --cached --check
+    tooling:
+      glob: "{scripts/**,package.json,pnpm-lock.yaml,lefthook.yml,.releaserc.json,.github/workflows/**}"
+      run: pnpm check
+
+commit-msg:
+  commands:
+    conventional:
+      run: node scripts/validate-commit-message.mjs "{1}"
+
+pre-push:
+  commands:
+    protected-branches:
+      run: node scripts/validate-push.mjs
+      use_stdin: true

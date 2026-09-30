@@ -1,0 +1,22 @@
+name: Maintenance or documentation
+description: Track tooling, refactoring, documentation, or dependency work.
+labels: [enhancement, needs-triage]
+body:
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason for the change
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Changes and boundaries
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Completion and verification
+    validations:
+      required: true

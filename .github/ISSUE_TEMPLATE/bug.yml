@@ -1,0 +1,27 @@
+name: Bug report
+description: Report incorrect behavior with enough detail to reproduce it.
+labels: [bug, needs-triage]
+body:
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Actual and expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include frequency, device/OS, and app version when known.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and impact
+      description: Add safe screenshots/logs and affected flows. Keep private wardrobe data and credentials out.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Fix verification
+      description: What should pass once this is fixed? Note related acceptance IDs if known.
