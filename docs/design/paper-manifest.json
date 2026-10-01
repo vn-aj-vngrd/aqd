@@ -3,13 +3,13 @@
   "url": "https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0",
   "verifiedOn": "2026-10-02",
   "scope": "Static design only; Paper is sole visual source",
-  "screenCount": 179,
-  "artboardCount": 224,
+  "screenCount": 201,
+  "artboardCount": 249,
   "pages": [
     {
       "id": "p-1-0",
       "name": "00 \u00b7 Start here & foundations",
-      "count": 25
+      "count": 27
     },
     {
       "id": "p-2-0",
@@ -34,7 +34,7 @@
     {
       "id": "p-A-1",
       "name": "05 \u00b7 Agent",
-      "count": 33
+      "count": 55
     },
     {
       "id": "p-5-0",
@@ -49,7 +49,7 @@
     {
       "id": "p-8-0",
       "name": "08 \u00b7 V1 Flow",
-      "count": 20
+      "count": 21
     }
   ],
   "screens": [
@@ -64,7 +64,7 @@
         "content": [
           "None"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -79,7 +79,7 @@
         "content": [
           "E-arrival"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -95,7 +95,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -111,7 +111,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -127,7 +127,7 @@
           "C-select",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -143,7 +143,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -159,7 +159,7 @@
           "C-select",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -175,7 +175,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -191,7 +191,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -207,7 +207,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -223,7 +223,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -238,7 +238,7 @@
         "content": [
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -254,7 +254,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -270,7 +270,7 @@
           "C-select",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V2"
     },
@@ -286,7 +286,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -302,7 +302,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -318,7 +318,7 @@
           "C-select",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -334,7 +334,7 @@
           "C-select",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -350,7 +350,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -366,7 +366,7 @@
           "C-select",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -382,7 +382,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -398,7 +398,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -414,7 +414,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -430,7 +430,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -446,7 +446,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -461,7 +461,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -478,7 +478,7 @@
           "C-change",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -495,7 +495,7 @@
           "C-change",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -512,7 +512,7 @@
           "C-change",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -529,7 +529,7 @@
           "C-change",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -544,7 +544,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -559,7 +559,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -575,7 +575,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -591,7 +591,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -607,7 +607,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -623,7 +623,7 @@
           "C-select",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -639,7 +639,7 @@
           "C-change",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -654,7 +654,7 @@
         "content": [
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -670,7 +670,7 @@
           "C-change",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -686,7 +686,7 @@
           "C-select",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -702,7 +702,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -718,7 +718,7 @@
           "C-select",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -734,7 +734,7 @@
           "C-stream",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -750,7 +750,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -766,7 +766,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -782,7 +782,7 @@
           "C-select",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -798,7 +798,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -814,7 +814,7 @@
           "C-select",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -830,7 +830,7 @@
           "C-select",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -846,7 +846,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -862,7 +862,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -878,7 +878,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -894,7 +894,7 @@
           "C-select",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -910,7 +910,7 @@
           "C-select",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -926,7 +926,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -941,7 +941,7 @@
         "content": [
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -957,7 +957,7 @@
           "C-load",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -973,7 +973,7 @@
           "C-load",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -989,7 +989,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1005,7 +1005,7 @@
           "C-load",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1021,7 +1021,7 @@
           "C-message",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1037,7 +1037,7 @@
           "C-load",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1054,7 +1054,7 @@
           "C-message",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1071,7 +1071,7 @@
           "C-message",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1087,7 +1087,7 @@
           "C-select",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1103,7 +1103,7 @@
           "C-select",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1119,7 +1119,7 @@
           "C-select",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1135,7 +1135,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1152,7 +1152,7 @@
           "C-change",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1169,7 +1169,7 @@
           "C-change",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1185,7 +1185,7 @@
           "C-select",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1201,7 +1201,7 @@
           "C-select",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1217,7 +1217,7 @@
           "C-select",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V2"
     },
@@ -1234,7 +1234,7 @@
           "C-change",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1250,7 +1250,7 @@
           "C-load",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1266,7 +1266,7 @@
           "C-load",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1282,7 +1282,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1298,7 +1298,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1314,7 +1314,7 @@
           "C-select",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1330,7 +1330,7 @@
           "C-select",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1346,7 +1346,7 @@
           "C-form",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1361,7 +1361,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1376,7 +1376,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1391,7 +1391,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1406,7 +1406,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1421,7 +1421,7 @@
         "content": [
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1437,7 +1437,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1453,7 +1453,7 @@
           "C-select",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1468,7 +1468,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1484,7 +1484,7 @@
           "C-form",
           "C-stream"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1500,7 +1500,7 @@
           "C-form",
           "C-stream"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1516,7 +1516,7 @@
           "C-form",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1532,7 +1532,7 @@
           "C-receipt",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1548,7 +1548,7 @@
           "C-load",
           "C-change"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1564,7 +1564,7 @@
           "C-form",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1580,7 +1580,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1596,7 +1596,7 @@
           "C-stream",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1612,7 +1612,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1628,7 +1628,7 @@
           "C-form",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1644,7 +1644,7 @@
           "C-stream",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1660,7 +1660,7 @@
           "C-stream",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1676,7 +1676,7 @@
           "C-stream",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1692,7 +1692,7 @@
           "C-stream",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1708,7 +1708,7 @@
           "C-stream",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1724,7 +1724,7 @@
           "C-stream",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1740,7 +1740,7 @@
           "C-stream",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1756,7 +1756,7 @@
           "C-form",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1772,7 +1772,7 @@
           "C-form",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V2"
     },
@@ -1788,7 +1788,7 @@
           "C-receipt",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V2"
     },
@@ -1804,7 +1804,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V2"
     },
@@ -1820,7 +1820,7 @@
           "C-stream",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1836,7 +1836,7 @@
           "C-form",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1851,7 +1851,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1866,7 +1866,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1882,7 +1882,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1898,7 +1898,7 @@
           "C-receipt",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V2"
     },
@@ -1914,7 +1914,7 @@
           "C-stream",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V2"
     },
@@ -1930,7 +1930,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1946,7 +1946,7 @@
           "C-form",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1962,7 +1962,7 @@
           "C-select",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1978,7 +1978,7 @@
           "C-select",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -1994,7 +1994,7 @@
           "C-save",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2009,7 +2009,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2024,7 +2024,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2040,7 +2040,7 @@
           "C-save",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2056,7 +2056,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2072,7 +2072,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2088,7 +2088,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2105,7 +2105,7 @@
           "C-message",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2122,7 +2122,7 @@
           "C-message",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2139,7 +2139,7 @@
           "C-message",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2155,7 +2155,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2171,7 +2171,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2187,7 +2187,7 @@
           "C-select",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2203,7 +2203,7 @@
           "C-select",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2219,7 +2219,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2236,7 +2236,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2253,7 +2253,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2270,7 +2270,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2287,7 +2287,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2304,7 +2304,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2321,7 +2321,7 @@
           "C-form",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2338,7 +2338,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2355,7 +2355,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2372,7 +2372,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2389,7 +2389,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2406,7 +2406,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2423,7 +2423,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2440,7 +2440,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2457,7 +2457,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2474,7 +2474,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2491,7 +2491,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2508,7 +2508,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2525,7 +2525,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2542,7 +2542,7 @@
           "C-load",
           "C-form"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2558,7 +2558,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2574,7 +2574,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2590,7 +2590,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2606,7 +2606,7 @@
           "C-load",
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2623,7 +2623,7 @@
           "C-load",
           "C-save"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2639,7 +2639,7 @@
           "C-change",
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2654,7 +2654,7 @@
         "content": [
           "C-select"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2669,7 +2669,7 @@
         "content": [
           "C-load"
         ],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
     },
@@ -2922,9 +2922,361 @@
       "motion": {
         "navigation": "Native Menu",
         "content": [],
-        "contract": "MOTION.md"
+        "contract": "motion.md"
       },
       "release": "V1"
+    },
+    {
+      "id": "A34",
+      "title": "Agent \u00b7 Keyboard focused",
+      "nodeId": "GEH-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A35",
+      "title": "Add to your message",
+      "nodeId": "GGV-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A36",
+      "title": "Choose closet pieces",
+      "nodeId": "GJ9-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A37",
+      "title": "Agent \u00b7 Selected attachments",
+      "nodeId": "GLN-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A38",
+      "title": "Review attached photo",
+      "nodeId": "GO1-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A39",
+      "title": "Preparing attachment",
+      "nodeId": "GQF-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A40",
+      "title": "Attachment needs attention",
+      "nodeId": "GST-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A41",
+      "title": "Dictation permission",
+      "nodeId": "GV7-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A42",
+      "title": "Listening",
+      "nodeId": "GXL-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A43",
+      "title": "Transcribing",
+      "nodeId": "GZZ-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A44",
+      "title": "Review voice message",
+      "nodeId": "H2D-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A45",
+      "title": "Voice unavailable",
+      "nodeId": "H4R-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A46",
+      "title": "Context mode",
+      "nodeId": "H75-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A47",
+      "title": "Closet \u00b7 No matching pieces",
+      "nodeId": "H9J-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A48",
+      "title": "Stopping response",
+      "nodeId": "HBX-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A49",
+      "title": "Response timed out",
+      "nodeId": "HEB-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A50",
+      "title": "New response below",
+      "nodeId": "HGP-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A51",
+      "title": "Agent \u00b7 Reduced transparency",
+      "nodeId": "HJ3-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A52",
+      "title": "Agent \u00b7 Larger text",
+      "nodeId": "HLH-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A53",
+      "title": "Camera unavailable",
+      "nodeId": "HNV-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A54",
+      "title": "Photo assistance unavailable",
+      "nodeId": "HQ9-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A55",
+      "title": "Agent \u00b7 No closet context",
+      "nodeId": "HSN-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
     }
   ],
   "referenceBoards": [
@@ -3082,7 +3434,7 @@
       "name": "00 \u00b7 V1 overview",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-FLOW.md",
+      "contract": "v1-flow.md",
       "staticScreenCopies": true
     },
     {
@@ -3090,7 +3442,7 @@
       "name": "01 \u00b7 Welcome and capture",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-FLOW.md",
+      "contract": "v1-flow.md",
       "staticScreenCopies": true
     },
     {
@@ -3098,7 +3450,7 @@
       "name": "02 \u00b7 Optional auth and Home",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-FLOW.md",
+      "contract": "v1-flow.md",
       "staticScreenCopies": true
     },
     {
@@ -3106,7 +3458,7 @@
       "name": "03 \u00b7 Suggest, replace and save",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-FLOW.md",
+      "contract": "v1-flow.md",
       "staticScreenCopies": true
     },
     {
@@ -3114,7 +3466,7 @@
       "name": "04 \u00b7 Manual outfits and themes",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-FLOW.md",
+      "contract": "v1-flow.md",
       "staticScreenCopies": true
     },
     {
@@ -3122,7 +3474,7 @@
       "name": "05 \u00b7 Plan, wear and history",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-FLOW.md",
+      "contract": "v1-flow.md",
       "staticScreenCopies": true
     },
     {
@@ -3130,7 +3482,7 @@
       "name": "06 \u00b7 Trip and packing",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-FLOW.md",
+      "contract": "v1-flow.md",
       "staticScreenCopies": true
     },
     {
@@ -3138,7 +3490,7 @@
       "name": "07 \u00b7 Community and Inbox",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-FLOW.md",
+      "contract": "v1-flow.md",
       "staticScreenCopies": true
     },
     {
@@ -3146,7 +3498,7 @@
       "name": "08 \u00b7 Recovery branches",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-FLOW.md",
+      "contract": "v1-flow.md",
       "staticScreenCopies": true
     },
     {
@@ -3154,7 +3506,7 @@
       "name": "09 \u00b7 Identity and session recovery",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-COVERAGE.md",
+      "contract": "v1-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "E15",
@@ -3169,7 +3521,7 @@
       "name": "10 \u00b7 Backup, conflicts and restore",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-COVERAGE.md",
+      "contract": "v1-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "U16",
@@ -3185,7 +3537,7 @@
       "name": "11 \u00b7 Export and account deletion",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-COVERAGE.md",
+      "contract": "v1-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "U09",
@@ -3202,7 +3554,7 @@
       "name": "12 \u00b7 Wardrobe lifecycle and history",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-COVERAGE.md",
+      "contract": "v1-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "W08",
@@ -3218,7 +3570,7 @@
       "name": "13 \u00b7 Office routines and calendar edits",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-COVERAGE.md",
+      "contract": "v1-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "P04",
@@ -3233,7 +3585,7 @@
       "name": "14 \u00b7 Discovery, discussion and safety",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-COVERAGE.md",
+      "contract": "v1-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "S30",
@@ -3251,7 +3603,7 @@
       "name": "15 \u00b7 Agent review and contextual actions",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-COVERAGE.md",
+      "contract": "v1-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "A33",
@@ -3267,7 +3619,7 @@
       "name": "16 \u00b7 Inbox requests and safe retry",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-COVERAGE.md",
+      "contract": "v1-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "I01",
@@ -3283,7 +3635,7 @@
       "name": "17 \u00b7 V1 coverage and launch gates",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-COVERAGE.md",
+      "contract": "v1-coverage.md",
       "staticScreenCopies": false,
       "screenIds": []
     },
@@ -3292,7 +3644,7 @@
       "name": "18 \u00b7 V2 boundary",
       "pageId": "p-8-0",
       "reviewOnly": true,
-      "contract": "V1-COVERAGE.md",
+      "contract": "v1-coverage.md",
       "staticScreenCopies": false,
       "screenIds": []
     },
@@ -3301,7 +3653,7 @@
       "name": "Components \u00b7 Native controls and open menus",
       "pageId": "p-1-0",
       "reviewOnly": true,
-      "contract": "NATIVE-PRESENTATIONS.md",
+      "contract": "native-presentations.md",
       "staticScreenCopies": false,
       "screenIds": []
     },
@@ -3313,11 +3665,51 @@
       "contract": "../../DESIGN.md",
       "staticScreenCopies": false,
       "screenIds": []
+    },
+    {
+      "nodeId": "IB0-0",
+      "name": "Components \u00b7 Agent multimodal composer",
+      "pageId": "p-1-0",
+      "reviewOnly": true,
+      "contract": "agent-input.md",
+      "staticScreenCopies": false,
+      "screenIds": []
+    },
+    {
+      "nodeId": "IB1-0",
+      "name": "Components \u00b7 Agent shimmer and state coverage",
+      "pageId": "p-1-0",
+      "reviewOnly": true,
+      "contract": "agent-input.md",
+      "staticScreenCopies": false,
+      "screenIds": []
+    },
+    {
+      "nodeId": "IKI-0",
+      "name": "20 \u00b7 Agent input, voice and streaming",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "agent-input.md",
+      "staticScreenCopies": true,
+      "screenIds": [
+        "A34",
+        "A36",
+        "A37",
+        "A11",
+        "A12",
+        "A13",
+        "A41",
+        "A42",
+        "A43",
+        "A44",
+        "A40",
+        "A49"
+      ]
     }
   ],
   "controlMaterialReview": {
     "date": "2026-10-01",
-    "contract": "LIQUID-GLASS.md",
+    "contract": "liquid-glass.md",
     "scope": "All 226 Paper artboards inspected; canonical controls, masters and V1 review copies synchronized. Static native-material approximation; app implementation and device checks remain pending.",
     "inputs": "Native editing in one regular-glass shell; opaque accessibility variant",
     "back": "Native navigation-owned glass Back; preserve swipe/history",
@@ -3325,7 +3717,7 @@
   },
   "nativePresentationReview": {
     "date": "2026-10-01",
-    "contract": "NATIVE-PRESENTATIONS.md",
+    "contract": "native-presentations.md",
     "closetMore": "Native Menu popup anchored to More",
     "closetAdd": "Native sheet over dimmed Closet; content-height and large accessibility detents",
     "adaptation": "Content popover on wide layouts; sheet on compact iPhone; OS-owned chrome and dismissal",
@@ -3396,5 +3788,71 @@
     "artboardsAudited": 224,
     "staleReferences": 0,
     "verification": "Rendered Home, Closet, shared controls, dark Agent, foundation and palette swatches; whitespace and JSON checks passed. Static design only."
+  },
+  "agentInputReview": {
+    "reviewedOn": "2026-10-02",
+    "scope": "Static Paper/design only; no native streaming, speech or image runtime proof",
+    "screenIds": [
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A39",
+      "A40",
+      "A41",
+      "A42",
+      "A43",
+      "A44",
+      "A45",
+      "A46",
+      "A47",
+      "A48",
+      "A49",
+      "A50",
+      "A51",
+      "A52",
+      "A53",
+      "A54",
+      "A55"
+    ],
+    "sharedMasters": [
+      "IB0-0",
+      "IB1-0"
+    ],
+    "flowBoard": "IKI-0",
+    "composerInstancesUpdated": 17,
+    "nativeControls": "TextEditor, media/file pickers, camera, permission prompts, context sheets and Send/Stop",
+    "motion": "Busy-label shimmer with static Reduce Motion and VoiceOver alternative",
+    "appearance": [
+      "Light",
+      "D02 dark",
+      "A51 opaque",
+      "A52 larger text"
+    ]
+  },
+  "titleAlignmentReview": {
+    "date": "2026-10-02",
+    "navigationHeaders": 319,
+    "scope": "All nine iOS pages, canonical screens, appearance variants, shared navigation master and V1/offline reference copies",
+    "crowdedClosetHeaders": 0,
+    "agentWelcome": "Centered heading and supporting text; leading-aligned messages/forms/composer",
+    "nativeVerification": false,
+    "policy": "Root/no-Back headers leading; Back/task/sheet/full-screen navigation centered; Agent welcome centered; reading content leading",
+    "leadingRootHeaders": 58,
+    "centeredNavigationHeaders": 261,
+    "correctedOn": "2026-10-02"
+  },
+  "centeredTitleTypographyReview": {
+    "reviewedOn": "2026-10-02",
+    "scope": "261 centered navigation titles across canonical, dark/accessibility, shared and walkthrough references",
+    "baseSize": 20,
+    "lineHeight": 26,
+    "weight": 500,
+    "trackingToken": "--tracking-title",
+    "sizeToken": "--text-20",
+    "smallerAgentHeadersCorrected": 48,
+    "rootAlignmentPreserved": true,
+    "nativeDeviceTest": false
   }
 }

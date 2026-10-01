@@ -1,30 +1,37 @@
 # Design handoff
 
-Release scope is governed by [V1 release definition](../V1-RELEASE.md) and [V2 backlog](../V2-BACKLOG.md). Paper includes future/proposal states; screen inventory alone does not authorize every enhancement for launch.
+For UI work, begin with [rules](rules.md) and root [DESIGN.md](../../DESIGN.md), then follow the affected branch below. [Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0) owns visuals. Page 00 owns tokens and component masters; structural clone changes need explicit synchronization.
 
-[Open AQD in Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0). Paper is the sole visual source. The local gallery and renderers were retired on October 1, 2026 after verifying 99 screens and 13 reference boards in Paper.
+## Shared controls and behavior
 
-- Page 00 owns visual tokens and component masters. Token changes propagate; cloned geometry must be updated in affected instances.
-- [Screen map](SCREENS.md) owns route and state contracts.
-- [Entry and identity](ENTRY-IDENTITY.md) explains first use, optional discovery and auth recovery.
-- [V1 coverage](V1-COVERAGE.md) maps all 15 release groups, new lifecycle screens, shared states and remaining launch gates.
-- [V1 flow review](V1-FLOW.md) links the dedicated page 09 walkthrough from Welcome through optional auth, first outfit, planning/wear, travel, community and Inbox, with recovery branches and deferred scope.
-- [Entry motion](ENTRY-MOTION.md) specifies the welcome sequence, timing and Reduce Motion alternative.
-- [Native acceptance](NATIVE-IOS.md) defines implementation checks.
-- [Native presentations](NATIVE-PRESENTATIONS.md) selects native menus, adaptive popovers, bottom sheets, editor modals and confirmations.
-- [Manifest](paper-manifest.json) is the verified inventory, not an executable design source.
-- [Liquid Glass controls](LIQUID-GLASS.md) defines native material choices for inputs, Back, buttons, tabs and presentations. Temporary captures are ignored and are not documentation deliverables.
+| Contract | Read when |
+| --- | --- |
+| [Components](components.md) | Reusing shared primitives, states, geometry or accessibility contracts. |
+| [Icons](icons.md) | Choosing symbols or assistance badges. |
+| [Liquid Glass](liquid-glass.md) | Choosing native control material and opaque adaptations. |
+| [Native presentations](native-presentations.md) | Selecting menus, sheets, exits, title alignment and open states. |
+| [Native iOS acceptance](native-ios.md) | Verifying implementation on supported devices. |
+| [Global motion](motion.md) | Adding transitions, loading or feedback. |
+| [Motion coverage](motion-coverage.md) | Checking a route's assigned motion and accessibility variants. |
+| [Search and feeds](search-and-feeds.md) | Scoped search, control density and pagination. |
 
-Edit visuals in Paper. Update these documents only when behavior or handoff contracts change. Native app and service implementation are separate from static design completion.
+## Flows and platform surfaces
 
-[Agent experience](AGENT-EXPERIENCE.md) defines response streaming, measured progress and timing, copy, response versions, evaluation feedback and recovery. Paper page 05 contains the states; page 00 contains reusable patterns.
+| Contract | Read when |
+| --- | --- |
+| [Screen map](screens.md) | Locating routes, states and artboards. |
+| [Entry and identity](entry-identity.md) | First use, optional identity and recovery. |
+| [Entry motion](entry-motion.md) | Welcome and first-piece choreography. |
+| [Agent experience](agent-experience.md) | Response lifecycle, Markdown, approval and recovery. |
+| [Agent input](agent-input.md) | Media/context selection, dictation, streaming and input recovery. |
+| [Web](web.md) | Landing/admin appearance and responsive behavior. |
+| [V1 flow review](v1-flow.md) | Reviewing numbered Paper journeys and return paths. |
+| [V1 coverage](v1-coverage.md) | Mapping release groups to designs and remaining gates. |
 
-Current inventory: **179 screens and 48 reference boards** (227 artboards across ten pages). Agent now has A01–A30, plus A31–A33 lifecycle/context reviews. Evaluation feedback/version-comparison states are V2 references.
+## Inventory and evidence
 
-[Global motion](MOTION.md) defines native ownership, shared values, interruption and accessibility. [Motion coverage](MOTION-COVERAGE.md) assigns all screen states; page 00 Foundations · Global motion is the visual reference.
+[iOS manifest](paper-manifest.json) and [web manifest](web-paper-manifest.json) own recorded inventory; use their counts instead of copying them into indexes. [Asset provenance](../references/assets.md) owns reference imagery and licensing.
 
-[Search and feeds](SEARCH-AND-FEEDS.md) defines public/private search layouts and states, shared control density, thumbnails and infinite-scroll continuation.
+[Offline examples](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-7-0) remain a proposal, not an approved replacement for cached-social contracts. [V1 release](../product/v1-release.md) and [V2 backlog](../product/v2-backlog.md) determine which designed states ship.
 
-[Offline experience review](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-7-0) is a separate proposal: four viewport examples and a scope board. Offline personal closet, online social features. It is not an approved replacement for the existing cached-social contracts.
-
-Page 00 **Components · Native controls and open menus** shows page-specific open commands, native alert/action choices, switches, Appearance selection, rich-popover adaptation and dark/opaque variants. [Native presentations](NATIVE-PRESENTATIONS.md) owns the full native-control and per-page V1 mapping.
+Record static review separately from native/device/service evidence in [verification](../delivery/verification.md). Earlier canvas/gallery retirement and refinement reports remain in [the design review archive](../delivery/archive/design-review-log.md).

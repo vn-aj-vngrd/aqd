@@ -1,25 +1,14 @@
 # AQD agent guidance
 
-For product or feature work, read [docs/PRODUCT.md](docs/PRODUCT.md) and the relevant specification in [docs/features/README.md](docs/features/README.md). Use [CONTEXT.md](CONTEXT.md) for domain terms and [docs/OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md) to distinguish confirmed choices from working defaults and service gates.
+Read only the documents relevant to the task; [docs/README.md](docs/README.md) routes by responsibility.
 
-Before implementing a module, read [docs/IMPLEMENTATION-PLAN.md](docs/IMPLEMENTATION-PLAN.md) and inspect [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md). Deliver the authorized slice using existing app patterns; update implementation status and [docs/VERIFICATION.md](docs/VERIFICATION.md) with actual evidence. Product refinement alone does not authorize app changes.
-
-Before adding a screen, changing shared UI, choosing icons, or reviewing an interface, read [docs/DESIGN-RULES.md](docs/DESIGN-RULES.md). Use [DESIGN.md](DESIGN.md) for the authoritative target visual system and [docs/COMPONENTS.md](docs/COMPONENTS.md) for reusable component contracts.
-
-Before committing, opening a PR, or changing release automation, read [docs/DEVELOPMENT-WORKFLOW.md](docs/DEVELOPMENT-WORKFLOW.md). Use conventional commit subjects and PR titles; ticket references belong in the body.
+- **Product/spec work:** read [product definition](docs/product/definition.md), the relevant [feature](docs/features/README.md), and applicable [decisions](docs/product/decisions.md). [V1 release](docs/product/v1-release.md) owns launch scope; [V2 backlog](docs/product/v2-backlog.md) owns deferred work.
+- **Implementation/fixes/reviews:** follow [lifecycle](docs/agents/lifecycle.md) within the user's authorized scope. Read [plan](docs/delivery/implementation-plan.md) and [current status](docs/delivery/implementation-status.md); update status and [verification](docs/delivery/verification.md) with actual evidence. Product refinement authorizes documentation, not app implementation.
+- **UI work:** read [design rules](docs/design/rules.md) and root [DESIGN.md](DESIGN.md), then the affected component/flow contract through the [design index](docs/design/README.md).
+- **Commits/PRs/releases:** read [workflow](docs/delivery/workflow.md). Use Conventional Commits and PR titles; ticket references belong in the body.
 
 ## Agent skills
 
-### Issue tracker
-
-GitHub Issues in `vn-aj-vngrd/aqd` hold tickets and implementation specs. Read `docs/agents/issue-tracker.md` before ticket operations.
-
-### Triage labels
-
-Use the confirmed default five triage states. Read `docs/agents/triage-labels.md` before assigning state labels.
-
-### Domain docs
-
-Single-context: root `CONTEXT.md` and `docs/adr/`. Read `docs/agents/domain.md` before domain exploration or architecture changes.
-
-For implementation, bug fixes, review fixes, or PR delivery, follow [docs/agents/LIFECYCLE.md](docs/agents/LIFECYCLE.md) through its current-head checks and release gates, within the user’s authorized scope. Keep this file as the shared Codex/Claude/other-agent entry point.
+- **Issue tracker:** GitHub Issues in `vn-aj-vngrd/aqd`; read [tracker configuration](docs/agents/issue-tracker.md) before ticket operations.
+- **Triage labels:** five confirmed default states; read [label mapping](docs/agents/triage-labels.md) before assigning labels.
+- **Domain docs:** root [CONTEXT.md](CONTEXT.md) is the glossary; [docs/adr/](docs/adr/README.md) holds lasting decisions. Read [domain guidance](docs/agents/domain.md) for domain/architecture work.

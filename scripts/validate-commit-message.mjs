@@ -23,7 +23,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
       ? JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, "utf8")).pull_request?.title
       : readFileSync(argument, "utf8");
     if (!validMessage(message, { isPullRequest })) {
-      throw new Error("Use <type>(optional-scope)!: Summary (100 characters maximum). Example: feat(closet): Add item capture. Put ticket references in the body. See docs/DEVELOPMENT-WORKFLOW.md.");
+      throw new Error("Use <type>(optional-scope)!: Summary (100 characters maximum). Example: feat(closet): Add item capture. Put ticket references in the body. See docs/delivery/workflow.md.");
     }
   } catch (error) {
     console.error(error.message);
