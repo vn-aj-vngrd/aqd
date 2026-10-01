@@ -55,11 +55,4 @@ jobs:
         if: steps.current.outputs.release == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          export GITHUB_REF=refs/heads/release
-          export GITHUB_SHA="$(git rev-parse HEAD)"
-          pnpm exec semantic-release
-          tag="$(git tag --points-at HEAD --list 'v*' --sort=-version:refname | head -n1)"
-          test -n "$tag"
-          published="$(gh release view "$tag" --json isDraft,tagName --jq 'select(.isDraft == false) | .tagName')"
-          test "$published" = "$tag"
+        run: bash scripts/publish-release.sh

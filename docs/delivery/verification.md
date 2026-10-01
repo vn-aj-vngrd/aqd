@@ -18,7 +18,7 @@ Grouped documentation by responsibility, consolidated duplicate scope/decisions/
 
 | Check | Result | Evidence / limits |
 | --- | --- | --- |
-| Local documentation links and heading anchors | Passed | 435 local references resolve; every Markdown page is reachable from the documentation/agent indexes. |
+| Local documentation links and heading anchors | Passed | 378 tracked local references resolve; every Markdown page is reachable from the documentation/agent indexes. Historical local screenshots are labeled untracked paths rather than portable evidence links. |
 | Migration integrity | Passed | All 56 mapped destinations exist; feature acceptance IDs, historical verification headings and external asset sources remain present. |
 | Paper manifest contracts | Passed | 212 recorded Markdown references resolve; both JSON manifests parse. Artboard data was retained. |
 | Repository tooling | Passed | `node --test scripts/*.test.mjs`: 30 tests passed using installed Node v26.4.0. The repository targets Node 24; this is evidence for the local runtime used. |
@@ -41,3 +41,9 @@ New verification entries must identify the scope, actual result, source revision
 Codex's earlier PR review identified successful commit A being skipped when newer main commit B failed CI. Added a serialized, fast-forward-only `release` publication cursor, selected by semantic-release, so only successful main CI commits enter publication. Final verification checks both the exact-HEAD version tag and its published non-draft GitHub release.
 
 Passed locally: 33 tooling tests, including real Git fixtures for successful A/newer failing B, same-SHA retry, newer successful C, tag refresh, delayed A, mismatched checkout and divergent history. Standards/spec review checked the final release logic against issue #1; the standards review's missing-GitHub-release finding was fixed. Final-head CI/Codex review and post-merge main CI/release remain required live gates. No native/service deployment was added.
+
+## Final-head Codex review recovery fixes — October 2, 2026
+
+Codex reviewed `efeefff` and found two follow-ups. Publication now retries a missing GitHub release from its existing exact-HEAD version tag, or publishes a draft left by a partial upload, without deleting/recreating tags. Tests cover a tag surviving semantic-release failure, API creation failure/retry, idempotent success, missing tags and draft publication failure/retry. All 37 tooling tests pass locally.
+
+Converted 57 archived local screenshot links to labeled untracked capture paths. Re-ran the local-link/heading/reachability check against `git ls-files`, rather than filesystem existence: all 378 portable references pass. Historical captures are not evidence available in a fresh clone. Fresh final-head CI/Codex review and live merge/release verification remain required.

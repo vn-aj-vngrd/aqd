@@ -110,13 +110,10 @@ test("workflow publishes only after successful trusted main push CI", () => {
   const current = job.steps.find((step) => step.id === "current");
   assert.equal(current.run, "bash scripts/prepare-release.sh");
   assert.equal(current.env.RELEASE_SHA, "${{ github.event.workflow_run.head_sha }}");
-  const publish = job.steps.find((step) => step.run?.includes("pnpm exec semantic-release"));
+  const publish = job.steps.find((step) => step.run === "bash scripts/publish-release.sh");
   assert.equal(publish.if, "steps.current.outputs.release == 'true'");
   assert.equal(publish.env.GITHUB_TOKEN, "${{ secrets.GITHUB_TOKEN }}");
-  assert.ok(publish.run.includes("git tag --points-at HEAD"));
-  assert.ok(publish.run.includes("gh release view"));
-  assert.ok(publish.run.includes("select(.isDraft == false)"));
-  assert.ok(publish.run.includes("export GITHUB_REF=refs/heads/release"));
+  assert.equal(publish.run, "bash scripts/publish-release.sh");
   assert.deepEqual(config.branches, ["release"]);
   assert.equal(config.tagFormat, "v${version}");
   assert.ok(!config.plugins.some(([name]) => ["@semantic-release/npm", "@semantic-release/git"].includes(name)));
