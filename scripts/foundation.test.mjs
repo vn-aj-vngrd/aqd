@@ -104,7 +104,10 @@ test("workflow publishes only after successful trusted main push CI", () => {
   }
   assert.equal(release.permissions.contents, "read");
   assert.equal(job.permissions.contents, "write");
-  assert.equal(release.concurrency["cancel-in-progress"], false);
+  assert.equal(release.concurrency, undefined);
+  assert.equal(job.concurrency.group, "release-main");
+  assert.equal(job.concurrency.queue, "max");
+  assert.equal(job.concurrency["cancel-in-progress"], false);
   assert.equal(job.steps[0].with["fetch-depth"], 0);
   assert.equal(job.steps[0].with.ref, "${{ github.event.workflow_run.head_sha }}");
   const current = job.steps.find((step) => step.id === "current");
