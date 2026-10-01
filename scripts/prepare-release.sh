@@ -15,8 +15,13 @@ if [[ -n "$remote" ]]; then
   git fetch origin refs/heads/release
   previous="$(git rev-parse FETCH_HEAD)"
   if [[ "$previous" != "$head" ]] && git merge-base --is-ancestor "$head" "$previous"; then
-    echo "release=false" >> "$GITHUB_OUTPUT"
-    echo "A newer CI-validated commit already owns the publication branch." >> "$GITHUB_STEP_SUMMARY"
+    if [[ -n "$(git tag --points-at "$head" --list 'v*')" ]]; then
+      echo "release=true" >> "$GITHUB_OUTPUT"
+      echo "Recover the tagged ancestor's publication without rewinding the cursor." >> "$GITHUB_STEP_SUMMARY"
+    else
+      echo "release=false" >> "$GITHUB_OUTPUT"
+      echo "A newer CI-validated commit already owns the publication branch." >> "$GITHUB_STEP_SUMMARY"
+    fi
     exit 0
   fi
   # A divergent publication branch is an error, never a force-push opportunity.

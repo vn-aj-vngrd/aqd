@@ -51,3 +51,9 @@ Converted 57 archived local screenshot links to labeled untracked capture paths.
 ## Publication queue review fix — October 2, 2026
 
 Codex reviewed `14412af` and identified failed CI workflow runs replacing pending successful releases through workflow-level concurrency. Moved concurrency to the trusted-success-guarded release job and selected GitHub's `queue: max`; failed/skipped workflows no longer occupy the publication group, and eligible pending releases queue instead of replacing each other. The workflow contract test verifies no top-level release concurrency, the job-level queue, no cancellation, and trusted-success conditions. All 37 tooling tests pass; final-head CI/Codex and post-merge publication remain live gates.
+
+## Tagged ancestor recovery review — October 2, 2026
+
+Codex reviewed `b57fc15` and identified tagged A being skipped after successful B advanced the publication cursor. A tagged ancestor now runs existing-tag publication recovery without changing the cursor; untagged ancestors still skip safely. The regression verifies recovered A is eligible while the remote release cursor remains at C; an additional test verifies untagged ancestor skipping. All 38 tooling tests pass locally.
+
+The review also claimed `queue: max` is unsupported. Current [GitHub workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idconcurrency) explicitly documents the job concurrency queue property and its 100-pending-job bound. The finding is inapplicable; the supported native queue remains. Final-head CI/Codex and merge/release verification remain live gates.

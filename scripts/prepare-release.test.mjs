@@ -60,7 +60,7 @@ test("publish successful A while newer main B has not passed CI; retry A safely"
   });
 });
 
-test("advance to successful C, refresh tags, and skip delayed A without rewinding", () => {
+test("advance to successful C, refresh tags, and recover tagged A without rewinding", () => {
   fixture(({ git, commit, prepare }) => {
     const a = commit("Successful A");
     git("push", "origin", "main");
@@ -78,7 +78,7 @@ test("advance to successful C, refresh tags, and skip delayed A without rewindin
     git("checkout", "--detach", a);
     const delayed = prepare(a);
     assert.equal(delayed.status, 0, delayed.stderr);
-    assert.equal(delayed.output, "release=false\n");
+    assert.equal(delayed.output, "release=true\n");
     assert.ok(git("ls-remote", "origin", "refs/heads/release").startsWith(c));
   });
 });
@@ -100,5 +100,19 @@ test("mismatched checkout and divergent publication history fail without pushing
     assert.notEqual(result.status, 0);
     assert.equal(result.output, "");
     assert.ok(git("ls-remote", "origin", "refs/heads/release").startsWith(divergent));
+  });
+});
+
+test("skip an untagged ancestor already covered by a newer validated cursor", () => {
+  fixture(({ git, commit, prepare }) => {
+    const a = commit("Delayed untagged A");
+    const b = commit("Successful B");
+    git("push", "origin", "main");
+    assert.equal(prepare(b).status, 0);
+    git("checkout", "--detach", a);
+    const result = prepare(a);
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.output, "release=false\n");
+    assert.ok(git("ls-remote", "origin", "refs/heads/release").startsWith(b));
   });
 });
