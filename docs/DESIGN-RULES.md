@@ -24,7 +24,7 @@ Use native glass for functional controls, including Back and every editable inpu
 Native-first applies to every platform-capable control, including Toggle/Picker, alert, confirmationDialog/action sheet, Menu/contextMenu, adaptive popover/sheet, keyboard/edit menu, progress, media selection and sharing. Follow [global open states and per-page contracts](design/NATIVE-PRESENTATIONS.md). Apply AQD tint only where supported; keep OS-owned material, spacing, corner geometry, accessibility and gesture behavior.
 
 - Preserve input and selections through loading, error, filter changes and cancellation. Distinguish saved receipts from draft content.
-- Indeterminate loading uses the shared Agent circular spinner everywhere. Destructive commits use native destructive semantics with a neutral safe cancel action; do not style Delete as a green primary action. [Components](COMPONENTS.md#shared-loading-indicator) defines both contracts.
+- Indeterminate loading uses the shared Agent circular spinner everywhere. Destructive commits use native destructive semantics with a neutral safe cancel action; do not style Delete as a blue primary action. [Components](COMPONENTS.md#shared-loading-indicator) defines both contracts.
 - Product permissions and actual service availability control what is enabled. Reference people/counts/messages never become fake production activity.
 - Native chrome and content styling have different ownership: the OS owns material geometry and animation; AQD owns semantic tint, information hierarchy, content, and action labels.
 - An implementation task is complete only after its relevant build checks and rendered navigation checks pass. The design task records static review separately from device, service, security and model evidence.

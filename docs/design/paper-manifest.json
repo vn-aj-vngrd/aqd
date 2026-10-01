@@ -1,15 +1,15 @@
 {
   "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
   "url": "https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0",
-  "verifiedOn": "2026-10-01",
+  "verifiedOn": "2026-10-02",
   "scope": "Static design only; Paper is sole visual source",
   "screenCount": 179,
-  "artboardCount": 227,
+  "artboardCount": 224,
   "pages": [
     {
       "id": "p-1-0",
       "name": "00 \u00b7 Start here & foundations",
-      "count": 24
+      "count": 25
     },
     {
       "id": "p-2-0",
@@ -47,14 +47,9 @@
       "count": 25
     },
     {
-      "id": "p-7-0",
-      "name": "08 \u00b7 Offline experience \u00b7 Review",
-      "count": 5
-    },
-    {
       "id": "p-8-0",
-      "name": "09 \u00b7 V1 flow \u00b7 Review",
-      "count": 19
+      "name": "08 \u00b7 V1 Flow",
+      "count": 20
     }
   ],
   "screens": [
@@ -3046,31 +3041,35 @@
     {
       "nodeId": "ADU-0",
       "name": "Offline \u00b7 Today",
-      "pageId": "p-7-0",
-      "reviewOnly": true
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "parentNodeId": "FLK-0"
     },
     {
       "nodeId": "AFN-0",
       "name": "Offline \u00b7 Closet",
-      "pageId": "p-7-0",
-      "reviewOnly": true
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "parentNodeId": "FLK-0"
     },
     {
       "nodeId": "AHI-0",
       "name": "Offline \u00b7 Community",
-      "pageId": "p-7-0",
-      "reviewOnly": true
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "parentNodeId": "FLK-0"
     },
     {
       "nodeId": "AJ5-0",
       "name": "Offline \u00b7 Inbox",
-      "pageId": "p-7-0",
-      "reviewOnly": true
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "parentNodeId": "FLK-0"
     },
     {
       "nodeId": "AKG-0",
-      "name": "Offline proposal \u00b7 Review notes",
-      "pageId": "p-7-0",
+      "name": "19 \u00b7 Offline experience",
+      "pageId": "p-8-0",
       "reviewOnly": true
     },
     {
@@ -3305,6 +3304,15 @@
       "contract": "NATIVE-PRESENTATIONS.md",
       "staticScreenCopies": false,
       "screenIds": []
+    },
+    {
+      "nodeId": "FP1-0",
+      "name": "Foundations \u00b7 Color palette \u00b7 Heritage blue",
+      "pageId": "p-1-0",
+      "reviewOnly": true,
+      "contract": "../../DESIGN.md",
+      "staticScreenCopies": false,
+      "screenIds": []
     }
   ],
   "controlMaterialReview": {
@@ -3350,5 +3358,43 @@
     "leadingHeaderPolicy": "All exits before a header title use native glass Back, including task-root dismissal; trailing search and native confirmation Cancel remain.",
     "accountDeletionBackOnly": 2,
     "setupActionGroupsRestored": "Create profile, validation guidance, Connect this closet, and sign-in privacy copy restored in canonical screens and V1 copies; only equivalent exit labels are hidden."
+  },
+  "colorPaletteReview": {
+    "date": "2026-10-01",
+    "foundationNodeId": "FP1-0",
+    "direction": "Heritage blue, limestone and graphite; muted powder blue in dark appearance",
+    "rolePairs": 23,
+    "colorTokenCount": 50,
+    "artboardsAudited": 224,
+    "literalStyleNodesMigrated": 50,
+    "svgElementsMigrated": 866,
+    "stalePaletteReferences": 0,
+    "primaryLabelContrast": {
+      "light": 7.06,
+      "dark": 10.07
+    },
+    "scope": "Static Paper/docs only; token and SVG markup checked across all nine pages, representative light/dark/larger-text/Reduce Transparency renders reviewed. Native material, VoiceOver and runtime checks pending.",
+    "savedScreenshots": false
+  },
+  "aiBadgeReview": {
+    "date": "2026-10-01",
+    "masterNodeId": "FZ3-0",
+    "markedControls": 38,
+    "fullBadge": "38 \u00d7 20 pt star + AI capsule, separate trailing indicator",
+    "compactBadge": "18 \u00d7 16 pt star-only capsule on 10 regeneration controls",
+    "actionLabels": "Unchanged; AI is not a visible label prefix",
+    "placement": "Trailing edge on buttons; before disclosure/retry symbols on rows",
+    "scope": "Static Paper/docs only; Home, Agent rows/menu, dark toolbar and V1 renders reviewed. Native accessibility and device verification pending."
+  },
+  "heritageBlueReview": {
+    "date": "2026-10-02",
+    "accent": "#285A93",
+    "primaryLabelContrast": 7.06,
+    "accentOnCanvasContrast": 6.36,
+    "accentOnSoftContrast": 6.0,
+    "scope": "Shared light accent, info and prominent-glass tokens; foundation labels and documents synchronized. Dark palette retained.",
+    "artboardsAudited": 224,
+    "staleReferences": 0,
+    "verification": "Rendered Home, Closet, shared controls, dark Agent, foundation and palette swatches; whitespace and JSON checks passed. Static design only."
   }
 }

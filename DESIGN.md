@@ -1,6 +1,6 @@
 # AQD design system
 
-Design authority, October 1, 2026. This replaces the prototype's monochrome visual direction. It specifies the intended app, not shipped functionality. App code and backend are outside this design pass.
+Design authority, October 2, 2026. This replaces the prototype's monochrome visual direction. It specifies the intended app, not shipped functionality. App code and backend are outside this design pass.
 
 ## Authority
 
@@ -10,24 +10,45 @@ For UI work, read this document and the affected screen contract before inspecti
 
 ## Direction
 
-Premium through restraint: clothing photography, precise alignment, quiet surfaces, and native interaction. Light surfaces use limestone and graphite; dark surfaces use neutral charcoal. Eucalyptus green is reserved for accents and selection. The initial flat garment illustrations were rejected as childish. Use photographic pieces and looks; the AQD wordmark and small eucalyptus accent provide the brand.
+Premium through restraint: clothing photography, precise alignment, quiet surfaces, and native interaction. Light surfaces use limestone and graphite; dark surfaces use neutral charcoal. Heritage blue is reserved for actions and selection; dark appearance uses muted powder blue. The initial flat garment illustrations were rejected as childish. Use photographic pieces and looks; the AQD wordmark and small Heritage blue accent provide the brand.
 
 Root screens prioritize the task. Landing is the expressive introduction. Home combines Today’s private dashboard with All / Following discovery; Closet is private management. Whitespace and separators group ordinary content. Grouped backgrounds belong to forms/settings; image grounds support clothing. Brand character comes from content and proportion rather than decorations around every element.
 
 ## Color
 
-| Role / Paper token | Light | Dark | Use |
-| --- | --- | --- | --- |
-| Canvas / `--color-canvas` | `#F3F3F1` | `#1C1C1E` | Screen |
-| Surface / `--color-surface` | `#FFFFFF` | `#2C2C2E` | Forms and grouped settings |
-| Ink / `--color-ink` | `#292C29` | `#F2F2F7` | Text and icons |
-| Secondary / `--color-secondary` | `#686E68` | `#B8B8BD` | Supporting text |
-| Divider / `--color-line` | `#E5E9E3` | `#48484A` | Separators and fields |
-| Accent / `--color-accent` | `#48594F` | `#B8CFBE` | Actions and selection |
-| Accent surface / `--color-accent-soft` | `#ECEFEA` | `#34463A` | Selected controls |
-| Destructive / `--color-error` | `#A1403A` | `#FFB4AB` | Error and destructive intent |
+| Role / light Paper token | Light | Dark |
+| --- | --- | --- |
+| Canvas / `--color-canvas` | `#F3F3F1` | `#1C1C1E` |
+| Surface / `--color-surface` | `#FFFFFF` | `#2C2C2E` |
+| Primary text / `--color-ink` | `#292C30` | `#F2F2F7` |
+| Supporting text / `--color-secondary` | `#686C72` | `#B8B8BD` |
+| Divider / `--color-line` | `#E2E5E9` | `#48484A` |
+| Image ground / `--color-image-ground` | `#F0F0EE` | `#242426` |
+| Primary accent / `--color-accent` | `#285A93` | `#B7C9DE` |
+| On accent / `--color-on-accent` | `#FFFFFF` | `#1C1C1E` |
+| Soft selection / `--color-accent-soft` | `#E8EDF3` | `#2B394B` |
+| Control boundary / `--color-control-border` | `#7B8088` | `#8E8E93` |
+| Regular glass / `--color-glass` | `rgb(255 255 255 / 88%)` | `rgb(44 44 46 / 94%)` |
+| Prominent glass / `--color-glass-prominent` | `rgb(40 90 147 / 94%)` | `rgb(183 201 222 / 94%)` |
+| Glass edge / `--color-glass-edge` | `rgb(255 255 255 / 70%)` | `rgb(255 255 255 / 12%)` |
+| Segment track / `--color-segment-track` | `rgb(118 118 128 / 10%)` | `rgb(118 118 128 / 24%)` |
+| Control shadow / `--color-shadow` | `rgb(20 20 22 / 8%)` | `rgb(0 0 0 / 22%)` |
+| Error / destructive / `--color-error` | `#A1403A` | `#FFB4AB` |
+| Error surface / `--color-error-soft` | `#F5E9E7` | `#462F2E` |
+| Success / `--color-success` | `#416451` | `#B8D0BF` |
+| Success surface / `--color-success-soft` | `#E8EFEA` | `#293B30` |
+| Warning / `--color-warning` | `#795B2E` | `#DCC7A2` |
+| Warning surface / `--color-warning-soft` | `#F3EEE4` | `#403728` |
+| Information / `--color-info` | `#285A93` | `#B7C9DE` |
+| Information surface / `--color-info-soft` | `#E8EDF3` | `#2B394B` |
 
 Primary actions use white on the light accent, dark ink on the dark accent. Native alerts retain semantic system colors. Selection also has a check, fill, weight, or label. Glass responds to content and accessibility settings. Text contrast targets 4.5:1, or 3:1 for large text; soft surfaces do not require soft text.
+
+Dark partners use `--color-night-*`. Existing `--color-dark`, `--color-dark-surface`, `--color-dark-ink` and `--color-dark-secondary` are aliases to their night equivalents. Page 00 **Foundations · Color palette · Heritage blue** shows all 23 light/dark role pairs with live token swatches. Every color token has a usage description.
+
+Blue comes from tailored wool; limestone and neutral graphite keep photography prominent. Secondary controls, menus and disabled controls remain neutral. Success green is reserved for a confirmed status, never branding; warning uses muted amber, and error/destructive intent uses red. Pair status color with text or a symbol. Information aliases the visual blue family but requires an explicit message so it cannot be confused with selection. Use soft status grounds only when a notice needs containment; ordinary content remains unboxed. Native alerts and destructive chrome retain system semantic colors.
+
+Solid-color contrast: primary labels 7.06:1 light / 10.07:1 dark; supporting text 4.75:1 on light canvas / 7.05:1 on dark surface; control boundaries 3.58:1 light / 4.27:1 dark. All defined status foregrounds exceed 4.5:1 on their matching soft grounds. These ratios do not certify translucent glass over arbitrary content. Regular/prominent glass, edge, track and shadow alpha tokens are static Paper approximations; Reduced Transparency uses opaque semantic surfaces. Native materials own runtime alpha and optics.
 
 ## Typography
 
@@ -51,7 +72,7 @@ Phone reference: 390 × 844 pt, with native status and safe areas. Screen inset:
 
 Photographic corners: 4 pt. Input glass shells: 16 pt (multiline composers: 28 pt). Grouped content surfaces: 12 pt. Compositions: 12–16 pt when containment helps. Sheets use system corners. Pills belong to buttons, filters, and native glass chrome. Ordinary content has neither shadow nor outline. Choose separator or elevation according to function.
 
-Touch targets are at least 44 × 44 pt. Primary content action: base 50 pt tall, 17 pt medium label, 20 pt horizontal padding. Cancel and dismiss actions use neutral semantic ink on regular glass (light charcoal / dark light ink). Green is reserved for primary actions and selected states; secondary actions use neutral native controls. One action dominates each task step. Loading preserves control width and blocks duplicate submission.
+Touch targets are at least 44 × 44 pt. Primary content action: base 50 pt tall, 17 pt medium label, 20 pt horizontal padding. Cancel and dismiss actions use neutral semantic ink on regular glass (light charcoal / dark light ink). Blue is reserved for primary actions and selected states; secondary actions use neutral native controls. One action dominates each task step. Loading preserves control width and blocks duplicate submission.
 
 ## Change one place
 
@@ -61,7 +82,7 @@ Edit semantic values in Paper’s token panel. Edit geometry in the page 00 comp
 
 Use native components for every platform-capable control, including menus, action/confirmation sheets, alerts, adaptive popovers, switches, pickers, keyboard/edit menus, progress, media selection and sharing. [Native presentations](docs/design/NATIVE-PRESENTATIONS.md) defines the global open-state appearance and per-page V1 content. Page 00 **Components · Native controls and open menus** is the shared static reference. AQD owns task content and supported semantic tint; iOS owns control mechanics and presentation geometry. Native switches retain their system track/thumb without an extra glass wrapper.
 
-Five destinations: Home, Closet, Agent, Inbox, Profile. Native labels remain visible, with a selected icon treatment and system selected pill. This replaces the old icon-only requirement. Use SF Symbols and native back/disclosure/search controls; Paper's authored vectors approximate these symbols. Agent has a conversation symbol. The icon catalog in `docs/design/ICONS.md` maps every action to an SF Symbol; active navigation uses semibold weight, tint and the system selection pill.
+Five destinations: Home, Closet, Agent, Inbox, Profile. Native labels remain visible, with a selected icon treatment and system selected pill. This replaces the old icon-only requirement. Use SF Symbols and native back/disclosure/search controls; the shared star-and-AI capsule badge identifies model-powered assistance actions as defined in the icon catalog; Paper's authored vectors approximate these symbols. Agent has a conversation symbol. The icon catalog in `docs/design/ICONS.md` maps every action to an SF Symbol; active navigation uses semibold weight, tint and the system selection pill.
 
 Agent opens full screen from the center entry or focused assistance, with Back and no bottom bar. Dismissal restores the prior destination and scroll position. The action-like center entry is a product requirement; verify selection restoration against actual native tab behavior during implementation.
 
@@ -123,6 +144,6 @@ Today adds a quiet recorded-week summary beneath the planned look, with distinct
 
 Today uses a single large Home title, a quiet date and one regular-weight state message. Avoid a repeated dashboard heading; empty wear history is a plain secondary section. The [shared hierarchy](docs/COMPONENTS.md#today-text-hierarchy) applies to first-piece, no-plan and populated states.
 
-Filter chips use a solid eucalyptus selected fill with an on-accent label and checkmark. Pale accent surfaces are not the selected-filter treatment. Unselected chips remain neutral; see the shared filter contract.
+Filter chips use a solid Heritage blue selected fill with an on-accent label and checkmark. Pale accent surfaces are not the selected-filter treatment. Unselected chips remain neutral; see the shared filter contract.
 
 The [V1 flow review](docs/design/V1-FLOW.md) connects private capture to a first usable outfit, optional auth, adaptive Today, planning/wear and social/Inbox. W27–W29 and S48 reuse the existing visual system; page 00 owns first-outfit activation primitives. Try-on and shopping remain deferred.

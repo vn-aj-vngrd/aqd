@@ -288,3 +288,44 @@ Computed-style checks found no bare shells or invalid heights among 215 Back con
 Replaced nine legacy CSS border-based loading indicators with copies of the Agent Status and progress circular spinner across shared loading/save masters, search and feed pagination. A file-wide border-style search found zero remaining legacy indicators. Corrected fourteen active destructive command labels (Delete, Block, Discard), retained existing red confirmed-delete commits, and neutralized two disabled Delete account surfaces. The comment-deletion component now shows native destructive Delete and neutral Cancel rows instead of two independent glass buttons. Titles and impact copy remain neutral.
 
 Reviewed loading/save references, delete-comment confirmation and theme-deletion control for spacing, type, contrast, alignment and fit. Docs define one circular native indeterminate component, truthful operation labels and native destructive/safe roles. No app changes, native runtime tests or screenshots saved.
+
+
+## V1 review consolidation and spacing · October 1, 2026
+
+Moved all four offline review screens and their notes into V1 board 19, preserving existing node IDs. Removed the empty Offline experience page through Paper’s page menu; live MCP readback confirms nine pages and the user-renamed 08 · V1 Flow. All 20 V1 review board containers use the white surface token; phone canvases retain their existing backgrounds. Tightened inter-board gaps from roughly 1,000 px to 160 px, preserving the existing 105 px overview gap and internal board layouts. Live geometry readback confirmed every gap and no overlapping boards. Screenshot review of manual outfits and the consolidated offline board confirmed spacing, typography, contrast, alignment and full-frame fit. Updated overview guidance, coverage index and manifest locations/counts (223 top-level artboards; four offline screens are now nested references). Static Paper/docs work only; no app changes or runtime tests.
+
+
+## Global AI assistance marker · October 1, 2026
+
+Audited text and full layer hierarchies on all nine live Paper pages / 223 top-level artboards, including nested V1/offline references. Added one shared plain AI vector master to the page-00 icon library and marked 38 controls: 27 labeled assistance actions, ten response-regeneration toolbar controls and the native Agent Retry menu. Canonical screens, shared masters, dark Agent and V1 copies use the same monogram; retry arrows and existing 44 pt targets remain. Manual selection/edit/save, Quick rules, human Inbox, ordinary network/load retries, navigation and input placeholders remain unmarked. File-wide readback found all ten regeneration controls marked, no sparkle/wand layer names and exactly one new marker under each of the 38 audited controls.
+
+Screenshot-reviewed all 30 affected boards plus the icon library for spacing, typography, contrast, alignment, repetition and full-frame fit. Checked Home primary/Closet secondary actions, Add sheet, piece detail, first-outfit readiness, suggestion form, planning, Agent shortcuts, failed/stopped/interrupted regeneration, dark controls, native menu, shared masters and all eight affected V1 strips. No clipping or mismatched geometry was found. Documented the explicit icon exception and accessibility/Reduce Transparency/Dynamic Type contracts. Static Paper/docs work only; no app changes or native/device tests.
+
+
+## Ink-blue color foundation · October 1, 2026
+
+Applied the approved restrained blue direction to all shared Paper color tokens. Defined and described 23 light/dark semantic role pairs (46 tokens), retaining four legacy dark aliases. The new page-00 **Foundations · Color palette · Ink blue** board contains live swatches, exact values, token names, status colors, material approximations and usage/contrast guidance. Updated the start-board swatches, foundation copy and solid-color legibility figures.
+
+Audited exported markup and hierarchy across all nine pages / 224 artboards, including canonical screens, component masters and nested V1/offline copies. Migrated 50 nodes with old literal style values and 866 SVG elements, including the sampled active Home icon, to semantic token references. Final full-artboard markup scan found zero references to the replaced eucalyptus palette, green-tinted ink/secondary/divider/control-border values or prior prominent-glass colors. Clothing photography and native system semantic colors retain their content/platform meaning.
+
+Solid-pair checks: primary labels 8.84:1 light / 10.07:1 dark; secondary text 4.75:1 on light canvas / 7.05:1 on dark surface; control boundaries 3.58:1 light / 4.27:1 dark. All four status foregrounds exceed 4.5:1 on their matching light/dark soft backgrounds. Translucent material contrast requires testing against actual native content. Screenshot review covered the color board, typography foundation, shared controls, Home, Closet, Planner, Inbox, Profile, dark Settings/Agent and larger-text capture; spacing, type, foreground rendering, alignment and frame fit were preserved.
+
+Synchronized DESIGN.md, color-related component/native/entry contracts and the manifest. Static Paper/docs changes only; no app implementation, native builds, device/VoiceOver checks or saved screenshot files.
+
+
+## Separate AI assistance badge · October 1, 2026
+
+Replaced the inline AI letter monogram in the page-00 master and all 38 previously marked assistance controls. The full 38 × 20 pt badge contains a small four-point star and AI inside an opaque capsule, with accent-on-accent-soft colors. Full-width buttons keep their task label independently centered and dock the badge at the trailing edge with 16 pt inset and symmetric 64 pt label padding. Disclosure rows place the badge before the chevron; Retry menus place it after the task label and before the retry arrow. The ten regeneration toolbar controls use a compact 18 × 16 pt star-only capsule plus their existing 16 pt retry arrow, with 4 pt gap inside unchanged 44 pt targets.
+
+Parent readback confirmed exactly one badge in all 39 locations including the master, no original monogram remaining at those locations, and all badge backgrounds bound to opaque accent-soft/night-accent-soft tokens. Rendered checks covered the shared badge, Home primary action, Agent shortcut rows, native Retry menu, dark Agent regeneration toolbar and Welcome/capture V1 strip. Label separation, contrast, alignment and frame fit were checked; task labels remain unchanged. Light badge foreground contrast is 7.51:1; dark is 6.94:1.
+
+Updated the icon/component/design contracts: AI is an indicator, not part of the visible task wording, a separate action or a success state. Documented native accessibility labels/hints, decorative-child hiding, right-to-left placement and Dynamic Type reflow. Static Paper/docs work only; no app code, native builds, device/VoiceOver checks or saved screenshot files.
+
+
+## Heritage blue refinement · October 2, 2026
+
+Applied the approved richer Heritage blue `#285A93` to shared light accent/information tokens and the Paper prominent-glass preview (`rgb(40 90 147 / 94%)`). Updated the start-board swatch, palette values/title, usage guidance and foundation contrast figures. Existing soft selection grounds, neutral surfaces, separate AI badges, status colors and accessible dark-mode palette retain their roles.
+
+Read current Paper inventory (nine pages / 224 artboards) and audited every artboard's exported markup after the token change: zero references to the superseded `#344C67` or `52 76 103` prominent-glass tint. Reviewed Home primary action/AI badge, Closet selected filter/navigation, shared controls, dark Agent, foundation type/legibility and the light/dark accent swatches. Spacing, foreground contrast, alignment and frame fit were preserved. Solid-color contrast: white on Heritage blue 7.06:1, Heritage blue on limestone canvas 6.36:1, and Heritage blue on soft selection / AI badge background 6.00:1. Each exceeds WCAG AA normal-text contrast; native translucent material remains content-dependent.
+
+Synchronized DESIGN.md, Entry identity and the Paper manifest. Documentation whitespace and manifest JSON checks passed. Static Paper/docs only; no app changes, native builds, device tests or saved screenshot files.

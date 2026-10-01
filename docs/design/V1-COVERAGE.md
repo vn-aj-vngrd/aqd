@@ -1,6 +1,6 @@
 # V1 Paper coverage
 
-Audited October 1, 2026 against [V1 release definition](../V1-RELEASE.md). [Open Paper page 09](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-8-0). Board 00 is the overview; 01–16 are screen strips with conditional/independent branches; 17 is the coverage/launch gate map; 18 identifies V2. Every strip starts at step 00. Screen copies are static review references; feature pages own canonical screens.
+Audited October 1, 2026 against [V1 release definition](../V1-RELEASE.md). [Open Paper page 08](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-8-0). Board 00 is the overview; 01–16 are screen strips with conditional/independent branches; 17 is the coverage/launch gate map; 18 identifies V2; 19 consolidates the offline review examples and notes. Every strip starts at step 00. Screen copies are static review references; feature pages own canonical screens.
 
 All 15 V1 groups have a design route/state reference. This establishes specification coverage, not complete runtime behavior or approved service policies. Shared states/native controls handle variations without adding a separate artboard for every network response. Provider, sync/conflict/deletion, moderation and weather decisions remain launch gates.
 

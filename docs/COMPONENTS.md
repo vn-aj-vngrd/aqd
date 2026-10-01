@@ -47,7 +47,7 @@ Production acceptance: screen reader name/role/state, 44-point target, accessibl
 
 ## Toolbar reuse and Paper synchronization
 
-The page 00 toolbar text and toolbar icon masters own toolbar geometry. Cancel, Done, Save and Skip use the text variant; Cancel uses neutral semantic ink, with green reserved for primary actions and selected states; icon actions use the icon variant. Full-width sheet/form dismissal uses the secondary button variant because its placement differs.
+The page 00 toolbar text and toolbar icon masters own toolbar geometry. Cancel, Done, Save and Skip use the text variant; Cancel uses neutral semantic ink, with blue reserved for primary actions and selected states; icon actions use the icon variant. Full-width sheet/form dismissal uses the secondary button variant because its placement differs.
 
 Dimensions bind to Paper tokens (`--spacing-control-height`, `--spacing-control-text-min`, `--spacing-control-padding`, `--leading-control`). Change token values once to update bound instances. For geometry changes, update the master and affected clones, then inspect representative screens. Clones do not automatically inherit structural changes.
 
@@ -97,7 +97,7 @@ Skeletons reserve content geometry and do not constitute a second animated busy 
 
 ### Destructive action hierarchy
 
-A destructive confirmation has one destructive commit action and a safe neutral Cancel/Keep editing action. Delete can be the task's main action without becoming AQD green. Use native destructive roles and semantic system red for Delete, Block, Discard and Unpublish commands; navigation titles and impact copy remain neutral. Menu/list commands and secondary delete entries use destructive text on native regular material. A confirmed full-task destructive commit may use the existing red prominent treatment; it never uses the green primary tint. Native alerts/confirmation dialogs retain system action layout and red destructive labels rather than custom glass button stacks. Disabled destructive commits are neutral/disabled, with no green fill and no enabled red affordance. Cancellation changes no records; failure retains the target and draft.
+A destructive confirmation has one destructive commit action and a safe neutral Cancel/Keep editing action. Delete can be the task's main action without becoming AQD blue. Use native destructive roles and semantic system red for Delete, Block, Discard and Unpublish commands; navigation titles and impact copy remain neutral. Menu/list commands and secondary delete entries use destructive text on native regular material. A confirmed full-task destructive commit may use the existing red prominent treatment; it never uses the blue primary tint. Native alerts/confirmation dialogs retain system action layout and red destructive labels rather than custom glass button stacks. Disabled destructive commits are neutral/disabled, with no blue fill and no enabled red affordance. Cancellation changes no records; failure retains the target and draft.
 
 Composition previews reserve at least 245 pt so their photo columns fit. `screenLayout` keeps docked message composers outside scrolling content; native implementations use safe-area/keyboard insets.
 
@@ -229,3 +229,8 @@ Page 00 **Components · Native controls and open menus** defines the shared open
 ### Navigation exit ownership
 
 Each screen has one exit for one outcome. Pushed destinations and nested task steps use Back; standalone forms and setup use leading glass Back; read-only sheets use Close/Done; search uses trailing Cancel. Do not combine Back with an equivalent toolbar/body Cancel. Nested Back preserves the parent draft, with discard protection if leaving would lose changes; task-root Back dismisses to the originating screen without committing. Apply the [per-flow exit map](design/NATIVE-PRESENTATIONS.md#one-exit-per-screen) to canonical screens, masters and V1 copies.
+
+
+## AI assistance badge
+
+Reuse the page-00 star-and-AI capsule badge as a separate trailing indicator on labeled suggestion and focused assistance actions, with its compact star-only variant on regeneration controls, including canonical screens and V1 review copies. Geometry, color, placement, accessibility and exclusions are defined in [the icon catalog](design/ICONS.md#ai-assistance-badge). Keep native action material, enabled-state behavior and at least 44 pt targets. Agent navigation keeps its conversation symbol; manual actions and Quick rules are unmarked.

@@ -54,7 +54,7 @@ flowchart TD
 
 ## Visual system
 
-Entry retains system typography, limestone/graphite surfaces and eucalyptus actions. The welcome composition pairs an outfit photograph with piece photographs to explain the product visually. All images are design references, not an implied inventory belonging to a new user.
+Entry retains system typography, limestone/graphite surfaces and Heritage blue actions. The welcome composition pairs an outfit photograph with piece photographs to explain the product visually. All images are design references, not an implied inventory belonging to a new user.
 
 The Paper page 00 entry introduction, action stack, hero, identity choice and read-only identity masters reuse the app’s shared type, fields, actions, icons and rows. Forms use quiet opaque native fields; search and composer glass is not copied onto identity fields. Only one primary task action dominates each step; secondary choices remain visible with 44-point targets. Longer copy and accessibility text scroll rather than shrinking.
 
