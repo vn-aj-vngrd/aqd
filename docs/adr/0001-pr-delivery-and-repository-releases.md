@@ -4,7 +4,7 @@ Status: Accepted, October 1, 2026.
 
 ## Decision
 
-GitHub Issues hold AQD delivery tickets. main/master accept changes through PRs with current CI and resolved review threads, without administrator bypass. The repository allows squash merges only. Conventional commit subjects and PR titles feed semantic-release after successful main CI. Tags/GitHub releases own repository versions; native build numbering/distribution stays a separate delivery concern.
+GitHub Issues hold AQD delivery tickets. main/master accept changes through PRs with current CI and resolved review threads, without administrator bypass. The repository allows squash merges only. Conventional commit subjects and PR titles feed semantic-release after successful main CI. A serialized workflow fast-forwards a separate `release` publication cursor only to a successful main CI SHA; semantic-release publishes that exact commit. This avoids its behind-branch check suppressing commit A when newer main commit B fails CI. Delayed runs skip only for a newer validated descendant; divergent publication history fails without force pushes. Tags/GitHub releases own repository versions; native build numbering/distribution stays a separate delivery concern.
 
 The shared agent lifecycle requires current-head Codex review before merging, including work implemented by another agent. A missing review is a blocker, not successful CI. Repository rules enforce PR/check/thread policy; the current-head Codex completion check is an additional agent delivery obligation until a reliable review status integration is configured.
 

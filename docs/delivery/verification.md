@@ -35,3 +35,9 @@ No native build, live Paper review, connected-service test or deployment was per
 - [Prototype backend setup](archive/prototype-backend-setup.md): historical configuration procedure, not approval to provision a backend.
 
 New verification entries must identify the scope, actual result, source revision/environment and remaining limitations. Keep detailed chronological captures in the archive; summarize current release evidence here.
+
+## Foundation release review fix — October 2, 2026
+
+Codex's earlier PR review identified successful commit A being skipped when newer main commit B failed CI. Added a serialized, fast-forward-only `release` publication cursor, selected by semantic-release, so only successful main CI commits enter publication. Final verification checks both the exact-HEAD version tag and its published non-draft GitHub release.
+
+Passed locally: 33 tooling tests, including real Git fixtures for successful A/newer failing B, same-SHA retry, newer successful C, tag refresh, delayed A, mismatched checkout and divergent history. Standards/spec review checked the final release logic against issue #1; the standards review's missing-GitHub-release finding was fixed. Final-head CI/Codex review and post-merge main CI/release remain required live gates. No native/service deployment was added.

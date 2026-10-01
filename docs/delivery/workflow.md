@@ -22,7 +22,9 @@ Lefthook checks staged whitespace, runs tooling tests for changed foundation fil
 
 ## Automatic versioning
 
-After a merge/push to `main`, successful CI triggers Release for that exact commit. Release runs only for successful same-repository push events, uses full Git history, serializes publication, and skips obsolete runs when a newer main commit exists. The newer run includes unreleased commits.
+After a merge/push to `main`, successful CI triggers Release for that exact commit. Release runs only for successful same-repository push events, uses full Git history and serializes publication. `scripts/prepare-release.sh` advances the `release` publication branch to the successful CI SHA with a fast-forward push. This branch is a CI-validated publication cursor, not an integration branch or a place for manual work.
+
+semantic-release publishes from `release`, so a newer failing commit on `main` cannot suppress an older successful commit's release. Delayed runs skip only when `release` already contains a newer CI-validated descendant; divergent history fails instead of force pushing. Re-running the same SHA is safe. The workflow verifies a version tag points to the checked-out SHA and a non-draft GitHub release exists for that tag after publication; missing tags or GitHub releases fail even on a retry. Main/master remain protected and are never pushed by the release job.
 
 Like Relay and Roleway, `.releaserc.json` makes `feat` minor, breaking changes major, and other conventional types patch, including docs/chore/ci. A release uses the strongest change since the previous tag. Without an existing release tag, semantic-release starts at `v1.0.0`; later versions advance automatically. Skipped/no-change reruns do not mint duplicate versions.
 

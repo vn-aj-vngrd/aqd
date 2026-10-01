@@ -30,18 +30,11 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
-      - name: Check that this is still the current main commit
+      - name: Prepare the CI-validated publication branch
         id: current
-        shell: bash
-        run: |
-          head="$(git rev-parse HEAD)"
-          remote="$(git ls-remote origin refs/heads/main | cut -f1)"
-          if [[ "$head" == "$remote" ]]; then
-            echo "release=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "release=false" >> "$GITHUB_OUTPUT"
-            echo "A newer push exists; its release will include these commits." >> "$GITHUB_STEP_SUMMARY"
-          fi
+        env:
+          RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: bash scripts/prepare-release.sh
 
       - uses: pnpm/action-setup@v4
         if: steps.current.outputs.release == 'true'
@@ -62,4 +55,11 @@ jobs:
         if: steps.current.outputs.release == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm exec semantic-release
+        run: |
+          export GITHUB_REF=refs/heads/release
+          export GITHUB_SHA="$(git rev-parse HEAD)"
+          pnpm exec semantic-release
+          tag="$(git tag --points-at HEAD --list 'v*' --sort=-version:refname | head -n1)"
+          test -n "$tag"
+          published="$(gh release view "$tag" --json isDraft,tagName --jq 'select(.isDraft == false) | .tagName')"
+          test "$published" = "$tag"
