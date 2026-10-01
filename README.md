@@ -13,11 +13,11 @@ apps/
 docs/         Shared product documentation
 ```
 
-Start with [iOS setup](apps/ios/README.md) to run the app or [product documentation](docs/README.md) for scope and product decisions.
+Start with [product documentation](docs/README.md), the complete [V1 release definition](docs/V1-RELEASE.md) and [V2 backlog](docs/V2-BACKLOG.md). The current checkout has no tracked Swift source/build definition or iOS setup guide matching the historical prototype; establish a reproducible app baseline before implementation.
 
-Current implementation: a functional private wardrobe with local persistence, clothing photos, outfits, wear tracking, search, and rule-based suggestions. Account, live AI, and community code is also included; deployment and credentials are still required to activate it. See [implementation status](docs/IMPLEMENTATION.md). Android can be added independently under `apps/android/` when development begins.
+Historical prototype notes describe private wardrobe persistence, clothing photos, outfits, wear tracking, search and rule-based suggestions, with limited auth/Agent/community work. These are not current-release verification. See [implementation status](docs/IMPLEMENTATION.md). Android can be added independently under `apps/android/` when development begins.
 
-V1 AI uses Apple Foundation Models on supported iOS 26 devices, with a clearly labeled Quick rules fallback. No cloud AI service or account is required. iOS 26 uses native Liquid Glass navigation; iOS 18 retains translucent system navigation.
+V1 targets Apple Foundation Models on supported iOS 26 devices, with a clearly labeled Quick rules fallback. No cloud AI service or account is required. iOS 26 uses native Liquid Glass navigation; iOS 18 retains translucent system navigation.
 
 Repository hooks and automatic versioning: [development workflow](docs/DEVELOPMENT-WORKFLOW.md).
 

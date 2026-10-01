@@ -1,6 +1,8 @@
 # AQD product definition
 
-Refined October 1, 2026. This is the intended product, not a statement of shipped functionality. [Implementation status](IMPLEMENTATION.md) records the current prototype. This direction replaces Personal / Community Home and the earlier restriction of assisted creation to Agent alone.
+[V1 release definition](V1-RELEASE.md) is the complete launch checklist, including real authentication, backup/sync/recovery, community and Inbox. [V2 backlog](V2-BACKLOG.md) defers extras. Core workflows must work and pass release checks; a service gate is an unresolved launch dependency, not permission to ship a placeholder.
+
+Refined October 1, 2026. This is the intended product, not a statement of shipped functionality. [Implementation status](IMPLEMENTATION.md) records the current prototype. Home now combines a personal dashboard with All / Following discovery; the dashboard label is Today. The earlier restriction of assisted creation to Agent alone remains superseded.
 
 ## Purpose
 
@@ -10,6 +12,8 @@ The core asset is a durable record of what someone owns and how they use it. The
 
 The product loop is **capture → organize → create → plan → wear → optionally share → discover → recreate**.
 
+V1 makes the first-outfit handoff explicit: capture/review one piece, show the actual categories needed around it, then suggest or manually build, replace, review and save a look. A first save is a trust milestone; the first usable outfit is the styling milestone. [V1 flow review](design/V1-FLOW.md) shows the sequence and conditional auth/Home states. Virtual try-on and shopping wishlist/price alerts remain deferred by user decision.
+
 ## Experience target: personal stylist and social wardrobe
 
 The user-confirmed direction is **an Alta-inspired personal closet/styling experience plus a social-media-driven wardrobe product**. For AQD, the personal experience means easy capture, organized owned pieces, reusable outfits/themes, contextual styling, dated planning, travel packing, and useful wear insights. The social experience means a visual community feed, discoverable creators and public closets, following, sharing, reactions/bookmarks, inspiration recreated with owned pieces, and human chats.
@@ -18,13 +22,13 @@ These are connected parts of the product: a look created in Closet can be explic
 
 Social participation is optional for each user, but community and Inbox are required parts of the intended V1 product. A private-only milestone is an intermediate delivery, not completion of this combined experience. Building the personal foundation first is dependency order, not a reduction of the social ambition.
 
-“Alta experience” is an experience benchmark based on the supplied reference, not verified feature-for-feature parity. Advanced imports, virtual try-on, shopping, and other deferred capabilities remain separately scoped. AQD retains its monochrome identity, app-first manual controls, five destinations, and preferred on-device AI.
+“Alta experience” is an experience benchmark based on the supplied reference, not verified feature-for-feature parity. Advanced imports, virtual try-on, shopping, and other deferred capabilities remain separately scoped. AQD retains app-first manual controls, five destinations, and preferred on-device AI. The premium native visual direction is owned by [DESIGN.md](../DESIGN.md).
 
 ## Navigation and ownership
 
 | Destination | Owns | Entry points |
 | --- | --- | --- |
-| Home | Community discovery | All / Following feeds; search for users, public closets, outfits, and themes. |
+| Home | Daily dashboard and discovery | Today / All / Following. Today summarizes owned plans and wardrobe; All and Following show public posts. |
 | Closet | Personal wardrobe management | Pieces, Outfits, Themes, Planner; capture, editing, personal search, wear history, stats, and personalization. |
 | Agent | Conversational assistance across features | Questions, insights, reviewed creation and changes; centered entry opens full screen with Back and no bottom navigation. |
 | Inbox | Human conversations | Chats, message requests, and accessible public wardrobe references. |
@@ -32,7 +36,7 @@ Social participation is optional for each user, but community and Inbox are requ
 
 The target is **Home · Closet · Agent · Inbox · Profile**. Search is reached from Home or inside the relevant personal workspace. Add opens a bottom sheet from Closet or Profile. Profile creation uses the same private wardrobe flow; saving does not publish. Account controls belong in Profile.
 
-Home is a community feed, not a personal dashboard. All and Following are its two feed modes. Today's look, upcoming travel, office routines, and personal activity live in Closet and Planner. Closet and Profile refer to the same owned records, with separate private management and reviewed public presentation.
+Home has three modes: Today, All and Following. Today is the private dashboard for the current planned look, upcoming plans and wardrobe shortcuts; Closet and Planner remain the editing sources. All and Following retain their public-feed contracts. Today is the first-use default; returning users restore their last Home mode and scroll position. Search from Today is owner-scoped Closet search; search from All/Following is public discovery, with the scope named on entry. Closet and Profile refer to the same owned records, with separate private management and reviewed public presentation.
 
 ## App-first assistance
 
@@ -46,13 +50,13 @@ On-device AI remains the V1 preference. Supported-device behavior, image analysi
 
 Users can prepare the next two weeks, assign weekday office outfits for three months, or organize a two-week trip and its packing list. Events provide context; routines describe recurrence; plans hold dated intentions. Scheduling is distinct from actual wear.
 
-Items, outfits, themes, history, and plans start private. Users explicitly select what to publish. A public closet is a curated view, not disclosure of the complete private inventory. Inspiration creates a draft using the viewer's own items. Inbox is human messaging; Agent conversation stays separate.
+Items, outfits, themes, history, and plans start private. Users explicitly select what to publish: a piece, outfit, or theme. Every shared photo must link at least one owned piece reviewed for public sharing; photo-only posts are not supported. A public closet is a curated view, not disclosure of the complete private inventory. Inspiration creates a draft using the viewer's own items. Inbox is human messaging; Agent conversation stays separate.
 
 ## Specification map
 
 [Feature specifications](features/README.md) own detailed fields, behavior, states, access rules, and acceptance criteria. [Canonical vocabulary](../CONTEXT.md) owns domain terms. [Delivery scope](V1-SCOPE.md) bounds milestones; [Implementation plan](IMPLEMENTATION-PLAN.md) defines the module order and handoff. [Decisions](OPEN-QUESTIONS.md) separates confirmed choices, working defaults, and service gates.
 
-The [supplied Alta comparison](references/ALTA-NOTES.md) informs discovery and creation patterns. It does not override AQD's core purpose or verify competitor behavior independently.
+The [Alta reference and comparison](references/ALTA-NOTES.md) informs discovery and creation patterns. It does not override AQD's core purpose or verify competitor behavior independently.
 
 ## Success and boundaries
 

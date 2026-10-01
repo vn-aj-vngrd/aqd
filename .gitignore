@@ -24,3 +24,6 @@ supabase/.branches/
 # Repository tooling
 node_modules/
 *.log
+
+# Temporary design review captures
+docs/design/evidence/

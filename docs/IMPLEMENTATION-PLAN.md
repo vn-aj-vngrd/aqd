@@ -1,5 +1,7 @@
 # Implementation plan and handoff
 
+Deliver the complete [V1 release checklist](V1-RELEASE.md), including auth/data/safety/launch checks; [V2 extras](V2-BACKLOG.md) are excluded. The source/build baseline must be established first: the current checkout has no tracked Swift source/build definition matching the historical prototype. Service/capability gates for mandatory V1 must close before release.
+
 This is the implementation entry point after product refinement. This documentation pass authorizes specifications only; do not begin app changes until the user requests implementation. Once authorized, deliver one complete slice at a time using the relevant [feature specification](features/README.md).
 
 ## Readiness meanings

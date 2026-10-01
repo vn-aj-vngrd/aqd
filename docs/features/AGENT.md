@@ -50,3 +50,11 @@ Validate output structure and owned active IDs. Suggested complete outfits meet 
 - A10: Evaluate physical-device availability/latency and realistic prompts separately from mocked tools and host tests.
 
 Evaluation fixtures cover insufficient closets, unavailable pieces, ambiguous names, corrupt output, stale ownership, denied media permission, unknown weather, long routine conflicts, duplicate operations, malicious captions, and revoked content. Record failures and supported capability limits before widening the feature. Usage, approval/error metrics, and user feedback are useful; default telemetry excludes wardrobe photos, notes, and chat bodies.
+
+## Response lifecycle design
+
+[V1 release scope](../V1-RELEASE.md) includes basic history, cancel/retry, copy, response rendering, proposal details and real receipts. Advanced response-version comparison and server-collected rating/comment feedback are V2; hide their unavailable entry points at launch. Internal quality evaluation remains mandatory V1 engineering work.
+
+[Agent experience](../design/AGENT-EXPERIENCE.md) defines streaming, measured progress/timing, cancellation, response versions, copy, feedback for evaluations, privacy consent, history and failure recovery. Paper page 05 is the visual reference and page 00 owns shared components. These design contracts do not authorize a provider switch or enable an unapproved feedback service.
+
+Agent response content supports Markdown, including incremental rendering, safe links and plain-text/source copy, through the shared [Markdown contract](../design/AGENT-EXPERIENCE.md#markdown-responses). Markdown never authorizes a write or substitutes for a structured proposal/receipt.

@@ -1,10 +1,18 @@
 # Initial iOS implementation
 
+Current-checkout warning — October 1: no tracked Swift app source or project build definition was found under apps/ios. The prototype descriptions below are historical records, not a reproducible current-build audit. All [V1 release checks](V1-RELEASE.md) remain unverified for the delivered release; [V2](V2-BACKLOG.md) separates extras.
+
 This document tracks the runnable first increment. [PRODUCT.md](PRODUCT.md) owns the product vision; [feature specifications](features/README.md) own detailed target behavior. Neither is a list of shipped features. The next authorized slice is defined in [Implementation plan](IMPLEMENTATION-PLAN.md); this documentation pass adds no app functionality.
+
+## October 1 design target
+
+The [V1 flow refinement](design/V1-FLOW.md) adds first-outfit activation, selected-photo review and adaptive Today contracts in documentation/Paper only. It does not establish new app behavior. Virtual try-on and shopping wishlist/price alerts remain outside V1 by user decision.
+
+The complete redesign is maintained in [Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0), the sole visual source, with native usage documented in [DESIGN.md](../DESIGN.md). Shared tokens and component masters live in Paper page 00; [screen contracts](design/SCREENS.md) map routes and states. These remain design targets. This design pass makes no changes to the iOS app or backend. Existing implementation and prior Simulator evidence below predate the redesign.
 
 ## Gap after product refinement
 
-The refined target uses Home, Closet, Agent, Inbox, Profile, moves discovery search into Home, introduces human messaging, and changes Home to All / Following community feeds and adds personal Planner, events, routines, travel packing, app-level focused AI actions, and a broader gated Agent. None of those changes were implemented in the product-definition pass. Current Home remains Personal / Community, with a separate Search tab and no Inbox. Current themes have one free-text theme per outfit, not the proposed many-to-many collection model. Current Agent can answer and prepare limited outfit/theme drafts; it cannot yet upload through chat, apply arbitrary edits, prepare calendar plans, or execute a production action loop. Public closets, follows, sync/recovery, and moderation remain incomplete. Source and prior test evidence describe the existing increment only.
+The refined target uses Home, Closet, Agent, Inbox, Profile, moves discovery search into Home, introduces human messaging, and changes Home to Today / All / Following with a private dashboard and community feeds, and adds personal Planner, events, routines, travel packing, app-level focused AI actions, and a broader gated Agent. None of those changes were implemented in the product-definition pass. Current Home remains Personal / Community, with a separate Search tab and no Inbox. Current themes have one free-text theme per outfit, not the proposed many-to-many collection model. Current Agent can answer and prepare limited outfit/theme drafts; it cannot yet upload through chat, apply arbitrary edits, prepare calendar plans, or execute a production action loop. Public closets, follows, sync/recovery, and moderation remain incomplete. Source and prior test evidence describe the existing increment only.
 
 ## Closet-first navigation update
 
@@ -67,4 +75,4 @@ This is an initial functional product, not the complete V1 or an App Store relea
 
 ## Verification
 
-Run the checks in [iOS setup](../apps/ios/README.md). Automated tests cover core state and persistence; they do not prove physical-camera access, real-device performance, cloud backup, live AI, or App Store readiness.
+Use [Verification](VERIFICATION.md) for recorded prototype checks and remaining native evidence. The earlier iOS setup guide is absent from this checkout. Historical automated tests cover core state and persistence; they do not prove physical-camera access, real-device performance, cloud backup, live AI, or App Store readiness.

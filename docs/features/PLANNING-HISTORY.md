@@ -2,7 +2,7 @@
 
 ## Outcome and placement
 
-Closet's Planner organizes intended clothing use; History records actual use; Stats explains that history. A Today entry shows the user's next planned look, not a social Home recommendation. Entry from an outfit can schedule it directly.
+Closet's Planner organizes intended clothing use; History records actual use; Stats explains that history. Home's Today tab summarizes the user's planned look and upcoming entries; Closet's Today/Planner entry opens the same records. These are saved plans, not social recommendations. Entry from an outfit can schedule it directly.
 
 ## Planning contract
 

@@ -1,47 +1,32 @@
-# UI implementation rules
+# Applying the AQD design
 
-Apply these rules when adding an AQD screen, editing a shared component, choosing an icon, or reviewing a UI change. [DESIGN.md](../DESIGN.md) describes the current visual system; source owns exact values.
+Read [DESIGN.md](../DESIGN.md) before adding a screen, changing a shared control, selecting an icon, or reviewing an interface. It is the authority for the intended app; the old prototype is migration evidence.
 
-## Change workflow
+## Design workflow
 
-1. Inspect the affected screen and `apps/ios/AQD/Design/Components.swift`. Identify the existing header, action, row, and image component before adding code.
-2. Change the shared component when the behavior belongs to every use. Keep feature state and business actions in the feature view. Extract a component when two real uses share the same behavior; avoid frameworks for hypothetical screens.
-3. Build, then inspect the changed screens on the simulator. Check default and accessibility text, light and dark appearance, labels, touch targets, and the affected navigation path. Completion requires rendered evidence; disclose any untested state.
-4. Update this document only when a decision changes. Update DESIGN.md when the implemented visual system changes.
+1. Locate the route in [the screen map](design/SCREENS.md) and its Paper artboard. Read the relevant feature specification for access and data behavior.
+2. Reuse the logical component in [COMPONENTS.md](COMPONENTS.md). Change visual tokens and component masters in Paper page 00, then update affected Paper screen instances. Do not recreate a parallel local design gallery or renderer.
+3. Apply shared changes across the affected Paper nodes, rather than adjusting each screen independently. Paper tokens control color/type/spacing references. Cloned geometry is not a live linked component; regeneration or a batched node update is required after a structural component change.
+4. Review rendered screens, including content fit, native safe areas, keyboard, accessibility text, light/dark, and Reduce Transparency. Record the scope in [VERIFICATION.md](VERIFICATION.md). A static design pass does not establish native behavior or performance.
 
-## Headers and hierarchy
+## Native controls
 
-- Use `screenHeader(title, prominent: true)` for root destinations: a bold left title. Target Home uses a compact community feed header; the prototype currently uses a time-based greeting. Detail and modal titles use the compact variant. Account settings are accessed only from Profile. Bottom navigation is icon-only with accessible labels, targeting Home, Closet, Agent, Inbox, Profile (current build still uses Search). Selected navigation icons use filled variants (a heavier outline for the current Search icon) alongside the native selection pill. The center Agent item opens a full-screen cover with Back and no bottom navigation; dismissing returns to the previous tab. Keep contextual actions with their content.
-- Use `ScreenHeading` only when a screen genuinely needs an in-content heading. Use `SectionHeading` for sections. Keep one obvious hierarchy; avoid a slogan beneath a navigation title.
-- Write concrete task language: “Edit outfit”, “Wear today”, “Recently added”. Put explanatory text beside the decision it supports.
-- Use semantic system typography. Let garment images provide the visual character.
+Use system navigation, TabView/UITabBarController, toolbar Button/Menu, searchable/UISearchController, grouped forms, sheets, alerts, Photos picker, share sheet, and date pickers. Allow the OS to supply Liquid Glass and scroll-edge behavior. The Paper representation is a visual reference, not instructions to implement a custom glass tab bar.
 
-## Actions and icons
+Keep Add and search in the relevant toolbar. Search exposes its owner/community scope, clear, cancel, loading and no-result behavior; focusing it accommodates the system keyboard. Group related toolbar actions and keep destructive actions in their relevant menu or confirmation. Provide labels for every icon button and at least 44-point targets.
 
-- Use `PrimaryButton` for the primary content action and `ActionButtonStyle(primary: false)` for its secondary peer. Native toolbar, form, and destructive controls retain their native behavior.
-- Keep actions at least 44 points tall, with content-driven growth at larger text sizes. Use the shared style’s padding; adding vertical padding or large control size on top creates oversized buttons.
-- Use `FilterChip` inside `ChipRail` for categories and occasions. Each chip has a compact monochrome icon, capsule surface, subtle downward shadow, and explicit selected state; its action must actually filter or navigate. Use one primary action per task area. Use words when the action is already clear; add an icon only when it improves recognition.
-- Use `AppSymbol` for recurring destinations and the assistant. The assistant uses Lucide’s `message-circle`, with the accessible name “Ask AQD”. Sparkles are explicitly excluded by the product owner.
-- Use bundled Lucide vector assets through `AppIcon` / `IconLabel`; native system-owned controls keep their OS glyphs. Preserve one stroke family and retain source/license attribution when adding icons.
+Home, Closet, Agent, Inbox, Profile remain the five product destinations. Native tab labels are visible in the redesign. The full-screen center Agent entry is an explicit exception to the usual persistent-tab model; verify selection restoration and accessibility focus. Account controls belong in Profile.
 
-## Product surfaces
+Use native glass for functional controls, including Back and every editable input shell, following [the control matrix](design/LIQUID-GLASS.md). Preserve native inline/content controls and approved Apple sign-in styling. Use SF Symbols for implementation, semantic system fonts, and operating-system adaptations. Brand tint belongs to selected controls and primary actions. Ordinary content uses opaque neutral surfaces and photographic clothing.
 
-Use [PRODUCT.md](PRODUCT.md) for intended information architecture and [feature specifications](features/README.md) for behavior: Home All / Following feeds with discovery search, Closet personal management and Planner, Inbox human chats, app-level manual/assisted creation, and full-screen Agent. The existing build still has Personal / Community Home and Agent-only assistance; refinement is documented before implementation. Profile presents social identity and public collections; account settings remain a separate sheet. Show unavailable social services honestly rather than fabricating connections or public URLs.
+## State and quality rules
 
-## In-page tabs
+Native-first applies to every platform-capable control, including Toggle/Picker, alert, confirmationDialog/action sheet, Menu/contextMenu, adaptive popover/sheet, keyboard/edit menu, progress, media selection and sharing. Follow [global open states and per-page contracts](design/NATIVE-PRESENTATIONS.md). Apply AQD tint only where supported; keep OS-owned material, spacing, corner geometry, accessibility and gesture behavior.
 
-Use `SegmentedTabs` for mutually exclusive views or modes (Closet sections, assistant mode, account mode). Match the supplied App Store structure while preserving AQD’s monochrome palette: white capsule container with a 4-point inset, a pale-gray selected capsule, equal-width dark text, and 44-point minimum targets. Selected state is communicated to accessibility. Filter chips remain separate because they represent scrollable categories; bottom navigation remains the native glass tab bar. Selection changes only view state, never submits a form.
+- Preserve input and selections through loading, error, filter changes and cancellation. Distinguish saved receipts from draft content.
+- Indeterminate loading uses the shared Agent circular spinner everywhere. Destructive commits use native destructive semantics with a neutral safe cancel action; do not style Delete as a green primary action. [Components](COMPONENTS.md#shared-loading-indicator) defines both contracts.
+- Product permissions and actual service availability control what is enabled. Reference people/counts/messages never become fake production activity.
+- Native chrome and content styling have different ownership: the OS owns material geometry and animation; AQD owns semantic tint, information hierarchy, content, and action labels.
+- An implementation task is complete only after its relevant build checks and rendered navigation checks pass. The design task records static review separately from device, service, security and model evidence.
 
-## Surfaces and layout
-
-- Read spacing and radii from `AppLayout`; read colors from the asset catalog through `Color` helpers. Reuse `GarmentTile` and `OutfitComposition` instead of rebuilding clothing cards.
-- Keep clothing surfaces neutral and flat. Glass belongs to native navigation chrome. Preserve the native iOS 26 tab bar, grouped five-tab arrangement, and OS accessibility adaptations.
-- Use deep charcoal for primary action fills, soft gray for secondary surfaces, and adaptive monochrome navigation tint, one consistent corner treatment for content controls, and system backgrounds. Preserve meaningful destructive/error colors.
-- Root headers use a shared safe-area layout so long greetings retain their width. Use `SearchField` for root search; navigation-bar search is hidden with the root toolbar.
-- Keep scroll content inside native safe areas. Allow wrapping and scrolling instead of shrinking text or clipping labels.
-
-## States and acceptance
-
-- Visible labels, accessible names, disabled states, loading, empty, and error behavior belong to the component’s contract. A decorative icon never substitutes for an action label.
-- On-device AI and Quick rules must remain clearly distinguished. Device/model availability is visible. AI results are editable drafts and saving requires a user action.
-- Review for duplicate styles, repeated view structure, accidental hierarchy changes, and leftover promotional copy. A screen is consistent when the shared components behave the same across it and its neighbors, not merely when colors match.
+For navigation, custom transitions, loading/feedback, onboarding or animation review, apply [Global motion](design/MOTION.md) and the screen assignment in [Motion coverage](design/MOTION-COVERAGE.md). Native transitions take precedence. Define timing once in the global policy, synchronize page 00, and verify standard/Reduce Motion paths before native completion.

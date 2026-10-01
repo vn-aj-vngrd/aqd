@@ -2,6 +2,8 @@
 
 These flows describe the refined target in [PRODUCT.md](PRODUCT.md). They are not test results for the current app. Detailed behavior and acceptance are owned by [feature specifications](features/README.md).
 
+The dedicated [V1 flow review](design/V1-FLOW.md) links the numbered Paper walkthroughs. First use goes Welcome → private capture/review → real saved-piece receipt → missing-category capture loop or ready state → pinned outfit suggestion/manual composition → review/save → plan/wear. Authentication is optional for private use and preserves the initiating intent; public profile setup is contextual. Today adapts to actual saved pieces, outfits and plans rather than advancing a fixed onboarding checklist.
+
 ## Capture a wardrobe item
 
 1. Open Closet's Add sheet, or ask Agent to add an item.

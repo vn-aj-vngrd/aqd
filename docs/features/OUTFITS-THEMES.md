@@ -29,6 +29,12 @@ A generated theme is a proposed name/description/membership; review each before 
 
 ## Collection and detail
 
+### First usable outfit
+
+E12 and Today link to the same first-outfit task: W28 when categories are missing, W29/W17 when a complete suggestion is possible, or W13 for manual composition. Carry the first saved piece as an explicit pin; the user can unpin it. Readiness is evaluated against the requested outfit form and current availability, not a fixed inventory size. If no supported form can include the pinned piece, explain the gap and offer a different form, unpin or manual composition.
+
+Review the proposed owned pieces before saving; replacing a slot returns to the same review with name, occasion, pin and other pieces preserved. The saved outfit detail offers Plan, Record wear and Share as separate actions. Saving is private and does not create a calendar entry or actual wear. Runtime failure offers manual composition with the draft intact. Partial manual looks remain valid but are not labelled complete suggestions. No style quiz or theme membership is required for a first outfit.
+
 Browse outfits with search, theme and favorites filters. Detail opens each piece, shows unavailable references, and supports edit, plan, wear, favorite, and reviewed publication. Theme detail contains member outfits and add/remove membership. Empty themes offer Add outfits. Favorites on owned outfits are distinct from community bookmarks.
 
 ## Acceptance
@@ -40,6 +46,8 @@ Browse outfits with search, theme and favorites filters. Detail opens each piece
 - O5: A suggested replacement preserves pinned pieces and never introduces unowned IDs.
 - O6: AI failure or unsupported devices offer manual creation; cancelling generation creates no saved record.
 - O7: Failed/retried saves retain edits and avoid duplicate outfits/themes.
+- O8: Create the first usable outfit from the capture/readiness path, preserving the pin through replacement; approve/save once and open the same persisted identity.
+- O9: Choose manual composition from missing-category, ready and unavailable-assistance states. Partial looks are identified and remain editable; planning, wear and publication occur only through their own reviewed actions.
 
 ## Dependencies
 

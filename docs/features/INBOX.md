@@ -18,6 +18,8 @@ Block prevents new contact and removes the relationship from discovery/contact s
 
 ## Lifecycle gates
 
+V1 requires real in-app acknowledged unread and reliable connected delivery. Remote push/activity alerts are V2; email authentication still requires delivery. Retention/deletion/abuse decisions are V1 blockers, not optional notification enhancements.
+
 Before connected implementation, decide notification transport/preferences, retention, delete-for-self versus delete-for-everyone, account deletion effects, encryption claims, and abuse limits. Do not claim end-to-end encryption from ordinary authenticated storage. Never populate production Inbox with artificial conversations or counts.
 
 ## Acceptance
