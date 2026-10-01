@@ -20,3 +20,10 @@ apps/ios/Configuration/Local.xcconfig
 !.env.example
 supabase/.temp/
 supabase/.branches/
+
+# Repository tooling
+node_modules/
+*.log
+
+# Temporary design review captures
+docs/design/evidence/

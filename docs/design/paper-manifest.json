@@ -1,0 +1,3858 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "url": "https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "verifiedOn": "2026-10-02",
+  "scope": "Static design only; Paper is sole visual source",
+  "screenCount": 201,
+  "artboardCount": 249,
+  "pages": [
+    {
+      "id": "p-1-0",
+      "name": "00 \u00b7 Start here & foundations",
+      "count": 27
+    },
+    {
+      "id": "p-2-0",
+      "name": "01 \u00b7 Entry & identity",
+      "count": 17
+    },
+    {
+      "id": "p-3-0",
+      "name": "02 \u00b7 Home",
+      "count": 53
+    },
+    {
+      "id": "p-4-0",
+      "name": "03 \u00b7 Closet & creation",
+      "count": 31
+    },
+    {
+      "id": "p-9-0",
+      "name": "04 \u00b7 Planning & wear",
+      "count": 12
+    },
+    {
+      "id": "p-A-1",
+      "name": "05 \u00b7 Agent",
+      "count": 55
+    },
+    {
+      "id": "p-5-0",
+      "name": "06 \u00b7 Inbox",
+      "count": 8
+    },
+    {
+      "id": "p-6-0",
+      "name": "07 \u00b7 Profile & settings",
+      "count": 25
+    },
+    {
+      "id": "p-8-0",
+      "name": "08 \u00b7 V1 Flow",
+      "count": 21
+    }
+  ],
+  "screens": [
+    {
+      "id": "E01",
+      "title": "Splash",
+      "pageId": "p-2-0",
+      "nodeId": "W-0",
+      "complete": true,
+      "motion": {
+        "navigation": "Native launch",
+        "content": [
+          "None"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E02",
+      "title": "Welcome",
+      "pageId": "p-2-0",
+      "nodeId": "12-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "E-arrival"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E03",
+      "title": "Sign in",
+      "pageId": "p-2-0",
+      "nodeId": "2G-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E04",
+      "title": "Check your email",
+      "pageId": "p-2-0",
+      "nodeId": "3S-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E05",
+      "title": "Style preferences",
+      "pageId": "p-2-0",
+      "nodeId": "4X-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E06",
+      "title": "Your first piece",
+      "pageId": "p-2-0",
+      "nodeId": "EW-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E07",
+      "title": "Public profile",
+      "pageId": "p-2-0",
+      "nodeId": "FW-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E08",
+      "title": "Connect your closet",
+      "pageId": "p-2-0",
+      "nodeId": "H3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E09",
+      "title": "Camera access",
+      "pageId": "p-2-0",
+      "nodeId": "IG-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E10",
+      "title": "Continue with email",
+      "pageId": "p-2-0",
+      "nodeId": "5U6-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E11",
+      "title": "Sign-in link expired",
+      "pageId": "p-2-0",
+      "nodeId": "5VQ-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E12",
+      "title": "First piece saved",
+      "pageId": "p-2-0",
+      "nodeId": "5XK-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E13",
+      "title": "Connect closet",
+      "pageId": "p-2-0",
+      "nodeId": "609-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E14",
+      "title": "How you found AQD",
+      "pageId": "p-2-0",
+      "nodeId": "5XJ-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V2"
+    },
+    {
+      "id": "S01",
+      "title": "Home \u00b7 All",
+      "pageId": "p-3-0",
+      "nodeId": "65-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S02",
+      "title": "Home \u00b7 Following",
+      "pageId": "p-3-0",
+      "nodeId": "JM-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S03",
+      "title": "Search",
+      "pageId": "p-3-0",
+      "nodeId": "LP-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S04",
+      "title": "Search results",
+      "pageId": "p-3-0",
+      "nodeId": "NV-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S05",
+      "title": "A light layer",
+      "pageId": "p-3-0",
+      "nodeId": "PR-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-photo",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S06",
+      "title": "Camille Reyes",
+      "pageId": "p-3-0",
+      "nodeId": "R7-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S07",
+      "title": "Camille\u2019s closet",
+      "pageId": "p-3-0",
+      "nodeId": "SP-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-photo",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S08",
+      "title": "Saved inspiration",
+      "pageId": "p-3-0",
+      "nodeId": "UF-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-photo",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S09",
+      "title": "Publish look",
+      "pageId": "p-3-0",
+      "nodeId": "VX-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S10",
+      "title": "Report or block",
+      "pageId": "p-3-0",
+      "nodeId": "XB-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S11",
+      "title": "Report post",
+      "pageId": "p-3-0",
+      "nodeId": "YS-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S12",
+      "title": "Following",
+      "pageId": "p-3-0",
+      "nodeId": "10F-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W01",
+      "title": "Closet",
+      "pageId": "p-4-0",
+      "nodeId": "8B-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-select",
+          "C-change",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W02",
+      "title": "Closet",
+      "pageId": "p-4-0",
+      "nodeId": "1E4-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-select",
+          "C-change",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W03",
+      "title": "Closet",
+      "pageId": "p-4-0",
+      "nodeId": "1GG-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-select",
+          "C-change",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W04",
+      "title": "Closet",
+      "pageId": "p-4-0",
+      "nodeId": "1IR-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-select",
+          "C-change",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W05",
+      "title": "Add to closet",
+      "pageId": "p-4-0",
+      "nodeId": "1LK-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W06",
+      "title": "Add a photo",
+      "pageId": "p-4-0",
+      "nodeId": "1NJ-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W07",
+      "title": "New piece",
+      "pageId": "p-4-0",
+      "nodeId": "1ON-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W08",
+      "title": "Cotton shirt",
+      "pageId": "p-4-0",
+      "nodeId": "1Q9-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-photo",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W09",
+      "title": "Piece details",
+      "pageId": "p-4-0",
+      "nodeId": "1UE-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W10",
+      "title": "Search closet",
+      "pageId": "p-4-0",
+      "nodeId": "1W8-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W11",
+      "title": "Archived pieces",
+      "pageId": "p-4-0",
+      "nodeId": "1Y1-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-change",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W12",
+      "title": "Delete piece",
+      "pageId": "p-4-0",
+      "nodeId": "21M-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W13",
+      "title": "Build outfit",
+      "pageId": "p-4-0",
+      "nodeId": "26F-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-change",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W14",
+      "title": "Choose pieces",
+      "pageId": "p-4-0",
+      "nodeId": "29G-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-select",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W15",
+      "title": "An easy afternoon",
+      "pageId": "p-4-0",
+      "nodeId": "2AY-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-photo",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W16",
+      "title": "Replace a piece",
+      "pageId": "p-4-0",
+      "nodeId": "2CJ-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-select",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W17",
+      "title": "Suggest an outfit",
+      "pageId": "p-4-0",
+      "nodeId": "2QN-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-stream",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W18",
+      "title": "Weekend",
+      "pageId": "p-4-0",
+      "nodeId": "2X8-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-photo",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W19",
+      "title": "Edit theme",
+      "pageId": "p-4-0",
+      "nodeId": "33K-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W20",
+      "title": "Style preferences",
+      "pageId": "p-4-0",
+      "nodeId": "36N-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-select",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W21",
+      "title": "Additional details",
+      "pageId": "p-4-0",
+      "nodeId": "3GI-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P01",
+      "title": "Planner",
+      "pageId": "p-9-0",
+      "nodeId": "2CK-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P02",
+      "title": "October 2026",
+      "pageId": "p-9-0",
+      "nodeId": "2K0-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P03",
+      "title": "Plan a look",
+      "pageId": "p-9-0",
+      "nodeId": "2SF-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P04",
+      "title": "New plan",
+      "pageId": "p-9-0",
+      "nodeId": "2XC-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P05",
+      "title": "Office routine",
+      "pageId": "p-9-0",
+      "nodeId": "34X-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P06",
+      "title": "Seoul, slowly",
+      "pageId": "p-9-0",
+      "nodeId": "3DI-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P07",
+      "title": "Packing list",
+      "pageId": "p-9-0",
+      "nodeId": "3IQ-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P08",
+      "title": "Review plan",
+      "pageId": "p-9-0",
+      "nodeId": "3O3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P09",
+      "title": "Record wear",
+      "pageId": "p-9-0",
+      "nodeId": "50O-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P10",
+      "title": "Wear history",
+      "pageId": "p-9-0",
+      "nodeId": "5B0-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P11",
+      "title": "Wear insights",
+      "pageId": "p-9-0",
+      "nodeId": "5F5-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "P12",
+      "title": "Resolve a conflict",
+      "pageId": "p-9-0",
+      "nodeId": "5GJ-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "I01",
+      "title": "Inbox",
+      "pageId": "p-5-0",
+      "nodeId": "2D2-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "I02",
+      "title": "Camille Reyes",
+      "pageId": "p-5-0",
+      "nodeId": "2N8-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-message",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "I03",
+      "title": "Requests",
+      "pageId": "p-5-0",
+      "nodeId": "2XD-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "I04",
+      "title": "Message request",
+      "pageId": "p-5-0",
+      "nodeId": "34Z-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-message",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "I05",
+      "title": "New message",
+      "pageId": "p-5-0",
+      "nodeId": "3BQ-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-message",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "I06",
+      "title": "Conversation details",
+      "pageId": "p-5-0",
+      "nodeId": "3HL-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "I07",
+      "title": "Camille Reyes",
+      "pageId": "p-5-0",
+      "nodeId": "3ML-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U01",
+      "title": "Profile",
+      "pageId": "p-6-0",
+      "nodeId": "2EN-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-select",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U02",
+      "title": "Edit profile",
+      "pageId": "p-6-0",
+      "nodeId": "2QO-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U03",
+      "title": "Connections",
+      "pageId": "p-6-0",
+      "nodeId": "2XZ-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-change",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U04",
+      "title": "Published content",
+      "pageId": "p-6-0",
+      "nodeId": "34Y-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-change",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U05",
+      "title": "Settings",
+      "pageId": "p-6-0",
+      "nodeId": "3B1-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U06",
+      "title": "Privacy",
+      "pageId": "p-6-0",
+      "nodeId": "4F6-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U07",
+      "title": "Notifications",
+      "pageId": "p-6-0",
+      "nodeId": "4LE-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V2"
+    },
+    {
+      "id": "U08",
+      "title": "Blocked people",
+      "pageId": "p-6-0",
+      "nodeId": "4MW-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-change",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U09",
+      "title": "Your data",
+      "pageId": "p-6-0",
+      "nodeId": "50P-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U10",
+      "title": "Export data",
+      "pageId": "p-6-0",
+      "nodeId": "52I-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U11",
+      "title": "Delete account",
+      "pageId": "p-6-0",
+      "nodeId": "53R-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U12",
+      "title": "Sign out",
+      "pageId": "p-6-0",
+      "nodeId": "5B1-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U13",
+      "title": "Help and legal",
+      "pageId": "p-6-0",
+      "nodeId": "5DE-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U14",
+      "title": "Appearance",
+      "pageId": "p-6-0",
+      "nodeId": "5GG-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "U15",
+      "title": "Confirm deletion",
+      "pageId": "p-6-0",
+      "nodeId": "5IZ-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "X01",
+      "title": "Home",
+      "pageId": "p-3-0",
+      "nodeId": "123-0",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "X02",
+      "title": "You\u2019re offline",
+      "pageId": "p-3-0",
+      "nodeId": "13S-0",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "X03",
+      "title": "No results",
+      "pageId": "p-3-0",
+      "nodeId": "15A-0",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "X04",
+      "title": "Content unavailable",
+      "pageId": "p-3-0",
+      "nodeId": "18H-0",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "X05",
+      "title": "Changes saved",
+      "pageId": "p-6-0",
+      "nodeId": "5JV-0",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "X06",
+      "title": "Couldn\u2019t save",
+      "pageId": "p-4-0",
+      "nodeId": "3LJ-0",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "X07",
+      "title": "Search active",
+      "pageId": "p-3-0",
+      "nodeId": "1C6-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "X08",
+      "title": "Inbox unavailable",
+      "pageId": "p-5-0",
+      "nodeId": "3PX-0",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A01",
+      "title": "Agent",
+      "nodeId": "2CL-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-stream"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A02",
+      "title": "Agent",
+      "nodeId": "2K1-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-stream"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A03",
+      "title": "Review outfit",
+      "nodeId": "2QT-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A04",
+      "title": "Outfit saved",
+      "nodeId": "2XB-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-receipt",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A05",
+      "title": "Conversations",
+      "nodeId": "34E-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-change"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A06",
+      "title": "Agent context",
+      "nodeId": "3C7-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A07",
+      "title": "Assistance unavailable",
+      "nodeId": "3I4-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A08",
+      "title": "Preparing a draft",
+      "nodeId": "3N2-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-stream",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A09",
+      "title": "Couldn\u2019t save yet",
+      "nodeId": "3QB-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A10",
+      "title": "Review message",
+      "nodeId": "3S9-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A11",
+      "title": "Waiting for response",
+      "nodeId": "65L-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-stream",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A12",
+      "title": "Streaming response",
+      "nodeId": "66Z-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-stream",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A13",
+      "title": "Response complete",
+      "nodeId": "68B-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-stream",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A14",
+      "title": "Response stopped",
+      "nodeId": "6AF-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-stream",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A15",
+      "title": "Response interrupted",
+      "nodeId": "6CG-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-stream",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A16",
+      "title": "Taking longer",
+      "nodeId": "6DW-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-stream",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A17",
+      "title": "Live task progress",
+      "nodeId": "6FC-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-stream",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A18",
+      "title": "Response details",
+      "nodeId": "6HG-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A19",
+      "title": "Response feedback",
+      "nodeId": "6K9-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V2"
+    },
+    {
+      "id": "A20",
+      "title": "Feedback received",
+      "nodeId": "6O8-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-receipt",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V2"
+    },
+    {
+      "id": "A21",
+      "title": "Feedback not sent",
+      "nodeId": "6TF-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V2"
+    },
+    {
+      "id": "A22",
+      "title": "Saving approved draft",
+      "nodeId": "6UE-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-stream",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A23",
+      "title": "Draft needs review",
+      "nodeId": "6WK-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A24",
+      "title": "Loading conversations",
+      "nodeId": "6Z0-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A25",
+      "title": "No conversations",
+      "nodeId": "70B-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A26",
+      "title": "Conversation load failed",
+      "nodeId": "71B-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A27",
+      "title": "Copied and rated",
+      "nodeId": "727-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-receipt",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V2"
+    },
+    {
+      "id": "A28",
+      "title": "Alternate response",
+      "nodeId": "747-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-stream",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V2"
+    },
+    {
+      "id": "A29",
+      "title": "Message not sent",
+      "nodeId": "76B-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "In place",
+        "content": [
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A30",
+      "title": "Clarification needed",
+      "nodeId": "77N-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S13",
+      "title": "Camille \u00b7 Pieces",
+      "nodeId": "7CQ-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S14",
+      "title": "Camille \u00b7 Themes",
+      "nodeId": "7ED-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S15",
+      "title": "Home \u00b7 Today",
+      "nodeId": "7JN-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-save",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S16",
+      "title": "Today \u00b7 First piece",
+      "nodeId": "7L6-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S17",
+      "title": "Today \u00b7 No planned look",
+      "nodeId": "7MP-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S18",
+      "title": "Today \u00b7 Wardrobe activity",
+      "nodeId": "7X5-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-save",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S19",
+      "title": "Post \u00b7 Tags visible",
+      "nodeId": "872-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S20",
+      "title": "Pieces in this look",
+      "nodeId": "88R-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S21",
+      "title": "Blue wool coat",
+      "nodeId": "89W-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S22",
+      "title": "Comments",
+      "nodeId": "8B5-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-message",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S23",
+      "title": "Comments \u00b7 Empty",
+      "nodeId": "8D5-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-message",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S24",
+      "title": "Comments \u00b7 Send failed",
+      "nodeId": "8FR-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-message",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S25",
+      "title": "Likes",
+      "nodeId": "8IK-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S26",
+      "title": "Liked posts",
+      "nodeId": "8LB-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S27",
+      "title": "Tag pieces",
+      "nodeId": "8OL-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S28",
+      "title": "Choose published piece",
+      "nodeId": "8PX-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S29",
+      "title": "Saved inspiration \u00b7 Empty",
+      "nodeId": "8TR-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S30",
+      "title": "Share from your closet",
+      "nodeId": "8W7-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S31",
+      "title": "Theme post",
+      "nodeId": "8XF-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S32",
+      "title": "Add a piece to continue",
+      "nodeId": "8Z5-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S33",
+      "title": "Publish piece",
+      "nodeId": "904-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S34",
+      "title": "Publish theme",
+      "nodeId": "91C-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S35",
+      "title": "Burgundy coat",
+      "nodeId": "92L-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-form",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S36",
+      "title": "Search \u00b7 People",
+      "nodeId": "9FF-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S37",
+      "title": "Search \u00b7 Pieces",
+      "nodeId": "9GX-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S38",
+      "title": "Search \u00b7 Outfits",
+      "nodeId": "9IE-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S39",
+      "title": "Search \u00b7 Themes",
+      "nodeId": "9JV-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S40",
+      "title": "Search \u00b7 Loading",
+      "nodeId": "9LF-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S41",
+      "title": "Search \u00b7 Failed",
+      "nodeId": "9MX-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S42",
+      "title": "Search \u00b7 Offline",
+      "nodeId": "9O9-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S43",
+      "title": "Search \u00b7 Loading more",
+      "nodeId": "9PS-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W22",
+      "title": "Search closet \u00b7 Outfits",
+      "nodeId": "9RC-0",
+      "pageId": "p-4-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W23",
+      "title": "Search closet \u00b7 Themes",
+      "nodeId": "9SN-0",
+      "pageId": "p-4-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W24",
+      "title": "Search closet \u00b7 No matches",
+      "nodeId": "9U1-0",
+      "pageId": "p-4-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W25",
+      "title": "Search closet \u00b7 Loading",
+      "nodeId": "9VD-0",
+      "pageId": "p-4-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W26",
+      "title": "Search closet \u00b7 Failed",
+      "nodeId": "9WP-0",
+      "pageId": "p-4-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select",
+          "C-load",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S44",
+      "title": "Home \u00b7 Multiple posts",
+      "nodeId": "9XV-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S45",
+      "title": "Home \u00b7 Loading more",
+      "nodeId": "A24-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S46",
+      "title": "Home \u00b7 Load more failed",
+      "nodeId": "A4J-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S47",
+      "title": "Home \u00b7 End reached",
+      "nodeId": "A6X-0",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W27",
+      "title": "Review piece photo",
+      "nodeId": "AMO-1",
+      "pageId": "p-4-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W28",
+      "title": "First outfit \u00b7 Missing pieces",
+      "nodeId": "AO3-1",
+      "pageId": "p-4-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-change",
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "W29",
+      "title": "First outfit \u00b7 Ready",
+      "nodeId": "AP9-1",
+      "pageId": "p-4-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-select"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "S48",
+      "title": "Today \u00b7 Ready to style",
+      "nodeId": "AQF-1",
+      "pageId": "p-3-0",
+      "complete": true,
+      "motion": {
+        "navigation": "N-root",
+        "content": [
+          "C-load"
+        ],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "E15",
+      "pageId": "p-2-0",
+      "nodeId": "CRT-1",
+      "title": "Session expired",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "E16",
+      "pageId": "p-2-0",
+      "nodeId": "CSZ-1",
+      "title": "Sign-in unavailable",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "E17",
+      "pageId": "p-2-0",
+      "nodeId": "CU3-1",
+      "title": "Connecting closet",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "U16",
+      "pageId": "p-6-0",
+      "nodeId": "CV7-1",
+      "title": "Backup and sync",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "U17",
+      "pageId": "p-6-0",
+      "nodeId": "CWF-1",
+      "title": "Sync conflict",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "U18",
+      "pageId": "p-6-0",
+      "nodeId": "CXA-1",
+      "title": "Restore closet",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "U19",
+      "pageId": "p-6-0",
+      "nodeId": "CY5-1",
+      "title": "Export status",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "U20",
+      "pageId": "p-6-0",
+      "nodeId": "CZ0-1",
+      "title": "Deletion pending",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "U21",
+      "pageId": "p-6-0",
+      "nodeId": "CZV-1",
+      "title": "Account deleted",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "U22",
+      "pageId": "p-6-0",
+      "nodeId": "D0Q-1",
+      "title": "Sync failed",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "U23",
+      "pageId": "p-6-0",
+      "nodeId": "D1L-1",
+      "title": "Restore failed",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "A31",
+      "pageId": "p-A-1",
+      "nodeId": "D2G-1",
+      "title": "Review theme",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "A32",
+      "pageId": "p-A-1",
+      "nodeId": "D3B-1",
+      "title": "Review changes",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "A33",
+      "pageId": "p-A-1",
+      "nodeId": "D46-1",
+      "title": "Weather context",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "U24",
+      "pageId": "p-6-0",
+      "nodeId": "D51-1",
+      "title": "Review conflicting edits",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form",
+          "C-load",
+          "C-save"
+        ]
+      }
+    },
+    {
+      "id": "W30",
+      "title": "Closet options",
+      "nodeId": "F3H-1",
+      "pageId": "p-4-0",
+      "complete": true,
+      "motion": {
+        "navigation": "Native Menu",
+        "content": [],
+        "contract": "motion.md"
+      },
+      "release": "V1"
+    },
+    {
+      "id": "A34",
+      "title": "Agent \u00b7 Keyboard focused",
+      "nodeId": "GEH-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A35",
+      "title": "Add to your message",
+      "nodeId": "GGV-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A36",
+      "title": "Choose closet pieces",
+      "nodeId": "GJ9-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A37",
+      "title": "Agent \u00b7 Selected attachments",
+      "nodeId": "GLN-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A38",
+      "title": "Review attached photo",
+      "nodeId": "GO1-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A39",
+      "title": "Preparing attachment",
+      "nodeId": "GQF-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A40",
+      "title": "Attachment needs attention",
+      "nodeId": "GST-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A41",
+      "title": "Dictation permission",
+      "nodeId": "GV7-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A42",
+      "title": "Listening",
+      "nodeId": "GXL-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A43",
+      "title": "Transcribing",
+      "nodeId": "GZZ-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A44",
+      "title": "Review voice message",
+      "nodeId": "H2D-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A45",
+      "title": "Voice unavailable",
+      "nodeId": "H4R-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A46",
+      "title": "Context mode",
+      "nodeId": "H75-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A47",
+      "title": "Closet \u00b7 No matching pieces",
+      "nodeId": "H9J-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A48",
+      "title": "Stopping response",
+      "nodeId": "HBX-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A49",
+      "title": "Response timed out",
+      "nodeId": "HEB-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A50",
+      "title": "New response below",
+      "nodeId": "HGP-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A51",
+      "title": "Agent \u00b7 Reduced transparency",
+      "nodeId": "HJ3-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A52",
+      "title": "Agent \u00b7 Larger text",
+      "nodeId": "HLH-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A53",
+      "title": "Camera unavailable",
+      "nodeId": "HNV-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A54",
+      "title": "Photo assistance unavailable",
+      "nodeId": "HQ9-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "N-sheet",
+        "content": [
+          "C-form",
+          "C-select"
+        ],
+        "contract": "motion.md"
+      }
+    },
+    {
+      "id": "A55",
+      "title": "Agent \u00b7 No closet context",
+      "nodeId": "HSN-0",
+      "pageId": "p-A-1",
+      "complete": true,
+      "release": "V1",
+      "motion": {
+        "navigation": "Native full-screen",
+        "content": [
+          "C-stream",
+          "C-form"
+        ],
+        "contract": "motion.md"
+      }
+    }
+  ],
+  "referenceBoards": [
+    {
+      "nodeId": "1-0",
+      "name": "AQD \u00b7 Start here",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "14I-0",
+      "name": "Components \u00b7 Controls and states",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "1JB-0",
+      "name": "Foundations \u00b7 Type, space and materials",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "1YD-0",
+      "name": "D01 \u00b7 Settings \u00b7 Dark",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "21N-0",
+      "name": "D02 \u00b7 Agent \u00b7 Dark",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "22T-0",
+      "name": "D03 \u00b7 New piece \u00b7 Larger text",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "25T-0",
+      "name": "D04 \u00b7 Home \u00b7 Reduced transparency",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "4E1-0",
+      "name": "Components \u00b7 States and feedback",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "4GB-0",
+      "name": "Components \u00b7 Presentations and navigation",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "4LD-0",
+      "name": "Components \u00b7 Content and form patterns",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "4MI-0",
+      "name": "Components \u00b7 Icon library and navigation states",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "5PP-0",
+      "name": "Components \u00b7 Entry and identity",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "64C-0",
+      "name": "Motion \u00b7 Welcome and first piece",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "6FD-0",
+      "name": "Components \u00b7 Agent response lifecycle",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "7HE-0",
+      "name": "Components \u00b7 Compact profile and bio",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "7R2-0",
+      "name": "Components \u00b7 Home dashboard",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "7US-0",
+      "name": "Components \u00b7 People and avatar images",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "83E-0",
+      "name": "Foundations \u00b7 Global motion",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "862-0",
+      "name": "Components \u00b7 Social actions and piece tags",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "A9A-0",
+      "name": "Foundations \u00b7 Control sizes",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "AAE-0",
+      "name": "Foundations \u00b7 Search",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "AC0-0",
+      "name": "Foundations \u00b7 Feed continuation",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "ADU-0",
+      "name": "Offline \u00b7 Today",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "parentNodeId": "FLK-0"
+    },
+    {
+      "nodeId": "AFN-0",
+      "name": "Offline \u00b7 Closet",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "parentNodeId": "FLK-0"
+    },
+    {
+      "nodeId": "AHI-0",
+      "name": "Offline \u00b7 Community",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "parentNodeId": "FLK-0"
+    },
+    {
+      "nodeId": "AJ5-0",
+      "name": "Offline \u00b7 Inbox",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "parentNodeId": "FLK-0"
+    },
+    {
+      "nodeId": "AKG-0",
+      "name": "19 \u00b7 Offline experience",
+      "pageId": "p-8-0",
+      "reviewOnly": true
+    },
+    {
+      "nodeId": "AM1-1",
+      "name": "Components \u00b7 First outfit activation",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "ASJ-1",
+      "name": "00 \u00b7 V1 overview",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-flow.md",
+      "staticScreenCopies": true
+    },
+    {
+      "nodeId": "AT9-1",
+      "name": "01 \u00b7 Welcome and capture",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-flow.md",
+      "staticScreenCopies": true
+    },
+    {
+      "nodeId": "ATG-1",
+      "name": "02 \u00b7 Optional auth and Home",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-flow.md",
+      "staticScreenCopies": true
+    },
+    {
+      "nodeId": "ATN-1",
+      "name": "03 \u00b7 Suggest, replace and save",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-flow.md",
+      "staticScreenCopies": true
+    },
+    {
+      "nodeId": "ATU-1",
+      "name": "04 \u00b7 Manual outfits and themes",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-flow.md",
+      "staticScreenCopies": true
+    },
+    {
+      "nodeId": "AU1-1",
+      "name": "05 \u00b7 Plan, wear and history",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-flow.md",
+      "staticScreenCopies": true
+    },
+    {
+      "nodeId": "AU8-1",
+      "name": "06 \u00b7 Trip and packing",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-flow.md",
+      "staticScreenCopies": true
+    },
+    {
+      "nodeId": "AUF-1",
+      "name": "07 \u00b7 Community and Inbox",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-flow.md",
+      "staticScreenCopies": true
+    },
+    {
+      "nodeId": "AUM-1",
+      "name": "08 \u00b7 Recovery branches",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-flow.md",
+      "staticScreenCopies": true
+    },
+    {
+      "nodeId": "D5W-1",
+      "name": "09 \u00b7 Identity and session recovery",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-coverage.md",
+      "staticScreenCopies": true,
+      "screenIds": [
+        "E15",
+        "E16",
+        "E17",
+        "E13",
+        "U12"
+      ]
+    },
+    {
+      "nodeId": "DBF-1",
+      "name": "10 \u00b7 Backup, conflicts and restore",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-coverage.md",
+      "staticScreenCopies": true,
+      "screenIds": [
+        "U16",
+        "U22",
+        "U17",
+        "U24",
+        "U18",
+        "U23"
+      ]
+    },
+    {
+      "nodeId": "DHO-1",
+      "name": "11 \u00b7 Export and account deletion",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-coverage.md",
+      "staticScreenCopies": true,
+      "screenIds": [
+        "U09",
+        "U10",
+        "U19",
+        "U11",
+        "U15",
+        "U20",
+        "U21"
+      ]
+    },
+    {
+      "nodeId": "DPT-1",
+      "name": "12 \u00b7 Wardrobe lifecycle and history",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-coverage.md",
+      "staticScreenCopies": true,
+      "screenIds": [
+        "W08",
+        "W09",
+        "W11",
+        "W12",
+        "W19",
+        "P10"
+      ]
+    },
+    {
+      "nodeId": "DYR-1",
+      "name": "13 \u00b7 Office routines and calendar edits",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-coverage.md",
+      "staticScreenCopies": true,
+      "screenIds": [
+        "P04",
+        "P05",
+        "P12",
+        "P08",
+        "P02"
+      ]
+    },
+    {
+      "nodeId": "E8H-1",
+      "name": "14 \u00b7 Discovery, discussion and safety",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-coverage.md",
+      "staticScreenCopies": true,
+      "screenIds": [
+        "S30",
+        "S33",
+        "S34",
+        "S03",
+        "S22",
+        "S24",
+        "S10",
+        "S11"
+      ]
+    },
+    {
+      "nodeId": "EKI-1",
+      "name": "15 \u00b7 Agent review and contextual actions",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-coverage.md",
+      "staticScreenCopies": true,
+      "screenIds": [
+        "A33",
+        "A31",
+        "A32",
+        "A23",
+        "A22",
+        "A09"
+      ]
+    },
+    {
+      "nodeId": "EQO-1",
+      "name": "16 \u00b7 Inbox requests and safe retry",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-coverage.md",
+      "staticScreenCopies": true,
+      "screenIds": [
+        "I01",
+        "I05",
+        "I03",
+        "I07",
+        "I06",
+        "U08"
+      ]
+    },
+    {
+      "nodeId": "EZH-1",
+      "name": "17 \u00b7 V1 coverage and launch gates",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-coverage.md",
+      "staticScreenCopies": false,
+      "screenIds": []
+    },
+    {
+      "nodeId": "F24-1",
+      "name": "18 \u00b7 V2 boundary",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "v1-coverage.md",
+      "staticScreenCopies": false,
+      "screenIds": []
+    },
+    {
+      "nodeId": "FBL-1",
+      "name": "Components \u00b7 Native controls and open menus",
+      "pageId": "p-1-0",
+      "reviewOnly": true,
+      "contract": "native-presentations.md",
+      "staticScreenCopies": false,
+      "screenIds": []
+    },
+    {
+      "nodeId": "FP1-0",
+      "name": "Foundations \u00b7 Color palette \u00b7 Heritage blue",
+      "pageId": "p-1-0",
+      "reviewOnly": true,
+      "contract": "../../DESIGN.md",
+      "staticScreenCopies": false,
+      "screenIds": []
+    },
+    {
+      "nodeId": "IB0-0",
+      "name": "Components \u00b7 Agent multimodal composer",
+      "pageId": "p-1-0",
+      "reviewOnly": true,
+      "contract": "agent-input.md",
+      "staticScreenCopies": false,
+      "screenIds": []
+    },
+    {
+      "nodeId": "IB1-0",
+      "name": "Components \u00b7 Agent shimmer and state coverage",
+      "pageId": "p-1-0",
+      "reviewOnly": true,
+      "contract": "agent-input.md",
+      "staticScreenCopies": false,
+      "screenIds": []
+    },
+    {
+      "nodeId": "IKI-0",
+      "name": "20 \u00b7 Agent input, voice and streaming",
+      "pageId": "p-8-0",
+      "reviewOnly": true,
+      "contract": "agent-input.md",
+      "staticScreenCopies": true,
+      "screenIds": [
+        "A34",
+        "A36",
+        "A37",
+        "A11",
+        "A12",
+        "A13",
+        "A41",
+        "A42",
+        "A43",
+        "A44",
+        "A40",
+        "A49"
+      ]
+    }
+  ],
+  "controlMaterialReview": {
+    "date": "2026-10-01",
+    "contract": "liquid-glass.md",
+    "scope": "All 226 Paper artboards inspected; canonical controls, masters and V1 review copies synchronized. Static native-material approximation; app implementation and device checks remain pending.",
+    "inputs": "Native editing in one regular-glass shell; opaque accessibility variant",
+    "back": "Native navigation-owned glass Back; preserve swipe/history",
+    "nativeTransparency": "System-owned variants, tint and accessibility adaptation; Paper alpha is illustrative"
+  },
+  "nativePresentationReview": {
+    "date": "2026-10-01",
+    "contract": "native-presentations.md",
+    "closetMore": "Native Menu popup anchored to More",
+    "closetAdd": "Native sheet over dimmed Closet; content-height and large accessibility detents",
+    "adaptation": "Content popover on wide layouts; sheet on compact iPhone; OS-owned chrome and dismissal",
+    "scope": "Global native-control/open-state master and per-page V1 presentation contracts; static authored approximations, not imported Apple kit. Design/docs only; device checks pending.",
+    "globalMaster": "FBL-1",
+    "keyboard": "X07 bottom-docked keyboard layout reference; actual keyboard OS-owned"
+  },
+  "navigationConsistencyReview": {
+    "date": "2026-10-01",
+    "scope": "All 227 artboards structurally inspected. 215 Back controls checked; 35 stale bare Back shells corrected. 13 bare Cancel toolbar actions wrapped and 18 outlined search fields synchronized. Canonical screens, component references and V1 copies covered. Static styling only.",
+    "detection": "Header structure and icon paths, independent of layer naming",
+    "savedScreenshots": false
+  },
+  "progressAndDestructiveReview": {
+    "date": "2026-10-01",
+    "spinner": "Agent Status and progress circular spinner is the sole indeterminate loading reference; replaced all 9 legacy border-based indicators.",
+    "destructive": "14 active destructive command labels corrected; 2 disabled Delete account surfaces neutralized. Delete-comment uses native destructive/Cancel confirmation rows.",
+    "scope": "Static Paper/docs only; no saved screenshots or app code changes."
+  },
+  "navigationExitReview": {
+    "date": "2026-10-01",
+    "duplicateHeaderPairsResolved": 77,
+    "nestedBackOnly": 21,
+    "standaloneOrSearchCancelOnly": 56,
+    "accountDeletionCancelOnly": 0,
+    "duplicateSafetyBodyCancelsRemoved": 2,
+    "duplicateSetupBodyExitsRemoved": 6,
+    "scope": "Paper and docs only; no runtime changes or saved screenshots",
+    "signInOverride": "E03 and its V1 copy use native glass Back to Welcome or the originating screen, without Cancel",
+    "leadingHeaderPolicy": "All exits before a header title use native glass Back, including task-root dismissal; trailing search and native confirmation Cancel remain.",
+    "accountDeletionBackOnly": 2,
+    "setupActionGroupsRestored": "Create profile, validation guidance, Connect this closet, and sign-in privacy copy restored in canonical screens and V1 copies; only equivalent exit labels are hidden."
+  },
+  "colorPaletteReview": {
+    "date": "2026-10-01",
+    "foundationNodeId": "FP1-0",
+    "direction": "Heritage blue, limestone and graphite; muted powder blue in dark appearance",
+    "rolePairs": 23,
+    "colorTokenCount": 50,
+    "artboardsAudited": 224,
+    "literalStyleNodesMigrated": 50,
+    "svgElementsMigrated": 866,
+    "stalePaletteReferences": 0,
+    "primaryLabelContrast": {
+      "light": 7.06,
+      "dark": 10.07
+    },
+    "scope": "Static Paper/docs only; token and SVG markup checked across all nine pages, representative light/dark/larger-text/Reduce Transparency renders reviewed. Native material, VoiceOver and runtime checks pending.",
+    "savedScreenshots": false
+  },
+  "aiBadgeReview": {
+    "date": "2026-10-01",
+    "masterNodeId": "FZ3-0",
+    "markedControls": 38,
+    "fullBadge": "38 \u00d7 20 pt star + AI capsule, separate trailing indicator",
+    "compactBadge": "18 \u00d7 16 pt star-only capsule on 10 regeneration controls",
+    "actionLabels": "Unchanged; AI is not a visible label prefix",
+    "placement": "Trailing edge on buttons; before disclosure/retry symbols on rows",
+    "scope": "Static Paper/docs only; Home, Agent rows/menu, dark toolbar and V1 renders reviewed. Native accessibility and device verification pending."
+  },
+  "heritageBlueReview": {
+    "date": "2026-10-02",
+    "accent": "#285A93",
+    "primaryLabelContrast": 7.06,
+    "accentOnCanvasContrast": 6.36,
+    "accentOnSoftContrast": 6.0,
+    "scope": "Shared light accent, info and prominent-glass tokens; foundation labels and documents synchronized. Dark palette retained.",
+    "artboardsAudited": 224,
+    "staleReferences": 0,
+    "verification": "Rendered Home, Closet, shared controls, dark Agent, foundation and palette swatches; whitespace and JSON checks passed. Static design only."
+  },
+  "agentInputReview": {
+    "reviewedOn": "2026-10-02",
+    "scope": "Static Paper/design only; no native streaming, speech or image runtime proof",
+    "screenIds": [
+      "A34",
+      "A35",
+      "A36",
+      "A37",
+      "A38",
+      "A39",
+      "A40",
+      "A41",
+      "A42",
+      "A43",
+      "A44",
+      "A45",
+      "A46",
+      "A47",
+      "A48",
+      "A49",
+      "A50",
+      "A51",
+      "A52",
+      "A53",
+      "A54",
+      "A55"
+    ],
+    "sharedMasters": [
+      "IB0-0",
+      "IB1-0"
+    ],
+    "flowBoard": "IKI-0",
+    "composerInstancesUpdated": 17,
+    "nativeControls": "TextEditor, media/file pickers, camera, permission prompts, context sheets and Send/Stop",
+    "motion": "Busy-label shimmer with static Reduce Motion and VoiceOver alternative",
+    "appearance": [
+      "Light",
+      "D02 dark",
+      "A51 opaque",
+      "A52 larger text"
+    ]
+  },
+  "titleAlignmentReview": {
+    "date": "2026-10-02",
+    "navigationHeaders": 319,
+    "scope": "All nine iOS pages, canonical screens, appearance variants, shared navigation master and V1/offline reference copies",
+    "crowdedClosetHeaders": 0,
+    "agentWelcome": "Centered heading and supporting text; leading-aligned messages/forms/composer",
+    "nativeVerification": false,
+    "policy": "Root/no-Back headers leading; Back/task/sheet/full-screen navigation centered; Agent welcome centered; reading content leading",
+    "leadingRootHeaders": 58,
+    "centeredNavigationHeaders": 261,
+    "correctedOn": "2026-10-02"
+  },
+  "centeredTitleTypographyReview": {
+    "reviewedOn": "2026-10-02",
+    "scope": "261 centered navigation titles across canonical, dark/accessibility, shared and walkthrough references",
+    "baseSize": 20,
+    "lineHeight": 26,
+    "weight": 500,
+    "trackingToken": "--tracking-title",
+    "sizeToken": "--text-20",
+    "smallerAgentHeadersCorrected": 48,
+    "rootAlignmentPreserved": true,
+    "nativeDeviceTest": false
+  }
+}

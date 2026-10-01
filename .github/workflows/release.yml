@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    # Never run privileged code from a PR workflow or another repository.
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    concurrency:
+      group: release-main
+      queue: max
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Prepare the CI-validated publication branch
+        id: current
+        env:
+          RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: bash scripts/prepare-release.sh
+
+      - uses: pnpm/action-setup@v4
+        if: steps.current.outputs.release == 'true'
+        with:
+          version: 10.12.1
+
+      - uses: actions/setup-node@v7
+        if: steps.current.outputs.release == 'true'
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install pinned release tooling
+        if: steps.current.outputs.release == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate version, tag and GitHub release notes
+        if: steps.current.outputs.release == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/publish-release.sh

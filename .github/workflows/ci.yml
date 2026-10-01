@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tooling:
+    name: Repository tooling
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Validate PR title
+        if: github.event_name == 'pull_request'
+        run: node scripts/validate-commit-message.mjs --pr-title
+      - name: Validate PR branch
+        if: github.event_name == 'pull_request'
+        run: node scripts/validate-pr-branch.mjs
+      - name: Install pinned tooling
+        run: pnpm install --frozen-lockfile
+      - name: Validate commit and release contracts
+        run: pnpm check

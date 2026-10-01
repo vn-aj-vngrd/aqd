@@ -1,0 +1,30 @@
+name: Feature or improvement
+description: Define a useful change and its acceptance criteria.
+labels: [enhancement, needs-triage]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and outcome
+      description: Who needs this, what is missing, and what should become possible?
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected behavior and scope
+      description: Include important states, limits, dependencies, and what is outside this change.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance and verification
+      description: List observable completion checks and relevant feature-spec IDs. Explain how to verify them.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Decisions and references
+      description: Link relevant product specs, screenshots, or prior discussion. Name unresolved decisions.
