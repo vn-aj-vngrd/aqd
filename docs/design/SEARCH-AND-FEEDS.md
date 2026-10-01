@@ -37,3 +37,5 @@ Failure keeps posts and shows “Couldn't load more” with Retry at the same fo
 ## Linked-piece thumbnails
 
 Public-piece lists, marker editing and the published-piece picker share 56 × 64 thumbnails, a two-line text lane and a trailing disclosure. Use the linked piece's photo or a deliberate creator crop; existing fixture crops are reused consistently for coat/bag references. The complete row is a target; thumbnail is decorative to VoiceOver when the row names the piece. Missing/loading photos reserve geometry; revoked pieces remove private imagery and names. Never substitute an unrelated garment photo.
+
+Search uses one trailing Cancel in every query/scope/loading/recovery state. Do not render a second Back control with the same source destination. Opening a search result pushes its detail with Back; returning restores the search query and results rather than dismissing search.

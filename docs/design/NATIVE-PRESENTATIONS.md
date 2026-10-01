@@ -2,6 +2,27 @@
 
 Refined October 1, 2026 against [Apple Design Resources](https://developer.apple.com/design/resources/), [Menus](https://developer.apple.com/design/human-interface-guidelines/menus), [Popovers](https://developer.apple.com/design/human-interface-guidelines/popovers/) and [Sheets](https://developer.apple.com/design/human-interface-guidelines/sheets). Use native SwiftUI/UIKit presentation components. Paper illustrates task content and context; the OS owns exact material, corner shape, arrow, detents, animation and accessibility adaptation.
 
+## One exit per screen
+
+Leading header exits use the native glass Back chevron before the title, including standalone forms and setup. Back returns to the previous screen/task step, or dismisses a task root to its originating screen, without committing. Preserve parent drafts and pending return intent. Cancel is reserved for trailing search controls and native decisions; Close/Done dismisses a read-only sheet. Never show Back and Cancel for the same outcome, including a second dismissal button in the body. Search has one trailing native Cancel across initial, focused, result, loading, error and offline states; it restores the source scope and scroll.
+
+Standalone forms and nested steps use one leading neutral glass Back button. At a task root, Back restores the originating screen without committing; within a task, it returns one step with the draft retained. Back or interactive dismissal that would lose unsaved edits opens the native Discard changes / Keep editing confirmation. Do not silently save on exit. Do not place a Cancel text pill before the title or add an equivalent toolbar/body exit. Search keeps trailing Cancel; native alerts and action sheets retain their safe Cancel actions.
+
+| Existing flow | Exit contract |
+| --- | --- |
+| E03 sign-in | Native glass Back restores Welcome or the originating screen and pending return intent; local records are unchanged. No Cancel or duplicate Continue privately exit. |
+| E07 public-profile setup, E08/E13 connect closet | Back exits the setup step without committing and preserves local records and pending return intent; E07 leaves the social action pending, and connection cancellation leaves ownership unresolved. No duplicate Continue privately / Not now / Keep it on this iPhone dismissal in the same view. |
+| E10 email entry, E04 verification, E11 expired link | Back returns to the previous auth step with the transaction/draft retained. E11's Continue privately can exit the whole auth flow, a different destination from Back. Back at E03 exits to Welcome or the originating screen. |
+| E09 camera recovery | Back returns to capture with its draft. Photos/manual recovery remain separate actions. |
+| W06 photo choice, W07 manual capture, W09 piece editor, W13 builder, W17 suggestion, W19 theme editor | One leading glass Back; preserve the prior saved record and confirm loss of unsaved edits. |
+| W27 photo review, W16 replacement, W21 additional details | Back returns to capture/editor with the same draft and selection. No redundant Cancel. |
+| P03 plan choice, P04 new plan/trip, P09 record wear | One leading glass Back. No calendar or wear mutation on exit. |
+| P05 routine details, P08 plan review, P12 conflicts | Back returns to the preceding draft step with proposed entries and conflict choices retained. Back at the planning task root restores the originating screen without committing. |
+| S09 publish, I05 compose, U02 edit profile, U15 typed deletion review, Agent review sheets | One leading glass Back. U15 Back returns to settings without deleting; the final native destructive confirmation retains its own safe Cancel. |
+| S10 safety destination and pushed details | Back only; remove duplicate body Cancel. Native action sheets/alerts retain their own OS Cancel group. |
+
+Canonical screens, page-00 masters, larger-text references and V1 review copies use the same exit contract. An alert's safe Cancel is a separate decision within the alert, not a duplicate navigation exit behind it.
+
 ## Presentation selection
 
 | Task | Native presentation | Contract |
@@ -11,7 +32,7 @@ Refined October 1, 2026 against [Apple Design Resources](https://developer.apple
 | Small contextual commands | Menu / contextMenu | Own/other-owner actions and destructive roles come from authorized state. No cascade of custom floating cards. A native menu popup is distinct from a generic content popover. |
 | Temporary rich inspector or picker | Native popover in a regular/wide size class; native sheet in compact iPhone layouts | Anchor the popover to its source; let the OS place its arrow. Keep the source visible when possible. Do not force a desktop-size popover on a narrow iPhone. |
 | Capture/selection (E06, W06, W14, W16) | Native sheet and system Photos/Camera picker where appropriate | Draft survives picker cancellation/denial; chooser scrolls and grows for accessibility. One presentation at a time. |
-| Forms and review (S09, S11, W17, W20, P03–P05, P08–P09, P12, I05, U02, U11, U15, A03, A06, A10, A19, A23) | Native sheet with a NavigationStack and content-appropriate detents | Use large/full-height form presentation when keyboard or content requires it. Single-view form Cancel leads; Save/Done trails when applicable. Protect unsaved edits with a native keep/discard confirmation. Keep primary action clear, keyboard-safe and disabled/pending states truthful. A19 remains V2. |
+| Forms and review (S09, S11, W17, W20, P03–P05, P08–P09, P12, I05, U02, U11, U15, A03, A06, A10, A19, A23) | Native sheet with a NavigationStack and content-appropriate detents | Use large/full-height form presentation when keyboard or content requires it. Single-view forms use the glass Back chevron before the title; Save/Done trails when applicable. Protect unsaved edits with a native keep/discard confirmation. Keep primary action clear, keyboard-safe and disabled/pending states truthful. A19 remains V2. |
 | Safety/request choices (S10, I04) | Native menu, confirmationDialog or sheet according to the content | A short choice uses native commands; report details/review use a sheet. Avoid an unrelated modal stacked on the current popup. |
 | Destructive actions (W12, U12 and committing account deletion) | Native confirmationDialog/alert after any necessary impact/typed review sheet | Explicit target and impact, destructive role and safe Cancel. Cancellation preserves records and drafts. Never treat an alert mockup as a custom full-screen dialog implementation. |
 | Agent focus and conversation states (A01–A02, A30) | Native full-screen presentation with system navigation | Existing Agent exception: Back restores the originating tab/scroll. Clarification belongs to the conversation; no new modal for every reply. |

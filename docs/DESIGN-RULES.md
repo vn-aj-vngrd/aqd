@@ -30,3 +30,7 @@ Native-first applies to every platform-capable control, including Toggle/Picker,
 - An implementation task is complete only after its relevant build checks and rendered navigation checks pass. The design task records static review separately from device, service, security and model evidence.
 
 For navigation, custom transitions, loading/feedback, onboarding or animation review, apply [Global motion](design/MOTION.md) and the screen assignment in [Motion coverage](design/MOTION-COVERAGE.md). Native transitions take precedence. Define timing once in the global policy, synchronize page 00, and verify standard/Reduce Motion paths before native completion.
+
+## Navigation exits
+
+Use one exit per outcome: Back for pushed destinations/nested steps, leading glass Back for standalone forms and setup, Close/Done for read-only sheets, and trailing Cancel for search. Remove equivalent body dismissal actions. Keep native discard protection for unsaved edits and retain parent drafts when stepping back. See [Native presentations](design/NATIVE-PRESENTATIONS.md#one-exit-per-screen) for each existing flow.

@@ -83,3 +83,7 @@ The editable design source remains Paper; static designs do not establish runtim
 Field, privacy and lifecycle rules remain in [feature specs](../features/README.md); routes in [SCREENS.md](SCREENS.md); implementation status in [IMPLEMENTATION.md](../IMPLEMENTATION.md). This refinement introduces no new backend/provider selection, paid AI path or service deployment.
 
 Closet inspiration route: W01/W02/W03/W04 → More (W30) → Saved inspiration (S08/S29) → post detail or Make my version. Return restores the originating Closet state. The collection is shared with Profile Settings; community Liked posts stay there, and owned Favorites stay in Closet. Canonical menu reference: [Paper page 03](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-4-0).
+
+## Exit behavior
+
+Review copies follow the [one-exit map](NATIVE-PRESENTATIONS.md#one-exit-per-screen): standalone tasks and nested steps use leading glass Back with drafts preserved, and search has trailing Cancel only. A nested Back returns to its task root; Back at the root dismisses the task to its originating screen without committing. Dirty exits require Keep editing / Discard changes. Cancellation never commits a plan, publication, wear record, profile change or account deletion.

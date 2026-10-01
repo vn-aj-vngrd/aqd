@@ -3336,5 +3336,19 @@
     "spinner": "Agent Status and progress circular spinner is the sole indeterminate loading reference; replaced all 9 legacy border-based indicators.",
     "destructive": "14 active destructive command labels corrected; 2 disabled Delete account surfaces neutralized. Delete-comment uses native destructive/Cancel confirmation rows.",
     "scope": "Static Paper/docs only; no saved screenshots or app code changes."
+  },
+  "navigationExitReview": {
+    "date": "2026-10-01",
+    "duplicateHeaderPairsResolved": 77,
+    "nestedBackOnly": 21,
+    "standaloneOrSearchCancelOnly": 56,
+    "accountDeletionCancelOnly": 0,
+    "duplicateSafetyBodyCancelsRemoved": 2,
+    "duplicateSetupBodyExitsRemoved": 6,
+    "scope": "Paper and docs only; no runtime changes or saved screenshots",
+    "signInOverride": "E03 and its V1 copy use native glass Back to Welcome or the originating screen, without Cancel",
+    "leadingHeaderPolicy": "All exits before a header title use native glass Back, including task-root dismissal; trailing search and native confirmation Cancel remain.",
+    "accountDeletionBackOnly": 2,
+    "setupActionGroupsRestored": "Create profile, validation guidance, Connect this closet, and sign-in privacy copy restored in canonical screens and V1 copies; only equivalent exit labels are hidden."
   }
 }
