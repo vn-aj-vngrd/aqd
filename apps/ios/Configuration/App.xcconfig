@@ -1,0 +1,3 @@
+// Local configuration is ignored by Git; only publishable keys belong in the client.
+AQD_AUTH_RESEND_SECONDS = 60
+#include? "Local.xcconfig"

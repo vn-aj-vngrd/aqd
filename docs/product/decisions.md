@@ -4,6 +4,8 @@
 
 ## Confirmed by the user
 
+- October 5: implement iOS **01 · Entry & identity** with Supabase for real Apple/email authentication and the scoped private closet association backend (issue #3). Public flow/recovery tests and Simulator journeys are approved verification boundaries. Hosted provisioning, commercial plan/region, Apple team credentials and the general sync/retention policies remain gates.
+
 - A web admin app supports management, analytics, monitoring and controls; a public landing page supports launch. Detailed hosting, staff permissions and telemetry policies remain proposed in [web/admin architecture](../architecture/admin-web.md). This refinement remains documentation/design only.
 
 - V1 includes all core product workflows, authentication and account lifecycle working end to end; extras are V2. [Release definition](v1-release.md) owns the checklist and gaps; this request is documentation only.
@@ -48,7 +50,7 @@ Required V1 gates must resolve before launch; they are not optional missing feat
 
 | Gate | Decision/evidence needed | Blocks |
 | --- | --- | --- |
-| Identity/data service | Sign-in methods, ownership, sync conflict/recovery policy, local account association. | Connected U/S/I and production durability. |
+| Identity/data service | Supabase and Apple/email selected for Entry; explicit local association implemented. Hosted provisioning, full sync conflict/recovery and account lifecycle remain unresolved. | Production durability and remaining U/S/I scope. |
 | Media/publication | Storage, access/revocation, deletion/retention policy, supported publication media. | Public closets and safe sharing. |
 | Moderation | Report/block operation, enforcement, abuse/rate limits, account/content deletion. | Social launch. |
 | Messaging | Transport, retention, delete-for-self/everyone, notification policy, encryption claims. | Connected Inbox. |

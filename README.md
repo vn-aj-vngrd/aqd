@@ -13,7 +13,7 @@ apps/
 docs/         Shared product, design, architecture and delivery documentation
 ```
 
-Start with [product documentation](docs/README.md), the complete [V1 release definition](docs/product/v1-release.md) and [V2 backlog](docs/product/v2-backlog.md). The current checkout has no tracked Swift source/build definition or iOS setup guide matching the historical prototype; establish a reproducible app baseline before implementation.
+Start with [product documentation](docs/README.md), the complete [V1 release definition](docs/product/v1-release.md) and [V2 backlog](docs/product/v2-backlog.md). The native Entry & identity app and local Supabase backend are implemented. See the [iOS setup and checks](apps/ios/README.md); the remaining V1 modules and hosted/distribution gates are tracked separately.
 
 Historical prototype notes describe private wardrobe persistence, clothing photos, outfits, wear tracking, search and rule-based suggestions, with limited auth/Agent/community work. These are not current-release verification. See [implementation status](docs/delivery/implementation-status.md). Android can be added independently under `apps/android/` when development begins.
 

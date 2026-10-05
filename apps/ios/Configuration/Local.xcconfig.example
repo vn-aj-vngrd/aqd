@@ -1,0 +1,6 @@
+// Copy to Local.xcconfig. Only the public client key belongs in this file.
+// For a hosted project, use HTTPS and configure Apple/email in Supabase.
+AQD_SUPABASE_URL = http:/$()/127.0.0.1:54321
+AQD_SUPABASE_PUBLISHABLE_KEY = sb_publishable_REPLACE_FROM_SUPABASE_STATUS
+// Must match auth.email.max_frequency on the selected server (local: 1s).
+AQD_AUTH_RESEND_SECONDS = 1

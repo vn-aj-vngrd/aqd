@@ -2,15 +2,33 @@
 
 ## Release evidence
 
-The current checkout has no tracked iOS app/build baseline. Historical build and simulator results cannot be reproduced from tracked source here. All full-V1 device, live-service, security, accessibility and distribution checks remain unverified.
+A reproducible Entry & identity app/backend baseline now exists for issue #3. Current scoped evidence is below. Historical prototype results remain separate; full V1, hosted production and distribution remain unverified.
 
 | Boundary | Status | Evidence / next check |
 | --- | --- | --- |
 | Product and design requirements | Specified | [Feature acceptance](../features/README.md), [V1 release](../product/v1-release.md), and [design handoff](../design/README.md). Requirements and static drawings are not passing runtime tests. |
 | Paper inventory | Recorded design reference | [iOS manifest](../design/paper-manifest.json) and [web manifest](../design/web-paper-manifest.json). Reopen Paper for live visual acceptance. |
-| Native build / device behavior | Unverified for current source | Establish a reproducible source/build baseline; verify navigation, keyboard, accessibility, camera and model behavior. |
+| Native Entry build / Simulator behavior | Verified for this slice | Swift 6 / Xcode 26.5, iPhone 17 iOS 26.5; public flow, durable writes, recovery and UI journeys. Physical camera/Apple/device checks remain open. |
 | Connected services / production | Unverified | Resolve [service gates](../product/decisions.md), then verify identity, sync, publication/revocation, Inbox and operations. |
 | Distribution | Unverified | Repository release, TestFlight and App Store delivery have separate gates. |
+
+
+## Entry & identity — October 5, 2026
+
+Scope: [issue #3](https://github.com/vn-aj-vngrd/aqd/issues/3), branch `van/issue-3/ios-entry-identity`, foundation merge-base `cf923a05001215aa60625b2d1f5bc3252df7e628`. Source and exact setup: [iOS README](../../apps/ios/README.md). Paper's canonical Entry page was read directly through MCP, including JSX, photographs and recovery screens. E01–E13 and E15–E17 are implemented; E14 stays V2. The private Closet/Profile and first-outfit readiness screens are bounded handoffs, not completion of later wardrobe/outfit/social modules.
+
+| Check | Result and boundary |
+| --- | --- |
+| Native strict Swift 6 build | Passed, Xcode 26.5 with ad-hoc Simulator signing. Supabase Swift 2.55.3 and transitive lockfile pinned. |
+| Public flow tests | 15 domain/identity tests passed before final refinements; invalid writes, corruption, draft restoration, account isolation, cancellation/stale callbacks and explicit association are covered. Added pin persistence check for the outfit readiness handoff. |
+| Native UI journeys | Three passed: no-photo first save/relaunch, invalid email/cancel/private Skip, and optional unselected preferences. Test attachments show welcome, capture, saved receipt, sign-in, keyboard validation and preferences. Portable snapshots: [welcome](evidence/entry-identity/welcome.png) and [first piece](evidence/entry-identity/first-piece.png). |
+| Real local Supabase | 22 checks passed, then expanded to photo association with Swift UUID casing. Real email delivery/PKCE verification and consumed-code rejection; owner RLS, profile uniqueness, private photo access, exact receipts, replay, collision and atomic rollback. |
+| Database lint | Migration uses explicit types; strict public/private-schema lint is required locally and in CI. |
+| CI delivery | New macOS native build/UI and Linux local-Supabase jobs preserve native artifacts. Latest-head CI and Codex review are pending until the PR is opened. |
+
+Local evidence bundles are untracked captures under `/private/tmp/aqd-final-native.xcresult` and `/private/tmp/aqd-live-native.xcresult`. They do not survive a fresh clone; reproducible commands and GitHub CI artifacts are the portable evidence. Simulator results do not establish physical camera behavior, live Apple provider success, VoiceOver interaction quality, hosted email delivery or App Store acceptance.
+
+No hosted AQD project was provisioned; existing unrelated projects were preserved. Hosted organization/cost/region, SMTP, Apple credentials/team, launch legal/retention/deletion policy and marketing-image clearance remain owner gates. The development stack is real local Supabase, not a fake successful auth mode. Signing in does not publish a profile or wardrobe; the explicit connect command confirms an immutable local snapshot before ownership changes. General sync, full cloud media restoration and lifecycle deletion remain later slices.
 
 ## Documentation maintenance — October 2, 2026
 
