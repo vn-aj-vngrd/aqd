@@ -7,6 +7,7 @@ struct EmailTransaction: Codable {
   let email: String
   let returnRoute: EntryRouteIntent
   var resendAt: Date
+  var callbackURL: URL?
 }
 enum EntryRouteIntent: String, Codable { case closet, profile }
 
@@ -60,13 +61,28 @@ final class IdentityFlow {
     flow.route = origin
   }
 
+  func back(from route: EntryRoute) {
+    generation = UUID()
+    switch route {
+    case .email: flow.route = .signIn
+    case .checkEmail: flow.route = .email
+    case .expiredLink: flow.route = .checkEmail
+    case .authUnavailable: flow.route = email.isEmpty ? .signIn : .email
+    default: cancel()
+    }
+  }
+
   func restore() async {
     let attempt = generation
     do {
       let account = try await service.restoreAccount()
       guard attempt == generation else { return }
       flow.setAccount(account)
-      if account != nil { profile = try await service.profile() }
+      if account != nil {
+        let restoredProfile = try await service.profile()
+        guard attempt == generation else { return }
+        profile = restoredProfile
+      }
     } catch {
       guard attempt == generation else { return }
       flow.setAccount(nil)
@@ -130,6 +146,10 @@ final class IdentityFlow {
     busy = true
     defer { busy = false }
     do {
+      var pending = transaction
+      pending.callbackURL = url
+      try transactionStorage.store(key: "email-transaction", value: JSONEncoder().encode(pending))
+      self.transaction = pending
       let account = try await service.verifyCallback(url)
       guard token == generation else {
         try? await service.signOut()
@@ -138,7 +158,11 @@ final class IdentityFlow {
       flow.setAccount(account)
       try transactionStorage.remove(key: "email-transaction")
       self.transaction = nil
-      await signedIn()
+      await signedIn(attempt: token)
+      if token != generation {
+        try? await service.signOut()
+        flow.setAccount(nil)
+      }
     } catch {
       guard token == generation else { return }
       if let auth = error as? AuthError, auth.errorCode == .otpExpired {
@@ -164,7 +188,11 @@ final class IdentityFlow {
         return
       }
       flow.setAccount(account)
-      await signedIn()
+      await signedIn(attempt: attempt)
+      if attempt != generation {
+        try? await service.signOut()
+        flow.setAccount(nil)
+      }
     } catch {
       if generation == attempt {
         self.error = "Apple sign-in couldn’t complete. Try email or continue privately."
@@ -173,10 +201,14 @@ final class IdentityFlow {
     }
   }
 
-  private func signedIn() async {
+  private func signedIn(attempt: UUID) async {
     do {
-      profile = try await service.profile()
-      remotePieces = try await service.accountPieces()
+      let loadedProfile = try await service.profile()
+      guard attempt == generation else { return }
+      let loadedPieces = try await service.accountPieces()
+      guard attempt == generation else { return }
+      profile = loadedProfile
+      remotePieces = loadedPieces
       error = nil
       if let pending = flow.state.pendingAssociation, pending.ownerID == flow.account?.id {
         flow.route = .connecting
@@ -186,6 +218,7 @@ final class IdentityFlow {
           ? (remotePieces.isEmpty ? .connectCloset : .closetConflict) : destination
       }
     } catch {
+      guard attempt == generation else { return }
       self.error =
         "You’re signed in, but account records couldn’t load. Retry before connecting your closet."
       flow.route = .authUnavailable
@@ -234,18 +267,22 @@ final class IdentityFlow {
       return
     }
     busy = true
+    let attempt = generation
+    defer { busy = false }
     do {
-      profile = try await service.saveProfile(name: displayName, username: username)
+      let saved = try await service.saveProfile(name: displayName, username: username)
+      guard attempt == generation else { return }
+      profile = saved
       flow.route = .profile
       error = nil
     } catch {
+      guard attempt == generation else { return }
       if let failure = error as? PostgrestError, failure.code == "23505" {
         self.error = "That username is taken. Choose another; your input is kept."
       } else {
         self.error = "Your profile couldn’t save. Try again; your input is kept."
       }
     }
-    busy = false
   }
 
   func signOut() async {
@@ -268,8 +305,10 @@ final class IdentityFlow {
     guard !busy else { return }
     if flow.account != nil {
       busy = true
-      await signedIn()
+      await signedIn(attempt: generation)
       busy = false
+    } else if let callback = transaction?.callbackURL {
+      await handleCallback(callback)
     } else if transaction != nil {
       flow.route = .checkEmail
     } else {

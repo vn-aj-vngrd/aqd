@@ -18,17 +18,17 @@ final class EntryJourneyTests: XCTestCase {
     attach(app, name: "E06 First piece")
     app.buttons["entry.manual"].tap()
     app.textFields["piece.name"].tap()
-    app.textFields["piece.name"].typeText("Everyday shoes")
+    app.textFields["piece.name"].typeText("Everyday shirt")
     app.buttons["piece.category"].tap()
-    app.buttons["Shoes"].tap()
+    app.buttons["Tops"].tap()
     app.buttons["piece.save"].tap()
     XCTAssertTrue(app.staticTexts["Your first piece is saved."].waitForExistence(timeout: 5))
     attach(app, name: "E12 Saved receipt")
     app.buttons["Open my closet"].tap()
-    XCTAssertTrue(app.staticTexts["Everyday shoes"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["Everyday shirt"].waitForExistence(timeout: 5))
     app.terminate()
     app.launch()
-    XCTAssertTrue(app.staticTexts["Everyday shoes"].waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["Everyday shirt"].waitForExistence(timeout: 10))
     XCTAssertFalse(app.buttons["entry.start"].exists)
   }
 
@@ -43,7 +43,8 @@ final class EntryJourneyTests: XCTestCase {
     app.buttons["auth.send"].tap()
     XCTAssertTrue(app.staticTexts["Enter a valid email address."].waitForExistence(timeout: 5))
     attach(app, name: "E10 Email validation")
-    app.buttons["Cancel"].tap()
+    app.buttons["Back"].tap()
+    app.buttons["Back"].tap()
     XCTAssertTrue(app.buttons["entry.start"].waitForExistence(timeout: 5))
     app.buttons["entry.start"].tap()
     app.buttons["Skip"].tap()
@@ -60,6 +61,16 @@ final class EntryJourneyTests: XCTestCase {
     attach(app, name: "E05 Optional preferences")
     app.buttons["Skip"].tap()
     XCTAssertTrue(app.staticTexts["Your private closet."].waitForExistence(timeout: 5))
+  }
+
+  func testWelcomeAndEmailAccessibilityAudit() throws {
+    let app = application()
+    XCTAssertTrue(app.buttons["entry.start"].waitForExistence(timeout: 10))
+    try app.performAccessibilityAudit(for: [.contrast, .hitRegion, .sufficientElementDescription])
+    app.buttons["I already have an account"].tap()
+    app.buttons["auth.emailMethod"].tap()
+    XCTAssertTrue(app.textFields["auth.email"].waitForExistence(timeout: 5))
+    try app.performAccessibilityAudit(for: [.contrast, .hitRegion, .sufficientElementDescription])
   }
 
   private func attach(_ app: XCUIApplication, name: String) {

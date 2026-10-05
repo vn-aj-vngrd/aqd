@@ -102,6 +102,22 @@ struct EntryRecoveryTests {
     #expect(try EntryFlow(directory: url).associationOperation() == first)
   }
 
+  @Test func readinessUsesThePinInsteadOfAnUnrelatedDress() throws {
+    let url = directory()
+    defer { try? FileManager.default.removeItem(at: url) }
+    let flow = EntryFlow(directory: url)
+    for (name, category) in [("Shirt", PieceCategory.tops), ("Dress", .dresses), ("Shoes", .shoes)]
+    {
+      flow.draft.name = name
+      flow.draft.category = category
+      try flow.savePiece()
+    }
+    let top = try #require(flow.pieces.first { $0.category == .tops })
+    let dress = try #require(flow.pieces.first { $0.category == .dresses })
+    #expect(flow.missingCategories(around: top.id) == [.bottoms])
+    #expect(flow.missingCategories(around: dress.id).isEmpty)
+  }
+
   @Test func addingMissingCategoriesKeepsTheOriginalPiecePinned() throws {
     let url = directory()
     defer { try? FileManager.default.removeItem(at: url) }

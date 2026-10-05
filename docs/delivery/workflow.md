@@ -30,7 +30,7 @@ Like Relay and Roleway, `.releaserc.json` makes `feat` minor, breaking changes m
 
 Release publishes a `vX.Y.Z` Git tag and GitHub release notes using the job's contents-write `GITHUB_TOKEN`. Release notes include maintenance and documentation changes. There is no npm publication, version-bump commit, or hook bypass commit. Tags and releases are the repository version source; root package.json is private tooling, not an app version.
 
-This is repository release automation. It does not yet update Xcode's `MARKETING_VERSION`/build number, archive/sign the app, upload TestFlight, or publish to the App Store. Add native build/version injection and its CI gate when the app is tracked and build delivery is authorized. Current CI verifies repository tooling, not the untracked iOS prototype.
+This is repository release automation. It does not yet update Xcode's `MARKETING_VERSION`/build number, archive/sign the app, upload TestFlight, or publish to the App Store. Add native build/version injection and its CI gate when the app is tracked and build delivery is authorized. Current CI verifies repository tooling, the tracked Entry app on iPhone 17, and isolated local Supabase ownership/auth integration. Native CI artifacts retain test screenshots; distribution still has separate gates.
 
 ## GitHub policy
 

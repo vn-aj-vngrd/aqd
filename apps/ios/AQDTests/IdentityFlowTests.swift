@@ -16,6 +16,37 @@ struct IdentityFlowTests {
     return (flow, identity, service, directory)
   }
 
+  @Test func cancellationDuringAccountLoadingCannotRedirectLater() async throws {
+    let (flow, identity, service, url) = fixture()
+    defer { try? FileManager.default.removeItem(at: url) }
+    service.suspendProfile = true
+    identity.start()
+    let request = Task { await identity.apple(token: "test", nonce: "test") }
+    while service.profileWait == nil { await Task.yield() }
+    identity.cancel()
+    service.profileWait?.resume()
+    await request.value
+    #expect(flow.route == .welcome)
+    #expect(flow.account == nil)
+  }
+
+  @Test func offlineCallbackCanBeRetriedWithoutRequestingAnotherEmail() async throws {
+    let (flow, identity, service, url) = fixture()
+    defer { try? FileManager.default.removeItem(at: url) }
+    identity.start()
+    identity.email = "person@example.com"
+    await identity.sendEmail()
+    let state = try #require(identity.transaction?.id.uuidString)
+    service.offline = true
+    await identity.handleCallback(
+      URL(string: "com.aqd.ios://auth/callback?state=\(state)&code=valid")!)
+    #expect(flow.route == .authUnavailable)
+    service.offline = false
+    await identity.retry()
+    #expect(flow.account != nil)
+    #expect(flow.route == .closet)
+  }
+
   @Test func invalidEmailKeepsInputWithoutStartingVerification() async {
     let (flow, identity, _, url) = fixture()
     defer { try? FileManager.default.removeItem(at: url) }
@@ -122,16 +153,24 @@ struct IdentityFlowTests {
   var offline = false
   var delay = false
   var records: [RemotePiece] = []
+  var suspendProfile = false
+  var profileWait: CheckedContinuation<Void, Never>?
   let user = AccountIdentity(id: UUID(), label: "person@example.com")
   func restoreAccount() async throws -> AccountIdentity? { nil }
   func sendEmail(_ email: String, redirect: URL) async throws {
     if delay { try await Task.sleep(for: .milliseconds(30)) }
     if offline { throw URLError(.notConnectedToInternet) }
   }
-  func verifyCallback(_ url: URL) async throws -> AccountIdentity { user }
+  func verifyCallback(_ url: URL) async throws -> AccountIdentity {
+    if offline { throw URLError(.notConnectedToInternet) }
+    return user
+  }
   func signInWithApple(token: String, nonce: String) async throws -> AccountIdentity { user }
   func signOut() async throws {}
-  func profile() async throws -> PublicProfile? { nil }
+  func profile() async throws -> PublicProfile? {
+    if suspendProfile { await withCheckedContinuation { profileWait = $0 } }
+    return nil
+  }
   func saveProfile(name: String, username: String) async throws -> PublicProfile {
     PublicProfile(id: user.id, displayName: name, username: username)
   }

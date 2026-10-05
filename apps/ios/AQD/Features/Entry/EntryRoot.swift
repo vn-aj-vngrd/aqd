@@ -15,10 +15,16 @@ struct EntryRoot: View {
   private var root: EntryRoute { flow.state.onboardingCompleted ? .closet : .welcome }
 
   var body: some View {
+    GeometryReader { viewport in
+      navigation.environment(\.entryCompact, viewport.size.height < 700)
+    }
+  }
+
+  private var navigation: some View {
     NavigationStack(path: $path) {
       screen(root)
         .navigationDestination(for: EntryRoute.self) { route in screen(route) }
-    }.tint(AQDColor.accent)
+    }.tint(AQDColor.ink)
       .onChange(of: flow.route) { _, route in
         guard route != path.last else { return }
         if route == root {
@@ -198,10 +204,7 @@ struct EntryRoot: View {
   }
 
   private func readiness(_ id: UUID) -> some View {
-    let available = Set(flow.pieces.map(\.category))
-    let needed: [PieceCategory] =
-      available.contains(.dresses) ? [.dresses, .shoes] : [.tops, .bottoms, .shoes]
-    let missing = needed.filter { !available.contains($0) }
+    let missing = flow.missingCategories(around: id)
     return EntryPage(
       title: missing.isEmpty ? "Your pieces are ready." : "Build around your first piece.",
       detail: "Your saved piece stays pinned while you add the categories around it."

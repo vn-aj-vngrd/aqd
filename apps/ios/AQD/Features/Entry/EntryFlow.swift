@@ -76,6 +76,15 @@ final class EntryFlow {
     route = next.pinnedPieceID.map { .readiness($0) } ?? .saved(piece.id)
   }
 
+  func missingCategories(around id: UUID) -> [PieceCategory] {
+    let available = Set(pieces.map(\.category))
+    let pin = pieces.first { $0.id == id }
+    let required: [PieceCategory] =
+      pin?.category == .dresses
+      ? [.dresses, .shoes] : [.tops, .bottoms, .shoes]
+    return required.filter { !available.contains($0) }
+  }
+
   func buildAround(_ id: UUID) throws {
     var next = state
     next.pinnedPieceID = id

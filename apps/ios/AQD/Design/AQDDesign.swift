@@ -57,8 +57,9 @@ struct PrimaryAction: View {
         Text(title).opacity(busy ? 0 : 1)
         if busy { ProgressView().accessibilityLabel("In progress") }
       }.font(.headline).frame(maxWidth: .infinity).frame(minHeight: 28).padding(.vertical, 6)
-    }.buttonBorderShape(.capsule).disabled(disabled || busy).accessibilityLabel(
-      busy ? title + ", in progress" : title)
+    }.tint(AQDColor.accent).buttonBorderShape(.capsule).disabled(disabled || busy)
+      .accessibilityLabel(
+        busy ? title + ", in progress" : title)
   }
   var body: some View {
     if #available(iOS 26.0, *) {
@@ -73,7 +74,10 @@ struct SecondaryAction: View {
   let title: String
   let action: () -> Void
   var body: some View {
-    Button(title, action: action).font(.body).frame(maxWidth: .infinity, minHeight: 44)
+    Button(action: action) {
+      Text(title).font(.body).foregroundStyle(AQDColor.ink)
+        .frame(maxWidth: .infinity, minHeight: 44).background(AQDColor.canvas).contentShape(.rect)
+    }.buttonStyle(.plain)
   }
 }
 
@@ -100,17 +104,31 @@ struct IdentityRow: View {
   }
 }
 
+private struct EntryCompactKey: EnvironmentKey {
+  static let defaultValue = false
+}
+extension EnvironmentValues {
+  var entryCompact: Bool {
+    get { self[EntryCompactKey.self] }
+    set { self[EntryCompactKey.self] = newValue }
+  }
+}
+
 struct EntryHero: View {
   var firstPiece = false
+  @Environment(\.entryCompact) private var compact
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(\.dynamicTypeSize) private var textSize
   @State private var arrived = false
   var body: some View {
+    if !textSize.isAccessibilitySize { illustration }
+  }
+  private var illustration: some View {
     GeometryReader { geometry in
-      let scale = min(1, geometry.size.width / 350, geometry.size.height / 324)
+      let scale = min(1, geometry.size.width / 350, geometry.size.height / (firstPiece ? 244 : 324))
       ZStack(alignment: .topLeading) {
         if firstPiece {
-          photograph("FirstShirt", width: 204, height: 232, padding: 8)
+          photograph("FirstShirt", width: 204 * scale, height: 232 * scale, padding: 8 * scale)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
           Image("WelcomeLook").resizable().scaledToFill().frame(
@@ -130,8 +148,13 @@ struct EntryHero: View {
             )
             .animation(reduceMotion ? nil : .easeOut(duration: 0.32).delay(0.04), value: arrived)
         }
-      }.frame(width: geometry.size.width, height: geometry.size.height, alignment: .topLeading)
-    }.frame(height: firstPiece ? 244 : textSize.isAccessibilitySize ? 250 : 324)
+      }.frame(
+        width: firstPiece ? geometry.size.width : 350 * scale,
+        height: geometry.size.height, alignment: .topLeading
+      )
+      .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+    }.frame(height: firstPiece ? (compact ? 164 : 244) : (compact ? 220 : 324))
+      .clipped()
       .accessibilityHidden(true)
       .onAppear { arrived = true }
   }

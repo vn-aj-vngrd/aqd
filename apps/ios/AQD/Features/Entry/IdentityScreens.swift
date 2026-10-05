@@ -18,8 +18,9 @@ struct IdentityScreens: View {
       .navigationBarBackButtonHidden(route != .profile)
       .toolbar {
         if route != .profile {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button("Cancel") { identity.cancel() }.disabled(route == .connecting && identity.busy)
+          ToolbarItem(placement: .topBarLeading) {
+            Button("Back", systemImage: "chevron.left") { identity.back(from: route) }
+              .tint(AQDColor.ink).disabled(route == .connecting && identity.busy)
           }
         }
       }
@@ -121,7 +122,7 @@ struct IdentityScreens: View {
           .textContentType(.emailAddress)
           .textInputAutocapitalization(.never).autocorrectionDisabled().textFieldStyle(
             .roundedBorder
-          ).accessibilityIdentifier("auth.email")
+          ).accessibilityLabel("Email address").accessibilityIdentifier("auth.email")
           .submitLabel(.go).onSubmit { Task { await identity.sendEmail() } }
       }
       InlineNotice(text: identity.error)
@@ -129,7 +130,8 @@ struct IdentityScreens: View {
         Task { await identity.sendEmail() }
       }.accessibilityIdentifier("auth.send")
       Text("Use an address you can open on this iPhone.").font(.callout).foregroundStyle(
-        AQDColor.secondary)
+        AQDColor.secondary
+      ).background(AQDColor.canvas)
       legalLinks
     }
   }
@@ -220,10 +222,11 @@ struct IdentityScreens: View {
         Text("Display name").font(.subheadline)
         TextField("Your name", text: $identity.name).textContentType(.name).textFieldStyle(
           .roundedBorder
-        ).accessibilityIdentifier("profile.name")
+        ).accessibilityLabel("Display name").accessibilityIdentifier("profile.name")
         Text("Username").font(.subheadline).padding(.top, 12)
         TextField("Choose a username", text: $identity.username).textInputAutocapitalization(.never)
-          .autocorrectionDisabled().textFieldStyle(.roundedBorder).accessibilityIdentifier(
+          .autocorrectionDisabled().textFieldStyle(.roundedBorder).accessibilityLabel("Username")
+          .accessibilityIdentifier(
             "profile.username")
       }
       Text("Letters, numbers, periods and underscores.").font(.footnote).foregroundStyle(
@@ -234,7 +237,6 @@ struct IdentityScreens: View {
       PrimaryAction(title: "Create profile", busy: identity.busy) {
         Task { await identity.createProfile() }
       }
-      SecondaryAction(title: "Not now") { flow.route = .closet }
     }
   }
 
@@ -255,7 +257,6 @@ struct IdentityScreens: View {
       PrimaryAction(title: "Connect this closet", busy: identity.busy) {
         Task { await identity.connectCloset() }
       }
-      SecondaryAction(title: "Keep it on this iPhone") { identity.keepSeparate() }
       SecondaryAction(title: "Use a different account") {
         Task {
           await identity.signOut()
@@ -349,11 +350,25 @@ struct IdentityScreens: View {
     IdentityRow(label: "Signed-in account", value: flow.account?.label ?? "Sign-in required")
   }
   private var legalLinks: some View {
-    HStack {
-      Button("Terms of service") { legal = .terms }.frame(minHeight: 44)
-      Text("·").foregroundStyle(AQDColor.secondary)
-      Button("Privacy policy") { legal = .privacy }.frame(minHeight: 44)
-    }.font(.footnote)
+    ViewThatFits(in: .horizontal) {
+      HStack(spacing: 20) {
+        legalButton(.terms)
+        legalButton(.privacy)
+      }
+      VStack(alignment: .leading, spacing: 0) {
+        legalButton(.terms)
+        legalButton(.privacy)
+      }
+    }
+  }
+  private func legalButton(_ document: LegalDocument) -> some View {
+    Button {
+      legal = document
+    } label: {
+      Text(document == .terms ? "Terms of service" : "Privacy policy")
+        .font(.footnote).foregroundStyle(AQDColor.ink)
+        .frame(minHeight: 44).contentShape(.rect)
+    }.buttonStyle(.plain)
   }
 }
 

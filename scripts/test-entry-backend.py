@@ -62,6 +62,9 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 try:
     owner, token = account()
     other, other_token = account()
+    for invalid in (None, []):
+        code, _ = request("/rest/v1/rpc/connect_closet", "POST", {"p_operation_id": str(uuid.uuid4()), "p_pieces": invalid}, token)
+        expect(code >= 400, "null/empty association payload cannot claim success")
     piece = {"id": str(uuid.uuid4()), "name": "Everyday shoes", "category": "shoes", "created_at": datetime.now(timezone.utc).isoformat()}
     operation = str(uuid.uuid4())
     payload = {"p_operation_id": operation, "p_pieces": [piece]}

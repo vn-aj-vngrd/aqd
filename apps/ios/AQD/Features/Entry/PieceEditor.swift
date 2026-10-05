@@ -20,7 +20,8 @@ struct PieceEditor: View {
       VStack(alignment: .leading, spacing: 8) {
         Text("Piece name").font(.subheadline)
         TextField("Name your piece", text: $flow.draft.name).textFieldStyle(.roundedBorder)
-          .textInputAutocapitalization(.sentences).accessibilityIdentifier("piece.name")
+          .textInputAutocapitalization(.sentences).accessibilityLabel("Piece name")
+          .accessibilityIdentifier("piece.name")
       }
       Picker("Category", selection: $flow.draft.category) {
         Text("Choose a category").tag(Optional<PieceCategory>.none)
@@ -53,7 +54,6 @@ struct PreferencesView: View {
         .textFieldStyle(.roundedBorder)
       InlineNotice(text: flow.message)
       PrimaryAction(title: "Save preferences") { save(false) }
-      SecondaryAction(title: "Not now") { save(true) }
     }.navigationTitle("Style preferences").navigationBarTitleDisplayMode(.inline)
       .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Skip") { save(true) } } }
   }

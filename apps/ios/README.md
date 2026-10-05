@@ -6,7 +6,7 @@ Open `AQD.xcodeproj`, select AQD and run on an iPhone. The committed project req
 
 From the repository root, run `supabase start` with Docker running. Copy `Configuration/Local.xcconfig.example` to `Configuration/Local.xcconfig` and fill only the local publishable key from `supabase status`. Do not copy secret/service-role keys into the app. Local configuration is ignored by Git.
 
-The URL escape `$()` preserves `//` inside xcconfig. Email cooldown must match the backend's `auth.email.max_frequency`; this local server uses one second. Run `python3 scripts/test-entry-backend.py` for real local auth/RLS/media/receipt checks. Local email opens in Mailpit at http://127.0.0.1:54324. Click the latest sign-in email on the same Simulator/device that initiated it. The callback is `com.aqd.ios://auth/callback?state=<transaction UUID>` with PKCE; the allowlist preserves that state.
+The URL escape `$()` preserves `//` inside xcconfig. Email cooldown must match the backend's `auth.email.max_frequency`; this local server uses one second. Run `python3 scripts/test-entry-backend.py` for real local auth/RLS/media/receipt checks. Local email opens in Mailpit at http://127.0.0.1:54324. Open the latest sign-in verification link from Mailpit on the same Simulator/device that initiated it (or use `xcrun simctl openurl <device UUID> <verification URL>`). The callback is `com.aqd.ios://auth/callback?state=<transaction UUID>` with PKCE; the allowlist preserves that state.
 
 The client uses Keychain for auth/session transactions. Simulator builds/tests need ad-hoc signing (`CODE_SIGN_IDENTITY=-`); disabling signing prevents Keychain access. The development app opens normally when the backend is unavailable and allows private work.
 
@@ -29,6 +29,8 @@ supabase db lint --local --schema public,aqd_private --level warning --fail-on w
 python3 scripts/test-entry-backend.py
 pnpm check
 ```
+
+With the local stack/configuration running, the native `LiveIdentityJourneyTests` also verifies a real Supabase SDK email callback back to the public-profile step. It skips explicitly when the local inbox is absent, including native-only CI; the separate backend CI job verifies real server auth.
 
 The tests use isolated temporary stores and temporary local-only Supabase users. They do not reset the user's closet. `generate-project.rb` is an optional maintenance helper requiring the xcodeproj Ruby gem; a fresh clone can build the committed project without it. Run the generator after adding source files if they are not added through Xcode.
 
