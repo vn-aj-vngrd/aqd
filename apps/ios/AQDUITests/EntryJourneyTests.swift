@@ -51,6 +51,25 @@ final class EntryJourneyTests: XCTestCase {
     XCTAssertTrue(app.staticTexts["Your private closet."].waitForExistence(timeout: 5))
   }
 
+  func testNativeBackKeepsPieceDraft() {
+    let app = application()
+    app.buttons["entry.start"].tap()
+    app.buttons["entry.manual"].tap()
+    let name = app.textFields["piece.name"]
+    XCTAssertTrue(name.waitForExistence(timeout: 5))
+    name.tap()
+    name.typeText("Travel shirt")
+    app.navigationBars["Add piece"].buttons.firstMatch.tap()
+    XCTAssertTrue(app.buttons["entry.manual"].waitForExistence(timeout: 5))
+    app.buttons["entry.manual"].tap()
+    XCTAssertTrue(name.waitForExistence(timeout: 5))
+    XCTAssertEqual(name.value as? String, "Travel shirt")
+    app.buttons["piece.category"].tap()
+    app.buttons["Tops"].tap()
+    app.buttons["piece.save"].tap()
+    XCTAssertTrue(app.staticTexts["Your first piece is saved."].waitForExistence(timeout: 5))
+  }
+
   func testPreferencesRemainOptionalAndUnselected() {
     let app = application()
     app.buttons["entry.start"].tap()

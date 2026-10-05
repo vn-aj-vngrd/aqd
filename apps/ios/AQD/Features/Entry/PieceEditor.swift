@@ -33,7 +33,7 @@ struct PieceEditor: View {
       }.accessibilityIdentifier("piece.save")
       Text("Saving here does not upload or publish your photo.").font(.footnote).foregroundStyle(
         AQDColor.secondary)
-    }.navigationTitle("Add piece").navigationBarTitleDisplayMode(.inline)
+    }.entryNavigationTitle("Add piece")
   }
 }
 
@@ -54,7 +54,7 @@ struct PreferencesView: View {
         .textFieldStyle(.roundedBorder)
       InlineNotice(text: flow.message)
       PrimaryAction(title: "Save preferences") { save(false) }
-    }.navigationTitle("Style preferences").navigationBarTitleDisplayMode(.inline)
+    }.entryNavigationTitle("Style preferences")
       .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Skip") { save(true) } } }
   }
   private func save(_ dismissed: Bool) {

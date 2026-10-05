@@ -14,7 +14,7 @@ struct IdentityScreens: View {
   @State private var reviewingRecords = false
 
   var body: some View {
-    content.navigationTitle(navigationTitle).navigationBarTitleDisplayMode(.inline)
+    content.entryNavigationTitle(navigationTitle)
       .navigationBarBackButtonHidden(route != .profile)
       .toolbar {
         if route != .profile {
@@ -30,7 +30,7 @@ struct IdentityScreens: View {
           List {
             Section("On this iPhone") { ForEach(flow.localPieces) { Text($0.name) } }
             Section("Account closet") { ForEach(identity.remotePieces) { Text($0.name) } }
-          }.navigationTitle("Review pieces").toolbar {
+          }.entryNavigationTitle("Review pieces").toolbar {
             ToolbarItem(placement: .topBarTrailing) { Button("Done") { reviewingRecords = false } }
           }
         }
@@ -395,7 +395,7 @@ private struct LegalView: View {
             "Final launch terms, retention, deletion and support policies are still required before public distribution."
           ).foregroundStyle(AQDColor.secondary)
         }.padding(20)
-      }.navigationTitle(document == .privacy ? "Privacy policy" : "Terms of service")
+      }.entryNavigationTitle(document == .privacy ? "Privacy policy" : "Terms of service")
         .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Done") { dismiss() } } }
     }
   }

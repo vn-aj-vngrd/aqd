@@ -13,6 +13,14 @@ struct EntryRoot: View {
   @State private var preparingPhoto = false
   private let media = MediaPreparation()
   private var root: EntryRoute { flow.state.onboardingCompleted ? .closet : .welcome }
+  private var navigationPath: Binding<[EntryRoute]> {
+    Binding(
+      get: { path },
+      set: { routes in
+        path = routes
+        flow.route = routes.last ?? root
+      })
+  }
 
   var body: some View {
     GeometryReader { viewport in
@@ -21,7 +29,7 @@ struct EntryRoot: View {
   }
 
   private var navigation: some View {
-    NavigationStack(path: $path) {
+    NavigationStack(path: navigationPath) {
       screen(root)
         .navigationDestination(for: EntryRoute.self) { route in screen(route) }
     }.tint(AQDColor.ink)
@@ -34,10 +42,6 @@ struct EntryRoot: View {
         } else {
           path.append(route)
         }
-      }
-      .onChange(of: path) { _, routes in
-        let current = routes.last ?? root
-        if flow.route != current { flow.route = current }
       }
       .task {
         if flow.route != root { path = [flow.route] }
@@ -139,7 +143,7 @@ struct EntryRoot: View {
       Text("Name it, choose a category, and save. Nothing is shared.").font(.callout)
         .foregroundStyle(AQDColor.secondary)
       InlineNotice(text: flow.message)
-    }.navigationTitle("Your first piece").navigationBarTitleDisplayMode(.inline)
+    }.entryNavigationTitle("Your first piece")
       .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Skip") { flow.skipCapture() } } }
   }
 
@@ -165,7 +169,7 @@ struct EntryRoot: View {
           Image(systemName: "chevron.right")
         }.frame(minHeight: 44)
       }
-    }.navigationTitle("First piece saved").navigationBarTitleDisplayMode(.inline)
+    }.entryNavigationTitle("First piece saved")
       .navigationBarBackButtonHidden()
   }
 
@@ -195,7 +199,7 @@ struct EntryRoot: View {
         ).font(.footnote).foregroundStyle(AQDColor.secondary)
         InlineNotice(text: flow.message)
       }
-    }.navigationTitle("Closet").navigationBarTitleDisplayMode(.inline)
+    }.entryNavigationTitle("Closet")
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
           Button("Profile", systemImage: "person.crop.circle") { flow.route = .profile }
@@ -224,7 +228,7 @@ struct EntryRoot: View {
         ).foregroundStyle(AQDColor.secondary)
       }
       SecondaryAction(title: "Open my closet") { flow.openCloset() }
-    }.navigationTitle("First outfit").navigationBarTitleDisplayMode(.inline)
+    }.entryNavigationTitle("First outfit")
   }
 
   private func prepare(_ data: Data) async throws {
@@ -259,6 +263,6 @@ struct EntryRoot: View {
       }
       Text("AQD asks for camera access only when you choose to take a photo.").font(.footnote)
         .foregroundStyle(AQDColor.secondary)
-    }.navigationTitle("Camera access").navigationBarTitleDisplayMode(.inline)
+    }.entryNavigationTitle("Camera access")
   }
 }

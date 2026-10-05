@@ -56,7 +56,8 @@ struct PrimaryAction: View {
       ZStack {
         Text(title).opacity(busy ? 0 : 1)
         if busy { ProgressView().accessibilityLabel("In progress") }
-      }.font(.headline).frame(maxWidth: .infinity).frame(minHeight: 28).padding(.vertical, 6)
+      }.font(.body.weight(.medium)).frame(maxWidth: .infinity).frame(minHeight: 28).padding(
+        .vertical, 4)
     }.tint(AQDColor.accent).buttonBorderShape(.capsule).disabled(disabled || busy)
       .accessibilityLabel(
         busy ? title + ", in progress" : title)
@@ -67,6 +68,18 @@ struct PrimaryAction: View {
     } else {
       button.buttonStyle(.borderedProminent)
     }
+  }
+}
+
+extension View {
+  func entryNavigationTitle(_ title: String) -> some View {
+    navigationTitle(title).navigationBarTitleDisplayMode(.inline)
+      .toolbar {
+        ToolbarItem(placement: .principal) {
+          Text(title).font(.title3.weight(.medium)).foregroundStyle(AQDColor.ink)
+            .lineLimit(1).accessibilityAddTraits(.isHeader)
+        }
+      }
   }
 }
 
@@ -125,7 +138,8 @@ struct EntryHero: View {
   }
   private var illustration: some View {
     GeometryReader { geometry in
-      let scale = min(1, geometry.size.width / 350, geometry.size.height / (firstPiece ? 244 : 324))
+      let scale = max(
+        0, min(1, geometry.size.width / 350, geometry.size.height / (firstPiece ? 244 : 324)))
       ZStack(alignment: .topLeading) {
         if firstPiece {
           photograph("FirstShirt", width: 204 * scale, height: 232 * scale, padding: 8 * scale)
@@ -135,13 +149,13 @@ struct EntryHero: View {
             width: 242 * scale, height: 304 * scale
           ).clipped().clipShape(.rect(cornerRadius: 4))
             .offset(y: 8 * scale)
-          photograph("WelcomeShirt", width: 134 * scale, height: 176 * scale, padding: 6)
+          photograph("WelcomeShirt", width: 134 * scale, height: 176 * scale, padding: 6 * scale)
             .offset(
               x: 216 * scale + (arrived || reduceMotion ? 0 : -12),
               y: arrived || reduceMotion ? 0 : 6
             )
             .animation(reduceMotion ? nil : .easeOut(duration: 0.32), value: arrived)
-          photograph("WelcomeShoe", width: 152 * scale, height: 118 * scale, padding: 6)
+          photograph("WelcomeShoe", width: 152 * scale, height: 118 * scale, padding: 6 * scale)
             .offset(
               x: 198 * scale + (arrived || reduceMotion ? 0 : -12),
               y: 198 * scale + (arrived || reduceMotion ? 0 : -6)
