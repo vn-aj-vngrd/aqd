@@ -1,5 +1,7 @@
 # AQD component contracts
 
+Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+
 Shared visual definitions live on [Paper page 00](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-1-0). [DESIGN.md](../../DESIGN.md) owns usage and the native target; [screen map](screens.md) owns routes. Feature specs own data rules. These are logical components, not a requirement to create one file per row.
 
 ## Foundations and native chrome
@@ -9,13 +11,15 @@ Shared visual definitions live on [Paper page 00](https://app.paper.design/file/
 | Semantic tokens | `TOKENS`, `DARK_TOKENS` | Asset/semantic colors and system text styles | One place to change colors, type roles, space, radii. Dark mapping is semantic, not inverted photography. |
 | Status/safe area | `status` | System-owned | Keep native status, home indicator, keyboard and safe-area insets. Reference status markup is illustrative. |
 | Root/detail header | `header` | NavigationStack/UINavigationController | Root title versus compact detail title; native glass Back and toolbar actions, system back label/history and swipe gesture; preserve title at large text. |
-| Glass tab bar | `nav` | TabView/UITabBarController | Five named destinations, selection, restored navigation state and accessible selected trait. Agent presentation exception is in DESIGN.md. |
+| Glass tab bar | `nav` | TabView/UITabBarController | Four named destinations in V1; five in V2. Equal-width slots, centered icons/labels, selection, restored navigation state and accessible selected trait. Agent presentation exception is in DESIGN.md. |
 | Toolbar icon button | `icon`, `header` | Button/ToolbarItem or UIBarButtonItem | 44-point target; SF Symbol plus accessibility label; loading/disabled/destructive semantics. Search/Add may group by task. |
 | Search | `search` | searchable/UISearchController | Explicit scope, query, clear, cancel, keyboard, loading/results/empty/error, retained selection and scroll state. |
 | Primary/secondary action | `button` | Native Button with glass/glassProminent style | Standalone primary uses tinted glassProminent; secondary uses glass. Inline content actions retain native plain style. One primary action; label retained during progress; duplicate submission prevented; disabled reason explained beside decision. |
 | Segmented control | `tabs` | Picker segmented/UISegmentedControl | Mutually exclusive view state; selected trait; no form submission side effect. |
 | Filter rail | `chips` | Native controls in horizontal scroll | Multiple/filter-specific selection, reset, real result updates, 44-point hit area even if visible capsule is smaller. |
 | Menu and sheet | Screen composition + row primitives | Menu, confirmationDialog, sheet | Anchor to trigger; sensible detents; accessible dismiss; dirty edits get keep/discard choice; keyboard never covers action. |
+
+Paper phone chrome follows the viewport geometry in [DESIGN.md](../../DESIGN.md#layout-and-shape). Bars and home indicators belong to the phone viewport rather than variable-height content/footer wrappers. Tour overlays leave the navigation visible and keep their actions above it. Inspect root screens, tour backdrops, nested phone previews and both appearances after synchronizing clones; changing only a component master does not repair existing copies. Native screens use system safe areas and retain scroll access behind floating chrome.
 
 ## Reusable content
 
@@ -34,6 +38,8 @@ Shared visual definitions live on [Paper page 00](https://app.paper.design/file/
 | Composer | `composer` | Draft/recipient → reviewed send intent | Empty disabled, keyboard, sending, failed retained draft, length validation. |
 | Notice/empty | `note`, `empty` | Feature-specific problem and recovery | Loading vs empty vs offline vs service unavailable vs permission denied; retain useful content. |
 | Proposal/receipt | Shared image, row, note, action primitives | Typed proposal/revision/result → review/edit/approve | Draft, stale, executing, succeeded, failed, unknown, cancelled; result links require actual committed identity. |
+
+Calendar selection updates the background and both weekday/date foregrounds together. A soft selected fill uses accent text; a solid accent fill uses on-accent text. Unselected dates use secondary ink. Never retain on-accent white text after clearing the accent background. Preserve today's separate marker and accessible selected state; apply the corresponding semantic roles in dark appearance.
 
 ## Native surfaces represented by contracts
 
@@ -185,7 +191,7 @@ Like and comment use adjacent controls with at least 44-point targets and `--spa
 
 ### First-outfit activation
 
-Paper page 00 **Components · First outfit activation** owns missing-category guidance, readiness actions and capture-review rules. Reuse existing opaque fields, 44-point rows, primary capsule, secondary action, status/nav and photo surfaces. Required capture fields are name/category; optional metadata is disclosed through More details. Readiness labels name actual available pieces; missing categories link to the same capture flow. No artificial progress bar, fixed item quota or account gate. W27–W29 and S48 extend existing patterns; [V1 flow](v1-flow.md) owns routing. N-push/C-form/C-save apply without a new animation system.
+Paper page 00 **Components · First outfit activation** owns missing-category guidance, readiness actions and capture-review rules. Reuse existing opaque fields, 44-point rows, primary capsule, secondary action, status/nav and photo surfaces. Required capture fields are name/category; optional metadata is disclosed through More details. Readiness labels name actual available pieces; missing categories link to the same capture flow. No artificial progress bar, fixed item quota or account gate. W27–W29 and S48 extend existing patterns; [V2 flow](v2-flow.md) owns routing. N-push/C-form/C-save apply without a new animation system.
 
 All shared components inherit [Global motion](motion.md): native chrome uses N-root/N-push/N-sheet; media detail N-photo; chips/segments C-select; placeholders C-load; collection/outfit edits C-change; mutation receipts C-save; fields C-form; human messages C-message; Agent replies C-stream; copy/feedback C-receipt. No component defines an independent timing scale. Page 00 Foundations · Global motion covers every component family and standard/Reduce Motion behavior.
 
@@ -205,11 +211,11 @@ Share chooser offers Piece, Outfit and Theme. Every photo requires at least one 
 
 [Search and feeds](search-and-feeds.md) owns scoped search, control density, linked-piece rows and cursor-pagination recovery. Reuse the page-00 masters.
 
-### V1 account and review states
+### V2 account and review states
 
-E15–E17, U16–U24 and A31–A33 reuse status/header/home indicator, body/metadata hierarchy, native rows, primary/secondary action stacks and shared save/error states. Exact account, record/revision, artifact and operation status is supplied by real records. Conflict choice opens U24 without discarding either revision. Export/deletion progress/failed/unknown variants retain the operation; native share, reauthentication, confirmation and place/date pickers remain platform-owned. See [V1 coverage](v1-coverage.md).
+E15–E17, U16–U24 and A31–A33 reuse status/header/home indicator, body/metadata hierarchy, native rows, primary/secondary action stacks and shared save/error states. Exact account, record/revision, artifact and operation status is supplied by real records. Conflict choice opens U24 without discarding either revision. Export/deletion progress/failed/unknown variants retain the operation; native share, reauthentication, confirmation and place/date pickers remain platform-owned. See [V2 coverage](v2-coverage.md).
 
-V1 response actions are Copy, Retry and Details. Feedback/version-comparison masters remain future references; hide Helpful/Not helpful and comparison entries until V2. Settings omit Notifications and first-save omits the acquisition survey. Inbox omits remote mute controls until notification transport is scoped. No unavailable toggle implies a service exists.
+Shared V1/V2 connected-core response actions are Copy, Retry and Details. Helpful/Not helpful and version-comparison masters prepare V2 extensions; show them when their real lifecycle is enabled. V1 omits Notifications and the acquisition survey. V2 connected core gates those controls until V2-E09/E15 transport/collection is enabled. Inbox gates remote mute until its notification transport exists. No unavailable toggle implies a service exists.
 
 ## Liquid Glass across controls
 
@@ -219,7 +225,7 @@ Paper layout: navigation previews reserve phone width; bounded tab insets keep s
 
 ### Navigation exit ownership
 
-Apply the [per-flow exit map](native-presentations.md#one-exit-per-screen) to canonical screens, masters and V1 copies.
+Apply the [per-flow exit map](native-presentations.md#one-exit-per-screen) to canonical screens, masters and V2 copies.
 
 ## AI assistance badge
 

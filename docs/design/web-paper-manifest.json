@@ -1,9 +1,9 @@
 {
-  "recordedAt": "2026-10-02",
+  "recordedAt": "2026-10-05",
   "fileId": "01M3W6P0PN9SSQ1J3N6V23A9WK",
   "fileName": "AQD — Web design system, landing & admin",
   "url": "https://app.paper.design/file/01M3W6P0PN9SSQ1J3N6V23A9WK",
-  "scope": "Static Paper design for two separate web apps; no app implementation or service verification.",
+  "scope": "Static shared foundations and phase boundaries; complete landing/admin references belong to V2. No app/server implementation.",
   "sharedBrandSource": "https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0",
   "pages": [
     {
@@ -15,8 +15,17 @@
           "name": "F01 · Web foundations & app boundaries",
           "width": 1440,
           "height": "fit-content"
+        },
+        {
+          "id": "22Q-0",
+          "name": "AQD · V1 and V2 web boundaries",
+          "worldX": 1520,
+          "worldY": 0,
+          "width": 1440,
+          "height": null
         }
-      ]
+      ],
+      "phase": "Shared"
     },
     {
       "pageId": "p-2-0",
@@ -34,11 +43,12 @@
           "width": 1440,
           "height": "fit-content"
         }
-      ]
+      ],
+      "phase": "Shared"
     },
     {
       "pageId": "p-3-0",
-      "pageName": "02 · Landing app",
+      "pageName": "02 · V2 · Landing app",
       "artboards": [
         {
           "id": "1-0",
@@ -52,11 +62,12 @@
           "width": 1440,
           "height": 900
         }
-      ]
+      ],
+      "phase": "V2"
     },
     {
       "pageId": "p-4-0",
-      "pageName": "03 · Admin · Overview & analytics",
+      "pageName": "03 · V2 · Admin · Overview & analytics",
       "artboards": [
         {
           "id": "3O-0",
@@ -70,11 +81,12 @@
           "width": 1440,
           "height": 900
         }
-      ]
+      ],
+      "phase": "V2"
     },
     {
       "pageId": "p-5-0",
-      "pageName": "04 · Admin · Safety",
+      "pageName": "04 · V2 · Admin · Safety",
       "artboards": [
         {
           "id": "73-0",
@@ -112,11 +124,12 @@
           "width": 1440,
           "height": 900
         }
-      ]
+      ],
+      "phase": "V2"
     },
     {
       "pageId": "p-6-0",
-      "pageName": "05 · Admin · Operations",
+      "pageName": "05 · V2 · Admin · Operations",
       "artboards": [
         {
           "id": "14B-0",
@@ -136,11 +149,12 @@
           "width": 1440,
           "height": 900
         }
-      ]
+      ],
+      "phase": "V2"
     },
     {
       "pageId": "p-7-0",
-      "pageName": "06 · Admin · Access & settings",
+      "pageName": "06 · V2 · Admin · Access & settings",
       "artboards": [
         {
           "id": "KR-0",
@@ -160,11 +174,12 @@
           "width": 1440,
           "height": 900
         }
-      ]
+      ],
+      "phase": "V2"
     },
     {
       "pageId": "p-8-0",
-      "pageName": "07 · Responsive & states",
+      "pageName": "07 · V2 · Responsive & states",
       "artboards": [
         {
           "id": "M9-0",
@@ -184,11 +199,12 @@
           "width": 1440,
           "height": "fit-content"
         }
-      ]
+      ],
+      "phase": "V2"
     },
     {
       "pageId": "p-9-0",
-      "pageName": "08 · Admin · V1 Flow",
+      "pageName": "08 · V2 · Admin flow",
       "artboards": [
         {
           "id": "1N6-0",
@@ -220,9 +236,22 @@
           "width": 1016,
           "height": "fit-content"
         }
-      ]
+      ],
+      "phase": "V2"
     }
   ],
-  "artboardCount": 27,
-  "organization": "Canonical module pages plus a separate annotated Admin V1 Flow page. Flow previews are static snapshots."
+  "artboardCount": 28,
+  "organization": "Canonical module pages plus a separate annotated V2 Admin Flow page. Flow previews are static snapshots.",
+  "phaseRefactorReview": {
+    "date": "2026-10-05",
+    "phaseBoundaryBoard": {
+      "id": "22Q-0",
+      "name": "AQD · V1 and V2 web boundaries",
+      "worldX": 1520,
+      "worldY": 0,
+      "width": 1440,
+      "height": null
+    },
+    "scope": "Page labels and shared V1/V2 boundary design; no website/backend deployment."
+  }
 }

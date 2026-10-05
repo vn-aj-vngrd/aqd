@@ -1,5 +1,9 @@
 # Future — Personal virtual try-on
 
+## Phase boundary
+
+V2 optional capability. Outside V1; prepared consent/result/failure requirements are mapped in V2 design. No provider, feature implementation or fit guarantee is approved. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
+
 Status: future exploration, outside the initial product. Documenting this direction does not authorize implementation, a cloud-provider change, or service deployment. No provider or delivery date is selected.
 
 ## Purpose

@@ -1,6 +1,14 @@
 # Launch costs
 
+Phase scope: V2 connected-product proposal. V1 needs no app backend, staff admin or paid entitlement service; see [V1 architecture](v1.md). Dated prices and recommendations below are historical planning assumptions, not refreshed purchasing quotes.
+
 Pricing snapshot: October 1, 2026. All figures are USD, before taxes and currency conversion. This is a recommended budget, not a paid-service selection or purchase authorization.
+
+## V1 cost boundary
+
+The [device-only V1](v1.md) has no required recurring AQD backend/database/media/AI/email/push cost. Apple developer distribution, devices, optional static support/domain hosting, design tools and support/legal work remain separate expenses. No purchase is approved here. The figures below are the preserved October 1 V2 connected-product snapshot; recheck official prices/allowances before budgeting or provisioning.
+
+## V2 historical budget
 
 ## Assumptions
 

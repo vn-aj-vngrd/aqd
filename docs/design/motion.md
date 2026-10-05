@@ -1,6 +1,8 @@
 # Global motion
 
-Paper page 00 **Foundations · Global motion** owns the visual reference. This contract owns named behaviors and implementation handoff for every screen. [Coverage](motion-coverage.md) assigns all 159 screen/state contracts and appearance variants. These are design specifications, not implemented animation or measured performance.
+Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+
+Paper page 00 **Foundations · Global motion** owns the visual reference. This contract owns named behaviors and implementation handoff for every screen. [Coverage](motion-coverage.md) assigns all 201 canonical screen/state contracts and appearance variants. Local L references inherit their source and shared native motion recipes, including optional tour navigation. These are design specifications, not implemented animation or measured performance.
 
 ## Apply the policy
 
@@ -18,9 +20,9 @@ Durations below are AQD design choices, not Apple-prescribed timings. Never over
 | motion.press | 100 ms | Custom button feedback only; ease-out. Native buttons keep their own feedback. |
 | motion.crossfade | 150 ms | Local content/status/photo replacement; ease-out. |
 | motion.reflow | 220 ms | Small layout/selection/insert changes; smooth spring, zero extra bounce. |
-| motion.arrival | 320 ms | Welcome photo transforms only; ease-out. |
-| motion.arrivalOffset | 12 pt horizontal, maximum 6 pt vertical | Welcome cards; no general page rise. |
-| motion.arrivalStagger | 40 ms | Second welcome card only; both settled by 360 ms. |
+| motion.welcomeSequence | 1,200 ms total | First Welcome arrival only: 520 ms forming phase, then 680 ms settle; smooth ease-out, no elastic bounce. |
+| motion.welcomeTravel | Within bounded hero; about 230 pt horizontal / 190 pt vertical maximum | Twelve garment transforms use the authored keyframes; never overlap text/actions. |
+| motion.welcomeStagger | 0–80 ms per group within forming phase | Parallel outfit groups; no accumulating per-item delays. |
 | motion.reduced | 0–120 ms | Immediate state or opacity-only crossfade. No spatial travel. |
 | motion.pressScale | 0.98 minimum | Only a custom standalone button that lacks native press feedback; keep hit region unchanged. Never shrink text fields, rows, or navigation. |
 
@@ -42,7 +44,7 @@ Use SwiftUI `.smooth(duration:extraBounce: 0)` for bounded local reflow where su
 | C-message | Human message insert / conversation change | Native conversation navigation. One local insertion reflow; sent/pending/failed updates in place. Auto-follow only when already at latest or after own send; otherwise show new-message affordance. | Immediate insertion/status; no animated forced scroll. |
 | C-stream | Agent waiting, streaming, tools, stop, retry | Labelled native progress; status crossfade. Render chunks normally, not character-by-character animation. Coalesce layout updates; no animation per token or Markdown relayout. Keep Stop immediate and partial text on interruption. | Same content, static state transitions; preserve reading position. |
 | C-receipt | Copy, feedback, accepted request | Short local crossfade to confirmation, with accessible announcement; preserve context. Do not animate every icon or announce every stream fragment. | Immediate or short fade. |
-| E-arrival | First visit to Welcome | Two existing clothing photos settle from arrival offsets, using arrival duration and stagger. Text/actions are visible and active immediately. Replay only on a genuinely fresh introduction, not Back. | Final composition immediately. |
+| E-arrival | First visit to Welcome | Twelve original garment layers gather, form looks and settle using the dedicated Welcome sequence and authored keyframes. Text/actions are visible and active immediately. Replay only on a genuinely fresh introduction, not Back. | Final composition immediately. |
 
 ### Native ownership and Liquid Glass
 

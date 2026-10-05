@@ -1,6 +1,6 @@
 # AQD design system
 
-Authoritative visual foundations, October 2, 2026. This specifies the intended app; implementation and verification are tracked separately.
+Authoritative visual foundations, phase scope updated October 5, 2026. This specifies the intended app; implementation and verification are tracked separately.
 
 ## Authority
 
@@ -14,7 +14,7 @@ For UI work, read this document and the affected screen contract before inspecti
 
 Premium through restraint: clothing photography, precise alignment, quiet surfaces, and native interaction. Light surfaces use limestone and graphite; dark surfaces use neutral charcoal. Heritage blue is reserved for actions and selection; dark appearance uses muted powder blue. The initial flat garment illustrations were rejected as childish. Use photographic pieces and looks; the AQD wordmark and small Heritage blue accent provide the brand.
 
-Root screens prioritize the task. Landing is the expressive introduction. Home combines Today’s private dashboard with All / Following discovery; Closet is private management. Whitespace and separators group ordinary content. Grouped backgrounds belong to forms/settings; image grounds support clothing. Brand character comes from content and proportion rather than decorations around every element.
+Root screens prioritize the task. Landing is the expressive introduction. V1 uses Home, Closet, Agent and local Profile with complete Settings; Planner remains in Closet. V2 Home combines Today’s private dashboard with All / Following discovery; Closet is private management. Whitespace and separators group ordinary content. Grouped backgrounds belong to forms/settings; image grounds support clothing. Brand character comes from content and proportion rather than decorations around every element.
 
 ## Color
 
@@ -72,6 +72,8 @@ Display tracking is `-0.025em`; body uses system tracking. The small AQD wordmar
 
 Phone reference: 390 × 844 pt, with native status and safe areas. Screen inset: 20 pt; brand compositions may use 24 pt. Space tokens: 4, 8, 12, 16, 20, 24, 32, 40, 48 pt. Related controls use 8–12, content groups 16–24, major transitions 32–40.
 
+Paper phone navigation uses a consistent 390 × 844 viewport: the 66-point bar has 16-point side insets and a 26-point bottom inset, with the home indicator 8 points above the bottom. V1 has four equal-width tab slots; V2 has five. Center each icon and label within its slot. Anchor chrome to the phone viewport so content height cannot move it; keep tour controls above the bar and preserve scroll access to final content/actions. These are reference drawing dimensions. Native implementation uses the operating system's tab bar and safe-area layout, including device, keyboard and accessibility adaptations.
+
 Photographic corners: 4 pt. Input glass shells: 16 pt (multiline composers: 28 pt). Grouped content surfaces: 12 pt. Compositions: 12–16 pt when containment helps. Sheets use system corners. Pills belong to buttons, filters, and native glass chrome. Ordinary content has neither shadow nor outline. Choose separator or elevation according to function.
 
 Touch targets are at least 44 × 44 pt. Primary content action: base 50 pt tall, 17 pt medium label, 20 pt horizontal padding. Cancel and dismiss actions use neutral semantic ink on regular glass (light charcoal / dark light ink). Blue is reserved for primary actions and selected states; secondary actions use neutral native controls. One action dominates each task step. Loading preserves control width and blocks duplicate submission.
@@ -80,7 +82,7 @@ Touch targets are at least 44 × 44 pt. Primary content action: base 50 pt tall,
 
 Edit semantic values in Paper’s token panel and geometry in page-00 component masters, then update affected screen clones. Tokens update live; structural clones require synchronization. [Design rules](docs/design/rules.md) owns the review procedure.
 
-Five destinations remain Home, Closet, Agent, Inbox and Profile, with visible native labels. Agent opens full screen from the center entry or focused assistance; dismissal restores the prior destination and scroll position. AQD owns content and semantic tint; the operating system owns native controls, material behavior and accessibility adaptation.
+V1 has Home, Closet, Agent and local Profile, with visible native labels. Settings is reached from Profile/toolbar; Planner is inside Closet. Agent has complete local conversation/history and reviewed actions; Profile is private personal information/collections. No social menu, publish action, online identity or Inbox appears. V2 adds connected controls and Inbox to this same foundation. V2 retains Home, Closet, Agent, Inbox and Profile, with visible native labels. V2 Agent opens full screen from the center entry or focused assistance; dismissal restores the prior destination and scroll position. AQD owns content and semantic tint; the operating system owns native controls, material behavior and accessibility adaptation.
 
 Read the contract for the affected branch:
 
@@ -106,6 +108,6 @@ Copy names the task: Add piece, Build outfit, Review changes, Save outfit, Publi
 
 ## Completion boundary
 
-[Screen contracts](docs/design/screens.md) and [V1 flow](docs/design/v1-flow.md) map the product paths. [iOS manifest](docs/design/paper-manifest.json) and [web manifest](docs/design/web-paper-manifest.json) own recorded inventories. [V1 release](docs/product/v1-release.md) and [V2 backlog](docs/product/v2-backlog.md) own scope.
+[V1 flow](docs/design/v1-flow.md) maps page 01 · V1, grouped into ten device-only flows. [Screen contracts](docs/design/screens.md), [V2 flow](docs/design/v2-flow.md) and [V2 requirements](docs/design/v2-requirements.md) map the complete connected and expansion paths. The iOS file contains exactly Foundations, V1 and V2, in that order. All connected canonical screens, review strips and expansion requirements live on page 02 · V2, grouped into nine sections. Screen and node IDs are retained; page links follow the consolidated structure. [iOS manifest](docs/design/paper-manifest.json) and [web manifest](docs/design/web-paper-manifest.json) own recorded inventories. [V1 release](docs/product/v1-release.md) and [V2 backlog](docs/product/v2-backlog.md) own scope.
 
 Static Paper review does not establish native keyboard/accessibility behavior, runtime performance or production services. Record actual checks and limits in [verification](docs/delivery/verification.md); provider and policy gates stay in [decisions](docs/product/decisions.md).

@@ -1,5 +1,9 @@
 # U — Profile, account, privacy, and durability
 
+## Phase boundary
+
+The connected identity/public Profile/account contract below belongs to V2. V1 includes a complete private local Profile with optional name/photo/style preferences, owned/history shortcuts, Settings, appearance/tour/help and local export/restore/erase. V1 has no online identity, authentication, association/sync, followers/public counts or account deletion. V2 extends this local Profile only after connected opt-in. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
+
 ## Outcome and separation
 
 Profile is social presence: avatar, username, display name, bio, real followers/following counts, and public Pieces / Outfits / Themes. Owner view also exposes publication management and settings. Closet remains the source of owned/private content; Profile does not create a second closet or show all private items to visitors.
@@ -16,7 +20,7 @@ Avatar uses user-selected media; body/face/measurement capture for virtual try-o
 
 ## Data durability
 
-Signed-in backup/sync/reinstall recovery, useful export, account deletion and isolated caches are mandatory V1 under [DATA acceptance](../product/v1-release.md#data-contract). Backend/conflict/retention selection remains unresolved and blocks launch. Device-only guest use remains available with its recovery limitations disclosed.
+Signed-in backup/sync/reinstall recovery, useful export, account deletion and isolated caches are mandatory V2 under [DATA acceptance](../product/v2-release.md#data-contract). Backend/conflict/retention selection remains unresolved and blocks launch. Device-only guest use remains available with its recovery limitations disclosed.
 
 The local prototype stores embedded photos/JSON. Future connected durability must preserve stable item/outfit IDs, theme memberships, history, and plans, with versioned migrations and explicit ownership. Local-account association previews what will be backed up. User choice to sign in is not blanket permission to publish.
 

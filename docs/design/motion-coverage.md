@@ -1,11 +1,13 @@
 # Motion coverage
 
+Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+
 Every Paper screen/state inherits [Global motion](motion.md), including interruption, Reduce Motion, accessibility and performance requirements. This table is an implementation contract, not evidence of working animation. Native recipes take precedence; custom recipes apply only to changed local content. Existing presentation ownership in docs/design/screens.md wins when a screen has several entry paths.
 
 | Screen | Navigation | Local motion | Flow constraint |
 | --- | --- | --- | --- |
 | E01 · Splash | Native launch | None | No delay; restore the authorized destination. |
-| E02 · Welcome | N-push | E-arrival | One arrival; Back returns settled; tap interrupts immediately. |
+| E02 · Welcome | N-push | E-arrival | Twelve-piece gather/form/settle sequence; Back returns settled; tap interrupts immediately. V1 L60/L67 inherit this recipe. |
 | E03 · Sign in | N-push | C-form, C-load | Native auth/keyboard; keep return intent and draft; no success before verification. |
 | E04 · Check your email | N-push | C-form, C-load | Native auth/keyboard; keep return intent and draft; no success before verification. |
 | E05 · Style preferences | N-push | C-select, C-form | Native step transition; selections and validation stay local. |
@@ -173,7 +175,7 @@ Every Paper screen/state inherits [Global motion](motion.md), including interrup
 | S48 · Today · Ready to style | N-root | C-load | Derived state; preserve Home mode and no repeated first-use arrival. |
 
 
-## V1 lifecycle additions
+## V2 lifecycle additions
 
 | Screen | Navigation | Local motion | Flow constraint |
 | --- | --- | --- | --- |

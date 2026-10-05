@@ -1,10 +1,12 @@
 # Native Liquid Glass controls
 
+Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+
 Design refinement, October 1, 2026. [Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0) remains the visual source. The supplied ChatGPT screenshots guide the floating composer, capsule controls and anchored menu treatment; they do not establish which private implementation APIs ChatGPT uses.
 
 ## Control matrix
 
-| Role | V1 native choice | Paper reference / state contract |
+| Role | V2 native choice | Paper reference / state contract |
 | --- | --- | --- |
 | Back | System NavigationStack/UINavigationController Back | Glass capsule/circle; retain native back label, history, swipe gesture and restored focus. Never add a duplicate custom Back. |
 | Toolbar icon/text actions | Native ToolbarItem/Button/Menu | Regular glass, 44 pt minimum target; labeled SF Symbol. Native grouping owns shared material. |
@@ -30,7 +32,7 @@ Photographs, wardrobe grids, message bubbles, notices, Markdown responses, revie
 
 ## Audit and changes
 
-Inspected all 226 artboards across ten Paper pages, including 179 canonical screen contracts, component masters, appearance references and V1 flow copies. Applied the shared material reference to 350 navigation/toolbar instances, 97 field/search/comment input shells, 25 composers, 429 standalone/filter actions, 72 tab/segmented containers and two menu references. Send/Stop controls and compact dashboard action shapes were synchronized too. Existing V2 reference screens received visual consistency only; release scope is unchanged.
+Inspected all 226 artboards across ten Paper pages, including 179 canonical screen contracts, component masters, appearance references and V2 flow copies. Applied the shared material reference to 350 navigation/toolbar instances, 97 field/search/comment input shells, 25 composers, 429 standalone/filter actions, 72 tab/segmented containers and two menu references. Send/Stop controls and compact dashboard action shapes were synchronized too. Existing V2 reference screens received visual consistency only; release scope is unchanged.
 
 Reviewed representative new-piece inputs, Agent dark composer/Back, Closet toolbar/tabs/menu, review actions and Reduce Transparency. Corrected dark Back surfaces after the first review. Geometry and routes remain intact. No app code, native build, device rendering, interaction or accessibility runtime validation is implied. No screenshot files were saved.
 
@@ -53,7 +55,7 @@ Reviewed representative new-piece inputs, Agent dark composer/Back, Closet toolb
 
 ## Navigation consistency follow-up · October 1, 2026
 
-A structural pass across all 227 artboards found generic Frame headers missed by the earlier name-based classification. Checked 215 Back controls; corrected 35 bare shells across Home, Closet search and V1 copies. Wrapped 13 bare toolbar Cancel actions in the shared neutral regular-glass control and synchronized 18 outlined search shells, including the component references and walkthrough. Named navigation headers/Back/search layers consistently to make later audits easier. All checked Back and Cancel controls retain 44-point height; content disclosure chevrons remain plain. Native behavior remains a separate implementation check.
+A structural pass across all 227 artboards found generic Frame headers missed by the earlier name-based classification. Checked 215 Back controls; corrected 35 bare shells across Home, Closet search and V2 copies. Wrapped 13 bare toolbar Cancel actions in the shared neutral regular-glass control and synchronized 18 outlined search shells, including the component references and walkthrough. Named navigation headers/Back/search layers consistently to make later audits easier. All checked Back and Cancel controls retain 44-point height; content disclosure chevrons remain plain. Native behavior remains a separate implementation check.
 
 ## Agent input material refinement · October 2, 2026
 

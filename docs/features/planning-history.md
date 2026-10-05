@@ -1,5 +1,9 @@
 # P — Planning, actual wear, and insights
 
+## Phase boundary
+
+V1 completes local manual dates/two-week plans, three-calendar-month routines, events/trips/packing, wear/history/correction and factual insights, with supported bounded assistance. External calendar, live weather/notifications and collaborative planning are V2. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
+
 ## Outcome and placement
 
 Closet's Planner organizes intended clothing use; History records actual use; Stats explains that history. Home's Today tab summarizes the user's planned look and upcoming entries; Closet's Today/Planner entry opens the same records. These are saved plans, not social recommendations. Entry from an outfit can schedule it directly.

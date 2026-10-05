@@ -1,6 +1,8 @@
 # Agent input and complete state contract
 
-Design refinement, October 2, 2026. Paper page 05 owns A01–A55; page 00 owns the multimodal composer and loading/recovery masters. These are static designs and implementation acceptance targets. No app source, streaming runtime, media analysis, speech service or provider change is delivered by this pass.
+Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+
+Design refinement, October 2, 2026. Paper page 02 · V2, section 05 · Agent owns A01–A55; page 00 owns the multimodal composer and loading/recovery masters. These are static designs and implementation acceptance targets. No app source, streaming runtime, media analysis, speech service or provider change is delivered by this pass.
 
 ## Entry, suggestions and focus
 
@@ -52,6 +54,6 @@ Send failure A29, generation failure A15/A49, attachment failure A40 and unknown
 
 ## Appearance and acceptance
 
-A51 uses opaque neutral shells and controls, no blur or translucent edges. A52 demonstrates larger text and the expanded editor; wrap context labels and reflow attachment/actions without shrinking type. Dark D02 uses the same controls, state meaning and V1 action set. Validate RTL, VoiceOver focus/labels, 44 pt remove/Send/Stop targets, keyboard gestures and Increase Contrast on the native app. Static Paper is insufficient to certify Liquid Glass optics, animation, recognition, streaming or persistence.
+A51 uses opaque neutral shells and controls, no blur or translucent edges. A52 demonstrates larger text and the expanded editor; wrap context labels and reflow attachment/actions without shrinking type. Dark D02 uses the same controls, state meaning and V2 action set. Validate RTL, VoiceOver focus/labels, 44 pt remove/Send/Stop targets, keyboard gestures and Increase Contrast on the native app. Static Paper is insufficient to certify Liquid Glass optics, animation, recognition, streaming or persistence.
 
 Implementation acceptance: new-chat autofocus once; returning-chat focus retained; multiline/long input; picker cancel/denial; one failed attachment among ready ones; all three closet categories and stale/deleted selection; no-context insights; denied microphone; no speech; speech/permission unavailable; transcription error/cancel/interruption; editable transcript with concurrent typing; first-token error; fragmented Markdown; midstream interruption; slow/hard timeout; Stop acknowledgement; scrolled-up reader; background restoration; send retry deduplication; stale approval and unknown save outcome. Every path preserves the applicable draft and offers the exact recovery action.

@@ -1,10 +1,14 @@
 # A — Agent and focused assistance
 
+## Phase boundary
+
+V1 has a complete local Agent destination with conversation/history/cancel/retry/copy/Markdown, grounded local queries, outfit/theme/plan drafts and reviewed local actions. On-device/rules/manual availability states are required. Online research/weather/social/message tools and server feedback are V2; photo/speech context needs verified on-device support. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
+
 ## Scope and outcome
 
 One capability surface supports both full-screen Agent and focused app actions. Agent covers style, clothing, weather, travel, and everyday planning, using authorized wardrobe context and domain actions. General answers are distinct from personal facts and verified current information. Unsupported topics get a brief scope explanation and relevant next step.
 
-On-device AI remains the user's V1 preference. Current Foundation Models code demonstrates limited text-based drafting, not image tagging, comprehensive multi-month planning, or a production tool loop. Unsupported device/model state offers manual work and clearly named deterministic rules; it never labels rules as model output. A cloud-provider change requires an explicit product decision.
+On-device AI remains the user's preference in both phases. Current Foundation Models code demonstrates limited text-based drafting, not image tagging, comprehensive multi-month planning, or a production tool loop. Unsupported device/model state offers manual work and clearly named deterministic rules; it never labels rules as model output. A cloud-provider change requires an explicit product decision.
 
 ## Capability and authority map
 
@@ -53,9 +57,9 @@ Evaluation fixtures cover insufficient closets, unavailable pieces, ambiguous na
 
 ## Response lifecycle design
 
-[V1 release scope](../product/v1-release.md) includes basic history, cancel/retry, copy, response rendering, proposal details and real receipts. Advanced response-version comparison and server-collected rating/comment feedback are V2; hide their unavailable entry points at launch. Internal quality evaluation remains mandatory V1 engineering work.
+[V1 local release](../product/v1-release.md) and [V2 connected core](../product/v2-release.md) include basic local history, cancel/retry, copy, response rendering, proposal details and real receipts. Advanced response-version comparison and server-collected rating/comment feedback are V2; hide their unavailable entry points at launch. Internal quality evaluation remains mandatory V2 engineering work.
 
-[Agent experience](../design/agent-experience.md) defines streaming, measured progress/timing, cancellation, response versions, copy, feedback for evaluations, privacy consent, history and failure recovery. Paper page 05 is the visual reference and page 00 owns shared components. These design contracts do not authorize a provider switch or enable an unapproved feedback service.
+[Agent experience](../design/agent-experience.md) defines streaming, measured progress/timing, cancellation, response versions, copy, feedback for evaluations, privacy consent, history and failure recovery. Paper page 02 · V2, section 05 · Agent is the visual reference and page 00 owns shared components. These design contracts do not authorize a provider switch or enable an unapproved feedback service.
 
 Agent response content supports Markdown, including incremental rendering, safe links and plain-text/source copy, through the shared [Markdown contract](../design/agent-experience.md#markdown-responses). Markdown never authorizes a write or substitutes for a structured proposal/receipt.
 

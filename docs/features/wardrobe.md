@@ -1,5 +1,9 @@
 # W — Wardrobe
 
+## Phase boundary
+
+V1 completes local manual single-photo capture/search/filter/sort/edit/availability/archive/lifecycle and activation. Profile local Add and Agent reuse that flow. Verified single-photo on-device cleanup/editable tag proposals belong in V1 with manual fallback. Saved inspiration (W11), advanced/provider visual workflows and connected backup are V2. Use LOCAL checks for the private release. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
+
 ## Outcome and entry points
 
 The user has a durable, searchable record of owned clothing, footwear, and accessories. Entry: Closet → Pieces → Add; Profile's Add opens the same capture flow; Agent requests capture through that flow. Owner-only management is separate from public presentation in [Profile](profile-account.md).
@@ -31,7 +35,7 @@ Text defaults: optional single-value metadata up to 80 characters, up to 20 tags
 
 ## Capture and classification
 
-V1 classification is manual. Automatic photo classification/tagging and visual cleanup are [V2 enhancements](../product/v2-backlog.md); the capability behavior below is future guidance, not required launch work.
+Manual classification is always available in V1 and V2. Verified single-photo on-device cleanup and editable tagging proposals follow the [V1 capability contract](../architecture/v1.md#apple-intelligence-limits). Advanced visual analysis/imports and provider processing remain [V2 enhancements](../product/v2-backlog.md). The proposal/review/fallback behavior below applies wherever a supported capability is enabled; local availability and real-photo quality require implementation evidence.
 
 1. Select Photos, Camera, or manual entry. Choose a cover photo or continue without one.
 2. Preserve the draft while loading/preparing media. Preview the image before saving.

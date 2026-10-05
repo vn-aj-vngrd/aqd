@@ -1,5 +1,7 @@
 # Provider comparison
 
+Phase scope: V2 connected-product proposal. V1 needs no app backend, staff admin or paid entitlement service; see [V1 architecture](v1.md). Dated prices and recommendations below are historical planning assumptions, not refreshed purchasing quotes.
+
 Recommendation snapshot: October 1, 2026. No services have been purchased or provisioned by this workshop.
 
 ## Comparison for AQD

@@ -1,5 +1,9 @@
 # S — Home, discovery, and publishing
 
+## Phase boundary
+
+V2 contract. V1 only reuses the private Today activation concepts in its dedicated local design; All/Following, publishing, public search/profiles, reactions, comments and inspiration are absent in V1. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
+
 ## Outcome and navigation
 
 Home has **Today / All / Following**. Today is a private dashboard over existing wardrobe and planning records; All and Following are visual social feeds of real people's published content. The initial All feed is newest accessible public posts; Following restricts to followed creators. Personalized ranking, trending labels, and personal AI outfit inserts are outside this slice. Users can browse discovery while keeping their closet private.
@@ -12,7 +16,7 @@ Search from Home covers public creators, closets, items, outfits, and themes wit
 
 Today reads existing records rather than storing onboarding completion. Empty closet uses S16. Pieces with no saved outfits and missing required categories offer Build my first outfit → W28; reuse the quiet S48 hierarchy with missing-category copy, not a new dashboard. Enough available pieces but no saved outfits use S48 → W17 or W13. Saved outfits without today's plan use S17 → choose an outfit. A planned look uses S15 → reviewed wear recording. Search remains owner-scoped in Today. Never show planned or wear totals without records, repeat first-use guidance after an outfit exists, or force a community/account step before styling.
 
-Verify the transitions after capture, cancellation, archive, outfit save and plan save; manual composition remains available if readiness changes or assistance fails. The [V1 flow review](../design/v1-flow.md) shows canonical screen sequences. These are target states, not implemented behavior.
+Verify the transitions after capture, cancellation, archive, outfit save and plan save; manual composition remains available if readiness changes or assistance fails. The [V2 flow review](../design/v2-flow.md) shows canonical screen sequences. These are target states, not implemented behavior.
 
 Private item/outfit/theme records and public posts have separate IDs and lifecycles. A post contains author, type, caption, selected imagery/composition, allowed included-piece metadata, optional theme and source attribution, created date, and optional owner-confirmed worn date. Working default: snapshot publication, not live mirroring.
 

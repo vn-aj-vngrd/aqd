@@ -1,5 +1,9 @@
 # O — Outfits and themes
 
+## Phase boundary
+
+V1 completes local manual/assisted owned-item outfits/favorites/pin/replacement and independent themes/multiple memberships. Public sharing and inspired community creation are V2; no publication control appears in V1. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
+
 ## Outcome
 
 Users compose and retain owned-wardrobe looks and organize them into reusable collections. Entry: Closet → Outfits/Themes; Add → Build an outfit; an item detail's “Style this”; focused assistance or [Agent](agent.md). Public display is a separate [publication](discovery-publishing.md).

@@ -1,6 +1,8 @@
 # Entry and identity
 
-The first trust milestone is one privately saved piece; the first styling milestone is a usable saved outfit. Onboarding must not require a profile, style quiz, photo, notification permission or AI availability. The [V1 flow review](v1-flow.md) connects capture to first-outfit readiness, Home, planning/wear and optional social identity.
+Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+
+The first trust milestone is one privately saved piece; the first styling milestone is a usable saved outfit. Onboarding must not require a profile, style quiz, photo, notification permission or AI availability. The [V2 flow review](v2-flow.md) connects capture to first-outfit readiness, Home, planning/wear and optional social identity.
 
 ```mermaid
 flowchart TD
@@ -42,7 +44,7 @@ flowchart TD
 
 - Welcome has one primary action: start a private closet. Returning-account access is a secondary text action. No ambiguous Explore link in the brand header.
 - First piece opens the standard picker/editor. Selected photos reach W27 review; manual entry uses W07 with equal eligibility and no photo access required. Skip opens the empty private closet. Saving shows E12 only after persistence succeeds, using the actual saved item.
-- E12's primary Build my first outfit carries the saved piece as a pin into W28 (missing categories) or W29 (ready). Secondary Open my closet remains available. Missing-category capture returns to that task after save/cancel without repeating setup. A partial manual look is allowed; complete suggestions need the requested available categories. Optional preferences stay off this path; the acquisition survey is V2 and its entry is hidden in V1.
+- E12's primary Build my first outfit carries the saved piece as a pin into W28 (missing categories) or W29 (ready). Secondary Open my closet remains available. Missing-category capture returns to that task after save/cancel without repeating setup. A partial manual look is allowed; complete suggestions need the requested available categories. Optional preferences stay off this path; the acquisition survey is V2-E15 and its entry is hidden in V1 and the V2 connected core until that extension is enabled.
 - Today is derived from records: empty closet → S16; pieces but missing categories → first-outfit guidance linking W28; enough pieces with no saved outfits → S48; saved outfits without today's plan → S17; a planned look → S15. Returning users restore their selected Home mode; local use never forces auth.
 - Preferences are offered after first value or from Closet. No style is preselected. Choices can be skipped and changed later; do not replay skipped setup every launch.
 - E03 offers Apple or email as working defaults, pending provider selection. E10 isolates email entry from provider selection. Auth cancellation returns to the initiating task with drafts intact.
@@ -64,7 +66,7 @@ Check fresh install, returning private user, returning signed-in user, expired s
 
 ## Acquisition question — V2
 
-The following optional survey design is deferred by the [release boundary](../product/v2-backlog.md); omit its entry point in V1.
+The following optional survey design is deferred by the [release boundary](../product/v2-backlog.md); omit its entry point in V1 and the V2 connected core until V2-E15 is enabled.
 
 Future E12 offers “How did you find AQD?” as an optional row linking to E14. It never interrupts capture or blocks opening the closet. E14 offers friend/family, Instagram, TikTok, App Store, search engine, something else and do not remember. No answer is preselected; Continue enables after one choice. Skip and Not now return to Closet. Preserve an answered/skipped dismissal so the question is not repeated.
 

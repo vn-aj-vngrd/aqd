@@ -1,5 +1,7 @@
 # Pricing and profitability hypotheses
 
+Phase scope: V2 connected-product proposal. V1 needs no app backend, staff admin or paid entitlement service; see [V1 architecture](v1.md). Dated prices and recommendations below are historical planning assumptions, not refreshed purchasing quotes.
+
 Updated October 1, 2026. We start from zero users. The user has not selected paid tiers, feature limits or a subscription price. This document records proposals to validate, not entitlements to implement.
 
 ## Proposed model

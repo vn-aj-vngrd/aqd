@@ -2,7 +2,7 @@
 
 ## Release evidence
 
-The current checkout has no tracked iOS app/build baseline. Historical build and simulator results cannot be reproduced from tracked source here. All full-V1 device, live-service, security, accessibility and distribution checks remain unverified.
+The current checkout has no tracked iOS app/build baseline. Historical build and simulator results cannot be reproduced from tracked source here. V1 native/local durability/model/accessibility/distribution checks remain unverified. V2 additionally needs live identity/sync/social/security/operating evidence; those connected gates do not block the V1 device-only architecture.
 
 | Boundary | Status | Evidence / next check |
 | --- | --- | --- |
@@ -57,3 +57,21 @@ Codex reviewed `14412af` and identified failed CI workflow runs replacing pendin
 Codex reviewed `b57fc15` and identified tagged A being skipped after successful B advanced the publication cursor. A tagged ancestor now runs existing-tag publication recovery without changing the cursor; untagged ancestors still skip safely. The regression verifies recovered A is eligible while the remote release cursor remains at C; an additional test verifies untagged ancestor skipping. All 38 tooling tests pass locally.
 
 The review also claimed `queue: max` is unsupported. Current [GitHub workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idconcurrency) explicitly documents the job concurrency queue property and its 100-pending-job bound. The finding is inapplicable; the supported native queue remains. Final-head CI/Codex and merge/release verification remain live gates.
+
+## V1/V2 planning and Paper refactor — October 5, 2026
+
+Branch: van/v1-v2-product-plan, based on cf923a05001215aa60625b2d1f5bc3252df7e628. Scope: product/architecture/design/backlog documentation and live static Paper only. No app source, provider provisioning, production code, backend deployment or distribution was added.
+
+V1 Paper now has 74 local phone references across ten numbered flow sections, with V2-style Welcome, private onboarding, Back/Next/Finish/Skip tour and Settings replay, complete Home/Closet/Agent/local Profile/Settings, private themes/plans/routines/trips/wear, verified-local rich-input requirements and recovery/appearance. V2 retains every original canonical reference and connected review, plus seven expansion requirement boards. The web file labels connected landing/admin V2 and adds a shared phase-boundary board.
+
+Static screenshots reviewed welcome/onboarding/tour, navigation, local Profile/Settings/data recovery, core wardrobe/planning/Agent states, dark variants, keyboard/voice permission/listen/transcribe/review/fallback/context and expansion boards. Paragraph wrapping, native labels, dark icon/control contrast, theme navigation and exact local-data copy were corrected. Paper does not prove native focus, Dynamic Type/VoiceOver, interaction wiring, model quality, local persistence or connected services. Extension requirements are prepared, not all final platform/provider layouts.
+
+The final Welcome refinement replaces the stock/lifestyle collage with twelve original AI-generated unbranded garment cutouts, preserved source/provenance/atlas coordinates, synchronized V1/V2/review heroes and a page-00 gather/form/settle storyboard (0/520/1,200 ms). Dark photographic ground preserves garment visibility; Reduce Motion uses the settled frame. These are static design/motion requirements; no working animation or native performance proof is claimed.
+
+Validation and two-perspective review findings are recorded below. All LOCAL acceptance and connected-service acceptance remain future implementation evidence.
+
+The iOS Paper file has exactly three pages in order: Foundations, V1 and V2, with 28/85/238 artboards (351 total). V1 is grouped into ten flows with 74 local phone references. All 201 original canonical screen IDs and node IDs remain in V2; the full backlog retains all fifteen deferred feature families and their design requirements. Foundations component masters remain unchanged by the page consolidation and navigation repair.
+
+The final static layout pass corrected all 50 phone bottom bars, their 50 viewports/home indicators and 236 tab slots. Each bar now has consistent side/bottom insets and equal-width centered destinations; fourteen obsolete footer wrappers are hidden. The empty V1 Home now uses all four V1 destinations. Reviewed screenshots cover tour Home/Closet, empty Home, Planner, local Profile, dark Home and V2 Planner/Profile. Tour controls finish above the bars. V1 Planner selection also fixes four weekday/date text nodes: selected accent text has 6.00:1 contrast on its soft fill, and unselected secondary text has 4.75:1 contrast on the light background. These measurements concern the static reference colors, not native accessibility acceptance.
+
+Local validation: 38 repository tooling tests passed on Node 24.20.0; all 512 tracked Markdown links/anchors resolve and every documentation page is reachable from the indexes. JSON/Excalidraw parsing, retained acceptance/screen IDs, planning-only file scope and whitespace checks passed. Two-perspective review findings about stale Agent navigation and backlog page labels were resolved. The manifests record current page membership, Welcome provenance/motion and the bottom-navigation review. No native build, interaction, animation performance, local durability, Apple capability or connected-service result is claimed.

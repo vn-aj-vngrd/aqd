@@ -1,5 +1,7 @@
 # Native iOS handoff
 
+Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+
 Research checked October 1, 2026 against Apple's current documentation. This is an implementation contract for the redesign, not proof that the existing app adopts it.
 
 ## Component selection

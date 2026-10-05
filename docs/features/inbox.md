@@ -1,5 +1,9 @@
 # I — Inbox
 
+## Phase boundary
+
+V2 only. V1 has no human messaging, requests, unread state, social notification transport or Inbox destination. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
+
 ## Outcome
 
 People can discuss looks and share accessible wardrobe content. Agent conversations stay in Agent. Entry: Inbox tab or Message from a public creator profile.
@@ -18,7 +22,7 @@ Block prevents new contact and removes the relationship from discovery/contact s
 
 ## Lifecycle gates
 
-V1 requires real in-app acknowledged unread and reliable connected delivery. Remote push/activity alerts are V2; email authentication still requires delivery. Retention/deletion/abuse decisions are V1 blockers, not optional notification enhancements.
+V2 requires real in-app acknowledged unread and reliable connected delivery. Remote push/activity alerts are V2; email authentication still requires delivery. Retention/deletion/abuse decisions are V2 blockers, not optional notification enhancements.
 
 Before connected implementation, decide notification transport/preferences, retention, delete-for-self versus delete-for-everyone, account deletion effects, encryption claims, and abuse limits. Do not claim end-to-end encryption from ordinary authenticated storage. Never populate production Inbox with artificial conversations or counts.
 

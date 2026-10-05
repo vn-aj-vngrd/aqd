@@ -1,62 +1,32 @@
 {
   "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
   "url": "https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0",
-  "verifiedOn": "2026-10-02",
-  "scope": "Static design only; Paper is sole visual source",
-  "screenCount": 201,
-  "artboardCount": 249,
+  "verifiedOn": "2026-10-05",
+  "scope": "Static design only; Paper is sole visual source. V1 complete local app; V2 retains connected core and full extension requirements.",
+  "screenCount": 275,
+  "artboardCount": 351,
   "pages": [
     {
       "id": "p-1-0",
-      "name": "00 \u00b7 Start here & foundations",
-      "count": 27
+      "name": "00 \u00b7 Foundations",
+      "count": 28
     },
     {
       "id": "p-2-0",
-      "name": "01 \u00b7 Entry & identity",
-      "count": 17
+      "name": "01 \u00b7 V1",
+      "count": 85
     },
     {
-      "id": "p-3-0",
-      "name": "02 \u00b7 Home",
-      "count": 53
-    },
-    {
-      "id": "p-4-0",
-      "name": "03 \u00b7 Closet & creation",
-      "count": 31
-    },
-    {
-      "id": "p-9-0",
-      "name": "04 \u00b7 Planning & wear",
-      "count": 12
-    },
-    {
-      "id": "p-A-1",
-      "name": "05 \u00b7 Agent",
-      "count": 55
-    },
-    {
-      "id": "p-5-0",
-      "name": "06 \u00b7 Inbox",
-      "count": 8
-    },
-    {
-      "id": "p-6-0",
-      "name": "07 \u00b7 Profile & settings",
-      "count": 25
-    },
-    {
-      "id": "p-8-0",
-      "name": "08 \u00b7 V1 Flow",
-      "count": 21
+      "id": "p-B-0",
+      "name": "02 \u00b7 V2",
+      "count": 238
     }
   ],
   "screens": [
     {
       "id": "E01",
       "title": "Splash",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "W-0",
       "complete": true,
       "motion": {
@@ -66,12 +36,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E02",
       "title": "Welcome",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "12-0",
       "complete": true,
       "motion": {
@@ -81,12 +53,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E03",
       "title": "Sign in",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "2G-0",
       "complete": true,
       "motion": {
@@ -97,12 +71,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E04",
       "title": "Check your email",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "3S-0",
       "complete": true,
       "motion": {
@@ -113,12 +89,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E05",
       "title": "Style preferences",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "4X-0",
       "complete": true,
       "motion": {
@@ -129,12 +107,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E06",
       "title": "Your first piece",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "EW-0",
       "complete": true,
       "motion": {
@@ -145,12 +125,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E07",
       "title": "Public profile",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "FW-0",
       "complete": true,
       "motion": {
@@ -161,12 +143,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E08",
       "title": "Connect your closet",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "H3-0",
       "complete": true,
       "motion": {
@@ -177,12 +161,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E09",
       "title": "Camera access",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "IG-0",
       "complete": true,
       "motion": {
@@ -193,12 +179,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E10",
       "title": "Continue with email",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "5U6-0",
       "complete": true,
       "motion": {
@@ -209,12 +197,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E11",
       "title": "Sign-in link expired",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "5VQ-0",
       "complete": true,
       "motion": {
@@ -225,12 +215,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E12",
       "title": "First piece saved",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "5XK-0",
       "complete": true,
       "motion": {
@@ -240,12 +232,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E13",
       "title": "Connect closet",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "609-0",
       "complete": true,
       "motion": {
@@ -256,12 +250,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E14",
       "title": "How you found AQD",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "5XJ-0",
       "complete": true,
       "motion": {
@@ -272,12 +268,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V2"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S01",
       "title": "Home \u00b7 All",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "65-0",
       "complete": true,
       "motion": {
@@ -288,12 +286,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S02",
       "title": "Home \u00b7 Following",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "JM-0",
       "complete": true,
       "motion": {
@@ -304,12 +304,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S03",
       "title": "Search",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "LP-0",
       "complete": true,
       "motion": {
@@ -320,12 +322,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S04",
       "title": "Search results",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "NV-0",
       "complete": true,
       "motion": {
@@ -336,12 +340,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S05",
       "title": "A light layer",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "PR-0",
       "complete": true,
       "motion": {
@@ -352,12 +358,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S06",
       "title": "Camille Reyes",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "R7-0",
       "complete": true,
       "motion": {
@@ -368,12 +376,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S07",
       "title": "Camille\u2019s closet",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "SP-0",
       "complete": true,
       "motion": {
@@ -384,12 +394,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S08",
       "title": "Saved inspiration",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "UF-0",
       "complete": true,
       "motion": {
@@ -400,12 +412,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S09",
       "title": "Publish look",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "VX-0",
       "complete": true,
       "motion": {
@@ -416,12 +430,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S10",
       "title": "Report or block",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "XB-0",
       "complete": true,
       "motion": {
@@ -432,12 +448,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S11",
       "title": "Report post",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "YS-0",
       "complete": true,
       "motion": {
@@ -448,12 +466,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S12",
       "title": "Following",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "10F-0",
       "complete": true,
       "motion": {
@@ -463,12 +483,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W01",
       "title": "Closet",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "8B-0",
       "complete": true,
       "motion": {
@@ -480,12 +502,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W02",
       "title": "Closet",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "1E4-0",
       "complete": true,
       "motion": {
@@ -497,12 +521,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W03",
       "title": "Closet",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "1GG-0",
       "complete": true,
       "motion": {
@@ -514,12 +540,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W04",
       "title": "Closet",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "1IR-0",
       "complete": true,
       "motion": {
@@ -531,12 +559,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W05",
       "title": "Add to closet",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "1LK-0",
       "complete": true,
       "motion": {
@@ -546,12 +576,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W06",
       "title": "Add a photo",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "1NJ-0",
       "complete": true,
       "motion": {
@@ -561,12 +593,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W07",
       "title": "New piece",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "1ON-0",
       "complete": true,
       "motion": {
@@ -577,12 +611,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W08",
       "title": "Cotton shirt",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "1Q9-0",
       "complete": true,
       "motion": {
@@ -593,12 +629,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W09",
       "title": "Piece details",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "1UE-0",
       "complete": true,
       "motion": {
@@ -609,12 +647,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W10",
       "title": "Search closet",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "1W8-0",
       "complete": true,
       "motion": {
@@ -625,12 +665,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W11",
       "title": "Archived pieces",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "1Y1-0",
       "complete": true,
       "motion": {
@@ -641,12 +683,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W12",
       "title": "Delete piece",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "21M-0",
       "complete": true,
       "motion": {
@@ -656,12 +700,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W13",
       "title": "Build outfit",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "26F-0",
       "complete": true,
       "motion": {
@@ -672,12 +718,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W14",
       "title": "Choose pieces",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "29G-0",
       "complete": true,
       "motion": {
@@ -688,12 +736,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W15",
       "title": "An easy afternoon",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "2AY-0",
       "complete": true,
       "motion": {
@@ -704,12 +754,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W16",
       "title": "Replace a piece",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "2CJ-0",
       "complete": true,
       "motion": {
@@ -720,12 +772,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W17",
       "title": "Suggest an outfit",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "2QN-0",
       "complete": true,
       "motion": {
@@ -736,12 +790,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W18",
       "title": "Weekend",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "2X8-0",
       "complete": true,
       "motion": {
@@ -752,12 +808,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W19",
       "title": "Edit theme",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "33K-0",
       "complete": true,
       "motion": {
@@ -768,12 +826,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W20",
       "title": "Style preferences",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "36N-0",
       "complete": true,
       "motion": {
@@ -784,12 +844,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W21",
       "title": "Additional details",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "3GI-0",
       "complete": true,
       "motion": {
@@ -800,12 +862,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P01",
       "title": "Planner",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "2CK-0",
       "complete": true,
       "motion": {
@@ -816,12 +880,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P02",
       "title": "October 2026",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "2K0-0",
       "complete": true,
       "motion": {
@@ -832,12 +898,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P03",
       "title": "Plan a look",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "2SF-0",
       "complete": true,
       "motion": {
@@ -848,12 +916,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P04",
       "title": "New plan",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "2XC-0",
       "complete": true,
       "motion": {
@@ -864,12 +934,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P05",
       "title": "Office routine",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "34X-0",
       "complete": true,
       "motion": {
@@ -880,12 +952,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P06",
       "title": "Seoul, slowly",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "3DI-0",
       "complete": true,
       "motion": {
@@ -896,12 +970,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P07",
       "title": "Packing list",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "3IQ-0",
       "complete": true,
       "motion": {
@@ -912,12 +988,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P08",
       "title": "Review plan",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "3O3-0",
       "complete": true,
       "motion": {
@@ -928,12 +1006,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P09",
       "title": "Record wear",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "50O-0",
       "complete": true,
       "motion": {
@@ -943,12 +1023,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P10",
       "title": "Wear history",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "5B0-0",
       "complete": true,
       "motion": {
@@ -959,12 +1041,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P11",
       "title": "Wear insights",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "5F5-0",
       "complete": true,
       "motion": {
@@ -975,12 +1059,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "P12",
       "title": "Resolve a conflict",
-      "pageId": "p-9-0",
+      "pageId": "p-B-0",
       "nodeId": "5GJ-0",
       "complete": true,
       "motion": {
@@ -991,12 +1077,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "I01",
       "title": "Inbox",
-      "pageId": "p-5-0",
+      "pageId": "p-B-0",
       "nodeId": "2D2-0",
       "complete": true,
       "motion": {
@@ -1007,12 +1095,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "I02",
       "title": "Camille Reyes",
-      "pageId": "p-5-0",
+      "pageId": "p-B-0",
       "nodeId": "2N8-0",
       "complete": true,
       "motion": {
@@ -1023,12 +1113,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "I03",
       "title": "Requests",
-      "pageId": "p-5-0",
+      "pageId": "p-B-0",
       "nodeId": "2XD-0",
       "complete": true,
       "motion": {
@@ -1039,12 +1131,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "I04",
       "title": "Message request",
-      "pageId": "p-5-0",
+      "pageId": "p-B-0",
       "nodeId": "34Z-0",
       "complete": true,
       "motion": {
@@ -1056,12 +1150,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "I05",
       "title": "New message",
-      "pageId": "p-5-0",
+      "pageId": "p-B-0",
       "nodeId": "3BQ-0",
       "complete": true,
       "motion": {
@@ -1073,12 +1169,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "I06",
       "title": "Conversation details",
-      "pageId": "p-5-0",
+      "pageId": "p-B-0",
       "nodeId": "3HL-0",
       "complete": true,
       "motion": {
@@ -1089,12 +1187,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "I07",
       "title": "Camille Reyes",
-      "pageId": "p-5-0",
+      "pageId": "p-B-0",
       "nodeId": "3ML-0",
       "complete": true,
       "motion": {
@@ -1105,12 +1205,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U01",
       "title": "Profile",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "2EN-0",
       "complete": true,
       "motion": {
@@ -1121,12 +1223,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U02",
       "title": "Edit profile",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "2QO-0",
       "complete": true,
       "motion": {
@@ -1137,12 +1241,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U03",
       "title": "Connections",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "2XZ-0",
       "complete": true,
       "motion": {
@@ -1154,12 +1260,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U04",
       "title": "Published content",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "34Y-0",
       "complete": true,
       "motion": {
@@ -1171,12 +1279,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U05",
       "title": "Settings",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "3B1-0",
       "complete": true,
       "motion": {
@@ -1187,12 +1297,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U06",
       "title": "Privacy",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "4F6-0",
       "complete": true,
       "motion": {
@@ -1203,12 +1315,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U07",
       "title": "Notifications",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "4LE-0",
       "complete": true,
       "motion": {
@@ -1219,12 +1333,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V2"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U08",
       "title": "Blocked people",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "4MW-0",
       "complete": true,
       "motion": {
@@ -1236,12 +1352,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U09",
       "title": "Your data",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "50P-0",
       "complete": true,
       "motion": {
@@ -1252,12 +1370,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U10",
       "title": "Export data",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "52I-0",
       "complete": true,
       "motion": {
@@ -1268,12 +1388,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U11",
       "title": "Delete account",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "53R-0",
       "complete": true,
       "motion": {
@@ -1284,12 +1406,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U12",
       "title": "Sign out",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "5B1-0",
       "complete": true,
       "motion": {
@@ -1300,12 +1424,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U13",
       "title": "Help and legal",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "5DE-0",
       "complete": true,
       "motion": {
@@ -1316,12 +1442,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U14",
       "title": "Appearance",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "5GG-0",
       "complete": true,
       "motion": {
@@ -1332,12 +1460,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U15",
       "title": "Confirm deletion",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "5IZ-0",
       "complete": true,
       "motion": {
@@ -1348,12 +1478,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "X01",
       "title": "Home",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "123-0",
       "complete": true,
       "motion": {
@@ -1363,12 +1495,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "X02",
       "title": "You\u2019re offline",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "13S-0",
       "complete": true,
       "motion": {
@@ -1378,12 +1512,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "X03",
       "title": "No results",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "15A-0",
       "complete": true,
       "motion": {
@@ -1393,12 +1529,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "X04",
       "title": "Content unavailable",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "18H-0",
       "complete": true,
       "motion": {
@@ -1408,12 +1546,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "X05",
       "title": "Changes saved",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "5JV-0",
       "complete": true,
       "motion": {
@@ -1423,12 +1563,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "X06",
       "title": "Couldn\u2019t save",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "nodeId": "3LJ-0",
       "complete": true,
       "motion": {
@@ -1439,12 +1581,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "X07",
       "title": "Search active",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "nodeId": "1C6-0",
       "complete": true,
       "motion": {
@@ -1455,12 +1599,14 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "X08",
       "title": "Inbox unavailable",
-      "pageId": "p-5-0",
+      "pageId": "p-B-0",
       "nodeId": "3PX-0",
       "complete": true,
       "motion": {
@@ -1470,13 +1616,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A01",
       "title": "Agent",
       "nodeId": "2CL-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-sheet",
@@ -1486,13 +1634,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A02",
       "title": "Agent",
       "nodeId": "2K1-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-sheet",
@@ -1502,13 +1652,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A03",
       "title": "Review outfit",
       "nodeId": "2QT-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-sheet",
@@ -1518,13 +1670,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A04",
       "title": "Outfit saved",
       "nodeId": "2XB-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1534,13 +1688,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A05",
       "title": "Conversations",
       "nodeId": "34E-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -1550,13 +1706,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A06",
       "title": "Agent context",
       "nodeId": "3C7-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-sheet",
@@ -1566,13 +1724,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A07",
       "title": "Assistance unavailable",
       "nodeId": "3I4-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1582,13 +1742,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A08",
       "title": "Preparing a draft",
       "nodeId": "3N2-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1598,13 +1760,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A09",
       "title": "Couldn\u2019t save yet",
       "nodeId": "3QB-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1614,13 +1778,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A10",
       "title": "Review message",
       "nodeId": "3S9-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-sheet",
@@ -1630,13 +1796,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A11",
       "title": "Waiting for response",
       "nodeId": "65L-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1646,13 +1814,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A12",
       "title": "Streaming response",
       "nodeId": "66Z-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1662,13 +1832,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A13",
       "title": "Response complete",
       "nodeId": "68B-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1678,13 +1850,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A14",
       "title": "Response stopped",
       "nodeId": "6AF-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1694,13 +1868,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A15",
       "title": "Response interrupted",
       "nodeId": "6CG-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1710,13 +1886,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A16",
       "title": "Taking longer",
       "nodeId": "6DW-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1726,13 +1904,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A17",
       "title": "Live task progress",
       "nodeId": "6FC-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1742,13 +1922,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A18",
       "title": "Response details",
       "nodeId": "6HG-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-sheet",
@@ -1758,13 +1940,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A19",
       "title": "Response feedback",
       "nodeId": "6K9-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-sheet",
@@ -1774,13 +1958,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V2"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A20",
       "title": "Feedback received",
       "nodeId": "6O8-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1790,13 +1976,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V2"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A21",
       "title": "Feedback not sent",
       "nodeId": "6TF-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1806,13 +1994,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V2"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A22",
       "title": "Saving approved draft",
       "nodeId": "6UE-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1822,13 +2012,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A23",
       "title": "Draft needs review",
       "nodeId": "6WK-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-sheet",
@@ -1838,13 +2030,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A24",
       "title": "Loading conversations",
       "nodeId": "6Z0-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -1853,13 +2047,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A25",
       "title": "No conversations",
       "nodeId": "70B-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -1868,13 +2064,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A26",
       "title": "Conversation load failed",
       "nodeId": "71B-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1884,13 +2082,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A27",
       "title": "Copied and rated",
       "nodeId": "727-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1900,13 +2100,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V2"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A28",
       "title": "Alternate response",
       "nodeId": "747-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1916,13 +2118,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V2"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A29",
       "title": "Message not sent",
       "nodeId": "76B-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "In place",
@@ -1932,13 +2136,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A30",
       "title": "Clarification needed",
       "nodeId": "77N-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-sheet",
@@ -1948,13 +2154,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S13",
       "title": "Camille \u00b7 Pieces",
       "nodeId": "7CQ-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -1964,13 +2172,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S14",
       "title": "Camille \u00b7 Themes",
       "nodeId": "7ED-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -1980,13 +2190,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S15",
       "title": "Home \u00b7 Today",
       "nodeId": "7JN-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-root",
@@ -1996,13 +2208,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S16",
       "title": "Today \u00b7 First piece",
       "nodeId": "7L6-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-root",
@@ -2011,13 +2225,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S17",
       "title": "Today \u00b7 No planned look",
       "nodeId": "7MP-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-root",
@@ -2026,13 +2242,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S18",
       "title": "Today \u00b7 Wardrobe activity",
       "nodeId": "7X5-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-root",
@@ -2042,13 +2260,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S19",
       "title": "Post \u00b7 Tags visible",
       "nodeId": "872-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2058,13 +2278,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S20",
       "title": "Pieces in this look",
       "nodeId": "88R-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2074,13 +2296,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S21",
       "title": "Blue wool coat",
       "nodeId": "89W-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2090,13 +2314,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S22",
       "title": "Comments",
       "nodeId": "8B5-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2107,13 +2333,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S23",
       "title": "Comments \u00b7 Empty",
       "nodeId": "8D5-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2124,13 +2352,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S24",
       "title": "Comments \u00b7 Send failed",
       "nodeId": "8FR-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2141,13 +2371,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S25",
       "title": "Likes",
       "nodeId": "8IK-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2157,13 +2389,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S26",
       "title": "Liked posts",
       "nodeId": "8LB-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2173,13 +2407,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S27",
       "title": "Tag pieces",
       "nodeId": "8OL-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2189,13 +2425,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S28",
       "title": "Choose published piece",
       "nodeId": "8PX-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2205,13 +2443,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S29",
       "title": "Saved inspiration \u00b7 Empty",
       "nodeId": "8TR-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2221,13 +2461,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S30",
       "title": "Share from your closet",
       "nodeId": "8W7-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2238,13 +2480,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S31",
       "title": "Theme post",
       "nodeId": "8XF-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2255,13 +2499,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S32",
       "title": "Add a piece to continue",
       "nodeId": "8Z5-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2272,13 +2518,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S33",
       "title": "Publish piece",
       "nodeId": "904-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2289,13 +2537,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S34",
       "title": "Publish theme",
       "nodeId": "91C-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2306,13 +2556,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S35",
       "title": "Burgundy coat",
       "nodeId": "92L-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2323,13 +2575,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S36",
       "title": "Search \u00b7 People",
       "nodeId": "9FF-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2340,13 +2594,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S37",
       "title": "Search \u00b7 Pieces",
       "nodeId": "9GX-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2357,13 +2613,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S38",
       "title": "Search \u00b7 Outfits",
       "nodeId": "9IE-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2374,13 +2632,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S39",
       "title": "Search \u00b7 Themes",
       "nodeId": "9JV-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2391,13 +2651,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S40",
       "title": "Search \u00b7 Loading",
       "nodeId": "9LF-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2408,13 +2670,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S41",
       "title": "Search \u00b7 Failed",
       "nodeId": "9MX-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2425,13 +2689,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S42",
       "title": "Search \u00b7 Offline",
       "nodeId": "9O9-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2442,13 +2708,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S43",
       "title": "Search \u00b7 Loading more",
       "nodeId": "9PS-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2459,13 +2727,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W22",
       "title": "Search closet \u00b7 Outfits",
       "nodeId": "9RC-0",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2476,13 +2746,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W23",
       "title": "Search closet \u00b7 Themes",
       "nodeId": "9SN-0",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2493,13 +2765,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W24",
       "title": "Search closet \u00b7 No matches",
       "nodeId": "9U1-0",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2510,13 +2784,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W25",
       "title": "Search closet \u00b7 Loading",
       "nodeId": "9VD-0",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2527,13 +2803,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W26",
       "title": "Search closet \u00b7 Failed",
       "nodeId": "9WP-0",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2544,13 +2822,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S44",
       "title": "Home \u00b7 Multiple posts",
       "nodeId": "9XV-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-root",
@@ -2560,13 +2840,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S45",
       "title": "Home \u00b7 Loading more",
       "nodeId": "A24-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-root",
@@ -2576,13 +2858,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S46",
       "title": "Home \u00b7 Load more failed",
       "nodeId": "A4J-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-root",
@@ -2592,13 +2876,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S47",
       "title": "Home \u00b7 End reached",
       "nodeId": "A6X-0",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-root",
@@ -2608,13 +2894,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W27",
       "title": "Review piece photo",
       "nodeId": "AMO-1",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2625,13 +2913,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W28",
       "title": "First outfit \u00b7 Missing pieces",
       "nodeId": "AO3-1",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2641,13 +2931,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W29",
       "title": "First outfit \u00b7 Ready",
       "nodeId": "AP9-1",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-push",
@@ -2656,13 +2948,15 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "S48",
       "title": "Today \u00b7 Ready to style",
       "nodeId": "AQF-1",
-      "pageId": "p-3-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "N-root",
@@ -2671,15 +2965,17 @@
         ],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E15",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "CRT-1",
       "title": "Session expired",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2687,15 +2983,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E16",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "CSZ-1",
       "title": "Sign-in unavailable",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2703,15 +3001,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "E17",
-      "pageId": "p-2-0",
+      "pageId": "p-B-0",
       "nodeId": "CU3-1",
       "title": "Connecting closet",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2719,15 +3019,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U16",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "CV7-1",
       "title": "Backup and sync",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2735,15 +3037,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U17",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "CWF-1",
       "title": "Sync conflict",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2751,15 +3055,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U18",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "CXA-1",
       "title": "Restore closet",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2767,15 +3073,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U19",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "CY5-1",
       "title": "Export status",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2783,15 +3091,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U20",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "CZ0-1",
       "title": "Deletion pending",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2799,15 +3109,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U21",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "CZV-1",
       "title": "Account deleted",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2815,15 +3127,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U22",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "D0Q-1",
       "title": "Sync failed",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2831,15 +3145,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U23",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "D1L-1",
       "title": "Restore failed",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2847,15 +3163,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A31",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "nodeId": "D2G-1",
       "title": "Review theme",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2863,15 +3181,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A32",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "nodeId": "D3B-1",
       "title": "Review changes",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2879,15 +3199,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A33",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "nodeId": "D46-1",
       "title": "Weather context",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2895,15 +3217,17 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "U24",
-      "pageId": "p-6-0",
+      "pageId": "p-B-0",
       "nodeId": "D51-1",
       "title": "Review conflicting edits",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-push",
         "content": [
@@ -2911,28 +3235,32 @@
           "C-load",
           "C-save"
         ]
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "W30",
       "title": "Closet options",
       "nodeId": "F3H-1",
-      "pageId": "p-4-0",
+      "pageId": "p-B-0",
       "complete": true,
       "motion": {
         "navigation": "Native Menu",
         "content": [],
         "contract": "motion.md"
       },
-      "release": "V1"
+      "release": "V2",
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A34",
       "title": "Agent \u00b7 Keyboard focused",
       "nodeId": "GEH-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "Native full-screen",
         "content": [
@@ -2940,15 +3268,17 @@
           "C-form"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A35",
       "title": "Add to your message",
       "nodeId": "GGV-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -2956,15 +3286,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A36",
       "title": "Choose closet pieces",
       "nodeId": "GJ9-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -2972,15 +3304,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A37",
       "title": "Agent \u00b7 Selected attachments",
       "nodeId": "GLN-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "Native full-screen",
         "content": [
@@ -2988,15 +3322,17 @@
           "C-form"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A38",
       "title": "Review attached photo",
       "nodeId": "GO1-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -3004,15 +3340,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A39",
       "title": "Preparing attachment",
       "nodeId": "GQF-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "Native full-screen",
         "content": [
@@ -3020,15 +3358,17 @@
           "C-form"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A40",
       "title": "Attachment needs attention",
       "nodeId": "GST-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "Native full-screen",
         "content": [
@@ -3036,15 +3376,17 @@
           "C-form"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A41",
       "title": "Dictation permission",
       "nodeId": "GV7-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -3052,15 +3394,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A42",
       "title": "Listening",
       "nodeId": "GXL-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -3068,15 +3412,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A43",
       "title": "Transcribing",
       "nodeId": "GZZ-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -3084,15 +3430,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A44",
       "title": "Review voice message",
       "nodeId": "H2D-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -3100,15 +3448,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A45",
       "title": "Voice unavailable",
       "nodeId": "H4R-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -3116,15 +3466,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A46",
       "title": "Context mode",
       "nodeId": "H75-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -3132,15 +3484,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A47",
       "title": "Closet \u00b7 No matching pieces",
       "nodeId": "H9J-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -3148,15 +3502,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A48",
       "title": "Stopping response",
       "nodeId": "HBX-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "Native full-screen",
         "content": [
@@ -3164,15 +3520,17 @@
           "C-form"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A49",
       "title": "Response timed out",
       "nodeId": "HEB-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "Native full-screen",
         "content": [
@@ -3180,15 +3538,17 @@
           "C-form"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A50",
       "title": "New response below",
       "nodeId": "HGP-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "Native full-screen",
         "content": [
@@ -3196,15 +3556,17 @@
           "C-form"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A51",
       "title": "Agent \u00b7 Reduced transparency",
       "nodeId": "HJ3-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "Native full-screen",
         "content": [
@@ -3212,15 +3574,17 @@
           "C-form"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A52",
       "title": "Agent \u00b7 Larger text",
       "nodeId": "HLH-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "Native full-screen",
         "content": [
@@ -3228,15 +3592,17 @@
           "C-form"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A53",
       "title": "Camera unavailable",
       "nodeId": "HNV-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -3244,15 +3610,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A54",
       "title": "Photo assistance unavailable",
       "nodeId": "HQ9-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "N-sheet",
         "content": [
@@ -3260,15 +3628,17 @@
           "C-select"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
     },
     {
       "id": "A55",
       "title": "Agent \u00b7 No closet context",
       "nodeId": "HSN-0",
-      "pageId": "p-A-1",
+      "pageId": "p-B-0",
       "complete": true,
-      "release": "V1",
+      "release": "V2",
       "motion": {
         "navigation": "Native full-screen",
         "content": [
@@ -3276,7 +3646,866 @@
           "C-form"
         ],
         "contract": "motion.md"
-      }
+      },
+      "phase": "V2",
+      "designStatus": "Prepared canonical reference"
+    },
+    {
+      "id": "L01",
+      "title": "Your closet, privately",
+      "nodeId": "JL8-0",
+      "pageId": "p-2-0",
+      "flowSection": "01",
+      "flowStep": 7,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L02",
+      "title": "Today",
+      "nodeId": "JMF-0",
+      "pageId": "p-2-0",
+      "flowSection": "02",
+      "flowStep": 0,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L03",
+      "title": "Closet",
+      "nodeId": "JNX-0",
+      "pageId": "p-2-0",
+      "flowSection": "03",
+      "flowStep": 0,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L04",
+      "title": "New piece",
+      "nodeId": "JPZ-0",
+      "pageId": "p-2-0",
+      "flowSection": "02",
+      "flowStep": 1,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L05",
+      "title": "First piece saved",
+      "nodeId": "JRU-0",
+      "pageId": "p-2-0",
+      "flowSection": "02",
+      "flowStep": 2,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L06",
+      "title": "Build outfit",
+      "nodeId": "JT0-0",
+      "pageId": "p-2-0",
+      "flowSection": "04",
+      "flowStep": 0,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L07",
+      "title": "Review outfit",
+      "nodeId": "JUF-0",
+      "pageId": "p-2-0",
+      "flowSection": "04",
+      "flowStep": 2,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L08",
+      "title": "An easy afternoon",
+      "nodeId": "JVS-0",
+      "pageId": "p-2-0",
+      "flowSection": "04",
+      "flowStep": 3,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L09",
+      "title": "Planner",
+      "nodeId": "JXA-0",
+      "pageId": "p-2-0",
+      "flowSection": "05",
+      "flowStep": 0,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L10",
+      "title": "Plan a look",
+      "nodeId": "JZY-0",
+      "pageId": "p-2-0",
+      "flowSection": "05",
+      "flowStep": 1,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L11",
+      "title": "Record wear",
+      "nodeId": "K16-0",
+      "pageId": "p-2-0",
+      "flowSection": "06",
+      "flowStep": 0,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L12",
+      "title": "Wear history",
+      "nodeId": "K2G-0",
+      "pageId": "p-2-0",
+      "flowSection": "06",
+      "flowStep": 1,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L13",
+      "title": "Settings",
+      "nodeId": "KGU-0",
+      "pageId": "p-2-0",
+      "flowSection": "08",
+      "flowStep": 3,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L14",
+      "title": "Export closet",
+      "nodeId": "KHP-0",
+      "pageId": "p-2-0",
+      "flowSection": "09",
+      "flowStep": 0,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L15",
+      "title": "Restore closet",
+      "nodeId": "KIK-0",
+      "pageId": "p-2-0",
+      "flowSection": "09",
+      "flowStep": 1,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L16",
+      "title": "Erase local closet",
+      "nodeId": "KJF-0",
+      "pageId": "p-2-0",
+      "flowSection": "09",
+      "flowStep": 2,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L17",
+      "title": "Couldn\u2019t save",
+      "nodeId": "K3U-0",
+      "pageId": "p-2-0",
+      "flowSection": "09",
+      "flowStep": 3,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L18",
+      "title": "Suggest an outfit",
+      "nodeId": "K4P-0",
+      "pageId": "p-2-0",
+      "flowSection": "04",
+      "flowStep": 1,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L19",
+      "title": "Assistance unavailable",
+      "nodeId": "K63-0",
+      "pageId": "p-2-0",
+      "flowSection": "07",
+      "flowStep": 9,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L20",
+      "title": "Closet \u00b7 Outfits",
+      "nodeId": "K70-0",
+      "pageId": "p-2-0",
+      "flowSection": "03",
+      "flowStep": 1,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L21",
+      "title": "Cotton shirt",
+      "nodeId": "K9I-0",
+      "pageId": "p-2-0",
+      "flowSection": "03",
+      "flowStep": 2,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L22",
+      "title": "Closet needs recovery",
+      "nodeId": "KKA-0",
+      "pageId": "p-2-0",
+      "flowSection": "09",
+      "flowStep": 4,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L23",
+      "title": "Today \u00b7 Planned outfit",
+      "nodeId": "KBP-0",
+      "pageId": "p-2-0",
+      "flowSection": "02",
+      "flowStep": 5,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L24",
+      "title": "Agent",
+      "nodeId": "KPT-0",
+      "pageId": "p-2-0",
+      "flowSection": "07",
+      "flowStep": 0,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L25",
+      "title": "Agent \u00b7 Local response",
+      "nodeId": "KRR-0",
+      "pageId": "p-2-0",
+      "flowSection": "07",
+      "flowStep": 1,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L26",
+      "title": "Conversations",
+      "nodeId": "KU5-0",
+      "pageId": "p-2-0",
+      "flowSection": "07",
+      "flowStep": 6,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L27",
+      "title": "Outfit saved \u00b7 Local receipt",
+      "nodeId": "KVA-0",
+      "pageId": "p-2-0",
+      "flowSection": "04",
+      "flowStep": 4,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L28",
+      "title": "Agent context \u00b7 Local",
+      "nodeId": "KWC-0",
+      "pageId": "p-2-0",
+      "flowSection": "07",
+      "flowStep": 2,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L29",
+      "title": "Agent \u00b7 Waiting",
+      "nodeId": "KXH-0",
+      "pageId": "p-2-0",
+      "flowSection": "07",
+      "flowStep": 3,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L30",
+      "title": "Agent \u00b7 Streaming",
+      "nodeId": "KZ2-0",
+      "pageId": "p-2-0",
+      "flowSection": "07",
+      "flowStep": 4,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L31",
+      "title": "Agent \u00b7 Complete",
+      "nodeId": "L0T-0",
+      "pageId": "p-2-0",
+      "flowSection": "07",
+      "flowStep": 5,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L32",
+      "title": "Closet \u00b7 Themes",
+      "nodeId": "L3D-0",
+      "pageId": "p-2-0",
+      "flowSection": "03",
+      "flowStep": 3,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L33",
+      "title": "Closet \u00b7 Planner",
+      "nodeId": "L5M-0",
+      "pageId": "p-2-0",
+      "flowSection": "03",
+      "flowStep": 4,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L34",
+      "title": "Weekend \u00b7 Theme",
+      "nodeId": "L7F-0",
+      "pageId": "p-2-0",
+      "flowSection": "03",
+      "flowStep": 5,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L35",
+      "title": "Edit theme",
+      "nodeId": "L8P-0",
+      "pageId": "p-2-0",
+      "flowSection": "03",
+      "flowStep": 6,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L36",
+      "title": "New routine",
+      "nodeId": "L9S-0",
+      "pageId": "p-2-0",
+      "flowSection": "05",
+      "flowStep": 2,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L37",
+      "title": "Office routine",
+      "nodeId": "LBA-0",
+      "pageId": "p-2-0",
+      "flowSection": "05",
+      "flowStep": 3,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L38",
+      "title": "Trip plan",
+      "nodeId": "LCX-0",
+      "pageId": "p-2-0",
+      "flowSection": "05",
+      "flowStep": 4,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L39",
+      "title": "Packing list",
+      "nodeId": "LED-0",
+      "pageId": "p-2-0",
+      "flowSection": "05",
+      "flowStep": 5,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L40",
+      "title": "Review plan",
+      "nodeId": "LFS-0",
+      "pageId": "p-2-0",
+      "flowSection": "05",
+      "flowStep": 6,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L41",
+      "title": "Wear insights",
+      "nodeId": "LH2-0",
+      "pageId": "p-2-0",
+      "flowSection": "06",
+      "flowStep": 2,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L42",
+      "title": "Resolve a conflict",
+      "nodeId": "LIA-0",
+      "pageId": "p-2-0",
+      "flowSection": "05",
+      "flowStep": 7,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L43",
+      "title": "First outfit \u00b7 Missing categories",
+      "nodeId": "LJG-0",
+      "pageId": "p-2-0",
+      "flowSection": "02",
+      "flowStep": 3,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L44",
+      "title": "First outfit \u00b7 Ready",
+      "nodeId": "LKC-0",
+      "pageId": "p-2-0",
+      "flowSection": "02",
+      "flowStep": 4,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L45",
+      "title": "Local style preferences",
+      "nodeId": "LLB-0",
+      "pageId": "p-2-0",
+      "flowSection": "08",
+      "flowStep": 2,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L46",
+      "title": "Review theme",
+      "nodeId": "LMY-0",
+      "pageId": "p-2-0",
+      "flowSection": "07",
+      "flowStep": 7,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L47",
+      "title": "Review local changes",
+      "nodeId": "LNT-0",
+      "pageId": "p-2-0",
+      "flowSection": "07",
+      "flowStep": 8,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L48",
+      "title": "Profile \u00b7 Local",
+      "nodeId": "LS0-0",
+      "pageId": "p-2-0",
+      "localComposition": true,
+      "flowSection": "08",
+      "flowStep": 0,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L49",
+      "title": "Edit local profile",
+      "nodeId": "LT9-0",
+      "pageId": "p-2-0",
+      "localComposition": true,
+      "flowSection": "08",
+      "flowStep": 1,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L50",
+      "title": "Appearance",
+      "nodeId": "LU7-0",
+      "pageId": "p-2-0",
+      "localComposition": true,
+      "flowSection": "08",
+      "flowStep": 4,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L51",
+      "title": "Help and privacy",
+      "nodeId": "LV5-0",
+      "pageId": "p-2-0",
+      "localComposition": true,
+      "flowSection": "08",
+      "flowStep": 5,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L52",
+      "title": "Local Agent capability",
+      "nodeId": "LW3-0",
+      "pageId": "p-2-0",
+      "localComposition": true,
+      "flowSection": "08",
+      "flowStep": 6,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L53",
+      "title": "Welcome \u00b7 Dark",
+      "nodeId": "M2Y-0",
+      "pageId": "p-2-0",
+      "appearance": "dark",
+      "sourceNodeId": "JL8-0",
+      "flowSection": "10",
+      "flowStep": 1,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L54",
+      "title": "Home \u00b7 Dark",
+      "nodeId": "M3Y-0",
+      "pageId": "p-2-0",
+      "appearance": "dark",
+      "sourceNodeId": "KBP-0",
+      "flowSection": "10",
+      "flowStep": 2,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L55",
+      "title": "Closet \u00b7 Dark",
+      "nodeId": "M6G-0",
+      "pageId": "p-2-0",
+      "appearance": "dark",
+      "sourceNodeId": "JNX-0",
+      "flowSection": "10",
+      "flowStep": 3,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L56",
+      "title": "Agent \u00b7 Dark",
+      "nodeId": "M8G-0",
+      "pageId": "p-2-0",
+      "appearance": "dark",
+      "sourceNodeId": "KPT-0",
+      "flowSection": "10",
+      "flowStep": 4,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L57",
+      "title": "Profile \u00b7 Dark",
+      "nodeId": "MAE-0",
+      "pageId": "p-2-0",
+      "appearance": "dark",
+      "sourceNodeId": "LS0-0",
+      "flowSection": "10",
+      "flowStep": 5,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L58",
+      "title": "Settings \u00b7 Dark",
+      "nodeId": "MCE-0",
+      "pageId": "p-2-0",
+      "appearance": "dark",
+      "sourceNodeId": "KGU-0",
+      "flowSection": "10",
+      "flowStep": 6,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L59",
+      "title": "Appearance \u00b7 Dark",
+      "nodeId": "MDT-0",
+      "pageId": "p-2-0",
+      "appearance": "dark",
+      "sourceNodeId": "LU7-0",
+      "flowSection": "10",
+      "flowStep": 7,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L60",
+      "title": "Welcome",
+      "nodeId": "MJJ-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "12-0",
+      "flowSection": "01",
+      "flowStep": 0,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference",
+      "sourceScreenId": "E02"
+    },
+    {
+      "id": "L61",
+      "title": "Welcome \u00b7 Start privately",
+      "nodeId": "MKC-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "KGU-0",
+      "flowSection": "01",
+      "flowStep": 1,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L62",
+      "title": "Tour \u00b7 Home",
+      "nodeId": "MLN-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "KBP-0",
+      "flowSection": "01",
+      "flowStep": 2,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L63",
+      "title": "Tour \u00b7 Closet",
+      "nodeId": "MO5-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "JNX-0",
+      "flowSection": "01",
+      "flowStep": 3,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L64",
+      "title": "Tour \u00b7 Agent",
+      "nodeId": "MQ5-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "KPT-0",
+      "flowSection": "01",
+      "flowStep": 4,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L65",
+      "title": "Tour \u00b7 Profile",
+      "nodeId": "MS3-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "LS0-0",
+      "flowSection": "01",
+      "flowStep": 5,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L66",
+      "title": "Onboarding \u00b7 Ready to begin",
+      "nodeId": "MU3-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "KGU-0",
+      "flowSection": "01",
+      "flowStep": 6,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L67",
+      "title": "Welcome \u00b7 Dark",
+      "nodeId": "MY9-0",
+      "pageId": "p-2-0",
+      "appearance": "dark",
+      "sourceNodeId": "MJJ-0",
+      "flowSection": "10",
+      "flowStep": 0,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L68",
+      "title": "Agent \u00b7 Keyboard focused",
+      "nodeId": "N0G-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "GEH-0",
+      "capability": "Local input",
+      "flowSection": "07",
+      "flowStep": 10,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L69",
+      "title": "Voice \u00b7 Permission",
+      "nodeId": "N43-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "GV7-0",
+      "capability": "Verified on-device speech only; typed fallback",
+      "flowSection": "07",
+      "flowStep": 11,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L70",
+      "title": "Voice \u00b7 Listening",
+      "nodeId": "N5P-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "GXL-0",
+      "capability": "Verified on-device speech only; typed fallback",
+      "flowSection": "07",
+      "flowStep": 12,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L71",
+      "title": "Voice \u00b7 Transcribing",
+      "nodeId": "N7F-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "GZZ-0",
+      "capability": "Verified on-device speech only; typed fallback",
+      "flowSection": "07",
+      "flowStep": 13,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L72",
+      "title": "Voice \u00b7 Review transcript",
+      "nodeId": "N91-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "H2D-0",
+      "capability": "Verified on-device speech only; typed fallback",
+      "flowSection": "07",
+      "flowStep": 14,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L73",
+      "title": "Voice \u00b7 Unavailable",
+      "nodeId": "NAN-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "H4R-0",
+      "capability": "Verified on-device speech only; typed fallback",
+      "flowSection": "07",
+      "flowStep": 15,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
+    },
+    {
+      "id": "L74",
+      "title": "Agent \u00b7 Choose local context",
+      "nodeId": "NC6-0",
+      "pageId": "p-2-0",
+      "sourceNodeId": "H75-0",
+      "capability": "Local input",
+      "flowSection": "07",
+      "flowStep": 16,
+      "release": "V1",
+      "phase": "V1",
+      "designStatus": "Prepared static local reference"
     }
   ],
   "referenceBoards": [
@@ -3393,35 +4622,35 @@
     {
       "nodeId": "ADU-0",
       "name": "Offline \u00b7 Today",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
       "parentNodeId": "FLK-0"
     },
     {
       "nodeId": "AFN-0",
       "name": "Offline \u00b7 Closet",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
       "parentNodeId": "FLK-0"
     },
     {
       "nodeId": "AHI-0",
       "name": "Offline \u00b7 Community",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
       "parentNodeId": "FLK-0"
     },
     {
       "nodeId": "AJ5-0",
       "name": "Offline \u00b7 Inbox",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
       "parentNodeId": "FLK-0"
     },
     {
       "nodeId": "AKG-0",
       "name": "19 \u00b7 Offline experience",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true
     },
     {
@@ -3431,82 +4660,82 @@
     },
     {
       "nodeId": "ASJ-1",
-      "name": "00 \u00b7 V1 overview",
-      "pageId": "p-8-0",
+      "name": "00 \u00b7 V2 complete product overview",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-flow.md",
+      "contract": "v2-flow.md",
       "staticScreenCopies": true
     },
     {
       "nodeId": "AT9-1",
       "name": "01 \u00b7 Welcome and capture",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-flow.md",
+      "contract": "v2-flow.md",
       "staticScreenCopies": true
     },
     {
       "nodeId": "ATG-1",
       "name": "02 \u00b7 Optional auth and Home",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-flow.md",
+      "contract": "v2-flow.md",
       "staticScreenCopies": true
     },
     {
       "nodeId": "ATN-1",
       "name": "03 \u00b7 Suggest, replace and save",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-flow.md",
+      "contract": "v2-flow.md",
       "staticScreenCopies": true
     },
     {
       "nodeId": "ATU-1",
       "name": "04 \u00b7 Manual outfits and themes",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-flow.md",
+      "contract": "v2-flow.md",
       "staticScreenCopies": true
     },
     {
       "nodeId": "AU1-1",
       "name": "05 \u00b7 Plan, wear and history",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-flow.md",
+      "contract": "v2-flow.md",
       "staticScreenCopies": true
     },
     {
       "nodeId": "AU8-1",
       "name": "06 \u00b7 Trip and packing",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-flow.md",
+      "contract": "v2-flow.md",
       "staticScreenCopies": true
     },
     {
       "nodeId": "AUF-1",
       "name": "07 \u00b7 Community and Inbox",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-flow.md",
+      "contract": "v2-flow.md",
       "staticScreenCopies": true
     },
     {
       "nodeId": "AUM-1",
       "name": "08 \u00b7 Recovery branches",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-flow.md",
+      "contract": "v2-flow.md",
       "staticScreenCopies": true
     },
     {
       "nodeId": "D5W-1",
       "name": "09 \u00b7 Identity and session recovery",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-coverage.md",
+      "contract": "v2-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "E15",
@@ -3519,9 +4748,9 @@
     {
       "nodeId": "DBF-1",
       "name": "10 \u00b7 Backup, conflicts and restore",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-coverage.md",
+      "contract": "v2-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "U16",
@@ -3535,9 +4764,9 @@
     {
       "nodeId": "DHO-1",
       "name": "11 \u00b7 Export and account deletion",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-coverage.md",
+      "contract": "v2-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "U09",
@@ -3552,9 +4781,9 @@
     {
       "nodeId": "DPT-1",
       "name": "12 \u00b7 Wardrobe lifecycle and history",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-coverage.md",
+      "contract": "v2-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "W08",
@@ -3568,9 +4797,9 @@
     {
       "nodeId": "DYR-1",
       "name": "13 \u00b7 Office routines and calendar edits",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-coverage.md",
+      "contract": "v2-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "P04",
@@ -3583,9 +4812,9 @@
     {
       "nodeId": "E8H-1",
       "name": "14 \u00b7 Discovery, discussion and safety",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-coverage.md",
+      "contract": "v2-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "S30",
@@ -3601,9 +4830,9 @@
     {
       "nodeId": "EKI-1",
       "name": "15 \u00b7 Agent review and contextual actions",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-coverage.md",
+      "contract": "v2-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "A33",
@@ -3617,9 +4846,9 @@
     {
       "nodeId": "EQO-1",
       "name": "16 \u00b7 Inbox requests and safe retry",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-coverage.md",
+      "contract": "v2-coverage.md",
       "staticScreenCopies": true,
       "screenIds": [
         "I01",
@@ -3632,19 +4861,19 @@
     },
     {
       "nodeId": "EZH-1",
-      "name": "17 \u00b7 V1 coverage and launch gates",
-      "pageId": "p-8-0",
+      "name": "17 \u00b7 V2 core coverage and launch gates",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-coverage.md",
+      "contract": "v2-coverage.md",
       "staticScreenCopies": false,
       "screenIds": []
     },
     {
       "nodeId": "F24-1",
-      "name": "18 \u00b7 V2 boundary",
-      "pageId": "p-8-0",
+      "name": "18 \u00b7 V2 expansion scope",
+      "pageId": "p-B-0",
       "reviewOnly": true,
-      "contract": "v1-coverage.md",
+      "contract": "v2-coverage.md",
       "staticScreenCopies": false,
       "screenIds": []
     },
@@ -3687,7 +4916,7 @@
     {
       "nodeId": "IKI-0",
       "name": "20 \u00b7 Agent input, voice and streaming",
-      "pageId": "p-8-0",
+      "pageId": "p-B-0",
       "reviewOnly": true,
       "contract": "agent-input.md",
       "staticScreenCopies": true,
@@ -3705,6 +4934,164 @@
         "A40",
         "A49"
       ]
+    },
+    {
+      "nodeId": "JKP-0",
+      "name": "V1 \u00b7 Four-destination navigation master",
+      "pageId": "p-1-0"
+    },
+    {
+      "nodeId": "JK8-0",
+      "name": "00 \u00b7 V1 scope & journey",
+      "pageId": "p-2-0"
+    },
+    {
+      "nodeId": "MZ2-0",
+      "name": "01 \u00b7 V1 flow \u00b7 Welcome, onboarding and tour",
+      "pageId": "p-2-0"
+    },
+    {
+      "nodeId": "MZ7-0",
+      "name": "02 \u00b7 V1 flow \u00b7 Home and first piece",
+      "pageId": "p-2-0"
+    },
+    {
+      "nodeId": "MZC-0",
+      "name": "03 \u00b7 V1 flow \u00b7 Closet and themes",
+      "pageId": "p-2-0"
+    },
+    {
+      "nodeId": "MZH-0",
+      "name": "04 \u00b7 V1 flow \u00b7 Create, review and save an outfit",
+      "pageId": "p-2-0"
+    },
+    {
+      "nodeId": "MZM-0",
+      "name": "05 \u00b7 V1 flow \u00b7 Planning, routines and trips",
+      "pageId": "p-2-0"
+    },
+    {
+      "nodeId": "MZR-0",
+      "name": "06 \u00b7 V1 flow \u00b7 Actual wear and insights",
+      "pageId": "p-2-0"
+    },
+    {
+      "nodeId": "MZW-0",
+      "name": "07 \u00b7 V1 flow \u00b7 Local Agent",
+      "pageId": "p-2-0"
+    },
+    {
+      "nodeId": "N01-0",
+      "name": "08 \u00b7 V1 flow \u00b7 Local Profile and Settings",
+      "pageId": "p-2-0"
+    },
+    {
+      "nodeId": "N06-0",
+      "name": "09 \u00b7 V1 flow \u00b7 Local data and recovery",
+      "pageId": "p-2-0"
+    },
+    {
+      "nodeId": "N0B-0",
+      "name": "10 \u00b7 V1 flow \u00b7 Dark appearance",
+      "pageId": "p-2-0"
+    },
+    {
+      "nodeId": "MEO-0",
+      "name": "EX01 \u00b7 V2 \u00b7 Capture and try-on",
+      "pageId": "p-B-0"
+    },
+    {
+      "nodeId": "MEU-0",
+      "name": "EX02 \u00b7 V2 \u00b7 Shopping and wishlist",
+      "pageId": "p-B-0"
+    },
+    {
+      "nodeId": "MF0-0",
+      "name": "EX03 \u00b7 V2 \u00b7 Personalization, insights and Agent",
+      "pageId": "p-B-0"
+    },
+    {
+      "nodeId": "MF6-0",
+      "name": "EX04 \u00b7 V2 \u00b7 Advanced planning and notifications",
+      "pageId": "p-B-0"
+    },
+    {
+      "nodeId": "MFC-0",
+      "name": "EX05 \u00b7 V2 \u00b7 Rich community and Inbox",
+      "pageId": "p-B-0"
+    },
+    {
+      "nodeId": "MFI-0",
+      "name": "EX06 \u00b7 V2 \u00b7 Identity, billing and platforms",
+      "pageId": "p-B-0"
+    },
+    {
+      "nodeId": "MFO-0",
+      "name": "EX07 \u00b7 V2 \u00b7 Operations and acquisition",
+      "pageId": "p-B-0"
+    },
+    {
+      "nodeId": "NJU-0",
+      "name": "01 \u00b7 V2 \u00b7 Entry and identity",
+      "pageId": "p-B-0",
+      "contract": "v2-flow.md",
+      "reviewOnly": true
+    },
+    {
+      "nodeId": "NJY-0",
+      "name": "02 \u00b7 V2 \u00b7 Home and community",
+      "pageId": "p-B-0",
+      "contract": "v2-flow.md",
+      "reviewOnly": true
+    },
+    {
+      "nodeId": "NK2-0",
+      "name": "03 \u00b7 V2 \u00b7 Closet and creation",
+      "pageId": "p-B-0",
+      "contract": "v2-flow.md",
+      "reviewOnly": true
+    },
+    {
+      "nodeId": "NK6-0",
+      "name": "04 \u00b7 V2 \u00b7 Planning and wear",
+      "pageId": "p-B-0",
+      "contract": "v2-flow.md",
+      "reviewOnly": true
+    },
+    {
+      "nodeId": "NKA-0",
+      "name": "05 \u00b7 V2 \u00b7 Agent",
+      "pageId": "p-B-0",
+      "contract": "v2-flow.md",
+      "reviewOnly": true
+    },
+    {
+      "nodeId": "NKE-0",
+      "name": "06 \u00b7 V2 \u00b7 Human Inbox",
+      "pageId": "p-B-0",
+      "contract": "v2-flow.md",
+      "reviewOnly": true
+    },
+    {
+      "nodeId": "NKI-0",
+      "name": "07 \u00b7 V2 \u00b7 Profile and account",
+      "pageId": "p-B-0",
+      "contract": "v2-flow.md",
+      "reviewOnly": true
+    },
+    {
+      "nodeId": "NKM-0",
+      "name": "08 \u00b7 V2 \u00b7 Complete connected journeys",
+      "pageId": "p-B-0",
+      "contract": "v2-flow.md",
+      "reviewOnly": true
+    },
+    {
+      "nodeId": "NKQ-0",
+      "name": "09 \u00b7 V2 \u00b7 Future expansion requirements",
+      "pageId": "p-B-0",
+      "contract": "v2-requirements.md",
+      "reviewOnly": true
     }
   ],
   "controlMaterialReview": {
@@ -3854,5 +5241,757 @@
     "smallerAgentHeadersCorrected": 48,
     "rootAlignmentPreserved": true,
     "nativeDeviceTest": false
+  },
+  "phaseRefactorReview": {
+    "date": "2026-10-05",
+    "branch": "van/v1-v2-product-plan",
+    "v1ScreenCount": 74,
+    "v1SectionCount": 10,
+    "v2ExpansionRequirementBoards": [
+      {
+        "id": "EX01",
+        "title": "Capture and try-on",
+        "nodeId": "MEO-0",
+        "pageId": "p-B-0"
+      },
+      {
+        "id": "EX02",
+        "title": "Shopping and wishlist",
+        "nodeId": "MEU-0",
+        "pageId": "p-B-0"
+      },
+      {
+        "id": "EX03",
+        "title": "Personalization, insights and Agent",
+        "nodeId": "MF0-0",
+        "pageId": "p-B-0"
+      },
+      {
+        "id": "EX04",
+        "title": "Advanced planning and notifications",
+        "nodeId": "MF6-0",
+        "pageId": "p-B-0"
+      },
+      {
+        "id": "EX05",
+        "title": "Rich community and Inbox",
+        "nodeId": "MFC-0",
+        "pageId": "p-B-0"
+      },
+      {
+        "id": "EX06",
+        "title": "Identity, billing and platforms",
+        "nodeId": "MFI-0",
+        "pageId": "p-B-0"
+      },
+      {
+        "id": "EX07",
+        "title": "Operations and acquisition",
+        "nodeId": "MFO-0",
+        "pageId": "p-B-0"
+      }
+    ],
+    "scope": "Documentation and live static Paper review; no app implementation, native accessibility/capability proof or backend deployment.",
+    "localInputReferences": [
+      "L68",
+      "L69",
+      "L70",
+      "L71",
+      "L72",
+      "L73",
+      "L74"
+    ],
+    "pageCount": 3,
+    "pageOrder": [
+      "Foundations",
+      "V1",
+      "V2"
+    ],
+    "v2SectionCount": 9
+  },
+  "welcomeMotionReview": {
+    "date": "2026-10-05",
+    "scope": "Original twelve-piece generated asset and static keyframes; native animation/performance unverified",
+    "asset": "assets/welcome/garment-atlas-original.png",
+    "provenance": "assets/welcome/README.md",
+    "motionBoard": "64C-0",
+    "v1References": [
+      "L60",
+      "L67"
+    ],
+    "v2Reference": "E02",
+    "copies": [
+      {
+        "kind": "V2Welcome",
+        "rootId": "NFI-0",
+        "pieces": [
+          "NFJ-0",
+          "NFL-0",
+          "NFN-0",
+          "NFP-0",
+          "NFR-0",
+          "NFT-0",
+          "NFV-0",
+          "NFX-0",
+          "NFZ-0",
+          "NG1-0",
+          "NG3-0",
+          "NG5-0"
+        ]
+      },
+      {
+        "kind": "V1WelcomeDark",
+        "rootId": "NG8-0",
+        "pieces": [
+          "NG9-0",
+          "NGB-0",
+          "NGD-0",
+          "NGF-0",
+          "NGH-0",
+          "NGJ-0",
+          "NGL-0",
+          "NGN-0",
+          "NGP-0",
+          "NGR-0",
+          "NGT-0",
+          "NGV-0"
+        ]
+      },
+      {
+        "kind": "V2ReviewWelcome",
+        "rootId": "NGY-0",
+        "pieces": [
+          "NGZ-0",
+          "NH1-0",
+          "NH3-0",
+          "NH5-0",
+          "NH7-0",
+          "NH9-0",
+          "NHB-0",
+          "NHD-0",
+          "NHF-0",
+          "NHH-0",
+          "NHJ-0",
+          "NHL-0"
+        ]
+      },
+      {
+        "kind": "MotionGathered",
+        "rootId": "NHO-0",
+        "pieces": [
+          "NHP-0",
+          "NHR-0",
+          "NHT-0",
+          "NHV-0",
+          "NHX-0",
+          "NHZ-0",
+          "NI1-0",
+          "NI3-0",
+          "NI5-0",
+          "NI7-0",
+          "NI9-0",
+          "NIB-0"
+        ]
+      },
+      {
+        "kind": "MotionLooks",
+        "rootId": "NIE-0",
+        "pieces": [
+          "NIF-0",
+          "NIH-0",
+          "NIJ-0",
+          "NIL-0",
+          "NIN-0",
+          "NIP-0",
+          "NIR-0",
+          "NIT-0",
+          "NIV-0",
+          "NIX-0",
+          "NIZ-0",
+          "NJ1-0"
+        ]
+      },
+      {
+        "kind": "MotionSettled",
+        "rootId": "NJ4-0",
+        "pieces": [
+          "NJ5-0",
+          "NJ7-0",
+          "NJ9-0",
+          "NJB-0",
+          "NJD-0",
+          "NJF-0",
+          "NJH-0",
+          "NJJ-0",
+          "NJL-0",
+          "NJN-0",
+          "NJP-0",
+          "NJR-0"
+        ]
+      }
+    ],
+    "timingMs": [
+      0,
+      520,
+      1200
+    ],
+    "reduceMotion": "Settled immediately; no spatial motion",
+    "workingAnimation": false
+  },
+  "v2FlowSections": [
+    {
+      "code": "01",
+      "title": "Entry and identity",
+      "details": "Private entry extends V1 with optional online identity. Canonical E references; service and callback states stay preserved.",
+      "left": 0,
+      "top": 1100,
+      "nodeIds": [
+        "W-0",
+        "12-0",
+        "2G-0",
+        "3S-0",
+        "4X-0",
+        "EW-0",
+        "FW-0",
+        "H3-0",
+        "IG-0",
+        "5U6-0",
+        "5VQ-0",
+        "5XJ-0",
+        "5XK-0",
+        "609-0",
+        "CRT-1",
+        "CSZ-1",
+        "CU3-1"
+      ],
+      "headerNodeId": "NJU-0",
+      "pageId": "p-B-0"
+    },
+    {
+      "code": "02",
+      "title": "Home and community",
+      "details": "Today extends the local Home with All/Following, discovery, public references and safety. Canonical S references.",
+      "left": 0,
+      "top": 6200,
+      "nodeIds": [
+        "65-0",
+        "JM-0",
+        "LP-0",
+        "NV-0",
+        "PR-0",
+        "R7-0",
+        "SP-0",
+        "UF-0",
+        "VX-0",
+        "XB-0",
+        "YS-0",
+        "10F-0",
+        "123-0",
+        "13S-0",
+        "15A-0",
+        "18H-0",
+        "1C6-0",
+        "7CQ-0",
+        "7ED-0",
+        "7JN-0",
+        "7L6-0",
+        "AQF-1",
+        "7MP-0",
+        "7X5-0",
+        "872-0",
+        "88R-0",
+        "89W-0",
+        "8B5-0",
+        "8D5-0",
+        "8FR-0",
+        "8IK-0",
+        "8LB-0",
+        "8OL-0",
+        "8PX-0",
+        "8TR-0",
+        "8W7-0",
+        "8XF-0",
+        "8Z5-0",
+        "904-0",
+        "91C-0",
+        "92L-0",
+        "9FF-0",
+        "9GX-0",
+        "9IE-0",
+        "9JV-0",
+        "9LF-0",
+        "9MX-0",
+        "9O9-0",
+        "9PS-0",
+        "9XV-0",
+        "A24-0",
+        "A4J-0",
+        "A6X-0"
+      ],
+      "headerNodeId": "NJY-0",
+      "pageId": "p-B-0"
+    },
+    {
+      "code": "03",
+      "title": "Closet and creation",
+      "details": "Owned wardrobe, outfits/themes and explicit publication. Canonical W references; private records and public snapshots remain distinct.",
+      "left": 0,
+      "top": 21100,
+      "nodeIds": [
+        "8B-0",
+        "F3H-1",
+        "1E4-0",
+        "1GG-0",
+        "1IR-0",
+        "1LK-0",
+        "1NJ-0",
+        "1ON-0",
+        "1Q9-0",
+        "1UE-0",
+        "1W8-0",
+        "1Y1-0",
+        "21M-0",
+        "26F-0",
+        "AMO-1",
+        "AO3-1",
+        "AP9-1",
+        "29G-0",
+        "2AY-0",
+        "2CJ-0",
+        "2QN-0",
+        "2X8-0",
+        "33K-0",
+        "36N-0",
+        "3GI-0",
+        "3LJ-0",
+        "9RC-0",
+        "9SN-0",
+        "9U1-0",
+        "9VD-0",
+        "9WP-0"
+      ],
+      "headerNodeId": "NK2-0",
+      "pageId": "p-B-0"
+    },
+    {
+      "code": "04",
+      "title": "Planning and wear",
+      "details": "Dates, routines, events/trips, packing and actual wear. Canonical P references; V1 manual journeys remain intact.",
+      "left": 0,
+      "top": 30100,
+      "nodeIds": [
+        "2CK-0",
+        "2K0-0",
+        "2SF-0",
+        "2XC-0",
+        "34X-0",
+        "3DI-0",
+        "3IQ-0",
+        "3O3-0",
+        "50O-0",
+        "5B0-0",
+        "5F5-0",
+        "5GJ-0"
+      ],
+      "headerNodeId": "NK6-0",
+      "pageId": "p-B-0"
+    },
+    {
+      "code": "05",
+      "title": "Agent",
+      "details": "Complete local Agent extends to selected contextual/connected capabilities. Canonical A references; exact review and truthful receipts.",
+      "left": 0,
+      "top": 33400,
+      "nodeIds": [
+        "2CL-0",
+        "GEH-0",
+        "GGV-0",
+        "GJ9-0",
+        "GLN-0",
+        "GO1-0",
+        "GQF-0",
+        "GST-0",
+        "GV7-0",
+        "GXL-0",
+        "GZZ-0",
+        "H2D-0",
+        "H4R-0",
+        "H75-0",
+        "H9J-0",
+        "HBX-0",
+        "HEB-0",
+        "HGP-0",
+        "HJ3-0",
+        "HLH-0",
+        "HNV-0",
+        "HQ9-0",
+        "HSN-0",
+        "2K1-0",
+        "2QT-0",
+        "2XB-0",
+        "34E-0",
+        "3C7-0",
+        "D2G-1",
+        "D3B-1",
+        "D46-1",
+        "3I4-0",
+        "3N2-0",
+        "3QB-0",
+        "3S9-0",
+        "65L-0",
+        "66Z-0",
+        "68B-0",
+        "6AF-0",
+        "6CG-0",
+        "6DW-0",
+        "6FC-0",
+        "6HG-0",
+        "6K9-0",
+        "6O8-0",
+        "6TF-0",
+        "6UE-0",
+        "6WK-0",
+        "6Z0-0",
+        "70B-0",
+        "71B-0",
+        "727-0",
+        "747-0",
+        "76B-0",
+        "77N-0"
+      ],
+      "headerNodeId": "NKA-0",
+      "pageId": "p-B-0"
+    },
+    {
+      "code": "06",
+      "title": "Human Inbox",
+      "details": "Participant-scoped human requests/messages, retry and safety. Canonical I references; separate from local Agent conversations.",
+      "left": 0,
+      "top": 48900,
+      "nodeIds": [
+        "2D2-0",
+        "2N8-0",
+        "2XD-0",
+        "34Z-0",
+        "3BQ-0",
+        "3HL-0",
+        "3ML-0",
+        "3PX-0"
+      ],
+      "headerNodeId": "NKE-0",
+      "pageId": "p-B-0"
+    },
+    {
+      "code": "07",
+      "title": "Profile and account",
+      "details": "V1 local Profile extends to public identity, account lifecycle, data association/sync/recovery and complete Settings. Canonical U references.",
+      "left": 0,
+      "top": 51300,
+      "nodeIds": [
+        "2EN-0",
+        "2QO-0",
+        "2XZ-0",
+        "34Y-0",
+        "3B1-0",
+        "4F6-0",
+        "4LE-0",
+        "4MW-0",
+        "50P-0",
+        "52I-0",
+        "53R-0",
+        "5B1-0",
+        "5DE-0",
+        "5GG-0",
+        "5IZ-0",
+        "CXA-1",
+        "CY5-1",
+        "CWF-1",
+        "CZ0-1",
+        "D51-1",
+        "CZV-1",
+        "D0Q-1",
+        "D1L-1",
+        "5JV-0",
+        "CV7-1"
+      ],
+      "headerNodeId": "NKI-0",
+      "pageId": "p-B-0"
+    },
+    {
+      "code": "08",
+      "title": "Complete connected journeys",
+      "details": "Preserved walkthrough, lifecycle/recovery and shared-input strips. Read each labelled journey left to right; independent cases are not one funnel.",
+      "left": 3200,
+      "top": 1100,
+      "nodeIds": [
+        "AT9-1",
+        "ATG-1",
+        "ATN-1",
+        "ATU-1",
+        "AU1-1",
+        "AU8-1",
+        "AUF-1",
+        "AUM-1",
+        "D5W-1",
+        "DBF-1",
+        "DHO-1",
+        "DPT-1",
+        "DYR-1",
+        "E8H-1",
+        "EKI-1",
+        "EQO-1",
+        "EZH-1",
+        "F24-1",
+        "AKG-0",
+        "IKI-0"
+      ],
+      "headerNodeId": "NKM-0",
+      "pageId": "p-B-0"
+    },
+    {
+      "code": "09",
+      "title": "Future expansion requirements",
+      "details": "All retained future families: capture/try-on, shopping, intelligence, planning/push, community/Inbox, identity/billing/platforms and operations. Prepared requirements, no implementation claim.",
+      "left": 10200,
+      "top": 1100,
+      "nodeIds": [
+        "MEO-0",
+        "MEU-0",
+        "MF0-0",
+        "MF6-0",
+        "MFC-0",
+        "MFI-0",
+        "MFO-0"
+      ],
+      "headerNodeId": "NKQ-0",
+      "pageId": "p-B-0"
+    }
+  ],
+  "bottomNavigationReview": {
+    "date": "2026-10-05",
+    "scope": "Static Paper only; native layouts, safe areas and accessibility remain unverified",
+    "bars": [
+      {
+        "nodeId": "LPS-0",
+        "phoneNodeId": "JXA-0"
+      },
+      {
+        "nodeId": "LQC-0",
+        "phoneNodeId": "K70-0"
+      },
+      {
+        "nodeId": "LP8-0",
+        "phoneNodeId": "KBP-0"
+      },
+      {
+        "nodeId": "MLP-0",
+        "phoneNodeId": "MLN-0"
+      },
+      {
+        "nodeId": "M40-0",
+        "phoneNodeId": "M3Y-0"
+      },
+      {
+        "nodeId": "LQW-0",
+        "phoneNodeId": "L3D-0"
+      },
+      {
+        "nodeId": "LRG-0",
+        "phoneNodeId": "L5M-0"
+      },
+      {
+        "nodeId": "LOO-0",
+        "phoneNodeId": "JNX-0"
+      },
+      {
+        "nodeId": "LXR-0",
+        "phoneNodeId": "LS0-0"
+      },
+      {
+        "nodeId": "MO9-0",
+        "phoneNodeId": "MO5-0"
+      },
+      {
+        "nodeId": "MT3-0",
+        "phoneNodeId": "MS3-0"
+      },
+      {
+        "nodeId": "M6K-0",
+        "phoneNodeId": "M6G-0"
+      },
+      {
+        "nodeId": "MBE-0",
+        "phoneNodeId": "MAE-0"
+      },
+      {
+        "nodeId": "489-0",
+        "phoneNodeId": "65-0"
+      },
+      {
+        "nodeId": "443-0",
+        "phoneNodeId": "JM-0"
+      },
+      {
+        "nodeId": "43E-0",
+        "phoneNodeId": "10F-0"
+      },
+      {
+        "nodeId": "48Y-0",
+        "phoneNodeId": "123-0"
+      },
+      {
+        "nodeId": "49N-0",
+        "phoneNodeId": "13S-0"
+      },
+      {
+        "nodeId": "7KF-0",
+        "phoneNodeId": "7JN-0"
+      },
+      {
+        "nodeId": "7LY-0",
+        "phoneNodeId": "7L6-0"
+      },
+      {
+        "nodeId": "AQH-1",
+        "phoneNodeId": "AQF-1"
+      },
+      {
+        "nodeId": "7NH-0",
+        "phoneNodeId": "7MP-0"
+      },
+      {
+        "nodeId": "7ZU-0",
+        "phoneNodeId": "7X5-0"
+      },
+      {
+        "nodeId": "A1E-0",
+        "phoneNodeId": "9XV-0"
+      },
+      {
+        "nodeId": "A3T-0",
+        "phoneNodeId": "A24-0"
+      },
+      {
+        "nodeId": "A67-0",
+        "phoneNodeId": "A4J-0"
+      },
+      {
+        "nodeId": "A8K-0",
+        "phoneNodeId": "A6X-0"
+      },
+      {
+        "nodeId": "47K-0",
+        "phoneNodeId": "8B-0"
+      },
+      {
+        "nodeId": "F3J-1",
+        "phoneNodeId": "F3H-1"
+      },
+      {
+        "nodeId": "466-0",
+        "phoneNodeId": "1E4-0"
+      },
+      {
+        "nodeId": "4B1-0",
+        "phoneNodeId": "1GG-0"
+      },
+      {
+        "nodeId": "45H-0",
+        "phoneNodeId": "1IR-0"
+      },
+      {
+        "nodeId": "44S-0",
+        "phoneNodeId": "2CK-0"
+      },
+      {
+        "nodeId": "46V-0",
+        "phoneNodeId": "2D2-0"
+      },
+      {
+        "nodeId": "4AC-0",
+        "phoneNodeId": "2XD-0"
+      },
+      {
+        "nodeId": "42P-0",
+        "phoneNodeId": "3PX-0"
+      },
+      {
+        "nodeId": "4BQ-0",
+        "phoneNodeId": "2EN-0"
+      },
+      {
+        "nodeId": "F87-1",
+        "phoneNodeId": "F69-1"
+      },
+      {
+        "nodeId": "AEX-0",
+        "phoneNodeId": "ADU-0"
+      },
+      {
+        "nodeId": "AKN-0",
+        "phoneNodeId": "AFN-0"
+      },
+      {
+        "nodeId": "AIF-0",
+        "phoneNodeId": "AHI-0"
+      },
+      {
+        "nodeId": "ALC-0",
+        "phoneNodeId": "AJ5-0"
+      },
+      {
+        "nodeId": "B9C-1",
+        "phoneNodeId": "B8A-1"
+      },
+      {
+        "nodeId": "BB7-1",
+        "phoneNodeId": "BA5-1"
+      },
+      {
+        "nodeId": "BUL-1",
+        "phoneNodeId": "BSM-1"
+      },
+      {
+        "nodeId": "BXI-1",
+        "phoneNodeId": "BVD-1"
+      },
+      {
+        "nodeId": "CFK-1",
+        "phoneNodeId": "CE3-1"
+      },
+      {
+        "nodeId": "ES9-1",
+        "phoneNodeId": "EQY-1"
+      },
+      {
+        "nodeId": "EV4-1",
+        "phoneNodeId": "EUD-1"
+      },
+      {
+        "nodeId": "KFH-0",
+        "phoneNodeId": "JMF-0"
+      }
+    ],
+    "phoneViewports": 50,
+    "indicatorCount": 50,
+    "tabSlotCount": 236,
+    "sideInset": 16,
+    "bottomInset": 26,
+    "height": 66,
+    "homeIndicatorBottom": 8,
+    "foundationMastersUnchanged": true,
+    "calendar": {
+      "screenId": "L09",
+      "selectedContrast": 6,
+      "unselectedContrast": 4.75,
+      "correctedTextNodes": 4
+    },
+    "verification": {
+      "bars": 50,
+      "phoneViewports": 50,
+      "indicators": 50,
+      "slots": 236,
+      "passed": true
+    }
   }
 }

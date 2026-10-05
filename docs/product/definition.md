@@ -1,69 +1,37 @@
 # AQD product definition
 
-[V1 release definition](v1-release.md) is the complete launch checklist, including real authentication, backup/sync/recovery, community and Inbox. [V2 backlog](v2-backlog.md) defers extras. Core workflows must work and pass release checks; a service gate is an unresolved launch dependency, not permission to ship a placeholder.
+Updated October 5, 2026. AQD has two product phases. This split supersedes the earlier connected V1 plan. It authorizes documentation and Paper design only; no application functionality or infrastructure is implemented by this planning branch. Product V1/V2 are scope names, independent of repository release tags such as `v1.0.0`.
 
-Refined October 1, 2026. This is the intended product, not a statement of shipped functionality. [Implementation status](../delivery/implementation-status.md) records the current prototype. Home now combines a personal dashboard with All / Following discovery; the dashboard label is Today. The earlier restriction of assisted creation to Agent alone remains superseded.
+## V1 — Private personal closet
 
-## Purpose
+An iPhone user can catalog owned clothing, create outfits, assign them to dates, and record actual wear, entirely on their device. The first useful result is one privately saved piece followed by a usable outfit. An account, connection, social participation, or AI-capable device never blocks the manual flow.
 
-**AQD is a personal digital closet for organizing owned clothing, creating outfits and themes, planning what to wear, and sharing selected wardrobe content.**
+| Destination | V1 responsibility |
+| --- | --- |
+| Home | Private Today dashboard, first-piece/outfit guidance, planned look, upcoming plans and factual wardrobe activity. No All/Following feeds. |
+| Closet | Pieces/Outfits/Themes, search/capture/lifecycle/favorites, Planner with dates/routines/trips/packing and wear/history/insights. |
+| Agent | Complete local conversation/history, supported on-device wardrobe assistance, focused actions, reviewed edits and truthful receipts/recovery. |
+| Profile | Local optional name/photo/preferences and personal collection/history/insight shortcuts. No social identity or followers. |
+| Settings, from Profile/toolbar | System/Light/Dark appearance, local privacy/help/permissions and export/restore/erase. No online account. |
 
-The core asset is a durable record of what someone owns and how they use it. The private experience works without posting, following anyone, or using AI. Community provides inspiration from real closets. Agent provides another way to use the same product capabilities.
+The clarification requires a complete usable V1, including V2-style Welcome, private onboarding and a skippable replayable tour, returning sessions, all private core journeys and complete appearance/permission/error states. Prefer Apple Foundation Models for supported local assistance, with labelled Quick rules and manual paths. No cloud AI fallback, general research, live-weather dependency or social action is required. Themes, routines/trips and the local Agent belong to V1; earlier draft omissions of those local core features are superseded.
 
-The product loop is **capture → organize → create → plan → wear → optionally share → discover → recreate**.
+Records and prepared photos live in the app's local sandbox. There is no AQD server, sign-in, managed CloudKit/iCloud sync, remote analytics, messaging transport or subscription entitlement service. AQD-owned stores/media are excluded from automatic device backup to honor the device-only default. User-initiated archive export is an explicit exception: the selected Files destination may be local or cloud-backed. An imported photo may also originate in the user's iCloud Photos library; AQD only receives the photo they select.
 
-V1 makes the first-outfit handoff explicit: capture/review one piece, show the actual categories needed around it, then suggest or manually build, replace, review and save a look. A first save is a trust milestone; the first usable outfit is the styling milestone. [V1 flow review](../design/v1-flow.md) shows the sequence and conditional auth/Home states. Virtual try-on and shopping wishlist/price alerts remain deferred by user decision.
+V1 does not promise recovery after device loss or app deletion. Export and tested local restore provide a manual recovery path. Apple Intelligence eligibility, settings, downloaded model readiness, language and region affect suggestions; the core closet remains usable without them. [V1 release](v1-release.md) owns the exact small scope; [V1 architecture](../architecture/v1.md) owns storage and capability boundaries.
 
-## Experience target: personal stylist and social wardrobe
+## V2 — The complete AQD product
 
-The user-confirmed direction is **an Alta-inspired personal closet/styling experience plus a social-media-driven wardrobe product**. For AQD, the personal experience means easy capture, organized owned pieces, reusable outfits/themes, contextual styling, dated planning, travel packing, and useful wear insights. The social experience means a visual community feed, discoverable creators and public closets, following, sharing, reactions/bookmarks, inspiration recreated with owned pieces, and human chats.
+V2 extends the complete local V1 with the broader connected styling and social/community vision; it never replaces or resets V1. The full connected core carries forward V1 themes, planning, routines/travel packing and conversational Agent, then adds contextual live weather, identity and account lifecycle, sync/recovery, curated public closets, publishing, discovery, follows, likes/bookmarks/comments, human Inbox and safety operations.
 
-These are connected parts of the product: a look created in Closet can be explicitly published; someone discovers it in Home, visits its creator's Profile, makes their own version, plans it, and optionally starts a chat in Inbox. Agent helps across that journey using the same domain capabilities.
+Navigation remains **Home · Closet · Agent · Inbox · Profile**. Home owns Today / All / Following; Closet owns private Pieces / Outfits / Themes and Planner. Profile is a curated public presentation, separate from the complete private closet. Inbox is human messaging, distinct from Agent. Saving private data never publishes it.
 
-Social participation is optional for each user, but community and Inbox are required parts of the intended V1 product. A private-only milestone is an intermediate delivery, not completion of this combined experience. Building the personal foundation first is dependency order, not a reduction of the social ambition.
+V2 also owns all previously deferred enhancements: visual capture, try-on, shopping, richer personalization/insights/planning/social/chat, notifications, billing, other platforms and measured infrastructure growth. [V2 backlog](v2-backlog.md) records the full vision, prepared design requirements, dependencies and limitations. [V2 core release](v2-release.md) retains the detailed connected acceptance baseline. Extensions need their named capability, consent, policy and service gates; inclusion in the vision is not a promise that every extension launches together.
 
-“Alta experience” is an experience benchmark based on the supplied reference, not verified feature-for-feature parity. Advanced imports, virtual try-on, shopping, and other deferred capabilities remain separately scoped. AQD retains app-first manual controls, five destinations, and preferred on-device AI. The premium native visual direction is owned by [DESIGN.md](../../DESIGN.md).
+V2 starts with one modular backend, relational data, authorized media, sync, durable jobs and moderation/admin operations. Providers, region, prices and service policies remain proposals until selected. [V2 architecture](../architecture/v2.md) records the complete boundary; neither a free provider tier nor Apple CloudKit removes the need to operate a connected social product.
 
-## Navigation and ownership
+## Shared principles
 
-| Destination | Owns | Entry points |
-| --- | --- | --- |
-| Home | Daily dashboard and discovery | Today / All / Following. Today summarizes owned plans and wardrobe; All and Following show public posts. |
-| Closet | Personal wardrobe management | Pieces, Outfits, Themes, Planner; capture, editing, personal search, wear history, stats, and personalization. |
-| Agent | Conversational assistance across features | Questions, insights, reviewed creation and changes; centered entry opens full screen with Back and no bottom navigation. |
-| Inbox | Human conversations | Chats, message requests, and accessible public wardrobe references. |
-| Profile | Social presence and account management | Identity, followers/following, public collections, publication management, and account settings. |
+Owned pieces are the source of truth. Drafts are editable; reviewed actions use trusted validation and actual save receipts. Planned clothing is distinct from actual wear. Unknown information stays unknown. Private notes, history and plans never become public implicitly. Manual operations remain available when assistance fails.
 
-The target is **Home · Closet · Agent · Inbox · Profile**. Search is reached from Home or inside the relevant personal workspace. Add opens a bottom sheet from Closet or Profile. Profile creation uses the same private wardrobe flow; saving does not publish. Account controls belong in Profile.
-
-Home has three modes: Today, All and Following. Today is the private dashboard for the current planned look, upcoming plans and wardrobe shortcuts; Closet and Planner remain the editing sources. All and Following retain their public-feed contracts. Today is the first-use default; returning users restore their last Home mode and scroll position. Search from Today is owner-scoped Closet search; search from All/Following is public discovery, with the scope named on entry. Closet and Profile refer to the same owned records, with separate private management and reviewed public presentation.
-
-## App-first assistance
-
-Normal screens complete every core private task manually. Focused actions such as “Suggest an outfit” and “Fill this week” use the same capabilities as Agent. The conversation handles questions and more complex requests; it does not create a separate inventory or planning system.
-
-Agent's general scope is style, clothing, weather, travel, and everyday planning. Personal facts come from authorized records, statistics from trusted calculations, and current information from dated sources. Changes are concrete proposals with review, validation, and execution receipts.
-
-On-device AI remains the V1 preference. Supported-device behavior, image analysis, planning quality, and current-information access require separate evidence before being promised. This refinement does not select a new provider or backend.
-
-## Planning and sharing
-
-Users can prepare the next two weeks, assign weekday office outfits for three months, or organize a two-week trip and its packing list. Events provide context; routines describe recurrence; plans hold dated intentions. Scheduling is distinct from actual wear.
-
-Items, outfits, themes, history, and plans start private. Users explicitly select what to publish: a piece, outfit, or theme. Every shared photo must link at least one owned piece reviewed for public sharing; photo-only posts are not supported. A public closet is a curated view, not disclosure of the complete private inventory. Inspiration creates a draft using the viewer's own items. Inbox is human messaging; Agent conversation stays separate.
-
-## Web and operating surfaces
-
-The launch architecture includes a public landing/support/legal website and a separate restricted web admin app for management, analytics, monitoring and controls. The admin app uses scoped, audited backend operations and does not create a second wardrobe or messaging system. [Web/admin architecture](../architecture/admin-web.md) defines the proposed modules and access boundaries; hosting and detailed operating policies remain open.
-
-## Specification map
-
-[Feature specifications](../features/README.md) own detailed fields, behavior, states, access rules, and acceptance criteria. [Canonical vocabulary](../../CONTEXT.md) owns domain terms. [Delivery scope](../delivery/implementation-plan.md) bounds milestones; [Implementation plan](../delivery/implementation-plan.md) defines the module order and handoff. [Decisions](decisions.md) separates confirmed choices, working defaults, and service gates.
-
-The [Alta reference and comparison](../references/alta-notes.md) informs discovery and creation patterns. It does not override AQD's core purpose or verify competitor behavior independently.
-
-## Success and boundaries
-
-Private success means a user can find owned pieces, save usable looks, prepare a plan, and correct wear history. Assisted success means valid owned-item proposals that are easy to review and edit. Social success means useful inspiration without exposing private context.
-
-Durable saving, migration, recovery, and account/data lifecycle are release requirements. A local prototype is insufficient evidence of connected recovery. Marketplace, payments, virtual try-on, livestreams, and unrelated creator features are outside the initial product.
+Keep the restrained Apple-native design system in [DESIGN.md](../../DESIGN.md). [Paper](../design/README.md) owns UI visuals for both phases; specifications own behavior, and [verification](../delivery/verification.md) owns actual evidence. The current checkout still needs a reproducible iOS source/build baseline before any implementation.

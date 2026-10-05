@@ -1,89 +1,49 @@
 # Decisions and unresolved gates
 
-[Product definition](definition.md) owns confirmed structure; [feature specs](../features/README.md) own exact behavior. Distinguish owner decisions from the reviewable defaults below.
+Updated October 5, 2026. The current owner request supersedes the earlier full-connected V1 scope. [V1 release](v1-release.md) and [V2 backlog](v2-backlog.md) own phase boundaries. Product refinement authorizes documentation, architecture and Paper designs only.
 
 ## Confirmed by the user
 
-- A web admin app supports management, analytics, monitoring and controls; a public landing page supports launch. Detailed hosting, staff permissions and telemetry policies remain proposed in [web/admin architecture](../architecture/admin-web.md). This refinement remains documentation/design only.
+- V1 is a small private personal digital closet and outfit-planning MVP running locally on the user's Apple device, with local clothing data and privacy by default.
+- Remove all social features from V1. Avoid backend/server infrastructure and recurring backend costs; prefer Apple-native/on-device capabilities, including Apple Intelligence where applicable.
+- V1 is a complete usable local app with Home, Closet, Agent, local Profile, Settings, welcome/onboarding and light/dark modes. Keep applicable private core features local; V2 simply extends V1 after real usage. No features are dropped.
+- Move the complete prior product vision into V2, including social/community, sync and its required infrastructure. Prepare design requirements for both phases in Paper.
+- Work on a new branch; do not implement features or production code. This supersedes the prior instruction that community, auth, account durability and Inbox were required in V1.
+- The retained broader vision includes Today/All/Following, private Pieces/Outfits/Themes, conversational Agent, human Inbox and social Profile; curated publication never exposes all owned data.
+- Preserve native premium restraint, centralized design tokens, system typography and Heritage blue. iOS first; no automatic platform expansion.
 
-- V1 includes all core product workflows, authentication and account lifecycle working end to end; extras are V2. [Release definition](v1-release.md) owns the checklist and gaps; this request is documentation only.
+## Working defaults for V1
 
-- V1 completes the wardrobe workflow first; virtual try-on/avatar previews and shopping wishlist/price alerts remain deferred. Refinement authorizes documentation and Paper design, not app implementation.
-
-- Alta-inspired personal closet/styling plus a social-media-driven wardrobe is the combined product target. Digital closet and personal management are core value; individual social participation is optional, while community and Inbox are required V1 product surfaces.
-- Home combines a personal dashboard with All and Following feeds. The first tab is labelled Today in the design.
-- Navigation is Home, Closet, Agent, Inbox, Profile. Closet owns personal search and Planner; Today links to those capabilities.
-- Normal flows support manual work and focused AI actions using the same capabilities as Agent.
-- Agent covers style, clothing, weather, travel, and everyday planning, across product features.
-- On-device AI remains the preferred V1 runtime; no provider switch is authorized by refinement.
-- Inbox contains human chats; Profile handles social presence/account management.
-- Calendar planning supports next two weeks, recurring office needs for three months, and travel events.
-- Profile/settings separation remains required. The October 1 redesign uses premium photographic content, system typography, a restrained accent, and native Liquid Glass controls; [DESIGN.md](../../DESIGN.md) supersedes earlier monochrome and icon-only styling.
-
-- Launch starts from zero users; 50,000 users is an illustrative scaling scenario, not initial traffic or an operating target.
-- iOS launches first; Android remains outside the current release.
-- Public launch includes landing/support/legal pages and a Facebook page. Architecture workshop material stays grouped under `docs/architecture/`.
-
-## Working defaults proposed in this specification pass
-
-These are concrete product recommendations, not retrospectively claimed user approvals. They can be revised during review; specifications consistently use them until changed.
-
-| Choice | Default | Owner specification |
+| Choice | Proposed practical default | Owner contract |
 | --- | --- | --- |
-| First use | Private capture without mandatory style quiz, avatar, or upload quota. | [W](../features/wardrobe.md) |
-| First outfit | First-save receipt leads to category readiness and pinned-piece styling; Today adapts to actual pieces/outfits/plans. Manual composition stays available. | [V1 flow](../design/v1-flow.md), [W](../features/wardrobe.md), [O](../features/outfits-themes.md) |
-| Item capture | Name/category required, one optional cover photo, optional details; manual classification always works. | [W](../features/wardrobe.md) |
-| Lifecycle | Archive preserves references; deletion previews effects; future assignments become unassigned, historical snapshots remain. | [W](../features/wardrobe.md) |
-| Themes | Independent collections; multiple memberships; case-insensitive name uniqueness. | [O](../features/outfits-themes.md) |
-| Planner | Calendar dates in explicit plan timezone; resolved entries; inclusive ranges; all-or-nothing bulk save. | [P](../features/planning-history.md) |
-| Wear | Same item set once per local day; different combinations allowed; prior estimates kept separate from recorded stats. | [P](../features/planning-history.md) |
-| Publication | Explicit snapshots and curated public closet, not automatic exposure of future uploads. | [S](../features/discovery-publishing.md) |
-| Feeds/follows | Chronological All, followed-creators Following, public profiles/direct follows; private-profile requests deferred. | [S](../features/discovery-publishing.md) |
-| Inbox | One-to-one text/public references; first-contact requests when recipient does not follow sender; no activity tab yet. | [I](../features/inbox.md) |
-| Agent | Reads/drafts directly; writes use version-bound review, validation, idempotency, and result receipts. | [A](../features/agent.md) |
+| Device | iPhone first; retain existing manual iOS 18 target subject to reproducible build review | [V1 release](v1-release.md) |
+| Navigation | Home, Closet, Agent, local Profile; Planner in Closet; complete Settings from Profile/toolbar | [V1 flow](../design/v1-flow.md) |
+| Capture | Name/category required, one optional cover photo, editable optional metadata, manual classification with verified local proposals/cleanup | [Wardrobe](../features/wardrobe.md) |
+| Storage | Versioned local database and protected media; no account; disable CloudKit; exclude AQD data from automatic backup | [V1 architecture](../architecture/v1.md) |
+| Recovery | User-initiated archive export and reviewed full local restore; disclose device/app-loss risk | [V1 release data contract](v1-release.md#data-contract) |
+| Outfits/planning | Owned outfits/favorites/themes, dates/routines/trips/packing, actual wear/history/insights; no external service dependency | [V1 release](v1-release.md) |
+| Assistance | Complete local Agent/history and focused reviewed actions with Foundation Models when available; labelled rules/manual fallback | [V1 architecture](../architecture/v1.md) |
+| Commercial | Free local MVP; no subscription/entitlement infrastructure | [Pricing proposals](../architecture/pricing-strategy.md) |
 
-## Gates before connected/capability-dependent implementation
+These implementation defaults make the plan concrete without claiming the user chose a specific persistence API or OS/device matrix. Verify them against restored source before implementation; no cloud service is needed to resolve V1.
 
-Required V1 gates must resolve before launch; they are not optional missing features. Automatic photo classification/advanced tagging are V2. Working defaults added by the release definition: Apple plus verified email links, signed-in backup/sync/recovery, free launch pending pricing approval, and no remote push in V1. These are recommendations, not newly claimed user approvals.
+## V1 implementation evidence needed
 
-| Gate | Decision/evidence needed | Blocks |
+Restore or establish a reproducible iOS baseline; validate schema/migration, media protection and backup exclusion, archive/restore/erase, date handling and native accessibility. Validate Foundation Models availability, owned-ID output quality and latency on real devices. Manual behavior remains releasable when optional model assistance is unavailable; no silent cloud fallback or mandatory AI promise.
+
+## V2 service and policy gates
+
+| Gate | Required decision/evidence | Blocks |
 | --- | --- | --- |
-| Identity/data service | Sign-in methods, ownership, sync conflict/recovery policy, local account association. | Connected U/S/I and production durability. |
-| Media/publication | Storage, access/revocation, deletion/retention policy, supported publication media. | Public closets and safe sharing. |
-| Moderation | Report/block operation, enforcement, abuse/rate limits, account/content deletion. | Social launch. |
-| Messaging | Transport, retention, delete-for-self/everyone, notification policy, encryption claims. | Connected Inbox. |
-| AI capability | Supported on-device image analysis, tools/current retrieval, realistic long-plan accuracy and physical-device latency. | Assisted tagging, weather reasoning, multi-month generation. |
-| External weather | Permitted provider/retrieval, licensing, date coverage, user-selected location consent. | Production weather assistance. |
-| Future virtual try-on | Separate scope approval, selected API/backend, upload consent and retention/deletion policy, supported garments, real-photo quality, latency and cost evidence. See [future exploration](../features/virtual-try-on.md). | Optional personal photo previews; outside the initial product. |
+| Identity/account | Sign-in methods, callbacks, email delivery, legacy recovery, account isolation/association | Connected accounts and lifecycle |
+| Sync/recovery | Server ownership/revisions, commit-safe cursor, conflict UI, offline window/tombstones, recovery and rollout | Account sync and second-device recovery |
+| Media/publication | Storage/access, derivatives, staged finalization, revoke/cache policy, deletion and backup retention | Public closets/sharing and cloud photos |
+| Community safety | Audience/age policy, block/report, rate limits, operator enforcement, appeals/support | Public discovery/comments and messaging |
+| Messaging | Transport, retention, request policy, durable send/read acknowledgments, encryption claims, media scanning | Human Inbox and richer chat |
+| AI/context | Supported image/speech/tools, bounded generation, physical-device quality; explicit cloud processing consent if ever chosen | Rich Agent/capture/current context |
+| Weather/calendar/push | Source/licensing/coverage, selected-location consent, calendar permission/conflicts, APNs lifecycle | Contextual planning and notifications |
+| Try-on/shopping | Provider/rights/consent/retention, real-photo quality, cost/latency/retry; catalog/licensing/affiliate terms | Optional previews and commerce |
+| Billing/platforms | Purchase/restore/cancellation/entitlement policy, store requirements and native layouts | Paid tiers and additional clients |
+| Operations | Provider/region/budget, backups/restore, role/MFA/audit, telemetry, alerts/SLOs and launch workload | Connected production release |
 
-Private capture/manual composition can proceed once implementation is requested; these later gates do not justify inventing service configuration. Planned private attachments, group chats, chat-context access for Agent, external calendar sync, and notifications need their own later feature decisions.
-
-## Architecture and commercial proposals
-
-| Recommendation | Basis |
-| --- | --- |
-| Supabase Pro initially | Integrated backend and relational model reduce initial delivery/operations work. |
-| Supabase Storage initially | Simpler access/lifecycle integration while photo demand is small. |
-| Cloudflare Pages | Low-cost static landing/support pages. |
-| Consider R2 when warranted | Photo bandwidth economics; allow migration through stable media references. |
-| $414 baseline / $600 first-year reserve | Planning assumptions in [Costs](../architecture/costs.md); excludes development, ads, taxes and unpriced business work. |
-| Freemium and $4.99/month or $49.99/year hypothesis | Needs user willingness-to-pay and capability validation; see [pricing hypotheses](../architecture/pricing-strategy.md). |
-| Optional Instagram, ads and paid staging | Not requested as mandatory launch spending. |
-
-The on-device AI preference and private first use without signup already come from the product specifications. The detailed offline/account-sync proposal has not received a separate answer in this conversation.
-
-
-## Refined architecture proposal
-
-The editable board now separates deployment, private write/sync sequence and publication/Inbox flows. The proposal adds a shared trusted command contract, commit-safe sync cursors, account-scoped operations, staged media finalization and durable message acknowledgments. A DB job worker handles retryable media/export/deletion work. Remote push remains V2. These are reviewable proposals, not implemented services or newly approved provider choices.
-
-Admin hosting, staff roles/MFA, audit retention, analytics event policy and monitoring/alert provider remain open. See [web/admin design](../architecture/admin-web.md).
-
-
-## Operating decisions before connected release
-
-- Select services/region, domain/brand and the actual operating budget.
-- Set account-scoped sync/recovery and tombstone retention; media limits/variants, cache revocation, deletion and backup retention.
-- Set moderation enforcement, rate limits, messaging retention and accurate encryption claims through the service gates above.
-- Set staff roles/MFA, audit retention, analytics event policy and monitoring/alert providers; review [web operations](../architecture/admin-web.md).
-- Validate Agent quality/latency on physical devices, subscription value and entitlements before payments, and measurable reliability/performance goals before capacity claims.
+Supabase/PostgreSQL/Storage/Realtime and Cloudflare static hosting remain V2 proposals. Historical cost/pricing snapshots are unapproved and must be refreshed before purchasing. No remote service was configured. V2 core acceptance is preserved in [V2 release](v2-release.md); all extension design requirements are in [V2 design](../design/v2-requirements.md).

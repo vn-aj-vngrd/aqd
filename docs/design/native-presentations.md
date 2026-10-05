@@ -1,5 +1,7 @@
 # Native iOS presentations
 
+Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+
 Refined October 1, 2026 against [Apple Design Resources](https://developer.apple.com/design/resources/), [Menus](https://developer.apple.com/design/human-interface-guidelines/menus), [Popovers](https://developer.apple.com/design/human-interface-guidelines/popovers/) and [Sheets](https://developer.apple.com/design/human-interface-guidelines/sheets). Use native SwiftUI/UIKit presentation components. Paper illustrates task content and context; the OS owns exact material, corner shape, arrow, detents, animation and accessibility adaptation.
 
 ## One exit per screen
@@ -21,7 +23,7 @@ Standalone forms and nested steps use one leading neutral glass Back button. At 
 | S09 publish, I05 compose, U02 edit profile, U15 typed deletion review, Agent review sheets | One leading glass Back. U15 Back returns to settings without deleting; the final native destructive confirmation retains its own safe Cancel. |
 | S10 safety destination and pushed details | Back only; remove duplicate body Cancel. Native action sheets/alerts retain their own OS Cancel group. |
 
-Canonical screens, page-00 masters, larger-text references and V1 review copies use the same exit contract. An alert's safe Cancel is a separate decision within the alert, not a duplicate navigation exit behind it.
+Canonical screens, page-00 masters, larger-text references and V2 review copies use the same exit contract. An alert's safe Cancel is a separate decision within the alert, not a duplicate navigation exit behind it.
 
 ## Presentation selection
 
@@ -53,9 +55,9 @@ Sheets use system dimming, corners and detents. Simple action choices use a nati
 
 Deletion confirmations use destructive Delete plus neutral Cancel; there is no separate blue primary action. The delete-comment component uses native confirmation rows and destructive red, replacing its old brand-tinted glass button stack. Theme deletion, block/discard commands and account/delete entry points share destructive semantics; disabled account deletion stays neutral until validation succeeds. Navigation titles and explanatory text stay neutral. Full review forms may have a red prominent commit action, while native alerts/dialogs keep system-managed actions and layout.
 
-## Per-page V1 presentation map
+## Per-page V2 presentation map
 
-This defines native presentations for every V1 page; it adds no new feature scope. Existing direct actions remain visible. A menu is secondary access, not a requirement to hide primary actions.
+This defines native presentations for every V2 page; it adds no new feature scope. Existing direct actions remain visible. A menu is secondary access, not a requirement to hide primary actions.
 
 | Paper page / context | Open content and entry | Native component / result |
 | --- | --- | --- |
@@ -67,12 +69,12 @@ This defines native presentations for every V1 page; it adds no new feature scop
 | 03 Closet · piece | Existing Edit, availability, archive/restore, wear and Delete actions (W08–W12) | Native Buttons/Picker/Menu according to existing layout. Availability is a state selection, not a binary switch. Delete names the piece and reviews linked impact before confirmation. |
 | 03 Closet · owned outfit/theme | Outfit: Edit outfit, Plan a wear, Delete outfit; theme: existing edit/membership/delete actions | Native Menu/contextMenu for secondary commands; edit/plan open existing tasks. Destructive last with confirmation. Favorite uses native toggle-button semantics. Removing theme membership never deletes an outfit. |
 | 04 Planning & wear | Date/timezone and outfit choices (P03–P05), review/conflict (P08/P12), Record/correct/undo wear (P09/P10) | Native DatePicker/Picker and sheet navigation. Rich date/inspection content may use adaptive popover. Packing checks are native selectable rows with a checked trait. No extra planning overflow menu required. |
-| 05 Agent | Response: Copy, Retry when valid, Details; proposal Review/Edit/Save; failed-message Resend/Edit | Native content Buttons with optional same-command Menu/contextMenu. Details uses adaptive sheet/popover. Proposals use review sheets; no mutation from simply opening/selecting a response. Helpful/Not helpful and version comparison remain V2. |
-| 06 Inbox | Existing conversation details → View profile, Report person, Block person; request Accept/Decline/Block | Native Menu for short secondary choices; details remains a navigable destination. Confirmation for block/decline where impact requires it. Native composer/edit menu. No mute or delete-for-everyone commands in V1. |
+| 05 Agent | Response: Copy, Retry when valid, Details; proposal Review/Edit/Save; failed-message Resend/Edit | Native content Buttons with optional same-command Menu/contextMenu. Details uses adaptive sheet/popover. Proposals use review sheets; no mutation from simply opening/selecting a response. Helpful/Not helpful and version comparison are V2 extensions beyond the shared V1/V2 core actions. |
+| 06 Inbox | Existing conversation details → View profile, Report person, Block person; request Accept/Decline/Block | Native Menu for short secondary choices; details remains a navigable destination. Confirmation for block/decline where impact requires it. Native composer/edit menu. Mute and delete-for-everyone are V2-E08/E09 extensions; gate their commands until the transport/lifecycle exists. |
 | 07 Profile · owner | Edit profile, Share profile, Add, Settings; Appearance System/Light/Dark | Native editor/Add sheets, ShareLink/activity sheet and Settings navigation. Appearance uses native Picker with selected check. No replacement Settings popover. |
 | 07 Profile · visitor | More → Report person, Block person | Same anchored Menu/safety group as Home; owner-only commands hidden. Full bio uses native About sheet. |
 | 07 Settings · privacy/account | Social listing preference; block management; export, sign out, account deletion and sync/restore reviews | Native Form/Toggle for the real binary preference, native share sheet for a ready export, impact/re-auth review sheets plus exact-target confirmation. Pending/failed sync remains an inline status/destination, not a switch. |
-| 08 Offline review / 09 V1 walkthrough | Copies of the same feature states | Inherit source-page native controls and commands; no separate presentation language. Offline proposal remains separately scoped. |
+| 08 Offline review / 09 V2 walkthrough | Copies of the same feature states | Inherit source-page native controls and commands; no separate presentation language. Offline proposal remains separately scoped. |
 
 ## All native-capable controls
 

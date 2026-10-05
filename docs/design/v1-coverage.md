@@ -1,55 +1,26 @@
-# V1 Paper coverage
+# V1 complete local design coverage
+October 5, 2026. [Paper page 01 · V1](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-2-0) groups the prepared V1 phones into ten numbered flow sections. [V1 flow](v1-flow.md) owns step/return behavior. L01–L74 are static designs; shared native state contracts handle repeated variations. Requirements preparation is not runtime completion.
 
-Audited October 1, 2026 against [V1 release definition](../product/v1-release.md). [Open Paper page 08](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-8-0). Board 00 is the overview; 01–16 are screen strips with conditional/independent branches; 17 is the coverage/launch gate map; 18 identifies V2; 19 consolidates the offline review examples and notes; 20 covers Agent input, voice and streaming. Every strip starts at step 00. Screen copies are static review references; feature pages own canonical screens.
+| V1 requirement | Local Paper references | Shared/private contracts and remaining native checks |
+| --- | --- | --- |
+| V1-01 · Welcome / onboarding / Home | L60–L66, L01–L02, L05, L23, L43–L44 | Shared original twelve-piece Welcome/motion, optional replayable tour, new/returning/draft states; E06 media permission presentation, S15–S18/S48 private hierarchy. Prove preview isolation and correct resume. |
+| V1-02 · Pieces | L03–L04, L21, L43 | W06–W12/W21/W27–W29: manual/photo, search/filter/sort/edit/archive/restore/delete and exact impacts. Native menu/form states, loading, no-match, media/save failures remain implementation checks. |
+| V1-03 · Outfits / themes | L06–L08, L18–L20, L27, L32/L34–L35/L46 | W13–W19, A03/A31: pin/replace/multi-theme/favorite and empty collection; manual path, stale drafts, private save. |
+| V1-04 · Planner / routines / trips | L09–L10, L33, L36–L40/L42 | P01–P08/P12: local event/trip form variant, recurrence/future-edit, intentional gaps/conflicts, atomic save and deduplicated packing. No live-weather requirement. |
+| V1-05 · Wear / insights | L11–L12/L41 | P09–P11: backdate/correct/undo, historical snapshot and real denominators; plan-versus-wear separation. |
+| V1-06 · Local Agent | L24–L31/L46–L47/L19; L07/L18/L27; L68–L74 | A01–A09/A11–A18/A22–A26/A29–A32 private lifecycle; typed input, local context/history/cancel/retry/copy/Markdown and actual receipts. A34–A55 and input masters apply only to verified on-device rich-input paths. External sends/tools/feedback remain V2. |
+| V1-07 · Local Profile | L48–L49/L45 | Optional name/photo/preferences and private shortcuts; no public handle/counts/follows. Test skipped/edited state and durability. |
+| V1-08 · Settings | L13/L50–L52; tour L62–L65 | Complete appearance/capability/privacy/help/tour replay controls; no inactive account, push, sync or billing toggles. |
+| V1-09 · Local durability | L17/L22 and every saved-record state | Restart/draft/media integrity, migrations, protection/backup exclusion and performance are LOCAL checks, not illustrative status labels. |
+| V1-10 · Export / restore / erase | L14–L16/L22 | Full sensitive archive, schema/media/reference validation, staged replacement, cancellation and erase effects including Profile/Agent. Chosen export location can be cloud-backed. |
+| V1-11 · Native appearance / accessibility | L53–L59/L67 + page-00 masters | Both appearances for all routes; shared large-text/opaque-material/form/menu states. Physical-device VoiceOver, focus/keyboard/RTL/localization, Reduce Motion/Transparency and permissions remain unverified. |
 
-All 15 V1 groups have a design route/state reference. This establishes specification coverage, not complete runtime behavior or approved service policies. Shared states/native controls handle variations without adding a separate artboard for every network response. Provider, sync/conflict/deletion, moderation and weather decisions remain launch gates.
+## Shared states are complete requirements
+Loading, empty, no-match, invalid data, denied permissions, cancelled input, dirty dismissal, capability unavailable, timeout/stopped/partial reply, stale proposal, failed/unknown save, invalid/newer archive and storage failure have retained-draft or safe recovery behavior. Use the relevant private domain contract and native presentation rather than adding fake success or a disabled social surface.
 
-| V1 group | Workflow | Review boards | Canonical references | Coverage / boundary |
-| --- | --- | --- | --- | --- |
-| V1-01 | Entry and Home | 01–02 | E01–E13, S15–S18, S48 | Return intent and record-derived states |
-| V1-02 | Wardrobe | 01, 12 | W01, W06–W12, W21, W27–W29 | Photo/manual, lifecycle and preserved drafts |
-| V1-03 | Outfits and themes | 03–04, 12, 15 | W13–W19, A03, A31 | Pin, replace, private save and membership |
-| V1-04 | Planner and packing | 05–06, 13 | P01–P08, P12 | Manual/assisted range, conflict and packing |
-| V1-05 | Wear and insights | 05, 12 | P09–P11 | Actual wear, correction/undo and snapshots |
-| V1-06 | Agent and focused actions | 03, 08, 15, 20 | A01–A18, A22–A26, A29–A32, A34–A55 | Rich input/context/voice, streaming, history, recovery, approval and receipts; native/media/speech capability gates remain |
-| V1-07 | Contextual styling | 03, 06, 15 | W17, W20, A33 | Place/date, missing source and coverage limits |
-| V1-08 | Authentication | 02, 09 | E03–E04, E10–E11, E15–E17, U12 | Apple/email defaults; callback/session gates |
-| V1-09 | Durability and lifecycle | 09–11 | E08, E13, E17, U09–U24 | Sync, conflict, restore, export and deletion |
-| V1-10 | Profile | 02, 07, 14 | E07, U01–U06, S06–S07, S13–S14 | Identity, public collections and privacy |
-| V1-11 | Publishing and discovery | 07, 14 | S01–S09, S19–S21, S25–S47, U04 | Types, search, reaction and revocation |
-| V1-12 | Comments | 14 | S22–S24, S10–S11 | Plain-text discussion, retry/delete/report |
-| V1-13 | Human Inbox | 07–08, 16 | I01–I07, X08, U08 | Requests, acknowledged unread and delivery |
-| V1-14 | Safety and support | 14, 16–17 | S10–S11, U06, U08, U13 | Report → operator review → revoke/remove; operator/service policy still gated |
-| V1-15 | Native and launch quality | 08, 17 | X01–X08 + page 00 masters | Device/accessibility, restore/load/deployment tests required; not proven by Paper |
+A14/A15/A16/A29 cancellation/interruption/slow/send-failure designs are shared visual patterns for local Agent; labels must describe the actual local runtime. Remote feedback A19–A21/A27–A28 and social actions A10/A28 remain V2. Model-not-ready and unsupported image/speech states preserve typed/manual paths. No generic Agent platform is required to satisfy the private UI.
 
-## Gaps closed in this pass
+## Limits and future extension
+The original canonical E/W/P/S/A/I/U inventory and connected review are preserved in [V2 coverage](v2-coverage.md). Reusable private references can serve both phases; canonical pages describe the complete V2 target and never introduce account/social controls into V1 automatically. [V2 requirements](v2-requirements.md) prepares the full expansion backlog.
 
-- Added E15–E17: expired session, sign-in failure and account association progress.
-- Added U16–U24: confirmed backup, upload failure, conflict summary/field choice, clean-install restore/partial failure, export and deletion outcomes.
-- Added A31–A33: theme-only review, exact-field edit proposal and selected weather context.
-- Added 09–16 review strips for account/data, wardrobe lifecycle, office routines, discovery/comments/safety, Agent and Inbox branches.
-- Your data now links to Backup and sync and Restore account closet. V1 settings/response/first-save screens hide deferred notification/survey/server-feedback entry points.
-- Labelled E14/U07/A19–A21/A27–A28 V2, preserving their designs for later review.
-
-## Shared state and native presentation coverage
-
-Use [SCREENS](screens.md) for route/state ownership. Email progress/invalid/resend/consumed link/cancelled provider reuse E03/E04/E10/E11/E16; session expiry uses E15. Association reconciliation uses E17/U22 and collisions use E13. Pending/failed export uses U19 with U10 selection retained. Deletion reauthentication uses the auth flow and returns to U15; received/failed/unknown states use U20 with one request ID. Confirmed deletion uses U21.
-
-U17 opens U24 for explicit competing fields; cancellation preserves both revisions. U18/U23 cover partial media restore. Loading/no-cache/error/revocation inherit X01–X08 and the shared media/search/feed contracts. Dirty dismissal, theme/outfit deletion, block, date/occasion selection, native share/export, permission and account-switch confirmation use native sheet/alert/picker presentations defined by the screen map and page 00 masters. Exact destructive target/impact stays visible.
-
-A33 uses native selected-place/date controls and states for source/time, retrieval failure and unsupported coverage. Missing context never becomes live weather. A31/A32 use the same draft/review/save/unknown/stale contract as outfit proposals. A10 remains human message review, with no default Inbox read access.
-
-## Remaining decisions and implementation evidence
-
-- Final identity methods/callbacks and legacy password migration; Apple/email links remain a working default.
-- Actual sync revision/conflict, retention, export/deletion and recovery policies; illustrative statuses are not confirmed service behavior.
-- Weather provider/coverage and physical-device on-device quality; long plans and every approved action require tests.
-- Moderation: report → scoped operator queue → review → action → access revocation → user-visible result. Board 17 records this operating requirement; no operator app is designed here. Assign an operator and choose the protected workflow before launch.
-- Landing/support/privacy/terms/Facebook presence and store readiness are operational launch surfaces, not new phone tabs. Board 17 maps the requirement; final branded web/Facebook layouts are outside this app-screen pass.
-- Accessibility/keyboard/larger text, persistence/restart, real two-account journeys, server access, deployment/restore and workload checks remain unverified by static Paper. No native code was implemented.
-
-## V2 boundary
-
-The [V2 backlog](../product/v2-backlog.md) is authoritative for extras. Existing future artboards remain in their feature pages with V2 layer names. Reference masters may show future feedback variants; implement only the V1 actions (copy/retry/details) at launch. The offline proposal page remains a proposal; actual account cache/sync behavior is governed by V1 data checks, not an unconditional offline-social promise.
-
-For the Closet inspiration route and return behavior, see [V1 flow](v1-flow.md#exit-behavior).
+Paper cannot establish database durability, archive recovery, Foundation Models quality, permission semantics, accessibility, distribution or infrastructure behavior. [Verification](../delivery/verification.md) records actual static checks separately. All LOCAL acceptance requires later authorized implementation; this branch changes no app functionality.

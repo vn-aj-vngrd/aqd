@@ -1,5 +1,7 @@
 # Scalability and media migration
 
+Phase scope: V2 connected-product proposal. V1 needs no app backend, staff admin or paid entitlement service; see [V1 architecture](v1.md). Dated prices and recommendations below are historical planning assumptions, not refreshed purchasing quotes.
+
 Updated October 1, 2026. Launch begins with zero users. Design efficient access paths now and buy capacity as observed activity grows. User count alone is not a capacity model.
 
 ## What drives capacity

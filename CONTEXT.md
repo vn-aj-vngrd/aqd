@@ -1,6 +1,6 @@
 # AQD product language
 
-AQD represents a person's owned wardrobe, the looks they create, their clothing plans, and the content they choose to share. These terms distinguish personal management from community discovery.
+AQD V1 represents a person's complete private wardrobe, outfits/themes, routines/trips/plans, actual wear and local Agent/Profile on one device. V2 adds the complete connected/social vision. Items/outfits/themes/events/routines/plans/wear/drafts and local Agent apply to V1. Online account, public Profile projections, post/feed/bookmark and human Inbox are V2. V1 Profile is private local personal information/preferences, not an online identity. A V1 local closet ID is not an online account.
 
 ## Wardrobe and creation
 
@@ -29,7 +29,11 @@ _Avoid_: Asset when naming the user-facing object; a photo is media attached to 
 
 **Routine**: A repeating clothing context, such as weekdays at the office, with a date range and recurrence pattern.
 
-## Community
+**Local Profile**: Optional personal name/photo and style preferences on this device, with shortcuts to owned collections, wear insights and local Settings. It is not an online account or public projection.
+
+**Onboarding / tour state**: Local completion/skip and resume state; read-only preview content never becomes user wardrobe data.
+
+## Community — V2
 
 **Profile**: A user's social identity and presentation of selected public wardrobe content.
 
@@ -53,8 +57,13 @@ _Avoid_: Asset when naming the user-facing object; a photo is media attached to 
 
 ## Assistance
 
-**AQD Agent**: The conversational assistant that reads authorized context and uses the product's wardrobe, creation, planning, and sharing capabilities.
+**AQD Agent**: The conversational assistant that reads authorized context and uses the product's wardrobe, creation, planning, capabilities; sharing and online tools are V2 extensions.
 
 **Focused AI action**: Assistance initiated from a normal app task with its context already selected, such as proposing outfits for an event.
 
 **Insight**: An observation derived from wardrobe information with a stated basis, time window, and limits.
+
+
+**Local archive (V1)**: A user-initiated versioned export of local records/media for manual restore. It is not account backup, automatic sync or a public post.
+
+**Local settings (V1)**: Device data/privacy, System/Light/Dark appearance/help, local Profile/preferences, archive export/restore and local erase; distinct from V2 account settings.

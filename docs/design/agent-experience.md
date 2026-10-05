@@ -1,8 +1,10 @@
 # Agent response experience
 
-Release boundary: [V1](../product/v1-release.md) requires basic history, response rendering, cancel/retry/copy and proposal/receipt details. Response-version comparison and server-collected evaluation feedback below are [V2](../product/v2-backlog.md) design targets, not launch controls.
+Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
-[Paper page 05](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-A-1) owns the screen designs; [page 00](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-1-0) owns reusable response components. This contract supplements [Agent capabilities](../features/agent.md). Designs and sample timings are illustrative, not runtime or service validation.
+Release boundary: [V1](../product/v1-release.md) and the V2 connected core both require local/private history, response rendering, cancel/retry/copy and proposal/receipt details. Response-version comparison and server-collected evaluation feedback below are [V2](../product/v2-backlog.md) design targets, not launch controls.
+
+[Paper page 02 · V2, section 05 · Agent](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-B-0) owns the screen designs; [page 00](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-1-0) owns reusable response components. This contract supplements [Agent capabilities](../features/agent.md). Designs and sample timings are illustrative, not runtime or service validation.
 
 ## Conversation lifecycle
 
@@ -44,7 +46,7 @@ Slow and hard-timeout thresholds belong to runtime configuration, not the visual
 
 ## Response actions and versions
 
-V1 completed assistant responses have Copy, Try another response when supported, and More/details. V2 adds Helpful and Not helpful. Symbols use the shared icon catalog with 44-point targets, labels and selected traits. Selected feedback uses a thicker symbol and accent-soft background. Actions attach to the displayed response version, not the entire conversation. Copy and feedback remain available on a clearly labelled partial response; Retry never transfers prior approvals.
+V2 completed assistant responses have Copy, Try another response when supported, and More/details. V2 adds Helpful and Not helpful. Symbols use the shared icon catalog with 44-point targets, labels and selected traits. Selected feedback uses a thicker symbol and accent-soft background. Actions attach to the displayed response version, not the entire conversation. Copy and feedback remain available on a clearly labelled partial response; Retry never transfers prior approvals.
 
 Copy writes rendered text in reading order without hidden prompts, tool payloads or internal IDs. Include a visible incomplete marker for partial replies. Announce “Response copied” only after clipboard success; on failure announce the failure and retain a retry action. A27 shows the copied/selected state. A28 retains previous versions with disabled first/last navigation edges. Feedback and receipts remain associated with their original version. Details may expose context sources, tool outcomes and timing; never hidden reasoning, secrets or an invented confidence score.
 
@@ -78,7 +80,7 @@ Use [Global motion](motion.md), particularly C-stream, C-receipt and C-save. No 
 
 [Agent input](agent-input.md) now owns autofocus, multiline growth, media/file capture, selected closet context, voice dictation, busy-label shimmer and their recovery/accessibility contracts. A34–A55 extend the existing lifecycle; A01 and all existing composers use the same richer shell. Page 00 owns the multimodal composer and shimmer/recovery masters. These remain Paper/design targets, not an implemented streaming or speech runtime.
 
-For V1, completed responses expose Copy, Retry when supported and More/details. Helpful / Not helpful and version comparisons described in the future sections above remain V2. The user-requested shimmer applies only to the active status label, with a static Reduce Motion/VoiceOver equivalent; streamed prose never shimmers.
+For V2, completed responses expose Copy, Retry when supported and More/details. Helpful / Not helpful and version comparisons described in the future sections above remain V2. The user-requested shimmer applies only to the active status label, with a static Reduce Motion/VoiceOver equivalent; streamed prose never shimmers.
 
 ## Selective assistance indicators
 

@@ -1,23 +1,16 @@
-# Feature specifications
+# Feature specifications by phase
 
-[V1 release definition](../product/v1-release.md) owns mandatory release scope and cross-feature acceptance. [V2 backlog](../product/v2-backlog.md) owns enhancements outside launch; broad feature/design contracts must be read within that boundary.
+[V1 release](../product/v1-release.md) owns the small local MVP and LOCAL checks. The detailed specs below retain the complete vision for V2; their phase headers identify what V1 reuses. Do not apply every broad feature acceptance ID to V1. [V2 core release](../product/v2-release.md) owns connected-core acceptance; [V2 backlog](../product/v2-backlog.md) owns all enhancements and [V2 designs](../design/v2-requirements.md) prepare their UX requirements.
 
-Read the relevant feature before implementing or reviewing that module. [Product definition](../product/definition.md) owns product positioning and navigation; these files own detailed behavior and acceptance. [Implementation plan](../delivery/implementation-plan.md) owns delivery order and readiness. [CONTEXT.md](../../CONTEXT.md) owns terms.
+| ID | Feature | V1 | V2 |
+| --- | --- | --- | --- |
+| W | [Wardrobe](wardrobe.md) | Local manual single-photo capture, search/edit/archive/lifecycle | Full capture/visual automation/inspiration/connected data |
+| O | [Outfits and themes](outfits-themes.md) | Complete local outfits/favorites/themes and focused assistance | Themes, rich styling and publication |
+| P | [Planning and history](planning-history.md) | Complete local plans/routines/trips/packing and wear/history/insights | Bulk plans, routines/events/trips/packing, weather and richer insights |
+| A | [Agent](agent.md) | Complete local Agent/chat/history and reviewed private actions | Full conversation/actions/tools/rich input/history/feedback |
+| S | [Discovery and publishing](discovery-publishing.md) | Private Today concepts only | Feeds/publication/social search/follows/comments/inspiration |
+| U | [Profile and account](profile-account.md) | Local Profile/preferences and complete Settings | Profile/auth/association/sync/recovery/account lifecycle |
+| I | [Inbox](inbox.md) | Absent | Human chats, requests, delivery/access and richer messaging |
+| Future | [Virtual try-on](virtual-try-on.md) | Absent | Capability-gated private appearance previews; no fit prediction |
 
-| ID | Feature | Read when working on |
-| --- | --- | --- |
-| W | [Wardrobe](wardrobe.md) | First use, capture, classification, item lifecycle, inventory search. |
-| O | [Outfits and themes](outfits-themes.md) | Composition, saved looks, collections, piece replacement. |
-| P | [Planning and history](planning-history.md) | Calendar, events, routines, packing, actual wear, stats. |
-| S | [Discovery and publishing](discovery-publishing.md) | Home Today dashboard, scoped search, feeds, posts, follows, inspiration, publication access. |
-| U | [Profile and account](profile-account.md) | Social identity, public closet, settings, onboarding identity, data lifecycle. |
-| I | [Inbox](inbox.md) | Human chats, requests, delivery, shared references, activity. |
-| A | [Agent](agent.md) | Focused AI actions, conversation, tools, approval, model limits, evaluations. |
-
-[V1 flow review](../design/v1-flow.md) connects first capture, category readiness, outfit creation, planning/wear and optional social/auth journeys. Try-on and shopping remain deferred.
-
-Each acceptance ID is local to its feature and is a target check, not a passing test. Product-owner decisions are distinguished from working defaults in [Decisions](../product/decisions.md). External-service choices stay unresolved until selected; do not infer a production backend from prototype code.
-
-## Future exploration
-
-- [Personal virtual try-on](virtual-try-on.md): optional private full-body photo previews using a potential external API; proposed scope, privacy, cost, and quality gates. Outside the initial product; no implementation or provider selected.
+[V1 flow](../design/v1-flow.md) and [V2 flow](../design/v2-flow.md) map separate Paper journeys. Terms live in [CONTEXT.md](../../CONTEXT.md); [decisions](../product/decisions.md) distinguishes scope from proposals. Acceptance IDs are target checks, never passing test evidence.
