@@ -46,11 +46,27 @@ final class IdentityFlow {
 
   func start(intent: EntryRouteIntent = .closet) {
     guard !busy else { return }
+    recordOrigin(intent: intent)
+    flow.route = .signIn
+  }
+
+  private func recordOrigin(intent: EntryRouteIntent) {
     generation = UUID()
     origin = flow.route
     returnIntent = intent
     error = nil
-    flow.route = .signIn
+  }
+
+  func setupProfile() {
+    guard !busy else { return }
+    recordOrigin(intent: .profile)
+    flow.route = .publicProfile
+  }
+
+  func reviewConnection() async {
+    guard !busy else { return }
+    recordOrigin(intent: .profile)
+    await retry()
   }
 
   func cancel() {

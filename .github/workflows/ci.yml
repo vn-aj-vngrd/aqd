@@ -50,7 +50,7 @@ jobs:
         run: xcrun swift-format lint --strict --recursive apps/ios/AQD apps/ios/AQDTests apps/ios/AQDUITests
       - name: Build and test on iPhone 17 Simulator
         run: |
-          device=$(xcrun simctl list devices available --json | jq -r '[.devices[][] | select(.name == "iPhone 17")][0].udid')
+          device=$(xcrun simctl list devices available --json | jq -r '[.devices["com.apple.CoreSimulator.SimRuntime.iOS-26-5"][] | select(.name == "iPhone 17")][0].udid')
           test -n "$device" && test "$device" != null
           xcodebuild -quiet -project apps/ios/AQD.xcodeproj -scheme AQD -destination "platform=iOS Simulator,id=$device" -derivedDataPath "$RUNNER_TEMP/AQD" -resultBundlePath "$RUNNER_TEMP/Entry.xcresult" test CODE_SIGN_IDENTITY=-
       - name: Preserve native test and screenshot evidence

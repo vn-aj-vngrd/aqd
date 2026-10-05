@@ -329,10 +329,12 @@ struct IdentityScreens: View {
       if flow.account != nil {
         accountRow
         if identity.profile == nil {
-          PrimaryAction(title: "Set up public profile") { flow.route = .publicProfile }
+          PrimaryAction(title: "Set up public profile") { identity.setupProfile() }
         }
         if !flow.localPieces.isEmpty {
-          SecondaryAction(title: "Review connecting my closet") { Task { await identity.retry() } }
+          SecondaryAction(title: "Review connecting my closet") {
+            Task { await identity.reviewConnection() }
+          }
         }
         Button("Sign out", role: .destructive) { Task { await identity.signOut() } }.frame(
           minHeight: 44

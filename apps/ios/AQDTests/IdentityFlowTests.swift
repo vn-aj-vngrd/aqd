@@ -16,6 +16,26 @@ struct IdentityFlowTests {
     return (flow, identity, service, directory)
   }
 
+  @Test func restoredAccountSetupAndConnectionBackReturnToProfile() async throws {
+    let (flow, identity, service, url) = fixture()
+    defer { try? FileManager.default.removeItem(at: url) }
+    service.restored = true
+    await identity.restore()
+    flow.route = .profile
+    identity.setupProfile()
+    #expect(flow.route == .publicProfile)
+    identity.back(from: .publicProfile)
+    #expect(flow.route == .profile)
+    flow.draft.name = "Everyday shirt"
+    flow.draft.category = .tops
+    try flow.savePiece()
+    flow.route = .profile
+    await identity.reviewConnection()
+    #expect(flow.route == .connectCloset)
+    identity.back(from: .connectCloset)
+    #expect(flow.route == .profile)
+  }
+
   @Test func cancellationDuringAccountLoadingCannotRedirectLater() async throws {
     let (flow, identity, service, url) = fixture()
     defer { try? FileManager.default.removeItem(at: url) }
@@ -151,12 +171,13 @@ struct IdentityFlowTests {
 @MainActor private final class TestIdentityService: IdentityService {
   let resendSeconds: TimeInterval = 1
   var offline = false
+  var restored = false
   var delay = false
   var records: [RemotePiece] = []
   var suspendProfile = false
   var profileWait: CheckedContinuation<Void, Never>?
   let user = AccountIdentity(id: UUID(), label: "person@example.com")
-  func restoreAccount() async throws -> AccountIdentity? { nil }
+  func restoreAccount() async throws -> AccountIdentity? { restored ? user : nil }
   func sendEmail(_ email: String, redirect: URL) async throws {
     if delay { try await Task.sleep(for: .milliseconds(30)) }
     if offline { throw URLError(.notConnectedToInternet) }
