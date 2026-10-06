@@ -3,69 +3,154 @@
   "url": "https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0",
   "verifiedOn": "2026-10-06",
   "scope": "Static design only; Paper is sole visual source. V1 complete local app; V2 retains connected core and full extension requirements.",
-  "screenCount": 365,
-  "artboardCount": 448,
+  "screenCount": 376,
+  "artboardCount": 455,
   "pages": [
     {
       "id": "p-1-0",
-      "name": "00 \u00b7 Foundations",
-      "count": 28
+      "name": "00 · Foundations",
+      "count": 32,
+      "canonicalCount": 0,
+      "rootReferenceCount": 32
     },
     {
       "id": "p-2-0",
-      "name": "01 \u00b7 V1",
-      "count": 181
+      "name": "01 · V1",
+      "count": 175,
+      "canonicalCount": 165,
+      "rootReferenceCount": 10
     },
     {
       "id": "p-B-0",
-      "name": "02 \u00b7 V2",
-      "count": 239
+      "name": "02 · V2",
+      "count": 248,
+      "canonicalCount": 211,
+      "rootReferenceCount": 37
     }
   ],
   "screens": [
     {
+      "id": "L172", "title": "Splash", "nodeId": "W6B-0", "pageId": "p-2-0",
+      "sourceNodeId": "W-0", "sourceScreenId": "E01", "complete": true,
+      "release": "V1", "phase": "V1", "designStatus": "Prepared static local reference",
+      "flowSection": "01", "flowStep": "01.00", "rootName": "01.00 · L172 · Splash",
+      "position": {"x": 40, "y": 1070}, "viewport": {"width": 390, "height": 844},
+      "motion": {"navigation": "Native launch", "content": ["None"], "contract": "motion.md"},
+      "runtimeComplete": false
+    },
+    {
+      "id": "U25", "title": "Private Profile menu", "nodeId": "W2T-0", "pageId": "p-B-0",
+      "complete": true, "release": "V2", "phase": "V2", "designStatus": "Prepared supporting static reference",
+      "flowSection": "05", "canvasSection": "07", "rootName": "U25 · Profile options · Open", "position": {"x": 2860, "y": 51530},
+      "motion": {"navigation": "Native Menu", "content": ["C-select"], "contract": "profile-fit-journal.md"},
+      "runtimeComplete": false
+    },
+    {
+      "id": "U26", "title": "Public profile projection", "nodeId": "VYT-0", "pageId": "p-B-0",
+      "complete": true, "release": "V2", "phase": "V2", "designStatus": "Prepared connected static reference",
+      "flowSection": "05", "canvasSection": "07", "rootName": "U26 · Public Profile · Projection reference", "position": {"x": 2390, "y": 51530},
+      "motion": {"navigation": "N-push", "content": ["C-load"], "contract": "profile-fit-journal.md"},
+      "runtimeComplete": false
+    },
+    {
       "id": "L160",
-      "title": "Profile — empty private fit journal",
+      "title": "Profile · Journal empty",
       "pageId": "p-2-0",
       "nodeId": "SV6-0",
       "complete": true,
       "release": "V1",
       "designStatus": "Prepared static reference",
-      "motion": { "navigation": "Native root", "content": ["C-load"], "contract": "profile-fit-journal.md" }
+      "motion": {
+        "navigation": "Native root",
+        "content": [
+          "C-load"
+        ],
+        "contract": "profile-fit-journal.md"
+      },
+      "flowSection": "08",
+      "flowStep": "08.00",
+      "rootName": "08.00 · L160 · Profile · Journal empty",
+      "position": {
+        "x": 40,
+        "y": 29188
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L161",
-      "title": "New fit — no content",
+      "title": "New fit · No content",
       "pageId": "p-2-0",
       "nodeId": "SZ4-0",
       "complete": true,
       "release": "V1",
       "designStatus": "Prepared static reference",
-      "motion": { "navigation": "N-push", "content": ["C-form"], "contract": "profile-fit-journal.md" }
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "profile-fit-journal.md"
+      },
+      "flowSection": "08",
+      "flowStep": "08.01",
+      "rootName": "08.01 · L161 · New fit · No content",
+      "position": {
+        "x": 510,
+        "y": 29188
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L162",
-      "title": "New fit — ready; shared edit form",
+      "title": "New fit · Ready / edit",
       "pageId": "p-2-0",
       "nodeId": "T2C-0",
       "complete": true,
       "release": "V1",
       "designStatus": "Prepared static reference",
-      "motion": { "navigation": "N-push", "content": ["C-form"], "contract": "profile-fit-journal.md" }
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "profile-fit-journal.md"
+      },
+      "flowSection": "08",
+      "flowStep": "08.02",
+      "rootName": "08.02 · L162 · New fit · Ready / edit",
+      "position": {
+        "x": 980,
+        "y": 29188
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L163",
-      "title": "Private fit memory — detail",
+      "title": "Private fit memory",
       "pageId": "p-2-0",
       "nodeId": "T3X-0",
       "complete": true,
       "release": "V1",
       "designStatus": "Prepared static reference",
-      "motion": { "navigation": "N-push", "content": ["C-load"], "contract": "profile-fit-journal.md" }
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-load"
+        ],
+        "contract": "profile-fit-journal.md"
+      },
+      "flowSection": "08",
+      "flowStep": "08.05",
+      "rootName": "08.05 · L163 · Private fit memory",
+      "position": {
+        "x": 2390,
+        "y": 29188
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L159",
-      "title": "Add photo — source sheet",
+      "title": "Photo source · Shared",
       "pageId": "p-2-0",
       "nodeId": "SOI-0",
       "complete": true,
@@ -73,9 +158,19 @@
       "designStatus": "Prepared static reference",
       "motion": {
         "navigation": "Native sheet / adaptive popover",
-        "content": ["C-form"],
+        "content": [
+          "C-form"
+        ],
         "contract": "capture-photo.md"
-      }
+      },
+      "flowSection": "02",
+      "flowStep": "02.03",
+      "rootName": "02.03 · L159 · Photo source · Shared",
+      "position": {
+        "x": 1450,
+        "y": 5226
+      },
+      "runtimeComplete": false
     },
     {
       "id": "E01",
@@ -1265,7 +1360,10 @@
     },
     {
       "id": "U01",
-      "title": "Profile",
+      "title": "Private Profile · Journal",
+      "flowSection": "05",
+      "canvasSection": "07",
+      "runtimeComplete": false,
       "pageId": "p-B-0",
       "nodeId": "2EN-0",
       "complete": true,
@@ -3710,43 +3808,67 @@
       "nodeId": "JL8-0",
       "pageId": "p-2-0",
       "flowSection": "01",
-      "flowStep": 7,
+      "flowStep": "01.03",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "01.03 · L01 · Your closet, privately",
+      "position": {
+        "x": 1450,
+        "y": 1070
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L02",
-      "title": "Today",
+      "title": "Today · Empty",
       "nodeId": "JMF-0",
       "pageId": "p-2-0",
       "flowSection": "02",
-      "flowStep": 0,
+      "flowStep": "02.00",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "02.00 · L02 · Today · Empty",
+      "position": {
+        "x": 40,
+        "y": 5226
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L03",
-      "title": "Closet",
+      "title": "Closet · Pieces",
       "nodeId": "JNX-0",
       "pageId": "p-2-0",
       "flowSection": "03",
-      "flowStep": 0,
+      "flowStep": "03.00",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "03.00 · L03 · Closet · Pieces",
+      "position": {
+        "x": 40,
+        "y": 9382
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L04",
-      "title": "New piece \u00b7 No photo",
+      "title": "New piece · No photo",
       "nodeId": "JPZ-0",
       "pageId": "p-2-0",
       "flowSection": "02",
-      "flowStep": 1,
+      "flowStep": "02.02",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "02.02 · L04 · New piece · No photo",
+      "position": {
+        "x": 980,
+        "y": 5226
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L05",
@@ -3754,10 +3876,16 @@
       "nodeId": "JRU-0",
       "pageId": "p-2-0",
       "flowSection": "02",
-      "flowStep": 2,
+      "flowStep": "02.14",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "02.14 · L05 · First piece saved",
+      "position": {
+        "x": 980,
+        "y": 7174
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L06",
@@ -3765,10 +3893,16 @@
       "nodeId": "JT0-0",
       "pageId": "p-2-0",
       "flowSection": "04",
-      "flowStep": 0,
+      "flowStep": "04.00",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "04.00 · L06 · Build outfit",
+      "position": {
+        "x": 40,
+        "y": 15486
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L07",
@@ -3776,10 +3910,16 @@
       "nodeId": "JUF-0",
       "pageId": "p-2-0",
       "flowSection": "04",
-      "flowStep": 2,
+      "flowStep": "04.04",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "04.04 · L07 · Review outfit",
+      "position": {
+        "x": 1920,
+        "y": 15486
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L08",
@@ -3787,21 +3927,33 @@
       "nodeId": "JVS-0",
       "pageId": "p-2-0",
       "flowSection": "04",
-      "flowStep": 3,
+      "flowStep": "04.07",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "04.07 · L08 · An easy afternoon",
+      "position": {
+        "x": 510,
+        "y": 16460
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L09",
-      "title": "Planner",
+      "title": "Planner · Week",
       "nodeId": "JXA-0",
       "pageId": "p-2-0",
       "flowSection": "05",
-      "flowStep": 0,
+      "flowStep": "05.00",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "05.00 · L09 · Planner · Week",
+      "position": {
+        "x": 40,
+        "y": 17694
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L10",
@@ -3809,10 +3961,16 @@
       "nodeId": "JZY-0",
       "pageId": "p-2-0",
       "flowSection": "05",
-      "flowStep": 1,
+      "flowStep": "05.06",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "05.06 · L10 · Plan a look",
+      "position": {
+        "x": 40,
+        "y": 18668
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L11",
@@ -3820,10 +3978,16 @@
       "nodeId": "K16-0",
       "pageId": "p-2-0",
       "flowSection": "06",
-      "flowStep": 0,
+      "flowStep": "06.00",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "06.00 · L11 · Record wear",
+      "position": {
+        "x": 40,
+        "y": 21850
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L12",
@@ -3831,21 +3995,33 @@
       "nodeId": "K2G-0",
       "pageId": "p-2-0",
       "flowSection": "06",
-      "flowStep": 1,
+      "flowStep": "06.05",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "06.05 · L12 · Wear history",
+      "position": {
+        "x": 2390,
+        "y": 21850
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L13",
       "title": "Settings",
       "nodeId": "KGU-0",
       "pageId": "p-2-0",
-      "flowSection": "08",
-      "flowStep": 3,
+      "flowSection": "09",
+      "flowStep": "09.00",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "09.00 · L13 · Settings",
+      "position": {
+        "x": 40,
+        "y": 31396
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L14",
@@ -3853,10 +4029,16 @@
       "nodeId": "KHP-0",
       "pageId": "p-2-0",
       "flowSection": "09",
-      "flowStep": 0,
+      "flowStep": "09.05",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "09.05 · L14 · Export closet",
+      "position": {
+        "x": 2390,
+        "y": 31396
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L15",
@@ -3864,10 +4046,16 @@
       "nodeId": "KIK-0",
       "pageId": "p-2-0",
       "flowSection": "09",
-      "flowStep": 1,
+      "flowStep": "09.09",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "09.09 · L15 · Restore closet",
+      "position": {
+        "x": 1450,
+        "y": 32370
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L16",
@@ -3875,21 +4063,33 @@
       "nodeId": "KJF-0",
       "pageId": "p-2-0",
       "flowSection": "09",
-      "flowStep": 2,
+      "flowStep": "09.16",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "09.16 · L16 · Erase local closet",
+      "position": {
+        "x": 1920,
+        "y": 33344
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L17",
-      "title": "Couldn\u2019t save",
+      "title": "Save failed · Shared writes",
       "nodeId": "K3U-0",
       "pageId": "p-2-0",
-      "flowSection": "09",
-      "flowStep": 3,
+      "flowSection": "02",
+      "flowStep": "02.20",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "02.20 · L17 · Save failed · Shared writes",
+      "position": {
+        "x": 980,
+        "y": 8148
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L18",
@@ -3897,32 +4097,50 @@
       "nodeId": "K4P-0",
       "pageId": "p-2-0",
       "flowSection": "04",
-      "flowStep": 1,
+      "flowStep": "04.03",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "04.03 · L18 · Suggest an outfit",
+      "position": {
+        "x": 1450,
+        "y": 15486
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L19",
-      "title": "Agent \u00b7 Unsupported iPhone",
+      "title": "Agent · Unsupported iPhone",
       "nodeId": "K63-0",
       "pageId": "p-2-0",
       "flowSection": "07",
-      "flowStep": 9,
+      "flowStep": "07.25",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.25 · L19 · Agent · Unsupported iPhone",
+      "position": {
+        "x": 510,
+        "y": 27954
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L20",
-      "title": "Closet \u00b7 Outfits",
+      "title": "Closet · Outfits",
       "nodeId": "K70-0",
       "pageId": "p-2-0",
       "flowSection": "03",
-      "flowStep": 1,
+      "flowStep": "03.01",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "03.01 · L20 · Closet · Outfits",
+      "position": {
+        "x": 510,
+        "y": 9382
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L21",
@@ -3930,10 +4148,16 @@
       "nodeId": "K9I-0",
       "pageId": "p-2-0",
       "flowSection": "03",
-      "flowStep": 2,
+      "flowStep": "03.04",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "03.04 · L21 · Cotton shirt",
+      "position": {
+        "x": 1920,
+        "y": 9382
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L22",
@@ -3941,21 +4165,33 @@
       "nodeId": "KKA-0",
       "pageId": "p-2-0",
       "flowSection": "09",
-      "flowStep": 4,
+      "flowStep": "09.15",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "09.15 · L22 · Closet needs recovery",
+      "position": {
+        "x": 1450,
+        "y": 33344
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L23",
-      "title": "Today \u00b7 Planned outfit",
+      "title": "Today · Planned outfit",
       "nodeId": "KBP-0",
       "pageId": "p-2-0",
       "flowSection": "02",
-      "flowStep": 5,
+      "flowStep": "02.01",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "02.01 · L23 · Today · Planned outfit",
+      "position": {
+        "x": 510,
+        "y": 5226
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L24",
@@ -3963,21 +4199,33 @@
       "nodeId": "KPT-0",
       "pageId": "p-2-0",
       "flowSection": "07",
-      "flowStep": 0,
+      "flowStep": "07.00",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.00 · L24 · Agent",
+      "position": {
+        "x": 40,
+        "y": 24058
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L25",
-      "title": "Agent \u00b7 Local response",
+      "title": "Agent · Local response",
       "nodeId": "KRR-0",
       "pageId": "p-2-0",
       "flowSection": "07",
-      "flowStep": 1,
+      "flowStep": "07.08",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.08 · L25 · Agent · Local response",
+      "position": {
+        "x": 980,
+        "y": 25032
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L26",
@@ -3985,98 +4233,152 @@
       "nodeId": "KU5-0",
       "pageId": "p-2-0",
       "flowSection": "07",
-      "flowStep": 6,
+      "flowStep": "07.15",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.15 · L26 · Conversations",
+      "position": {
+        "x": 1450,
+        "y": 26006
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L27",
-      "title": "Outfit saved \u00b7 Local receipt",
+      "title": "Outfit saved · Receipt",
       "nodeId": "KVA-0",
       "pageId": "p-2-0",
       "flowSection": "04",
-      "flowStep": 4,
+      "flowStep": "04.06",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "04.06 · L27 · Outfit saved · Receipt",
+      "position": {
+        "x": 40,
+        "y": 16460
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L28",
-      "title": "Agent context \u00b7 Local",
+      "title": "Agent context",
       "nodeId": "KWC-0",
       "pageId": "p-2-0",
       "flowSection": "07",
-      "flowStep": 2,
+      "flowStep": "07.03",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.03 · L28 · Agent context",
+      "position": {
+        "x": 1450,
+        "y": 24058
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L29",
-      "title": "Agent \u00b7 Waiting",
+      "title": "Agent · Waiting",
       "nodeId": "KXH-0",
       "pageId": "p-2-0",
       "flowSection": "07",
-      "flowStep": 3,
+      "flowStep": "07.05",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.05 · L29 · Agent · Waiting",
+      "position": {
+        "x": 2390,
+        "y": 24058
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L30",
-      "title": "Agent \u00b7 Streaming",
+      "title": "Agent · Streaming",
       "nodeId": "KZ2-0",
       "pageId": "p-2-0",
       "flowSection": "07",
-      "flowStep": 4,
+      "flowStep": "07.06",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.06 · L30 · Agent · Streaming",
+      "position": {
+        "x": 40,
+        "y": 25032
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L31",
-      "title": "Agent \u00b7 Complete",
+      "title": "Agent · Complete",
       "nodeId": "L0T-0",
       "pageId": "p-2-0",
       "flowSection": "07",
-      "flowStep": 5,
+      "flowStep": "07.07",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.07 · L31 · Agent · Complete",
+      "position": {
+        "x": 510,
+        "y": 25032
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L32",
-      "title": "Closet \u00b7 Themes",
+      "title": "Closet · Themes",
       "nodeId": "L3D-0",
       "pageId": "p-2-0",
       "flowSection": "03",
-      "flowStep": 3,
+      "flowStep": "03.22",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "03.22 · L32 · Closet · Themes",
+      "position": {
+        "x": 1920,
+        "y": 12304
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L33",
-      "title": "Planner \u2014 retained week reference",
+      "title": "Planner · Retained week",
       "nodeId": "L5M-0",
       "pageId": "p-2-0",
-      "flowSection": "03",
-      "flowStep": 4,
+      "flowSection": "05",
+      "flowStep": "05.01",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "05.01 · L33 · Planner · Retained week",
+      "position": {
+        "x": 510,
+        "y": 17694
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L34",
-      "title": "Weekend \u00b7 Theme",
+      "title": "Weekend · Theme",
       "nodeId": "L7F-0",
       "pageId": "p-2-0",
       "flowSection": "03",
-      "flowStep": 5,
+      "flowStep": "03.25",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "03.25 · L34 · Weekend · Theme",
+      "position": {
+        "x": 510,
+        "y": 13278
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L35",
@@ -4084,10 +4386,16 @@
       "nodeId": "L8P-0",
       "pageId": "p-2-0",
       "flowSection": "03",
-      "flowStep": 6,
+      "flowStep": "03.28",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "03.28 · L35 · Edit theme",
+      "position": {
+        "x": 1920,
+        "y": 13278
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L36",
@@ -4095,10 +4403,16 @@
       "nodeId": "L9S-0",
       "pageId": "p-2-0",
       "flowSection": "05",
-      "flowStep": 2,
+      "flowStep": "05.12",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "05.12 · L36 · New routine",
+      "position": {
+        "x": 40,
+        "y": 19642
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L37",
@@ -4106,10 +4420,16 @@
       "nodeId": "LBA-0",
       "pageId": "p-2-0",
       "flowSection": "05",
-      "flowStep": 3,
+      "flowStep": "05.13",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "05.13 · L37 · Office routine",
+      "position": {
+        "x": 510,
+        "y": 19642
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L38",
@@ -4117,10 +4437,16 @@
       "nodeId": "LCX-0",
       "pageId": "p-2-0",
       "flowSection": "05",
-      "flowStep": 4,
+      "flowStep": "05.16",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "05.16 · L38 · Trip plan",
+      "position": {
+        "x": 1920,
+        "y": 19642
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L39",
@@ -4128,10 +4454,16 @@
       "nodeId": "LED-0",
       "pageId": "p-2-0",
       "flowSection": "05",
-      "flowStep": 5,
+      "flowStep": "05.17",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "05.17 · L39 · Packing list",
+      "position": {
+        "x": 2390,
+        "y": 19642
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L40",
@@ -4139,10 +4471,16 @@
       "nodeId": "LFS-0",
       "pageId": "p-2-0",
       "flowSection": "05",
-      "flowStep": 6,
+      "flowStep": "05.18",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "05.18 · L40 · Review plan",
+      "position": {
+        "x": 40,
+        "y": 20616
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L41",
@@ -4150,10 +4488,16 @@
       "nodeId": "LH2-0",
       "pageId": "p-2-0",
       "flowSection": "06",
-      "flowStep": 2,
+      "flowStep": "06.08",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "06.08 · L41 · Wear insights",
+      "position": {
+        "x": 980,
+        "y": 22824
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L42",
@@ -4161,43 +4505,67 @@
       "nodeId": "LIA-0",
       "pageId": "p-2-0",
       "flowSection": "05",
-      "flowStep": 7,
+      "flowStep": "05.19",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "05.19 · L42 · Resolve a conflict",
+      "position": {
+        "x": 510,
+        "y": 20616
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L43",
-      "title": "First outfit \u00b7 Missing categories",
+      "title": "First outfit · Missing categories",
       "nodeId": "LJG-0",
       "pageId": "p-2-0",
       "flowSection": "02",
-      "flowStep": 3,
+      "flowStep": "02.15",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "02.15 · L43 · First outfit · Missing categories",
+      "position": {
+        "x": 1450,
+        "y": 7174
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L44",
-      "title": "First outfit \u00b7 Ready",
+      "title": "First outfit · Ready",
       "nodeId": "LKC-0",
       "pageId": "p-2-0",
       "flowSection": "02",
-      "flowStep": 4,
+      "flowStep": "02.16",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "02.16 · L44 · First outfit · Ready",
+      "position": {
+        "x": 1920,
+        "y": 7174
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L45",
       "title": "Style",
       "nodeId": "LLB-0",
       "pageId": "p-2-0",
-      "flowSection": "08",
-      "flowStep": 2,
+      "flowSection": "09",
+      "flowStep": "09.04",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "09.04 · L45 · Style",
+      "position": {
+        "x": 1920,
+        "y": 31396
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L46",
@@ -4205,10 +4573,16 @@
       "nodeId": "LMY-0",
       "pageId": "p-2-0",
       "flowSection": "07",
-      "flowStep": 7,
+      "flowStep": "07.13",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.13 · L46 · Review theme",
+      "position": {
+        "x": 510,
+        "y": 26006
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L47",
@@ -4216,22 +4590,34 @@
       "nodeId": "LNT-0",
       "pageId": "p-2-0",
       "flowSection": "07",
-      "flowStep": 8,
+      "flowStep": "07.14",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.14 · L47 · Review local changes",
+      "position": {
+        "x": 980,
+        "y": 26006
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L48",
-      "title": "Profile \u00b7 Local",
+      "title": "Profile · Local",
       "nodeId": "LS0-0",
       "pageId": "p-2-0",
       "localComposition": true,
       "flowSection": "08",
-      "flowStep": 0,
+      "flowStep": "08.03",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "08.03 · L48 · Profile · Local",
+      "position": {
+        "x": 1450,
+        "y": 29188
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L49",
@@ -4240,10 +4626,16 @@
       "pageId": "p-2-0",
       "localComposition": true,
       "flowSection": "08",
-      "flowStep": 1,
+      "flowStep": "08.06",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "08.06 · L49 · Edit local profile",
+      "position": {
+        "x": 40,
+        "y": 30162
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L50",
@@ -4251,11 +4643,17 @@
       "nodeId": "LU7-0",
       "pageId": "p-2-0",
       "localComposition": true,
-      "flowSection": "08",
-      "flowStep": 4,
+      "flowSection": "09",
+      "flowStep": "09.01",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "09.01 · L50 · Appearance",
+      "position": {
+        "x": 510,
+        "y": 31396
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L51",
@@ -4263,11 +4661,17 @@
       "nodeId": "LV5-0",
       "pageId": "p-2-0",
       "localComposition": true,
-      "flowSection": "08",
-      "flowStep": 5,
+      "flowSection": "09",
+      "flowStep": "09.02",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "09.02 · L51 · Help and privacy",
+      "position": {
+        "x": 980,
+        "y": 31396
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L52",
@@ -4275,102 +4679,17 @@
       "nodeId": "LW3-0",
       "pageId": "p-2-0",
       "localComposition": true,
-      "flowSection": "08",
-      "flowStep": 6,
+      "flowSection": "09",
+      "flowStep": "09.03",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
-    },
-    {
-      "id": "L53",
-      "title": "Start privately \u00b7 Dark",
-      "nodeId": "M2Y-0",
-      "pageId": "p-2-0",
-      "appearance": "dark",
-      "sourceNodeId": "JL8-0",
-      "flowSection": "10",
-      "flowStep": 1,
-      "release": "V1",
-      "phase": "V1",
-      "designStatus": "Prepared static local reference"
-    },
-    {
-      "id": "L54",
-      "title": "Home \u00b7 Dark",
-      "nodeId": "M3Y-0",
-      "pageId": "p-2-0",
-      "appearance": "dark",
-      "sourceNodeId": "KBP-0",
-      "flowSection": "10",
-      "flowStep": 2,
-      "release": "V1",
-      "phase": "V1",
-      "designStatus": "Prepared static local reference"
-    },
-    {
-      "id": "L55",
-      "title": "Closet \u00b7 Dark",
-      "nodeId": "M6G-0",
-      "pageId": "p-2-0",
-      "appearance": "dark",
-      "sourceNodeId": "JNX-0",
-      "flowSection": "10",
-      "flowStep": 3,
-      "release": "V1",
-      "phase": "V1",
-      "designStatus": "Prepared static local reference"
-    },
-    {
-      "id": "L56",
-      "title": "Agent \u00b7 Dark",
-      "nodeId": "M8G-0",
-      "pageId": "p-2-0",
-      "appearance": "dark",
-      "sourceNodeId": "KPT-0",
-      "flowSection": "10",
-      "flowStep": 4,
-      "release": "V1",
-      "phase": "V1",
-      "designStatus": "Prepared static local reference"
-    },
-    {
-      "id": "L57",
-      "title": "Profile \u00b7 Dark",
-      "nodeId": "MAE-0",
-      "pageId": "p-2-0",
-      "appearance": "dark",
-      "sourceNodeId": "LS0-0",
-      "flowSection": "10",
-      "flowStep": 5,
-      "release": "V1",
-      "phase": "V1",
-      "designStatus": "Prepared static local reference"
-    },
-    {
-      "id": "L58",
-      "title": "Settings \u00b7 Dark",
-      "nodeId": "MCE-0",
-      "pageId": "p-2-0",
-      "appearance": "dark",
-      "sourceNodeId": "KGU-0",
-      "flowSection": "10",
-      "flowStep": 6,
-      "release": "V1",
-      "phase": "V1",
-      "designStatus": "Prepared static local reference"
-    },
-    {
-      "id": "L59",
-      "title": "Appearance \u00b7 Dark",
-      "nodeId": "MDT-0",
-      "pageId": "p-2-0",
-      "appearance": "dark",
-      "sourceNodeId": "LU7-0",
-      "flowSection": "10",
-      "flowStep": 7,
-      "release": "V1",
-      "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "09.03 · L52 · Local Agent capability",
+      "position": {
+        "x": 1450,
+        "y": 31396
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L60",
@@ -4379,191 +4698,262 @@
       "pageId": "p-2-0",
       "sourceNodeId": "12-0",
       "flowSection": "01",
-      "flowStep": 0,
+      "flowStep": "01.01",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
-      "sourceScreenId": "E02"
+      "sourceScreenId": "E02",
+      "rootName": "01.01 · L60 · Welcome",
+      "position": {
+        "x": 510,
+        "y": 1070
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L61",
-      "title": "Welcome \u00b7 Start privately",
+      "title": "Start privately",
       "nodeId": "MKC-0",
       "pageId": "p-2-0",
       "sourceNodeId": "KGU-0",
       "flowSection": "01",
-      "flowStep": 1,
+      "flowStep": "01.02",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "01.02 · L61 · Start privately",
+      "position": {
+        "x": 980,
+        "y": 1070
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L62",
-      "title": "Tour \u00b7 Home",
+      "title": "Tour · Home",
       "nodeId": "MLN-0",
       "pageId": "p-2-0",
       "sourceNodeId": "KBP-0",
       "flowSection": "01",
-      "flowStep": 2,
+      "flowStep": "01.14",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "01.14 · L62 · Tour · Home",
+      "position": {
+        "x": 40,
+        "y": 3992
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L63",
-      "title": "Tour \u00b7 Closet",
+      "title": "Tour · Closet",
       "nodeId": "MO5-0",
       "pageId": "p-2-0",
       "sourceNodeId": "JNX-0",
       "flowSection": "01",
-      "flowStep": 3,
+      "flowStep": "01.15",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "01.15 · L63 · Tour · Closet",
+      "position": {
+        "x": 510,
+        "y": 3992
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L64",
-      "title": "Tour \u00b7 Agent",
+      "title": "Tour · Agent",
       "nodeId": "MQ5-0",
       "pageId": "p-2-0",
       "sourceNodeId": "KPT-0",
       "flowSection": "01",
-      "flowStep": 4,
+      "flowStep": "01.16",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "01.16 · L64 · Tour · Agent",
+      "position": {
+        "x": 980,
+        "y": 3992
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L65",
-      "title": "Tour \u00b7 Profile",
+      "title": "Tour · Profile",
       "nodeId": "MS3-0",
       "pageId": "p-2-0",
       "sourceNodeId": "LS0-0",
       "flowSection": "01",
-      "flowStep": 5,
+      "flowStep": "01.17",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "01.17 · L65 · Tour · Profile",
+      "position": {
+        "x": 1450,
+        "y": 3992
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L66",
-      "title": "Onboarding \u00b7 Ready to begin",
+      "title": "Ready to begin",
       "nodeId": "MU3-0",
       "pageId": "p-2-0",
       "sourceNodeId": "KGU-0",
       "flowSection": "01",
-      "flowStep": 6,
+      "flowStep": "01.18",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
-    },
-    {
-      "id": "L67",
-      "title": "Welcome \u00b7 Dark",
-      "nodeId": "MY9-0",
-      "pageId": "p-2-0",
-      "appearance": "dark",
-      "sourceNodeId": "MJJ-0",
-      "flowSection": "10",
-      "flowStep": 0,
-      "release": "V1",
-      "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "01.18 · L66 · Ready to begin",
+      "position": {
+        "x": 1920,
+        "y": 3992
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L68",
-      "title": "Agent \u00b7 Keyboard focused",
+      "title": "Agent · Keyboard focused",
       "nodeId": "N0G-0",
       "pageId": "p-2-0",
       "sourceNodeId": "GEH-0",
       "capability": "Local input",
       "flowSection": "07",
-      "flowStep": 10,
+      "flowStep": "07.02",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.02 · L68 · Agent · Keyboard focused",
+      "position": {
+        "x": 980,
+        "y": 24058
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L69",
-      "title": "Voice \u00b7 Permission",
+      "title": "Voice · Permission",
       "nodeId": "N43-0",
       "pageId": "p-2-0",
       "sourceNodeId": "GV7-0",
       "capability": "Verified on-device speech only; typed fallback",
       "flowSection": "07",
-      "flowStep": 11,
+      "flowStep": "07.20",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.20 · L69 · Voice · Permission",
+      "position": {
+        "x": 980,
+        "y": 26980
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L70",
-      "title": "Voice \u00b7 Listening",
+      "title": "Voice · Listening",
       "nodeId": "N5P-0",
       "pageId": "p-2-0",
       "sourceNodeId": "GXL-0",
       "capability": "Verified on-device speech only; typed fallback",
       "flowSection": "07",
-      "flowStep": 12,
+      "flowStep": "07.21",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.21 · L70 · Voice · Listening",
+      "position": {
+        "x": 1450,
+        "y": 26980
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L71",
-      "title": "Voice \u00b7 Transcribing",
+      "title": "Voice · Transcribing",
       "nodeId": "N7F-0",
       "pageId": "p-2-0",
       "sourceNodeId": "GZZ-0",
       "capability": "Verified on-device speech only; typed fallback",
       "flowSection": "07",
-      "flowStep": 13,
+      "flowStep": "07.22",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.22 · L71 · Voice · Transcribing",
+      "position": {
+        "x": 1920,
+        "y": 26980
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L72",
-      "title": "Voice \u00b7 Review transcript",
+      "title": "Voice · Review transcript",
       "nodeId": "N91-0",
       "pageId": "p-2-0",
       "sourceNodeId": "H2D-0",
       "capability": "Verified on-device speech only; typed fallback",
       "flowSection": "07",
-      "flowStep": 14,
+      "flowStep": "07.23",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.23 · L72 · Voice · Review transcript",
+      "position": {
+        "x": 2390,
+        "y": 26980
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L73",
-      "title": "Voice \u00b7 Unavailable",
+      "title": "Voice · Unavailable",
       "nodeId": "NAN-0",
       "pageId": "p-2-0",
       "sourceNodeId": "H4R-0",
       "capability": "Verified on-device speech only; typed fallback",
       "flowSection": "07",
-      "flowStep": 15,
+      "flowStep": "07.24",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.24 · L73 · Voice · Unavailable",
+      "position": {
+        "x": 40,
+        "y": 27954
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L74",
-      "title": "Agent \u00b7 Choose local context",
+      "title": "Choose local context",
       "nodeId": "NC6-0",
       "pageId": "p-2-0",
       "sourceNodeId": "H75-0",
       "capability": "Local input",
       "flowSection": "07",
-      "flowStep": 16,
+      "flowStep": "07.04",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference"
+      "designStatus": "Prepared static local reference",
+      "rootName": "07.04 · L74 · Choose local context",
+      "position": {
+        "x": 1920,
+        "y": 24058
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L75",
-      "title": "New piece \u00b7 Photo selected",
+      "title": "New piece · Photo selected",
       "nodeId": "ODL-0",
       "pageId": "p-2-0",
       "phase": "V1",
@@ -4577,11 +4967,19 @@
           "C-select"
         ],
         "contract": "capture-photo.md"
-      }
+      },
+      "flowSection": "02",
+      "flowStep": "02.04",
+      "rootName": "02.04 · L75 · New piece · Photo selected",
+      "position": {
+        "x": 1920,
+        "y": 5226
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L76",
-      "title": "New piece \u00b7 Landscape fit",
+      "title": "Landscape fit",
       "nodeId": "OEW-0",
       "pageId": "p-2-0",
       "phase": "V1",
@@ -4595,11 +4993,19 @@
           "C-select"
         ],
         "contract": "capture-photo.md"
-      }
+      },
+      "flowSection": "02",
+      "flowStep": "02.05",
+      "rootName": "02.05 · L76 · Landscape fit",
+      "position": {
+        "x": 2390,
+        "y": 5226
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L77",
-      "title": "Edit piece photo \u00b7 Portrait crop",
+      "title": "Edit photo · Shared",
       "nodeId": "OG7-0",
       "pageId": "p-2-0",
       "phase": "V1",
@@ -4613,11 +5019,19 @@
           "C-select"
         ],
         "contract": "capture-photo.md"
-      }
+      },
+      "flowSection": "02",
+      "flowStep": "02.06",
+      "rootName": "02.06 · L77 · Edit photo · Shared",
+      "position": {
+        "x": 40,
+        "y": 6200
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L78",
-      "title": "Photo options",
+      "title": "Photo options · Shared",
       "nodeId": "OIZ-0",
       "pageId": "p-2-0",
       "phase": "V1",
@@ -4631,11 +5045,19 @@
           "C-select"
         ],
         "contract": "capture-photo.md"
-      }
+      },
+      "flowSection": "02",
+      "flowStep": "02.07",
+      "rootName": "02.07 · L78 · Photo options · Shared",
+      "position": {
+        "x": 510,
+        "y": 6200
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L79",
-      "title": "New piece \u00b7 Photo missing",
+      "title": "Photo missing",
       "nodeId": "OMU-0",
       "pageId": "p-2-0",
       "phase": "V1",
@@ -4649,7 +5071,15 @@
           "C-select"
         ],
         "contract": "capture-photo.md"
-      }
+      },
+      "flowSection": "02",
+      "flowStep": "02.08",
+      "rootName": "02.08 · L79 · Photo missing",
+      "position": {
+        "x": 980,
+        "y": 6200
+      },
+      "runtimeComplete": false
     },
     {
       "id": "W31",
@@ -4671,7 +5101,7 @@
     },
     {
       "id": "L80",
-      "title": "Agent \u00b7 Intelligence off",
+      "title": "Agent · Intelligence off",
       "nodeId": "OPA-0",
       "pageId": "p-2-0",
       "flowSection": "07",
@@ -4684,11 +5114,18 @@
           "C-form"
         ],
         "contract": "agent-input.md"
-      }
+      },
+      "flowStep": "07.26",
+      "rootName": "07.26 · L80 · Agent · Intelligence off",
+      "position": {
+        "x": 980,
+        "y": 27954
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L81",
-      "title": "Agent \u00b7 Model preparing",
+      "title": "Agent · Model preparing",
       "nodeId": "OQA-0",
       "pageId": "p-2-0",
       "flowSection": "07",
@@ -4701,12 +5138,19 @@
           "C-form"
         ],
         "contract": "agent-input.md"
-      }
+      },
+      "flowStep": "07.27",
+      "rootName": "07.27 · L81 · Agent · Model preparing",
+      "position": {
+        "x": 1450,
+        "y": 27954
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L82",
       "nodeId": "P8B-0",
-      "title": "Planner \u00b7 Empty date",
+      "title": "Planner · Empty date",
       "pageId": "p-2-0",
       "flowSection": "05",
       "release": "V1",
@@ -4718,12 +5162,19 @@
           "C-form"
         ],
         "contract": "planner-calendar.md"
-      }
+      },
+      "flowStep": "05.03",
+      "rootName": "05.03 · L82 · Planner · Empty date",
+      "position": {
+        "x": 1450,
+        "y": 17694
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L83",
       "nodeId": "PEP-0",
-      "title": "Add plan \u00b7 Selected date",
+      "title": "Add plan · Selected date",
       "pageId": "p-2-0",
       "flowSection": "05",
       "release": "V1",
@@ -4735,12 +5186,19 @@
           "C-form"
         ],
         "contract": "planner-calendar.md"
-      }
+      },
+      "flowStep": "05.05",
+      "rootName": "05.05 · L83 · Add plan · Selected date",
+      "position": {
+        "x": 2390,
+        "y": 17694
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L84",
       "nodeId": "PFY-0",
-      "title": "Planner \u00b7 Saved date",
+      "title": "Planner · Saved date",
       "pageId": "p-2-0",
       "flowSection": "05",
       "release": "V1",
@@ -4752,12 +5210,19 @@
           "C-form"
         ],
         "contract": "planner-calendar.md"
-      }
+      },
+      "flowStep": "05.08",
+      "rootName": "05.08 · L84 · Planner · Saved date",
+      "position": {
+        "x": 980,
+        "y": 18668
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L85",
       "nodeId": "PRM-0",
-      "title": "Planner \u00b7 Month view",
+      "title": "Planner · Month",
       "pageId": "p-2-0",
       "flowSection": "05",
       "release": "V1",
@@ -4769,14 +5234,21 @@
           "C-form"
         ],
         "contract": "planner-calendar.md"
-      }
+      },
+      "flowStep": "05.02",
+      "rootName": "05.02 · L85 · Planner · Month",
+      "position": {
+        "x": 980,
+        "y": 17694
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L86",
-      "title": "Search \u00b7 Pieces",
+      "title": "Search · Pieces",
       "nodeId": "Q5Q-0",
       "pageId": "p-2-0",
-      "flowSection": "11",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4786,14 +5258,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.13",
+      "rootName": "03.13 · L86 · Search · Pieces",
+      "position": {
+        "x": 510,
+        "y": 11330
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L87",
-      "title": "Search \u00b7 Outfits",
+      "title": "Search · Outfits",
       "nodeId": "Q77-0",
       "pageId": "p-2-0",
-      "flowSection": "11",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4803,14 +5282,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.14",
+      "rootName": "03.14 · L87 · Search · Outfits",
+      "position": {
+        "x": 980,
+        "y": 11330
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L88",
-      "title": "Search \u00b7 Themes",
+      "title": "Search · Themes",
       "nodeId": "Q8P-0",
       "pageId": "p-2-0",
-      "flowSection": "11",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4820,14 +5306,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.15",
+      "rootName": "03.15 · L88 · Search · Themes",
+      "position": {
+        "x": 1450,
+        "y": 11330
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L89",
-      "title": "Search \u00b7 No matches",
+      "title": "Search · No matches",
       "nodeId": "QA4-0",
       "pageId": "p-2-0",
-      "flowSection": "11",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4837,14 +5330,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.16",
+      "rootName": "03.16 · L89 · Search · No matches",
+      "position": {
+        "x": 1920,
+        "y": 11330
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L90",
-      "title": "Search \u00b7 Loading",
+      "title": "Search · Loading",
       "nodeId": "QBG-0",
       "pageId": "p-2-0",
-      "flowSection": "11",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4854,14 +5354,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.18",
+      "rootName": "03.18 · L90 · Search · Loading",
+      "position": {
+        "x": 40,
+        "y": 12304
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L91",
-      "title": "Search \u00b7 Failed",
+      "title": "Search · Failed",
       "nodeId": "QCU-0",
       "pageId": "p-2-0",
-      "flowSection": "11",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4871,14 +5378,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.19",
+      "rootName": "03.19 · L91 · Search · Failed",
+      "position": {
+        "x": 510,
+        "y": 12304
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L92",
-      "title": "Search \u00b7 Start",
+      "title": "Search · Start",
       "nodeId": "QE0-0",
       "pageId": "p-2-0",
-      "flowSection": "11",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4888,14 +5402,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.12",
+      "rootName": "03.12 · L92 · Search · Start",
+      "position": {
+        "x": 40,
+        "y": 11330
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L93",
-      "title": "Search \u00b7 Empty closet",
+      "title": "Search · Empty closet",
       "nodeId": "QFC-0",
       "pageId": "p-2-0",
-      "flowSection": "11",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4905,14 +5426,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.17",
+      "rootName": "03.17 · L93 · Search · Empty closet",
+      "position": {
+        "x": 2390,
+        "y": 11330
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L94",
       "title": "Piece details",
       "nodeId": "QGO-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "02",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4922,14 +5450,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "02.12",
+      "rootName": "02.12 · L94 · Piece details",
+      "position": {
+        "x": 40,
+        "y": 7174
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L95",
       "title": "Additional details",
       "nodeId": "QIB-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "02",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4939,14 +5474,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "02.13",
+      "rootName": "02.13 · L95 · Additional details",
+      "position": {
+        "x": 510,
+        "y": 7174
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L96",
       "title": "Archived pieces",
       "nodeId": "QJE-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4956,14 +5498,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.09",
+      "rootName": "03.09 · L96 · Archived pieces",
+      "position": {
+        "x": 1450,
+        "y": 10356
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L97",
       "title": "Delete piece",
       "nodeId": "QKI-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4973,14 +5522,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.10",
+      "rootName": "03.10 · L97 · Delete piece",
+      "position": {
+        "x": 1920,
+        "y": 10356
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L98",
-      "title": "Choose pieces",
+      "title": "Choose pieces · Shared",
       "nodeId": "QM0-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "04",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -4990,14 +5546,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "04.01",
+      "rootName": "04.01 · L98 · Choose pieces · Shared",
+      "position": {
+        "x": 510,
+        "y": 15486
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L99",
       "title": "Replace a piece",
       "nodeId": "QNN-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "04",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5007,14 +5570,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "04.02",
+      "rootName": "04.02 · L99 · Replace a piece",
+      "position": {
+        "x": 980,
+        "y": 15486
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L100",
-      "title": "Agent \u00b7 Stopped",
+      "title": "Agent · Stopped",
       "nodeId": "QOO-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "07",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5024,14 +5594,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "07.10",
+      "rootName": "07.10 · L100 · Agent · Stopped",
+      "position": {
+        "x": 1920,
+        "y": 25032
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L101",
-      "title": "Agent \u00b7 Interrupted",
+      "title": "Agent · Interrupted",
       "nodeId": "QQX-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "07",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5041,14 +5618,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "07.11",
+      "rootName": "07.11 · L101 · Agent · Interrupted",
+      "position": {
+        "x": 2390,
+        "y": 25032
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L102",
       "title": "Response details",
       "nodeId": "QSL-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "07",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5058,14 +5642,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "07.09",
+      "rootName": "07.09 · L102 · Response details",
+      "position": {
+        "x": 1450,
+        "y": 25032
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L103",
-      "title": "No conversations",
+      "title": "Conversations · Empty",
       "nodeId": "QTQ-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "07",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5075,14 +5666,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "07.18",
+      "rootName": "07.18 · L103 · Conversations · Empty",
+      "position": {
+        "x": 40,
+        "y": 26980
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L104",
-      "title": "Conversations \u00b7 Failed",
+      "title": "Conversations · Failed",
       "nodeId": "QUC-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "07",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5092,14 +5690,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "07.19",
+      "rootName": "07.19 · L104 · Conversations · Failed",
+      "position": {
+        "x": 510,
+        "y": 26980
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L105",
-      "title": "Message \u00b7 Failed",
+      "title": "Message · Failed",
       "nodeId": "QV1-0",
       "pageId": "p-2-0",
-      "flowSection": "12",
+      "flowSection": "07",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5109,14 +5714,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "07.12",
+      "rootName": "07.12 · L105 · Message · Failed",
+      "position": {
+        "x": 40,
+        "y": 26006
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L106",
-      "title": "Unsaved changes \u00b7 Keep your draft?",
+      "title": "Dirty exit · Shared forms",
       "nodeId": "QWN-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "02",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5126,14 +5738,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "02.17",
+      "rootName": "02.17 · L106 · Dirty exit · Shared forms",
+      "position": {
+        "x": 2390,
+        "y": 7174
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L107",
-      "title": "Photo needs attention \u00b7 Couldn\u2019t use this photo.",
+      "title": "Photo error · Shared",
       "nodeId": "QXJ-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "02",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5143,14 +5762,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "02.09",
+      "rootName": "02.09 · L107 · Photo error · Shared",
+      "position": {
+        "x": 1450,
+        "y": 6200
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L108",
-      "title": "Camera access \u00b7 Allow camera access.",
+      "title": "Camera permission · Shared",
       "nodeId": "QYF-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "02",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5160,14 +5786,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "02.10",
+      "rootName": "02.10 · L108 · Camera permission · Shared",
+      "position": {
+        "x": 1920,
+        "y": 6200
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L109",
-      "title": "Export closet \u00b7 Preparing your archive\u2026",
+      "title": "Export · Preparing",
       "nodeId": "QZB-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "09",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5177,14 +5810,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "09.06",
+      "rootName": "09.06 · L109 · Export · Preparing",
+      "position": {
+        "x": 40,
+        "y": 32370
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L110",
-      "title": "Export closet \u00b7 Your archive is ready.",
+      "title": "Export · Ready",
       "nodeId": "R07-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "09",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5194,14 +5834,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "09.07",
+      "rootName": "09.07 · L110 · Export · Ready",
+      "position": {
+        "x": 510,
+        "y": 32370
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L111",
-      "title": "Export closet \u00b7 Couldn\u2019t prepare the archive.",
+      "title": "Export · Failed",
       "nodeId": "R13-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "09",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5211,14 +5858,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "09.08",
+      "rootName": "09.08 · L111 · Export · Failed",
+      "position": {
+        "x": 980,
+        "y": 32370
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L112",
-      "title": "Restore closet \u00b7 This archive can\u2019t be restored.",
+      "title": "Restore · Invalid archive",
       "nodeId": "R1Z-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "09",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5228,14 +5882,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "09.10",
+      "rootName": "09.10 · L112 · Restore · Invalid archive",
+      "position": {
+        "x": 1920,
+        "y": 32370
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L113",
-      "title": "Restore closet \u00b7 A newer AQD is needed.",
+      "title": "Restore · Newer AQD needed",
       "nodeId": "R2V-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "09",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5245,14 +5906,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "09.11",
+      "rootName": "09.11 · L113 · Restore · Newer AQD needed",
+      "position": {
+        "x": 2390,
+        "y": 32370
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L114",
-      "title": "Restore closet \u00b7 Restoring your closet\u2026",
+      "title": "Restore · Committing",
       "nodeId": "R3R-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "09",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5262,14 +5930,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "09.12",
+      "rootName": "09.12 · L114 · Restore · Committing",
+      "position": {
+        "x": 40,
+        "y": 33344
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L115",
-      "title": "Restore closet \u00b7 Your closet is restored.",
+      "title": "Restore · Complete",
       "nodeId": "R4N-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "09",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5279,14 +5954,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "09.13",
+      "rootName": "09.13 · L115 · Restore · Complete",
+      "position": {
+        "x": 510,
+        "y": 33344
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L116",
-      "title": "Review needed \u00b7 This draft is out of date.",
+      "title": "Stale draft · Shared review",
       "nodeId": "R5J-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "04",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5296,14 +5978,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "04.11",
+      "rootName": "04.11 · L116 · Stale draft · Shared review",
+      "position": {
+        "x": 2390,
+        "y": 16460
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L117",
-      "title": "Record unavailable \u00b7 This item is no longer here.",
+      "title": "Unavailable record · Shared",
       "nodeId": "R6F-0",
       "pageId": "p-2-0",
-      "flowSection": "13",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5313,14 +6002,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.11",
+      "rootName": "03.11 · L117 · Unavailable record · Shared",
+      "position": {
+        "x": 2390,
+        "y": 10356
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L118",
       "title": "Add to closet",
       "nodeId": "R7B-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5330,14 +6026,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.03",
+      "rootName": "03.03 · L118 · Add to closet",
+      "position": {
+        "x": 1450,
+        "y": 9382
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L119",
       "title": "Piece options",
       "nodeId": "R87-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5347,14 +6050,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.05",
+      "rootName": "03.05 · L119 · Piece options",
+      "position": {
+        "x": 2390,
+        "y": 9382
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L120",
       "title": "Availability",
       "nodeId": "R93-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5364,14 +6074,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.06",
+      "rootName": "03.06 · L120 · Availability",
+      "position": {
+        "x": 40,
+        "y": 10356
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L121",
       "title": "Filter pieces",
       "nodeId": "R9Z-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5381,14 +6098,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.20",
+      "rootName": "03.20 · L121 · Filter pieces",
+      "position": {
+        "x": 980,
+        "y": 12304
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L122",
       "title": "Sort pieces",
       "nodeId": "RAV-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5398,14 +6122,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.21",
+      "rootName": "03.21 · L122 · Sort pieces",
+      "position": {
+        "x": 1450,
+        "y": 12304
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L123",
-      "title": "Theme options",
+      "title": "Theme commands",
       "nodeId": "RBR-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5415,14 +6146,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.27",
+      "rootName": "03.27 · L123 · Theme commands",
+      "position": {
+        "x": 1450,
+        "y": 13278
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L124",
       "title": "Outfit options",
       "nodeId": "RCN-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "04",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5432,14 +6170,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "04.08",
+      "rootName": "04.08 · L124 · Outfit options",
+      "position": {
+        "x": 980,
+        "y": 16460
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L125",
       "title": "Agent options",
       "nodeId": "RDJ-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "07",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5449,14 +6194,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "07.01",
+      "rootName": "07.01 · L125 · Agent options",
+      "position": {
+        "x": 510,
+        "y": 24058
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L126",
       "title": "Choose themes",
       "nodeId": "REF-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "04",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5466,14 +6218,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "04.05",
+      "rootName": "04.05 · L126 · Choose themes",
+      "position": {
+        "x": 2390,
+        "y": 15486
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L127",
       "title": "Add to Planner",
       "nodeId": "RFB-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "05",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5483,14 +6242,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "05.04",
+      "rootName": "05.04 · L127 · Add to Planner",
+      "position": {
+        "x": 1920,
+        "y": 17694
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L128",
       "title": "Plan entry",
       "nodeId": "RG7-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "05",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5500,14 +6266,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "05.09",
+      "rootName": "05.09 · L128 · Plan entry",
+      "position": {
+        "x": 1450,
+        "y": 18668
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L129",
       "title": "Edit routine",
       "nodeId": "RH3-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "05",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5517,14 +6290,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "05.14",
+      "rootName": "05.14 · L129 · Edit routine",
+      "position": {
+        "x": 980,
+        "y": 19642
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L130",
       "title": "Wear record",
       "nodeId": "RHZ-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "06",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5534,14 +6314,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "06.02",
+      "rootName": "06.02 · L130 · Wear record",
+      "position": {
+        "x": 980,
+        "y": 21850
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L131",
-      "title": "Category",
+      "title": "Category · Shared picker",
       "nodeId": "RIV-0",
       "pageId": "p-2-0",
-      "flowSection": "14",
+      "flowSection": "02",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5551,14 +6338,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "02.11",
+      "rootName": "02.11 · L131 · Category · Shared picker",
+      "position": {
+        "x": 2390,
+        "y": 6200
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L132",
       "title": "Edit piece",
       "nodeId": "RJR-0",
       "pageId": "p-2-0",
-      "flowSection": "15",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5568,14 +6362,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.07",
+      "rootName": "03.07 · L132 · Edit piece",
+      "position": {
+        "x": 510,
+        "y": 10356
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L133",
       "title": "Edit outfit",
       "nodeId": "RL6-0",
       "pageId": "p-2-0",
-      "flowSection": "15",
+      "flowSection": "04",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5585,14 +6386,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "04.09",
+      "rootName": "04.09 · L133 · Edit outfit",
+      "position": {
+        "x": 1450,
+        "y": 16460
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L134",
       "title": "Create theme",
       "nodeId": "RML-0",
       "pageId": "p-2-0",
-      "flowSection": "15",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5602,14 +6410,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.24",
+      "rootName": "03.24 · L134 · Create theme",
+      "position": {
+        "x": 40,
+        "y": 13278
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L135",
-      "title": "Choose outfits",
+      "title": "Theme · Choose outfits",
       "nodeId": "RNP-0",
       "pageId": "p-2-0",
-      "flowSection": "15",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5619,14 +6434,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.29",
+      "rootName": "03.29 · L135 · Theme · Choose outfits",
+      "position": {
+        "x": 2390,
+        "y": 13278
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L136",
       "title": "Correct wear",
       "nodeId": "RP6-0",
       "pageId": "p-2-0",
-      "flowSection": "15",
+      "flowSection": "06",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5636,14 +6458,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "06.03",
+      "rootName": "06.03 · L136 · Correct wear",
+      "position": {
+        "x": 1450,
+        "y": 21850
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L137",
       "title": "Wear calendar",
       "nodeId": "RQG-0",
       "pageId": "p-2-0",
-      "flowSection": "15",
+      "flowSection": "06",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5653,14 +6482,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "06.06",
+      "rootName": "06.06 · L137 · Wear calendar",
+      "position": {
+        "x": 40,
+        "y": 22824
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L138",
-      "title": "Archive piece \u00b7 Archive Cotton shirt?",
+      "title": "Archive piece",
       "nodeId": "RX0-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5670,14 +6506,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.08",
+      "rootName": "03.08 · L138 · Archive piece",
+      "position": {
+        "x": 980,
+        "y": 10356
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L139",
-      "title": "Delete theme \u00b7 Delete Weekend?",
+      "title": "Delete theme",
       "nodeId": "RXW-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5687,14 +6530,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.30",
+      "rootName": "03.30 · L139 · Delete theme",
+      "position": {
+        "x": 40,
+        "y": 14252
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L140",
-      "title": "Delete outfit \u00b7 Delete An easy afternoon?",
+      "title": "Delete outfit",
       "nodeId": "RYS-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "04",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5704,14 +6554,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "04.10",
+      "rootName": "04.10 · L140 · Delete outfit",
+      "position": {
+        "x": 1920,
+        "y": 16460
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L141",
-      "title": "Undo wear \u00b7 Undo September 30?",
+      "title": "Undo wear",
       "nodeId": "RZO-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "06",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5721,14 +6578,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "06.04",
+      "rootName": "06.04 · L141 · Undo wear",
+      "position": {
+        "x": 1920,
+        "y": 21850
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L142",
-      "title": "Wear already recorded \u00b7 This look is already recorded.",
+      "title": "Wear already recorded",
       "nodeId": "S0K-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "06",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5738,14 +6602,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "06.01",
+      "rootName": "06.01 · L142 · Wear already recorded",
+      "position": {
+        "x": 510,
+        "y": 21850
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L143",
-      "title": "Delete conversation \u00b7 Delete Tonight\u2019s outfit?",
+      "title": "Delete conversation",
       "nodeId": "S1G-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "07",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5755,14 +6626,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "07.17",
+      "rootName": "07.17 · L143 · Delete conversation",
+      "position": {
+        "x": 2390,
+        "y": 26006
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L144",
-      "title": "Outfits \u00b7 Make your first look.",
+      "title": "Outfits · Empty",
       "nodeId": "S2C-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5772,14 +6650,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.02",
+      "rootName": "03.02 · L144 · Outfits · Empty",
+      "position": {
+        "x": 980,
+        "y": 9382
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L145",
-      "title": "Themes \u00b7 A place for your looks.",
+      "title": "Themes · Empty",
       "nodeId": "S38-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "03",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5789,14 +6674,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "03.23",
+      "rootName": "03.23 · L145 · Themes · Empty",
+      "position": {
+        "x": 2390,
+        "y": 12304
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L146",
-      "title": "Wear history \u00b7 Your history starts here.",
+      "title": "Wear history · Empty",
       "nodeId": "S44-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "06",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5806,14 +6698,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "06.07",
+      "rootName": "06.07 · L146 · Wear history · Empty",
+      "position": {
+        "x": 510,
+        "y": 22824
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L147",
-      "title": "Wear insights \u00b7 Not enough recorded history.",
+      "title": "Insights · Insufficient history",
       "nodeId": "S50-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "06",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5823,14 +6722,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "06.09",
+      "rootName": "06.09 · L147 · Insights · Insufficient history",
+      "position": {
+        "x": 1450,
+        "y": 22824
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L148",
-      "title": "Restore failed \u00b7 Your original closet is still here.",
+      "title": "Restore · Failed",
       "nodeId": "S5W-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "09",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5840,14 +6746,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "09.14",
+      "rootName": "09.14 · L148 · Restore · Failed",
+      "position": {
+        "x": 980,
+        "y": 33344
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L149",
-      "title": "Saving \u00b7 Saving your changes\u2026",
+      "title": "Saving · Shared writes",
       "nodeId": "S6S-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "02",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5857,14 +6770,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "02.18",
+      "rootName": "02.18 · L149 · Saving · Shared writes",
+      "position": {
+        "x": 40,
+        "y": 8148
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L150",
-      "title": "Save status \u00b7 Checking the last save\u2026",
+      "title": "Save unknown · Shared writes",
       "nodeId": "S7O-0",
       "pageId": "p-2-0",
-      "flowSection": "16",
+      "flowSection": "02",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5874,14 +6794,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "02.19",
+      "rootName": "02.19 · L150 · Save unknown · Shared writes",
+      "position": {
+        "x": 510,
+        "y": 8148
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L151",
-      "title": "Timezone",
+      "title": "Timezone · Shared dates",
       "nodeId": "S9L-0",
       "pageId": "p-2-0",
-      "flowSection": "17",
+      "flowSection": "05",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5891,14 +6818,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "05.11",
+      "rootName": "05.11 · L151 · Timezone · Shared dates",
+      "position": {
+        "x": 2390,
+        "y": 18668
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L152",
-      "title": "Preferences \u00b7 Goals",
+      "title": "Preferences · Goals",
       "nodeId": "SAH-0",
       "pageId": "p-2-0",
-      "flowSection": "17",
+      "flowSection": "01",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5908,14 +6842,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "01.04",
+      "rootName": "01.04 · L152 · Preferences · Goals",
+      "position": {
+        "x": 40,
+        "y": 2044
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L153",
-      "title": "Preferences \u00b7 Occasions",
+      "title": "Preferences · Occasions",
       "nodeId": "SBD-0",
       "pageId": "p-2-0",
-      "flowSection": "17",
+      "flowSection": "01",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5925,14 +6866,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "01.05",
+      "rootName": "01.05 · L153 · Preferences · Occasions",
+      "position": {
+        "x": 510,
+        "y": 2044
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L154",
-      "title": "Preferences \u00b7 Style",
+      "title": "Preferences · Style",
       "nodeId": "SC9-0",
       "pageId": "p-2-0",
-      "flowSection": "17",
+      "flowSection": "01",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5942,14 +6890,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "01.06",
+      "rootName": "01.06 · L154 · Preferences · Style",
+      "position": {
+        "x": 980,
+        "y": 2044
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L155",
       "title": "New event or trip",
       "nodeId": "SEL-0",
       "pageId": "p-2-0",
-      "flowSection": "17",
+      "flowSection": "05",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5959,14 +6914,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "05.15",
+      "rootName": "05.15 · L155 · New event or trip",
+      "position": {
+        "x": 1450,
+        "y": 19642
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L156",
       "title": "Remove plan entry",
       "nodeId": "SG4-0",
       "pageId": "p-2-0",
-      "flowSection": "17",
+      "flowSection": "05",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5976,14 +6938,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "05.10",
+      "rootName": "05.10 · L156 · Remove plan entry",
+      "position": {
+        "x": 1920,
+        "y": 18668
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L157",
-      "title": "Choose one outfit",
+      "title": "Choose one outfit · Shared",
       "nodeId": "SH0-0",
       "pageId": "p-2-0",
-      "flowSection": "17",
+      "flowSection": "05",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -5993,14 +6962,21 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
-      }
+      },
+      "flowStep": "05.07",
+      "rootName": "05.07 · L157 · Choose one outfit · Shared",
+      "position": {
+        "x": 510,
+        "y": 18668
+      },
+      "runtimeComplete": false
     },
     {
       "id": "L158",
       "title": "Manage conversations",
       "nodeId": "SJC-0",
       "pageId": "p-2-0",
-      "flowSection": "17",
+      "flowSection": "07",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
@@ -6010,119 +6986,503 @@
           "Shared selection/form/recovery state"
         ],
         "contract": "v1-interactions.md"
+      },
+      "flowStep": "07.16",
+      "rootName": "07.16 · L158 · Manage conversations",
+      "position": {
+        "x": 1920,
+        "y": 26006
+      },
+      "runtimeComplete": false
+    },
+    {
+      "id": "L164",
+      "nodeId": "UUA-0",
+      "title": "Theme options · Open",
+      "pageId": "p-2-0",
+      "release": "V1",
+      "phase": "V1",
+      "flowSection": "03",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "Native anchored Menu",
+        "content": [
+          "Shared menu state"
+        ],
+        "contract": "native-presentations.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "03.26",
+      "rootName": "03.26 · L164 · Theme options · Open",
+      "position": {
+        "x": 980,
+        "y": 13278
+      }
+    },
+    {
+      "id": "L165",
+      "nodeId": "V0A-0",
+      "title": "Profile options · Open",
+      "pageId": "p-2-0",
+      "release": "V1",
+      "phase": "V1",
+      "flowSection": "08",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "Native anchored Menu",
+        "content": [
+          "Shared menu state"
+        ],
+        "contract": "profile-fit-journal.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "08.04",
+      "rootName": "08.04 · L165 · Profile options · Open",
+      "position": {
+        "x": 1920,
+        "y": 29188
+      }
+    },
+    {
+      "id": "L166",
+      "nodeId": "V6F-0",
+      "title": "Preferences · Fit & comfort",
+      "pageId": "p-2-0",
+      "release": "V1",
+      "phase": "V1",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "01.07",
+      "rootName": "01.07 · L166 · Preferences · Fit & comfort",
+      "position": {
+        "x": 1450,
+        "y": 2044
+      }
+    },
+    {
+      "id": "L167",
+      "nodeId": "V7G-0",
+      "title": "Preferences · Optional body details",
+      "pageId": "p-2-0",
+      "release": "V1",
+      "phase": "V1",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "01.08",
+      "rootName": "01.08 · L167 · Preferences · Optional body details",
+      "position": {
+        "x": 1920,
+        "y": 2044
+      }
+    },
+    {
+      "id": "L168",
+      "nodeId": "V8H-0",
+      "title": "Preferences · Colors & patterns",
+      "pageId": "p-2-0",
+      "release": "V1",
+      "phase": "V1",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "01.09",
+      "rootName": "01.09 · L168 · Preferences · Colors & patterns",
+      "position": {
+        "x": 2390,
+        "y": 2044
+      }
+    },
+    {
+      "id": "L169",
+      "nodeId": "V9I-0",
+      "title": "Review preferences",
+      "pageId": "p-2-0",
+      "release": "V1",
+      "phase": "V1",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "01.10",
+      "rootName": "01.10 · L169 · Review preferences",
+      "position": {
+        "x": 40,
+        "y": 3018
+      }
+    },
+    {
+      "id": "L170",
+      "nodeId": "VO9-0",
+      "title": "Preferences · Settings edit · Goals answered",
+      "pageId": "p-2-0",
+      "release": "V1",
+      "phase": "V1",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "01.11",
+      "rootName": "01.11 · L170 · Settings edit · Goals answered",
+      "position": {
+        "x": 510,
+        "y": 3018
+      }
+    },
+    {
+      "id": "L171",
+      "nodeId": "VPA-0",
+      "title": "Preferences · Body shape picker open",
+      "pageId": "p-2-0",
+      "release": "V1",
+      "phase": "V1",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "Native picker / adaptive presentation",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "01.12",
+      "rootName": "01.12 · L171 · Body shape picker · Open",
+      "position": {
+        "x": 980,
+        "y": 3018
+      }
+    },
+    {
+      "id": "L173", "nodeId": "WK5-0", "title": "Body shape · Custom description", "pageId": "p-2-0",
+      "release": "V1", "phase": "V1", "flowSection": "01", "flowStep": "01.13", "rootName": "01.13 · L173 · Body shape · Custom description",
+      "position": {"x": 1450, "y": 3018}, "viewport": {"width": 390, "height": 844}, "designStatus": "Prepared shared V1/V2 static reference", "runtimeComplete": false,
+      "motion": {"navigation": "Native adaptive sheet/editor", "content": ["C-form"], "contract": "onboarding-personalization.md", "verification": "Native keyboard, focus, growing text and safe scrolling unverified"}
+    },
+    {
+      "id": "UP01",
+      "nodeId": "VEV-0",
+      "title": "Private preferences — goals",
+      "pageId": "p-B-0",
+      "release": "V2",
+      "phase": "V2",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "preferences.01",
+      "rootName": "UP01 · Private preferences · Goals",
+      "position": {
+        "x": 2430,
+        "y": 1330
+      }
+    },
+    {
+      "id": "UP02",
+      "nodeId": "VFW-0",
+      "title": "Private preferences — occasions",
+      "pageId": "p-B-0",
+      "release": "V2",
+      "phase": "V2",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "preferences.02",
+      "rootName": "UP02 · Private preferences · Occasions",
+      "position": {
+        "x": 2900,
+        "y": 1330
+      }
+    },
+    {
+      "id": "UP03",
+      "nodeId": "VH3-0",
+      "title": "Private preferences — style",
+      "pageId": "p-B-0",
+      "release": "V2",
+      "phase": "V2",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "preferences.03",
+      "rootName": "UP03 · Private preferences · Style",
+      "position": {
+        "x": 3370,
+        "y": 1330
+      }
+    },
+    {
+      "id": "UP04",
+      "nodeId": "VIA-0",
+      "title": "Private preferences — fit and comfort",
+      "pageId": "p-B-0",
+      "release": "V2",
+      "phase": "V2",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "preferences.04",
+      "rootName": "UP04 · Private preferences · Fit & comfort",
+      "position": {
+        "x": 3840,
+        "y": 1330
+      }
+    },
+    {
+      "id": "UP05",
+      "nodeId": "VJI-0",
+      "title": "Private preferences — optional body details",
+      "pageId": "p-B-0",
+      "release": "V2",
+      "phase": "V2",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "preferences.05",
+      "rootName": "UP05 · Private preferences · Optional body details",
+      "position": {
+        "x": 2430,
+        "y": 2254
+      }
+    },
+    {
+      "id": "UP06",
+      "nodeId": "VKU-0",
+      "title": "Private preferences — colors and patterns",
+      "pageId": "p-B-0",
+      "release": "V2",
+      "phase": "V2",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "preferences.06",
+      "rootName": "UP06 · Private preferences · Colors & patterns",
+      "position": {
+        "x": 2900,
+        "y": 2254
+      }
+    },
+    {
+      "id": "UP07",
+      "nodeId": "VM2-0",
+      "title": "Review private preferences — incomplete draft",
+      "pageId": "p-B-0",
+      "release": "V2",
+      "phase": "V2",
+      "flowSection": "01",
+      "designStatus": "Prepared static reference",
+      "runtimeComplete": false,
+      "motion": {
+        "navigation": "N-push",
+        "content": [
+          "C-form"
+        ],
+        "contract": "onboarding-personalization.md",
+        "verification": "Shared contract only; native motion and runtime behavior unverified"
+      },
+      "flowStep": "preferences.07",
+      "rootName": "UP07 · Review private preferences",
+      "position": {
+        "x": 3370,
+        "y": 2254
       }
     }
   ],
   "referenceBoards": [
+    {"nodeId": "WCL-0", "name": "01 · Foundations · Tokens and typography", "pageId": "p-1-0", "position": {"x": 40, "y": 40}, "reviewOnly": true},
+    {"nodeId": "WCQ-0", "name": "02 · Foundations · Icons and identity", "pageId": "p-1-0", "position": {"x": 40, "y": 3962}, "reviewOnly": true},
+    {"nodeId": "WDN-0", "name": "03 · Foundations · Native navigation and chrome", "pageId": "p-1-0", "position": {"x": 40, "y": 7112}, "reviewOnly": true},
+    {"nodeId": "WDS-0", "name": "04 · Foundations · Controls, forms and surfaces", "pageId": "p-1-0", "position": {"x": 40, "y": 10072}, "reviewOnly": true},
+    {"nodeId": "WDX-0", "name": "05 · Foundations · Images and composition", "pageId": "p-1-0", "position": {"x": 40, "y": 16115}, "reviewOnly": true},
+    {"nodeId": "WE2-0", "name": "06 · Foundations · States, feedback, Agent and motion", "pageId": "p-1-0", "position": {"x": 40, "y": 18411.001}, "reviewOnly": true},
     {
       "nodeId": "1-0",
-      "name": "AQD \u00b7 Start here",
-      "pageId": "p-1-0"
+      "name": "01.01 · AQD · Start here",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 370}
     },
     {
       "nodeId": "14I-0",
-      "name": "Components \u00b7 Controls and states",
-      "pageId": "p-1-0"
+      "name": "04.02 · Controls and states",
+      "pageId": "p-1-0", "position": {"x": 1360, "y": 10402}
     },
     {
       "nodeId": "1JB-0",
-      "name": "Foundations \u00b7 Type, space and materials",
-      "pageId": "p-1-0"
-    },
-    {
-      "nodeId": "1YD-0",
-      "name": "D01 \u00b7 Settings \u00b7 Dark",
-      "pageId": "p-1-0"
-    },
-    {
-      "nodeId": "21N-0",
-      "name": "D02 \u00b7 Agent \u00b7 Dark",
-      "pageId": "p-1-0"
+      "name": "01.03 · Type, space and materials",
+      "pageId": "p-1-0", "position": {"x": 1520, "y": 1290}
     },
     {
       "nodeId": "22T-0",
-      "name": "D03 \u00b7 New piece \u00b7 Larger text",
-      "pageId": "p-1-0"
+      "name": "06.07 · D03 · New piece · Larger text",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 23621}
     },
     {
       "nodeId": "25T-0",
-      "name": "D04 \u00b7 Home \u00b7 Reduced transparency",
-      "pageId": "p-1-0"
+      "name": "06.08 · D04 · Home · Reduced transparency",
+      "pageId": "p-1-0", "position": {"x": 590, "y": 23621}
     },
     {
       "nodeId": "4E1-0",
-      "name": "Components \u00b7 States and feedback",
-      "pageId": "p-1-0"
+      "name": "06.01 · States and feedback",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 18741}
     },
     {
       "nodeId": "4GB-0",
-      "name": "Components \u00b7 Presentations and navigation",
-      "pageId": "p-1-0"
+      "name": "03.02 · Presentations and navigation",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 7792}
     },
     {
       "nodeId": "4LD-0",
-      "name": "Components \u00b7 Content and form patterns",
-      "pageId": "p-1-0"
+      "name": "04.03 · Content and form patterns",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 11788}
     },
     {
       "nodeId": "4MI-0",
-      "name": "Foundations \u00b7 Icons and navigation states",
-      "pageId": "p-1-0"
+      "name": "02.01 · Icons and navigation states",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 4292}
     },
     {
       "nodeId": "5PP-0",
-      "name": "Components \u00b7 Entry and identity",
-      "pageId": "p-1-0"
+      "name": "02.02 · Entry and identity",
+      "pageId": "p-1-0", "position": {"x": 1520, "y": 4292}
     },
     {
       "nodeId": "64C-0",
-      "name": "Motion \u00b7 Welcome and first piece",
-      "pageId": "p-1-0"
+      "name": "06.06 · Motion · Welcome and first piece",
+      "pageId": "p-1-0", "position": {"x": 1520, "y": 22294.999}
     },
     {
       "nodeId": "6FD-0",
-      "name": "Components \u00b7 Agent response lifecycle",
-      "pageId": "p-1-0"
+      "name": "06.03 · Agent response lifecycle",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 20091}
     },
     {
       "nodeId": "7HE-0",
-      "name": "Components \u00b7 Compact profile and bio",
-      "pageId": "p-1-0"
+      "name": "04.07 · Compact profile and bio",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 15178.999}
     },
     {
       "nodeId": "7R2-0",
-      "name": "Components \u00b7 Home dashboard",
-      "pageId": "p-1-0"
+      "name": "04.06 · Home dashboard",
+      "pageId": "p-1-0", "position": {"x": 1300, "y": 13240.999}
     },
     {
       "nodeId": "7US-0",
-      "name": "Components \u00b7 People and avatar images",
-      "pageId": "p-1-0"
+      "name": "05.01 · People and avatar images",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 16445}
     },
     {
       "nodeId": "83E-0",
-      "name": "Foundations \u00b7 Global motion",
-      "pageId": "p-1-0"
+      "name": "06.05 · Global motion",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 22294.999}
     },
     {
       "nodeId": "862-0",
-      "name": "Components \u00b7 Social actions and piece tags",
-      "pageId": "p-1-0"
+      "name": "04.05 · Social actions and piece tags",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 13240.999}
     },
     {
       "nodeId": "A9A-0",
-      "name": "Foundations \u00b7 Control sizes",
-      "pageId": "p-1-0"
+      "name": "04.01 · Control sizes",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 10402}
     },
     {
       "nodeId": "AAE-0",
-      "name": "Foundations \u00b7 Search",
-      "pageId": "p-1-0"
+      "name": "04.04 · Search",
+      "pageId": "p-1-0", "position": {"x": 1520, "y": 11788}
     },
     {
       "nodeId": "AC0-0",
-      "name": "Foundations \u00b7 Feed continuation",
-      "pageId": "p-1-0"
+      "name": "06.02 · Feed continuation",
+      "pageId": "p-1-0", "position": {"x": 1520, "y": 18741}
     },
     {
       "nodeId": "ADU-0",
@@ -6168,8 +7528,8 @@
     },
     {
       "nodeId": "AM1-1",
-      "name": "Components \u00b7 First outfit activation",
-      "pageId": "p-1-0"
+      "name": "05.03 · First outfit activation",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 17804.999}
     },
     {
       "nodeId": "ASJ-1",
@@ -6392,8 +7752,8 @@
     },
     {
       "nodeId": "FBL-1",
-      "name": "Components \u00b7 Native controls and open menus",
-      "pageId": "p-1-0",
+      "name": "03.03 · Native controls and open menus",
+      "pageId": "p-1-0", "position": {"x": 1520, "y": 7792},
       "reviewOnly": true,
       "contract": "native-presentations.md",
       "staticScreenCopies": false,
@@ -6401,8 +7761,8 @@
     },
     {
       "nodeId": "FP1-0",
-      "name": "Foundations \u00b7 Color palette \u00b7 Crisp blue",
-      "pageId": "p-1-0",
+      "name": "01.02 · Color palette · Crisp blue",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 1290},
       "reviewOnly": true,
       "contract": "../../DESIGN.md",
       "staticScreenCopies": false,
@@ -6410,8 +7770,8 @@
     },
     {
       "nodeId": "IB0-0",
-      "name": "Components \u00b7 Agent multimodal composer",
-      "pageId": "p-1-0",
+      "name": "05.02 · Agent multimodal composer",
+      "pageId": "p-1-0", "position": {"x": 1200, "y": 16445},
       "reviewOnly": true,
       "contract": "agent-input.md",
       "staticScreenCopies": false,
@@ -6419,8 +7779,8 @@
     },
     {
       "nodeId": "IB1-0",
-      "name": "Components \u00b7 Agent shimmer and state coverage",
-      "pageId": "p-1-0",
+      "name": "06.04 · Agent shimmer and state coverage",
+      "pageId": "p-1-0", "position": {"x": 1520, "y": 20091},
       "reviewOnly": true,
       "contract": "agent-input.md",
       "staticScreenCopies": false,
@@ -6450,63 +7810,98 @@
     },
     {
       "nodeId": "JKP-0",
-      "name": "V1 + V2 \u00b7 Five-destination navigation master",
-      "pageId": "p-1-0"
+      "name": "03.01 · Five-destination navigation master",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 7442}
     },
     {
       "nodeId": "JK8-0",
-      "name": "00 \u00b7 V1 scope & journey",
-      "pageId": "p-2-0"
+      "name": "00 · V1 scope & journey",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 0,
+        "y": 0
+      }
     },
     {
       "nodeId": "MZ2-0",
-      "name": "01 \u00b7 V1 flow \u00b7 Welcome, onboarding and tour",
-      "pageId": "p-2-0"
+      "name": "01 · Welcome, onboarding & tour",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 40,
+        "y": 850
+      }
     },
     {
       "nodeId": "MZ7-0",
-      "name": "02 \u00b7 V1 flow \u00b7 Home and first piece",
-      "pageId": "p-2-0"
+      "name": "02 · Capture & photo editing",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 40,
+        "y": 5006
+      }
     },
     {
       "nodeId": "MZC-0",
-      "name": "03 \u00b7 V1 flow \u00b7 Closet and themes",
-      "pageId": "p-2-0"
+      "name": "03 · Closet, search & themes",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 40,
+        "y": 9162
+      }
     },
     {
       "nodeId": "MZH-0",
-      "name": "04 \u00b7 V1 flow \u00b7 Create, review and save an outfit",
-      "pageId": "p-2-0"
+      "name": "04 · Outfit creation & review",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 40,
+        "y": 15266
+      }
     },
     {
       "nodeId": "MZM-0",
-      "name": "05 \u00b7 V1 flow \u00b7 Planning, routines and trips",
-      "pageId": "p-2-0"
+      "name": "05 · Planner, routines & trips",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 40,
+        "y": 17474
+      }
     },
     {
       "nodeId": "MZR-0",
-      "name": "06 \u00b7 V1 flow \u00b7 Actual wear and insights",
-      "pageId": "p-2-0"
+      "name": "06 · Actual wear, history & insights",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 40,
+        "y": 21630
+      }
     },
     {
       "nodeId": "MZW-0",
-      "name": "07 \u00b7 V1 flow \u00b7 Local Agent",
-      "pageId": "p-2-0"
+      "name": "07 · Agent, conversations & recovery",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 40,
+        "y": 23838
+      }
     },
     {
       "nodeId": "N01-0",
-      "name": "08 \u00b7 V1 flow \u00b7 Local Profile and Settings",
-      "pageId": "p-2-0"
+      "name": "08 · Profile & private fit journal",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 40,
+        "y": 28968
+      }
     },
     {
       "nodeId": "N06-0",
-      "name": "09 \u00b7 V1 flow \u00b7 Local data and recovery",
-      "pageId": "p-2-0"
-    },
-    {
-      "nodeId": "N0B-0",
-      "name": "10 \u00b7 V1 flow \u00b7 Dark appearance",
-      "pageId": "p-2-0"
+      "name": "09 · Settings, preferences & local data",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 40,
+        "y": 31176
+      }
     },
     {
       "nodeId": "MEO-0",
@@ -6605,41 +8000,6 @@
       "pageId": "p-B-0",
       "contract": "v2-requirements.md",
       "reviewOnly": true
-    },
-    {
-      "nodeId": "SIH-0",
-      "name": "11 \u00b7 V1 supporting states",
-      "pageId": "p-2-0"
-    },
-    {
-      "nodeId": "SIL-0",
-      "name": "12 \u00b7 V1 supporting states",
-      "pageId": "p-2-0"
-    },
-    {
-      "nodeId": "SIP-0",
-      "name": "13 \u00b7 V1 supporting states",
-      "pageId": "p-2-0"
-    },
-    {
-      "nodeId": "SIT-0",
-      "name": "14 \u00b7 V1 supporting states",
-      "pageId": "p-2-0"
-    },
-    {
-      "nodeId": "SIX-0",
-      "name": "15 \u00b7 V1 supporting states",
-      "pageId": "p-2-0"
-    },
-    {
-      "nodeId": "SJ1-0",
-      "name": "16 \u00b7 V1 supporting states",
-      "pageId": "p-2-0"
-    },
-    {
-      "nodeId": "SJ5-0",
-      "name": "17 \u00b7 V1 supporting states",
-      "pageId": "p-2-0"
     }
   ],
   "controlMaterialReview": {
@@ -7239,6 +8599,8 @@
       "top": 51300,
       "nodeIds": [
         "2EN-0",
+        "W2T-0",
+        "VYT-0",
         "2QO-0",
         "2XZ-0",
         "34Y-0",
@@ -11216,5 +12578,243 @@
       "Square-and-pencil edit icon"
     ],
     "nativeChecks": "Route execution, OS presentations, accessibility, persistence, motion, real recommendation quality remain unverified"
+  },
+  "historicalReviewPolicy": {
+    "status": "Historical / superseded by latestRefinement for current inventory, placements and changed visual contracts",
+    "fields": [
+      "controlMaterialReview",
+      "nativePresentationReview",
+      "navigationConsistencyReview",
+      "progressAndDestructiveReview",
+      "navigationExitReview",
+      "colorPaletteReview",
+      "aiBadgeReview",
+      "heritageBlueReview",
+      "agentInputReview",
+      "titleAlignmentReview",
+      "centeredTitleTypographyReview",
+      "phaseRefactorReview",
+      "welcomeMotionReview",
+      "bottomNavigationReview",
+      "onboardingActionReview",
+      "agentNavigationIconReview",
+      "settingsSurfaceReview",
+      "todaySpacingReview",
+      "newPiecePhotoActionsReview",
+      "todaySecondaryActionReview",
+      "crispBluePaletteReview",
+      "plainOnboardingActionsReview",
+      "entryActionSpacingReview",
+      "plainSecondaryActionsReview",
+      "controlConsistencyReview",
+      "actionStackSpacingReview",
+      "photoCaptureFlowReview",
+      "photoRequiredCaptureReview",
+      "compactPhotoSelectorReview",
+      "privateStartIntroductionReview",
+      "agentAvailabilityReview",
+      "demoImageryReview",
+      "designQualityReview",
+      "readyToBeginVisualReview",
+      "todayInsightReview",
+      "plannerRootNavigationReview",
+      "privateFitJournalReview",
+      "agentStarterChipReview",
+      "v1InteractionReview"
+    ],
+    "note": "Dated proof remains unchanged. Historical counts, captions, separators, actions and retired IDs are not live canvas claims."
+  },
+  "latestRefinement": {
+    "settingsGlyphRepair": {"master": "4Q8-0", "selectedMaster": "4QB-0", "retainedWrappers": ["UYU-0", "4Q8-0", "4QB-0", "P2C-0", "P2G-0", "V3A-0", "W7V-0"], "rootCountScanned": 455, "geometry": "Corrected malformed polygon to shared eight-tooth closed outline at22 points; native gearshape role unchanged", "malformedPathMatchesAfter": 0, "controlStylesUnchanged": true, "parentReview": "Registered master and V2 Settings row crop rendered and inspected", "nightLimit": "No live Night/large-text gear sample; offline retint is not native proof", "nativeVerified": false},
+    "emptyStateConsistency": {"foundationsCentered": 11, "v1CenteredRoots": 27, "v2CenteredStates": 27, "placement": "Intrinsic leading-aligned stack centered in remaining body below controls and above footer/nav/composer; overflowing text top-aligns and scrolls natively", "exemptions": "Inline notices with actual content, functional form groups and native sheet/alert controls retain contextual placement", "coverageLimits": "Existing target inventories;131 V1 roots not freshly re-audited, inherited71 V2 unparsed nodes, representative renders not all-app certification", "evidence": "evidence/planner-surfaces.json#latestRefinement.emptyStateConsistency", "nativeVerified": false},
+    "customBodyDescription": {"screen": "L173", "nodeId": "WK5-0", "pageId": "p-2-0", "bounds": [1450, 3018, 390, 844], "sharedPhases": ["V1", "V2"], "source": "L171 picker → custom editor → pending picker selection → preference draft", "limitGraphemes": 160, "illustrativeCount": 38, "consent": "Independent and off by default", "commit": "Atomic preference review Save only", "headerPrefixRemoval": {"changedExistingHeaders": 16, "remainingExactNumberedMatches": 0, "progress": "Step n of 7 preserved"}, "overlapProof": "New box checked against all174 existing V1 roots, no overlap; existing positions unchanged", "nativeVerified": false},
+    "v1ThemeOutfitLists": {"screens": ["L32", "L34", "L88", "L164", "L123", "L135"], "domain": "Theme is a named collection of saved outfits, not direct pieces", "showcase": "L34 two existing distinct members, full-width composition/name/piece-count disclosures; L32 collection previews", "search": "L88 one known outfit preview plus honest remaining count", "preserved": "Original memberships/counts/selection/menu actions, Fit imagery and compact chrome", "limitations": "Blue weekends has no canonical second-member mapping; no member fabricated. L88 → L34 uses a generic detail fixture with differing title/count; runtime must open the actual selected theme", "evidence": "evidence/planner-surfaces.json#latestRefinement.v1ThemeOutfitLists"},
+    "compactControls": {"scope": "Foundations, V1 and V2 segmented tabs and chips, including nested references; native behavior unverified", "rail": 36, "pill": 32, "measuredVerticalInset": 2, "label": "14/20", "chipVisibleHeight": 32, "nativeHitMinimum": 44, "bottomNavigation": "Separate 54-point slots/22-point glyphs preserved", "foundations": {"reviewedRoots": 32, "changedRoots": 9, "controlFamilies": 13, "parentContrastLabelUpdates": 19}, "v1": {"reviewedRoots": 174, "structuralDescendantsAtSweep": 9061, "rails": 13, "initialChangedIds": 138, "enabledInactiveContrastUpdates": 36, "alreadyCompactFiltersRetained": 15}, "v2": {"reviewedRoots": 248, "rails": 61, "chips": 123, "changedIds": 781, "changedRoots": 102, "rasterRailChecks": 61, "inventoryLimit": "71 nodes absent from parsed tree inventory; representative full-screen reviews only, not whole-app certification"}, "lightInactiveLabel": "Existing ink on neutral track: calculated 11.47–11.50:1 rather than secondary4.33:1", "rootCountDelta": 0, "newTokens": 0, "newColors": 0, "evidence": "evidence/planner-navigation.json#latestRefinement.compactControls"},
+    "searchCaptionRemoval": {"copy": "Your closet · Only you", "removedTextNodes": ["Q69-0", "Q7Q-0", "Q95-0", "QAH-0", "QED-0", "QFP-0", "QBV-0", "QD1-0", "9EG-0", "9SB-0", "9TM-0", "9V0-0", "9WC-0", "9XO-0"], "liveTextMatchesAfter": 0, "scope": "Matching V1/V2 search captions; actual privacy/ownership and query semantics unchanged"},
+    "searchBodyRefinement": {"screens": ["L92", "L86", "L87", "L88", "L89", "L93"], "emptyStates": "Unboxed canvas stacks", "resultSurfaces": "Opaque surface, 12-point corners, 14-point padding, full-image Fit", "filters": "Before results grid, not after a long list; native persistent header unverified", "primary": ["L92 Browse pieces", "L89 Clear search", "L93 Add a piece"], "secondary": "L89 Add a piece is plain 50-point action", "nativeReturn": "Retain query, scope, filters and scroll", "evidence": "evidence/planner-surfaces.json#latestRefinement.searchBodyRefinement"},
+    "captureFooterSpacing": {"screens": ["L04", "L75", "L76", "L79"], "roots": ["JPZ-0", "ODL-0", "OEW-0", "OMU-0"], "baseViewport": [390, 844], "saveBottomClearance": 64, "contentPaddingBottom": {"JQI-0": 42, "ONT-0": 64, "ODO-0": 32, "OEZ-0": 32}, "selectedPhotoStackGap": 8, "preserved": "50-point Save, accepted photo Fit viewport, metadata, validation and home indicators", "verification": "Parent reviewed four rendered footer/body references; OS safe-area/keyboard/large-text behavior unverified", "rootCountDelta": 0},
+    "missingPhotoSelector": {"screen": "L79", "root": "OMU-0", "source": "L04 SO6-0", "selector": "WEH-0", "addPhoto": "WEJ-0", "removedSubtree": "OO8-0", "size": [350, 88], "route": "L159 with retained L79 draft", "preserved": ["Cotton shirt", "Tops", "ONX-0 validation", "disabled Save"], "layout": "Compact selector; category stack flexes and footer stays bottom-aligned", "verification": "Parent live 390x844 screenshot reviewed; native behavior unverified", "rootCountDelta": 0, "tokenHash": "fdeb7346"},
+    "date": "2026-10-06",
+    "foundationsFlowMap": {"source": "evidence/planner-navigation.json#latestRefinement.foundationsFlowMap", "stableMasters": 26, "headers": 6, "roots": 32, "overlaps": [], "unassignedRoots": [], "tokenHash": "fdeb7346"},
+    "splash": {"screen": "L172", "root": "W6B-0", "source": "E01 W-0", "viewport": [390, 844], "semantics": "Quiet AQD native launch; no artificial wait, actions or authentication gate"},
+    "v2PrivateProfile": {"source": "evidence/fit-journal-states.json#latestRefinement.v2Profile", "owner": "U01", "menu": "U25", "publicProjection": "U26", "privateEditor": "L49", "publicEditor": "U02", "automaticPrivateTransfer": false, "sectionNote": "Handoff Profile flowSection05 retained; live canvas/retained v2FlowSections place these roots under07 Profile and account. No canvas section renumbering performed."},
+    "v2CoreAlignment": {"source": "evidence/planner-surfaces.json#latestRefinement.v2CoreAlignment", "modifiedFamilies": 22, "screenshots": 29, "wholeAppAlignment": false, "nativeVerified": false},
+    "settingsFamily": {"source": "evidence/planner-surfaces.json#latestRefinement.settingsFamily", "modifiedRoots": 8, "registeredGlyphInstances": 43, "tourReplay": "WE7-0 → L62–L66 → U05", "newRoots": 0},
+    "removedThemeCreationFooters": ["L45-0", "1HX-0"],
+    "newTokens": 0,
+    "newColors": 0,
+    "newIconRoles": 0,
+    "repositoryJsonCheck": {"result": "Passed", "checks": ["Four JSON files parse", "375 unique canonical IDs/nodes; 454 roots and 79 root references plus four nested references", "All164 V1 manifest/map identities, positions and steps match reconciled final map", "All32 Foundations names/positions match final map exactly", "Zero numeric overlaps in32 Foundations and174 V1 bounds", "V2 core22 root/104 control IDs match source; Settings42 recovery glyph mappings plus tour43; menu8 rows", "Current72 bar IDs unique and read-only find_nodes verified", "Historical evidence fields unchanged against HEAD except parent follow-up/policy", "git diff --check"], "scope": "Repository/static evidence consistency only, no runtime/native certification"},
+    "scope": "Current authoritative static inventory and bounded refinement; not runtime completion or a whole-app audit",
+    "inventory": {
+      "rootArtboards": 455,
+      "canonicalScreens": 376,
+      "v1CanonicalScreens": 165,
+      "v2CanonicalScreens": 211,
+      "rootReferences": 79,
+      "nestedOfflineReferences": 4,
+      "pages": [
+        {
+          "id": "p-1-0",
+          "name": "00 · Foundations",
+          "count": 32,
+          "canonicalCount": 0,
+          "rootReferenceCount": 32
+        },
+        {
+          "id": "p-2-0",
+          "name": "01 · V1",
+          "count": 175,
+          "canonicalCount": 165,
+          "rootReferenceCount": 10
+        },
+        {
+          "id": "p-B-0",
+          "name": "02 · V2",
+          "count": 248,
+          "canonicalCount": 211,
+          "rootReferenceCount": 37
+        }
+      ]
+    },
+    "inventoryVerification": {
+      "method": "Read-only paper_get_basic_info on all three explicit pages",
+      "rootCounts": [32, 175, 248],
+      "priorCheckpoint": {"rootCounts": [32, 174, 248], "nodeCounts": [3478, 9072, 18059]},
+      "tokenHash": "fdeb7346",
+      "nodeCounts": [3531, 9182, 18132],
+      "finalCountSource": "Parent actual read-only Paper basic_info after compact/empty/custom-body/theme/gear follow-ups: roots32/175/248, nodes3531/9182/18132, token hash fdeb7346 on each. Root lists truncate100 on V1/V2 but counts do not. L173 adds the sole new root; its box checked against all174 prior V1 roots.",
+      "rootInventoryRead": "Foundations map covers32 roots; reconciled V1 map now covers175 roots/165 screens including L173. Worker V2 read-only basic info confirms 248 roots and token hash; U25/U26 node_info confirms actual root names/positions. Parent nodeInfo/screenshots independently verified W6B/U25/U26.",
+      "limits": "Basic info truncates root lists after 100. Final V1 and Foundations maps supply bounded position/overlap proof; Foundations retained-tree comparison covers eight complete roots and one partial prefix, not a binary whole-document diff. Four nested refs excluded from root totals; no native or whole-app certification."
+    },
+    "retirement": {
+      "canonicalDarkScreens": [
+        {
+          "id": "L53",
+          "nodeId": "M2Y-0"
+        },
+        {
+          "id": "L54",
+          "nodeId": "M3Y-0"
+        },
+        {
+          "id": "L55",
+          "nodeId": "M6G-0"
+        },
+        {
+          "id": "L56",
+          "nodeId": "M8G-0"
+        },
+        {
+          "id": "L57",
+          "nodeId": "MAE-0"
+        },
+        {
+          "id": "L58",
+          "nodeId": "MCE-0"
+        },
+        {
+          "id": "L59",
+          "nodeId": "MDT-0"
+        },
+        {
+          "id": "L67",
+          "nodeId": "MY9-0"
+        }
+      ],
+      "foundationsDarkPhoneRoots": [
+        "1YD-0",
+        "21N-0"
+      ],
+      "obsoleteV1HeadingRoots": [
+        "N0B-0",
+        "SIH-0",
+        "SIL-0",
+        "SIP-0",
+        "SIT-0",
+        "SIX-0",
+        "SJ1-0",
+        "SJ5-0"
+      ],
+      "allDarkPhonesRemoved": 10,
+      "v2DarkPhonesFound": 0,
+      "darkSupport": "Paired light/dark tokens and native dark appearance remain required; dark component masters are retained."
+    },
+    "v1FlowMap": {
+      "source": "evidence/planner-navigation.json#latestRefinement.v1FinalFlowMap",
+      "sections": 9,
+      "screens": 165,
+      "headings": 9,
+      "overview": 1,
+      "unassignedRoots": 0,
+      "actualPositionsVerified": true,
+      "rootNamesVerified": true,
+      "overlaps": [],
+      "nativeRoutes": "unverified"
+    },
+    "palette": {
+      "root": "FP1-0",
+      "rolePairs": 25,
+      "previousRolePairs": 23,
+      "colorTokens": 54,
+      "legacyAliases": 4,
+      "tokenHash": "fdeb7346",
+      "newTokens": 0,
+      "newColors": 0,
+      "addedRows": [
+        {
+          "role": "action text",
+          "row": "V5N-0",
+          "swatches": [
+            "V5Z-0",
+            "V5T-0"
+          ]
+        },
+        {
+          "role": "danger fill",
+          "row": "V61-0",
+          "swatches": [
+            "V6D-0",
+            "V67-0"
+          ]
+        }
+      ]
+    },
+    "icons": {
+      "newRoles": 0,
+      "searchMaster": "4OS-0"
+    },
+    "tabBars": {
+      "convertedBeforeRetirement": 73,
+      "retainedCount": 72,
+      "addedProfileRoots": ["W40-0", "VYV-0"],
+      "stableCanonicalProfileBar": "4BQ-0",
+      "retiredRoots": [
+        "M6K-0",
+        "MBE-0",
+        "M40-0"
+      ],
+      "addedRoot": "V0C-0",
+      "verification": "Current read-only find_nodes width 358px AND height 66px returned 72 untruncated nodes, including U25 W40-0/U26 VYV-0 and stable U01 4BQ-0. Older 70/72/73 evidence remains historical."
+    },
+    "evidence": [
+      "evidence/planner-surfaces.json#latestRefinement",
+      "evidence/planner-navigation.json#latestRefinement",
+      "evidence/fit-journal-states.json#latestRefinement"
+    ],
+    "parentVisualReview": "Packing, Week, Themes, Menu, Review/Conflict, Wear, Agent context, Profile empty/populated/menu, Goal, Body, Review, V2 Body, Settings goal and added palette pairs; bounded affected-surface review only",
+    "repositoryCheck": {
+      "command": "pnpm check",
+      "result": "38 passed",
+      "source": "Parent-reported; not rerun by inventory worker; not native evidence"
+    },
+    "runtimeComplete": false,
+    "nativeVerificationRequired": [
+      "Native tab/search/menu/picker behavior and dismissal/focus",
+      "Hit testing, VoiceOver, Dynamic Type, localization",
+      "Safe-area scrolling, short phones and keyboard",
+      "Preference drafts, validation/gating, atomic Save and recovery",
+      "Calendar/date, plan/wear save, conflicts, retry and Undo"
+    ]
   }
 }

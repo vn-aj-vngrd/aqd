@@ -18,7 +18,7 @@
     "heart": { "symbol": "heart", "nodeId": "4PI-0", "selectedNodeId": "4PK-0" },
     "bookmark": { "symbol": "bookmark", "nodeId": "4PQ-0", "selectedNodeId": "4PS-0" },
     "chevron": { "symbol": "chevron.forward", "nodeId": "4Q0-0", "selectedNodeId": "4Q2-0" },
-    "settings": { "symbol": "gearshape", "nodeId": "4Q8-0", "selectedNodeId": "4QB-0" },
+    "settings": { "symbol": "gearshape", "nodeId": "4Q8-0", "selectedNodeId": "4QB-0", "paperGeometry": "Repaired shared eight-tooth outline; retained22-point wrappers, semantic tints and1.7/2.35 strokes", "fallbackAsset": "https://github.com/tailwindlabs/heroicons/blob/master/optimized/24/outline/cog-8-tooth.svg", "nativeVerified": false },
     "edit": { "symbol": "square.and.pencil", "nodeId": "STE-0", "sourceNodeId": "S8W-0", "screenControlSource": "LDX-0" },
     "check": { "symbol": "checkmark", "nodeId": "4QI-0", "selectedNodeId": "4QK-0" },
     "more": { "symbol": "ellipsis", "nodeId": "4QQ-0", "selectedNodeId": "4QU-0" },

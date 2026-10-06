@@ -15,7 +15,7 @@ All 15 V2 groups have a design route/state reference. This establishes specifica
 | V2-07 | Contextual styling | 03, 06, 15 | W17, W20, A33 | Place/date, missing source and coverage limits |
 | V2-08 | Authentication | 02, 09 | E03–E04, E10–E11, E15–E17, U12 | Apple/email defaults; callback/session gates |
 | V2-09 | Durability and lifecycle | 09–11 | E08, E13, E17, U09–U24 | Sync, conflict, restore, export and deletion |
-| V2-10 | Profile | 02, 07, 14 | E07, U01–U06, S06–S07, S13–S14 | Identity, public collections and privacy |
+| V2-10 | Profile | 02, 07, 14 | E07, U01–U06, U25–U26, UP01–UP07, S06–S07, S13–S14 | Shared private journal/preferences base plus explicit public identity/collections and privacy |
 | V2-11 | Publishing and discovery | 07, 14 | S01–S09, S19–S21, S25–S47, U04 | Types, search, reaction and revocation |
 | V2-12 | Comments | 14 | S22–S24, S10–S11 | Plain-text discussion, retry/delete/report |
 | V2-13 | Human Inbox | 07–08, 16 | I01–I07, X08, U08 | Persistent V2 root-toolbar entry → I01 → conversations (not a tab); Back/startup/incoming intents preserve origin root/scroll/selected tab; requests, real acknowledged unread and delivery |

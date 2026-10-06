@@ -16,10 +16,12 @@ Updated October 5, 2026. The current owner request supersedes the earlier full-c
 
 ### Confirmed navigation refinement — October 6, 2026
 
-- Same five equal-width native slots in V1/V2: **Home · Closet · Planner · Agent · Profile**, visible labels and full nonoverlapping hit areas ≥44 × 44 pt. Planner is a dedicated root (Week default, Month alternate), never a Closet segment; Closet has only Pieces/Outfits/Themes.
+- Same five equal-width native slots in V1/V2: **Home · Closet · Planner · Agent · Profile**, icons only with explicit destination accessibility names, selected traits and full nonoverlapping hit areas ≥44 × 44 pt. Planner is a dedicated root (Week default, Month alternate), never a Closet segment; Closet has only Pieces/Outfits/Themes.
 - Home plan links and outfit Plan actions retain date context; Back restores origin and preserved selection. Agent launches a native full-screen task from the fourth slot or focused assistance, dismissing to origin/scroll/selection with restored accessibility focus.
 - V2 Inbox remains human messaging through a persistent labelled 44-point root-toolbar entry → existing I01 → conversations, not a tab. Back restores origin root/scroll/selected tab; startup/incoming intents preserve origin. Real acknowledged unread only. V1 has no mirrored Inbox control.
-- Planner/private core are never account-gated. Profile Style and Wear insights remain capabilities but move into native More menu/popover alongside reachable Settings/Edit profile, not loose footer links.
+- Planner/private core are never account-gated. V1 Profile uses one More icon for Add fit/Edit profile/Style/Wear insights/Settings; Theme More holds Add outfits/Edit theme/Delete theme. Remove redundant body management actions and Today/selected-day Add; Planner toolbar + retains date context.
+- Keep only light phone references on the current canvas; remove dark duplicate screens while retaining complete matched light/dark color roles in Foundations and native dark appearance acceptance.
+- Onboarding and Settings share six preference questions plus review, with seven numbered titles/progress and no Skip question/Skip setup controls. Every question accepts an explicit answer or honest No preference/refusal; fit/comfort/colors and self-described height/body shape remain private, with body details optional. Body use starts off, unknown stays unknown, no photo inference or exact-size guarantee, and no automatic cloud/public exposure.
 - Scope is documentation/plans and Paper only. Five-slot native baseline, cross-root selection/returns, Inbox toolbar/incoming intents, VoiceOver/Dynamic Type/keyboard/safe areas require later native evidence; no app wiring/build or verification pass is claimed.
 
 ## Working defaults for V1

@@ -8,7 +8,7 @@ Reclassified October 5, 2026 from the October 1 connected review. Documentation 
 
 The major gap was the transition from a saved piece to a useful outfit. V2 now makes it explicit: capture → review → save → missing-category capture or readiness → pin/suggest/manual composition → replace/review/save → plan → actual wear. One saved piece establishes trust; a usable outfit establishes styling value. There is no arbitrary upload count, required quiz, photo or social sign-up.
 
-User decision: complete the wardrobe workflow first; defer virtual try-on/avatar previews and shopping wishlist/price alerts. Community and human Inbox remain required V2 product surfaces. This is coverage of AQD's selected Alta-inspired workflow, not full Alta feature parity or a claim that these features ship today.
+User decision: V2 must retain V1's shared private design and add connected extensions, not replace the Profile journal or restyle shared core controls. U01 uses L48's private journal base; U25 shows its single More menu and U26 preserves a separate public projection. Shared private identity/fit editors remain independent of public username setup. Settings uses V1 core groups and registered icons, with account/sync/privacy additions. E05/W20/U05 reuse UP01–UP07, the same numbered no-skip preference flow. Complete the wardrobe workflow first; defer virtual try-on/avatar previews and shopping wishlist/price alerts. Community and human Inbox remain required V2 product surfaces. This is coverage of AQD's selected Alta-inspired workflow, not full Alta feature parity or a claim that these features ship today.
 
 ## Numbered Paper walkthroughs
 
@@ -40,7 +40,7 @@ Supplementary strips 09–16 show conditional/independent cases, not one compuls
 
 ## Shared roots and V2 Inbox access
 
-Both phases retain five equal-width visibly labelled native slots Home · Closet · Planner · Agent · Profile, full hit areas ≥44 × 44 pt. Closet segments are only Pieces/Outfits/Themes. Dedicated Planner defaults to Week, with Month alternate; Home plan links and outfit Plan actions carry date context, and Back restores origin/selection. Fourth-slot Agent opens a native full-screen task, dismissing to origin/scroll/selection. Account setup never gates Planner/private core.
+Both phases retain five equal-width icon-only native slots Home · Closet · Planner · Agent · Profile, explicit destination accessibility names and full hit areas ≥44 × 44 pt. Closet segments are only Pieces/Outfits/Themes. Dedicated Planner defaults to Week, with Month alternate; Home plan links and outfit Plan actions carry date context, and Back restores origin/selection. Fourth-slot Agent opens a native full-screen task, dismissing to origin/scroll/selection. Account setup never gates Planner/private core.
 
 V2 alone has a persistent labelled 44-point Inbox root-toolbar entry → existing I01 → conversations, not a tab. Back restores origin root/scroll/selected tab; startup/incoming Inbox intents preserve origin. Real acknowledged unread only; V1 has no mirrored entry. Verify native VoiceOver/focus, Dynamic Type, keyboard/safe areas and return behavior after implementation; Paper evidence is pending, not a runtime pass.
 

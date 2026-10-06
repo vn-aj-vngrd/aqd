@@ -1,6 +1,6 @@
 # Design handoff by phase
 
-Read [rules](rules.md) and [DESIGN.md](../../DESIGN.md). [iOS Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0) and [web Paper](https://app.paper.design/file/01M3W6P0PN9SSQ1J3N6V23A9WK) own visual UI. The iOS file has exactly three pages, in order: **00 · Foundations**, **01 · V1**, **02 · V2**. Foundations retains its shared tokens/component masters; structural clones require explicit synchronization. V1 has seventeen numbered flow and supporting-state groups. V2 has nine groups covering canonical features, complete connected journeys and future expansions.
+Read [rules](rules.md) and [DESIGN.md](../../DESIGN.md). [iOS Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0) and [web Paper](https://app.paper.design/file/01M3W6P0PN9SSQ1J3N6V23A9WK) own visual UI. The iOS file has exactly three pages, in order: **00 · Foundations**, **01 · V1**, **02 · V2**. Foundations organizes 26 retained master boards under six numbered groups: tokens/type, icons/brand, navigation/chrome, controls/forms/surfaces, images/composition, and states/feedback/Agent/motion. Its six headers and root positions are reference organization, not a user funnel; master dimensions/children and paired roles remain intact. Structural clones require explicit synchronization. V1 has nine ordered journey groups, with supporting states beside their owning flow; dark phone duplicates are removed while Foundations retains paired light/dark colors. V2 has nine groups covering canonical features, connected journeys and future expansions; shared private UI matches V1, with public/account/sync/Inbox additions instead of a replacement Profile layout.
 
 | Phase / contract | Owns |
 | --- | --- |
@@ -8,7 +8,7 @@ Read [rules](rules.md) and [DESIGN.md](../../DESIGN.md). [iOS Paper](https://app
 | [V2 flow](v2-flow.md) and [coverage](v2-coverage.md) | Page 02 · V2, section 08: complete connected review and preserved core acceptance references. |
 | [V2 expansion requirements](v2-requirements.md) | Page 02 · V2, section 09: prepared requirements for every extension in the full backlog. |
 | [Screen map](screens.md) | Retained canonical V2 E/W/P/S/A/I/U routes and shared states. |
-| [Private fit journal](profile-fit-journal.md) | Profile grid, empty/add/detail states L160–L163, native More utilities, private media and explicit V2 publication boundary. |
+| [Private fit journal](profile-fit-journal.md) | Profile grid, empty/add/detail states L160–L163, shared V2 owner U01/U25, separate public projection U26, native More utilities and explicit publication boundary. |
 | [Photo capture and editing](capture-photo.md) | V1/V2 missing-photo drafts, photo-required save, portrait/landscape Fit, optional crop/rotation and preserved originals/drafts. |
 | [Entry](entry-identity.md), [entry motion](entry-motion.md) | V2 private-first capture plus identity/recovery; V1 uses its separate local entry. |
 | [Agent experience](agent-experience.md), [input](agent-input.md) | V2 conversation/rich context/stream/review/recovery; V1 retains the complete local conversation/history/review/recovery experience, with supported on-device context and manual/rules paths. |
@@ -24,4 +24,4 @@ Shared rules apply only to states present in a phase: [Components](components.md
 
 [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 core release](../product/v2-release.md) own scope. [Verification](../delivery/verification.md) distinguishes live static Paper review from native/runtime/service checks. Earlier design history stays in [the archive](../delivery/archive/design-review-log.md).
 
-[V1 interactions](v1-interactions.md) maps visible actions, native presentations, returns and shared recovery. [Onboarding personalization](onboarding-personalization.md) defines the three skippable preference questions and their local use.
+[V1 interactions](v1-interactions.md) maps visible actions, native presentations, returns and shared recovery. [Onboarding personalization](onboarding-personalization.md) defines six questions plus numbered review/progress, explicit No preference/refusal instead of skip, optional body details and the identical editable Settings flow.

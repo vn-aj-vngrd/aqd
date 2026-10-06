@@ -28,6 +28,8 @@ The visual master is Paper page 00 **Foundations · Icons and navigation states*
 | close | `xmark` |
 | photo | `photo` |
 
+October 6 Settings repair: registered regular/selected masters retain IDs `4Q8-0`/`4QB-0`, but replace the malformed polygon with a shared [eight-tooth outline fallback](https://github.com/tailwindlabs/heroicons/blob/master/optimized/24/outline/cog-8-tooth.svg). Seven retained glyph wrappers across six roots were repaired after a 455-root path scan. Keep 22-point geometry, existing semantic tint and regular/selected stroke weights; native code still uses SF `gearshape`. Master/menu renders checked; offline Night retint is not a live Night/native acceptance sample.
+
 Back and disclosure mirror in right-to-left interfaces. Disabled controls use the semantic secondary foreground and native disabled state. Decorative symbols are hidden from VoiceOver. Native status, Apple sign-in, keyboard and other OS chrome keep their system-owned glyphs. The page 00 icon board contains the core navigation/action roles, Agent input roles, centralized editing/media, response and context/social rows, and all five navigation selections. The edit master reuses the existing square-and-pencil reference from the Trip plan header, rather than the rejected one-off Profile drawing. Send arrows are vector masters, not Unicode text glyphs. This catalog consolidation is not a claim that every pre-existing screen icon has been migrated.
 
 Both phases use Home · Closet · Planner · Agent · Profile. Planner clones the registered calendar master; the envelope is V2's root-toolbar Inbox action, not a sixth tab. V1 has no Inbox control.

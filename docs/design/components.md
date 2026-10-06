@@ -11,7 +11,7 @@ Shared visual definitions live on [Paper page 00](https://app.paper.design/file/
 | Semantic tokens | `TOKENS`, `DARK_TOKENS` | Asset/semantic colors and system text styles | One place to change colors, type roles, space, radii. Dark mapping is semantic, not inverted photography. |
 | Status/safe area | `status` | System-owned | Keep native status, home indicator, keyboard and safe-area insets. Reference status markup is illustrative. |
 | Root/detail header | `header` | NavigationStack/UINavigationController | Root title versus compact detail title; native glass Back and toolbar actions, system back label/history and swipe gesture; preserve title at large text. |
-| Glass tab bar | `nav` | TabView/UITabBarController | Same five named slots in V1/V2: Home · Closet · Planner · Agent · Profile. Equal native widths, visible centered icons/labels, full nonoverlapping hit areas ≥44 × 44 pt, selection, restored navigation state and accessible selected trait. Agent presentation exception is in DESIGN.md. |
+| Glass tab bar | `nav` | TabView/UITabBarController | Same five named slots in V1/V2: Home · Closet · Planner · Agent · Profile. Equal native widths, centered icons without visible captions, full nonoverlapping hit areas ≥44 × 44 pt, explicit destination accessibility names, selection, restored navigation state and accessible selected trait. Agent presentation exception is in DESIGN.md. |
 | Toolbar icon button | `icon`, `header` | Button/ToolbarItem or UIBarButtonItem | 44-point target; SF Symbol plus accessibility label; loading/disabled/destructive semantics. Search/Add may group by task. |
 | Search | `search` | searchable/UISearchController | Explicit scope, query, clear, cancel, keyboard, loading/results/empty/error, retained selection and scroll state. |
 | Primary/secondary action | `button` | Native Button with semantic solid primary / flat secondary styling | Standalone primary uses solid accent fill; secondary content actions use plain regular-weight action-text labels with no background, border, blur or shadow. Flat soft-blue Back/View outfit capsules retain their explicit contracts. Primary buttons have no blur or shadow. Inline content actions retain native plain style. One primary action; label retained during progress; duplicate submission prevented; disabled reason explained beside decision. |
@@ -73,7 +73,7 @@ Paper clones are snapshots, not linked component instances. Color and dimension 
 
 ## Accessibility rendering contract
 
-Use 44-point minimum interactive bounds for back, toolbar, segment, filter, search-clear, send, calendar and week controls. Checkbox/switch labels activate the entire row. Selected filters use a solid accent fill, on-accent checkmark and medium-weight on-accent label; selected segments use an opaque pill and medium type; Increase Contrast adds a clear outline. Empty composers show disabled Send; disabled action labels remain readable. Standard editable field shells use opaque semantic surfaces, 16-point corners and no decorative shadow, blur or border; system search remains native; native focus/invalid states and Increase Contrast supply a stronger boundary using `--color-control-border`. Reduced Transparency uses an opaque semantic surface; validation also uses text and accessible announcements.
+Use 44-point minimum interactive bounds for back, toolbar, segment, filter, search-clear, send, calendar and week controls. Checkbox/switch labels activate the entire row. Selected filters use a solid accent fill, on-accent checkmark and medium-weight on-accent label; selected segments use an inset opaque pill and accessible selected state; Increase Contrast adds a clear outline. Empty composers show disabled Send; disabled action labels remain readable. Standard editable field shells use opaque semantic surfaces, 16-point corners and no decorative shadow, blur or border; system search remains native; native focus/invalid states and Increase Contrast supply a stronger boundary using `--color-control-border`. Reduced Transparency uses an opaque semantic surface; validation also uses text and accessible announcements.
 
 Paper renders SVG color variables inconsistently in glyphs. Checkmarks use token-bound border geometry and Send uses a token-bound upward arrow; both preserve foreground contrast. Native implementation uses SF Symbols with semantic foreground styles. Do not certify a fix from exported markup alone: inspect rendered glyphs on their real background.
 
@@ -96,13 +96,13 @@ Paper page 00 contains the original controls board plus **States and feedback**,
 
 | Pattern | Shared definition | State details |
 | --- | --- | --- |
-| Empty state | `empty`, `actionStack` | 12 pt heading/body gap; 24 pt before actions; 12 pt primary/secondary gap. Secondary actions belong inside the stack. |
+| Empty state | `empty`, `actionStack` | Unboxed on the canvas: vertically center the intrinsic heading/explanation/action stack within the available body region below headers/search/scope controls and above navigation, composer or footer; keep the contents leading-aligned. Do not center the controls themselves or distribute the stack's children across the region. When text exceeds the region, top-align and scroll rather than clip. Inline notices among real records/messages and native sheet controls retain contextual placement. Use a leading 20/26 heading, 15/21–22 explanation, 8 pt heading/body gap and 12 pt before a full-width 50 pt primary action; secondary actions are plain 50 pt targets 12 pt below it. Preserve meaning and existing artwork; grow/reflow at accessibility sizes. Real result cards, form groups and native sheets retain their own surfaces. |
 | Skeleton | `skeleton` | Content-shaped placeholders, no fake content; reserve final geometry. Static under Reduce Motion. |
 | Indeterminate progress | `spinner` | One shared circular spinner, using the Agent status master everywhere; native circular ProgressView/UIActivityIndicatorView with an accessible operation label. No competing CSS border-arc variant or invented percentage. |
 | Modal / bottom sheet | `header`, `sheetHandle`, shared content | Native sheet detents, safe areas, scroll, keyboard and dirty-dismiss protection. |
 | Confirmation | `alertDialog` | Native alert, explicit consequence, safe Cancel, destructive role and restored focus. |
-| Filter rail | `chips` | No wrapping or text truncation. 32 pt visible capsules, 14/20 labels, 6 pt vertical / 12 pt horizontal padding, 8 pt rail gap, no border, blur or shadow. Native interactive bounds remain at least 44 pt. Horizontal overflow; 24 pt noninteractive trailing fade only while more content remains. Mirror for RTL; keep selection visible. |
-| Segmented tabs | `tabs` | 36 pt neutral rail with 2 pt inset, 32 pt segments, 14/20 labels and an opaque selected pill; inactive segments have no fill, border, blur or shadow. Use the OS segmented control; no nested custom glass. Reduce Transparency keeps the same flat geometry and opaque selection; Increase Contrast alone adds a stronger outline. |
+| Filter rail | `chips` | No wrapping or text truncation. 32 pt visible capsules, 14/20 labels, 6 pt vertical / 12–14 pt horizontal padding, 8 pt rail gap, no border, blur or shadow. Native interactive bounds remain at least 44 pt. Horizontal overflow; 24 pt noninteractive trailing fade only while more content remains. Mirror for RTL; keep selection visible. |
+| Segmented tabs | `tabs` | 36 pt neutral rail with measured 2 pt top/bottom and side insets, 32 pt segments centered without stretch, 14/20 labels and an opaque selected pill; inactive segments have no fill, border, blur or shadow. Use the OS segmented control; no nested custom glass. Reduce Transparency keeps the same flat geometry and opaque selection; Increase Contrast alone adds a stronger outline. |
 | Icons | `icon`, `ICONS` | 24-unit grid, 22 pt visual size, 44 pt target. Regular inactive / semibold active; tint and selected container reinforce weight. See ICONS.md. |
 
 Paper previews are static. Scroll, focus, material animation and platform semantics are native acceptance requirements. The local gallery has been retired. Paper color tokens remain live; component structure remains synchronized snapshots.
@@ -123,7 +123,9 @@ Entry patterns on page 00 include introduction, action stack, identity choice, p
 
 ## List and card separators
 
-The list or section container owns separator placement, whether the surface is a rounded card or the plain page background. Use a semantic divider between adjacent related rows only; remove the final row’s bottom border. A standalone row or one-row card has no separator. Do not combine the rounded outer edge with an inset bottom stroke. Preserve row height, touch targets and internal alignment. Apply this rule to page 00 masters, light/dark settings, sheets and identity cards; field outlines and explicit section boundaries are separate components and must not be simulated with a trailing row border.
+Refined theme lists, packing/review/conflict rows, Planner choices, wear-history utilities and Agent context controls use flat opaque semantic surfaces with spacing instead of decorative rules. Separate image rows use 12-point gaps; related form/toggle rows share one 12-corner group with fixed lanes and no interior separators. Do not apply the no-rule treatment to OS-owned menu/alert grouping or unrelated Settings references without synchronizing their contract.
+
+Where separators remain appropriate, the list or section container owns separator placement, whether the surface is a rounded card or the plain page background. Use a semantic divider between adjacent related rows only; remove the final row’s bottom border. A standalone row or one-row card has no separator. Do not combine the rounded outer edge with an inset bottom stroke. Preserve row height, touch targets and internal alignment. Apply this rule to page 00 masters, light/dark settings, sheets and identity cards; field outlines and explicit section boundaries are separate components and must not be simulated with a trailing row border.
 
 Segmented-control master: 36 pt neutral capsule rail, 2 pt inset and gap, equal-width 32 pt visible segments, and an opaque selected capsule. Labels use 14/20; selection uses medium weight. Native hit bounds remain at least 44 pt. Default and Reduce Transparency use flat opaque selection without blur or shadow. It does not imply Increase Contrast. Native material behavior remains system-owned.
 
@@ -150,7 +152,7 @@ Native shared components should be driven by these states; Paper snapshots are i
 
 ## Private Profile and fit journal
 
-[Private fit journal](profile-fit-journal.md) owns V1 L48/L57/L160–L163: compact optional identity, private dated three-column memories, honest empty state, date plus photo-or-outfit draft validation, note ≤500 user-perceived characters and full-source detail. More/Settings/Edit profile remain 44-point native controls. Style and Wear insights live in the native More menu, not loose footer links. Foundations T6P owns the 240-point open-menu composition with 54-point rows and an inset separator; native Menu adapts placement/size and restores focus on dismissal. No followers, public collections, Share or Post in V1. Journal operations never record wear. Later V2 publishing uses a separately reviewed rendition and caption, never the private note by default.
+[Private fit journal](profile-fit-journal.md) owns V1 L48/L160–L163/L165 (dark phone L57 retired): compact optional identity, private dated three-column memories, honest empty state, date plus photo-or-outfit draft validation, note ≤500 user-perceived characters and full-source detail. A single 44-point More toolbar control contains Add fit, Edit profile, Style, Wear insights and Settings. Remove the separate Settings/Edit profile/Add fit controls from populated and empty journal roots. Foundations T6P owns the shared five-command open-menu composition with native row targets; native Menu adapts placement/size and restores focus on dismissal. No followers, public collections, Share or Post in V1. Journal operations never record wear. Later V2 publishing uses a separately reviewed rendition and caption, never the private note by default.
 
 [Planner calendar](planner-calendar.md) owns reusable grouped choice surfaces and agenda cards. [Agent input](agent-input.md) owns opaque starter capsules; suggestions fill an editable draft and never auto-send.
 
@@ -167,7 +169,7 @@ Home scope is one shared Today / All / Following segmented control, including lo
 Today summary components reuse typed records: planned-look card (outfit, plan entry, availability, wear state), upcoming-plan row (saved local date/timezone and destination), and compact wardrobe action row (44-point Add piece / Build outfit targets). Never treat viewing or passing a plan date as recording wear. The Record wear action opens the existing review flow. Hide unavailable data, retain useful cached content during refresh, and distinguish no closet, no plan, section load failure and offline social feeds. Show only the signed-in/local owner's authorized data. Page 00 and S15–S17 define the composition; Closet and Planner remain the editing sources.
 
 
-Profile owner and visitor variants share avatar/name/count lanes, 12-point content gaps, single-line bio, equal-width 44-point actions and collection grids. Owner navigation uses the username with Add/Settings; owner actions are Edit profile/Share. Visitor navigation keeps Back/More and Follow/Message. Root destination remains Profile.
+The public owner projection U26 and visitor variants share avatar/name/count lanes, 12-point content gaps, single-line bio and collection grids. Public owner management uses More, not loose Add/Settings/Edit/Share duplicates; visitor navigation keeps Back/More and Follow/Message. Default owner root U01 instead shares V1's private dated journal layout, single More and icon-only Profile navigation, with V2 Inbox/additive connected commands. Public username editing and verified-link sharing remain separate from private identity/fit editing.
 
 `ProfileBioPreview` displays exactly one 15/22 line, width-constrained with tail ellipsis (never a manually shortened saved value). The containing button has a 44-point target and opens a native About sheet with the full, selectable, wrapping description and Done. VoiceOver receives the full description plus an opens-details hint. Empty bios omit the row for visitors; owners add one through Edit profile. Dynamic Type keeps the single-line preview at the selected system size without shrinking type; full text remains available in the sheet. This constraint applies to profile bios, not chat replies, explanatory error text or accessibility labels.
 
@@ -201,7 +203,7 @@ Empty wear history is an unboxed secondary section: 15/22 medium “Wear history
 
 ### Filter chip selection
 
-Selected chips use accent fill, on-accent checkmark and 14/20 medium labels. Unselected chips use a neutral segment-track fill and regular secondary labels. All chips are flat without decorative outlines, blur or shadows. Keep the checkmark and accessible selected state. Use 32-point visible capsules with at least 44-point native hit bounds; grow with Dynamic Type. Horizontal scrolling and conditional trailing fade remain. Segmented tabs share the compact geometry contract above.
+Selected chips use accent fill, on-accent checkmark and 14/20 medium labels. Unselected chips use a neutral segment-track fill and regular ink labels when secondary would fall below 4.5:1 at the compact text size; disabled states retain their separate semantic treatment. All chips are flat without decorative outlines, blur or shadows. Keep the checkmark and accessible selected state. Use 32-point visible capsules with at least 44-point native hit bounds; grow with Dynamic Type. Horizontal scrolling and conditional trailing fade remain. Segmented tabs share the compact geometry contract above.
 
 ### Post action row
 
@@ -241,7 +243,7 @@ Shared V1/V2 connected-core response actions are Copy, Retry and Details. Helpfu
 
 [Liquid Glass](liquid-glass.md) owns native API/material selection and accessibility variants. [Native presentations](native-presentations.md) owns open controls, menus/sheets, adaptation and safe dismissal.
 
-Paper layout: navigation previews reserve phone width; bounded tab insets keep single-line labels above the home indicator. Filter rails remain in normal flow with intrinsic height and section gaps, including cloned sheet backdrops. Inspect clone positioning after duplication.
+Paper layout: navigation previews reserve phone width; bounded tab insets keep centered icons and full hit targets above the home indicator. Destination names remain available to accessibility without visible captions. Filter rails remain in normal flow with intrinsic height and section gaps, including cloned sheet backdrops. Inspect clone positioning after duplication.
 
 ### Navigation exit ownership
 
@@ -267,6 +269,10 @@ Page 00 **Components · Agent multimodal composer** and **Components · Agent sh
 
 Use the canonical [demo wardrobe and composition mapping](../references/assets.md#v1-and-v2-demo-wardrobe--october-6-2026) across V1, V2 and flow copies. Match visible piece labels, colors and included-piece counts to the image. Keep garment proportions, use whole-image Fit for previews, and reserve cropping for the explicit editor. Different named looks need distinct compositions; repeated appearances of the same look retain the same pieces. Empty capture remains empty.
 
+
+## Three-action task hierarchy
+
+For three content actions, keep the first two in the existing 12-point primary/secondary stack and place the third as a centered plain 50-point footer above native safe areas, matching L61 Explore first. L43 Build manually is a tertiary alternative, not a third adjacent primary. Preserve native scroll access and keyboard/Dynamic Type expansion; use native safe-area layout rather than fixed runtime coordinates. This does not rearrange menus, toolbar commands, picker choices or system destructive dialogs.
 
 ## Disclosure rows and header editing
 

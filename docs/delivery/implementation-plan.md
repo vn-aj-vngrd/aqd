@@ -31,16 +31,20 @@ The activation flow is V2-style Welcome → private onboarding / optional replay
 
 The [V2 core release](../product/v2-release.md) retains complete connected acceptance. V2 extension design requirements are [prepared separately](../design/v2-requirements.md); a future roadmap row is not permission to build or provision it now.
 
+## Shared personalization acceptance — docs/Paper only
+
+Onboarding, Settings → Style and Profile More → Style use one seven-step numbered draft/review/save flow in both phases (six questions plus review), with a progress bar and no Skip question/Skip setup actions. Each question requires an answer or explicit No preference/refusal; sensitive body details remain optional. Goals/occasions/style/fit-comfort/colors guide eligible suggestions; optional height/self-described body shape require purpose-specific use consent, off initially. Declined/unknown values stay unknown; no photo inference, exact-size promise or implicit public/cloud use. Save is atomic, failure retains input, cancellation preserves saved answers and returns to the true source; onboarding success alone continues to capture. Implement and verify PREF-01–PREF-07 in [personalization](../design/onboarding-personalization.md) against a deterministic baseline before widening supported on-device assistance. This design refinement implements no ranking, persistence or model integration.
+
 ## Navigation refinement acceptance — docs/Paper only
 
-The approved target is the same five equal-width native slots in both phases: **Home · Closet · Planner · Agent · Profile**, with visible labels and full nonoverlapping hit areas ≥44 × 44 pt. Current scope updates diagrams/specifications and Paper references only; it implements no app wiring, migration, service or native build.
+The approved target is the same five equal-width native slots in both phases: **Home · Closet · Planner · Agent · Profile**, with centered icons only, explicit destination accessibility names/selected traits and full nonoverlapping hit areas ≥44 × 44 pt. Current scope updates diagrams/specifications and Paper references only; it implements no app wiring, migration, service or native build.
 
 After separate implementation authorization, acceptance must cover:
 
 - Establish the native five-slot baseline on compact/large phones; Closet segments only Pieces/Outfits/Themes, dedicated Planner root with Week default and Month alternate. Account setup never gates Planner/private core.
 - Cross-root Home plan/outfit Plan links carry date context; Back restores origin/selection/scroll. Fourth-slot Agent launches a native full-screen task and dismissal restores origin and accessibility focus.
 - V2 alone retains persistent labelled 44-point Inbox root-toolbar access → existing I01 → conversations. Back restores origin root/scroll/selected tab; startup/incoming intents open Inbox preserving origin. Real acknowledged unread only; no V1 mirror or Inbox tab.
-- Profile More uses native menu/popover for retained Style and Wear insights, alongside reachable Settings/Edit profile; no loose footer links or deleted capabilities.
+- V1 Profile uses one More toolbar icon → Add fit, Edit profile, Style, Wear insights and Settings. No separate Settings/Edit/Add fit root controls or loose footer links; capabilities remain available. Theme More → Add outfits/Edit theme/Delete theme removes bottom management actions. Menu dismissal restores origin/focus/scroll; editing keeps dirty-draft protections.
 - Related Planner choices use one shared surface with stable label/value/disclosure lanes; agenda/trip surfaces and section spacing follow [Planner calendar](../design/planner-calendar.md). Agent starter capsules follow [input](../design/agent-input.md), fill editable drafts and never auto-send. Verify long values, wrapping and keyboard-safe actions.
 - VoiceOver/focus, Dynamic Type/localization, keyboard/safe areas and interruption/return behavior on a reproducible native build. Static Paper checks cannot satisfy these gates.
 

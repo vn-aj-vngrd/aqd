@@ -61,5 +61,280 @@
     "placement": "Existing section-08 Help/Capability occupy x40/510 at y18590; new states occupy x980/1450/1920/2390, 80-point horizontal gaps. All 390x844; bottom y19434 remains above next section y19950. paper_find_nodes confirmed the four new 390-point artboards at exact y18590.",
     "spec": "Read profile-account.md journal contract initially and again after creation; optional-photo, outfit-only, 500-character, cancellation and no-wear semantics agree.",
     "limits": ["Static authored Paper references only; no executable prototype or native interaction tests.", "No separate open journal source-sheet, Delete menu or deletion confirmation artboard; shared native recipe and exact action/return semantics recorded above.", "Keyboard, Dynamic Type, smaller phones, VoiceOver/focus, native detents/materials, reduced transparency/motion, permissions/import failures, persistence, cleanup and export/restore require implementation/device verification.", "Only these four light supporting states reviewed; existing artboards and dark counterparts owned by the parent were not altered or independently verified."]
+  },
+  "historicalEvidencePolicy": {
+    "status": "Historical / superseded",
+    "fields": [
+      "fileId",
+      "pageId",
+      "scope",
+      "viewport",
+      "typography",
+      "fixture",
+      "artboards",
+      "sharedSemantics",
+      "verification"
+    ],
+    "note": "Original scoped procedure, screenshots, counts, styles, actions and positions are preserved as dated history, not current live proof. latestRefinement owns affected current contracts; paper-manifest.json owns inventory."
+  },
+  "latestRefinement": {
+    "journalEmptyPlacement": {"screen": "L160", "root": "SV6-0", "region": "SYS-0", "remainingRegion": "350×420 below identity/header and above native tabs", "placement": "Intrinsic heading/explanation centered with leading alignment; no CTA invented, More remains sole Add-fit route", "nativeVerified": false, "evidence": "planner-surfaces.json#latestRefinement.emptyStateConsistency"},
+    "date": "2026-10-06",
+    "foundationsFlowMap": "planner-navigation.json#latestRefinement.foundationsFlowMap",
+    "v1FinalFlowMap": "planner-navigation.json#latestRefinement.v1FinalFlowMap",
+    "v2CoreAlignment": "planner-surfaces.json#latestRefinement.v2CoreAlignment",
+    "settingsFamily": "planner-surfaces.json#latestRefinement.settingsFamily",
+    "inventoryVerification": {"source": "Parent-reported final read-only Paper basic_info on all three pages", "rootCounts": [32, 175, 248], "nodeCounts": [3531, 9182, 18132], "priorCheckpoint": {"rootCounts": [32, 174, 248], "nodeCounts": [3478, 9072, 18059]}, "tokenHash": "fdeb7346", "limits": "Foundations complete32 root list; V1/V2 lists truncated100, counts not truncated. Parent nodeInfo/screenshots verified splash/U25/U26. No inventory scout artifact was produced."},
+    "newTokens": 0, "newColors": 0, "newIconRoles": 0,
+    "v2Profile": {
+      "phase": "V2", "flowSection": "05", "canvasSection": "07",
+      "sectionNote": "Requested Profile contract section05 retained as metadata; actual retained canvas section07 Profile and account owns U01/U25/U26. No section heading renumbering performed.",
+      "roots": [{"screen": "U01", "root": "2EN-0"}, {"screen": "U25", "root": "W2T-0", "position": {"x": 2860, "y": 51530}}, {"screen": "U26", "root": "VYT-0", "position": {"x": 2390, "y": 51530}}],
+      "owner": {"screen": "U01", "source": "L48 LS0-0", "fixture": "Private Van journal", "toolbar": {"more": ["2IC-0", "W1E-0"], "inbox": "UKC-0", "destination": "I01"}, "bottomLooseCommands": "None", "stableBar": "4BQ-0"},
+      "menu": {"screen": "U25", "root": "W2T-0", "popup": "W64-0", "position": {"x": 106, "top": 114}, "widthPx": 264, "radiusPx": 12, "rowHeightPx": 54, "rows": [
+        {"nodeId": "W66-0", "label": "Add fit", "destination": "L161"},
+        {"nodeId": "W6F-0", "label": "Edit profile", "destination": "L49", "excludes": "U02 public editor"},
+        {"nodeId": "W6M-0", "label": "Style", "destination": "W20 / UP01"},
+        {"nodeId": "W7N-0", "label": "Wear insights", "destination": "P11"},
+        {"nodeId": "W7T-0", "label": "Settings", "destination": "U05"},
+        {"nodeId": "W7Z-0", "label": "Public collections", "destination": "U04"},
+        {"nodeId": "W8V-0", "label": "Share from your closet", "destination": "S30"},
+        {"nodeId": "W9H-0", "label": "Share profile", "destination": "Native verified public URL share sheet"}],
+        "return": "Dismissal restores More focus/journal position; pushed editors preserve source/draft/discard semantics", "native": "Toolbar Menu with OS presentation/geometry; Paper popup is static reference"},
+      "publicProjection": {"screen": "U26", "root": "VYT-0", "fixture": "Separate public Maya identity and collections", "editor": "U02", "more": "W10-0", "moreActions": ["U02", "Native verified public URL share"], "back": {"control": "WEE-0", "glyph": "WEF-0", "master": "4PA-0", "cloneSource": "3BH-0", "return": "Native source return to originating private Profile/menu state"}, "automaticPrivateIdentityTransfer": false, "automaticPrivateMediaTransfer": false, "automaticPrivateNotesTransfer": false, "automaticBodyDetailsTransfer": false, "privacy": "Connected public projection is separate from private journal; only explicit publication makes selected content public"},
+      "barRoots": ["W40-0", "VYV-0"],
+      "verification": {"workerReadOnlyRootPositions": "U25/U26 node_info confirmed actual names, 390×844 roots and coordinates", "parentScreenshots": ["U01", "U25", "U26"], "limits": "Parent reviewed actual final U26 including native Back; static composition only, not a whole-app or native behavior pass", "nativeVerified": false},
+      "nativeGaps": ["Menu focus/dismissal and source returns", "Private editor save/draft protection and journal persistence", "Verified URL eligibility/share cancellation/failure", "Explicit publication consent and private/public identity/media separation", "Safe areas/Dynamic Type/VoiceOver/keyboard/hit testing"]
+    },
+    "status": "Prepared static reference; shared contracts only",
+    "runtimeComplete": false,
+    "verificationSource": "Parent-reported rendered checks and final actual-position proof; inventory worker used read-only Paper counts and node inspection",
+    "retirement": {
+      "canonicalDarkScreens": [
+        {
+          "id": "L53",
+          "nodeId": "M2Y-0"
+        },
+        {
+          "id": "L54",
+          "nodeId": "M3Y-0"
+        },
+        {
+          "id": "L55",
+          "nodeId": "M6G-0"
+        },
+        {
+          "id": "L56",
+          "nodeId": "M8G-0"
+        },
+        {
+          "id": "L57",
+          "nodeId": "MAE-0"
+        },
+        {
+          "id": "L58",
+          "nodeId": "MCE-0"
+        },
+        {
+          "id": "L59",
+          "nodeId": "MDT-0"
+        },
+        {
+          "id": "L67",
+          "nodeId": "MY9-0"
+        }
+      ],
+      "foundationsDarkPhoneRoots": [
+        "1YD-0",
+        "21N-0"
+      ],
+      "obsoleteV1HeadingRoots": [
+        "N0B-0",
+        "SIH-0",
+        "SIL-0",
+        "SIP-0",
+        "SIT-0",
+        "SIX-0",
+        "SJ1-0",
+        "SJ5-0"
+      ],
+      "allDarkPhonesRemoved": 10,
+      "v2DarkPhonesFound": 0,
+      "darkSupport": "Paired light/dark tokens and native dark appearance remain required; dark component masters are retained."
+    },
+    "currentInventory": {
+      "rootArtboards": 455,
+      "canonicalScreens": 376,
+      "v1CanonicalScreens": 165,
+      "v2CanonicalScreens": 211,
+      "rootReferences": 79,
+      "nestedOfflineReferences": 4,
+      "pages": [
+        {
+          "id": "p-1-0",
+          "name": "00 · Foundations",
+          "count": 32,
+          "canonicalCount": 0,
+          "rootReferenceCount": 32
+        },
+        {
+          "id": "p-2-0",
+          "name": "01 · V1",
+          "count": 175,
+          "canonicalCount": 165,
+          "rootReferenceCount": 10
+        },
+        {
+          "id": "p-B-0",
+          "name": "02 · V2",
+          "count": 248,
+          "canonicalCount": 211,
+          "rootReferenceCount": 37
+        }
+      ]
+    },
+    "nativeVerificationRequired": [
+      "Native tab/search/menu/picker behavior and dismissal/focus",
+      "Hit testing, VoiceOver, Dynamic Type, localization",
+      "Safe-area scrolling, short phones and keyboard",
+      "Preference drafts, validation/gating, atomic Save and recovery",
+      "Calendar/date, plan/wear save, conflicts, retry and Undo"
+    ],
+    "currentFlowMap": [
+      {
+        "id": "L160",
+        "nodeId": "SV6-0",
+        "title": "Profile · Journal empty",
+        "x": 40,
+        "y": 29188,
+        "flowStep": "08.00",
+        "rootName": "08.00 · L160 · Profile · Journal empty"
+      },
+      {
+        "id": "L161",
+        "nodeId": "SZ4-0",
+        "title": "New fit · No content",
+        "x": 510,
+        "y": 29188,
+        "flowStep": "08.01",
+        "rootName": "08.01 · L161 · New fit · No content"
+      },
+      {
+        "id": "L162",
+        "nodeId": "T2C-0",
+        "title": "New fit · Ready / edit",
+        "x": 980,
+        "y": 29188,
+        "flowStep": "08.02",
+        "rootName": "08.02 · L162 · New fit · Ready / edit"
+      },
+      {
+        "id": "L48",
+        "nodeId": "LS0-0",
+        "title": "Profile · Local",
+        "x": 1450,
+        "y": 29188,
+        "flowStep": "08.03",
+        "rootName": "08.03 · L48 · Profile · Local"
+      },
+      {
+        "id": "L165",
+        "nodeId": "V0A-0",
+        "title": "Profile options · Open",
+        "x": 1920,
+        "y": 29188,
+        "flowStep": "08.04",
+        "rootName": "08.04 · L165 · Profile options · Open"
+      },
+      {
+        "id": "L163",
+        "nodeId": "T3X-0",
+        "title": "Private fit memory",
+        "x": 2390,
+        "y": 29188,
+        "flowStep": "08.05",
+        "rootName": "08.05 · L163 · Private fit memory"
+      },
+      {
+        "id": "L49",
+        "nodeId": "LT9-0",
+        "title": "Edit local profile",
+        "x": 40,
+        "y": 30162,
+        "flowStep": "08.06",
+        "rootName": "08.06 · L49 · Edit local profile"
+      }
+    ],
+    "profileRoots": [
+      {
+        "screen": "L48",
+        "root": "LS0-0"
+      },
+      {
+        "screen": "L160",
+        "root": "SV6-0"
+      },
+      {
+        "screen": "L165",
+        "root": "V0A-0"
+      }
+    ],
+    "navigation": {
+      "toolbar": "Single More only; outside Settings / Edit / Add fit removed",
+      "foundationMenu": "T6P-0",
+      "openMenuScreen": "L165",
+      "openMenuRoot": "V0A-0",
+      "openMenu": "V2N-0",
+      "rows": [
+        {
+          "nodeId": "UY8-0",
+          "label": "Add fit",
+          "destination": "L161"
+        },
+        {
+          "nodeId": "UYD-0",
+          "label": "Edit profile",
+          "destination": "L49"
+        },
+        {
+          "nodeId": "T70-0",
+          "label": "Style",
+          "destination": "L45"
+        },
+        {
+          "nodeId": "T6X-0",
+          "label": "Wear insights",
+          "destination": "L41"
+        },
+        {
+          "nodeId": "UYS-0",
+          "label": "Settings",
+          "destination": "L13"
+        }
+      ],
+      "rowMinHeightPx": 54,
+      "emptyCopy": "Directs to More; no duplicate Add fit action",
+      "return": "Native menu dismissal restores More focus and journal position; pushed destinations retain origin and draft/discard semantics",
+      "retiredDarkProfile": "MAE-0"
+    },
+    "unchangedEditors": [
+      "SZ4-0",
+      "T2C-0"
+    ],
+    "unchangedDetail": "T3X-0",
+    "sharedSemantics": {
+      "privacy": "Private local journal; no upload or implicit Agent context",
+      "wear": "Journal edits/linking never record wear or change plans/counts",
+      "save": "Atomic local save; photo OR outfit required; draft/error/retry behavior remains contract only"
+    },
+    "visualReview": {
+      "parentChecked": [
+        "Empty Profile",
+        "Populated Profile",
+        "Open Profile menu"
+      ],
+      "fullWholeAppAudit": false,
+      "native": "Menu focus, routes, journal persistence, media permissions and safe-area/accessibility behavior unverified"
+    }
   }
 }
