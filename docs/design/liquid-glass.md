@@ -1,6 +1,6 @@
 # Native Liquid Glass controls
 
-Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
 Design refinement, October 1, 2026. [Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0) remains the visual source. The supplied ChatGPT screenshots guide the floating composer, capsule controls and anchored menu treatment; they do not establish which private implementation APIs ChatGPT uses.
 
@@ -11,10 +11,10 @@ Design refinement, October 1, 2026. [Paper](https://app.paper.design/file/01M3SM
 | Back | System NavigationStack/UINavigationController Back | Glass capsule/circle; retain native back label, history, swipe gesture and restored focus. Never add a duplicate custom Back. |
 | Toolbar icon/text actions | Native ToolbarItem/Button/Menu | Regular glass, 44 pt minimum target; labeled SF Symbol. Native grouping owns shared material. |
 | Tab bar | TabView/UITabBarController | Native material, named destinations and restored stacks. Avoid custom blur behind an already native glass tab bar. |
-| Segmented view | Native segmented Picker/UISegmentedControl | Native selection lens; neutral track, one selected segment and announced state. |
+| Segmented view | Native segmented Picker/UISegmentedControl | Compact flat reference: neutral track, one opaque selected segment and announced state. Use native segmented behavior without nested custom glass. |
 | Standalone primary action | Native Button with glassProminent | AQD tint, readable foreground, preserved width/label during progress and genuine disabled state. |
 | Standalone secondary/filter action | Native Button with glass | Regular glass with neutral semantic ink for Cancel/dismiss actions; blue is reserved for primary actions and selected states. Selected filters retain checkmark/tint and semantic state. |
-| Every editable input | Native TextField/TextEditor inside one regular-glass functional shell when needed | Rounded 16 pt field shell; persistent label, native focus/keyboard/autofill/selection, validation outside the material. Inner editor has no second glass background. Read-only values remain content. |
+| Every editable input | Native TextField/TextEditor inside one opaque semantic surface shell | Flat 16 pt field shell without decorative border, blur or shadow; persistent label, native focus/keyboard/autofill/selection, validation outside the field. Inner editor has no second glass background. Read-only values remain content. |
 | Search | searchable/UISearchController | System glass field, clear/cancel, retained scope/query and keyboard-aware placement. Do not wrap an already glass system search field again. |
 | Agent/Inbox/comment composer | Native editor + one glass shell + native Send/Stop | Rounded multiline shell; bounded growth, keyboard safe-area inset, 44 pt Send/Stop, retained failed drafts. No duplicated shell material. |
 | Context menu/popover | Native Menu/context menu/popover | Anchor to the source, native material and shape, dismissal and focus restoration. Destructive actions keep system roles. |

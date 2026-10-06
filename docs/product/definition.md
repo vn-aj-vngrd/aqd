@@ -9,7 +9,8 @@ An iPhone user can catalog owned clothing, create outfits, assign them to dates,
 | Destination | V1 responsibility |
 | --- | --- |
 | Home | Private Today dashboard, first-piece/outfit guidance, planned look, upcoming plans and factual wardrobe activity. No All/Following feeds. |
-| Closet | Pieces/Outfits/Themes, search/capture/lifecycle/favorites, Planner with dates/routines/trips/packing and wear/history/insights. |
+| Closet | Only Pieces/Outfits/Themes segments, search/capture/lifecycle/favorites and wear/history/insight access. |
+| Planner | Dedicated root: dates/routines/trips/packing; Week default, Month alternate. Home plan links and outfit Plan actions preserve date and return context. |
 | Agent | Complete local conversation/history, supported on-device wardrobe assistance, focused actions, reviewed edits and truthful receipts/recovery. |
 | Profile | Local optional name/photo/preferences and personal collection/history/insight shortcuts. No social identity or followers. |
 | Settings, from Profile/toolbar | System/Light/Dark appearance, local privacy/help/permissions and export/restore/erase. No online account. |
@@ -24,7 +25,7 @@ V1 does not promise recovery after device loss or app deletion. Export and teste
 
 V2 extends the complete local V1 with the broader connected styling and social/community vision; it never replaces or resets V1. The full connected core carries forward V1 themes, planning, routines/travel packing and conversational Agent, then adds contextual live weather, identity and account lifecycle, sync/recovery, curated public closets, publishing, discovery, follows, likes/bookmarks/comments, human Inbox and safety operations.
 
-Navigation remains **Home · Closet · Agent · Inbox · Profile**. Home owns Today / All / Following; Closet owns private Pieces / Outfits / Themes and Planner. Profile is a curated public presentation, separate from the complete private closet. Inbox is human messaging, distinct from Agent. Saving private data never publishes it.
+Both versions share **Home · Closet · Planner · Agent · Profile**, five equal-width native slots with visible labels and full hit areas of at least 44 × 44 pt. Home owns Today / All / Following in V2; Closet owns only private Pieces / Outfits / Themes. Planner is a dedicated root, not account-gated. The fourth Agent slot launches a native full-screen task whose dismissal restores origin/selection/scroll. Profile extends its private journal with curated public presentation after opt-in. V2 human Inbox remains available through a persistent labelled 44-point root-toolbar entry, not a tab: I01 then conversations; Back restores origin root/scroll/selected tab. Startup/incoming intents open Inbox while preserving origin; unread requires real acknowledged state. V1 has no Inbox. Saving private data never publishes it.
 
 V2 also owns all previously deferred enhancements: visual capture, try-on, shopping, richer personalization/insights/planning/social/chat, notifications, billing, other platforms and measured infrastructure growth. [V2 backlog](v2-backlog.md) records the full vision, prepared design requirements, dependencies and limitations. [V2 core release](v2-release.md) retains the detailed connected acceptance baseline. Extensions need their named capability, consent, policy and service gates; inclusion in the vision is not a promise that every extension launches together.
 

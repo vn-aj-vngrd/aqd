@@ -2,6 +2,8 @@
 
 Read [DESIGN.md](../../DESIGN.md) before adding a screen, changing a shared control, selecting an icon, or reviewing an interface. It is the authority for the intended app; the old prototype is migration evidence.
 
+Apply [quality criteria](quality-criteria.md) during every review and handoff; record checked inventory and distinguish static findings from native acceptance.
+
 ## Design workflow
 
 1. Locate the route in [the screen map](screens.md) and its Paper artboard. Read the relevant feature specification for access and data behavior.
@@ -15,9 +17,9 @@ Use system navigation, TabView/UITabBarController, toolbar Button/Menu, searchab
 
 Keep Add and search in the relevant toolbar. V1 search is local Pieces/Outfits/Themes; Planner keeps its local date/agenda controls. V2 search exposes its owner/community scope, clear, cancel, loading and no-result behavior; focusing it accommodates the system keyboard. Group related toolbar actions and keep destructive actions in their relevant menu or confirmation. Provide labels for every icon button and at least 44-point targets.
 
-V1 uses Home, Closet, Agent and local Profile; Settings opens from Profile/toolbar and Planner from Closet. Local Agent is complete; focused suggestions reuse its capabilities. V2 retains Home, Closet, Agent, Inbox and Profile. Native tab labels are visible in the redesign. The full-screen center Agent entry is an explicit exception to the usual persistent-tab model; verify selection restoration and accessibility focus. Account controls belong in V2 Profile; V1 has local Profile/preferences and complete Settings without online identity or social actions.
+Both phases use five equal-width native slots with visible labels: Home · Closet · Planner · Agent · Profile, full nonoverlapping hit areas of at least 44 × 44 pt. Closet has only Pieces / Outfits / Themes; Planner is its own root (Week default, Month alternate). Home plan links and outfit Plan actions retain date context, and Back restores origin/selection. Agent's fourth-slot launch presents a native full-screen task; dismissal restores origin, scroll and accessibility focus. Settings/Edit profile stay reachable; Profile More is a native menu/popover for Style and Wear insights, not loose footer links. V2 alone adds a persistent 44-point Inbox root-toolbar entry → I01 → conversation, preserving origin root/scroll/selected tab on Back and startup/incoming intents; never fabricate unread. Account controls belong in V2 Profile and never gate Planner/private core. V1 has no Inbox or online/social controls.
 
-Use native glass for functional controls, including Back and every editable input shell, following [the control matrix](liquid-glass.md). Preserve native inline/content controls and approved Apple sign-in styling. Use SF Symbols for implementation, semantic system fonts, and operating-system adaptations. Brand tint belongs to selected controls and primary actions. Ordinary content uses opaque neutral surfaces and photographic clothing.
+Use native material for navigation controls, including Back, and flat opaque semantic surfaces for editable fields, following [the control matrix](liquid-glass.md). Preserve native inline/content controls and approved Apple sign-in styling. Use SF Symbols for implementation, semantic system fonts, and operating-system adaptations. Brand tint belongs to selected controls and primary actions. Ordinary content uses opaque neutral surfaces and photographic clothing.
 
 ## State and quality rules
 

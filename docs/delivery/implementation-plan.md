@@ -6,16 +6,16 @@ Updated October 5, 2026. This branch authorizes documentation/planning/architect
 
 | Order | Slice | Exit evidence after implementation is authorized |
 | --- | --- | --- |
-| 1 | Local baseline/storage and capture | Versioned records/media, name/category/no-photo save, permission failure/drafts, search/edit/archive and restart/migration; LOCAL-01–04. |
+| 1 | Local baseline/storage and capture | Versioned records/media, photo/name/category validation before save, permission failure/drafts, search/edit/archive and restart/migration; LOCAL-01–04. |
 | 2 | Complete outfits and themes | Owned-piece selection, save/edit/favorite/pin/replace, independent themes/memberships, migration/failure recovery; LOCAL-03–04/11. |
 | 3 | Planner, routines/trips and actual wear | Manual dates/two-week plans/routines/events/trip packing/conflicts/timezones, atomic review/save and factual history/insights; LOCAL-05. |
 | 4 | Local recovery/privacy | Archive export, validated reviewed restore, erase, file protection/backup exclusion and network audit; LOCAL-06–08. |
-| 5 | Complete local Agent, Profile and Settings | Local chat/history/review/cancel/retry/copy, optional profile/preferences, complete appearance/data settings and on-device/rules/manual states; LOCAL-09/12/13. No mandatory cloud dependency. |
+| 5 | Complete local Agent, private fit journal, Profile and Settings | Local chat/history/review/cancel/retry/copy, optional identity/preferences, [fit journal](../design/profile-fit-journal.md) date plus photo-or-outfit validation, atomic drafts/imports/scoped deletion/export-restore, complete appearance/data settings and reason-specific on-device/manual states; LOCAL-09/12/13/14 and J1–J7. No mandatory cloud dependency or implicit wear/publication. |
 | 6 | Native acceptance/distribution | Device/Simulator accessibility, appearance, keyboard/media/performance and end-to-end offline path; LOCAL-10 and all preceding checks. |
 
 Use the existing smallest suitable app boundaries. Do not add server adapters, a distributed command bus, CloudKit, subscriptions, social tabs or generic future infrastructure. Any recovered legacy data needs a safe migration; this plan is not permission to discard it. [V1 release](../product/v1-release.md) owns the complete local baseline; private W/O/P/A contracts apply, while explicit connected/extension behaviors remain V2.
 
-The activation flow is V2-style Welcome → private onboarding / optional replayable tour → optional photo/manual details → saved piece → actual missing categories or manual composition → saved outfit → date → actual wear. Settings provides explicit local data control. No fixed item count, quiz/account or AI-capable hardware blocks first value. Home/Closet/Agent/local Profile/Settings, themes/routines/trips, onboarding and both appearances must be complete before V1 is handed to users.
+The activation flow is V2-style Welcome → private onboarding / optional replayable tour → photo selection and editable manual details → saved piece → actual missing categories or manual composition → saved outfit → date → actual wear. Settings provides explicit local data control. No fixed item count, quiz/account or AI-capable hardware blocks first value. Home/Closet/Planner/Agent/local Profile/Settings, themes/routines/trips, onboarding and both appearances must be complete before V1 is handed to users.
 
 ## V2 — Complete product
 
@@ -30,6 +30,21 @@ The activation flow is V2-style Welcome → private onboarding / optional replay
 | 7 | All prepared V2 extensions | Prioritize [full backlog](../product/v2-backlog.md) after usage; implement named design/service gates before enabling. |
 
 The [V2 core release](../product/v2-release.md) retains complete connected acceptance. V2 extension design requirements are [prepared separately](../design/v2-requirements.md); a future roadmap row is not permission to build or provision it now.
+
+## Navigation refinement acceptance — docs/Paper only
+
+The approved target is the same five equal-width native slots in both phases: **Home · Closet · Planner · Agent · Profile**, with visible labels and full nonoverlapping hit areas ≥44 × 44 pt. Current scope updates diagrams/specifications and Paper references only; it implements no app wiring, migration, service or native build.
+
+After separate implementation authorization, acceptance must cover:
+
+- Establish the native five-slot baseline on compact/large phones; Closet segments only Pieces/Outfits/Themes, dedicated Planner root with Week default and Month alternate. Account setup never gates Planner/private core.
+- Cross-root Home plan/outfit Plan links carry date context; Back restores origin/selection/scroll. Fourth-slot Agent launches a native full-screen task and dismissal restores origin and accessibility focus.
+- V2 alone retains persistent labelled 44-point Inbox root-toolbar access → existing I01 → conversations. Back restores origin root/scroll/selected tab; startup/incoming intents open Inbox preserving origin. Real acknowledged unread only; no V1 mirror or Inbox tab.
+- Profile More uses native menu/popover for retained Style and Wear insights, alongside reachable Settings/Edit profile; no loose footer links or deleted capabilities.
+- Related Planner choices use one shared surface with stable label/value/disclosure lanes; agenda/trip surfaces and section spacing follow [Planner calendar](../design/planner-calendar.md). Agent starter capsules follow [input](../design/agent-input.md), fill editable drafts and never auto-send. Verify long values, wrapping and keyboard-safe actions.
+- VoiceOver/focus, Dynamic Type/localization, keyboard/safe areas and interruption/return behavior on a reproducible native build. Static Paper checks cannot satisfy these gates.
+
+Static Paper inventories and representative visual checks are recorded in [verification](verification.md); native wiring/build/navigation acceptance remains unverified. Six embedded V2 review/expansion boards still lack synchronized root Inbox toolbar copies; legacy Inbox screenshots use an explicitly documented Home-origin placeholder, not a hard-coded native return.
 
 ## Evidence meanings
 

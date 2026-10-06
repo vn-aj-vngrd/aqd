@@ -17,7 +17,7 @@ V1 is page 01; V2 is page 02. V2 sections 01–07 contain canonical features, se
 | Board | Sequence | Conditional behavior |
 | --- | --- | --- |
 | 00 · V2 overview | Scope and route overview | Read before the screen strips. |
-| 01 · Welcome and capture | E02 → E06 → W06 → W27 → E12 → W28 / W29 | W07 replaces photo review for manual/no-photo capture. W28 appears only for actual missing categories; its capture loop returns to the same pinned task. Ready closets skip W28. |
+| 01 · Welcome and capture | E02 → E06 → W06 → W27 → E12 → W28 / W29 | W07 provides manual classification with the same photo requirement before saving. W28 appears only for actual missing categories; its capture loop returns to the same pinned task. Ready closets skip W28. |
 | 02 · Optional auth and Home | E03 → E10 → E04 → E08 → E07 → Home | Apple can bypass email. E08 only if local association is unresolved; E07 only if a new social profile is needed. Home illustration is S48; choose the actual record-derived state. Existing accounts skip unnecessary setup. |
 | 03 · Suggest, replace and save | S48 → W17 → A03 → W16 → A03 → A04 → W15 | Replacement is optional and returns to the same review. Pin and other slots remain. Receipt follows successful approved execution. A07 gives manual fallback. |
 | 04 · Manual outfits and themes | W13 → W14 → W15; optional W18 / W19 | Themes are independent and optional; partial manual looks are identified. No AI runtime requirement. |
@@ -37,6 +37,12 @@ V1 is page 01; V2 is page 02. V2 sections 01–07 contain canonical features, se
 | 18 · V2 expansion scope | Future controls/features | Identifies excluded launch surfaces; core auth/data/safety remain required for connected launch; extensions use their own gates. |
 
 Supplementary strips 09–16 show conditional/independent cases, not one compulsory funnel. The original 98 review copies across 16 strips use zero-based step codes; canonical feature sections remain authoritative. [Full coverage audit](v2-coverage.md) records shared/native states and unresolved service gates.
+
+## Shared roots and V2 Inbox access
+
+Both phases retain five equal-width visibly labelled native slots Home · Closet · Planner · Agent · Profile, full hit areas ≥44 × 44 pt. Closet segments are only Pieces/Outfits/Themes. Dedicated Planner defaults to Week, with Month alternate; Home plan links and outfit Plan actions carry date context, and Back restores origin/selection. Fourth-slot Agent opens a native full-screen task, dismissing to origin/scroll/selection. Account setup never gates Planner/private core.
+
+V2 alone has a persistent labelled 44-point Inbox root-toolbar entry → existing I01 → conversations, not a tab. Back restores origin root/scroll/selected tab; startup/incoming Inbox intents preserve origin. Real acknowledged unread only; V1 has no mirrored entry. Verify native VoiceOver/focus, Dynamic Type, keyboard/safe areas and return behavior after implementation; Paper evidence is pending, not a runtime pass.
 
 ## Home state and return rules
 
@@ -91,3 +97,7 @@ Review copies follow the [one-exit map](native-presentations.md#one-exit-per-scr
 ## Agent input and streaming review · October 2, 2026
 
 Board 20 adds twelve static copies numbered 20.00–20.11: A34 → A36 → A37 → A11 → A12 → A13, followed by the optional A41–A44 voice branch and independent A40/A49 recovery examples. The last main step and independent branches have no onward arrows. Selected-context examples preserve the dinner prompt; voice review adds editable text and never sends automatically. Canonical A34–A55 and page-00 input/shimmer masters retain authority. Board 19 remains the consolidated offline review. Native focus, permissions, streaming, transcription and execution remain unverified; see [Agent input](agent-input.md).
+
+### Shared capture refinement
+
+W27 → W31 → W27 adds the same local photo editor prepared for V1 L77. No-photo/selected, full portrait/landscape Fit, crop/rotate/reset, Change menu and missing-photo validation states are shared in [Capture photo](capture-photo.md). V2 extends this with its existing sync, tagging and publication gates; editing alone does not trigger any connected action.

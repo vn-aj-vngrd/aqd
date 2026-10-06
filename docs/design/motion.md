@@ -1,6 +1,6 @@
 # Global motion
 
-Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
 Paper page 00 **Foundations · Global motion** owns the visual reference. This contract owns named behaviors and implementation handoff for every screen. [Coverage](motion-coverage.md) assigns all 201 canonical screen/state contracts and appearance variants. Local L references inherit their source and shared native motion recipes, including optional tour navigation. These are design specifications, not implemented animation or measured performance.
 

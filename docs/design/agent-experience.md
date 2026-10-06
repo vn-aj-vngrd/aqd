@@ -1,6 +1,6 @@
 # Agent response experience
 
-Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
 Release boundary: [V1](../product/v1-release.md) and the V2 connected core both require local/private history, response rendering, cancel/retry/copy and proposal/receipt details. Response-version comparison and server-collected evaluation feedback below are [V2](../product/v2-backlog.md) design targets, not launch controls.
 

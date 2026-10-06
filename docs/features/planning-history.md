@@ -6,7 +6,7 @@ V1 completes local manual dates/two-week plans, three-calendar-month routines, e
 
 ## Outcome and placement
 
-Closet's Planner organizes intended clothing use; History records actual use; Stats explains that history. Home's Today tab summarizes the user's planned look and upcoming entries; Closet's Today/Planner entry opens the same records. These are saved plans, not social recommendations. Entry from an outfit can schedule it directly.
+Planner is the dedicated third root in both phases, not a Closet segment; Closet has only Pieces/Outfits/Themes. Planner organizes intended clothing use; History records actual use; Stats explains that history. Week is default, Month alternate, preserving selected date. Home's Today mode summarizes planned looks/upcoming entries; these links and outfit Plan actions open Planner with date context. Back restores origin, scroll and preserved selection. Plans are not social recommendations, and account setup never gates this private core.
 
 ## Planning contract
 
@@ -34,6 +34,8 @@ Working default consistent with current behavior: one wear per identical item se
 
 A record snapshots item IDs and minimal names/categories, optional outfit/plan-entry ID, date/timezone, and provenance. Photos and notes are not required in historical snapshots. Item total = estimated prior wears + recorded occurrences; estimates do not imply dated history. Marking planned entries worn creates or links the matching record. Undoing a wear returns every entry linked to that record to planned and removes its recorded item counts once; skipped creates no record. Deleting a plan never deletes actual history. Editing an outfit does not rewrite what was worn earlier.
 
+Profile's [private fit journal](profile-account.md#v1-private-fit-journal) stores dated memories, separately from plans and actual wear. Its required editable date defaults to today in the recorded timezone; later device-zone changes preserve the calendar day. Adding/editing/deleting a fit or linking/unlinking its outfit never records wear, changes counts or marks a plan worn. Only a separate explicit Record wear action uses the same item-set/day and operation-ID deduplication above, including when a matching wear already exists. Journal outfit snapshots survive outfit deletion independently of actual-wear snapshots; neither snapshot is evidence that a wear occurred.
+
 Stats: most/least worn uses total count but labels estimates; recorded utilization is active items with at least one dated AQD wear / all active items. Prior estimates are excluded from recorded utilization and time-window stats. Monthly wear reports distinguish wear occasions from individual item totals. Unknown history and empty denominators show “Not enough recorded history,” not a misleading percentage.
 
 ## Acceptance
@@ -47,6 +49,7 @@ Stats: most/least worn uses total count but labels estimates; recorded utilizati
 - P7: Planning/passing a date does not increment wear; mark/undo/backdate/correct handles duplicates consistently.
 - P8: Outfit/item changes leave actual-wear snapshots interpretable; deleting a plan preserves history.
 - P9: Recompute each displayed statistic from records, with correct window, denominator, and estimate labeling.
+- P10: Add/edit/delete journal fits and link/unlink outfits without changing wear counts or planned state; separately record a matching wear twice and count it once. Journal dates/snapshots remain stable across device-zone/outfit changes and deletion.
 
 ## Dependencies
 

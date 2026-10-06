@@ -1,0 +1,72 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "scope": "Paper-only planner form choice groups and planned-look agenda surfaces",
+  "tokenHash": "fdeb7346",
+  "authorityRead": ["DESIGN.md", "docs/design/quality-criteria.md", "docs/design/rules.md", "docs/design/components.md#reusable-settings-group", "docs/design/native-presentations.md", "docs/design/planner-calendar.md", "Paper full MCP guide"],
+  "formInventory": [
+    {"screen": "L10", "artboard": "JZY-0", "content": "K00-0", "newGroup": "T6I-0", "preservedRows": ["K0B-0", "K05-0"], "fieldShells": ["K0M-0", "K0I-0"]},
+    {"screen": "L36", "artboard": "L9S-0", "content": "L9U-0", "newGroup": "T66-0", "preservedRows": ["LAF-0", "LA9-0", "LA3-0"], "fieldShells": ["LAQ-0", "LAM-0"]},
+    {"screen": "L37", "artboard": "LBA-0", "content": "LBC-0", "newGroup": "T6G-0", "preservedRows": ["LBN-0", "LBH-0"], "fieldShells": ["LCD-0", "LC9-0"]},
+    {"screen": "L38", "artboard": "LCX-0", "content": "LCZ-0", "newGroup": "T6A-0", "preservedRows": ["LDE-0", "LD8-0", "LD2-0"], "fieldShells": ["LDT-0", "LDP-0", "LDL-0"]},
+    {"screen": "P03", "artboard": "2SF-0", "content": "2WC-0", "newGroup": "T6E-0", "preservedRows": ["2WL-0", "2WR-0"], "fieldShells": ["2WF-0", "2WJ-0"]},
+    {"screen": "P04", "artboard": "2XC-0", "content": "30M-0", "newGroup": "T68-0", "preservedRows": ["30V-0", "311-0", "317-0"], "fieldShells": ["30P-0", "30T-0"]},
+    {"screen": "P05", "artboard": "34X-0", "content": "38A-0", "newGroup": "T6K-0", "preservedRows": ["38W-0", "392-0"], "fieldShells": ["38D-0", "38H-0"]},
+    {"screen": "P06", "artboard": "3DI-0", "content": "3GJ-0", "newGroup": "T6C-0", "preservedRows": ["3GW-0", "3H2-0", "3H8-0"], "fieldShells": ["3GM-0", "3GQ-0", "3GU-0"]}
+  ],
+  "agendaInventory": [
+    {"screen": "L09", "artboard": "JXA-0", "content": "JY0-0", "cards": ["JYI-0", "JY9-0"], "covers": ["ORA-0", "OY0-0"], "textLanes": ["JYL-0", "JYC-0"], "chevrons": ["JYJ-0", "JYA-0"], "headings": ["JYP-0", "JYG-0"]},
+    {"screen": "L85", "artboard": "PRM-0", "content": "PS6-0", "cards": ["PSL-0"], "hiddenCard": "PS9-0", "covers": ["PSR-0", "PSF-0"], "heading": "PSW-0"},
+    {"screen": "P01", "artboard": "2CK-0", "content": "2D3-0", "cards": ["2DY-0", "2E7-0"], "covers": ["OUP-0", "OUV-0"], "headings": ["2DU-0", "2E5-0"]},
+    {"screen": "P02", "artboard": "2K0-0", "content": "2NS-0", "cards": ["2Q3-0"], "cover": "OV1-0", "heading": "2Q1-0"},
+    {"screen": "L82", "artboard": "P8B-0", "content": "P8V-0", "hiddenCard": "P8Y-0", "emptyState": "PMC-0"},
+    {"screen": "L84", "artboard": "PFY-0", "content": "PGI-0", "cards": ["PGX-0"], "hiddenCard": "PGL-0", "cover": "PH3-0", "receipt": "PMG-0"}
+  ],
+  "structuralProcedure": "Each new group was inserted into its existing content parent, moved before the first original choice row using sibling-relative move_nodes, then populated by moving original rows in their original order. No row or action was recreated.",
+  "computedMetrics": {
+    "groups": {"backgroundColor": "var(--color-surface)", "borderRadius": "var(--radius-12)", "resolvedRadiusPx": 12, "paddingInlinePx": 14, "rowGapPx": 0, "border": "none", "measuredWidthPxV1": 350, "measuredTwoRowHeightPxV1": 108, "measuredThreeRowHeightPxV1": 162},
+    "choiceRows": {"minHeightPx": 54, "paddingBlockPx": 8, "internalGapPx": 12, "innerWidthPxV1": 322, "separator": "1px solid var(--color-line), between only, inset 14px by group", "lastRowBorder": "none", "label": {"flexGrow": 1, "flexBasis": "0%", "minWidthPx": 0, "fontSizePx": 17, "lineHeightPx": 24}, "value": {"flexShrink": 0, "fontSizePx": 15, "lineHeightPx": 21}, "accessory": {"widthPx": 22, "flexShrink": 0}},
+    "separateFields": {"backgroundColor": "var(--color-surface)", "borderRadius": "var(--radius-16)", "minHeightPx": 52, "paddingInlinePx": 14, "paddingBlockPx": 12, "border": "none"},
+    "visibleAgendaCards": {"backgroundColor": "var(--color-surface)", "borderRadius": "var(--radius-12)", "paddingPx": 14, "internalGapPx": 12, "minHeightPx": 108, "measuredHeightPxWeekV1": 108, "measuredWidthPxWeekV1": 350, "border": "none", "coverPx": [64, 80], "coverFlexShrink": 0, "chevronPx": [22, 22], "chevronFlexShrink": 0, "titlePx": [17, 24], "metadataPx": [15, 21], "titleMetadataGapPx": 4, "measuredTextLanePxWeekV1": [212, 49], "measuredChildXOffsetsPxBothWeekV1Cards": {"cover": 14, "text": 90, "chevron": 314}},
+    "sectionSpacing": {"contentInsetPx": 20, "headingFrameToCardPx": 12, "weekCardToComingUpTextPx": 24, "weekContentGapPx": 12, "comingUpHeadingPaddingTopPx": 12, "monthContentGapPx": 12},
+    "viewport": {"widthPx": 390, "heightPx": 844, "v2BoardsChangedFromFitContentToFixed": ["2SF-0", "2XC-0", "34X-0", "3DI-0", "2K0-0"], "formContentMaxHeightPx": 680, "agendaContentMaxHeightPx": 630, "existingFormHomeIndicators": {"position": "absolute", "bottomPx": 8, "leftPx": 130, "sizePx": [130, 5]}, "formHomeIndicatorNodesInspected": ["JZZ-0", "L9T-0", "LBB-0", "LCY-0", "2X6-0", "33G-0", "3BO-0", "3HJ-0", "2QR-0"]}
+  },
+  "screenshotReview": {
+    "method": "paper_get_screenshot at default 1x; actual rendered images inspected, not inferred from JSX",
+    "firstBatch": ["JZY-0", "L9S-0", "LBA-0", "LCX-0", "2SF-0", "2XC-0", "34X-0", "3DI-0", "JXA-0", "PRM-0", "2CK-0", "2K0-0", "P8B-0", "PFY-0"],
+    "verdicts": {
+      "JZY-0": "Pass: continuous two-row surface, separate fields, legible lanes, all actions fit.",
+      "L9S-0": "Pass: one three-row surface, two inset separators, no final line, actions fit.",
+      "LBA-0": "Pass: occasion/repetition grouped; weekday choices and editing notice unchanged; review action fits.",
+      "LCX-0": "Pass: three labelled fields remain separate; trip choices grouped; Review trip fits.",
+      "2SF-0": "Pass: matching two-row group; original Thursday fixture and actions retained.",
+      "2XC-0": "Pass: matching three-row group; form/action stack fits.",
+      "34X-0": "Pass: matching routine group; supporting notice remains readable.",
+      "3DI-0": "Pass: matching trip group and separate fields; no action clipping.",
+      "JXA-0": "Pass: both 108px cards share image/text/accessory lanes; coherent Coming up spacing.",
+      "PRM-0": "Pass: visible selected-date card fits beneath unchanged month grid; hidden coffee stays absent.",
+      "2CK-0": "Pass: actual afternoon/Office days fixtures preserved; matching surfaces and lanes; create action fits.",
+      "2K0-0": "Fix: reduce content gap from 16 to 12 to meet heading-to-card contract; card and actions otherwise fit.",
+      "P8B-0": "Pass: empty-day message/action remain truthful and visible; hidden coffee remains hidden.",
+      "PFY-0": "Pass: saved-date card matches shared geometry; saved receipt and Undo remain visible."
+    },
+    "oneFixBatch": {"node": "2NS-0", "change": "gap 16px to 12px"},
+    "confirmationBatch": ["2K0-0"],
+    "confirmationVerdict": "Pass: selected-day heading/card now use 12px spacing; unchanged calendar, subsequent controls and bottom safe area fit.",
+    "overall": "Static spacing, hierarchy, contrast, alignment, repetition and artboard fit reviewed. No observed clipping in the affected visible content.",
+    "screenshotsSaved": false
+  },
+  "preserved": ["original row IDs", "actual values, labels and dates", "outfit compositions and image sources", "actions and route references", "draft/save/unassigned contracts", "calendar Month/Week state", "selected calendar dates", "empty-date message", "saved receipt and Undo", "all navigation/tab/header icons and Closet segments", "existing unrelated dirty repository changes"],
+  "scrollContract": "Content frames are named as native safe-area scroll content. Native implementation must scroll full content above stable system footer/tab safe areas; reference 844px viewport is not expanded for overflow. Paper normalized requested overflowY:auto to overflow:clip, so static drawing is not proof of scroll interaction.",
+  "exceptions": [
+    {"scope": "Hidden coffee templates PS9-0, P8Y-0, PGL-0", "detail": "Surface, radius, padding and minimum height updated while display:none was preserved. Paper drops inert flex gap/alignment and descendant flex-shrink/lane properties under hidden parents. These hidden layouts are not visually certified; apply the visible card contract when a real scroll/viewport state reveals them."},
+    {"scope": "Foundations", "detail": "Existing content/form and settings-group masters inspected. Optional new master reference not added; no board created."},
+    {"scope": "Navigation", "detail": "Existing nav selection/slot contents shown in screenshots belong to another writer and were not changed or certified by this scoped pass."},
+    {"scope": "Other error/draft screens", "detail": "No error-screen template was modified; existing failure/draft references and behavior remain unchanged. Static review does not verify persistence or recovery at runtime."}
+  ],
+  "nativeVerificationRequired": ["scroll and footer safe-area behavior on short phones", "keyboard avoidance", "Dynamic Type and long localized values", "VoiceOver order and full-row targets", "native picker/dismissal and draft restoration", "persistence, retry, conflict and Undo behavior"],
+  "parentFollowUp": {"node": "2EE-0", "screen": "P01", "change": "Compact trip summary also surfaced: 12-point corners, 14-point horizontal padding, 54-point minimum, flexible 17/24 title, 15/21 date and fixed 22-point disclosure", "verification": "Parent default Paper export inspected after worker completion; native behavior unverified"},
+  "runtimeOrImplementationClaims": false,
+  "externalResearch": false,
+  "generatedImages": false,
+  "repositoryWrites": ["docs/design/evidence/planner-surfaces.json"]
+}

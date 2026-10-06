@@ -25,5 +25,8 @@ supabase/.branches/
 node_modules/
 *.log
 
-# Temporary design review captures
-docs/design/evidence/
+# Temporary design review captures; retain structured handoff records
+docs/design/evidence/*
+!docs/design/evidence/fit-journal-states.json
+!docs/design/evidence/planner-navigation.json
+!docs/design/evidence/planner-surfaces.json

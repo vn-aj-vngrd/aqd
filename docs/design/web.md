@@ -1,6 +1,6 @@
 # AQD web design
 
-Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
 Recorded October 2, 2026. [Web in Paper](https://app.paper.design/file/01M3W6P0PN9SSQ1J3N6V23A9WK) owns the static web designs. [DESIGN.md](../../DESIGN.md) owns the shared AQD brand and native iOS system. These are designs for two separate apps: a public landing site and a protected operator workspace. No web app code, deployment, identity provider, or mailing service was added.
 
@@ -26,7 +26,9 @@ The [web manifest](web-paper-manifest.json) records 28 artboards across nine pag
 
 ## Shared visual rules
 
-Use the existing limestone canvas `#F3F3F1`, white surface, graphite ink `#292C30`, supporting text `#686C72`, divider `#E2E5E9`, and Heritage blue `#285A93`. Blue identifies primary actions and selection; success, warning, and error retain their existing semantic roles. Ordinary content is unboxed or grouped with separators. Use contained surfaces where they explain a form, evidence group, or notice.
+Use the existing cool neutral canvas `#F5F5F7`, white surface, graphite ink `#292C30`, supporting text `#686C72`, divider `#E2E5E9`, and crisp blue `#006FEE`. Blue identifies primary actions and selection; links and secondary labels use `#005BC4` on `#E6F1FE` soft fills; success, warning, and error retain their existing semantic roles. Ordinary content is unboxed or grouped with separators. Use contained surfaces where they explain a form, evidence group, or notice.
+
+Admin Settings uses the [shared settings group](components.md#reusable-settings-group): white opaque surface on the canvas, 12px corners, 14px horizontal padding and separators between rows only. Operator profile, access and security reuse this group with existing web actions, wrapping metadata and keyboard focus. Keep page identity and explanations outside the group. Native and web share these semantic surface rules while retaining their platform controls.
 
 Paper uses Helvetica Neue, matching the iOS reference. Web implementation should use the existing system sans-serif stack rather than depend on a locally installed font. Display headings use medium weight and tight tracking; body text remains regular. Desktop landing display is 96/96px (early-access display 80/84px), section headings 56/60px, admin titles 26/32px, data and compact UI 14/20px, supporting metadata 13/20px, and longer explanatory copy 14/22px. Landing body remains 17/27px and UI 15/20px. Mobile display is 48/50px.
 
@@ -105,3 +107,5 @@ The eleven desktop workspace headers use a separate muted 13/20px Workspace ance
 Admin actions, status selectors, filter controls and search share a fixed 44px height, 6px corners and 14/20px text. Center button content in both axes; use symmetric vertical insets rather than padding that determines the outer height. Filters use a separate 14px downward chevron in an 8px gap. Search uses the same neutral line border as adjacent filters, a 20px icon and leading-aligned text. Accounts now has the same 250px search field treatment as Reports. Editable review forms keep their existing stronger field boundary; focus remains a distinct visible outline. The shared C02 reference contains the breadcrumb and complete queue toolbar. Marketing controls retain their own larger pill pattern.
 
 Applied the contract across 49 existing admin controls, desktop module screens, confirmation/access screens, mobile Reports and admin recovery states. Refreshed all fifteen V2 Flow snapshots from fourteen canonical screens. This is static Paper geometry; accessible input labelling, breadcrumb link semantics, focus/hover/disabled states and keyboard operation require browser implementation verification.
+
+Secondary content actions use the shared plain regular-weight blue label treatment, with no white fill, border or shadow and at least a 44-point target. Fields, filters, navigation and grouped Settings surfaces retain their existing structures; primary actions remain prominent.

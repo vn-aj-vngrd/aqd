@@ -2,7 +2,7 @@
 
 **Your wardrobe, understood.**
 
-V1 is a complete private, device-only iPhone closet app: Home, Closet, Agent, local Profile, Settings, onboarding and light/dark modes. V2 extends the same app and preserves the complete connected product, including community, Inbox, sync and broader styling/planning.
+V1 is a complete private, device-only iPhone closet app: Home, Closet, Planner, Agent, local Profile with a private fit journal, Settings, onboarding and light/dark modes. V2 extends the same app and preserves the complete connected product, including community, Inbox, sync and broader styling/planning.
 
 ## Repository layout
 

@@ -6,7 +6,7 @@ Updated October 5, 2026. Shared V1/V2 visual design: Paper E02, V1 L60/L67, the 
 
 Twelve original garment cutouts make the wardrobe feel full and useful. Pieces gather, briefly form looks, then settle into a calm composition around the message **More from what you already own.** The text, wordmark and actions remain stationary and usable throughout. The illustration shows possibilities; it does not promise those exact looks, actual user inventory or an automated purchase.
 
-[Original imagery and provenance](assets/welcome/README.md) replace the earlier stock/lifestyle Welcome collage. The [atlas layout](assets/welcome/atlas-layout.json) records exact source crops and layer positions; the twelve garments are individually editable Paper layers. V1 light/dark, V2 Welcome and connected review share this asset/composition. Dark mode retains an opaque light photographic ground so dark garments remain visible; native controls use night tokens.
+[Original imagery and provenance](assets/welcome/README.md) replace the earlier stock/lifestyle Welcome collage. The [atlas layout](assets/welcome/atlas-layout.json) records exact source crops and layer positions; the twelve garments are individually editable Paper layers. V1 light/dark, V2 Welcome and connected review share this asset/composition. Welcome uses the atlas alpha on a transparent hero ground in both appearances. Dark controls use night tokens; preserve garment separation and test dark garment visibility on real screens.
 
 ## Sequence
 

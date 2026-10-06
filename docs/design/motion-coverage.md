@@ -1,6 +1,6 @@
 # Motion coverage
 
-Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
 Every Paper screen/state inherits [Global motion](motion.md), including interruption, Reduce Motion, accessibility and performance requirements. This table is an implementation contract, not evidence of working animation. Native recipes take precedence; custom recipes apply only to changed local content. Existing presentation ownership in docs/design/screens.md wins when a screen has several entry paths.
 
@@ -65,7 +65,7 @@ Every Paper screen/state inherits [Global motion](motion.md), including interrup
 | W20 · Style preferences | N-sheet | C-select, C-change | Selection immediate; apply draft changes on explicit confirmation. |
 | W21 · Additional details | N-push | C-form, C-save | Native editing; inline validation and confirmed local save. |
 | X06 · Couldn’t save | In place | C-form, C-load | Preserve failed draft and readable recovery action. |
-| P01 · Planner | N-push | C-select, C-change | Native calendar; drag follows finger; invalid drop restores slot. |
+| P01 · Planner | N-root | C-select, C-change | Dedicated third root; Week default/Month alternate retain date. Cross-root links preserve origin/selection for Back; native calendar drag follows finger, invalid drop restores slot. |
 | P02 · October 2026 | N-push | C-select, C-change | Native calendar; drag follows finger; invalid drop restores slot. |
 | P03 · Plan a look | N-sheet | C-form, C-save | Plan steps preserve input; no fake assignment before commit. |
 | P04 · New plan | N-sheet | C-form, C-save | Plan steps preserve input; no fake assignment before commit. |
@@ -107,7 +107,7 @@ Every Paper screen/state inherits [Global motion](motion.md), including interrup
 | A28 · Alternate response | In place | C-stream, C-load | No token animation; Stop immediate; preserve scroll, partial text and task status. |
 | A29 · Message not sent | In place | C-load, C-form | Static recoverable error; retain draft/partial work; no shake. |
 | A30 · Clarification needed | N-sheet | C-form, C-select | Review/context/details/clarification remains readable; native sheet as appropriate. |
-| I01 · Inbox | N-root | C-load, C-change | Stable list; request status changes after confirmation. |
+| I01 · Inbox | N-push | C-load, C-change | V2 persistent root-toolbar entry, not a tab; startup/incoming intents preserve origin root/scroll/selected tab for Back. Stable list; real acknowledged unread only, request status changes after confirmation. |
 | I02 · Camille Reyes | N-push | C-message, C-load | Anchor reading position; native keyboard; retain failed draft. |
 | I03 · Requests | N-root | C-load, C-change | Stable list; request status changes after confirmation. |
 | I04 · Message request | N-sheet | C-form, C-message, C-save | Review recipient/request; native dismissal preserves draft. |
@@ -229,3 +229,7 @@ Reference boards are specifications, not additional navigable screens. New scree
 | A53 · Camera unavailable | N-sheet | C-form, C-select | Camera denied or absent; precise reason and Photos/Settings/typing alternatives, unchanged draft. |
 | A54 · Photo assistance unavailable | N-sheet | C-form, C-select | Unsupported image assistance offers description/manual capture/removal; no fake analysis or cloud switch. |
 | A55 · Agent · No closet context | Native full-screen | C-stream, C-form | No closet context shows General, useful prompts and Add piece; no ownership claims. |
+
+## Shared piece photo states
+
+L75/L76 use C-load/C-form for importing and accepted media; L78 uses native Menu presentation. L77/W31 use N-push and C-select/C-form; preview transformations follow direct user input, with no decorative animation. Cancel/Use photo return to the originating draft; only confirmed record save reaches C-save in L05; L79 stays C-form/C-select with missing-photo feedback and retained fields. Reduce Motion applies state changes immediately.

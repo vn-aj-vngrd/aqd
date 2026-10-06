@@ -4,7 +4,7 @@ Updated October 5, 2026. These are planning contracts, not implemented infrastru
 
 | Boundary | V1: device-only MVP | V2: complete product |
 | --- | --- | --- |
-| Client | Native iPhone Home / Closet / Agent / local Profile, full Settings; Planner in Closet | Native Home / Closet / Agent / Inbox / Profile; additional clients later |
+| Client | Native iPhone Home / Closet / Planner / Agent / local Profile, full Settings; dedicated Planner and private fit journal | Same five roots; persistent Inbox root-toolbar entry, explicit connected extensions; additional clients later |
 | Authority | Local versioned records and protected media | Local private work plus authenticated backend authority for connected records |
 | Identity | Local Profile/preferences; no online account/signup | Account/auth/profile, reviewed local association, session/account isolation |
 | Sync | None; explicit local archive export/restore | Account-scoped operations, revisions/cursors/conflicts/tombstones, media sync and restore |

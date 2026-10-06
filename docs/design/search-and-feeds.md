@@ -1,6 +1,6 @@
 # Search, density and feed continuation
 
-Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
 Paper page 00 owns the Search, Control sizes and Feed continuation masters. These contracts describe static designs; services and native interactions require implementation verification.
 
@@ -41,3 +41,7 @@ Failure keeps posts and shows “Couldn't load more” with Retry at the same fo
 Public-piece lists, marker editing and the published-piece picker share 56 × 64 thumbnails, a two-line text lane and a trailing disclosure. Use the linked piece's photo or a deliberate creator crop; existing fixture crops are reused consistently for coat/bag references. The complete row is a target; thumbnail is decorative to VoiceOver when the row names the piece. Missing/loading photos reserve geometry; revoked pieces remove private imagery and names. Never substitute an unrelated garment photo.
 
 Search uses one trailing Cancel in every query/scope/loading/recovery state. Do not render a second Back control with the same source destination. Opening a search result pushes its detail with Back; returning restores the search query and results rather than dismissing search.
+
+## V1 local search references
+
+L92/L93 are initial/empty closet; L86–L88 are Pieces/Outfits/Themes results; L89 no matches, L90 loading, L91 read failure. L121–L122 own filters/sort. V1 does not persist recent queries in this slice and has no remote feed pagination. Cancel restores the source; return from detail preserves query/scope/filters/scroll. Field and compact scope controls use the latest flat component contract. See [V1 interactions](v1-interactions.md).

@@ -18,7 +18,7 @@ All 15 V2 groups have a design route/state reference. This establishes specifica
 | V2-10 | Profile | 02, 07, 14 | E07, U01–U06, S06–S07, S13–S14 | Identity, public collections and privacy |
 | V2-11 | Publishing and discovery | 07, 14 | S01–S09, S19–S21, S25–S47, U04 | Types, search, reaction and revocation |
 | V2-12 | Comments | 14 | S22–S24, S10–S11 | Plain-text discussion, retry/delete/report |
-| V2-13 | Human Inbox | 07–08, 16 | I01–I07, X08, U08 | Requests, acknowledged unread and delivery |
+| V2-13 | Human Inbox | 07–08, 16 | I01–I07, X08, U08 | Persistent V2 root-toolbar entry → I01 → conversations (not a tab); Back/startup/incoming intents preserve origin root/scroll/selected tab; requests, real acknowledged unread and delivery |
 | V2-14 | Safety and support | 14, 16–17 | S10–S11, U06, U08, U13 | Report → operator review → revoke/remove; operator/service policy still gated |
 | V2-15 | Native and launch quality | 08, 17 | X01–X08 + page 00 masters | Device/accessibility, restore/load/deployment tests required; not proven by Paper |
 

@@ -1,6 +1,6 @@
 # Native iOS handoff
 
-Phase scope: shared native/visual rules apply to both phases. Full-app E/W/P/S/A/I/U routes, five-destination navigation, identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+Phase scope: shared native/visual rules apply to both phases. Both phases share Home · Closet · Planner · Agent · Profile as five equal-width native slots with visible labels and full hit areas ≥44 × 44 pt. Full-app E/W/P/S/A/I/U routes, identity and connected states are V2 references; V2 alone adds persistent Inbox root-toolbar access. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
 Research checked October 1, 2026 against Apple's current documentation. This is an implementation contract for the redesign, not proof that the existing app adopts it.
 
@@ -30,13 +30,14 @@ Use regular native Liquid Glass for navigation, Back, standalone actions, filter
 
 Search is scoped: Home searches the public community; Closet searches owned records. A toolbar search affordance preserves the five product destinations. On focus, use the native field/keyboard transition and actual keyboard-safe viewport. Field placement follows the native search API and supported OS; do not hard-code a mockup position. Cancel returns to the original content and scroll position. X07 illustrates the active state; its bottom-docked keyboard is an authored layout approximation and the actual keyboard is OS-owned.
 
-Add and Search in Closet are related toolbar controls. Add opens native contextual choices for piece, outfit, theme, or focused assistance. Keep data actions out of a new tab. AQD's pre-existing requirement for a full-screen Agent from the center entry is a documented tab-model exception; validate accessibility focus and return-state restoration during implementation.
+Add and Search in Closet are related toolbar controls. Add opens native contextual choices for piece, outfit, theme, or focused assistance. Keep data actions out of a new tab. AQD's pre-existing requirement for a full-screen Agent from the fourth tab is a documented tab-model exception; validate accessibility focus and return-state restoration during implementation.
 
 ## Native acceptance matrix
 
 Verify on the minimum supported and current target iOS versions, a compact and a large iPhone, light/dark, largest accessibility text, VoiceOver, keyboard, Reduce Motion, Reduce Transparency and Increase Contrast. Use actual OS components; a screenshot of CSS blur is insufficient.
 
-- Tab switching and Back preserve destination, query, selection, drafts and scroll position.
+- Tab switching and Back preserve destination, query, selection, drafts and scroll position. Planner is its own root (Week default/Month alternate); Closet segments are only Pieces/Outfits/Themes. Home plan/outfit Plan links carry date context and preserve return selection; no account gates private core.
+- V2's persistent labelled 44-point Inbox root-toolbar entry opens I01 then conversations; Back restores origin root/scroll/selected tab. Startup/incoming intents preserve origin; no fake unread or V1 Inbox. Fourth-slot Agent dismissal restores origin and accessibility focus.
 - Search focus/cancel, keyboard dismissal and interactive Back leave no covered controls.
 - Sheets present from the correct trigger, avoid stacked unrelated modals, and return accessibility focus.
 - Icon actions have spoken labels; selected and disabled states are communicated beyond color.

@@ -75,3 +75,174 @@ The iOS Paper file has exactly three pages in order: Foundations, V1 and V2, wit
 The final static layout pass corrected all 50 phone bottom bars, their 50 viewports/home indicators and 236 tab slots. Each bar now has consistent side/bottom insets and equal-width centered destinations; fourteen obsolete footer wrappers are hidden. The empty V1 Home now uses all four V1 destinations. Reviewed screenshots cover tour Home/Closet, empty Home, Planner, local Profile, dark Home and V2 Planner/Profile. Tour controls finish above the bars. V1 Planner selection also fixes four weekday/date text nodes: selected accent text has 6.00:1 contrast on its soft fill, and unselected secondary text has 4.75:1 contrast on the light background. These measurements concern the static reference colors, not native accessibility acceptance.
 
 Local validation: 38 repository tooling tests passed on Node 24.20.0; all 512 tracked Markdown links/anchors resolve and every documentation page is reachable from the indexes. JSON/Excalidraw parsing, retained acceptance/screen IDs, planning-only file scope and whitespace checks passed. Two-perspective review findings about stale Agent navigation and backlog page labels were resolved. The manifests record current page membership, Welcome provenance/motion and the bottom-navigation review. No native build, interaction, animation performance, local durability, Apple capability or connected-service result is claimed.
+
+## V1 onboarding action hierarchy — October 6, 2026
+
+Updated L61 Start privately in live Paper: retained the prominent first-piece action and secondary tour button, and moved Explore first to a separate plain text footer above the home indicator. Its reference target is 50 points tall with 20-point side insets and a 34-point bottom inset; computed styles confirm no background, border or shadow. The rendered 390 × 844 screen was reviewed for spacing, hierarchy, contrast, alignment and fit. Native safe-area/large-text behavior remains an implementation requirement. Documentation/design only; no app code changed.
+
+## Agent navigation icon — October 6, 2026
+
+Replaced 63 Agent conversation glyphs in live Paper with a single four-point sparkle: 61 navigation instances across Foundations, V1/V2 and previews, plus regular/selected icon-library samples. Retained 22-point boxes, semantic colors and existing stroke weights, tab labels, selection pills and parent slots. Verified every affected parent contains the new vector and no old conversation path; reviewed rendered light, dark and selected navigation. The icon-library native symbol label now reads sparkle. This is a static design update; native SF Symbols rendering and accessibility remain implementation checks. The focused AI assistance badge and human comment symbols retain their separate roles.
+
+## Shared Profile and Settings surfaces — October 6, 2026
+
+Reused the existing V2 grouped-row pattern to create a named Foundations master and 25 opaque grouped surfaces around 71 existing native setting rows. Row IDs/order and controls were retained; light/dark semantic surfaces, 12-point corners, 14-point insets and internal-only separators were verified. Coverage includes local Profile/Settings, appearance, privacy/preferences/data/account controls and the Profile tour backdrop; existing V2 grouped sections retain the same pattern. Admin Settings also groups its three existing operator-profile/access/security rows on a white surface over the canvas.
+
+Reviewed rendered light Profile, Settings and appearance, dark Profile/Settings, V2 privacy, the Profile tour, the reusable master and desktop admin Settings. Surface styles and all 25 new native group memberships/order passed structural checks. No pages or artboards were added; this remains static Paper and documentation work. Native/web component reuse, larger text, keyboard focus and runtime scrolling remain implementation acceptance requirements.
+
+## Today title/date spacing — October 6, 2026
+
+Tightened the V1 Today header/date spacing on empty Home, planned Home, dark Home and the Home tour backdrop. The header now uses 8-point top/4-point bottom padding and content starts with 4-point top padding. Node geometry confirms a 10-point title/date text-frame gap on empty Home; light/dark screenshots were reviewed. Date text, controls and viewport-anchored bottom navigation were retained. Static Paper/design documentation only; no app code changed.
+
+## New piece photo actions — October 6, 2026
+
+Updated L04 in live Paper with separate 165 × 44 neutral capsule buttons for Choose photo and Take photo, an optional-photo caption and a separate red Remove photo action. Retained the existing preview, fields and Save piece hierarchy; More details now has a minimum 44-point target. Computed button styles and the rendered screen were reviewed for spacing, hierarchy, contrast, alignment and fit. Documentation and static design only; picker/camera behavior and adaptive native layout remain implementation checks.
+
+## Today secondary action — October 6, 2026
+
+Changed all seven View outfit button instances in the iOS Paper file to the same flat accent-soft treatment as tour Back, including the shared reference, V1/V2 copies, Home tour backdrop and dark Home. Removed blur, shadow and border while preserving labels, geometry and the prominent Record wear action. Reviewed light/dark/tour renders for hierarchy, contrast, spacing, alignment and fit. Static design only; no app code changed.
+
+## Crisp blue palette — October 6, 2026
+
+Applied the approved brighter palette to shared iOS and web Paper tokens: light primary #006FEE, dark primary #338EF7, soft fills #E6F1FE/#142B47 and cool light canvas #F5F5F7. Separate action-text roles (#005BC4/#66AAF9) keep small labels and links readable; migrated 347 light iOS, seven dark iOS and 49 web text instances. Existing prominent-preview tokens alias solid accents; primary capsule previews shed blur/shadow. Updated Foundations palette labels, design rules and both manifests; prior palette reviews remain historical and are superseded.
+
+Reviewed rendered light/dark Home, New piece, shared Home foundation, palette and web admin Settings for spacing, hierarchy, contrast, alignment and fit. Solid primary label contrast is 4.66:1 light and 5.15:1 dark; light secondary labels on soft fill are 5.58:1. No pages or product functionality were added. Native adaptive colors, contrast over materials, accessibility and runtime behavior remain implementation checks.
+
+## Plain onboarding alternatives — October 6, 2026
+
+Removed the white capsule backgrounds from L61 Take the tour and L66 Open Home. Both retain centered semantic blue labels and 50-point minimum targets, with no border, blur or shadow. Checked equivalent Welcome tour actions in light/dark and Explore first: these already use plain text treatment. Settings replay remains a grouped row. Reviewed both updated screens for spacing, typography, contrast, alignment and fit; no app code changed.
+
+## Entry action spacing and weight — October 6, 2026
+
+Grouped L61/L66 primary and plain secondary actions with a 12-point gap, retaining existing node IDs and keeping content-section spacing independent. Standardized V1 light/dark Welcome and three equivalent V2/reference account links to 50-point targets; eight matching plain entry labels use regular weight. L61 geometry confirms 50-point primary + 12-point gap + 50-point secondary; Explore first retains its viewport-safe footer. Reviewed Welcome, Start privately, Ready to begin, dark Welcome and V2 Welcome for spacing, typography, contrast, alignment and fit. Static design/documentation only; no app code changed.
+
+## Plain secondary actions across surfaces — October 6, 2026
+
+Audited regular-glass/white secondary action references and copies, then changed 171 iOS and 25 web actions to plain text treatment: no fill, border, radius, shadow or blur; regular-weight action labels with existing target geometry. Coverage includes Foundations, V1/V2 piece/empty-state/planning/Agent/recovery flows, photo actions and web admin/recovery actions. Destructive red and disabled supporting colors were retained. Native chrome, segmented/filter controls, photo-tag overlays and grouped Settings surfaces retain their separate purposes; soft-blue Back/View outfit capsules remain flat.
+
+Computed styles for all 171 updated iOS targets confirmed no background, shadow or blur. Reviewed V1/V2 piece detail, empty Closet, New piece, outfit suggestion, destructive theme editing and admin Settings for spacing, typography, contrast, alignment and fit. This supersedes the earlier white photo-button treatment. Static design/docs only; runtime interaction and native accessibility remain unverified.
+
+## October 6, 2026 — Compact controls and form consistency
+
+Static Paper review supersedes earlier glass-field, raised-filter and trailing-AI-badge styling references. Updated 37 segmented rails / 117 segments and 81 filter capsules across Foundations, V1 and V2: 36-point visible rails, 32-point visible segments/chips, 14/20 labels, no decorative blur, border or shadow. Inactive Themes is transparent; selection remains distinct. The native implementation must retain nonoverlapping 44-point minimum hit bounds and expand for Dynamic Type.
+
+Flattened 105 editable shells to opaque surfaces, retaining field values and geometry. Updated 31 square checkbox states with no gray outline on selected blue boxes and control-border on unchecked boxes. Promoted the two main Closet outfit-suggestion actions to primary blue; moved all 23 in-use full AI badges before their labels. Agent response actions remain unbadged. V1 New piece now uses a vertical optional-photo label, centered preview, plain photo actions and labelled fields; existing V2 capture-disclosure forms remain vertical.
+
+Brighter danger palette uses D4142A foreground / FFF0F2 soft ground, E02335 filled action / white label, and FF6472 dark foreground / 422027 soft ground. Four iOS and three web destructive filled actions use danger-fill. Ratios: white/danger fill 4.71:1, light destructive text/soft 4.83:1, dark destructive text/soft 4.99:1.
+
+Reviewed screenshots: V1 Closet Outfits, V1 New piece, V1 Packing list, V2 New piece, V2 theme editor and dark Closet. Checked spacing, typography, contrast, alignment and artboard fit. Paper and documentation only; no native runtime, accessibility or animation acceptance claimed. Documentation links and diff whitespace checks pass.
+
+## October 6, 2026 — Global Welcome action spacing
+
+Audited the 171 native plain-secondary references and their parents. Added dedicated 12-point-gap action groups to 56 mismatched stacks in Foundations, V1, V2 and cloned flow screens; matching existing groups retain their 12-point gap. Reparented existing action nodes without replacing labels, badges or identities, preserving surrounding metadata/form spacing. Audited 25 web secondary references and corrected the vertical Review decision pair; horizontal toolbar/action rows retain their platform layout. All 56 native groups have computed 12px gaps. Reviewed V1 and V2 piece-detail, Welcome and web Review decision renders for spacing, type, contrast, alignment and fit; no clipping or overlapping actions observed. Static Paper/docs only. Native hit areas, Dynamic Type and runtime behavior still require implementation verification.
+
+## October 6, 2026 — First-piece photo flow
+
+L04 now represents a genuine new draft: no photo, empty required fields and disabled Save until name/category are valid. Added five V1 state references on the existing V1 page (L75–L79): accepted photo, landscape Fit, portrait editor, native Change menu and confirmed manual/no-photo receipt. Added W31 on the existing V2 page and updated W27 to share the vertical portrait preview/editor hierarchy. Original L68–L74 Agent/voice/context references remain unchanged. Exactly three iOS pages remain; 357 artboards / 281 screen references (79 V1, 202 V2 including the new editor).
+
+Source image fills were inspected: the portrait shirt fixture is 600 × 899; the landscape shoe fixture is 600 × 429. Both use contain/Fit in the same 168 × 224 portrait presentation without stretching or automatic clipping. The 240 × 320 editor demonstrates optional 3:4 crop, pan/zoom, rotate/reset, Fit, Cancel and Use photo. Change shows photo/camera/remove options; no-photo receipt uses a category placeholder. Cancel wrapping, selected-form bottom spacing, editor title alignment and V2 form height were corrected during the bounded visual review. First-save action pairs also use Welcome’s 12-point gap and 50-point secondary targets.
+
+Reviewed no-photo, selected, landscape, crop, Change menu, manual receipt and V2 capture/editor renders for spacing, typography, contrast, alignment, original aspect preservation and artboard fit. The full native editor, physical-device memory/orientation, gesture/VoiceOver, permissions, import cancellation, staging, backup exclusion and crop-recipe export/sync remain implementation acceptance requirements. Apple sources and API limitations are recorded in Capture photo. Existing fixture media was reused; no new product images or functionality were implemented.
+
+Documentation validation: 523 repository-local links pass with zero unreachable documents; manifest IDs/page counts are consistent and git diff --check passes.
+
+## October 6, 2026 — Photo prerequisite and capture labels
+
+Supersedes the earlier optional-photo/manual-save design contract. New-piece capture now needs an accepted photo, name and category; labels are Photo, Name and Category without Required/Optional. Updated V1/V2 capture copies and introductory/recovery copy. L79 now shows retained metadata, missing-photo feedback and disabled Save rather than a successful no-photo receipt. Manual classification remains available; legacy missing-media records remain manageable. Portrait Fit and optional crop remain unchanged. Static initial/selected/missing-photo renders reviewed; documentation validation recorded below. No product code, native validation or release evidence.
+
+Validation: local documentation links 524, failures 0, unreachable documents 0; `git diff --check` passed. Capture requirement and L79 title synchronized in the Paper manifest.
+
+## October 6, 2026 — L61 lighter private-start introduction
+
+Reused two original Welcome garment cutouts for a bounded 350 × 156 decorative visual, shortened capture guidance to two lines and consolidated local privacy/export/device-loss disclosure into a compact lock-marked note. Preserved the primary/plain-secondary action stack and bottom Explore first. Reviewed the live L61 static render for spacing, type hierarchy, contrast, alignment and fit; the content fits the 390 × 844 reference. No generated assets, new routes or app implementation. Native scrolling, larger text, VoiceOver and dark-mode behavior remain implementation acceptance checks.
+
+## October 6, 2026 — Agent device availability
+
+Verified Apple Foundation Models documentation distinguishes device eligibility, enablement and readiness. Updated L19 and added L80/L81 live Paper references for unsupported iPhone, Intelligence off and model preparing. Kept native Agent destination/Back, shared sparkle, short copy and primary/plain-secondary actions; no unavailable composer or misleading retry on ineligible hardware. Three static renders reviewed for spacing, typography, contrast, alignment and fit. Specified visible Agent tab, retained draft/history/manual routes and future explicit V2 provider consent/privacy/cost. No model/provider code or native/runtime proof.
+
+Agent availability validation: local links 530, failures 0; `git diff --check` passed. Manifest contains 283 unique screen references and 359 artboards (28 Foundations / 92 V1 / 239 V2).
+
+## October 6, 2026 — Realistic V1/V2 demo imagery
+
+Reused the original 12-garment Welcome atlas: 224 existing image-fill update operations and 59 outfit/theme cover replacements, including shared examples and V2 flow copies. These operation counts overlap where a cover later replaced its image children. Corrected shoe/bag labels and colors, differentiated named outfit compositions, and aligned planner examples, populated-profile summaries, a public post's tagged-piece count and the mixed-category selection filter. No new generated media or app seed implementation.
+
+Reviewed representative Closet light/dark, Today, outfit/theme, search, capture editor and flow-row screenshots. Garments retain proportions, labels match objects, grouped compositions remain legible, and the reviewed screens preserve spacing, typography, contrast, alignment and fit. The explicit portrait editor shows a crop while ordinary previews retain Fit. Manifest records replacement nodes and composition keys; asset reference documents the mapping and provenance. Static Paper review does not establish native layout/accessibility, import/crop behavior or release acceptance.
+
+Imagery documentation validation: 533 local links, zero failures and zero unreachable documents; `git diff --check` passed. Manifest retains 283 screen references and 359 artboards.
+
+
+## October 6, 2026 — Criteria-led V1/V2 polish
+
+Reviewed all 283 then-existing canonical iOS screens (81 V1 / 202 V2) in rendered contact sheets and their tree inventory; inspected shared control/appearance references and computed styles for findings. Added four V1 section-05 references and reviewed their renders, bringing the manifest to 287 canonical screens / 363 artboards. The exact initial inventory and final confirmation nodes are stored in `designQualityReview` in the Paper manifest. This is a static review of the iOS file, not a new full audit of the separate web file or runtime acceptance.
+
+[Quality criteria](../design/quality-criteria.md) defines DQ01–DQ12, observable acceptance, severity and the review procedure. AGENTS.md, design rules and the design index now route future agents to it.
+
+- DQ01/07/09/10: replaced the incorrect Closet Planner empty-state content with its actual selected Planner agenda; made date/count/period fixtures concrete; aligned selected-piece markers and shoe replacement labels/images; removed contradictory optional-photo copy and duplicate exits.
+- DQ02/03/04/05: normalized remaining recovery actions to Welcome's computed 12-point gap and 50-point secondary bounds; flattened profile secondary/disabled controls, compacted feed and Agent context segments, unified Appearance selection and applied surface treatment to 19 piece/theme disclosure rows and flow copies.
+- DQ07/08: added restrained empty-Home artwork, balanced private-start artwork, replaced the malformed Settings gear and moved Settings access exclusively to Profile; five header Edit pills became neutral pencil controls. The decorative plus uses centered SVG geometry.
+- DQ10/12: Week remains Planner's default; Month is an explicit alternate. L85/L82/L83/L84 show month, empty selected day, date-prefilled plan and saved-date/Undo. [Planner calendar](../design/planner-calendar.md) documents selection, add, unassigned, conflict, save/failure/cancel and native acceptance.
+- DQ07: L41/P11 and the V2 flow copy now share thumbnail wear-ranking bars (6 and 4 wears) and factual utilization (8 of 12 / 67%). History has surface-backed chronological records. Values are illustrative fixtures, not live analytics.
+
+Final rendered checks covered Week/Month/empty/add/saved, Closet Planner, restore/recovery action stacks, empty Home, private start, trip pencil, selection, Appearance, feed/context segments, destructive field, outfit disclosure surfaces and wear visuals. Spacing, type, alignment, contrast roles and static fit were checked; the outfit review remains scrollable content at native sizes rather than a runtime fit claim. No unresolved core-task blocker was observed in this inspected static inventory.
+
+DQ06/11 native checks remain required: measured rendered contrast under system materials, Dynamic Type, smaller phones/landscape, VoiceOver and calendar focus/announcements, keyboard, localization, dark/contrast modes, interruption and actual data durability. Prepared layouts and specified recovery behavior are not implemented or tested functionality.
+
+Validation: 550 local documentation links pass, zero unreachable documents; manifest has 287 unique screen references and 363 artboards; `git diff --check` passes. Final history cards use plain surface with no colored edge. No app build was run because this task changed Paper and design documentation only.
+
+
+## October 6, 2026 — Ready-to-begin visual
+
+L66 reuses the original garment atlas for an ivory knit, sand trousers and oxblood loafers composition, with a compact piece/outfit/plan roadmap. Header and shorter copy distinguish tour completion from a saved closet. Primary/plain-secondary actions retain 12-point spacing. Live screenshot checked for spacing, type, contrast roles, alignment and fit at 390 × 844; no clipping observed. Illustrative artwork and roadmap are noninteractive, with native accessibility and larger-text scrolling still requiring implementation.
+
+
+## October 6, 2026 — Returning Home insight card
+
+Added one compact Closet in use card to L23 and dark L54. Reuses September Insights fixtures (8 of 12), a proportional bar and a View insights route for the same period. Reviewed both live static screenshots: cards fit above the anchored tab bar, preserve hierarchy and use semantic light/dark surfaces. Recorded-only data, no-history omission, whole-card accessibility and native scrolling are specified in V1 flow; runtime behavior is not implemented. Local documentation link validation and diff whitespace checks pass.
+
+## October 6, 2026 · V1 destinations and state expansion
+
+Added 73 static local phone references L86–L158 and seven section headers on Paper V1. Inspected the existing V1 action inventory and rendered every added phone in bounded contact-sheet batches; corrected inherited glass/shadows, inappropriate V2 publication controls, replacement shoe wording, calendar record labels/markers, selection checks, disabled empty theme Save and busy foreground contrast. Added explicit action/return/state and onboarding-personalization contracts. Shortened preference navigation labels to Style across ten matching Paper text nodes. Replaced five existing header edit glyphs with a square-and-pencil reference, added theme row surfaces and synchronized dark private start with light entry; dark Welcome hero ground is transparent.
+
+Evidence is static Paper layout and document consistency only. Native gestures, VoiceOver, OS picker/permission behavior, Foundation Models, motion smoothness, save/restore guarantees and recommendation behavior are not implemented or runtime-verified. Screens are requirement references, not proof of functioning routes.
+
+Validation: 564 local documentation links passed with zero failures and no unreachable documents; manifest screen/node IDs are unique and page counts sum correctly. Live Paper V1 reports 176 artboards: 158 phones plus 18 scope/section references. Final inventory is 360 canonical phones and 443 total artboards across three pages. `git diff --check` passed. No app tests/build were run because this change is design/docs only.
+
+### Conversations footer refinement
+
+Removed the duplicate footer action and privacy note from L26. Header compose now explicitly routes to a fresh L24; management/deletion remain available through native row menus and equivalent accessibility actions. Static screenshot reviewed; no native routing implementation is claimed.
+
+## October 6, 2026 — Photo selector comparison (proposal only)
+
+On Paper page 01 · V1, added **Compare · Photo selector · Original** (`SKT-0`) and **Proposal · Photo selector · Compact** (`SMB-0`) side by side to the right of Home and first piece. Canonical L04 and all selected-photo states remain unchanged. The compact proposal replaces the empty portrait well with a 350 × 88-point opaque photo-selection row, retains a separate 44-point Take photo action, removes redundant no-photo copy, and preserves labelled fields and disabled Save. Name/Category move 136 points higher; the save group stays bottom-aligned in the reference viewport.
+
+Reviewed both live 390 × 844 Paper screenshots and compact computed styles; confirmed alignment, readable token-based labels, static fit and no decorative glass/shadows. Corrected SVG strokes to semantic action/secondary tokens and confirmed the final proposal screenshot. [Research and proposal behavior](../references/photo-selector-research.md) distinguishes this option from the original research recommendation. Only light reference-size composition was checked; Dynamic Type, dark/Increase Contrast, VoiceOver, keyboard, picker/camera cancellation/permissions/import failure and draft preservation remain native acceptance work. No app code/build or runtime test was performed. Exploratory artboards are not added to the canonical screen manifest.
+
+### Approved L04 replacement
+
+The user approved overriding the original. Replaced only L04's photo section with the compact composition while retaining canonical artboard `JPZ-0`, navigation, field and save node references. The new photo section is `SO6-0`, with whole-row picker reference `SO8-0`. Deleted both exploratory comparison artboards (`SKT-0`, `SMB-0`), including their original/compact copies. The old empty portrait well is no longer in L04. Reviewed the final canonical 390 × 844 screenshot and computed styles: semantic icon/label tint, 350 × 88-point row, 12-point group gaps, 44-point camera target, fields moved up and bottom-aligned disabled Save all retained. Updated capture, component, V1 flow/interaction, foundation and manifest contracts. L75/L76/editor/options remain unchanged; L79 and other V1/V2 empty-photo drawings were not synchronized in this scoped adoption. No native/runtime accessibility or app build evidence is claimed.
+
+### Single Add photo entry and native source sheet
+
+At the user's direct request (no further research), removed L04's separate Take photo text node and changed the whole-row label to Add photo. Added L159 (`SOI-0`) in section 02 beside the media states: dimmed inactive form, native-style 304-point bottom-sheet reference, grabber, Add photo title, 44-point Close target, and grouped 56-point Choose from Photos / Take photo rows with consistent icon lanes. The whole row now opens the source sheet rather than PhotosPicker directly; the selected source opens the system PhotosPicker or camera after sheet dismissal. Close/outside-tap/swipe preserves draft fields/media and restores focus; wide layouts adapt to a native popover. No Remove action is shown for an empty draft.
+
+Inspected final L04 and L159 live 390 × 844 screenshots: labels, spacing, icon alignment, sheet fit and home-indicator safe area are clean. Updated canonical capture/component/flow/interaction/foundation contracts and manifest (361 phones, 444 artboards; V1 177 artboards). Static reference only: actual OS presentation, focus management, keyboard/accessibility sizes, dark appearance, cancellation, camera permission and media import remain native acceptance checks. Other no-photo drawings remain outside this scoped change.
+
+## October 6, 2026 — Private fit journal, Planner root and grouped controls
+
+Design/documentation only; no app code, wiring, native build, infrastructure or new external research. User-approved roots are Home · Closet · Planner · Agent · Profile in both phases. V2 human Inbox uses persistent root-toolbar access rather than a sixth tab; V1 has none.
+
+- Profile L48/L57 now shows a private dated grid, optional identity and Add fit, rather than a second Closet. Reused the existing Trip square-and-pencil through Foundations master STE-0; registered app-owned glyphs and aliases in the [icon manifest](../design/icon-manifest.json). Added L160–L163 empty/new/ready/detail states. Light/dark populated and empty compositions, ready draft and icon master rows were inspected. Fixture provenance is in [journal assets](../design/assets/journal/README.md); no invented entries appear in the empty state. [Journal state evidence](../design/evidence/fit-journal-states.json) and [contract](../design/profile-fit-journal.md) specify optional photo-or-outfit validation, retained drafts, private notes, export/restore, scoped deletion and no implicit wear/publication.
+- Removed loose Profile Style/Wear insights footers in light, dark and empty states. Native 44-point More controls preserve both capabilities; Foundations T6P shows the anchored menu composition. Settings/Edit profile remain reachable. Open menu, source-sheet and deletion-confirmation behavior are shared native recipes, not additional compulsory screens.
+- Eight canonical V1/V2 Planner forms now use one related-row surface with 54-point rows, 14-point insets, stable label/value/disclosure lanes and separators only between rows. Labelled fields remain separate. Week/month/saved agenda entries use consistent opaque cards and heading gaps; the compact P01 trip summary is surfaced too. [Surface evidence](../design/evidence/planner-surfaces.json) records original IDs, geometry, fourteen rendered checks, one bounded fix and hidden-template limits. Parent inspected representative new-plan/week/empty/P01 compositions. A default Paper export confirmed P01's complete header, toolbar and content after transient screenshot-tool captures omitted chrome; this was a capture artifact, not evidence of native behavior.
+- Migrated 66 existing bar roots and added six master template bars; all 72 have five captions and a structurally valid selected slot. Eleven Closet rails became Pieces/Outfits/Themes; the obsolete Planner rail was removed. Planner week/month/empty/saved references select Planner. Retained L33 keeps its root ID but now clones L09's Planner header/agenda, removing the obsolete Closet title/More; default export confirmed the synchronized composition. Twenty V2 root Inbox entries use the registered envelope and a visible label, without fake unread. Active Agent remains a full-screen task without a tab bar. [Navigation evidence](../design/evidence/planner-navigation.json) records exact IDs and representative visual reviews; parent confirmed Profile light/dark/empty, Planner/empty, Agent light/dark/focused and V2 root entries.
+- Agent welcome shortcuts are opaque capsules with 44-point targets, 15/21 labels and 8-point gaps. Tonight’s look / Plan my week and the retained extra suggestions fill an editable draft; Start with a piece opens context selection. Disclosure chevrons and AI badges are absent. L24/L56/L68/A01/A34 and the keyboard flow reference were synchronized and representative light/dark/focused compositions inspected.
+
+Current manifest: **365 canonical screens** (163 V1 / 202 V2), **448 root artboards** (28 Foundations / 181 V1 / 239 V2), plus four nested offline review viewports that are not extra artboards. Historical counts above remain dated evidence. Product/navigation plans, contracts and interaction returns were aligned; no implementation status was promoted to runtime-verified.
+
+Remaining static exceptions: root Inbox toolbar copies are not synchronized inside AKG-0, ATG-1, ATN-1, AU1-1, AUF-1 and EQO-1 embedded review/expansion boards. Six legacy Inbox bars illustrate a Home-origin return; native code must preserve the actual originating root, not hard-code Home. Hidden agenda templates remain hidden and are not visually certified. Existing V2 public Profile artboards were not replaced by the private-journal design. This is not a new whole-app audit.
+
+Validation: `pnpm check` passed all 38 repository-tooling tests; local Markdown links and design JSON/unique IDs/root-count consistency passed; `git diff --check` passed. Tooling tests are not app tests. Native Dynamic Type/localization, smaller phones, VoiceOver/focus, keyboard/scroll/safe areas, materials, source-sheet/OS permissions, date/timezone and cross-root/incoming-intent returns, persistence/retries/conflicts/Undo, journal media lifecycle/export/restore and scoped deletion still require separately authorized implementation and device evidence.
+
+### Populated Week footer simplification
+
+Removed the redundant Plan an outfit footer from L09 and its retained L33 copy, after verifying each node's parent. Toolbar + and selected-day Add still provide creation; L82's prominent empty-date action is unchanged. L09's final screenshot confirms unchanged card spacing, typography, contrast, alignment and viewport fit, with a quieter end to the agenda; L33 was synchronized and structurally checked. Other month/V2 footer references remain outside this narrow change. Updated the calendar contract, interaction ledger and manifest. JSON parsing and `git diff --check` pass; no app code/build or native route verification.

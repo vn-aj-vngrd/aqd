@@ -6,7 +6,7 @@ V2 only. V1 has no human messaging, requests, unread state, social notification 
 
 ## Outcome
 
-People can discuss looks and share accessible wardrobe content. Agent conversations stay in Agent. Entry: Inbox tab or Message from a public creator profile.
+People can discuss looks and share accessible wardrobe content. Agent conversations stay in Agent. Entry: persistent labelled 44-point Inbox toolbar control on V2 roots, or Message from a public creator profile. The five base slots remain Home · Closet · Planner · Agent · Profile; Inbox is not a tab. Toolbar entry opens existing I01, then a conversation; Back restores origin root/scroll/selected tab. Startup/incoming Inbox intents open Inbox while retaining the origin (default Home for a fresh session); conversation Back returns through I01. No unread badge is shown without actual acknowledged unread state. V1 has no mirrored entry.
 
 Working first scope: one-to-one text and references to public wardrobe content. Inbox sections are Chats and Requests. Social activity (follows/reactions) is deferred; it is not mixed into messages merely because the supplied Alta reference proposed “activity.” Group chats, calls, arbitrary media uploads, location sharing, and private wardrobe attachments are excluded from the first slice.
 
@@ -36,7 +36,8 @@ Before connected implementation, decide notification transport/preferences, rete
 - I6: Opening a revoked shared post does not reveal cached private content.
 - I7: Agent drafts a message without sending; changed recipient/content requires a new review.
 - I8: Empty, offline, request, delivery-error, and unavailable-service states are distinguishable.
+- I9: Persistent V2 root-toolbar entry opens I01 before conversations; Back and startup/incoming intent returns restore origin root/scroll/selected tab. Verify 44-point targets, labels, VoiceOver/focus, Dynamic Type and keyboard/safe areas; never fabricate unread or mirror Inbox in V1.
 
 ## Dependencies
 
-Connected [Identity](profile-account.md), content access, block/report behavior, and selected messaging services. The tab shell may be specified early; messaging functionality cannot be claimed until these gates pass.
+Connected [Identity](profile-account.md), content access, block/report behavior, and selected messaging services. The root-toolbar entry and return contract may be specified early; messaging functionality cannot be claimed until these gates pass.

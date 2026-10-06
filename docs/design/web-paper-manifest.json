@@ -1,24 +1,24 @@
 {
   "recordedAt": "2026-10-05",
   "fileId": "01M3W6P0PN9SSQ1J3N6V23A9WK",
-  "fileName": "AQD — Web design system, landing & admin",
+  "fileName": "AQD \u2014 Web design system, landing & admin",
   "url": "https://app.paper.design/file/01M3W6P0PN9SSQ1J3N6V23A9WK",
   "scope": "Static shared foundations and phase boundaries; complete landing/admin references belong to V2. No app/server implementation.",
   "sharedBrandSource": "https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0",
   "pages": [
     {
       "pageId": "p-1-0",
-      "pageName": "00 · Shared web foundations",
+      "pageName": "00 \u00b7 Shared web foundations",
       "artboards": [
         {
           "id": "PP-0",
-          "name": "F01 · Web foundations & app boundaries",
+          "name": "F01 \u00b7 Web foundations & app boundaries",
           "width": 1440,
           "height": "fit-content"
         },
         {
           "id": "22Q-0",
-          "name": "AQD · V1 and V2 web boundaries",
+          "name": "AQD \u00b7 V1 and V2 web boundaries",
           "worldX": 1520,
           "worldY": 0,
           "width": 1440,
@@ -29,17 +29,17 @@
     },
     {
       "pageId": "p-2-0",
-      "pageName": "01 · Web components",
+      "pageName": "01 \u00b7 Web components",
       "artboards": [
         {
           "id": "R7-0",
-          "name": "C01 · Web controls & feedback",
+          "name": "C01 \u00b7 Web controls & feedback",
           "width": 1440,
           "height": "fit-content"
         },
         {
           "id": "1UD-0",
-          "name": "C02 · Admin density & table patterns",
+          "name": "C02 \u00b7 Admin density & table patterns",
           "width": 1440,
           "height": "fit-content"
         }
@@ -48,17 +48,17 @@
     },
     {
       "pageId": "p-3-0",
-      "pageName": "02 · V2 · Landing app",
+      "pageName": "02 \u00b7 V2 \u00b7 Landing app",
       "artboards": [
         {
           "id": "1-0",
-          "name": "L01 · Landing · Desktop",
+          "name": "L01 \u00b7 Landing \u00b7 Desktop",
           "width": 1440,
           "height": "fit-content"
         },
         {
           "id": "L7-0",
-          "name": "L02 · Early access",
+          "name": "L02 \u00b7 Early access",
           "width": 1440,
           "height": 900
         }
@@ -67,17 +67,17 @@
     },
     {
       "pageId": "p-4-0",
-      "pageName": "03 · V2 · Admin · Overview & analytics",
+      "pageName": "03 \u00b7 V2 \u00b7 Admin \u00b7 Overview & analytics",
       "artboards": [
         {
           "id": "3O-0",
-          "name": "A01 · Overview",
+          "name": "A01 \u00b7 Overview",
           "width": 1440,
           "height": 900
         },
         {
           "id": "10R-0",
-          "name": "A11 · Product analytics",
+          "name": "A11 \u00b7 Product analytics",
           "width": 1440,
           "height": 900
         }
@@ -86,41 +86,41 @@
     },
     {
       "pageId": "p-5-0",
-      "pageName": "04 · V2 · Admin · Safety",
+      "pageName": "04 \u00b7 V2 \u00b7 Admin \u00b7 Safety",
       "artboards": [
         {
           "id": "73-0",
-          "name": "A02 · Reports · Open queue",
+          "name": "A02 \u00b7 Reports \u00b7 Open queue",
           "width": 1440,
           "height": 900
         },
         {
           "id": "B0-0",
-          "name": "A03 · Report · Evidence & decision",
+          "name": "A03 \u00b7 Report \u00b7 Evidence & decision",
           "width": 1440,
           "height": 900
         },
         {
           "id": "DH-0",
-          "name": "A04 · Accounts",
+          "name": "A04 \u00b7 Accounts",
           "width": 1440,
           "height": 900
         },
         {
           "id": "UC-0",
-          "name": "A10 · Account · Enforcement review",
+          "name": "A10 \u00b7 Account \u00b7 Enforcement review",
           "width": 1440,
           "height": 900
         },
         {
           "id": "G9-0",
-          "name": "A05 · Audit log",
+          "name": "A05 \u00b7 Audit log",
           "width": 1440,
           "height": 900
         },
         {
           "id": "LU-0",
-          "name": "A08 · Confirm removal",
+          "name": "A08 \u00b7 Confirm removal",
           "width": 1440,
           "height": 900
         }
@@ -129,23 +129,23 @@
     },
     {
       "pageId": "p-6-0",
-      "pageName": "05 · V2 · Admin · Operations",
+      "pageName": "05 \u00b7 V2 \u00b7 Admin \u00b7 Operations",
       "artboards": [
         {
           "id": "14B-0",
-          "name": "A12 · System health",
+          "name": "A12 \u00b7 System health",
           "width": 1440,
           "height": 900
         },
         {
           "id": "17O-0",
-          "name": "A13 · Jobs · Retry review",
+          "name": "A13 \u00b7 Jobs \u00b7 Retry review",
           "width": 1440,
           "height": 900
         },
         {
           "id": "1B4-0",
-          "name": "A14 · Controls · Publishing pause",
+          "name": "A14 \u00b7 Controls \u00b7 Publishing pause",
           "width": 1440,
           "height": 900
         }
@@ -154,23 +154,23 @@
     },
     {
       "pageId": "p-7-0",
-      "pageName": "06 · V2 · Admin · Access & settings",
+      "pageName": "06 \u00b7 V2 \u00b7 Admin \u00b7 Access & settings",
       "artboards": [
         {
           "id": "KR-0",
-          "name": "A07 · Operator sign-in",
+          "name": "A07 \u00b7 Operator sign-in",
           "width": 1440,
           "height": 900
         },
         {
           "id": "1E1-0",
-          "name": "A15 · Staff verification",
+          "name": "A15 \u00b7 Staff verification",
           "width": 1440,
           "height": 900
         },
         {
           "id": "IT-0",
-          "name": "A06 · Settings",
+          "name": "A06 \u00b7 Settings",
           "width": 1440,
           "height": 900
         }
@@ -179,23 +179,23 @@
     },
     {
       "pageId": "p-8-0",
-      "pageName": "07 · V2 · Responsive & states",
+      "pageName": "07 \u00b7 V2 \u00b7 Responsive & states",
       "artboards": [
         {
           "id": "M9-0",
-          "name": "L03 · Landing · Mobile browser",
+          "name": "L03 \u00b7 Landing \u00b7 Mobile browser",
           "width": 390,
           "height": "fit-content"
         },
         {
           "id": "NY-0",
-          "name": "A09 · Reports · Mobile browser",
+          "name": "A09 \u00b7 Reports \u00b7 Mobile browser",
           "width": 390,
           "height": "fit-content"
         },
         {
           "id": "SX-0",
-          "name": "X01 · Loading, empty & recovery",
+          "name": "X01 \u00b7 Loading, empty & recovery",
           "width": 1440,
           "height": "fit-content"
         }
@@ -204,35 +204,35 @@
     },
     {
       "pageId": "p-9-0",
-      "pageName": "08 · V2 · Admin flow",
+      "pageName": "08 \u00b7 V2 \u00b7 Admin flow",
       "artboards": [
         {
           "id": "1N6-0",
-          "name": "01 · Staff access & workspace",
+          "name": "01 \u00b7 Staff access & workspace",
           "width": 1520,
           "height": "fit-content"
         },
         {
           "id": "1T0-0",
-          "name": "02 · Reports, decision & audit",
+          "name": "02 \u00b7 Reports, decision & audit",
           "width": 1992,
           "height": "fit-content"
         },
         {
           "id": "1TR-0",
-          "name": "03 · Account enforcement",
+          "name": "03 \u00b7 Account enforcement",
           "width": 1504,
           "height": "fit-content"
         },
         {
           "id": "1UK-0",
-          "name": "04 · Service health, jobs & controls",
+          "name": "04 \u00b7 Service health, jobs & controls",
           "width": 1504,
           "height": "fit-content"
         },
         {
           "id": "1WI-0",
-          "name": "05 · Analytics & operator settings",
+          "name": "05 \u00b7 Analytics & operator settings",
           "width": 1016,
           "height": "fit-content"
         }
@@ -246,12 +246,101 @@
     "date": "2026-10-05",
     "phaseBoundaryBoard": {
       "id": "22Q-0",
-      "name": "AQD · V1 and V2 web boundaries",
+      "name": "AQD \u00b7 V1 and V2 web boundaries",
       "worldX": 1520,
       "worldY": 0,
       "width": 1440,
       "height": null
     },
     "scope": "Page labels and shared V1/V2 boundary design; no website/backend deployment."
+  },
+  "settingsSurfaceReview": {
+    "date": "2026-10-06",
+    "screenId": "A06",
+    "nodeId": "IT-0",
+    "groupNodeId": "233-0",
+    "rowIds": [
+      "K6-0",
+      "KD-0",
+      "KK-0"
+    ],
+    "pattern": "Shared opaque white Settings surface",
+    "radius": 12,
+    "horizontalInset": 14,
+    "verification": "Desktop screenshot reviewed; existing controls retained; runtime behavior unverified"
+  },
+  "crispBluePaletteReview": {
+    "date": "2026-10-06",
+    "lightPrimary": "#006FEE",
+    "darkPrimary": "#338EF7",
+    "lightActionText": "#005BC4",
+    "darkActionText": "#66AAF9",
+    "lightSoft": "#E6F1FE",
+    "darkSoft": "#142B47",
+    "lightCanvas": "#F5F5F7",
+    "primaryLabelContrast": {
+      "light": 4.66,
+      "dark": 5.15
+    },
+    "lightSecondaryLabelContrast": 5.58,
+    "scope": "Shared live Paper tokens and documentation only; solid primary previews, light/dark/Home/capture/foundation/admin renders reviewed; native behavior unverified"
+  },
+  "plainSecondaryActionsReview": {
+    "date": "2026-10-06",
+    "count": 25,
+    "nodeIds": [
+      "M4-0",
+      "CC-0",
+      "DE-0",
+      "WO-0",
+      "PL-0",
+      "P5-0",
+      "PH-0",
+      "TD-0",
+      "TJ-0",
+      "TR-0",
+      "TX-0",
+      "U3-0",
+      "1EO-0",
+      "1EU-0",
+      "1F0-0",
+      "KA-0",
+      "KH-0",
+      "KO-0",
+      "167-0",
+      "17L-0",
+      "19K-0",
+      "1D8-0",
+      "1DI-0",
+      "I-0",
+      "RF-0"
+    ],
+    "treatment": "Plain regular-weight secondary actions; no fill, border, blur or shadow; target geometry and destructive/disabled colors retained",
+    "verification": "All updated iOS target styles checked; representative native/web renders reviewed; static designs only"
+  },
+  "dangerPaletteReview": {
+    "verifiedOn": "2026-10-06",
+    "tokensHash": "72c60ddc",
+    "filledActionIds": [
+      "M6-0",
+      "DC-0",
+      "RH-0"
+    ],
+    "fill": "#E02335",
+    "foreground": "#D4142A",
+    "soft": "#FFF0F2",
+    "evidence": "Static Paper report/deletion action review; no production implementation."
+  },
+  "actionStackSpacingReview": {
+    "date": "2026-10-06",
+    "group": {
+      "wrapper": "235-0",
+      "nodeIds": [
+        "DC-0",
+        "DE-0"
+      ]
+    },
+    "gap": "12px",
+    "scope": "Static Paper design and documentation; no production code"
   }
 }

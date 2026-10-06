@@ -1,0 +1,65 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "pageId": "p-2-0",
+  "scope": "Four new supporting V1 private fit journal artboards only; no existing artboard, master, token, canonical manifest or existing repository file changed by this worker.",
+  "viewport": { "width": 390, "height": 844 },
+  "typography": { "native": "SF Pro semantic Dynamic Type", "paper": "var(--font-system) / Helvetica Neue", "availability": "SF Pro and PaperHelveticaNeue unavailable; Helvetica Neue 400/500/700 verified available." },
+  "fixture": { "photo": "https://images.unsplash.com/photo-1539109136881-3be0616acf4b", "date": "2026-10-06", "note": "A slow afternoon in the city.", "noteCharacters": 29, "linkedOutfit": null, "mediaPolicy": "Illustrative fixture only, not bundled production data. Full-image Fit / object-fit contain; no generated imagery." },
+  "artboards": [
+    {
+      "screen": "L160",
+      "id": "SV6-0",
+      "name": "08.07 · L160 · V1 · Profile · Journal empty",
+      "position": { "x": 980, "y": 18590 },
+      "rootContentNodes": ["SVQ-0", "SYQ-0", "SYS-0"],
+      "state": "Deep clone of redesigned LS0-0. No grid, journal count or demo memories; honest Keep a memory of today's fit empty state. Header, identity and privacy retained. Parent subsequently removed the utility footer, added More T60-0 for Style/Wear insights and synchronized five native tabs; navigation evidence owns the final chrome.",
+      "actions": { "Add fit": "Open L161 new draft", "Edit profile": "L49", "Settings": "L13", "Style": "Existing local Style preferences destination", "Wear insights": "Existing actual wear-insights destination", "tabs": "Home / Closet / Planner / Agent / Profile destinations", "More": "Native Style / Wear insights menu; T6P-0 reference" },
+      "return": "Returning from a cancelled new draft restores Profile and journal scroll; successful Save refreshes real entries, not fixture totals."
+    },
+    {
+      "screen": "L161",
+      "id": "SZ4-0",
+      "name": "08.08 · L161 · V1 · New fit · No content",
+      "position": { "x": 1450, "y": 18590 },
+      "rootContentNodes": ["T17-0", "T1H-0", "T1R-0", "T1Y-0", "T24-0"],
+      "state": "Standalone new draft, default date 6 October 2026; no photo/link/note. Save disabled. Explicitly says photo optional and outfit alone sufficient.",
+      "actions": { "Back": "Return to originating Profile without commit; protect changed drafts with Keep editing / Discard changes", "Date": "Native DatePicker preserving calendar day and explicit timezone", "Add photo": "Shared L159 native source-sheet recipe, but with New fit draft beneath it; Choose from Photos / Take photo / native Close", "Link outfit": "Existing outfit chooser; return accepted outfit and minimal snapshot into this draft", "Private note": "TextEditor, 500 user-perceived characters maximum; retain over-limit text and show inline validation", "Save fit": "Disabled until valid date, note <= 500 characters and photo OR existing outfit" },
+      "return": "Cancel sheet, Photos, camera, editor or permission/import failure preserves date, note, link and previously accepted media; source focus returns to Add photo. Never apply piece capture's required-photo rule."
+    },
+    {
+      "screen": "L162",
+      "id": "T2C-0",
+      "name": "08.09 · L162 · V1 · New fit · Ready",
+      "position": { "x": 1920, "y": 18590 },
+      "rootContentNodes": ["T33-0", "T3S-0", "T2O-0", "T2J-0", "T2F-0"],
+      "state": "Valid photo-only draft with fixture date/note, Not linked, full-image Fit and enabled Save fit. No worn claim.",
+      "actions": { "Change photo": "Same native source-sheet recipe as L159 in journal context; retain accepted image until replacement succeeds", "Link outfit": "Same optional existing outfit chooser", "Save fit": "Atomic local journal commit only; successful new-fit save returns to originating Profile with the committed memory focused; editing returns to refreshed L163; no plan or wear mutation", "Back": "Keep editing / Discard changes if dirty; no silent save" },
+      "return": "Save failure keeps complete draft and prior saved record. Repeated retry creates one memory. Edit mode uses this same form recipe with Edit fit title and saved fields; success returns refreshed L163."
+    },
+    {
+      "screen": "L163",
+      "id": "T3X-0",
+      "name": "08.10 · L163 · V1 · Fit memory · Detail",
+      "position": { "x": 2390, "y": 18590 },
+      "rootContentNodes": ["T49-0", "T4K-0", "T4N-0", "T4V-0", "T53-0", "T5A-0"],
+      "state": "Saved photo-only private memory, 6 October 2026, same note, Not linked. Full-image Fit. No Share/Post/likes/followers.",
+      "actions": { "Back": "Restore originating Profile and journal scroll", "Edit fit": "Open L162 form recipe in Edit fit mode with this memory's saved data", "Link outfit": "Open the same editor draft focused on outfit selection; commit only through Save", "More": "Native anchored Menu with Delete memory command only; dismiss before confirmation; outside tap leaves memory unchanged", "Delete memory": "Native scoped confirmation: Delete this fit memory from 6 October 2026? Removes only this memory, its private note/snapshot and unreferenced AQD-owned photo copies. Keeps outfits, wear history, other memories and original Photos. Actions Delete memory (destructive) / Cancel (safe)." },
+      "return": "Cancel deletion restores unchanged detail and More focus. Confirmed deletion returns to Profile, which shows L160 only if actually empty. Deletion failure retains memory with retry; do not show a false successful deletion."
+    }
+  ],
+  "sharedSemantics": {
+    "privacy": "Private local journal; no upload, social surface or implicit Agent context.",
+    "wear": "Adding, editing, linking, unlinking or deleting memories never records wear or changes plans/counts.",
+    "outfitOnly": "Existing outfit alone is sufficient; show actual piece composition/snapshot, never fabricated wearer imagery.",
+    "validation": "Date-only/note-only drafts cannot save. Removing last photo/link cannot save an empty record. Retain over-limit input, never truncate.",
+    "nativePresentation": "L159 SOI-0 / SPS-0 source sheet is the shared presentation recipe, not a new fifth journal artboard. Journal-specific source/menu/confirmation open states are specified here; no custom runtime renderer implied.",
+    "icons": "New content symbols cloned from Foundations: plus 4P2-0, photo 4S2-0, calendar 4RE-0, chevron 4Q0-0, back 4PA-0, more 4QQ-0, lock 4R2-0, edit STE-0. Existing status/header/home-indicator/tab chrome deep-cloned from JPZ-0 / LS0-0. Source recipe retains existing Foundations camera STN-0 / close 4RU-0.",
+    "safeAreas": "Save is visibly separated from the home indicator; native scroll, safe-area and keyboard adaptation remain implementation specifications."
+  },
+  "verification": {
+    "static": "Reviewed all four full screenshots at 1x in one bounded batch: spacing, typography, contrast roles, alignment, repetition, full-image Fit and artboard fit passed. Replaced three Back symbols with explicit Foundations 4PA-0 clones and confirmed those three screens in one final batch; no clipping or overlap observed.",
+    "placement": "Existing section-08 Help/Capability occupy x40/510 at y18590; new states occupy x980/1450/1920/2390, 80-point horizontal gaps. All 390x844; bottom y19434 remains above next section y19950. paper_find_nodes confirmed the four new 390-point artboards at exact y18590.",
+    "spec": "Read profile-account.md journal contract initially and again after creation; optional-photo, outfit-only, 500-character, cancellation and no-wear semantics agree.",
+    "limits": ["Static authored Paper references only; no executable prototype or native interaction tests.", "No separate open journal source-sheet, Delete menu or deletion confirmation artboard; shared native recipe and exact action/return semantics recorded above.", "Keyboard, Dynamic Type, smaller phones, VoiceOver/focus, native detents/materials, reduced transparency/motion, permissions/import failures, persistence, cleanup and export/restore require implementation/device verification.", "Only these four light supporting states reviewed; existing artboards and dark counterparts owned by the parent were not altered or independently verified."]
+  }
+}

@@ -3,14 +3,24 @@ Checked October 5, 2026 on the planning branch. There is no tracked Swift app so
 
 | Area | Current status | Next evidence required |
 | --- | --- | --- |
-| V1 product and architecture | Complete local scope specified: Home/Closet/Agent/local Profile/Settings, welcome/onboarding/tour, private wardrobe/planning/history and appearance. | Separately authorized source baseline and [LOCAL acceptance](../product/v1-release.md#local-acceptance). |
+| V1 product and architecture | Complete local scope specified: Home/Closet/Planner/Agent/local Profile/Settings, welcome/onboarding/tour, private wardrobe/planning/history and appearance. | Separately authorized source baseline and [LOCAL acceptance](../product/v1-release.md#local-acceptance). |
 | V1 UI/UX | Prepared and grouped in Paper page 01 · V1, with recovery and dark references. | Native rendered flow, accessibility, permission/model and local durability/recovery proof. |
 | V2 product and architecture | Full prior vision preserved as additive connected core and extensions. | Resolve service policies/providers and implement incremental authorized slices after usage evidence. |
 | V2 UI/UX | Existing canonical screens/review retained; page 02 · V2, section 09 prepares every expansion family. Landing/admin remain V2 operating references. | Final capability/platform layouts and live connected/native/browser checks before each release. |
 | Repository tooling | Present; root package.json owns check commands. | Actual results in [verification](verification.md). |
 | App release / distribution | Unverified for both versions. | V1 device/store/support evidence; V2 additionally needs auth/sync/social/operations and backend proof. |
 
+October 6 approved navigation target: V1/V2 share five equal-width visibly labelled native slots Home · Closet · Planner · Agent · Profile (full hit areas ≥44 × 44 pt). Planner is a dedicated root, Week default/Month alternate; Closet has only Pieces/Outfits/Themes. Cross-root plan/date selection and Back context, fourth-slot full-screen Agent return, V2-only persistent 44-point Inbox root-toolbar entry/I01/incoming intents, and Profile More for retained Style/Wear insights are specified in [plan acceptance](implementation-plan.md#navigation-refinement-acceptance--docspaper-only). No app functionality/wiring/build is implemented or verified. Static Paper changes and inventories are recorded in [verification](verification.md): grouped Planner forms/cards, starter capsules, Profile More and journal states. Canonical root Inbox access is prepared; six embedded V2 review/expansion boards retain unsynchronized toolbar copies. Accessibility/Dynamic Type/keyboard and native return checks remain outstanding.
+
 ## Handoff
 [V1 release](../product/v1-release.md) owns the complete private MVP; [V2 backlog](../product/v2-backlog.md) retains all future work. [Implementation plan](implementation-plan.md) defines incremental private slices and an additive V2 migration. Complete local capability is a release requirement, not authorization to code on this branch.
 
 [Prototype implementation](archive/prototype-implementation.md), [prototype checks](archive/prototype-verification.md) and [design review log](archive/design-review-log.md) preserve historical context. Their earlier connected V1 wording now maps to V2 and is not current release evidence. Update this status only with reproducible implementation/build evidence; static designs stay a separate boundary.
+
+October 6 capture contract refinement: new-piece save requires accepted photo/name/category; labels omit Required/Optional. L79 is missing-photo validation rather than a receipt. This is Paper/spec evidence only; native enforcement remains unimplemented. See [Capture photo](../design/capture-photo.md).
+
+October 6 Agent availability refinement: visible Agent destination with reason-specific L19/L80/L81; future V2 explicit LLM provider option documented. Static Paper/spec work only; runtime gate and provider integration remain unimplemented.
+
+October 6 design polish: canonical V1/V2 static screens reviewed against the new [quality criteria](../design/quality-criteria.md), linked from AGENTS.md. V1 section 05 adds month/empty-date/add/saved references while retaining Week as default; shared controls, imagery, action spacing and disclosures were refined. Paper/spec evidence only; native implementation and acceptance remain outstanding.
+
+- October 6 design handoff: V1 now includes L86–L158 supporting destinations/states, Search and skippable personalization. See [interaction coverage](../design/v1-interactions.md). Static Paper/docs changes only; implementation status is unchanged.
