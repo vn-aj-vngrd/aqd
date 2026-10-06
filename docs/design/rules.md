@@ -11,6 +11,10 @@ Apply [quality criteria](quality-criteria.md) during every review and handoff; r
 3. Apply shared changes across the affected Paper nodes, rather than adjusting each screen independently. Paper tokens control color/type/spacing references. Cloned geometry is not a live linked component; regeneration or a batched node update is required after a structural component change.
 4. Review rendered screens, including content fit, native safe areas, keyboard, accessibility text, light/dark, and Reduce Transparency. Record the scope in [Verification](../delivery/verification.md). A static design pass does not establish native behavior or performance.
 
+## Foundations ownership
+
+Foundations contains reusable tokens, type/spacing/shape rules, the labelled app-icon catalog, native navigation/control primitives and generic component states. Full phone screens and feature-specific journeys, menus, feeds and accessibility examples belong to V1/V2 reference areas. Preserve registered primitive IDs when moving product examples; update their page ownership and links rather than inventing canonical routes. A feature-specific reusable component is documented in Components, but its complete product walkthrough is not a foundation.
+
 ## Native controls
 
 Use system navigation, TabView/UITabBarController, toolbar Button/Menu, searchable/UISearchController, grouped forms, sheets, alerts, Photos picker, share sheet, and date pickers. Allow the OS to supply Liquid Glass and scroll-edge behavior. The Paper representation is a visual reference, not instructions to implement a custom glass tab bar.

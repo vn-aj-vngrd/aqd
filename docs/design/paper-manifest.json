@@ -3,32 +3,36 @@
   "url": "https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0",
   "verifiedOn": "2026-10-06",
   "scope": "Static design only; Paper is sole visual source. V1 complete local app; V2 retains connected core and full extension requirements.",
-  "screenCount": 376,
-  "artboardCount": 455,
+  "screenCount": 380,
+  "artboardCount": 463,
   "pages": [
     {
       "id": "p-1-0",
       "name": "00 · Foundations",
-      "count": 32,
+      "count": 18,
       "canonicalCount": 0,
-      "rootReferenceCount": 32
+      "rootReferenceCount": 18
     },
     {
       "id": "p-2-0",
       "name": "01 · V1",
-      "count": 175,
-      "canonicalCount": 165,
-      "rootReferenceCount": 10
+      "count": 183,
+      "canonicalCount": 169,
+      "rootReferenceCount": 14
     },
     {
       "id": "p-B-0",
       "name": "02 · V2",
-      "count": 248,
+      "count": 262,
       "canonicalCount": 211,
-      "rootReferenceCount": 37
+      "rootReferenceCount": 51
     }
   ],
   "screens": [
+    {"id":"L174","title":"Preferences review · Answered","nodeId":"WZT-0","pageId":"p-2-0","sourceNodeId":"V9I-0","sourceScreenId":"L169","complete":true,"release":"V1","phase":"V1","sharedWith":"V2","designStatus":"Prepared static shared state","flowSection":"01","flowStep":"01.14","rootName":"01.14 · L174 · Preferences review · Answered","position":{"x":1920,"y":3018},"viewport":{"width":390,"height":844},"runtimeComplete":false},
+    {"id":"L175","title":"Preferences review · Declined","nodeId":"X1H-0","pageId":"p-2-0","sourceNodeId":"V9I-0","sourceScreenId":"L169","complete":true,"release":"V1","phase":"V1","sharedWith":"V2","designStatus":"Prepared static shared state","flowSection":"01","flowStep":"01.15","rootName":"01.15 · L175 · Preferences review · Declined","position":{"x":2390,"y":3018},"viewport":{"width":390,"height":844},"runtimeComplete":false},
+    {"id":"L176","title":"Custom description · Over limit","nodeId":"X35-0","pageId":"p-2-0","sourceNodeId":"WK5-0","sourceScreenId":"L173","complete":true,"release":"V1","phase":"V1","sharedWith":"V2","designStatus":"Prepared static shared state","flowSection":"01","flowStep":"01.16","rootName":"01.16 · L176 · Custom description · Over limit","position":{"x":2860,"y":3018},"viewport":{"width":390,"height":844},"runtimeComplete":false},
+    {"id":"L177","title":"Preferences save failed · Shared","nodeId":"X53-0","pageId":"p-2-0","sourceNodeId":"K3U-0","sourceScreenId":"L17","complete":true,"release":"V1","phase":"V1","sharedWith":"V2","designStatus":"Prepared static shared state","flowSection":"01","flowStep":"01.17","rootName":"01.17 · L177 · Preferences save failed · Shared","position":{"x":3330,"y":3018},"viewport":{"width":390,"height":844},"runtimeComplete":false},
     {
       "id": "L172", "title": "Splash", "nodeId": "W6B-0", "pageId": "p-2-0",
       "sourceNodeId": "W-0", "sourceScreenId": "E01", "complete": true,
@@ -4735,11 +4739,11 @@
       "pageId": "p-2-0",
       "sourceNodeId": "KBP-0",
       "flowSection": "01",
-      "flowStep": "01.14",
+      "flowStep": "01.18",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
-      "rootName": "01.14 · L62 · Tour · Home",
+      "rootName": "01.18 · L62 · Tour · Home",
       "position": {
         "x": 40,
         "y": 3992
@@ -4753,11 +4757,11 @@
       "pageId": "p-2-0",
       "sourceNodeId": "JNX-0",
       "flowSection": "01",
-      "flowStep": "01.15",
+      "flowStep": "01.19",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
-      "rootName": "01.15 · L63 · Tour · Closet",
+      "rootName": "01.19 · L63 · Tour · Closet",
       "position": {
         "x": 510,
         "y": 3992
@@ -4771,11 +4775,11 @@
       "pageId": "p-2-0",
       "sourceNodeId": "KPT-0",
       "flowSection": "01",
-      "flowStep": "01.16",
+      "flowStep": "01.20",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
-      "rootName": "01.16 · L64 · Tour · Agent",
+      "rootName": "01.20 · L64 · Tour · Agent",
       "position": {
         "x": 980,
         "y": 3992
@@ -4789,11 +4793,11 @@
       "pageId": "p-2-0",
       "sourceNodeId": "LS0-0",
       "flowSection": "01",
-      "flowStep": "01.17",
+      "flowStep": "01.21",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
-      "rootName": "01.17 · L65 · Tour · Profile",
+      "rootName": "01.21 · L65 · Tour · Profile",
       "position": {
         "x": 1450,
         "y": 3992
@@ -4807,11 +4811,11 @@
       "pageId": "p-2-0",
       "sourceNodeId": "KGU-0",
       "flowSection": "01",
-      "flowStep": "01.18",
+      "flowStep": "01.22",
       "release": "V1",
       "phase": "V1",
       "designStatus": "Prepared static local reference",
-      "rootName": "01.18 · L66 · Ready to begin",
+      "rootName": "01.22 · L66 · Ready to begin",
       "position": {
         "x": 1920,
         "y": 3992
@@ -7378,111 +7382,115 @@
     }
   ],
   "referenceBoards": [
-    {"nodeId": "WCL-0", "name": "01 · Foundations · Tokens and typography", "pageId": "p-1-0", "position": {"x": 40, "y": 40}, "reviewOnly": true},
-    {"nodeId": "WCQ-0", "name": "02 · Foundations · Icons and identity", "pageId": "p-1-0", "position": {"x": 40, "y": 3962}, "reviewOnly": true},
-    {"nodeId": "WDN-0", "name": "03 · Foundations · Native navigation and chrome", "pageId": "p-1-0", "position": {"x": 40, "y": 7112}, "reviewOnly": true},
-    {"nodeId": "WDS-0", "name": "04 · Foundations · Controls, forms and surfaces", "pageId": "p-1-0", "position": {"x": 40, "y": 10072}, "reviewOnly": true},
-    {"nodeId": "WDX-0", "name": "05 · Foundations · Images and composition", "pageId": "p-1-0", "position": {"x": 40, "y": 16115}, "reviewOnly": true},
-    {"nodeId": "WE2-0", "name": "06 · Foundations · States, feedback, Agent and motion", "pageId": "p-1-0", "position": {"x": 40, "y": 18411.001}, "reviewOnly": true},
+    {"nodeId": "WCL-0", "name": "Foundations · Tokens and typography", "pageId": "p-1-0", "position": {"x": 40, "y": 40}, "reviewOnly": true},
+    {"nodeId": "WCQ-0", "name": "Foundations · Icons and identity", "pageId": "p-1-0", "position": {"x": 40, "y": 3882}, "reviewOnly": true},
+    {"nodeId": "WDN-0", "name": "Foundations · Native navigation and chrome", "pageId": "p-1-0", "position": {"x": 40, "y": 7920}, "reviewOnly": true},
+    {"nodeId": "WDS-0", "name": "Foundations · Controls, forms and surfaces", "pageId": "p-1-0", "position": {"x": 40, "y": 9627}, "reviewOnly": true},
+    {"nodeId": "WDX-0", "name": "Foundations · Images and composition", "pageId": "p-1-0", "position": {"x": 40, "y": 12504}, "reviewOnly": true},
+    {"nodeId": "WE2-0", "name": "Foundations · Feedback, accessibility and motion", "pageId": "p-1-0", "position": {"x": 40, "y": 13740}, "reviewOnly": true},
+    {"nodeId": "X71-0", "name": "REFERENCE · V1 component and accessibility examples", "pageId": "p-2-0", "position": {"x": 4000, "y": 40}, "reviewOnly": true},
+    {"nodeId": "X76-0", "name": "REFERENCE · V2 component and state examples", "pageId": "p-B-0", "position": {"x": 13000, "y": 40}, "reviewOnly": true},
+    {"nodeId": "X7B-0", "name": "REFERENCE · Private task compositions", "pageId": "p-2-0", "position": {"x": 4000, "y": 2314}, "reviewOnly": true},
+    {"nodeId": "X7G-0", "name": "REFERENCE · Public content and motion assignments", "pageId": "p-B-0", "position": {"x": 13000, "y": 15599}, "reviewOnly": true},
     {
       "nodeId": "1-0",
-      "name": "01.01 · AQD · Start here",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 370}
+      "name": "AQD · Start here",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 290}
     },
     {
       "nodeId": "14I-0",
-      "name": "04.02 · Controls and states",
-      "pageId": "p-1-0", "position": {"x": 1360, "y": 10402}
+      "name": "Controls and states",
+      "pageId": "p-1-0", "position": {"x": 1520, "y": 9877}
     },
     {
       "nodeId": "1JB-0",
-      "name": "01.03 · Type, space and materials",
-      "pageId": "p-1-0", "position": {"x": 1520, "y": 1290}
+      "name": "Type, space and materials",
+      "pageId": "p-1-0", "position": {"x": 1520, "y": 1210}
     },
     {
       "nodeId": "22T-0",
-      "name": "06.07 · D03 · New piece · Larger text",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 23621}
+      "name": "REFERENCE · D03 · New piece · Larger text",
+      "pageId": "p-2-0", "position": {"x": 4000, "y": 300}
     },
     {
       "nodeId": "25T-0",
-      "name": "06.08 · D04 · Home · Reduced transparency",
-      "pageId": "p-1-0", "position": {"x": 590, "y": 23621}
+      "name": "REFERENCE · D04 · Home · Reduced transparency",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 300}
     },
     {
       "nodeId": "4E1-0",
-      "name": "06.01 · States and feedback",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 18741}
+      "name": "States and feedback",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 13990}
     },
     {
       "nodeId": "4GB-0",
-      "name": "03.02 · Presentations and navigation",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 7792}
+      "name": "Presentations and navigation",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 8520}
     },
     {
       "nodeId": "4LD-0",
-      "name": "04.03 · Content and form patterns",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 11788}
+      "name": "Content and form patterns",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 11215}
     },
     {
       "nodeId": "4MI-0",
-      "name": "02.01 · Icons and navigation states",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 4292}
+      "name": "Icons and navigation states",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 4132}
     },
     {
       "nodeId": "5PP-0",
-      "name": "02.02 · Entry and identity",
-      "pageId": "p-1-0", "position": {"x": 1520, "y": 4292}
+      "name": "REFERENCE · Entry and identity",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 1304}
     },
     {
       "nodeId": "64C-0",
-      "name": "06.06 · Motion · Welcome and first piece",
-      "pageId": "p-1-0", "position": {"x": 1520, "y": 22294.999}
+      "name": "REFERENCE · Motion · Welcome and first piece",
+      "pageId": "p-2-0", "position": {"x": 4000, "y": 1304}
     },
     {
       "nodeId": "6FD-0",
-      "name": "06.03 · Agent response lifecycle",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 20091}
+      "name": "REFERENCE · Agent response lifecycle",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 2191}
     },
     {
       "nodeId": "7HE-0",
-      "name": "04.07 · Compact profile and bio",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 15178.999}
+      "name": "REFERENCE · Compact profile and bio",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 4327}
     },
     {
       "nodeId": "7R2-0",
-      "name": "04.06 · Home dashboard",
-      "pageId": "p-1-0", "position": {"x": 1300, "y": 13240.999}
+      "name": "REFERENCE · Home dashboard",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 5263}
     },
     {
       "nodeId": "7US-0",
-      "name": "05.01 · People and avatar images",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 16445}
+      "name": "People and avatar images",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 12754}
     },
     {
       "nodeId": "83E-0",
-      "name": "06.05 · Global motion",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 22294.999}
+      "name": "Global motion",
+      "pageId": "p-1-0", "position": {"x": 1520, "y": 13990}
     },
     {
       "nodeId": "862-0",
-      "name": "04.05 · Social actions and piece tags",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 13240.999}
+      "name": "REFERENCE · Social actions and piece tags",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 6511}
     },
     {
       "nodeId": "A9A-0",
-      "name": "04.01 · Control sizes",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 10402}
+      "name": "Control sizes",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 9877}
     },
     {
       "nodeId": "AAE-0",
-      "name": "04.04 · Search",
-      "pageId": "p-1-0", "position": {"x": 1520, "y": 11788}
+      "name": "REFERENCE · Search",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 14555}
     },
     {
       "nodeId": "AC0-0",
-      "name": "06.02 · Feed continuation",
-      "pageId": "p-1-0", "position": {"x": 1520, "y": 18741}
+      "name": "REFERENCE · Feed continuation",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 8459}
     },
     {
       "nodeId": "ADU-0",
@@ -7528,8 +7536,8 @@
     },
     {
       "nodeId": "AM1-1",
-      "name": "05.03 · First outfit activation",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 17804.999}
+      "name": "REFERENCE · First outfit activation",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 9199}
     },
     {
       "nodeId": "ASJ-1",
@@ -7752,8 +7760,8 @@
     },
     {
       "nodeId": "FBL-1",
-      "name": "03.03 · Native controls and open menus",
-      "pageId": "p-1-0", "position": {"x": 1520, "y": 7792},
+      "name": "REFERENCE · Native controls and open menus",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 9805},
       "reviewOnly": true,
       "contract": "native-presentations.md",
       "staticScreenCopies": false,
@@ -7761,8 +7769,8 @@
     },
     {
       "nodeId": "FP1-0",
-      "name": "01.02 · Color palette · Crisp blue",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 1290},
+      "name": "Color palette · Crisp blue",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 1210},
       "reviewOnly": true,
       "contract": "../../DESIGN.md",
       "staticScreenCopies": false,
@@ -7770,8 +7778,8 @@
     },
     {
       "nodeId": "IB0-0",
-      "name": "05.02 · Agent multimodal composer",
-      "pageId": "p-1-0", "position": {"x": 1200, "y": 16445},
+      "name": "REFERENCE · Agent multimodal composer",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 12085},
       "reviewOnly": true,
       "contract": "agent-input.md",
       "staticScreenCopies": false,
@@ -7779,8 +7787,8 @@
     },
     {
       "nodeId": "IB1-0",
-      "name": "06.04 · Agent shimmer and state coverage",
-      "pageId": "p-1-0", "position": {"x": 1520, "y": 20091},
+      "name": "REFERENCE · Agent shimmer and state coverage",
+      "pageId": "p-B-0", "position": {"x": 13000, "y": 13445},
       "reviewOnly": true,
       "contract": "agent-input.md",
       "staticScreenCopies": false,
@@ -7810,8 +7818,8 @@
     },
     {
       "nodeId": "JKP-0",
-      "name": "03.01 · Five-destination navigation master",
-      "pageId": "p-1-0", "position": {"x": 40, "y": 7442}
+      "name": "Five-destination navigation master",
+      "pageId": "p-1-0", "position": {"x": 40, "y": 8170}
     },
     {
       "nodeId": "JK8-0",
@@ -12625,17 +12633,20 @@
     "note": "Dated proof remains unchanged. Historical counts, captions, separators, actions and retired IDs are not live canvas claims."
   },
   "latestRefinement": {
+    "designSync": {"evidence":"evidence/design-sync.json","resolvedStaticIssues":30,"resolvedClarificationItems":6,"sharedVariants":["L174","L175","L176","L177"],"scope":"Foundations, V1/V2 shared styles/flows/review copies and active docs; native/runtime unverified"},
+    "destinationChooserDisclosures": {"roots": ["4GB-0", "R7B-0", "RFB-0", "1LK-0", "8W7-0"], "rows": 16, "master": "4Q0-0", "size": 22, "gap": 12, "rowMinimum": "54 retained;S30 retains52", "scope": "Foundations/V1/V2 Closet Add, V1 Planner Add and V2 share-source destination rows", "preserved": "Labels/row IDs/routes/surfaces/separators/selected source/privacy/native presentation", "exempt": "Native Menu commands, immediate/destructive actions, selectable options/toggles and OS pickers", "verification": "Worker4 representative renders; parent L118/S30 final renders and all16 computed rows/glyph wrappers and registered clone provenance; S30 final forward-path/tint JSX inspected; bounded chooser-family discovery", "rootDelta": 0, "nodeDeltaByMutations": 0, "nativeVerified": false, "evidence": "evidence/planner-navigation.json#latestRefinement.destinationChooserDisclosures"},
     "settingsGlyphRepair": {"master": "4Q8-0", "selectedMaster": "4QB-0", "retainedWrappers": ["UYU-0", "4Q8-0", "4QB-0", "P2C-0", "P2G-0", "V3A-0", "W7V-0"], "rootCountScanned": 455, "geometry": "Corrected malformed polygon to shared eight-tooth closed outline at22 points; native gearshape role unchanged", "malformedPathMatchesAfter": 0, "controlStylesUnchanged": true, "parentReview": "Registered master and V2 Settings row crop rendered and inspected", "nightLimit": "No live Night/large-text gear sample; offline retint is not native proof", "nativeVerified": false},
     "emptyStateConsistency": {"foundationsCentered": 11, "v1CenteredRoots": 27, "v2CenteredStates": 27, "placement": "Intrinsic leading-aligned stack centered in remaining body below controls and above footer/nav/composer; overflowing text top-aligns and scrolls natively", "exemptions": "Inline notices with actual content, functional form groups and native sheet/alert controls retain contextual placement", "coverageLimits": "Existing target inventories;131 V1 roots not freshly re-audited, inherited71 V2 unparsed nodes, representative renders not all-app certification", "evidence": "evidence/planner-surfaces.json#latestRefinement.emptyStateConsistency", "nativeVerified": false},
     "customBodyDescription": {"screen": "L173", "nodeId": "WK5-0", "pageId": "p-2-0", "bounds": [1450, 3018, 390, 844], "sharedPhases": ["V1", "V2"], "source": "L171 picker → custom editor → pending picker selection → preference draft", "limitGraphemes": 160, "illustrativeCount": 38, "consent": "Independent and off by default", "commit": "Atomic preference review Save only", "headerPrefixRemoval": {"changedExistingHeaders": 16, "remainingExactNumberedMatches": 0, "progress": "Step n of 7 preserved"}, "overlapProof": "New box checked against all174 existing V1 roots, no overlap; existing positions unchanged", "nativeVerified": false},
-    "v1ThemeOutfitLists": {"screens": ["L32", "L34", "L88", "L164", "L123", "L135"], "domain": "Theme is a named collection of saved outfits, not direct pieces", "showcase": "L34 two existing distinct members, full-width composition/name/piece-count disclosures; L32 collection previews", "search": "L88 one known outfit preview plus honest remaining count", "preserved": "Original memberships/counts/selection/menu actions, Fit imagery and compact chrome", "limitations": "Blue weekends has no canonical second-member mapping; no member fabricated. L88 → L34 uses a generic detail fixture with differing title/count; runtime must open the actual selected theme", "evidence": "evidence/planner-surfaces.json#latestRefinement.v1ThemeOutfitLists"},
+    "v1ThemeOutfitLists": {"screens": ["L32", "L34", "L88", "L164", "L123", "L135"], "domain": "Theme is a named collection of saved outfits, not direct pieces", "showcase": "L34 two existing distinct members, full-width composition/name/piece-count disclosures; L32 collection previews", "search": "L88 query Weekend and result Weekend · 8 outfits use the same two represented covers as L34/W18; W23 matches", "preserved": "Original memberships/counts/selection/menu actions, Fit imagery and compact chrome", "limitations": "Eight-outfit fixture has two represented members, not six fabricated additions. Name/count/covers now match search and detail; native selection must still retain actual theme ID.", "evidence": "evidence/planner-surfaces.json#latestRefinement.v1ThemeOutfitLists"},
     "compactControls": {"scope": "Foundations, V1 and V2 segmented tabs and chips, including nested references; native behavior unverified", "rail": 36, "pill": 32, "measuredVerticalInset": 2, "label": "14/20", "chipVisibleHeight": 32, "nativeHitMinimum": 44, "bottomNavigation": "Separate 54-point slots/22-point glyphs preserved", "foundations": {"reviewedRoots": 32, "changedRoots": 9, "controlFamilies": 13, "parentContrastLabelUpdates": 19}, "v1": {"reviewedRoots": 174, "structuralDescendantsAtSweep": 9061, "rails": 13, "initialChangedIds": 138, "enabledInactiveContrastUpdates": 36, "alreadyCompactFiltersRetained": 15}, "v2": {"reviewedRoots": 248, "rails": 61, "chips": 123, "changedIds": 781, "changedRoots": 102, "rasterRailChecks": 61, "inventoryLimit": "71 nodes absent from parsed tree inventory; representative full-screen reviews only, not whole-app certification"}, "lightInactiveLabel": "Existing ink on neutral track: calculated 11.47–11.50:1 rather than secondary4.33:1", "rootCountDelta": 0, "newTokens": 0, "newColors": 0, "evidence": "evidence/planner-navigation.json#latestRefinement.compactControls"},
     "searchCaptionRemoval": {"copy": "Your closet · Only you", "removedTextNodes": ["Q69-0", "Q7Q-0", "Q95-0", "QAH-0", "QED-0", "QFP-0", "QBV-0", "QD1-0", "9EG-0", "9SB-0", "9TM-0", "9V0-0", "9WC-0", "9XO-0"], "liveTextMatchesAfter": 0, "scope": "Matching V1/V2 search captions; actual privacy/ownership and query semantics unchanged"},
     "searchBodyRefinement": {"screens": ["L92", "L86", "L87", "L88", "L89", "L93"], "emptyStates": "Unboxed canvas stacks", "resultSurfaces": "Opaque surface, 12-point corners, 14-point padding, full-image Fit", "filters": "Before results grid, not after a long list; native persistent header unverified", "primary": ["L92 Browse pieces", "L89 Clear search", "L93 Add a piece"], "secondary": "L89 Add a piece is plain 50-point action", "nativeReturn": "Retain query, scope, filters and scroll", "evidence": "evidence/planner-surfaces.json#latestRefinement.searchBodyRefinement"},
     "captureFooterSpacing": {"screens": ["L04", "L75", "L76", "L79"], "roots": ["JPZ-0", "ODL-0", "OEW-0", "OMU-0"], "baseViewport": [390, 844], "saveBottomClearance": 64, "contentPaddingBottom": {"JQI-0": 42, "ONT-0": 64, "ODO-0": 32, "OEZ-0": 32}, "selectedPhotoStackGap": 8, "preserved": "50-point Save, accepted photo Fit viewport, metadata, validation and home indicators", "verification": "Parent reviewed four rendered footer/body references; OS safe-area/keyboard/large-text behavior unverified", "rootCountDelta": 0},
     "missingPhotoSelector": {"screen": "L79", "root": "OMU-0", "source": "L04 SO6-0", "selector": "WEH-0", "addPhoto": "WEJ-0", "removedSubtree": "OO8-0", "size": [350, 88], "route": "L159 with retained L79 draft", "preserved": ["Cotton shirt", "Tops", "ONX-0 validation", "disabled Save"], "layout": "Compact selector; category stack flexes and footer stays bottom-aligned", "verification": "Parent live 390x844 screenshot reviewed; native behavior unverified", "rootCountDelta": 0, "tokenHash": "fdeb7346"},
     "date": "2026-10-06",
-    "foundationsFlowMap": {"source": "evidence/planner-navigation.json#latestRefinement.foundationsFlowMap", "stableMasters": 26, "headers": 6, "roots": 32, "overlaps": [], "unassignedRoots": [], "tokenHash": "fdeb7346"},
+    "foundationsFlowMap": {"source": "evidence/planner-navigation.json#latestRefinement.foundationsFlowMap", "stableMasters": 26, "headers": 6, "roots": 32, "overlaps": [], "unassignedRoots": [], "tokenHash": "fdeb7346", "status": "Historical; superseded", "supersededBy": "foundationsLibrary"},
+    "foundationsLibrary": {"repositoryVerification": {"result": "Passed", "checks": ["Five owned JSON files parse with no duplicate keys", "380 unique canonical IDs/nodes; 463 roots exactly match cleanup finalRoots", "83 root references and four nested references; page/count agreement in all current inventories", "41 roles and 12 valid aliases; retained master/source IDs and calendar variant reconcile", "All 41 phase-use/source representatives joined to final root/descendant ownership", "Affected names/positions match cleanup reflow/moves; WE2 final parent rename applied", "git diff --check"], "scope": "Repository consistency against supplied artifacts; no new Paper inspection or native certification"}, "evidence": "evidence/foundations-library.json", "scope": "Reusable library only; 14 whole feature boards and product subtrees relocated to V1/V2 references with original IDs retained", "roots": 18, "boards": 12, "headers": 6, "newReferenceRoots": ["X71-0", "X76-0", "X7B-0", "X7G-0"], "canonicalScreensUnchanged": 380, "registeredIconRoles": 41, "aliases": 12, "tokenHash": "fdeb7346", "profileMenu": {"nodeId": "T6P-0", "pageId": "p-2-0", "genericFoundationsClone": "X8U-0", "dimensions": [240, 270]}, "nativeVerified": false, "limits": "Static organization and bounded source/render checks; cached icon occurrences are not a unique visible native census; inactive fit-content roots not all measured"},
     "splash": {"screen": "L172", "root": "W6B-0", "source": "E01 W-0", "viewport": [390, 844], "semantics": "Quiet AQD native launch; no artificial wait, actions or authentication gate"},
     "v2PrivateProfile": {"source": "evidence/fit-journal-states.json#latestRefinement.v2Profile", "owner": "U01", "menu": "U25", "publicProjection": "U26", "privateEditor": "L49", "publicEditor": "U02", "automaticPrivateTransfer": false, "sectionNote": "Handoff Profile flowSection05 retained; live canvas/retained v2FlowSections place these roots under07 Profile and account. No canvas section renumbering performed."},
     "v2CoreAlignment": {"source": "evidence/planner-surfaces.json#latestRefinement.v2CoreAlignment", "modifiedFamilies": 22, "screenshots": 29, "wholeAppAlignment": false, "nativeVerified": false},
@@ -12643,48 +12654,53 @@
     "removedThemeCreationFooters": ["L45-0", "1HX-0"],
     "newTokens": 0,
     "newColors": 0,
-    "newIconRoles": 0,
+    "newIconRoles": 7,
     "repositoryJsonCheck": {"result": "Passed", "checks": ["Four JSON files parse", "375 unique canonical IDs/nodes; 454 roots and 79 root references plus four nested references", "All164 V1 manifest/map identities, positions and steps match reconciled final map", "All32 Foundations names/positions match final map exactly", "Zero numeric overlaps in32 Foundations and174 V1 bounds", "V2 core22 root/104 control IDs match source; Settings42 recovery glyph mappings plus tour43; menu8 rows", "Current72 bar IDs unique and read-only find_nodes verified", "Historical evidence fields unchanged against HEAD except parent follow-up/policy", "git diff --check"], "scope": "Repository/static evidence consistency only, no runtime/native certification"},
     "scope": "Current authoritative static inventory and bounded refinement; not runtime completion or a whole-app audit",
     "inventory": {
-      "rootArtboards": 455,
-      "canonicalScreens": 376,
-      "v1CanonicalScreens": 165,
+      "rootArtboards": 463,
+      "canonicalScreens": 380,
+      "v1CanonicalScreens": 169,
       "v2CanonicalScreens": 211,
-      "rootReferences": 79,
+      "rootReferences": 83,
       "nestedOfflineReferences": 4,
       "pages": [
         {
           "id": "p-1-0",
           "name": "00 · Foundations",
-          "count": 32,
+          "count": 18,
           "canonicalCount": 0,
-          "rootReferenceCount": 32
+          "rootReferenceCount": 18
         },
         {
           "id": "p-2-0",
           "name": "01 · V1",
-          "count": 175,
-          "canonicalCount": 165,
-          "rootReferenceCount": 10
+          "count": 183,
+          "canonicalCount": 169,
+          "rootReferenceCount": 14
         },
         {
           "id": "p-B-0",
           "name": "02 · V2",
-          "count": 248,
+          "count": 262,
           "canonicalCount": 211,
-          "rootReferenceCount": 37
+          "rootReferenceCount": 51
         }
       ]
     },
     "inventoryVerification": {
       "method": "Read-only paper_get_basic_info on all three explicit pages",
-      "rootCounts": [32, 175, 248],
+      "rootCounts": [18, 183, 262],
+      "supersededCheckpoint": {"rootCounts": [32, 179, 248], "nodeCounts": [3549, 9433, 18322]},
       "priorCheckpoint": {"rootCounts": [32, 174, 248], "nodeCounts": [3478, 9072, 18059]},
       "tokenHash": "fdeb7346",
-      "nodeCounts": [3531, 9182, 18132],
-      "finalCountSource": "Parent actual read-only Paper basic_info after compact/empty/custom-body/theme/gear follow-ups: roots32/175/248, nodes3531/9182/18132, token hash fdeb7346 on each. Root lists truncate100 on V1/V2 but counts do not. L173 adds the sole new root; its box checked against all174 prior V1 roots.",
-      "rootInventoryRead": "Foundations map covers32 roots; reconciled V1 map now covers175 roots/165 screens including L173. Worker V2 read-only basic info confirms 248 roots and token hash; U25/U26 node_info confirms actual root names/positions. Parent nodeInfo/screenshots independently verified W6B/U25/U26.",
+      "nodeCounts": [1834, 9709, 19947],
+      "totalRoots": 463,
+      "totalNodes": 31490,
+      "currentCountSource": "evidence/foundations-library.json; cleanup finalRoots enumerates all three pages; four nested references excluded from root totals",
+      "historicalFieldScope": "finalCountSource, rootInventoryRead and limits retain prior checkpoint evidence; current counts and proof are currentCountSource and foundationsLibrary",
+      "finalCountSource": "Parent final read-only Paper basic_info after all30 sync repairs/global styles: roots32/179/248, nodes3549/9433/18322, token hash fdeb7346. L174–L177 add four shared state roots; no root removals. Lists truncate100 on V1/V2 but counts do not.",
+      "rootInventoryRead": "Existing455-root audit baseline retained, plus four live node_info-confirmed shared preference roots at onboarding row3018. New rectangles checked against all175 measured prior V1 roots and each other; no overlap. Tour roots unmoved with updated ordinals. Scoped styles/renders and exact limits: evidence/design-sync.json.",
       "limits": "Basic info truncates root lists after 100. Final V1 and Foundations maps supply bounded position/overlap proof; Foundations retained-tree comparison covers eight complete roots and one partial prefix, not a binary whole-document diff. Four nested refs excluded from root totals; no native or whole-app certification."
     },
     "retirement": {

@@ -30,3 +30,5 @@ docs/design/evidence/*
 !docs/design/evidence/fit-journal-states.json
 !docs/design/evidence/planner-navigation.json
 !docs/design/evidence/planner-surfaces.json
+!docs/design/evidence/design-sync.json
+!docs/design/evidence/foundations-library.json

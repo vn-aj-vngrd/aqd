@@ -33,7 +33,7 @@ The [V2 core release](../product/v2-release.md) retains complete connected accep
 
 ## Shared personalization acceptance — docs/Paper only
 
-Onboarding, Settings → Style and Profile More → Style use one seven-step numbered draft/review/save flow in both phases (six questions plus review), with a progress bar and no Skip question/Skip setup actions. Each question requires an answer or explicit No preference/refusal; sensitive body details remain optional. Goals/occasions/style/fit-comfort/colors guide eligible suggestions; optional height/self-described body shape require purpose-specific use consent, off initially. Declined/unknown values stay unknown; no photo inference, exact-size promise or implicit public/cloud use. Save is atomic, failure retains input, cancellation preserves saved answers and returns to the true source; onboarding success alone continues to capture. Implement and verify PREF-01–PREF-07 in [personalization](../design/onboarding-personalization.md) against a deterministic baseline before widening supported on-device assistance. This design refinement implements no ranking, persistence or model integration.
+Onboarding, Settings → Style and Profile More → Style use one seven-step draft/review/save flow in both phases (six questions plus review), with unnumbered titles, separate Step n of 7 and a progress bar and no Skip question/Skip setup actions. Each question requires an answer or explicit No preference/refusal; sensitive body details remain optional. Goals/occasions/style/fit-comfort/colors guide eligible suggestions; optional height/self-described body shape require purpose-specific use consent, off initially. Declined/unknown values stay unknown; no photo inference, exact-size promise or implicit public/cloud use. Save is atomic, failure retains input, cancellation preserves saved answers and returns to the true source; onboarding success alone continues to capture. Implement and verify PREF-01–PREF-07 in [personalization](../design/onboarding-personalization.md) against a deterministic baseline before widening supported on-device assistance. This design refinement implements no ranking, persistence or model integration.
 
 ## Navigation refinement acceptance — docs/Paper only
 
@@ -48,7 +48,11 @@ After separate implementation authorization, acceptance must cover:
 - Related Planner choices use one shared surface with stable label/value/disclosure lanes; agenda/trip surfaces and section spacing follow [Planner calendar](../design/planner-calendar.md). Agent starter capsules follow [input](../design/agent-input.md), fill editable drafts and never auto-send. Verify long values, wrapping and keyboard-safe actions.
 - VoiceOver/focus, Dynamic Type/localization, keyboard/safe areas and interruption/return behavior on a reproducible native build. Static Paper checks cannot satisfy these gates.
 
-Static Paper inventories and representative visual checks are recorded in [verification](verification.md); native wiring/build/navigation acceptance remains unverified. Six embedded V2 review/expansion boards still lack synchronized root Inbox toolbar copies; legacy Inbox screenshots use an explicitly documented Home-origin placeholder, not a hard-coded native return.
+Static Paper inventories and representative visual checks are recorded in [verification](verification.md); native wiring/build/navigation acceptance remains unverified. The nine previously missing V2 root-state/review Inbox controls now share the labelled 44-point canonical entry, including offline roots. Legacy Inbox screenshots use an explicitly documented Home-origin placeholder, not a hard-coded native return.
+
+## Foundations library ownership — docs/Paper only
+
+Foundations is the reusable token/component/icon library, not a fourth app flow. Full-screen product and accessibility examples move into their owning V1/V2 reference areas with stable IDs; canonical routes and implementation scope do not change. The labelled icon catalog and registry distinguish actual phase usage, shared aliases/variants and OS-owned symbols. Native symbol rendering, accessibility and hit testing still require a separately authorized implementation.
 
 ## Evidence meanings
 

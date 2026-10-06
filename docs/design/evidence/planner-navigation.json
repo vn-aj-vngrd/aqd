@@ -7692,15 +7692,10 @@
     ]
   },
   "uncoveredInventory": {
-    "v2InboxToolbarEmbeddedReviewOrExpansionArtboards": [
-      "AKG-0",
-      "ATG-1",
-      "ATN-1",
-      "AU1-1",
-      "AUF-1",
-      "EQO-1"
-    ],
-    "reason": "Embedded review/expansion compositions have migrated bars but their root Inbox toolbar copies were not synchronized; canonical device-root variants listed in inboxEntries are covered."
+    "v2InboxToolbarEmbeddedReviewOrExpansionArtboards": [],
+    "resolvedArtboards": ["AKG-0", "ATG-1", "ATN-1", "AU1-1", "AUF-1"],
+    "notApplicable": {"EQO-1":"Parent live depth4 tree contains Inbox/Requests/conversation/blocked-user tasks only, not a Home/Closet/Planner root; no redundant Inbox-entry-to-Inbox needed. Legacy origin placeholder remains a native return acceptance item."},
+    "reason": "Nine missing root-state/review controls now cloned from canonical labelled 44-point Inbox, including S12 and offline origins. Exact control mappings and scoped proof: latestRefinement.designSync / design-sync.json."
   },
   "preservedMasterRootReplacementMaps": [
     {
@@ -7798,10 +7793,14 @@
     "note": "Original scoped procedure, screenshots, counts, styles, actions and positions are preserved as dated history, not current live proof. latestRefinement owns affected current contracts; paper-manifest.json owns inventory."
   },
   "latestRefinement": {
+    "designSync": {"evidence":"design-sync.json","addedInboxEntries":9,"correctedPlannerReview":"BSM-1 Planner selected, Month alternate, toolbar+ only","runtimeComplete":false},
+    "destinationChooserDisclosures": {"master": "4Q0-0", "rows": {"4GB-0": ["4JO-0", "4JU-0", "4K0-0"], "R7B-0": ["R7K-0", "R7H-0", "R7E-0"], "RFB-0": ["RFK-0", "RFH-0", "RFE-0"], "1LK-0": ["1M6-0", "1MC-0", "1MI-0", "1N8-0"], "8W7-0": ["8WQ-0", "8WX-0", "8X4-0"]}, "glyphIds": ["WRP-0", "WRS-0", "WRV-0", "WRY-0", "WS1-0", "WS4-0", "WS7-0", "WSA-0", "WSD-0", "WSG-0", "WSJ-0", "WSM-0", "WSP-0", "WSV-0", "WSS-0", "WSY-0"], "metrics": "22-point registered forward disclosures/secondary1.7 stroke;12-point gap,flexible labels;54 base rows,S30 existing52", "routes": "L118→L04/L06/L134;L127→L83orL10/L36/L155;W05→W06/W07,W13,W19,W17;S30→S33,S09,S34. No record created/published by chooser selection", "preservation": "Control/master IDs and chooser context/dismissal/accessibility contract, surfaces/separators/privacy unchanged", "discovery": "Page-wide chooser-title searches +bounded Foundations source boards;no matching additional Planner chooser found,not all-app certification", "recovery": "Worker Desktop interruption before S30 clones; parent resumed live tool access and completed all3 forward clones before final render checks", "proof": "Four worker representative renders; parent L118/S30 final renders plus computed rows/glyph/lane checks and registered clone provenance; S30 final forward path/secondary1.7 JSX inspected", "nativeLimits": "Hit testing,Dynamic Type/localization/RTL,VoiceOver,appearance and native presentation behavior unverified", "rootDelta": 0, "nodeDeltaByMutations": 0},
     "customBodyDescription": {"screen": "L173", "nodeId": "WK5-0", "source": "L171 Describe in my own words", "actions": {"Cancel": "Picker with prior choice", "Use description": "Validated pending custom selection in picker", "Done": "L167/UP05 preference draft"}, "limitGraphemes": 160, "illustrativeCount": 38, "commitBoundary": "Review Save, not sheet actions", "consent": "Off by default, never enabled by description", "headerPrefixRemoval": {"existingTitlesChanged": 16, "remainingExactNumberedMatches": 0, "retained": "Step n of 7 and progress"}, "newRoot": {"bounds": [1450, 3018, 390, 844], "overlapWith174ExistingRoots": false}, "tourLayerRenumbering": "L62–L66 become01.14–01.18 without moving them; app tour titles unchanged", "nativeVerified": false},
     "compactControls": {"baseGeometry": {"rail": 36, "pill": 32, "topBottomInset": 2, "label": "14/20", "chip": 32, "nativeHitMinimum": 44}, "coverage": {"foundations": {"rootsReviewed": 32, "changedRoots": 9, "controlFamilies": 13}, "v1": {"rootsReviewed": 174, "structuralDescendantsAtSweep": 9061, "railsMeasured": 13, "initialChangedIds": 138, "contrastFollowupLabels": 36, "alreadyCompactFiltersRetained": 15}, "v2": {"rootsReviewed": 248, "railsRasterChecked": 61, "chipsReviewed": 123, "changedIdsComputedChecked": 781, "changedRoots": 102}}, "selectedPaddingProof": "V1 actual bounds and V2 all61 rail rasters verify a visible2-point vertical inset; Foundations representative renders and computed styles checked", "contrast": {"oldLightSecondaryOnTrack": 4.33, "newLightInkOnTrack": "11.47–11.50", "parentFoundationsLabels": 19, "nativeMaterialsCertified": false}, "preserved": ["Five equal-width native54-point slots and22-point glyphs", "Selected traits/checkmarks", "Actual accessibility-size growth", "Prompt chips fill drafts without sending", "States, routes and original root IDs"], "limits": ["V2 parsed inventory omitted71 nodes; not all full screens screenshot-reviewed", "Foundation broad style searches truncated200; target coverage recovered through per-root hierarchy", "Native hit testing, Dynamic Type, localization/RTL, keyboard/focus and system-material contrast remain unverified"], "rootCountDelta": 0, "tokensChanged": false},
     "date": "2026-10-06",
+    "foundationsLibrary": {"evidence": "foundations-library.json", "scope": "Reusable Foundations: 12 boards + 6 headers; 14 feature boards and product subtrees moved to phase references; canonical IDs unchanged", "newReferenceRoots": ["X71-0", "X76-0", "X7B-0", "X7G-0"], "nativeVerified": false},
     "foundationsFlowMap": {
+      "status": "Historical; superseded", "supersededBy": "foundationsLibrary",
       "pageId": "p-1-0", "sourceArtifact": "/tmp/aqd-foundations-final-layout.json", "sourcePortability": "Local evidence provenance only, not a repository asset",
       "existingRootCount": 26, "addedHeadingCount": 6, "finalRootCount": 32,
       "sections": [
@@ -7852,8 +7851,8 @@
     "v2Profile": "fit-journal-states.json#latestRefinement.v2Profile",
     "settingsFamily": "planner-surfaces.json#latestRefinement.settingsFamily",
     "removedThemeCreationFooters": ["L45-0", "1HX-0"],
-    "newTokens": 0, "newColors": 0, "newIconRoles": 0,
-    "inventoryVerification": {"source": "Parent-reported final read-only Paper basic_info on all three pages", "rootCounts": [32, 175, 248], "nodeCounts": [3531, 9182, 18132], "priorCheckpoint": {"rootCounts": [32, 174, 248], "nodeCounts": [3478, 9072, 18059]}, "tokenHash": "fdeb7346", "limits": "Foundations complete32 root list; V1/V2 lists truncated100, counts not truncated. Parent nodeInfo/screenshots verified splash/U25/U26. No inventory scout artifact was produced."},
+    "newTokens": 0, "newColors": 0, "newIconRoles": 7,
+    "inventoryVerification": {"source": "Parent-reported final read-only Paper basic_info on all three pages", "rootCounts": [18, 183, 262], "nodeCounts": [1834, 9709, 19947], "totalRoots": 463, "totalNodes": 31490, "currentSource": "foundations-library.json; cleanup finalRoots enumerates all pages; four nested references excluded", "supersededCheckpoint": {"rootCounts": [32, 179, 248], "nodeCounts": [3549, 9433, 18322]}, "historicalFieldScope": "source and limits describe superseded checkpoint, not current cleanup proof", "priorCheckpoint": {"rootCounts": [32, 174, 248], "nodeCounts": [3478, 9072, 18059]}, "tokenHash": "fdeb7346", "limits": "Foundations complete32 root list; V1/V2 lists truncated100, counts not truncated. Parent nodeInfo/screenshots verified splash/U25/U26. No inventory scout artifact was produced."},
     "status": "Prepared static reference; shared contracts only",
     "runtimeComplete": false,
     "verificationSource": "Parent-reported rendered checks and final actual-position proof; inventory worker used read-only Paper counts and node inspection",
@@ -7911,33 +7910,33 @@
       "darkSupport": "Paired light/dark tokens and native dark appearance remain required; dark component masters are retained."
     },
     "currentInventory": {
-      "rootArtboards": 455,
-      "canonicalScreens": 376,
-      "v1CanonicalScreens": 165,
+      "rootArtboards": 463,
+      "canonicalScreens": 380,
+      "v1CanonicalScreens": 169,
       "v2CanonicalScreens": 211,
-      "rootReferences": 79,
+      "rootReferences": 83,
       "nestedOfflineReferences": 4,
       "pages": [
         {
           "id": "p-1-0",
           "name": "00 · Foundations",
-          "count": 32,
+          "count": 18,
           "canonicalCount": 0,
-          "rootReferenceCount": 32
+          "rootReferenceCount": 18
         },
         {
           "id": "p-2-0",
           "name": "01 · V1",
-          "count": 175,
-          "canonicalCount": 165,
-          "rootReferenceCount": 10
+          "count": 183,
+          "canonicalCount": 169,
+          "rootReferenceCount": 14
         },
         {
           "id": "p-B-0",
           "name": "02 · V2",
-          "count": 248,
+          "count": 262,
           "canonicalCount": 211,
-          "rootReferenceCount": 37
+          "rootReferenceCount": 51
         }
       ]
     },

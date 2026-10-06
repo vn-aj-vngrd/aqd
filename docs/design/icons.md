@@ -2,35 +2,65 @@
 
 Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
-The visual master is Paper page 00 **Foundations · Icons and navigation states** (`4MI-0`). [Icon manifest](icon-manifest.json) records every app-owned role in this catalog, its master node and native symbol, including aliases for equivalent actions. Clone these registered masters rather than drawing SVGs in individual screens. Register any new role in Foundations and the manifest before use; token tint/size adaptations are allowed, geometry stays shared. Existing structural clones are not live-linked: a master geometry change requires explicit synchronization of affected copies. System-owned chrome and decorative artwork are outside this app-icon inventory. Native implementation uses SF Symbols, with the AQD AI badge as the explicit assistance indicator exception; Paper uses consistent schematic vectors on a 24-unit grid. Default visual size 22 pt, minimum interactive target 44 pt. Inactive regular weight; active semibold weight (reference stroke 1.7 → 2.35), semantic accent and selected container. Filled variants may be used only when the system provides the matching symbol and the meaning remains clear. Every icon-only control has a localized action label.
+The visual master is Paper page 00 **Foundations · Icons and navigation states** (`4MI-0`). [Icon manifest](icon-manifest.json) records every app-owned role in this catalog, its master node and native symbol, including aliases for equivalent actions. Clone these registered masters rather than drawing SVGs in individual screens. Register any new role in Foundations and the manifest before use; token tint/size adaptations are allowed, geometry stays shared. Existing structural clones are not live-linked: a master geometry change requires explicit synchronization of affected copies. System-owned chrome and decorative artwork are outside this app-icon inventory. Native implementation uses SF Symbols for action/navigation symbols, a native ProgressView for indeterminate loading and the custom AQD AI assistance badge; Paper uses consistent schematic vectors on a 24-unit grid. Default visual size 22 pt, minimum interactive target 44 pt. Inactive regular weight; active semibold weight (reference stroke 1.7 → 2.35), semantic accent and selected container. Filled variants may be used only when the system provides the matching symbol and the meaning remains clear. Every icon-only control has a localized action label.
 
-| Role | Native symbol |
-| --- | --- |
-| home | `house` |
-| closet | `hanger` |
-| planner | `calendar` (shared calendar master alias) |
-| agent | `sparkle` |
-| inbox | `envelope` |
-| profile | `person.crop.circle` |
-| search | `magnifyingglass` |
-| plus | `plus` |
-| back | `chevron.backward` |
-| heart | `heart` |
-| bookmark | `bookmark` |
-| chevron | `chevron.forward` |
-| settings | `gearshape` |
-| edit | `square.and.pencil` |
-| check | `checkmark` |
-| more | `ellipsis` |
-| lock | `lock` |
-| calendar | `calendar` |
-| send | `arrow.up` |
-| close | `xmark` |
-| photo | `photo` |
+## Complete app-owned catalog
+
+The usage inventory identifies **41 semantic roles**, with aliases and selected variants listed separately. Phase columns show actual icon evidence in that phase's canonical/reference designs, not a claim about feature availability or unique visible live-instance counts. Geometry classification covers the supplied exports plus recent repairs; representative live checks reconcile new/uncertain symbols. Exact sources and limits belong to the [Foundations library evidence](evidence/foundations-library.json). Native names are implementation assignments, not proof that schematic Paper vectors are Apple assets.
+
+| Role | Native symbol / implementation | V1 | V2 |
+| --- | --- | --- | --- |
+| Home | `house` | Yes | Yes |
+| Closet | `hanger` | Yes | Yes |
+| Agent | `sparkle` | Yes | Yes |
+| Inbox | `envelope` | — | Yes |
+| Profile | `person.crop.circle` | Yes | Yes |
+| Search | `magnifyingglass` | Yes | Yes |
+| Add | `plus` | Yes | Yes |
+| Back / previous | `chevron.backward` | Yes | Yes |
+| Like | `heart` / `heart.fill` | — | Yes |
+| Bookmark | `bookmark` / `bookmark.fill` | — | Yes |
+| Forward disclosure / next | `chevron.forward` | Yes | Yes |
+| Settings | `gearshape` | Yes | Yes |
+| Edit | `square.and.pencil` | Yes | Yes |
+| Check / selected option | `checkmark` | Yes | Yes |
+| More | `ellipsis` | Yes | Yes |
+| Lock / private | `lock` | Yes | Yes |
+| Calendar / Planner | `calendar`; checked variant `calendar.badge.checkmark` | Yes | Yes |
+| Send | `arrow.up` | Yes | Yes |
+| Close / remove attachment | `xmark` | Yes | Yes |
+| Photo | `photo` | Yes | Yes |
+| Camera | `camera` | Yes | Yes |
+| Copy response | `doc.on.doc` | Yes | Yes |
+| Helpful | `hand.thumbsup` / `hand.thumbsup.fill` | Yes | Yes |
+| Not helpful | `hand.thumbsdown` / `hand.thumbsdown.fill` | Yes | Yes |
+| Retry / regenerate | `arrow.clockwise` | Yes | Yes |
+| Stop response | `stop.fill` | Yes | Yes |
+| Clock / time / Wear insights | `clock` | Yes | Yes |
+| Jump to latest | `arrow.down` | — | Yes |
+| Comments | `text.bubble` | — | Yes |
+| Tag / Style action | `tag` | Yes | Yes |
+| Closet context / garment placeholder | `tshirt` | Yes | Yes |
+| Microphone | `mic` | Yes | Yes |
+| Recording waveform | `waveform` | Yes | Yes |
+| AI assistance badge | Custom informational star + AI capsule | Yes | Yes |
+| Rotate photo | `arrow.counterclockwise` | Yes | Yes |
+| Downward disclosure | `chevron.down` | Yes | Yes |
+| Delete | `trash` | Yes | Yes |
+| Report | `flag` | — | Yes |
+| Block | `nosign` | — | Yes |
+| Information | `info.circle` | — | Yes |
+| Indeterminate progress | Native `ProgressView`; schematic circular spinner | Yes | Yes |
+
+Aliases reuse geometry: Planner/Plan a day → calendar (Plan a day may use the checked variant); attachment → plus; image file → photo; remove attachment → close; finish recording → check; response details → more; previous/next response → back/forward; category placeholder/Make look → context; Agent empty state → Agent. Selected/disabled tint and documented stroke weight do not create new roles. CSS-rendered checkmarks and Stop squares retain the Check/Stop semantics.
+
+### System-owned symbols
+
+These are listed for completeness, but are **not AQD master glyphs**: status-bar signal/Wi-Fi/battery; keyboard Shift/Delete/language/dictation; native date-picker previous/next; Apple sign-in logo; native Photos/camera/source-sheet chrome. The OS supplies their production geometry, accessibility and adaptation. App-owned photo/camera/close controls remain in the table above. Crop grids, radio dots, switches, slider thumbs, grabbers, home indicators and photographic/decorative artwork are not additional icon roles. Text-only Reset/Zoom/Category are not invented icons.
 
 October 6 Settings repair: registered regular/selected masters retain IDs `4Q8-0`/`4QB-0`, but replace the malformed polygon with a shared [eight-tooth outline fallback](https://github.com/tailwindlabs/heroicons/blob/master/optimized/24/outline/cog-8-tooth.svg). Seven retained glyph wrappers across six roots were repaired after a 455-root path scan. Keep 22-point geometry, existing semantic tint and regular/selected stroke weights; native code still uses SF `gearshape`. Master/menu renders checked; offline Night retint is not a live Night/native acceptance sample.
 
-Back and disclosure mirror in right-to-left interfaces. Disabled controls use the semantic secondary foreground and native disabled state. Decorative symbols are hidden from VoiceOver. Native status, Apple sign-in, keyboard and other OS chrome keep their system-owned glyphs. The page 00 icon board contains the core navigation/action roles, Agent input roles, centralized editing/media, response and context/social rows, and all five navigation selections. The edit master reuses the existing square-and-pencil reference from the Trip plan header, rather than the rejected one-off Profile drawing. Send arrows are vector masters, not Unicode text glyphs. This catalog consolidation is not a claim that every pre-existing screen icon has been migrated.
+Back and disclosure mirror in right-to-left interfaces. Disabled controls use the semantic secondary foreground and native disabled state. Decorative symbols are hidden from VoiceOver. Native status, Apple sign-in, keyboard and other OS chrome keep their system-owned glyphs. The page 00 icon board lists every inventoried app-owned role with native names and phase usage, plus registered variants/aliases and system-ownership guidance. It is an icon library, not a collection of app screens. The edit master reuses the existing square-and-pencil reference from the Trip plan header, rather than the rejected one-off Profile drawing. Send arrows are vector masters, not Unicode text glyphs. This catalog consolidation is not a claim that every pre-existing screen icon has been migrated.
 
 Both phases use Home · Closet · Planner · Agent · Profile. Planner clones the registered calendar master; the envelope is V2's root-toolbar Inbox action, not a sixth tab. V1 has no Inbox control.
 
@@ -66,7 +96,7 @@ All have 44-point targets. Photo tags and filled action states are demonstrated 
 
 ## AI assistance badge
 
-Paper page 00 **Icon specification — AI assistance** owns a separate, minimal status badge: a small four-point star plus AI inside an opaque capsule. It indicates model-powered assistance without becoming part of the action wording. Keep visible labels such as “Suggest an outfit” unchanged; never prepend AI to the task sentence. Agent navigation uses the standalone sparkle, without the AI capsule.
+The Foundations icon catalog's **AI assistance** specimen owns a separate, minimal status badge: a small four-point star plus AI inside an opaque capsule. It indicates model-powered assistance without becoming part of the action wording. Keep visible labels such as “Suggest an outfit” unchanged; never prepend AI to the task sentence. Agent navigation uses the standalone sparkle, without the AI capsule.
 
 Use the badge selectively for focused model-powered assistance outside Agent: outfit suggestions, variations, Style this, photo-assisted capture and planning assistance in Closet, Home and related task screens. Agent already establishes the assistance context: its prompt shortcuts, response toolbar, regeneration, Refresh draft, Try again and resend controls have no AI badge. Manual editing, approval/save, ordinary network retries, conversation loading, human Inbox and deterministic Quick rules remain unmarked. The badge is informational, not a separate tap target, completion receipt or promise of availability.
 

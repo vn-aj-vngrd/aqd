@@ -1,6 +1,6 @@
 # Welcome wardrobe motion
 
-Updated October 5, 2026. Shared V1/V2 visual design: Paper E02, V1 L60/L67, the connected review copy, and page 00 **Motion · Welcome and first piece**. This is a native motion handoff with static keyframes, not working animation or measured performance. UI remains in Paper; no local gallery or product code is added.
+Updated October 5, 2026. Shared V1/V2 visual design: Paper E02, V1 L60/L67, the connected review copy, and the phase-owned **Motion · Welcome and first piece** reference. This is a native motion handoff with static keyframes, not working animation or measured performance. UI remains in Paper; no local gallery or product code is added.
 
 ## Intent and imagery
 

@@ -8,7 +8,7 @@ Reclassified October 5, 2026 from the October 1 connected review. Documentation 
 
 The major gap was the transition from a saved piece to a useful outfit. V2 now makes it explicit: capture → review → save → missing-category capture or readiness → pin/suggest/manual composition → replace/review/save → plan → actual wear. One saved piece establishes trust; a usable outfit establishes styling value. There is no arbitrary upload count, required quiz, photo or social sign-up.
 
-User decision: V2 must retain V1's shared private design and add connected extensions, not replace the Profile journal or restyle shared core controls. U01 uses L48's private journal base; U25 shows its single More menu and U26 preserves a separate public projection. Shared private identity/fit editors remain independent of public username setup. Settings uses V1 core groups and registered icons, with account/sync/privacy additions. E05/W20/U05 reuse UP01–UP07, the same numbered no-skip preference flow. Complete the wardrobe workflow first; defer virtual try-on/avatar previews and shopping wishlist/price alerts. Community and human Inbox remain required V2 product surfaces. This is coverage of AQD's selected Alta-inspired workflow, not full Alta feature parity or a claim that these features ship today.
+User decision: V2 must retain V1's shared private design and add connected extensions, not replace the Profile journal or restyle shared core controls. U01 uses L48's private journal base; U25 shows its single More menu and U26 preserves a separate public projection. Shared private identity/fit editors remain independent of public username setup. Settings uses V1 core groups and registered icons, with account/sync/privacy additions. E05/W20/U05 reuse UP01–UP07: unnumbered titles, separate numbered Step n of 7/progress and no questionnaire skip. Complete the wardrobe workflow first; defer virtual try-on/avatar previews and shopping wishlist/price alerts. Community and human Inbox remain required V2 product surfaces. This is coverage of AQD's selected Alta-inspired workflow, not full Alta feature parity or a claim that these features ship today.
 
 ## Numbered Paper walkthroughs
 
@@ -20,7 +20,7 @@ V1 is page 01; V2 is page 02. V2 sections 01–07 contain canonical features, se
 | 01 · Welcome and capture | E02 → E06 → W06 → W27 → E12 → W28 / W29 | W07 provides manual classification with the same photo requirement before saving. W28 appears only for actual missing categories; its capture loop returns to the same pinned task. Ready closets skip W28. |
 | 02 · Optional auth and Home | E03 → E10 → E04 → E08 → E07 → Home | Apple can bypass email. E08 only if local association is unresolved; E07 only if a new social profile is needed. Home illustration is S48; choose the actual record-derived state. Existing accounts skip unnecessary setup. |
 | 03 · Suggest, replace and save | S48 → W17 → A03 → W16 → A03 → A04 → W15 | Replacement is optional and returns to the same review. Pin and other slots remain. Receipt follows successful approved execution. A07 gives manual fallback. |
-| 04 · Manual outfits and themes | W13 → W14 → W15; optional W18 / W19 | Themes are independent and optional; partial manual looks are identified. No AI runtime requirement. |
+| 04 · Manual outfits and themes | W13 → W14 → W15; optional W18 / W19 | Themes are independent and optional; partial manual looks are identified. W05 Create theme reuses shared blank L134/L135 with V2 source-return; W19 edits an existing theme only. No AI runtime requirement. |
 | 05 · Plan, wear and history | W15 → P03 → P01 → S15 → P09 → P10 → P11 | Review before plan save. Planner and Today are separate entry points into the same records. Planned does not mean worn; history/stats require actual records. |
 | 06 · Trip and packing | P04 trip variant → P08 → P06 → P07 | Trip variant replaces routine recurrence with destination/activities. P12 branches before save when a conflict exists, then returns to review. Deduplicate packing by owned item ID. Weather depends on supported date coverage. |
 | 07 · Community and Inbox | W15 → S09 → U04; S01 → S06; I04 → I02 | Separate optional journeys. Auth/profile gates preserve the held action. Exact publication is reviewed. I04 illustrates a received request; outgoing contact uses I05/pending-request policy. |
@@ -73,6 +73,13 @@ The [Alta reference](../references/alta-notes.md) separates official advertised 
 | Human Inbox | Requests, one-to-one text/public references, draft preservation and safe retry | Transport, retention, abuse controls and delivery evidence required. Agent chat is separate. |
 | Virtual try-on | Deferred by user decision | Future scope/provider/privacy/quality/cost review. |
 | Shopping wishlist/price alerts | Deferred by user decision | No launch shopping catalog, alerts or affiliate revenue assumption. |
+
+## Synchronized fixture and draft modes
+
+- Search examples now use Weekend → Weekend · 8 outfits with the same two represented member covers, and Afternoon → An easy afternoon with its canonical four-piece composition. Runtime supplies the actual selected record ID; no six unrepresented Theme memberships are invented.
+- Board 05 Today/Record wear review retains October 1, 2026, Asia/Manila. Its post-confirmation history illustration adds October 1 without changing September 30/28 records. Canonical P09's September 30 snapshot is an independent backdated mode, never a forced date for Today entry. V1 Home/Record wear use October 5; the current-week summary has no future recorded wear. Board 06 trip conflict is October 18 · Afternoon · Asia/Seoul, within the October 18–31 trip.
+- Capture More details reuses L94/L95 to apply only to its parent draft; W09/W21 Save changes edit an existing saved record. W05 Create theme reuses initially blank L134/L135, never populated W19 Edit Weekend.
+- Private U09 local archive/restore/erase and U05 on-device assistance are account-independent. Local tasks carry localDevice scope and U09/U05 return/focus; local erase does not delete the connected account, public posts or remote backups. Account lifecycle remains separately reviewed/service-gated.
 
 ## Review and implementation acceptance
 

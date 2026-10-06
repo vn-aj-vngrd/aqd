@@ -4,7 +4,7 @@ Phase scope: shared native/visual rules apply to both phases. Five-destination b
 
 Release boundary: [V1](../product/v1-release.md) and the V2 connected core both require local/private history, response rendering, cancel/retry/copy and proposal/receipt details. Response-version comparison and server-collected evaluation feedback below are [V2](../product/v2-backlog.md) design targets, not launch controls.
 
-[Paper page 02 · V2, section 05 · Agent](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-B-0) owns the screen designs; [page 00](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-1-0) owns reusable response components. This contract supplements [Agent capabilities](../features/agent.md). Designs and sample timings are illustrative, not runtime or service validation.
+[Paper page 02 · V2, section 05 · Agent](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-B-0) owns the screen designs; phase-owned references retain response lifecycle/composer examples, while [Foundations](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-1-0) owns the reusable controls, icons and generic states. This contract supplements [Agent capabilities](../features/agent.md). Designs and sample timings are illustrative, not runtime or service validation.
 
 ## Conversation lifecycle
 

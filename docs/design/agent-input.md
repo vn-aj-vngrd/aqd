@@ -2,7 +2,7 @@
 
 Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
-Design refinement, October 2, 2026. Paper page 02 · V2, section 05 · Agent owns A01–A55; page 00 owns the multimodal composer and loading/recovery masters. These are static designs and implementation acceptance targets. No app source, streaming runtime, media analysis, speech service or provider change is delivered by this pass.
+Design refinement, October 2, 2026. Paper page 02 · V2, section 05 · Agent owns A01–A55; phase-owned references retain the multimodal composer and Agent loading/recovery examples; Foundations owns their reusable control/icon primitives and generic loading states. These are static designs and implementation acceptance targets. No app source, streaming runtime, media analysis, speech service or provider change is delivered by this pass.
 
 ## Entry, suggestions and focus
 

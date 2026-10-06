@@ -1,0 +1,97 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "date": "2026-10-06",
+  "scope": "Static Foundations library separation and app-owned V1/V2 icon catalog. No app implementation, runtime acceptance or whole-current-canvas glyph certification.",
+  "boundary": "Tokens, typography/space/shape, icons, navigation/control primitives, surfaces and generic component states only. Complete product screens, feature menus/journeys and accessibility phone examples are phase references.",
+  "currentInventory": {
+    "rootArtboards": 463, "canonicalScreens": 380,
+    "v1CanonicalScreens": 169, "v2CanonicalScreens": 211,
+    "rootReferences": 83, "nestedOfflineReferences": 4,
+    "pages": [
+      {"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},
+      {"id":"p-2-0","name":"01 · V1","count":183,"canonicalCount":169,"rootReferenceCount":14},
+      {"id":"p-B-0","name":"02 · V2","count":262,"canonicalCount":211,"rootReferenceCount":51}
+    ],
+    "nodeCounts": [1834,9709,19947], "totalNodes":31490,
+    "tokenHash":"fdeb7346"
+  },
+  "foundations": {
+    "beforeRoots":32,"afterRoots":18,"reusableBoards":12,"headers":6,
+    "boardIds":["1-0","FP1-0","1JB-0","4MI-0","JKP-0","4GB-0","A9A-0","14I-0","4LD-0","7US-0","4E1-0","83E-0"],
+    "headerIds":["WCL-0","WCQ-0","WDN-0","WDS-0","WDX-0","WE2-0"],
+    "retained": "Paired semantic colors, brand/type/spacing, complete icon roles/variants, five-slot navigation, generic native presentation/menu grammar, control dimensions/states, grouped forms/surfaces, image/avatar primitives, feedback and global motion rules.",
+    "originalIdsSeen":3548,"originalIdsMissing":0,
+    "preservationLimit":"Depth-10 source/final tree comparison and no deletion operations; not a binary full-document equality claim. Product examples moved; generic specimens cloned/distilled without discarding original IDs.",
+    "wholeBoardMoves":[
+      {"id":"22T-0","label":"D03 · New piece · Larger text","page":"p-2-0","xy":[4000,300]},
+      {"id":"64C-0","label":"Motion · Welcome and first piece","page":"p-2-0","xy":[4000,1304]},
+      {"id":"25T-0","label":"D04 · Home · Reduced transparency","page":"p-B-0","xy":[13000,300]},
+      {"id":"5PP-0","label":"Entry and identity","page":"p-B-0","xy":[13000,1304]},
+      {"id":"6FD-0","label":"Agent response lifecycle","page":"p-B-0","xy":[13000,2191]},
+      {"id":"7HE-0","label":"Compact profile and bio","page":"p-B-0","xy":[13000,4327]},
+      {"id":"7R2-0","label":"Home dashboard","page":"p-B-0","xy":[13000,5263]},
+      {"id":"862-0","label":"Social actions and piece tags","page":"p-B-0","xy":[13000,6511]},
+      {"id":"AC0-0","label":"Feed continuation","page":"p-B-0","xy":[13000,8459]},
+      {"id":"AM1-1","label":"First outfit activation","page":"p-B-0","xy":[13000,9199]},
+      {"id":"FBL-1","label":"Native controls and open menus","page":"p-B-0","xy":[13000,9805]},
+      {"id":"IB0-0","label":"Agent multimodal composer","page":"p-B-0","xy":[13000,12085]},
+      {"id":"IB1-0","label":"Agent shimmer and state coverage","page":"p-B-0","xy":[13000,13445]},
+      {"id":"AAE-0","label":"Search","page":"p-B-0","xy":[13000,14555]}
+    ],
+    "newReferenceRoots":[
+      {"id":"X71-0","page":"p-2-0","label":"V1 component and accessibility examples","xy":[4000,40]},
+      {"id":"X7B-0","page":"p-2-0","label":"Private task compositions","xy":[4000,2314]},
+      {"id":"X76-0","page":"p-B-0","label":"V2 component and state examples","xy":[13000,40]},
+      {"id":"X7G-0","page":"p-B-0","label":"Public content and motion assignments","xy":[13000,15599]}
+    ],
+    "privateSubtreesMoved":["4JI-0","4K9-0","4KP-0","58T-0","T6M-0"],
+    "publicSubtreesMoved":["56A-0","82Z-0","55Z-0","849-0","84E-0","84J-0","84O-0","84T-0","84Y-0","853-0","858-0","4E7-0","4F8-0","190-0"],
+    "profileMenu":{"original":"T6P-0","page":"p-2-0","genericFoundationClone":"X8U-0","dimensions":[240,270]},
+    "progressPrimitive":{"original":"6LG-0","page":"p-1-0","catalogMaster":"XD3-0"},
+    "routes":"REFERENCE labels are not new canonical steps/routes. Both phases still have nine journey groups. Shared private examples remain reusable from their owning phase."
+  },
+  "icons": {
+    "roles":41,"aliases":12,"newRegisteredRoles":7,
+    "catalogRoot":"4MI-0","registry":"../icon-manifest.json","documentation":"../icons.md",
+    "coverage":{"inputExports":463,"baselineRootExports":455,"nestedReferenceExports":4,"newPreferenceRootExports":4,"svgOccurrences":2941,"svgSignatures":79,"primitiveSignatures":120,"unclassifiedGeometry":0,"cssCheckOccurrences":57,"cssStopOccurrences":12},
+    "coverageMeaning":"The 463 input exports describe the pre-cleanup 459-root canvas plus four nested references; this number is coincidentally equal to the final root total. The final canvas has four additional reference roots, not four new app routes. Recent repaired/new glyphs and representative phase sources were reconciled live; use counts include reference/hidden occurrences and are not a unique visible live census.",
+    "newMasters":{
+      "rotatePhoto":{"nodeId":"X7R-0","symbol":"arrow.counterclockwise","source":"OII-0"},
+      "chevronDown":{"nodeId":"XBQ-0","symbol":"chevron.down","source":"N0S-0"},
+      "delete":{"nodeId":"XBZ-0","symbol":"trash","source":"VYG-0"},
+      "report":{"nodeId":"XC8-0","symbol":"flag","source":"FCB-1"},
+      "block":{"nodeId":"XCH-0","symbol":"nosign","source":"FCF-1"},
+      "info":{"nodeId":"XCR-0","symbol":"info.circle","source":"FE8-1"},
+      "progress":{"nodeId":"XD3-0","nativeControl":"ProgressView","source":"QBL-0"}
+    },
+    "checkedCalendar":{"nodeId":"XDD-0","symbol":"calendar.badge.checkmark","source":"Q4T-0","phase":"V1","role":"Calendar variant, not a new role"},
+    "phaseSourceColumns":["role","V1 representative glyph","V2 representative glyph"],
+    "phaseSources":[
+      ["home","TFY-0","TRK-0"],["closet","TG2-0","TRO-0"],["agent","TGB-0","TRX-0"],
+      ["inbox",null,"UH7-0"],["profile","TGF-0","FEP-1"],["search","V3Q-0","6K-0"],
+      ["plus","Q15-0","5TR-0"],["back","Q6V-0","5LF-0"],["heart",null,"8J8-0"],
+      ["bookmark",null,"FCW-1"],["chevron","WHU-0","5PM-0"],["settings","P2C-0","W7V-0"],
+      ["edit","V2U-0","FDC-1"],["check","N6L-0","FGT-1"],["more","N3L-0","FC3-1"],
+      ["lock","SZ0-0","W3Q-0"],["calendar","TG6-0","FDG-1"],["send","N0K-0","8D2-0"],
+      ["close","Q6M-0","9BU-0"],["photo","SO9-0","5TF-0"],["camera","SQF-0","WAU-0"],
+      ["copy","KSY-0","FE0-1"],["helpful","KSU-0","6IW-0"],["notHelpful","KSQ-0","6J0-0"],
+      ["retry","KSM-0","FE4-1"],["stop","QQ7-0","6XK-0"],["clock","V35-0","W7P-0"],
+      ["jumpToLatest",null,"IC0-0"],["comments",null,"8JC-0"],["tag","V30-0","85X-0"],
+      ["context","N0V-0","G4G-0"],["microphone","N0N-0","G4N-0"],["waveform","N6Q-0","IAX-0"],
+      ["aiBadge","K7W-0","FZ9-0"],["rotatePhoto","OII-0","OL9-0"],["chevronDown","N0S-0","G4J-0"],
+      ["delete","VYG-0","FDK-1"],["report",null,"FCB-1"],["block",null,"FCF-1"],
+      ["info",null,"FE8-1"],["progress","QBL-0","FKX-1"]
+    ],
+    "systemOwnedFamilies":["status signal/Wi-Fi/battery","keyboard Shift/Delete/language/dictation","native date-picker previous/next","Apple sign-in logo","native Photos/camera/source-sheet chrome"],
+    "notExtraIcons":["crop grids","radio dots/switches","slider thumbs","grabbers/home indicators","photographic/decorative artwork","text-only Reset/Zoom/Category"],
+    "limitations":["Assigned SF Symbols are semantic implementation choices, not exact Apple vector certification.","Cached ancestor display:none was not exhaustively evaluated; occurrences are not visible-instance counts.","81 broad CSS border candidates are ordinary containers/control geometry, not unresolved icons; mapped Check/Stop primitives were aligned.","Structural clones are not live-linked. Existing copies were not globally migrated to the seven newly registered masters."]
+  },
+  "verification": {
+    "worker":"32-root classification; original-ID preservation; measured/reflowed affected roots and reference columns; bounded renders; live role/source checks.",
+    "parent":"Rendered complete icon catalog and generic presentation/form boards; live three-page counts, eight new/variant master parents, original/generic menu parents and D03/D04 page parents checked. Catalogue Tag/Style and Clock/time/insights labels widened to match actual private uses; Tag specimen rendered again.",
+    "overlaps":"No measured affected-root overlaps. Inactive fit-content roots can be unmeasured; no whole-app layout certification.",
+    "checks":"38 repository tooling tests passed; JSON/reference/inventory checks recorded in delivery verification.",
+    "nativeVerified":false,
+    "nativeRequired":["SF Symbol rendering/selected variants","VoiceOver names/focus and hit testing","Dynamic Type/localization/RTL","keyboard/safe-area/scrolling","native menu/media and route/persistence behavior"]
+  }
+}

@@ -94,16 +94,18 @@
     "note": "Original scoped procedure, screenshots, counts, styles, actions and positions are preserved as dated history, not current live proof. latestRefinement owns affected current contracts; paper-manifest.json owns inventory."
   },
   "latestRefinement": {
+    "designSync": {"evidence":"design-sync.json","scope":"Coherent named-look/date/Theme fixtures, shared capture/review structure, blank Create mode and Foundations rows","runtimeComplete":false},
     "emptyStateConsistency": {"visual": "Unboxed canvas; leading20/26 heading15/21–22 explanation,8-point message gap,12 before full-width50 primary and plain50 secondary", "placement": "One intrinsic stack centered in flexible remaining body, below controls and above navigation/composer/footer, never viewport-center coordinates", "overflow": "Safe center + nonshrinking content; overflowing Dynamic Type top-aligns and scrolls natively, not proven by static Paper", "foundations": {"inventoryEntries": 25, "centered": 11, "contextualExemptions": 14, "regionIds": ["4E9-0", "4FA-0", "4G0-0", "WJC-0", "WJF-0", "WJI-0", "WJL-0", "WJO-0", "WJR-0", "WJU-0", "WK3-0"], "proof": "All regions/stacks computed-checked; six bounded representative renders; inactive measurements unavailable"}, "v1": {"priorChangedRoots": 34, "centeredRoots": 27, "proof": "All27 regions computed-checked and rendered; inline conversation QOO/QQX/QV1 restored and rerendered", "representativeGeometry": {"L91Region": "WJX-0 350×552", "stack": "56-point message +12gap+50Retry", "equalFreeSpace": 217}, "discoveryLimit": "Reuse existing target map;131 other roots not freshly re-audited"}, "v2": {"priorStates": 48, "centeredStates": 27, "contextualExemptions": 21, "changedRoots": 24, "proof": "All target regions computed/raster measured,113 computed nodes,15 representative screens; no region errors", "inventoryLimit": "Inherited71 unparsed nodes remain"}, "preserved": ["Headers/search/scope/filter controls", "Actual records and opaque result/form surfaces", "Inline failures beside their related content", "Native sheet/alert button placement", "Copy, illustration, destinations, consent and selected traits", "50-point actions and compact controls", "Root positions/sizes/tokens"], "parentReview": "V1/V2 read-failure renders and sampled remaining-region styles independently checked", "nativeCertified": false},
-    "v1ThemeOutfitLists": {"changed": [{"screen": "L34", "root": "L7F-0", "body": "L7H-0"}, {"screen": "L32", "root": "L3D-0", "body": "L43-0"}, {"screen": "L88", "root": "Q8P-0", "body": "Q8R-0"}, {"screen": "L164", "root": "UUA-0", "body": "UUC-0"}, {"screen": "L123", "root": "RBR-0", "body": "VXQ-0"}, {"screen": "L135", "root": "RNP-0", "body": "RNR-0"}], "domain": "Theme groups outfits; membership removal/deletion never deletes the outfit", "fixtureSources": {"afternoon": "Existing K81-0 under L20", "coffee": "Existing OTN-0 under L34 and RO6-0 under L135"}, "treatment": "Collection previews on lists; L34 full-width composition covers/name/piece count/native disclosure; original selected members retained", "verification": "Six root screenshots and computed geometry/registered disclosures reviewed; parent independently checks representative render", "limits": ["L88 Blue weekends canonical second member not mapped: known preview plus remaining-count text, no invented outfit", "L88 generic L34 detail fixture differs in name/count; actual runtime selection must retain theme ID", "Native navigation/membership persistence/scroll/hit testing/Dynamic Type unverified"], "rootDelta": 0, "tokensChanged": false},
+    "v1ThemeOutfitLists": {"changed": [{"screen": "L34", "root": "L7F-0", "body": "L7H-0"}, {"screen": "L32", "root": "L3D-0", "body": "L43-0"}, {"screen": "L88", "root": "Q8P-0", "body": "Q8R-0"}, {"screen": "L164", "root": "UUA-0", "body": "UUC-0"}, {"screen": "L123", "root": "RBR-0", "body": "VXQ-0"}, {"screen": "L135", "root": "RNP-0", "body": "RNR-0"}], "domain": "Theme groups outfits; membership removal/deletion never deletes the outfit", "fixtureSources": {"afternoon": "Existing K81-0 under L20", "coffee": "Existing OTN-0 under L34 and RO6-0 under L135"}, "treatment": "Collection previews on lists; L34 full-width composition covers/name/piece count/native disclosure; original selected members retained", "verification": "Six root screenshots and computed geometry/registered disclosures reviewed; parent independently checks representative render", "limits": ["Latest sync: L88/W23 query Weekend matches Weekend · 8 outfits detail L34/W18 with the same two represented outfit covers; no six other members fabricated", "Actual native selection must retain theme ID; generic fixture mismatch resolved statically", "Native navigation/membership persistence/scroll/hit testing/Dynamic Type unverified"], "rootDelta": 0, "tokensChanged": false},
     "searchBodyRefinement": {"screens": ["L92", "L86", "L87", "L88", "L89", "L93"], "finalOverrides": ["Empty guidance on canvas, no surface/card fill", "L89 Clear search primary; Add a piece plain secondary", "Filters surface moved above result grid"], "surfaces": {"resultCards": "Opaque semantic surface,12 corners,14 padding,full-image Fit", "filters": "Same surface; original label/summary/route; before grid", "emptyStacks": "Transparent, zero-padding/radius, screen-aligned"}, "actions": {"primary": ["Browse pieces", "Clear search", "L93 Add a piece"], "secondary": ["L89 Add a piece"], "minHeight": 50, "gap": 12, "labels": "17/24"}, "verification": "Worker rendered all6 roots, recaptured final override states and checked styles/parent order; original IDs, image sources and counts preserved", "subsequentChanges": "Parent removed14 matching V1/V2 Your closet · Only you captions; Outfit/Theme card parity is a separate follow-up", "nativeLimits": "Keyboard, Dynamic Type, focus, retained navigation/search state and filter-header persistence unverified", "rootCountDelta": 0},
     "captureFooterSpacing": {"screens": ["L04", "L75", "L76", "L79"], "viewport": [390, 844], "saveBottomClearance": 64, "contentPaddingBottom": {"JQI-0": 42, "ONT-0": 64, "ODO-0": 32, "OEZ-0": 32}, "selectedStackGap": 8, "preserved": "50-point action, Fit preview, fields, validation and home indicators", "proof": "Parent reviewed all4 rendered footer/body references; root dimensions unchanged", "native": "Use actual safe-area/keyboard insets and scrolling, not fixed64 at every device/text size"},
     "date": "2026-10-06",
     "foundationsFlowMap": "planner-navigation.json#latestRefinement.foundationsFlowMap",
+    "foundationsLibrary": {"evidence": "foundations-library.json", "scope": "Reusable Foundations: 12 boards + 6 headers; 14 feature boards and product subtrees moved to phase references; canonical IDs unchanged", "supersedes": "foundationsFlowMap", "nativeVerified": false},
     "v1FinalFlowMap": "planner-navigation.json#latestRefinement.v1FinalFlowMap",
     "v2Profile": "fit-journal-states.json#latestRefinement.v2Profile",
-    "newTokens": 0, "newColors": 0, "newIconRoles": 0,
-    "inventoryVerification": {"source": "Parent-reported final read-only Paper basic_info on all three pages", "rootCounts": [32, 175, 248], "nodeCounts": [3531, 9182, 18132], "priorCheckpoint": {"rootCounts": [32, 174, 248], "nodeCounts": [3478, 9072, 18059]}, "tokenHash": "fdeb7346", "limits": "Foundations complete32 root list; V1/V2 lists truncated100, counts not truncated. Parent nodeInfo/screenshots verified splash/U25/U26. No inventory scout artifact was produced."},
+    "newTokens": 0, "newColors": 0, "newIconRoles": 7,
+    "inventoryVerification": {"source": "Parent-reported final read-only Paper basic_info on all three pages", "rootCounts": [18, 183, 262], "nodeCounts": [1834, 9709, 19947], "totalRoots": 463, "totalNodes": 31490, "currentSource": "foundations-library.json; cleanup finalRoots enumerates all pages; four nested references excluded", "supersededCheckpoint": {"rootCounts": [32, 179, 248], "nodeCounts": [3549, 9433, 18322]}, "historicalFieldScope": "source and limits describe superseded checkpoint, not current cleanup proof", "priorCheckpoint": {"rootCounts": [32, 174, 248], "nodeCounts": [3478, 9072, 18059]}, "tokenHash": "fdeb7346", "limits": "Foundations complete32 root list; V1/V2 lists truncated100, counts not truncated. Parent nodeInfo/screenshots verified splash/U25/U26. No inventory scout artifact was produced."},
     "v2CoreAlignment": {
       "sourceArtifact": "/tmp/aqd-v2-core-alignment.json", "sourcePortability": "Local provenance, not a portable asset or Markdown image link",
       "modifiedFamilies": 22, "screenshotsReviewed": 29, "newArtboards": 0,
@@ -212,33 +214,33 @@
       "darkSupport": "Paired light/dark tokens and native dark appearance remain required; dark component masters are retained."
     },
     "currentInventory": {
-      "rootArtboards": 455,
-      "canonicalScreens": 376,
-      "v1CanonicalScreens": 165,
+      "rootArtboards": 463,
+      "canonicalScreens": 380,
+      "v1CanonicalScreens": 169,
       "v2CanonicalScreens": 211,
-      "rootReferences": 79,
+      "rootReferences": 83,
       "nestedOfflineReferences": 4,
       "pages": [
         {
           "id": "p-1-0",
           "name": "00 · Foundations",
-          "count": 32,
+          "count": 18,
           "canonicalCount": 0,
-          "rootReferenceCount": 32
+          "rootReferenceCount": 18
         },
         {
           "id": "p-2-0",
           "name": "01 · V1",
-          "count": 175,
-          "canonicalCount": 165,
-          "rootReferenceCount": 10
+          "count": 183,
+          "canonicalCount": 169,
+          "rootReferenceCount": 14
         },
         {
           "id": "p-B-0",
           "name": "02 · V2",
-          "count": 248,
+          "count": 262,
           "canonicalCount": 211,
-          "rootReferenceCount": 37
+          "rootReferenceCount": 51
         }
       ]
     },
