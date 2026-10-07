@@ -1,4 +1,4 @@
-# S — Home, discovery, and publishing
+# S — Today, discovery, and publishing
 
 ## Phase boundary
 
@@ -6,9 +6,9 @@ V2 contract. V1 only reuses the private Today activation concepts in its dedicat
 
 ## Outcome and navigation
 
-Home has **Today / All / Following**. Today is a private dashboard over existing wardrobe and planning records; All and Following are visual social feeds of real people's published content. The initial All feed is newest accessible public posts; Following restricts to followed creators. Personalized ranking, trending labels, and personal AI outfit inserts are outside this slice. Users can browse discovery while keeping their closet private.
+The first root is **Today**, with the customizable private stack specified by [Today](today.md). V2 retains the separate **All / Following** discovery scopes and public Search; these are visual social feeds of real people's published content. The optional Community posts widget may link to those existing scopes but is not their only entry or a prerequisite. The canonical Home/community section name is an internal legacy alias, not the visible private destination. The initial All feed is newest accessible public posts; Following restricts to followed creators. Personalized ranking, trending labels, and personal AI outfit inserts are outside this slice. Users can browse discovery while keeping their closet private.
 
-Search from Home covers public creators, closets, items, outfits, and themes with explicit result types. Closet's search remains owner-scoped. Working default: discovery is available as guest; authenticated identity is required to follow, react, bookmark, publish, or message. A disconnected backend shows an unavailable state, not fake community activity.
+Search from public All/Following covers public creators, closets, items, outfits, and themes with explicit result types. Closet's search remains owner-scoped. Working default: discovery is available as guest; authenticated identity is required to follow, react, bookmark, publish, or message. A disconnected backend shows an unavailable state, not fake community activity.
 
 ## Publication contract
 
@@ -56,7 +56,7 @@ Authenticated ownership, media access/revocation, pagination, abuse controls, mo
 
 ## Today dashboard
 
-Current October7 owner contract: [Today](today.md) owns the twelve-kind customizable private stack, independent local notes/photos, durable instances, minimum-one and all configuration/save/recovery states; V2 inherits it. Existing Home/S route identities are retained. Optional Community posts uses only existing authorized All/Following feed scope/store, never a new API or stock default. Public Search stays intact; private header Search becomes Customize Today. Historical fixed-dashboard examples below describe source records, not a hardcoded three-card maximum.
+Current October7 owner contract: [Today](today.md) owns the twelve-kind customizable private stack, independent local notes/photos, durable instances, minimum-one and all configuration/save/recovery states; V2 inherits it. Existing Home/S route identities are retained as internal legacy identifiers. Optional Community posts uses only existing authorized All/Following feed scope/store, never a new API or stock default. Public Search stays intact; private header Search becomes Customize Today. Historical fixed-dashboard examples below describe source records, not a hardcoded three-card maximum.
 
 Today summarizes the current user's planned look, next dated plan entries and direct Add piece / Build outfit / Planner actions. It never publishes or copies records into a second dashboard store. Show actual saved names, availability and dates, using each plan's timezone; optional basic native WeatherKit context follows the [V1 contract](../product/v1-release.md#optional-live-weather-contract), with selected place/day/freshness, returned bounds and SDK Apple attribution in both phases; computed insights appear only with valid source data. Weather failure/offline or AI ineligibility never blocks Today/manual planning; public snapshots never automatically refresh their weather. Do not invent streaks, utilization, outfit recommendations or upcoming trips to fill space.
 
@@ -66,11 +66,11 @@ S15 shows a planned day. Record wear opens P09 for explicit confirmation and dup
 
 Load local sections independently, preserving cached data and drafts. Empty is distinct from load failure. Offline users can use available local wardrobe/plans; public-feed connection failures do not replace the Today dashboard. A failed local section has Retry and its relevant workspace link. Summary totals use actual authorized records, not invented analytics. Refresh after a wardrobe/plan/wear change; sign-out/account switching clears or re-scopes private summaries according to account policy.
 
-Acceptance: three Home tabs remain reachable in populated/loading/empty/offline states; mode-specific search never mixes private/public scope; Today reflects a saved plan change; viewing a plan never records wear; first-use and no-plan states remain useful without AI or network services; larger text expands layouts without hiding actions.
+Acceptance: Today remains reachable in populated/loading/empty/offline states with configured instances and all twelve supported kinds preserved; V2 All/Following and public Search remain reachable independently of optional Community posts widget placement. Customize Today edits the private stack; public Search belongs only to All/Following and never mixes private/public scope; Today reflects a saved plan change; viewing a plan never records wear; first-use and no-plan states remain useful without AI or network services; larger text expands layouts without hiding actions.
 
 ## Today wardrobe activity
 
-Today retains the planned look as the primary task. Beneath it, **Your week in wear** shows two calculated values and a seven-day strip. S15 is the initial viewport; S18 is its scrolled continuation with Wear again, upcoming plans and manual quick actions. The strip is history, not a goal, streak, completion score or forecast.
+The historical activity fixture places the planned look above **Your week in wear**, which shows two calculated values and a seven-day strip. Current Today respects configured instance order and all twelve kinds under [Today](today.md); this source example is not a fixed stack or maximum. S15 is the initial viewport; S18 is its scrolled continuation with Wear again, upcoming plans and manual quick actions. The strip is history, not a goal, streak, completion score or forecast.
 
 - Use the current locale's calendar week and display its date range. Count distinct saved local record dates in that week through today for “days recorded”; count distinct item IDs across those records for “pieces worn.” Multiple wears on one day still count as one day; repeated pieces count once. Historical record date/timezone remains unchanged when the device travels. Prior wear estimates and future plans never enter these totals.
 - Checked days have dated wear records; an outline marks today; future days remain neutral. A past unmarked day means no record, not that nothing was worn. Tapping the summary opens Wear history (P10) for this week. The strip is one accessible summary, not seven undersized buttons; announce full dates and recorded/not recorded/future states, with a textual history alternative.

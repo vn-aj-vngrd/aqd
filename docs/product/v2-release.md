@@ -20,7 +20,7 @@ Every row is mandatory. A service or capability gate means work to resolve befor
 
 | ID | V2 feature | Required result | Acceptance / fallback |
 | --- | --- | --- | --- |
-| V2-01 | Entry and Home | Private first use, returning-session restore, Today / All / Following; adaptive empty, missing-category, ready, saved-outfit and planned states | Preserve return intent/drafts. Never require account, photo, quiz or AI for private manual work. |
+| V2-01 | Entry and Today | Private first use, returning-session restore, Today / All / Following; adaptive empty, missing-category, ready, saved-outfit and planned states | Preserve return intent/drafts. Never require account, photo, quiz or AI for private manual work. |
 | V2-02 | Wardrobe | Photos/camera/manual capture, selected-photo review, name/category, optional metadata, add-next loop, search/filter/sort, edit, availability/laundry, archive/restore and deletion impact | W1–W10; first-outfit pin/readiness; storage and permission failures retain drafts. Verified on-device tagging/cleanup follows the V1 capability contract; advanced visual capture remains V2-E01. |
 | V2-03 | Outfits and themes | Manual and assisted owned-piece composition, pin/slot replacement, private save/edit/favorites, independent multi-membership themes | O1–O9; missing pieces and partial manual looks are honest; no AI requirement for manual work. |
 | V2-04 | Planner and packing | Calendar/agenda, dated plans, two-week planning, three-calendar-month office routines, events/trips, conflicts, review and deduplicated packing | P1–P6; manual and bounded assisted drafts use the same records; bulk changes apply completely or remain drafts. |

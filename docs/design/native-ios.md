@@ -46,7 +46,7 @@ Add and Search in Closet are related toolbar controls. Add opens native contextu
 
 Verify on the minimum supported and current target iOS versions, a compact and a large iPhone, light/dark, largest accessibility text, VoiceOver, keyboard, Reduce Motion, Reduce Transparency and Increase Contrast. Use actual OS components; a screenshot of CSS blur is insufficient.
 
-- Tab switching and Back preserve destination, query, selection, drafts and scroll position. Planner is its own root (Week default/Month alternate); Closet segments are only Pieces/Outfits/Themes. Home plan/outfit Plan links carry date context and preserve return selection; no account gates private core.
+- Tab switching and Back preserve destination, query, selection, drafts and scroll position. Planner is its own root (Week default/Month alternate); Closet segments are only Pieces/Outfits/Themes. Today plan/outfit Plan links carry date context and preserve return selection; no account gates private core.
 - V2's persistent labelled 44-point Inbox root-toolbar entry opens I01 then conversations; Back restores origin root/scroll/selected tab. Startup/incoming intents preserve origin; no fake unread or V1 Inbox. Fourth-slot Agent dismissal restores origin and accessibility focus.
 - Search focus/cancel, keyboard dismissal and interactive Back leave no covered controls.
 - Sheets and confirmation states present from the actual trigger, dismiss command menus first, avoid stacked unrelated modals, and restore accessibility focus/selection/scroll/draft. Retained canonical confirmation IDs describe STATE references, not compulsory pushes.
@@ -60,7 +60,7 @@ Verify on the minimum supported and current target iOS versions, a compact and a
 - Slow image loads, offline paging, failed saves, unavailable model/service and unknown send results retain useful work.
 - Smoothness is measured with Instruments on physical hardware; motion timings in DESIGN.md are targets.
 
-LOCAL-16 adds the [native weather acceptance](weather-context.md#native-release-acceptance): signed entitlement/service and aggregate membership capacity, weather independent of AI/account, pre-action Apple search disclosure, no location prompt for manual city, explicit one-shot When In Use/approximate/denied paths, actual forecast/place/day/timezone/DST bounds, attribution fresh/cached/light/dark/legal, cancellation/selection races, expiry/coalescing/cooldown/off purge and no wardrobe/body/photo/chat payload/background traffic. Home day never shifts to weather city; off/unavailable/manual core stays complete offline. Dynamic Type/VoiceOver announce state/source/time and restore caller focus. These are unverified acceptance targets, not device/entitlement/network passes.
+LOCAL-16 adds the [native weather acceptance](weather-context.md#native-release-acceptance): signed entitlement/service and aggregate membership capacity, weather independent of AI/account, pre-action Apple search disclosure, no location prompt for manual city, explicit one-shot When In Use/approximate/denied paths, actual forecast/place/day/timezone/DST bounds, attribution fresh/cached/light/dark/legal, cancellation/selection races, expiry/coalescing/cooldown/off purge and no wardrobe/body/photo/chat payload/background traffic. Today's plan/journal day never shifts to weather city; off/unavailable/manual core stays complete offline. Dynamic Type/VoiceOver announce state/source/time and restore caller focus. These are unverified acceptance targets, not device/entitlement/network passes.
 
 ## Sources
 

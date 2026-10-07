@@ -30,13 +30,13 @@ Shared confirmation primitives live in Foundations `4GB-0`: critical alert `FJ2-
 
 Paper phone chrome follows the viewport geometry in [DESIGN.md](../../DESIGN.md#layout-and-shape). Bars and home indicators belong to the phone viewport rather than variable-height content/footer wrappers. Tour overlays leave the navigation visible and keep their actions above it. Inspect root screens, tour backdrops, nested phone previews and both appearances after synchronizing clones; changing only a component master does not repair existing copies. Native screens use system safe areas and retain scroll access behind floating chrome.
 
-Today’s look uses a flat secondary capsule for View outfit, matching tour Back: accent-soft background, action-text label, no border, blur or shadow. Dark appearance uses the corresponding night roles. Retain the existing equal-width action slots and minimum 44-point targets; Record wear remains prominent. This content-card exception applies to the shared Home reference and its V1/V2 copies.
+Today’s look uses a flat secondary capsule for View outfit, matching tour Back: accent-soft background, action-text label, no border, blur or shadow. Dark appearance uses the corresponding night roles. Retain the existing equal-width action slots and minimum 44-point targets; Record wear remains prominent. This content-card exception applies to the shared Today reference and its V1/V2 copies.
 
 Welcome and onboarding alternatives (Take the tour, Take a quick tour, Open Today and Explore first) use centered plain action-text labels without filled capsules, borders, blur or shadows. Use regular-weight plain secondary labels and 50-point reference targets throughout matching entry flows. Group adjacent primary/secondary actions with a dedicated 12-point-gap action stack, matching Welcome. This applies to entry, piece detail, outfit/planner forms, confirmation and recovery flows in V1/V2 and equivalent admin action stacks. Content sections retain their own spacing; do not let their 16/20/24-point gap space individual buttons. Equivalent V2 Welcome account links use the same target and regular weight. Tour step Back/Next remain their existing capsules, and Settings replay remains a grouped row.
 
-## Compact Home weather context
+## Compact Today weather context
 
-[Weather context](weather-context.md) owns this shared V1/V2 component. Home uses the locale-formatted short date + native condition symbol + temperature, not a separate card. Keep a ≥44-point details target. The owner removed the Paper Home attribution row; details retain attribution, but details-only placement is unverified and blocks numerical-weather release until Apple's required assets and legal placement are satisfied. Show inline numbers only after opt-in, fresh retrieval and matching Home/selected-place day/timezone; off/unavailable/mismatch leaves date only, stale uses explicit Saved/updated text. The weather city never changes plan/journal day. Details expose selected place/day/timezone, source/freshness and actual available forecast fields. Missing attribution with no valid cached asset suppresses numbers. Paper's unverified SDK-asset slot illustrates placement, not certified Apple branding or service retrieval. Use existing grouped rows/system text and native growing layout; settings/source actions return to the actual caller without saving wardrobe records.
+[Weather context](weather-context.md) owns this shared V1/V2 component. Today uses the locale-formatted short date + native condition symbol + temperature, not a separate card. Keep a ≥44-point details target. The owner removed the Paper Today attribution row; details retain attribution, but details-only placement is unverified and blocks numerical-weather release until Apple's required assets and legal placement are satisfied. Show inline numbers only after opt-in, fresh retrieval and matching Today/selected-place day/timezone; off/unavailable/mismatch leaves date only, stale uses explicit Saved/updated text. The weather city never changes plan/journal day. Details expose selected place/day/timezone, source/freshness and actual available forecast fields. Missing attribution with no valid cached asset suppresses numbers. Paper's unverified SDK-asset slot illustrates placement, not certified Apple branding or service retrieval. Use existing grouped rows/system text and native growing layout; settings/source actions return to the actual caller without saving wardrobe records.
 
 ## Reusable content
 
@@ -189,7 +189,7 @@ Native shared components should be driven by these states; Paper snapshots are i
 
 V2-only: [connected geometry/state contract](components-connected.md#compact-public-profile--v2-owner-and-visitor). Load only when changing this connected branch.
 
-## Home dashboard
+## Today dashboard
 
 [Today](today.md) owns the customizable private in-app widget stack and its native Customize Today toolbar control; it has no private header Search. V2 may retain existing All / Following discovery modes with public Search and independent scroll positions. Public scope controls retain compact visuals,44-point hit bounds and opaque accessibility variants; they do not replace the private stack or mix public queries with personal content.
 
@@ -210,9 +210,9 @@ Paper screen copies share the asset mapping but are not live linked components. 
 
 ## Today activity modules
 
-The existing page-00 Home dashboard master owns RecordedWeekSummary and WearAgain. Reuse surface/ink/secondary/accent/segment-track tokens, 16-point card padding/corners, 12-point inner gaps, 28/34 numbers and 13/18 metric labels. Keep the seven markers evenly spaced; recorded uses check + tint, today an outline, future neutral. At larger text sizes, stack metric groups and expand vertically; never shrink controls or truncate counts. The entire week summary links to history with at least 44-point bounds.
+The existing page-00 master (legacy fixture name Home dashboard) supplies RecordedWeekSummary and WearAgain source patterns; [Today](today.md) owns current widget kinds and configured composition. Reuse surface/ink/secondary/accent/segment-track tokens, 16-point card padding/corners, 12-point inner gaps, 28/34 numbers and 13/18 metric labels. Keep the seven markers evenly spaced; recorded uses check + tint, today an outline, future neutral. At larger text sizes, stack metric groups and expand vertically; never shrink controls or truncate counts. The entire week summary links to history with at least 44-point bounds.
 
-WearAgain uses the existing 4-point photographic corners, one 100 × 112 preview, a named piece, last-recorded date and a 44-point manual-build action. No image shadow or extra decorative badge. Current-day outfit remains above the summary; WearAgain, upcoming and quick actions follow on scroll. Native navigation remains pinned to the viewport safe area; S15 and S18 represent two scroll positions of one Today view.
+WearAgain uses the existing 4-point photographic corners, one 100 × 112 preview, a named piece, last-recorded date and a 44-point manual-build action. No image shadow or extra decorative badge. The historical source fixture places the current-day outfit above the summary, with WearAgain, upcoming and quick actions following on scroll; runtime respects the configured Today instance order rather than hard-coding this fixture. Native navigation remains pinned to the viewport safe area; S15 and S18 represent two scroll positions of one Today view.
 
 No-history, loading, cached, error and ineligible-piece behavior is defined in the [activity contract](../features/discovery-publishing.md#today-wardrobe-activity). A confirmed wear may crossfade the updated summary once using motion.crossfade; no repeated shimmer, count-up or animated goals. Reduce Motion updates immediately.
 
@@ -222,7 +222,7 @@ No-history, loading, cached, error and ineligible-piece behavior is defined in t
 
 Do not repeat “Your wardrobe today” beneath the title. Date, condition symbol and temperature remain secondary; metadata uses14/20 regular text. Empty/no-plan messages use 20/26 regular, supporting copy 15/22, and an 8-point internal gap. Keep 20 points before the primary action and existing 44-point minimum secondary targets. Populated card headings use 17/24 medium.
 
-Empty wear history is an unboxed secondary section: 15/22 medium “Wear history,” 15/22 supporting text, and a regular-weight action. Populated history retains its data card and numeric hierarchy. This distinction reduces competing emphasis without implying that empty history is an error. Page 00 Home dashboard owns the hierarchy; S15–S17 apply it.
+Empty wear history is an unboxed secondary section: 15/22 medium “Wear history,” 15/22 supporting text, and a regular-weight action. Populated history retains its data card and numeric hierarchy. This distinction reduces competing emphasis without implying that empty history is an error. Page 00's legacy Home dashboard fixture supplies this source hierarchy; S15–S17 apply it within the current Today configuration contract.
 
 ### Filter chip selection
 
@@ -299,7 +299,7 @@ For three content actions, keep the first two in the existing 12-point primary/s
 
 ## Disclosure rows and header editing
 
-Piece/theme selection and summary disclosures use semantic surface, 12-point corners, 14-point horizontal padding and 54-point minimum height. Keep the trailing chevron in a fixed 22-point lane and allow labels/values to wrap at larger text sizes. Header Edit uses a 22-point `square.and.pencil` symbol in a 44-point circular Back-style control with semantic ink, an explicit accessibility label and the existing edit destination. Content-level Edit actions remain plain text. Home does not expose Settings; Profile owns that route. See [quality criteria](quality-criteria.md) and [Planner calendar](planner-calendar.md).
+Piece/theme selection and summary disclosures use semantic surface, 12-point corners, 14-point horizontal padding and 54-point minimum height. Keep the trailing chevron in a fixed 22-point lane and allow labels/values to wrap at larger text sizes. Header Edit uses a 22-point `square.and.pencil` symbol in a 44-point circular Back-style control with semantic ink, an explicit accessibility label and the existing edit destination. Content-level Edit actions remain plain text. Today does not expose Settings; Profile owns that route. See [quality criteria](quality-criteria.md) and [Planner calendar](planner-calendar.md).
 
 ## Recorded-wear visuals
 

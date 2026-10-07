@@ -49,9 +49,9 @@ _Avoid_: Asset when naming the user-facing object; a photo is media attached to 
 
 **Post**: An explicitly published presentation of a wardrobe item, outfit, theme, or worn look. It is distinct from the private source record.
 
-**All feed**: Home's discovery feed of accessible public posts, including creators the user follows.
+**All feed**: V2's public discovery mode within the Today root, showing accessible public posts, including creators the user follows.
 
-**Following feed**: Home's feed restricted to accessible posts by creators the user follows.
+**Following feed**: V2's public discovery mode within the Today root, restricted to accessible posts by creators the user follows.
 
 **Community bookmark**: A saved reference to another creator's public content. It does not transfer ownership of their wardrobe items.
 

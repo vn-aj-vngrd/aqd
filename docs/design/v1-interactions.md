@@ -106,7 +106,7 @@ Updated October 6, 2026. This is the implementation route checklist for [Paper V
 
 ## Optional WeatherKit controls — shared V1/V2
 
-[Weather context](weather-context.md) owns source/date/freshness/attribution, network disclosure and exact fallback. A33 is the existing shared reference, not a new L destination. [Portable completed worker evidence](evidence/weatherkit-v1.json) maps source controls and nine reference-only roots, with exact origin returns and bounded static/native limits. Home10GK-0 has44-point weather target10LC-0 and legal10LN-0; actual Mon5/Manila/29° fixture, not Wed7 data. Canonical Today remains default-off/date-only. Parent filled native glyph10LD-0 with legitimate macOS cloud.sun.fill; iOS WeatherKit symbol mapping/appearance remains unverified. SDK mark10LM-0 stays reserved/unverified, not certified attribution.
+[Weather context](weather-context.md) owns source/date/freshness/attribution, network disclosure and exact fallback. A33 is the existing shared reference, not a new L destination. [Portable completed worker evidence](evidence/weatherkit-v1.json) maps source controls and nine reference-only roots, with exact origin returns and bounded static/native limits. Today10GK-0 has44-point weather target10LC-0 and legal10LN-0; actual Mon5/Manila/29° fixture, not Wed7 data. Canonical Today remains default-off/date-only. Parent filled native glyph10LD-0 with legitimate macOS cloud.sun.fill; iOS WeatherKit symbol mapping/appearance remains unverified. SDK mark10LM-0 stays reserved/unverified, not certified attribution.
 
 | Source / action | Destination or state | Return / outcome |
 | --- | --- | --- |

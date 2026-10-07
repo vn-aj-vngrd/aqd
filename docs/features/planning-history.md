@@ -6,7 +6,7 @@ V1 completes local manual dates/two-week plans, three-calendar-month routines, e
 
 ## Outcome and placement
 
-Planner is the dedicated third root in both phases, not a Closet segment; Closet has only Pieces/Outfits/Themes. Planner organizes intended clothing use; History records actual use; Stats explains that history. Week is default, Month alternate, preserving selected date. Home's Today mode summarizes planned looks/upcoming entries; these links and outfit Plan actions open Planner with date context. Back restores origin, scroll and preserved selection. Plans are not social recommendations, and account setup never gates this private core.
+Planner is the dedicated third root in both phases, not a Closet segment; Closet has only Pieces/Outfits/Themes. Planner organizes intended clothing use; History records actual use; Stats explains that history. Week is default, Month alternate, preserving selected date. Today summarizes planned looks/upcoming entries; these links and outfit Plan actions open Planner with date context. Back restores origin, scroll and preserved selection. Plans are not social recommendations, and account setup never gates this private core.
 
 ## Planning contract
 

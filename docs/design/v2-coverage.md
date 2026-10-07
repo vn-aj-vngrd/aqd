@@ -6,7 +6,7 @@ All 15 V2 groups have a design route/state reference. This establishes specifica
 
 | V2 group | Workflow | Review boards | Canonical references | Coverage / boundary |
 | --- | --- | --- | --- | --- |
-| V2-01 | Entry and Home | 01–02 | E01–E13, S15–S18, S48 | Return intent and record-derived states |
+| V2-01 | Entry and Today | 01–02 | E01–E13, S15–S18, S48 | Return intent and record-derived states |
 | V2-02 | Wardrobe | 01, 12 | W01, W06–W12, W21, W27–W29 | Photo/manual, lifecycle and preserved drafts |
 | V2-03 | Outfits and themes | 03–04, 12, 15 | W13–W19, A03, A31 | Pin, replace, private save and membership |
 | V2-04 | Planner and packing | 05–06, 13 | P01–P08, P12 | Manual/assisted range, conflict and packing |

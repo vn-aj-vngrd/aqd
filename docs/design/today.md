@@ -22,9 +22,9 @@ The thirteen pinned roots retain their identities. Visible title becomes Today. 
 | ATN-1 · journey copy | BAH-1 | BAG-1 | BAI-1 /BAJ-1 |
 | AU1-1 · journey copy | BVP-1 | BVO-1 | BVQ-1 /BVR-1 |
 
-Title32/38 Medium at left20/top70, metadata14/20 secondary at top116 with8-point gap. Preserve real fixture dates: V1 Mon5 October2026, V2 Thu1 October2026. Full locale date is the accessibility value. Today is first-tab destination accessibility name; house visual stays unchanged. Closet/global Search remains Search. V2 All/Following retains public Search; scope comes through the optional existing connected feed widget/configuration, no new API. Tour controls remain inert.
+Title32/38 Medium at left20/top70, metadata14/20 secondary at top116 with8-point gap. Preserve real fixture dates: V1 Mon5 October2026, V2 Thu1 October2026. Full locale date is the accessibility value. Today is first-tab destination accessibility name; house visual stays unchanged. Closet/global Search remains Search. V2 All/Following retains public Search and existing scope entry independently of optional Community posts placement; that widget links to the existing connected feed scope/store, with no new API. Tour controls remain inert.
 
-No weather payload/forecast/temperature/calendar changes. Hidden Home attribution10LL-0 remains hidden by the owner’s separate override; do not restore an Info row. Details retain supplied attribution. Details-only Home compliance is **not verified and blocks numerical-weather release**. Weather widget is an existing setup/details launcher, globally Off until explicit setup consent.
+No weather payload/forecast/temperature/calendar changes. Hidden Today attribution10LL-0 remains hidden by the owner’s separate override; do not restore an Info row. Details retain supplied attribution. Details-only Today compliance is **not verified and blocks numerical-weather release**. Weather widget is an existing setup/details launcher, globally Off until explicit setup consent.
 
 ## Content and control grammar
 

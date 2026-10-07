@@ -88,4 +88,4 @@ For V2, completed responses expose Copy, Retry when supported and More/details. 
 
 ## Selective assistance indicators
 
-Agent supplies an explicit assistance context. Its starter prompts, response toolbar, regeneration, Refresh draft, Try again, resend and native Retry menu use ordinary task labels and symbols without an AI badge. Keep the shared badge on focused model-powered assistance in Closet, Home and planning where it clarifies an otherwise ordinary action. See [the badge contract](icons.md#ai-assistance-badge).
+Agent supplies an explicit assistance context. Its starter prompts, response toolbar, regeneration, Refresh draft, Try again, resend and native Retry menu use ordinary task labels and symbols without an AI badge. Keep the shared badge on focused model-powered assistance in Closet, Today and planning where it clarifies an otherwise ordinary action. See [the badge contract](icons.md#ai-assistance-badge).

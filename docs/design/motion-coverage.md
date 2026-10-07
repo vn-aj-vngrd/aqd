@@ -2,7 +2,7 @@
 
 Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
-Every Paper screen/state inherits [Global motion](motion.md), including interruption, Reduce Motion, accessibility and performance requirements. This table is an implementation contract, not evidence of working animation. Native recipes take precedence; custom recipes apply only to changed local content. Existing presentation ownership in docs/design/screens.md wins when a screen has several entry paths.
+Every Paper screen/state inherits [Global motion](motion.md), including interruption, Reduce Motion, accessibility and performance requirements. This table is an implementation contract, not evidence of working animation. Native recipes take precedence; custom recipes apply only to changed local content. Existing presentation ownership in docs/design/screens.md wins when a screen has several entry paths. Retained public Home labels are internal legacy Home/community references, not the private Today destination name.
 
 | Screen | Navigation | Local motion | Flow constraint |
 | --- | --- | --- | --- |
@@ -31,10 +31,10 @@ Every Paper screen/state inherits [Global motion](motion.md), including interrup
 | S09 · Publish look | N-sheet | C-form, C-save | Publish receipt follows confirmed write only. |
 | S10 · Report or block | N-sheet | C-form, C-save | Stable safety confirmation; no celebratory effects. |
 | S11 · Report post | N-sheet | C-form, C-save | Stable safety confirmation; no celebratory effects. |
-| S12 · Following | N-root | C-load | Empty Following stays still; retain selected Home scope. |
+| S12 · Following | N-root | C-load | Empty Following stays still; retain selected All/Following scope. |
 | S13 · Camille · Pieces | N-push | C-select, C-load | Stable identity; collection selection/follow update locally. |
 | S14 · Camille · Themes | N-push | C-select, C-load | Stable identity; collection selection/follow update locally. |
-| S15 · Home · Today | N-root | C-save, C-load | Two scroll positions of one Today view; do not animate between artboards. |
+| S15 · Today | N-root | C-save, C-load | Two scroll positions of one Today view; do not animate between artboards. |
 | S16 · Today · First piece | N-root | C-load | No data means a static useful prompt, not perpetual loading. |
 | S17 · Today · No planned look | N-root | C-load | No data means a static useful prompt, not perpetual loading. |
 | S18 · Today · Wardrobe activity | N-root | C-save, C-load | Two scroll positions of one Today view; do not animate between artboards. |
@@ -172,7 +172,7 @@ Every Paper screen/state inherits [Global motion](motion.md), including interrup
 | W27 · Review piece photo | N-push | C-form, C-load, C-save | Preserve photo/fields; no auto-save after analysis or fake receipt. |
 | W28 · First outfit · Missing pieces | N-push | C-change, C-load | Category capture returns to same task; no forced progress animation. |
 | W29 · First outfit · Ready | N-push | C-select | Actual availability, not a quota; manual path stays visible. |
-| S48 · Today · Ready to style | N-root | C-load | Derived state; preserve Home mode and no repeated first-use arrival. |
+| S48 · Today · Ready to style | N-root | C-load | Derived state; preserve Today / All / Following mode and no repeated first-use arrival. |
 
 
 ## V2 lifecycle additions
@@ -193,7 +193,7 @@ Every Paper screen/state inherits [Global motion](motion.md), including interrup
 | A31 · Review theme | N-push | C-form, C-load, C-save | Preserve drafts/revisions and announce actual terminal status; no invented percentage or premature receipt. |
 | A32 · Review changes | N-push | C-form, C-load, C-save | Preserve drafts/revisions and announce actual terminal status; no invented percentage or premature receipt. |
 | A33 +108S-0–10FL-0 · Shared V1/V2 WeatherKit states | Native push/search/permission | C-form, C-load, C-select | OS transitions/growing rows/bounded fade; Reduce Motion immediate or opacity-only. Preserve actual source/draft/focus; Settings confirms optional preference, outfit/plan/Agent apply context only. No invented progress or save receipt. See [weather](weather-context.md). |
-|10GK-0 · Enabled Home inline weather | Native Home/details push | C-load, C-select | Date/symbol/temperature only, no card/number animation; source/time/Saved announced, day mismatch omits values. Return to same Home; legal system-browser return preserves focus. |
+|10GK-0 · Enabled Today inline weather | Native Today/details push | C-load, C-select | Date/symbol/temperature only, no card/number animation; source/time/Saved announced, day mismatch omits values. Return to same Today; legal system-browser return preserves focus. |
 | U24 · Review conflicting edits | N-push | C-form, C-load, C-save | Preserve drafts/revisions and announce actual terminal status; no invented percentage or premature receipt. |
 
 | W30 · Closet options | Native Menu | None | Anchored toolbar presentation; selection dismisses then pushes S08/S29; dismissal preserves Closet state. |
