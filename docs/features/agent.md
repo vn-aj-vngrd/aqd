@@ -20,8 +20,9 @@ On-device AI remains the user's preference in both phases. Historical Foundation
 | Planner | Dates/routine/event/constraints; dated assignment draft | Review entire changeset, gaps, and conflicts before commit. |
 | Item/outfit/theme/plan edit | Exact IDs/revisions and proposed fields | Review changed fields; manual validation applies. |
 | Wear | Item set/date/plan entry; proposed wear or correction | Review; enforce history duplicate rules. |
-| Publication/privacy/delete | Exact targets, impact, public preview | Explicit review and confirmation. |
-| Human message | Recipient/conversation and content/reference draft | Explicit send approval; no default Inbox reading. |
+| Local privacy/delete (V1/V2) | Exact owned local targets/revisions and private impact; privacy changes follow the existing explicit native consent flow | Visible review/confirmation; no consent inferred from chat, public mutation or connected action. |
+| Publication/public privacy (V2 only) | Exact public targets, impact and publication preview | Explicit review and confirmation; absent from V1 tools and controls. |
+| Human message (V2 only) | Recipient/conversation and content/reference draft | Explicit human-send approval; no default Inbox reading. Absent from V1 tools and controls. |
 | Weather/current information | Explicit selected location/date and permitted native WeatherKit retrieval in V1/V2; advanced sources V2 | Only fresh matching returned data is Agent input; source/place/timezone/date/freshness and SDK attribution required. Saved/expired/missing/out-of-range context is not current fact. No wardrobe/photos/body/chat sent to weather/search services; unavailable weather never blocks manual work. |
 
 Full ownership/access validation happens when actions execute, not only during prompt construction. User notes, generated text, public captions, and imported metadata cannot authorize a tool call. Photos/private notes are absent from current model context; adding them requires a scoped reviewed feature.
@@ -32,7 +33,7 @@ A proposal has stable ID, capability, exact target IDs/revisions, proposed chang
 
 Execution has an idempotency key and states proposed → approved → executing → succeeded/failed/cancelled. Rejected proposals do not execute. On retry, determine prior completion before resending. Changes succeed through the same domain operations as app buttons. Show receipts linking actual saved entities; report partial or unknown outcomes honestly. Bulk plan application follows the all-or-nothing contract in [Planner](planning-history.md).
 
-Cancellation stops generation and prevents unapproved writes. If an approved write has already committed, cancel does not claim rollback; show completion and available undo. New conversation turns do not silently reuse an old approval. Permanent deletion/publication/message sends require visible exact impact or destination.
+Cancellation stops generation and prevents unapproved writes. If an approved write has already committed, cancel does not claim rollback; show completion and available undo. New conversation turns do not silently reuse an old approval. Permanent local deletion requires visible exact impact. V2-only publication and human-message sends require their exact public impact or destination; these connected actions are absent from V1. Private Agent composer sends are conversation turns, not human messaging.
 
 ## Context and output quality
 
@@ -52,7 +53,7 @@ Validate output structure and owned active IDs. Suggested complete outfits meet 
 - A6: Review a two-week plan and cancelled proposal without any calendar mutation.
 - A7: Generated “saved” language is not displayed as execution success without a receipt.
 - A8: Personal insights are reproducible from the cited scope; weather claims match available dated context.
-- A9: Publication/send approval is bound to exact content and destination; Inbox remains unread by default.
+- A9 (V2 only): Publication/human-send approval is bound to exact content and destination; Inbox remains unread by default. V1 exposes neither capability, tool nor control.
 - A10: Evaluate physical-device availability/latency and realistic prompts separately from mocked tools and host tests.
 
 Evaluation fixtures cover insufficient closets, unavailable pieces, ambiguous names, corrupt output, stale ownership, denied media permission, unknown weather, long routine conflicts, duplicate operations, malicious captions, and revoked content. Record failures and supported capability limits before widening the feature. Usage, approval/error metrics, and user feedback are useful; default telemetry excludes wardrobe photos, notes, and chat bodies.
