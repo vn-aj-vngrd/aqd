@@ -32,6 +32,10 @@ Date uses a native date picker and stable local calendar-date/timezone semantics
 
 No journal action records actual wear or updates planning. Any later explicit Record wear action must route through the existing duplicate-safe wear flow. Photo-only memories do not infer garments or an outfit. This is a memory collection, not proof of utilization.
 
+## Optional local identity editor
+
+L49 exposes the accessible name-field **Clear name** action and native photo options **Choose photo / Remove photo** when a reference exists, even if its file is unavailable. Both clear only the draft; Save accepts absent name/avatar and shows the neutral identity only after acknowledgment. Cancel/dirty discard restores prior saved identity and journal focus/scroll. [Local identity contract](../features/profile-account.md#local-identity-editing-v1-shared-private-v2) owns import-token invalidation, pending/failure/unknown/restart, export and reference-safe cleanup. These added options reuse native field/menu grammar; no separate Paper state or runtime verification is claimed.
+
 ## V2 preparation
 
 Reuse dated memory thumbnails and detail, but keep private journal and curated public collections distinguishable. A later Share memory action creates a separate public draft with the exact selected rendition and deliberate piece/outfit associations required by the publishing contract. Public caption starts independently of the private note; identity, audience, consent and media/safety gates still apply. Cancelling publication leaves the private memory unchanged. Editing/deleting a private memory does not silently update/unpublish a public snapshot; public lifecycle uses explicit review.
