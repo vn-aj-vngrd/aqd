@@ -43,7 +43,7 @@ Manual classification is always available in V1 and V2. Verified single-photo on
 4. If classification is supported, present proposed fields for review. User changes win; uncertain fields remain unknown. If unsupported or failed, manual completion remains available.
 5. Save atomically, show the saved item, and expose add-another/build-outfit actions.
 
-Use the existing photo normalization where suitable; read source for exact image limits. Picker cancellation keeps the draft. Denied camera access offers Photos or Keep draft; entered metadata remains intact and Save stays disabled without an accepted photo. Corrupt/unsupported images show an error without losing metadata. Photo replacement applies only after preparation succeeds. Batch uploads, receipt import, shopping databases, scanning, selfie garment extraction, background cleanup, and multiple photos are later slices, not prerequisites.
+Use the existing photo normalization where suitable; read source for exact image limits. Picker cancellation keeps the draft. Denied camera access offers Photos or Keep draft; entered metadata remains intact and Save stays disabled without an accepted photo. Corrupt/unsupported images show an error without losing metadata. Photo replacement applies only after preparation succeeds. Batch uploads, receipt import, shopping databases, scanning, selfie garment extraction, advanced background/edge repair and multiple photos are later slices, not prerequisites. The bounded V1 local foreground-removal action follows the [capture cleanup contract](../design/capture-photo.md); it requires an explicit preview/application and never gates manual save or promises garment-only extraction.
 
 ## Browse and lifecycle
 

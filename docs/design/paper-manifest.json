@@ -4,7 +4,7 @@
   "verifiedOn": "2026-10-06",
   "scope": "Static design only; Paper is sole visual source. V1 complete local app; V2 retains connected core and full extension requirements.",
   "screenCount": 380,
-  "artboardCount": 463,
+  "artboardCount": 502,
   "pages": [
     {
       "id": "p-1-0",
@@ -16,16 +16,16 @@
     {
       "id": "p-2-0",
       "name": "01 · V1",
-      "count": 183,
+      "count": 197,
       "canonicalCount": 169,
-      "rootReferenceCount": 14
+      "rootReferenceCount": 28
     },
     {
       "id": "p-B-0",
       "name": "02 · V2",
-      "count": 262,
+      "count": 287,
       "canonicalCount": 211,
-      "rootReferenceCount": 51
+      "rootReferenceCount": 76
     }
   ],
   "screens": [
@@ -1573,16 +1573,29 @@
       "nodeId": "5B1-0",
       "complete": true,
       "motion": {
-        "navigation": "N-sheet",
-        "content": [
-          "C-form",
-          "C-save"
-        ],
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
         "contract": "motion.md"
       },
       "release": "V2",
       "phase": "V2",
-      "designStatus": "Prepared canonical reference"
+      "designStatus": "Prepared static native overlay STATE; retained canonical ID",
+      "rootName": "STATE · U12 · Sign out — native decision",
+      "position": {
+        "x": 1450,
+        "y": 53378
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "presentation": "actionSheet",
+      "runtimePushRoute": false,
+      "sourceHost": {
+        "rootId": "3B1-0",
+        "cloneId": "XF9-0",
+        "caller": "U05 Sign out with current account/draft/sync scope; journey preserves held origin, not fixed root return"
+      },
+      "nativeConfirmationEvidence": "evidence/native-confirmations.json"
     },
     {
       "id": "U13",
@@ -5519,21 +5532,30 @@
       "flowSection": "03",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference",
+      "designStatus": "Prepared static native overlay STATE; retained canonical ID",
       "motion": {
-        "navigation": "Native presentation or push by route",
-        "content": [
-          "Shared selection/form/recovery state"
-        ],
-        "contract": "v1-interactions.md"
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
       },
       "flowStep": "03.10",
-      "rootName": "03.10 · L97 · Delete piece",
+      "rootName": "03.10 · L97 · Delete piece · Native overlay STATE",
       "position": {
         "x": 1920,
         "y": 10356
       },
-      "runtimeComplete": false
+      "runtimeComplete": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "presentation": "actionSheet",
+      "runtimePushRoute": false,
+      "sourceHost": {
+        "rootId": "K9I-0",
+        "cloneId": "YPD-0",
+        "caller": "L21"
+      },
+      "nativeConfirmationEvidence": "evidence/native-confirmations.json"
     },
     {
       "id": "L98",
@@ -5735,21 +5757,30 @@
       "flowSection": "02",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference",
+      "designStatus": "Prepared static native overlay STATE; retained canonical ID",
       "motion": {
-        "navigation": "Native presentation or push by route",
-        "content": [
-          "Shared selection/form/recovery state"
-        ],
-        "contract": "v1-interactions.md"
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
       },
       "flowStep": "02.17",
-      "rootName": "02.17 · L106 · Dirty exit · Shared forms",
+      "rootName": "02.17 · L106 · Dirty exit · Shared forms · Native overlay STATE",
       "position": {
         "x": 2390,
         "y": 7174
       },
-      "runtimeComplete": false
+      "runtimeComplete": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "presentation": "actionSheet",
+      "runtimePushRoute": false,
+      "sourceHost": {
+        "rootId": "ODL-0",
+        "cloneId": "YGJ-0",
+        "caller": "L75"
+      },
+      "nativeConfirmationEvidence": "evidence/native-confirmations.json"
     },
     {
       "id": "L107",
@@ -6161,8 +6192,11 @@
     },
     {
       "id": "L124",
-      "title": "Outfit options",
+      "title": "Outfit More · Contextual open STATE",
       "nodeId": "RCN-0",
+      "runtimePushRoute": false,
+      "presentation": "nativeMenu",
+      "contract": "native-presentations.md#outfit-and-receipt-trailing-more",
       "pageId": "p-2-0",
       "flowSection": "04",
       "release": "V1",
@@ -6176,7 +6210,7 @@
         "contract": "v1-interactions.md"
       },
       "flowStep": "04.08",
-      "rootName": "04.08 · L124 · Outfit options",
+      "rootName": "04.08 · L124 · Outfit More · Contextual open STATE",
       "position": {
         "x": 980,
         "y": 16460
@@ -6503,21 +6537,30 @@
       "flowSection": "03",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference",
+      "designStatus": "Prepared static native overlay STATE; retained canonical ID",
       "motion": {
-        "navigation": "Native presentation or push by route",
-        "content": [
-          "Shared selection/form/recovery state"
-        ],
-        "contract": "v1-interactions.md"
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
       },
       "flowStep": "03.08",
-      "rootName": "03.08 · L138 · Archive piece",
+      "rootName": "03.08 · L138 · Archive piece · Native overlay STATE",
       "position": {
         "x": 980,
         "y": 10356
       },
-      "runtimeComplete": false
+      "runtimeComplete": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "presentation": "actionSheet",
+      "runtimePushRoute": false,
+      "sourceHost": {
+        "rootId": "K9I-0",
+        "cloneId": "XKK-0",
+        "caller": "L21"
+      },
+      "nativeConfirmationEvidence": "evidence/native-confirmations.json"
     },
     {
       "id": "L139",
@@ -6527,21 +6570,30 @@
       "flowSection": "03",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference",
+      "designStatus": "Prepared static native overlay STATE; retained canonical ID",
       "motion": {
-        "navigation": "Native presentation or push by route",
-        "content": [
-          "Shared selection/form/recovery state"
-        ],
-        "contract": "v1-interactions.md"
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
       },
       "flowStep": "03.30",
-      "rootName": "03.30 · L139 · Delete theme",
+      "rootName": "03.30 · L139 · Delete theme · Native overlay STATE",
       "position": {
         "x": 40,
         "y": 14252
       },
-      "runtimeComplete": false
+      "runtimeComplete": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "presentation": "actionSheet",
+      "runtimePushRoute": false,
+      "sourceHost": {
+        "rootId": "L7F-0",
+        "cloneId": "XDV-0",
+        "caller": "L34"
+      },
+      "nativeConfirmationEvidence": "evidence/native-confirmations.json"
     },
     {
       "id": "L140",
@@ -6551,21 +6603,30 @@
       "flowSection": "04",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference",
+      "designStatus": "Prepared static native overlay STATE; retained canonical ID",
       "motion": {
-        "navigation": "Native presentation or push by route",
-        "content": [
-          "Shared selection/form/recovery state"
-        ],
-        "contract": "v1-interactions.md"
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
       },
       "flowStep": "04.10",
-      "rootName": "04.10 · L140 · Delete outfit",
+      "rootName": "04.10 · L140 · Delete outfit · Native overlay STATE",
       "position": {
         "x": 1920,
         "y": 16460
       },
-      "runtimeComplete": false
+      "runtimeComplete": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "presentation": "actionSheet",
+      "runtimePushRoute": false,
+      "sourceHost": {
+        "rootId": "JVS-0",
+        "cloneId": "XIX-0",
+        "caller": "L08"
+      },
+      "nativeConfirmationEvidence": "evidence/native-confirmations.json"
     },
     {
       "id": "L141",
@@ -6575,21 +6636,30 @@
       "flowSection": "06",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference",
+      "designStatus": "Prepared static native overlay STATE; retained canonical ID",
       "motion": {
-        "navigation": "Native presentation or push by route",
-        "content": [
-          "Shared selection/form/recovery state"
-        ],
-        "contract": "v1-interactions.md"
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
       },
       "flowStep": "06.04",
-      "rootName": "06.04 · L141 · Undo wear",
+      "rootName": "06.04 · L141 · Undo wear · Native overlay STATE",
       "position": {
         "x": 1920,
         "y": 21850
       },
-      "runtimeComplete": false
+      "runtimeComplete": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "presentation": "actionSheet",
+      "runtimePushRoute": false,
+      "sourceHost": {
+        "rootId": "RHZ-0",
+        "cloneId": "XPL-0",
+        "caller": "L130"
+      },
+      "nativeConfirmationEvidence": "evidence/native-confirmations.json"
     },
     {
       "id": "L142",
@@ -6599,21 +6669,30 @@
       "flowSection": "06",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference",
+      "designStatus": "Prepared static native overlay STATE; retained canonical ID",
       "motion": {
-        "navigation": "Native presentation or push by route",
-        "content": [
-          "Shared selection/form/recovery state"
-        ],
-        "contract": "v1-interactions.md"
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
       },
       "flowStep": "06.01",
-      "rootName": "06.01 · L142 · Wear already recorded",
+      "rootName": "06.01 · L142 · Wear already recorded · Native overlay STATE",
       "position": {
         "x": 510,
         "y": 21850
       },
-      "runtimeComplete": false
+      "runtimeComplete": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "presentation": "actionSheet",
+      "runtimePushRoute": false,
+      "sourceHost": {
+        "rootId": "K16-0",
+        "cloneId": "YYC-0",
+        "caller": "L11"
+      },
+      "nativeConfirmationEvidence": "evidence/native-confirmations.json"
     },
     {
       "id": "L143",
@@ -6623,21 +6702,30 @@
       "flowSection": "07",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference",
+      "designStatus": "Prepared static native overlay STATE; retained canonical ID",
       "motion": {
-        "navigation": "Native presentation or push by route",
-        "content": [
-          "Shared selection/form/recovery state"
-        ],
-        "contract": "v1-interactions.md"
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
       },
       "flowStep": "07.17",
-      "rootName": "07.17 · L143 · Delete conversation",
+      "rootName": "07.17 · L143 · Delete conversation · Native overlay STATE",
       "position": {
         "x": 2390,
         "y": 26006
       },
-      "runtimeComplete": false
+      "runtimeComplete": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "presentation": "actionSheet",
+      "runtimePushRoute": false,
+      "sourceHost": {
+        "rootId": "KU5-0",
+        "cloneId": "XYE-0",
+        "caller": "L26"
+      },
+      "nativeConfirmationEvidence": "evidence/native-confirmations.json"
     },
     {
       "id": "L144",
@@ -6935,21 +7023,30 @@
       "flowSection": "05",
       "release": "V1",
       "phase": "V1",
-      "designStatus": "Prepared static local reference",
+      "designStatus": "Prepared static native overlay STATE; retained canonical ID",
       "motion": {
-        "navigation": "Native presentation or push by route",
-        "content": [
-          "Shared selection/form/recovery state"
-        ],
-        "contract": "v1-interactions.md"
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
       },
       "flowStep": "05.10",
-      "rootName": "05.10 · L156 · Remove plan entry",
+      "rootName": "05.10 · L156 · Remove plan entry · Native overlay STATE",
       "position": {
         "x": 1920,
         "y": 18668
       },
-      "runtimeComplete": false
+      "runtimeComplete": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "presentation": "actionSheet",
+      "runtimePushRoute": false,
+      "sourceHost": {
+        "rootId": "RG7-0",
+        "cloneId": "Y72-0",
+        "caller": "L128"
+      },
+      "nativeConfirmationEvidence": "evidence/native-confirmations.json"
     },
     {
       "id": "L157",
@@ -7382,6 +7479,16 @@
     }
   ],
   "referenceBoards": [
+    {"nodeId":"1010-0","name":"REFERENCE · Background removal · Processing · Shared local V1/V2","pageId":"p-2-0","reviewOnly":true,"referenceKind":"Shared local photo operation STATE","runtimePushRoute":false,"presentation":"nativeTask","sourceHost":{"rootId":"OIZ-0","caller":"L78 accepted photo; shared V2 W27 Change"},"contract":"capture-photo.md#background-removal-reference-states","evidence":"evidence/background-removal.json"},
+    {"nodeId":"1025-0","name":"REFERENCE · Background preview · Original selected","pageId":"p-2-0","reviewOnly":true,"referenceKind":"Shared local photo preview STATE","runtimePushRoute":false,"presentation":"nativeTask","sourceHost":{"rootId":"OIZ-0","caller":"Originating accepted photo draft"},"contract":"capture-photo.md#background-removal-reference-states","evidence":"evidence/background-removal.json"},
+    {"nodeId":"103A-0","name":"REFERENCE · Background preview · Removed selected","pageId":"p-2-0","reviewOnly":true,"referenceKind":"Shared local photo preview STATE","runtimePushRoute":false,"presentation":"nativeTask","sourceHost":{"rootId":"OIZ-0","caller":"Originating accepted photo draft"},"contract":"capture-photo.md#background-removal-reference-states","evidence":"evidence/background-removal.json"},
+    {"nodeId":"104E-0","name":"REFERENCE · Background removal · Failed / ambiguous","pageId":"p-2-0","reviewOnly":true,"referenceKind":"Shared retained-photo recovery STATE","runtimePushRoute":false,"presentation":"nativeTask","sourceHost":{"rootId":"OIZ-0","caller":"Originating accepted photo draft"},"contract":"capture-photo.md#background-removal-reference-states","evidence":"evidence/background-removal.json"},
+    {"nodeId":"105C-0","name":"REFERENCE · Background removal · Unavailable","pageId":"p-2-0","reviewOnly":true,"referenceKind":"Shared retained-photo recovery STATE","runtimePushRoute":false,"presentation":"nativeTask","sourceHost":{"rootId":"OIZ-0","caller":"Originating accepted photo draft"},"contract":"capture-photo.md#background-removal-reference-states","evidence":"evidence/background-removal.json"},
+    {"nodeId":"1011-0","name":"REFERENCE · W27 photo options · Shared local background removal","pageId":"p-B-0","reviewOnly":true,"referenceKind":"Contextual native Menu STATE","runtimePushRoute":false,"presentation":"nativeMenu","sourceHost":{"rootId":"AMO-1","caller":"W27 accepted photo Change; shares L78"},"contract":"capture-photo.md#background-removal-reference-states","evidence":"evidence/background-removal.json"},
+    {"nodeId":"ZRD-0","name":"REFERENCE · V1 · L27 saved receipt · More open","pageId":"p-2-0","reviewOnly":true,"referenceKind":"Contextual native Menu STATE","runtimePushRoute":false,"presentation":"nativeMenu","sourceHost":{"rootId":"KVA-0","caller":"L27 acknowledged receipt; Agent return conditional"},"contract":"native-presentations.md#outfit-and-receipt-trailing-more","evidence":"evidence/ui-refinements.json"},
+    {"nodeId":"ZTD-0","name":"REFERENCE · V2 · A04 saved receipt · More open","pageId":"p-B-0","reviewOnly":true,"referenceKind":"Contextual native Menu STATE","runtimePushRoute":false,"presentation":"nativeMenu","sourceHost":{"rootId":"2XB-0","caller":"A04 acknowledged receipt; Agent return conditional"},"contract":"native-presentations.md#outfit-and-receipt-trailing-more","evidence":"evidence/ui-refinements.json"},
+    {"nodeId":"ZVD-0","name":"REFERENCE · V2 · W15 owned outfit · More open","pageId":"p-B-0","reviewOnly":true,"referenceKind":"Contextual native Menu STATE","runtimePushRoute":false,"presentation":"nativeMenu","sourceHost":{"rootId":"2AY-0","caller":"W15 owned saved outfit; Edit/Favorite/Delete"},"contract":"native-presentations.md#outfit-and-receipt-trailing-more","evidence":"evidence/ui-refinements.json"},
+    {"nodeId":"ZXE-0","name":"REFERENCE · V2 · A20 feedback receipt · More open","pageId":"p-B-0","reviewOnly":true,"referenceKind":"Contextual native Menu STATE","runtimePushRoute":false,"presentation":"nativeMenu","sourceHost":{"rootId":"6O8-0","caller":"A20 acknowledged response-scoped feedback; authorized conversation return only"},"contract":"native-presentations.md#outfit-and-receipt-trailing-more","evidence":"evidence/ui-refinements.json"},
     {"nodeId": "WCL-0", "name": "Foundations · Tokens and typography", "pageId": "p-1-0", "position": {"x": 40, "y": 40}, "reviewOnly": true},
     {"nodeId": "WCQ-0", "name": "Foundations · Icons and identity", "pageId": "p-1-0", "position": {"x": 40, "y": 3882}, "reviewOnly": true},
     {"nodeId": "WDN-0", "name": "Foundations · Native navigation and chrome", "pageId": "p-1-0", "position": {"x": 40, "y": 7920}, "reviewOnly": true},
@@ -8008,6 +8115,817 @@
       "pageId": "p-B-0",
       "contract": "v2-requirements.md",
       "reviewOnly": true
+    },
+    {
+      "nodeId": "Z01-0",
+      "name": "REFERENCE · V1 native decision · Delete fit memory",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 1450,
+        "y": 8148
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "T3X-0",
+        "cloneId": "Z02-0",
+        "caller": "L163"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "Z1X-0",
+      "name": "REFERENCE · V1 native decision · Discard fit draft",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 1920,
+        "y": 8148
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "T2C-0",
+        "cloneId": "Z1Y-0",
+        "caller": "L162"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "Z3U-0",
+      "name": "REFERENCE · V1 native decision · Discard photo edits",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 2390,
+        "y": 8148
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "OG7-0",
+        "cloneId": "Z3V-0",
+        "caller": "L77"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "Z6J-0",
+      "name": "REFERENCE · V1 native decision · Remove fit photo",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 2860,
+        "y": 8148
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "T2C-0",
+        "cloneId": "Z6K-0",
+        "caller": "L162"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "Z8G-0",
+      "name": "REFERENCE · V1 native decision · Discard recording",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 3330,
+        "y": 8148
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "N5P-0",
+        "cloneId": "Z8H-0",
+        "caller": "L70"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "ZAS-0",
+      "name": "REFERENCE · V1 native decision · Major unsaved loss",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 3800,
+        "y": 8148
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "alert",
+      "sourceHost": {
+        "rootId": "LFS-0",
+        "cloneId": "ZAT-0",
+        "caller": "L40"
+      },
+      "motion": {
+        "navigation": "OS-owned native alert",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "ZCU-0",
+      "name": "REFERENCE · V1 native decision · Restore commit",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 4270,
+        "y": 8148
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "alert",
+      "sourceHost": {
+        "rootId": "KIK-0",
+        "cloneId": "ZCV-0",
+        "caller": "L15"
+      },
+      "motion": {
+        "navigation": "OS-owned native alert",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "ZE7-0",
+      "name": "REFERENCE · V1 native decision · Erase commit",
+      "pageId": "p-2-0",
+      "position": {
+        "x": 4740,
+        "y": 8148
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "alert",
+      "sourceHost": {
+        "rootId": "KJF-0",
+        "cloneId": "ZE8-0",
+        "caller": "L16"
+      },
+      "motion": {
+        "navigation": "OS-owned native alert",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "XQI-0",
+      "name": "REFERENCE · STATE · Delete theme · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 1520,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "2X8-0",
+        "cloneId": "XQL-0",
+        "caller": "W18 More / W19 Delete; W23 selected Weekend"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "XSH-0",
+      "name": "REFERENCE · STATE · Delete outfit · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 1990,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "ZMA-0",
+        "cloneId": "ZNN-0",
+        "caller": "W15 2AY-0 owner More → necessary linked-impact review ZMA-0 when linked public posts → final sheet over same held review"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "XUH-0",
+      "name": "REFERENCE · STATE · Delete piece final · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 2460,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "21M-0",
+        "cloneId": "XUI-0",
+        "caller": "W12 exact-impact review; current revisions/counts required"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "XWH-0",
+      "name": "REFERENCE · STATE · Discard draft · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 2930,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "26F-0",
+        "cloneId": "XWI-0",
+        "caller": "Dirty editor Back or system dismissal; X06 Discard draft; all forms/reviews"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "XZQ-0",
+      "name": "REFERENCE · STATE · Substantial unrecoverable planning loss",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 3400,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "alert",
+      "sourceHost": {
+        "rootId": "XZT-0",
+        "cloneId": "XZT-0",
+        "caller": "Held V2 multi-date planning review/editor origin, not ordinary W13"
+      },
+      "motion": {
+        "navigation": "OS-owned native alert",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "Y1U-0",
+      "name": "REFERENCE · STATE · Block person · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 3870,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "R7-0",
+        "cloneId": "Y1V-0",
+        "caller": "S10 / I06 / public profile / post / comments; exact selected person"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "Y45-0",
+      "name": "REFERENCE · STATE · Unblock person · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 4340,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "4MW-0",
+        "cloneId": "Y46-0",
+        "caller": "U08 selected stable account ID; show actual available identity, never invent one"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "Y5M-0",
+      "name": "REFERENCE · STATE · Decline request · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 4810,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "34Z-0",
+        "cloneId": "Y5N-0",
+        "caller": "I04 Decline; pending/failure retains request"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "Y87-0",
+      "name": "REFERENCE · STATE · Unpublish look · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 5280,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "34Y-0",
+        "cloneId": "Y8A-0",
+        "caller": "U04 / owner-public commands; never private U01 background"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "YAI-0",
+      "name": "REFERENCE · STATE · Delete comment · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 5750,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "8B5-0",
+        "cloneId": "YAJ-0",
+        "caller": "S22 own acknowledged comment; unknown-send state must reconcile first"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "YCT-0",
+      "name": "REFERENCE · STATE · Delete Agent conversation · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 6220,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "34E-0",
+        "cloneId": "YCU-0",
+        "caller": "A05 owner conversation commands"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "YEJ-0",
+      "name": "REFERENCE · STATE · Undo wear · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 6690,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "5B0-0",
+        "cloneId": "YEK-0",
+        "caller": "P10 selected record; exact date/item set must come from caller"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "YI7-0",
+      "name": "REFERENCE · STATE · Discard recording · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 7160,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "GXL-0",
+        "cloneId": "YIA-0",
+        "caller": "A42 Discard; interrupt stops microphone first"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "YKL-0",
+      "name": "REFERENCE · STATE · Erase local closet · native alert",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 7630,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "alert",
+      "sourceHost": {
+        "rootId": "KJF-0",
+        "cloneId": "ZKW-0",
+        "caller": "U09 50P-0 → shared L16 in V2 localDevice origin mode → validated exact ERASE → final native alert"
+      },
+      "motion": {
+        "navigation": "OS-owned native alert",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "YMR-0",
+      "name": "REFERENCE · STATE · Replace closet · native alert",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 8100,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "alert",
+      "sourceHost": {
+        "rootId": "KIK-0",
+        "cloneId": "ZFG-0",
+        "caller": "Reviewed replacement mode only; nonreplacing account restore stays task"
+      },
+      "motion": {
+        "navigation": "OS-owned native alert",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "YO2-0",
+      "name": "REFERENCE · STATE · Delete account final · native alert",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 8570,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "alert",
+      "sourceHost": {
+        "rootId": "5IZ-0",
+        "cloneId": "YO3-0",
+        "caller": "U15 only after valid typed confirmation and required reauthentication"
+      },
+      "motion": {
+        "navigation": "OS-owned native alert",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "YSO-0",
+      "name": "REFERENCE · STATE · Delete fit memory · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 9040,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "T3X-0",
+        "cloneId": "YSP-0",
+        "caller": "Shared private local editor/detail with V2 true source return; no public projection"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "YUG-0",
+      "name": "REFERENCE · STATE · Remove fit photo · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 9510,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "T2C-0",
+        "cloneId": "YUH-0",
+        "caller": "Shared private local editor/detail with V2 true source return; no public projection"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "YW9-0",
+      "name": "REFERENCE · RESULT · Piece photo removed · direct + Undo",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 9980,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Direct-action result reference",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "directActionResult",
+      "sourceHost": {
+        "rootId": "1ON-0",
+        "cloneId": "YWA-0",
+        "caller": "W07 1ON-0 pieceDraft photo options → direct Remove → current no-photo draft result YW9-0"
+      },
+      "motion": {
+        "navigation": "Native inline result; no modal transition",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "ZGW-0",
+      "name": "REFERENCE · STATE · Remove plan entry · native actionSheet",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 10450,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Native presentation STATE",
+      "contract": "native-presentations.md",
+      "runtimePushRoute": false,
+      "presentation": "actionSheet",
+      "sourceHost": {
+        "rootId": "2K0-0",
+        "cloneId": "ZGX-0",
+        "caller": "P02/P05 selected entry; scope review required for future/all routine dates"
+      },
+      "motion": {
+        "navigation": "OS-owned confirmationDialog/action sheet adaptation",
+        "contract": "motion.md"
+      },
+      "evidence": "evidence/native-confirmations.json"
+    },
+    {
+      "nodeId": "ZMA-0",
+      "name": "REFERENCE · REVIEW · Outfit linked plans and publication choice",
+      "pageId": "p-B-0",
+      "position": {
+        "x": 10920,
+        "y": 0
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reviewOnly": true,
+      "referenceKind": "Necessary linked-impact review",
+      "runtimePushRoute": false,
+      "presentation": "richImpactReview",
+      "sourceHost": {
+        "rootId": "2AY-0",
+        "caller": "W15 owner More; linked impact review only when actual linked public snapshots exist"
+      },
+      "motion": {
+        "navigation": "Native necessary review presentation; no confirmation push route added",
+        "contract": "motion.md"
+      },
+      "contract": "native-presentations.md",
+      "evidence": "evidence/native-confirmations.json"
     }
   ],
   "controlMaterialReview": {
@@ -12658,11 +13576,16 @@
     "repositoryJsonCheck": {"result": "Passed", "checks": ["Four JSON files parse", "375 unique canonical IDs/nodes; 454 roots and 79 root references plus four nested references", "All164 V1 manifest/map identities, positions and steps match reconciled final map", "All32 Foundations names/positions match final map exactly", "Zero numeric overlaps in32 Foundations and174 V1 bounds", "V2 core22 root/104 control IDs match source; Settings42 recovery glyph mappings plus tour43; menu8 rows", "Current72 bar IDs unique and read-only find_nodes verified", "Historical evidence fields unchanged against HEAD except parent follow-up/policy", "git diff --check"], "scope": "Repository/static evidence consistency only, no runtime/native certification"},
     "scope": "Current authoritative static inventory and bounded refinement; not runtime completion or a whole-app audit",
     "inventory": {
-      "rootArtboards": 463,
+      "rootArtboards":502,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":122,"nestedOfflineReferences":4,
+      "pages":[{"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},{"id":"p-2-0","name":"01 · V1","count":197,"canonicalCount":169,"rootReferenceCount":28},{"id":"p-B-0","name":"02 · V2","count":287,"canonicalCount":211,"rootReferenceCount":76}],
+      "nodeCounts":[1847,10952,21913],"totalNodes":34712,"tokenHash":"fdeb7346","nodeCountStatus":"Parent-confirmed live three-page counts after background-removal design froze; static only","evidence":"evidence/background-removal.json"
+    },
+    "historicalNativeConfirmationInventory": {
+      "rootArtboards": 492,
       "canonicalScreens": 380,
       "v1CanonicalScreens": 169,
       "v2CanonicalScreens": 211,
-      "rootReferences": 83,
+      "rootReferences": 112,
       "nestedOfflineReferences": 4,
       "pages": [
         {
@@ -12675,33 +13598,48 @@
         {
           "id": "p-2-0",
           "name": "01 · V1",
-          "count": 183,
+          "count": 191,
           "canonicalCount": 169,
-          "rootReferenceCount": 14
+          "rootReferenceCount": 22
         },
         {
           "id": "p-B-0",
           "name": "02 · V2",
-          "count": 262,
+          "count": 283,
           "canonicalCount": 211,
-          "rootReferenceCount": 51
+          "rootReferenceCount": 72
         }
-      ]
-    },
-    "inventoryVerification": {
-      "method": "Read-only paper_get_basic_info on all three explicit pages",
-      "rootCounts": [18, 183, 262],
-      "supersededCheckpoint": {"rootCounts": [32, 179, 248], "nodeCounts": [3549, 9433, 18322]},
-      "priorCheckpoint": {"rootCounts": [32, 174, 248], "nodeCounts": [3478, 9072, 18059]},
+      ],
+      "nodeCounts": [
+        1847,
+        10595,
+        21611
+      ],
+      "totalNodes": 34053,
       "tokenHash": "fdeb7346",
-      "nodeCounts": [1834, 9709, 19947],
-      "totalRoots": 463,
-      "totalNodes": 31490,
-      "currentCountSource": "evidence/foundations-library.json; cleanup finalRoots enumerates all three pages; four nested references excluded from root totals",
-      "historicalFieldScope": "finalCountSource, rootInventoryRead and limits retain prior checkpoint evidence; current counts and proof are currentCountSource and foundationsLibrary",
-      "finalCountSource": "Parent final read-only Paper basic_info after all30 sync repairs/global styles: roots32/179/248, nodes3549/9433/18322, token hash fdeb7346. L174–L177 add four shared state roots; no root removals. Lists truncate100 on V1/V2 but counts do not.",
-      "rootInventoryRead": "Existing455-root audit baseline retained, plus four live node_info-confirmed shared preference roots at onboarding row3018. New rectangles checked against all175 measured prior V1 roots and each other; no overlap. Tour roots unmoved with updated ordinals. Scoped styles/renders and exact limits: evidence/design-sync.json.",
-      "limits": "Basic info truncates root lists after 100. Final V1 and Foundations maps supply bounded position/overlap proof; Foundations retained-tree comparison covers eight complete roots and one partial prefix, not a binary whole-document diff. Four nested refs excluded from root totals; no native or whole-app certification."
+      "nodeCountStatus": "Final frozen worker artifacts reconciled with parent verified three-page counts",
+      "canonicalMeaning": "380 unchanged registered IDs:169 V1/211 V2, including 10 retained canonical STATE roots. V2 210 feature roots plus U12 STATE;72 root references, not 73. Four nested offline references excluded from root counts."
+    },
+    "inventoryVerification": {"method":"Frozen background-removal worker live three-page basic-info","rootCounts":[18,197,287],"nodeCounts":[1847,10952,21913],"totalRoots":502,"totalNodes":34712,"tokenHash":"fdeb7346","currentCountSource":"evidence/background-removal.json","limits":"Parent independent three-page counts and all six static renders confirmed; no native/whole-app certification"},
+    "backgroundRemoval": {"evidence":"evidence/background-removal.json","addedReferenceRoots":["1010-0","1025-0","103A-0","104E-0","105C-0","1011-0"],"rootDelta":6,"nodeDelta":256,"canonicalRouteAdditions":0,"nativeVerified":false},
+    "uiRefinements": {"date":"2026-10-07","evidence":"evidence/ui-refinements.json","addedReferenceRoots":["ZRD-0","ZTD-0","ZVD-0","ZXE-0"],"rootDelta":4,"nodeDelta":403,"canonicalRouteAdditions":0,"nativeVerified":false},
+    "historicalNativeConfirmationInventoryVerification": {
+      "method": "Frozen V1/V2 artifacts plus parent final three-page live counts;V2 all283 root IDs individually verified by worker",
+      "rootCounts": [
+        18,
+        191,
+        283
+      ],
+      "nodeCounts": [
+        1847,
+        10595,
+        21611
+      ],
+      "totalRoots": 492,
+      "totalNodes": 34053,
+      "tokenHash": "fdeb7346",
+      "currentCountSource": "evidence/native-confirmations.json",
+      "limits": "Baseline classification/candidates historical;bounded current39 cases plus rich review. No whole-root raster proof/native certification."
     },
     "retirement": {
       "canonicalDarkScreens": [
@@ -12816,7 +13754,8 @@
     "evidence": [
       "evidence/planner-surfaces.json#latestRefinement",
       "evidence/planner-navigation.json#latestRefinement",
-      "evidence/fit-journal-states.json#latestRefinement"
+      "evidence/fit-journal-states.json#latestRefinement",
+      "evidence/native-confirmations.json"
     ],
     "parentVisualReview": "Packing, Week, Themes, Menu, Review/Conflict, Wear, Agent context, Profile empty/populated/menu, Goal, Body, Review, V2 Body, Settings goal and added palette pairs; bounded affected-surface review only",
     "repositoryCheck": {
@@ -12831,6 +13770,95 @@
       "Safe-area scrolling, short phones and keyboard",
       "Preference drafts, validation/gating, atomic Save and recovery",
       "Calendar/date, plan/wear save, conflicts, retry and Undo"
-    ]
+    ],
+    "historicalInventoryVerifications": [
+      {
+        "status": "Historical pre-copy/native-overlay checkpoint",
+        "supersededBy": "evidence/native-confirmations.json",
+        "evidence": {
+          "method": "Read-only paper_get_basic_info on all three explicit pages",
+          "rootCounts": [
+            18,
+            183,
+            262
+          ],
+          "supersededCheckpoint": {
+            "rootCounts": [
+              32,
+              179,
+              248
+            ],
+            "nodeCounts": [
+              3549,
+              9433,
+              18322
+            ]
+          },
+          "priorCheckpoint": {
+            "rootCounts": [
+              32,
+              174,
+              248
+            ],
+            "nodeCounts": [
+              3478,
+              9072,
+              18059
+            ]
+          },
+          "tokenHash": "fdeb7346",
+          "nodeCounts": [
+            1834,
+            9709,
+            19947
+          ],
+          "totalRoots": 463,
+          "totalNodes": 31490,
+          "currentCountSource": "evidence/foundations-library.json; cleanup finalRoots enumerates all three pages; four nested references excluded from root totals",
+          "historicalFieldScope": "finalCountSource, rootInventoryRead and limits retain prior checkpoint evidence; current counts and proof are currentCountSource and foundationsLibrary",
+          "finalCountSource": "Parent final read-only Paper basic_info after all30 sync repairs/global styles: roots32/179/248, nodes3549/9433/18322, token hash fdeb7346. L174–L177 add four shared state roots; no root removals. Lists truncate100 on V1/V2 but counts do not.",
+          "rootInventoryRead": "Existing455-root audit baseline retained, plus four live node_info-confirmed shared preference roots at onboarding row3018. New rectangles checked against all175 measured prior V1 roots and each other; no overlap. Tour roots unmoved with updated ordinals. Scoped styles/renders and exact limits: evidence/design-sync.json.",
+          "limits": "Basic info truncates root lists after 100. Final V1 and Foundations maps supply bounded position/overlap proof; Foundations retained-tree comparison covers eight complete roots and one partial prefix, not a binary whole-document diff. Four nested refs excluded from root totals; no native or whole-app certification."
+        }
+      }
+    ],
+    "nativeConfirmations": {
+      "date": "2026-10-06",
+      "evidence": "evidence/native-confirmations.json",
+      "scope": "Final V1 copy/native overlays and V2 reviewed native/direct/review contracts; static references, no native certification",
+      "caseCount": 39,
+      "nativeDecisionCount": 38,
+      "directActionResultCount": 1,
+      "richReviewCount": 1,
+      "illustratedViews": 40,
+      "caseCountMeaning": "39 case entries:17 V1 native +21 V2 native (including nested U12 DAI-1)+1 V2 direct-action result YW9-0. Native decisions=38:37 root states plus one nested state. Additional rich-review reference ZMA-0 makes40 illustrated views, not40 native confirmations.",
+      "newReferenceRoots": 29,
+      "canonicalIdsRetained": 380,
+      "retainedCanonicalStateRoots": 10,
+      "retainedNestedConvertedStates": 1,
+      "canonicalRouteAdditions": 0,
+      "tokenHash": "fdeb7346",
+      "nativeCertified": false,
+      "wholeRootVisualProof": false,
+      "supersedes": "Only affected current inventory/control contracts; earlier measured logs, copy pass and scoped renders remain historical."
+    },
+    "v1CopyReview": {
+      "evidence": "evidence/v1-copy-review.json",
+      "status": "Historical pre-overlay",
+      "supersededAffectedControlsBy": "evidence/native-confirmations.json",
+      "counts": {
+        "rewriteOccurrences": 63,
+        "removedTextOccurrences": 44,
+        "findingGroups": 93,
+        "affectedCanonicalScreens": 76,
+        "hiddenEmptyIntroductionGroups": 3,
+        "rootCountBefore": 183,
+        "rootCountAfter": 183,
+        "nodeCountBefore": 9709,
+        "nodeCountAfter": 9665,
+        "mutationNodeDelta": -44,
+        "rootDelta": 0
+      }
+    }
   }
 }

@@ -65,7 +65,22 @@
   },
   "verification": "Editing/media and response rows inspected as static Paper screenshots; final context row and profile variants checked separately. No claim of a repo-wide icon migration or native glyph verification.",
   "foundationsLibrary": {"evidence": "evidence/foundations-library.json", "roles": 41, "aliases": 12, "masterPageId": "p-1-0", "masterArtboardId": "4MI-0", "registeredMastersAfter": "All 34 prior roles and selected variants remain under 4MI-0 per cleanup registeredMastersAfter; seven new role masters and checked-calendar variant verified separately by parent and worker", "nativeVerified": false},
-  "usageEvidencePolicy": {"source": "evidence/foundations-library.json", "localProvenance": ["/tmp/aqd-foundations-icon-usage.json", "/tmp/aqd-foundations-cleanup.json", "/tmp/aqd-foundations-cleanup-compact.json"], "sourceEvidenceNotation": "V1 or V2: nodeId@sourceRoot; representative cached canonical/reference occurrence joined to finalRoots and originalNodePageChanges for current phase; sourceRoot may be historical after subtree relocation", "phaseUse": "Actual canonical/reference occurrences only; Foundations masters excluded. No inference that a V1 feature is absent because its icon is not observed", "counts": "Snapshot/reference occurrences including hidden glyphs and nested exports, not unique current visible native instances; ancestor display:none not exhaustively interpreted", "geometry": {"svgOccurrences": 2941, "uniqueSvgSignatures": 79, "primitiveSignatures": 120, "classifiedSignatures": true, "unmappedGeometry": [], "limits": "All supplied cached exports plus four added preference roots; no all-current-live raster/glyph migration or exact Apple asset certification. SVG wrappers and CSS check/Stop candidates classified; ordinary borders, radio dots, switches, slider thumbs, home indicators and grabbers are controls, not icon roles"}, "nativeVerified": false},
+  "usageEvidencePolicy": {
+    "source": "evidence/foundations-library.json",
+    "localProvenance": ["/tmp/aqd-foundations-icon-usage.json", "/tmp/aqd-foundations-cleanup.json", "/tmp/aqd-foundations-cleanup-compact.json"],
+    "sourceEvidenceNotation": "V1 or V2: nodeId@sourceRoot; representative cached canonical/reference occurrence joined to finalRoots and originalNodePageChanges for current phase; sourceRoot may be historical after subtree relocation",
+    "phaseUse": "Actual canonical/reference occurrences only; Foundations masters excluded. No inference that a V1 feature is absent because its icon is not observed",
+    "counts": "Snapshot/reference occurrences including hidden glyphs and nested exports, not unique current visible native instances; ancestor display:none not exhaustively interpreted",
+    "geometry": {"svgOccurrences": 2941, "uniqueSvgSignatures": 79, "primitiveSignatures": 120, "classifiedSignatures": true, "unmappedGeometry": [], "limits": "All supplied cached exports plus four added preference roots; no all-current-live raster/glyph migration or exact Apple asset certification. SVG wrappers and CSS check/Stop candidates classified; ordinary borders, radio dots, switches, slider thumbs, home indicators and grabbers are controls, not icon roles"},
+    "nativeVerified": false,
+    "historicalSnapshot": {
+      "status": "Historical pre-copy/native-overlay geometry census",
+      "inputExports": 463,
+      "svgOccurrences": 2941,
+      "supersededInventoryBy": "evidence/native-confirmations.json",
+      "note": "No new full glyph census;29 new reference roots reuse existing glyphs. Registry41 roles/12 aliases unchanged; historical occurrence counts must not be extrapolated."
+    }
+  },
   "variantSemantics": {"default": "Retain each registered selectedNodeId; selected optical weight/tint is not a different semantic role. Geometry signatures/size/stroke variants in source artifact are reference vectors, not native asset certification", "agent": "Single sparkle navigation/assistance role; larger empty-state sparkle is a documented decorative alias", "profile": "Person-circle outline and circle/head geometry share identity semantics", "search": "Magnifier geometry/size variants share search semantics", "plus": "Plus stroke/size variants cover add and attachment alias", "back": "Backward-chevron optical variants retain source-return meaning", "heart": "Like/unlike state, V2 only", "bookmark": "Save/unsave state and filled/outline geometry, V2 only", "chevron": "Forward disclosure and next-response alias; not down-chevron", "edit": "Square-and-pencil variants retain editing meaning", "check": "SVG and CSS border checks represent selection/confirmation, not a new role", "calendar": "Selected weight differs from checkedCalendar Plan a day action variant; no confirmed-save claim", "send": "Up-arrow send action; jumpToLatest is a separately assigned down-arrow role", "stop": "Filled square SVG/CSS control means interrupt response, not Close", "clock": "Time and Wear insights action; not only timestamp decoration", "tag": "Tag and private Style action; not limited to social tagging", "context": "T-shirt context/category/make-look aliases; not evidence of actual garment record", "waveform": "Voice input state, not fabricated recording activity", "aiBadge": "Custom assistance badge exception retained at FZ3-0, never save-status or navigation", "rotatePhoto": "Counterclockwise media edit, distinct from clockwise Retry", "chevronDown": "Down disclosure/collapse, distinct from forward navigation", "delete": "Destructive trash action; native destructive confirmation owns behavior", "report": "V2 safety report flag", "block": "V2 safety prohibition", "info": "V2 information circle", "progress": "Native ProgressView circular indeterminate control; no SF Symbol assignment"},
   "roleUsage": {
     "home": {"phaseUse": ["V1", "V2"], "sourceEvidence": ["V1: TFY-0@JMF-0", "V2: TRK-0@65-0"], "nativeVerified": false},
@@ -109,5 +124,20 @@
     "block": {"phaseUse": ["V2"], "sourceEvidence": ["V2: FCF-1@FBL-1"], "nativeVerified": false},
     "info": {"phaseUse": ["V2"], "sourceEvidence": ["V2: FE8-1@FBL-1"], "nativeVerified": false},
     "progress": {"phaseUse": ["V1", "V2"], "sourceEvidence": ["V1: QBL-0@QBG-0", "V2: FKX-1@9LF-0"], "nativeVerified": false}
+  },
+  "nativeConfirmationRefinement": {
+    "evidence": "evidence/native-confirmations.json",
+    "newReferenceRoots": 29,
+    "newMasterIcons": 0,
+    "roles": 41,
+    "aliases": 12,
+    "currentRootInventory": 502,
+    "historicalRootInventory": 492,
+    "currentInventoryEvidence": "evidence/background-removal.json",
+    "currentInventoryStatus": "Parent-confirmed live three-page counts after background-removal design froze; static only",
+    "nativeVerified": false,
+    "nativeDecisionCases": 38,
+    "directActionResultReferences": 1,
+    "richReviewReferences": 1
   }
 }

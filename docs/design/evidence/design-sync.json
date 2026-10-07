@@ -59,7 +59,84 @@
     "checks":"Tooling38 tests, JSON uniqueness/inventory and local Markdown reference checks recorded in delivery verification",
     "renderStorage":"Tool-response renders inspected, not committed screenshot assets. IDs support live recapture."
   },
-  "provenanceArtifacts":["/tmp/aqd-sync-fix-foundations.json","/tmp/aqd-sync-fix-flows.json","/tmp/aqd-sync-fix-capture-settings.json","/tmp/aqd-sync-fix-global.json"],
-  "limits":["Targeted rendered/style confirmation, not all459 roots visually certified","Global style artifact has36 exact changed node IDs without root-name mapping; node style checks are not missing or invented root coverage","Eight-member Theme fixture has only two represented members; no remaining membership/production data inferred","Native VoiceOver/Dynamic Type/RTL/localization/keyboard/safe-area/hit testing and focus/scroll returns unverified","Atomic persistence/media preparation/restore/erase isolation/retry reconciliation and actual model/account/service behavior unverified"],
-  "appImplemented":false,"runtimeComplete":false,"commitOrPush":false
+  "provenanceArtifacts": ["/tmp/aqd-sync-fix-foundations.json","/tmp/aqd-sync-fix-flows.json","/tmp/aqd-sync-fix-capture-settings.json","/tmp/aqd-sync-fix-global.json"],
+  "limits": ["Targeted rendered/style confirmation, not all459 roots visually certified","Global style artifact has36 exact changed node IDs without root-name mapping; node style checks are not missing or invented root coverage","Eight-member Theme fixture has only two represented members; no remaining membership/production data inferred","Native VoiceOver/Dynamic Type/RTL/localization/keyboard/safe-area/hit testing and focus/scroll returns unverified","Atomic persistence/media preparation/restore/erase isolation/retry reconciliation and actual model/account/service behavior unverified"],
+  "appImplemented": false,
+  "runtimeComplete": false,
+  "commitOrPush": false,
+  "historicalEvidencePolicy": {
+    "status": "Historical pre-copy/native-overlay design-sync checkpoint",
+    "fields": [
+      "inventory",
+      "issues",
+      "parentVerification"
+    ],
+    "supersededAffectedContractsBy": "native-confirmations.json",
+    "note": "Preserve measured counts, old repairs and scoped renders; no claims of newly rendering all old states."
+  },
+  "currentInventory": {
+    "rootArtboards":502,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":122,"nestedOfflineReferences":4,
+    "pages":[{"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},{"id":"p-2-0","name":"01 · V1","count":197,"canonicalCount":169,"rootReferenceCount":28},{"id":"p-B-0","name":"02 · V2","count":287,"canonicalCount":211,"rootReferenceCount":76}],
+    "nodeCounts":[1847,10952,21913],"totalNodes":34712,"tokenHash":"fdeb7346","nodeCountStatus":"Parent-confirmed live three-page counts after background-removal design froze; static only","evidence":"background-removal.json"
+  },
+  "historicalNativeConfirmationInventory": {
+    "rootArtboards": 492,
+    "canonicalScreens": 380,
+    "v1CanonicalScreens": 169,
+    "v2CanonicalScreens": 211,
+    "rootReferences": 112,
+    "nestedOfflineReferences": 4,
+    "pages": [
+      {
+        "id": "p-1-0",
+        "name": "00 · Foundations",
+        "count": 18,
+        "canonicalCount": 0,
+        "rootReferenceCount": 18
+      },
+      {
+        "id": "p-2-0",
+        "name": "01 · V1",
+        "count": 191,
+        "canonicalCount": 169,
+        "rootReferenceCount": 22
+      },
+      {
+        "id": "p-B-0",
+        "name": "02 · V2",
+        "count": 283,
+        "canonicalCount": 211,
+        "rootReferenceCount": 72
+      }
+    ],
+    "nodeCounts": [
+      1847,
+      10595,
+      21611
+    ],
+    "totalNodes": 34053,
+    "tokenHash": "fdeb7346",
+    "nodeCountStatus": "Final frozen worker artifacts reconciled with parent verified three-page counts",
+    "canonicalMeaning": "380 unchanged registered IDs:169 V1/211 V2, including 10 retained canonical STATE roots. V2 210 feature roots plus U12 STATE;72 root references, not 73. Four nested offline references excluded from root counts."
+  },
+  "nativeConfirmationRefinement": {
+    "date": "2026-10-06",
+    "evidence": "native-confirmations.json",
+    "scope": "Final V1 copy/native overlays and V2 reviewed native/direct/review contracts; static references, no native certification",
+    "caseCount": 39,
+    "nativeDecisionCount": 38,
+    "directActionResultCount": 1,
+    "richReviewCount": 1,
+    "illustratedViews": 40,
+    "caseCountMeaning": "39 case entries:17 V1 native +21 V2 native (including nested U12 DAI-1)+1 V2 direct-action result YW9-0. Native decisions=38:37 root states plus one nested state. Additional rich-review reference ZMA-0 makes40 illustrated views, not40 native confirmations.",
+    "newReferenceRoots": 29,
+    "canonicalIdsRetained": 380,
+    "retainedCanonicalStateRoots": 10,
+    "retainedNestedConvertedStates": 1,
+    "canonicalRouteAdditions": 0,
+    "tokenHash": "fdeb7346",
+    "nativeCertified": false,
+    "wholeRootVisualProof": false,
+    "supersedes": "Only affected current inventory/control contracts; earlier measured logs, copy pass and scoped renders remain historical."
+  }
 }

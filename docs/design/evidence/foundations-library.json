@@ -4,16 +4,43 @@
   "scope": "Static Foundations library separation and app-owned V1/V2 icon catalog. No app implementation, runtime acceptance or whole-current-canvas glyph certification.",
   "boundary": "Tokens, typography/space/shape, icons, navigation/control primitives, surfaces and generic component states only. Complete product screens, feature menus/journeys and accessibility phone examples are phase references.",
   "currentInventory": {
-    "rootArtboards": 463, "canonicalScreens": 380,
-    "v1CanonicalScreens": 169, "v2CanonicalScreens": 211,
-    "rootReferences": 83, "nestedOfflineReferences": 4,
+    "rootArtboards":502,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":122,"nestedOfflineReferences":4,
+    "pages":[{"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},{"id":"p-2-0","name":"01 · V1","count":197,"canonicalCount":169,"rootReferenceCount":28},{"id":"p-B-0","name":"02 · V2","count":287,"canonicalCount":211,"rootReferenceCount":76}],
+    "nodeCounts":[1847,10952,21913],"totalNodes":34712,"tokenHash":"fdeb7346","nodeCountStatus":"Parent-confirmed live three-page counts after background-removal design froze; static only","evidence":"background-removal.json"
+  },
+  "historicalNativeConfirmationInventory": {
+    "rootArtboards": 492,
+    "canonicalScreens": 380,
+    "v1CanonicalScreens": 169,
+    "v2CanonicalScreens": 211,
+    "rootReferences": 112,
+    "nestedOfflineReferences": 4,
     "pages": [
       {"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},
-      {"id":"p-2-0","name":"01 · V1","count":183,"canonicalCount":169,"rootReferenceCount":14},
-      {"id":"p-B-0","name":"02 · V2","count":262,"canonicalCount":211,"rootReferenceCount":51}
+      {
+        "id": "p-2-0",
+        "name": "01 · V1",
+        "count": 191,
+        "canonicalCount": 169,
+        "rootReferenceCount": 22
+      },
+      {
+        "id": "p-B-0",
+        "name": "02 · V2",
+        "count": 283,
+        "canonicalCount": 211,
+        "rootReferenceCount": 72
+      }
     ],
-    "nodeCounts": [1834,9709,19947], "totalNodes":31490,
-    "tokenHash":"fdeb7346"
+    "nodeCounts": [
+      1847,
+      10595,
+      21611
+    ],
+    "totalNodes": 34053,
+    "tokenHash": "fdeb7346",
+    "nodeCountStatus": "Final frozen worker artifacts reconciled with parent verified three-page counts",
+    "canonicalMeaning": "380 unchanged registered IDs:169 V1/211 V2, including 10 retained canonical STATE roots. V2 210 feature roots plus U12 STATE;72 root references, not 73. Four nested offline references excluded from root counts."
   },
   "foundations": {
     "beforeRoots":32,"afterRoots":18,"reusableBoards":12,"headers":6,
@@ -51,11 +78,15 @@
     "routes":"REFERENCE labels are not new canonical steps/routes. Both phases still have nine journey groups. Shared private examples remain reusable from their owning phase."
   },
   "icons": {
-    "roles":41,"aliases":12,"newRegisteredRoles":7,
-    "catalogRoot":"4MI-0","registry":"../icon-manifest.json","documentation":"../icons.md",
-    "coverage":{"inputExports":463,"baselineRootExports":455,"nestedReferenceExports":4,"newPreferenceRootExports":4,"svgOccurrences":2941,"svgSignatures":79,"primitiveSignatures":120,"unclassifiedGeometry":0,"cssCheckOccurrences":57,"cssStopOccurrences":12},
-    "coverageMeaning":"The 463 input exports describe the pre-cleanup 459-root canvas plus four nested references; this number is coincidentally equal to the final root total. The final canvas has four additional reference roots, not four new app routes. Recent repaired/new glyphs and representative phase sources were reconciled live; use counts include reference/hidden occurrences and are not a unique visible live census.",
-    "newMasters":{
+    "roles": 41,
+    "aliases": 12,
+    "newRegisteredRoles": 7,
+    "catalogRoot": "4MI-0",
+    "registry": "../icon-manifest.json",
+    "documentation": "../icons.md",
+    "coverage": {"inputExports":463,"baselineRootExports":455,"nestedReferenceExports":4,"newPreferenceRootExports":4,"svgOccurrences":2941,"svgSignatures":79,"primitiveSignatures":120,"unclassifiedGeometry":0,"cssCheckOccurrences":57,"cssStopOccurrences":12},
+    "coverageMeaning": "The 463 input exports describe the pre-cleanup 459-root canvas plus four nested references; this number is coincidentally equal to the final root total. The final canvas has four additional reference roots, not four new app routes. Recent repaired/new glyphs and representative phase sources were reconciled live; use counts include reference/hidden occurrences and are not a unique visible live census.",
+    "newMasters": {
       "rotatePhoto":{"nodeId":"X7R-0","symbol":"arrow.counterclockwise","source":"OII-0"},
       "chevronDown":{"nodeId":"XBQ-0","symbol":"chevron.down","source":"N0S-0"},
       "delete":{"nodeId":"XBZ-0","symbol":"trash","source":"VYG-0"},
@@ -64,9 +95,9 @@
       "info":{"nodeId":"XCR-0","symbol":"info.circle","source":"FE8-1"},
       "progress":{"nodeId":"XD3-0","nativeControl":"ProgressView","source":"QBL-0"}
     },
-    "checkedCalendar":{"nodeId":"XDD-0","symbol":"calendar.badge.checkmark","source":"Q4T-0","phase":"V1","role":"Calendar variant, not a new role"},
-    "phaseSourceColumns":["role","V1 representative glyph","V2 representative glyph"],
-    "phaseSources":[
+    "checkedCalendar": {"nodeId":"XDD-0","symbol":"calendar.badge.checkmark","source":"Q4T-0","phase":"V1","role":"Calendar variant, not a new role"},
+    "phaseSourceColumns": ["role","V1 representative glyph","V2 representative glyph"],
+    "phaseSources": [
       ["home","TFY-0","TRK-0"],["closet","TG2-0","TRO-0"],["agent","TGB-0","TRX-0"],
       ["inbox",null,"UH7-0"],["profile","TGF-0","FEP-1"],["search","V3Q-0","6K-0"],
       ["plus","Q15-0","5TR-0"],["back","Q6V-0","5LF-0"],["heart",null,"8J8-0"],
@@ -82,9 +113,10 @@
       ["delete","VYG-0","FDK-1"],["report",null,"FCB-1"],["block",null,"FCF-1"],
       ["info",null,"FE8-1"],["progress","QBL-0","FKX-1"]
     ],
-    "systemOwnedFamilies":["status signal/Wi-Fi/battery","keyboard Shift/Delete/language/dictation","native date-picker previous/next","Apple sign-in logo","native Photos/camera/source-sheet chrome"],
-    "notExtraIcons":["crop grids","radio dots/switches","slider thumbs","grabbers/home indicators","photographic/decorative artwork","text-only Reset/Zoom/Category"],
-    "limitations":["Assigned SF Symbols are semantic implementation choices, not exact Apple vector certification.","Cached ancestor display:none was not exhaustively evaluated; occurrences are not visible-instance counts.","81 broad CSS border candidates are ordinary containers/control geometry, not unresolved icons; mapped Check/Stop primitives were aligned.","Structural clones are not live-linked. Existing copies were not globally migrated to the seven newly registered masters."]
+    "systemOwnedFamilies": ["status signal/Wi-Fi/battery","keyboard Shift/Delete/language/dictation","native date-picker previous/next","Apple sign-in logo","native Photos/camera/source-sheet chrome"],
+    "notExtraIcons": ["crop grids","radio dots/switches","slider thumbs","grabbers/home indicators","photographic/decorative artwork","text-only Reset/Zoom/Category"],
+    "limitations": ["Assigned SF Symbols are semantic implementation choices, not exact Apple vector certification.","Cached ancestor display:none was not exhaustively evaluated; occurrences are not visible-instance counts.","81 broad CSS border candidates are ordinary containers/control geometry, not unresolved icons; mapped Check/Stop primitives were aligned.","Structural clones are not live-linked. Existing copies were not globally migrated to the seven newly registered masters."],
+    "coverageStatus": "Historical463-input-export/2941-SVG-occurrence census, not current492-root inventory.29 reference additions reuse glyphs; no new masters/census."
   },
   "verification": {
     "worker":"32-root classification; original-ID preservation; measured/reflowed affected roots and reference columns; bounded renders; live role/source checks.",
@@ -93,5 +125,74 @@
     "checks":"38 repository tooling tests passed; JSON/reference/inventory checks recorded in delivery verification.",
     "nativeVerified":false,
     "nativeRequired":["SF Symbol rendering/selected variants","VoiceOver names/focus and hit testing","Dynamic Type/localization/RTL","keyboard/safe-area/scrolling","native menu/media and route/persistence behavior"]
+  },
+  "inventoryHistory": [
+    {
+      "status": "Historical pre-copy/native-overlay checkpoint",
+      "supersededBy": "native-confirmations.json",
+      "inventory": {
+        "rootArtboards": 463,
+        "canonicalScreens": 380,
+        "v1CanonicalScreens": 169,
+        "v2CanonicalScreens": 211,
+        "rootReferences": 83,
+        "nestedOfflineReferences": 4,
+        "pages": [
+          {
+            "id": "p-1-0",
+            "name": "00 · Foundations",
+            "count": 18,
+            "canonicalCount": 0,
+            "rootReferenceCount": 18
+          },
+          {
+            "id": "p-2-0",
+            "name": "01 · V1",
+            "count": 183,
+            "canonicalCount": 169,
+            "rootReferenceCount": 14
+          },
+          {
+            "id": "p-B-0",
+            "name": "02 · V2",
+            "count": 262,
+            "canonicalCount": 211,
+            "rootReferenceCount": 51
+          }
+        ],
+        "nodeCounts": [
+          1834,
+          9709,
+          19947
+        ],
+        "totalNodes": 31490,
+        "tokenHash": "fdeb7346"
+      }
+    }
+  ],
+  "nativeConfirmationRefinement": {
+    "pageId": "p-1-0",
+    "rootId": "4GB-0",
+    "criticalAlertId": "FJ2-1",
+    "actionSheetId": "ZGG-0",
+    "actionSheetContainerId": "ZGD-0",
+    "nodesAdded": 13,
+    "rootsAdded": 0,
+    "featureBoardsAdded": 0,
+    "registeredMasterIconsAdded": 0,
+    "policy": "Generic OS-owned critical alert and bounded action-sheet grammar; no feature walkthroughs added",
+    "parentReview": "Parent reported complete 4GB board inspected; read-only tree verifies retained FJ2-1 and added ZGG-0 ancestry.",
+    "evidence": "native-confirmations.json",
+    "nativeVerified": false
+  },
+  "verificationHistoryPolicy": {
+    "status": "Historical pre-copy/native-overlay scoped cleanup verification",
+    "fields": [
+      "verification",
+      "foundations",
+      "icons.coverage"
+    ],
+    "supersededAffectedContractsBy": "native-confirmations.json",
+    "note": "Old counts, retained-tree proofs and renders remain historical. CurrentInventory and nativeConfirmationRefinement own affected current contracts; no new icon census."
   }
 }

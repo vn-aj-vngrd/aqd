@@ -86,8 +86,28 @@
     "v1FinalFlowMap": "planner-navigation.json#latestRefinement.v1FinalFlowMap",
     "v2CoreAlignment": "planner-surfaces.json#latestRefinement.v2CoreAlignment",
     "settingsFamily": "planner-surfaces.json#latestRefinement.settingsFamily",
-    "inventoryVerification": {"source": "Parent-reported final read-only Paper basic_info on all three pages", "rootCounts": [18, 183, 262], "nodeCounts": [1834, 9709, 19947], "totalRoots": 463, "totalNodes": 31490, "currentSource": "foundations-library.json; cleanup finalRoots enumerates all pages; four nested references excluded", "supersededCheckpoint": {"rootCounts": [32, 179, 248], "nodeCounts": [3549, 9433, 18322]}, "historicalFieldScope": "source and limits describe superseded checkpoint, not current cleanup proof", "priorCheckpoint": {"rootCounts": [32, 174, 248], "nodeCounts": [3478, 9072, 18059]}, "tokenHash": "fdeb7346", "limits": "Foundations complete32 root list; V1/V2 lists truncated100, counts not truncated. Parent nodeInfo/screenshots verified splash/U25/U26. No inventory scout artifact was produced."},
-    "newTokens": 0, "newColors": 0, "newIconRoles": 7,
+    "historicalUIRefinementInventoryVerification": {"method":"Read-only three-page basic-info integration observation","rootCounts":[18,192,286],"nodeCounts":[1847,10760,21849],"totalRoots":496,"totalNodes":34456,"tokenHash":"fdeb7346","currentCountSource":"evidence/ui-refinements.json","limits":"Historical parent-confirmed496 checkpoint; latest inventory below; no native/whole-app certification"},
+    "historicalNativeConfirmationInventoryVerification": {
+      "method": "Frozen V1/V2 artifacts plus parent final three-page live counts;V2 all283 root IDs individually verified by worker",
+      "rootCounts": [
+        18,
+        191,
+        283
+      ],
+      "nodeCounts": [
+        1847,
+        10595,
+        21611
+      ],
+      "totalRoots": 492,
+      "totalNodes": 34053,
+      "tokenHash": "fdeb7346",
+      "currentCountSource": "native-confirmations.json",
+      "limits": "Baseline classification/candidates historical;bounded current39 cases plus rich review. No whole-root raster proof/native certification."
+    },
+    "newTokens": 0,
+    "newColors": 0,
+    "newIconRoles": 7,
     "v2Profile": {
       "phase": "V2", "flowSection": "05", "canvasSection": "07",
       "sectionNote": "Requested Profile contract section05 retained as metadata; actual retained canvas section07 Profile and account owns U01/U25/U26. No section heading renumbering performed.",
@@ -165,11 +185,16 @@
       "darkSupport": "Paired light/dark tokens and native dark appearance remain required; dark component masters are retained."
     },
     "currentInventory": {
-      "rootArtboards": 463,
+      "rootArtboards":502,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":122,"nestedOfflineReferences":4,
+      "pages":[{"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},{"id":"p-2-0","name":"01 · V1","count":197,"canonicalCount":169,"rootReferenceCount":28},{"id":"p-B-0","name":"02 · V2","count":287,"canonicalCount":211,"rootReferenceCount":76}],
+      "nodeCounts":[1847,10952,21913],"totalNodes":34712,"tokenHash":"fdeb7346","nodeCountStatus":"Parent-confirmed live three-page counts after background-removal design froze; static only","evidence":"background-removal.json"
+    },
+    "historicalNativeConfirmationInventory": {
+      "rootArtboards": 492,
       "canonicalScreens": 380,
       "v1CanonicalScreens": 169,
       "v2CanonicalScreens": 211,
-      "rootReferences": 83,
+      "rootReferences": 112,
       "nestedOfflineReferences": 4,
       "pages": [
         {
@@ -182,18 +207,27 @@
         {
           "id": "p-2-0",
           "name": "01 · V1",
-          "count": 183,
+          "count": 191,
           "canonicalCount": 169,
-          "rootReferenceCount": 14
+          "rootReferenceCount": 22
         },
         {
           "id": "p-B-0",
           "name": "02 · V2",
-          "count": 262,
+          "count": 283,
           "canonicalCount": 211,
-          "rootReferenceCount": 51
+          "rootReferenceCount": 72
         }
-      ]
+      ],
+      "nodeCounts": [
+        1847,
+        10595,
+        21611
+      ],
+      "totalNodes": 34053,
+      "tokenHash": "fdeb7346",
+      "nodeCountStatus": "Final frozen worker artifacts reconciled with parent verified three-page counts",
+      "canonicalMeaning": "380 unchanged registered IDs:169 V1/211 V2, including 10 retained canonical STATE roots. V2 210 feature roots plus U12 STATE;72 root references, not 73. Four nested offline references excluded from root counts."
     },
     "nativeVerificationRequired": [
       "Native tab/search/menu/picker behavior and dismissal/focus",
@@ -340,6 +374,115 @@
       ],
       "fullWholeAppAudit": false,
       "native": "Menu focus, routes, journal persistence, media permissions and safe-area/accessibility behavior unverified"
+    },
+    "nativeConfirmations": {
+      "date": "2026-10-06",
+      "evidence": "native-confirmations.json",
+      "scope": "Final V1 copy/native overlays and V2 reviewed native/direct/review contracts; static references, no native certification",
+      "caseCount": 39,
+      "nativeDecisionCount": 38,
+      "directActionResultCount": 1,
+      "richReviewCount": 1,
+      "illustratedViews": 40,
+      "caseCountMeaning": "39 case entries:17 V1 native +21 V2 native (including nested U12 DAI-1)+1 V2 direct-action result YW9-0. Native decisions=38:37 root states plus one nested state. Additional rich-review reference ZMA-0 makes40 illustrated views, not40 native confirmations.",
+      "newReferenceRoots": 29,
+      "canonicalIdsRetained": 380,
+      "retainedCanonicalStateRoots": 10,
+      "retainedNestedConvertedStates": 1,
+      "canonicalRouteAdditions": 0,
+      "tokenHash": "fdeb7346",
+      "nativeCertified": false,
+      "wholeRootVisualProof": false,
+      "supersedes": "Only affected current inventory/control contracts; earlier measured logs, copy pass and scoped renders remain historical."
+    },
+    "historicalInventoryVerifications": [
+      {
+        "status": "Historical pre-copy/native-overlay inventory checkpoint",
+        "supersededBy": "native-confirmations.json",
+        "evidence": {
+          "source": "Parent-reported final read-only Paper basic_info on all three pages",
+          "rootCounts": [
+            18,
+            183,
+            262
+          ],
+          "nodeCounts": [
+            1834,
+            9709,
+            19947
+          ],
+          "totalRoots": 463,
+          "totalNodes": 31490,
+          "currentSource": "foundations-library.json; cleanup finalRoots enumerates all pages; four nested references excluded",
+          "supersededCheckpoint": {
+            "rootCounts": [
+              32,
+              179,
+              248
+            ],
+            "nodeCounts": [
+              3549,
+              9433,
+              18322
+            ]
+          },
+          "historicalFieldScope": "source and limits describe superseded checkpoint, not current cleanup proof",
+          "priorCheckpoint": {
+            "rootCounts": [
+              32,
+              174,
+              248
+            ],
+            "nodeCounts": [
+              3478,
+              9072,
+              18059
+            ]
+          },
+          "tokenHash": "fdeb7346",
+          "limits": "Foundations complete32 root list; V1/V2 lists truncated100, counts not truncated. Parent nodeInfo/screenshots verified splash/U25/U26. No inventory scout artifact was produced."
+        }
+      }
+    ],
+    "historicalCurrentInventory": {
+      "rootArtboards": 463,
+      "canonicalScreens": 380,
+      "v1CanonicalScreens": 169,
+      "v2CanonicalScreens": 211,
+      "rootReferences": 83,
+      "nestedOfflineReferences": 4,
+      "pages": [
+        {
+          "id": "p-1-0",
+          "name": "00 · Foundations",
+          "count": 18,
+          "canonicalCount": 0,
+          "rootReferenceCount": 18
+        },
+        {
+          "id": "p-2-0",
+          "name": "01 · V1",
+          "count": 183,
+          "canonicalCount": 169,
+          "rootReferenceCount": 14
+        },
+        {
+          "id": "p-B-0",
+          "name": "02 · V2",
+          "count": 262,
+          "canonicalCount": 211,
+          "rootReferenceCount": 51
+        }
+      ]
+    },
+    "deletionConfirmationSupersession": {
+      "historicalClaim": "Earlier no deletion-confirmation artboard statements describe pre-overlay state only",
+      "currentV1Reference": "Z01-0",
+      "currentV2Reference": "YSO-0",
+      "source": "native-confirmations.json",
+      "presentation": "Bounded native action sheet on actual memory caller; Cancel preserves source/draft; no route added",
+      "baseStateRerendered": false,
+      "note": "Z01-0/YSO-0 supersede prior no-confirmation-artboard statements; four base-state renders remain historical, not rerendered by this task."
     }
   }
 }

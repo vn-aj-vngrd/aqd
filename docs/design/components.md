@@ -6,6 +6,8 @@ Shared visual definitions live on [Paper page 00](https://app.paper.design/file/
 
 ## Foundations and native chrome
 
+Shared confirmation primitives live in Foundations `4GB-0`: critical alert `FJ2-1` and routine action-sheet specimen `ZGG-0` (choice group `ZGJ-0`, destructive row `ZGO-0`, separate Cancel `ZGR-0`). These are generic structure, not feature screens. Product confirmation states clone their actual originating scene in V1/V2; apply the [risk-based native policy](native-presentations.md#confirmation-states-not-pushed-screens). The OS supplies runtime appearance and dismissal; no custom dialog renderer or extra pushed confirmation route.
+
 | Component | Canonical builder | Native implementation | Contract |
 | --- | --- | --- | --- |
 | Semantic tokens | `TOKENS`, `DARK_TOKENS` | Asset/semantic colors and system text styles | One place to change colors, type roles, space, radii. Dark mapping is semantic, not inverted photography. |

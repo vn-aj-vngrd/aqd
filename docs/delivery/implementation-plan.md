@@ -2,6 +2,12 @@
 
 Updated October 5, 2026. This branch authorizes documentation/planning/architecture and Paper designs only. Begin product implementation only after a separate user request. First restore or establish a reproducible source/build baseline: the current checkout has no tracked Swift app/build definition matching historical prototype reports.
 
+## Confirmation acceptance — docs/Paper only
+
+Both phases follow [native risk/presentation policy and state mapping](../design/native-presentations.md#confirmation-states-not-pushed-screens). Existing confirmation IDs describe contextual states, not compulsory pushed pages. Use native action sheets for intentional bounded choices and alerts for critical irreversible loss; retain rich review, typed validation and authentication before the final decision. Common undoable actions should not gain redundant prompts.
+
+Native acceptance must prove exact authorized target/impact, Cancel and supported dismissal without mutation, source focus/scroll/draft return, unavailable/in-flight actions, atomic commit/rollback and unknown-completion reconciliation before retry. Test accessibility sizes/localization/RTL, iPad adaptation, keyboard/safe areas and interruptions. Neither Paper state coverage nor repository tooling tests satisfy these runtime gates. No implementation is authorized by this refinement.
+
 ## V1 — Small local MVP
 
 | Order | Slice | Exit evidence after implementation is authorized |
@@ -53,6 +59,10 @@ Static Paper inventories and representative visual checks are recorded in [verif
 ## Foundations library ownership — docs/Paper only
 
 Foundations is the reusable token/component/icon library, not a fourth app flow. Full-screen product and accessibility examples move into their owning V1/V2 reference areas with stable IDs; canonical routes and implementation scope do not change. The labelled icon catalog and registry distinguish actual phase usage, shared aliases/variants and OS-owned symbols. Native symbol rendering, accessibility and hit testing still require a separately authorized implementation.
+
+## Shared capture/background-removal acceptance — docs/Paper only
+
+Implement only after separate authorization. Follow [capture contract](../design/capture-photo.md#background-removal-reference-states): explicit capability-gated native accepted-photo Menu action, one identity-checked local job, immediate UI Cancel, disabled Use until rendered preview, reversible Original/Removed selection and parent-draft-only apply. Multiple foreground labels preview their union (legitimate pairs valid), never count-only failure or garment-confidence inference. Execution/no-subject/empty/render failure offers Try again/Crop manually/Cancel; unavailable offers Crop manually/Cancel; manual original save remains possible. Prove crop/reset/original recovery, export/restore and Save atomicity; cancellation/replacement/retry/dismiss/save races cannot publish stale results. Validate offline/no photo sent for removal, physical API/device boundaries, latency/memory, enlarged edge inspection, accessibility/appearance/keyboard adaptation and representative consented corpus against manual original baseline. Paper uses identical atlas pixels and establishes no mask-quality or native-runtime pass.
 
 ## Evidence meanings
 

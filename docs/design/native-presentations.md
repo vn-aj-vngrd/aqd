@@ -8,7 +8,7 @@ Refined October 1, 2026 against [Apple Design Resources](https://developer.apple
 
 Leading header exits use the native glass Back chevron at the leading edge, with the navigation title independently centered, including standalone forms and setup. Back returns to the previous screen/task step, or dismisses a task root to its originating screen, without committing. Preserve parent drafts and pending return intent. Cancel is reserved for trailing search controls and native decisions; Close/Done dismisses a read-only sheet. Never show Back and Cancel for the same outcome, including a second dismissal button in the body. Search has one trailing native Cancel across initial, focused, result, loading, error and offline states; it restores the source scope and scroll.
 
-Standalone forms and nested steps use one leading neutral glass Back button. At a task root, Back restores the originating screen without committing; within a task, it returns one step with the draft retained. Back or interactive dismissal that would lose unsaved edits opens the native Discard changes / Keep editing confirmation. Do not silently save on exit. Do not place a Cancel text pill before the title or add an equivalent toolbar/body exit. Search keeps trailing Cancel; native alerts and action sheets retain their safe Cancel actions.
+Standalone forms and nested steps use one leading neutral glass Back button. At a task root, Back restores the originating screen without committing; within a task, it returns one step with the draft retained. Back or interactive dismissal that would lose unsaved edits opens a contextual native Discard changes / Cancel decision. Cancel keeps editing; no silent save. Routine intentional draft choices use an action sheet; uncommon, substantial unrecoverable loss may require an alert. Do not silently save on exit. Do not place a Cancel text pill before the title or add an equivalent toolbar/body exit. Search keeps trailing Cancel; native alerts and action sheets retain their safe Cancel actions.
 
 | Existing flow | Exit contract |
 | --- | --- |
@@ -23,7 +23,92 @@ Standalone forms and nested steps use one leading neutral glass Back button. At 
 | S09 publish, I05 compose, U02 edit profile, U15 typed deletion review, Agent review sheets | One leading glass Back. U15 Back returns to settings without deleting; the final native destructive confirmation retains its own safe Cancel. |
 | S10 safety destination and pushed details | Back only; remove duplicate body Cancel. Native action sheets/alerts retain their own OS Cancel group. |
 
-Canonical screens, page-00 masters, larger-text references and V2 review copies use the same exit contract. An alert's safe Cancel is a separate decision within the alert, not a duplicate navigation exit behind it.
+Canonical screens, reusable Foundation primitives, phase-owned larger-text references and V2 review copies use the same exit contract. An alert's safe Cancel is a separate decision within the alert, not a duplicate navigation exit behind it.
+
+## Outfit and receipt trailing More
+
+October 7 [scoped evidence](evidence/ui-refinements.json): outfit detail L08/W15 uses a 44-point trailing ellipsis **More** native Menu with Edit outfit, favorite toggle and destructive Delete last in a separate group. Retained L124 is a contextual open STATE over L08, not a pushed options page; generic and V2 phase menu examples share registered22-point command symbols, without disclosure chevrons, popup headers, Close or grabbers. The OS owns menu geometry/material/adaptation. Hide duplicate body Edit; preserve Plan/Wear and V2 explicit Publish review.
+
+Saved receipts L27/A04 keep Open outfit/Plan primaries and move management into More. Edit outfit opens L133 (V1) or W13 saved-record edit mode (V2), with the same outfit ID/expected revision and Save changes; creation mode is unchanged. Back to conversation is included only for an acknowledged Agent-origin operation plus retained authorized conversation/response; omit it for manual saves or unavailable context. A20 response-feedback receipt's More contains only that guarded conversation return; Update feedback remains separate. Pending/unknown A22/A09 never imply success. Feedback remains V2-extension-only.
+
+Dismiss Menu before editor, Agent return or confirmation. Revalidate ownership, revision and return context. Clean Back/dismissal writes nothing and restores focus/scroll; dirty exit protects drafts; failure preserves prior records, unknown completion reconciles the existing operation. V1 Delete uses L140; V2 linked impact retains necessary ZMA-0 publication review before XSH-0, never a stacked Menu/alert or implicit publication. Added open references ZRD-0 (V1 L27), ZTD-0 (V2 A04), ZVD-0 (V2 W15) and ZXE-0 (V2 A20) are four reference roots, not canonical routes or extra confirmations. Native acceptance remains outstanding.
+
+## Confirmation states, not pushed screens
+
+October 6 owner-approved rule applies to both V1 and V2. A confirmation is an overlay on the actual originating screen, not a new navigation destination. Existing confirmation IDs remain useful Paper state references; do not implement them as extra pushed pages. Keep the selected record, draft, scroll and invoking control behind the native presentation. Reference fixtures never hard-code the runtime return route.
+
+| Risk / task | Native presentation | Required behavior |
+| --- | --- | --- |
+| Critical, uncommon loss: erase the local closet, replace the current store, delete an account, substantial unrecoverable edits or an actual financial commitment | Native alert for the final decision | Concise specific title, necessary impact message, deliberate action and Cancel. Preserve mandatory typed review, authentication, validation and transaction reconciliation in their real preceding task. No outside tap confirms a destructive action. |
+| Intentional, bounded choices: delete a theme/outfit/piece/memory/conversation, remove a plan, sign out, block or routine draft discard | Native confirmationDialog/action sheet | Show the owner underneath; destructive command when appropriate, with a separate Cancel group. Retain exactly scoped consequences. Theme removal never deletes outfits/pieces/wear; sign-out is not erase. Native system dismissal, where permitted, equals Cancel. |
+| Common undoable action or unchanged dismissal | Direct action + honest Undo, or dismissal | Avoid redundant interruption. Undo must be real, not a promised fallback where recovery is unavailable. |
+| Rich import/restore/upload/payment/publication review or required verification/input | Existing native review/form task | Do not collapse necessary input, scope review or validation into a two-button dialog. Use a final overlay only when its risk requires a separate deliberate decision. |
+| Unknown save/send completion | Existing reconciliation state | Never turn an unknown result into blind Retry, Discard or an assumed completed mutation. |
+
+Apple recommends action sheets for related choices after an intentional action, including saving/deleting a draft; alerts are reserved for critical information and uncommon irreversible decisions. Keep titles short, include a message only when it adds necessary scope, and use explicit action verbs. The safe action is **Cancel**: bottom group in an action sheet, normally leading in a horizontal alert. Cancel, outside/system dismissal where supported and interruption never commit. Keep action sheets to at most four actions including Cancel. Restore accessibility focus to the trigger; keep the obscured host out of focus while presented.
+
+The critical draft-loss exception requires all of: an explicit exit request, substantial actual changed content, no autosaved/restorable draft or Undo, and no in-flight write or unknown completion. The10-date V1 and12-date V2 fixtures demonstrate qualifying scope, not a universal numeric threshold. Otherwise use routine scoped discard or clean dismissal; reconcile unknown writes before offering loss decisions.
+
+An iPhone action sheet is not a custom draggable mini-form. SwiftUI `confirmationDialog` or UIKit action-sheet presentation adapts to the device/size class; iPad can use an anchored popover. Do not assume all native dialogs swipe away, or that bottom sheets are mobile-only. Critical decisions require an explicit choice. The OS owns scrim, material, sizing, animation, accessibility and supported dismissal; Paper illustrates the state only. Avoid layering a new confirmation over an undismissed command popup.
+
+Primary guidance: [Apple Alerts](https://developer.apple.com/design/human-interface-guidelines/alerts), [Action sheets](https://developer.apple.com/design/human-interface-guidelines/action-sheets) and [SwiftUI confirmationDialog](https://developer.apple.com/documentation/swiftui/view/confirmationdialog(_:ispresented:titlevisibility:actions:message:)). Reviewed the public Apple DocC [Alerts JSON](https://developer.apple.com/tutorials/data/design/human-interface-guidelines/alerts.json) and [Action sheets JSON](https://developer.apple.com/tutorials/data/design/human-interface-guidelines/action-sheets.json) after the JavaScript page fetch was unavailable. This is guidance, not device acceptance.
+
+## Prepared confirmation state map
+
+Both phases now illustrate decisions over their source context. The register covers17 V1 native decisions and21 V2 native decisions, including the retained nested U12 journey copy, plus a direct piece-photo-removal result and any required linked-impact review. Ten existing canonical IDs and that nested copy keep their control identities; new roots are reference-only. Registered screen/state IDs remain380; these drawings add no pushed runtime routes. The full baseline classifications and final state contracts are in [confirmation evidence](evidence/native-confirmations.json). Baseline candidate text/visibility is not current post-conversion evidence.
+
+### V1
+
+| State / Paper node | Actual caller illustrated | Native decision / preserved scope |
+| --- | --- | --- |
+| L139 `RXW-0` | L34 `L7F-0`, selected Weekend | Action sheet; theme/memberships only, not outfits/pieces/wear |
+| L140 `RYS-0` | L08 `JVS-0`, selected outfit | Action sheet; outfit/memberships/future-plan impact, historical and memory snapshots retained |
+| L138 `RX0-0` | L21 `K9I-0`, selected piece | Action sheet for linked-plan impact; unlinked routine archive may act directly with real Undo |
+| L141 `RZO-0` | L130 `RHZ-0`, selected wear record | Action sheet; exact wear removal and linked-plan correction |
+| L143 `S1G-0` | L26 `KU5-0`, selected conversation | Action sheet; this conversation only, saved proposals excluded |
+| L156 `SG4-0` | L128 `RG7-0`, selected plan entry | Action sheet; reviewed occurrence/scope only, actual wear and completed past entries retained |
+| L106 `QWN-0` | L75 `ODL-0`, dirty capture fixture | Action sheet; caller-scoped draft discard and pending exit, no silent save |
+| L97 `QKI-0` | L21 `K9I-0`, Cotton shirt | Action sheet; revalidated piece/outfit/theme-membership/future-plan impact, Photos/history/memories preserved |
+| L142 `S0K-0` | L11 `K16-0`, September30 wear | Action sheet; inspect/correct existing wear, never create a duplicate |
+| Delete memory `Z01-0` | L163 `T3X-0` | Action sheet; exact memory and only unreferenced AQD media after commit, no wardrobe/wear or Photos deletion |
+| Discard fit draft `Z1X-0` | L162 `T2C-0` | Action sheet; current draft only, prior saved memory retained |
+| Discard photo edits `Z3U-0` | L77 `OG7-0` | Action sheet; uncommitted crop/rotation only, accepted rendition and piece/fit parent draft retained; clean exit returns directly |
+| Remove fit photo `Z6J-0` | L162 `T2C-0` | Action sheet; draft photo removal only, fit eligibility revalidated |
+| Discard recording `Z8G-0` | L70 `N5P-0` | Action sheet; stop recording first, typed parent draft retained |
+| Major unsaved loss `ZAS-0` | Qualifying cloned L40 draft:10 unsaved date changes, Oct5–16 | Alert only when explicit exit loses substantial multi-date edits with no autosaved/restorable draft or Undo; ordinary L40 remains unchanged and uses routine dismissal policy |
+| Restore commit `ZCU-0` | L15 `KIK-0`, validated archive review | Alert after required validation/impact review; replacement is atomic, not merge; rollback on failure |
+| Erase commit `ZE7-0` | L16 `KJF-0`, typed ERASE review | Alert after exact local impact and typed gate; original Photos/exported archives excluded |
+
+### V2
+
+| State / Paper node | Actual caller illustrated | Native decision / preserved scope |
+| --- | --- | --- |
+| U12 `5B1-0`; journey `DAI-1` | U05 `3B1-0` | Action sheet; account session/cache boundary, unuploaded local changes retained, no erase |
+| Delete theme `XQI-0` | W18 `2X8-0`, Weekend | Action sheet; private theme/memberships only, eight outfits remain |
+| Outfit deletion review `ZMA-0` | W15 `2AY-0`; existing plan/public-snapshot fixtures `2Q3-0` / `39L-0` | Required rich review, not a confirmation; hold an explicit Keep published / Unpublish choice with actual authorized record IDs/revisions |
+| Delete outfit `XSH-0` | Retained `ZMA-0` review, illustrated clone `ZNN-0` | Action sheet after actual plan/public-snapshot review; bind exact Keep published snapshot / Unpublish choice, preserve wear/memory snapshots |
+| Delete piece final `XUH-0` | W12 `21M-0` | Action sheet after exact-impact/authorized scope review; public choices remain explicit |
+| Discard draft `XWH-0` | W13 `26F-0` dirty fixture | Action sheet; actual invoking editor draft only; all forms inherit scoped dismissal, not a fixed W13 return |
+| Major unsaved loss `XZQ-0` | Qualifying planning draft:12 dated assignments/edited notes, Oct7–18, Asia/Manila | Alert only for substantial changed content AND unavailable recoverable draft retention AND no in-flight/unknown write; ordinary W13 remains unchanged |
+| Block person `Y1U-0` | S06 `R7-0`, selected person | Action sheet; exact stable account ID and safety consequences |
+| Unblock person `Y45-0` | U08 `4MW-0`, selected blocked account | Action sheet; actual available identity, no invented person |
+| Decline request `Y5M-0` | I04 `34Z-0`, selected request | Action sheet; request retained on pending/failure |
+| Unpublish look `Y87-0` | U04 `34Y-0`, own published look | Action sheet; revoke selected public access, never expose/delete private journal implicitly |
+| Delete comment `YAI-0` | S22 `8B5-0`, own acknowledged comment | Action sheet; reconcile unknown send first, no unrelated comment deletion |
+| Delete Agent conversation `YCT-0` | A05 `34E-0` | Action sheet; selected conversation, saved wardrobe/proposals excluded |
+| Undo wear `YEJ-0` | P10 `5B0-0`, selected historical record | Action sheet; exact record/date/item set from caller |
+| Discard recording `YI7-0` | A42 `GXL-0` | Action sheet; stop microphone first and retain typed parent draft |
+| Erase local closet `YKL-0` | Shared L16 typed-ERASE review, V2-origin U09 | Alert only after validated ERASE and exact device impact; Cancel keeps review input; account/public deletion remains separate |
+| Replace closet `YMR-0` | Shared L15 review cloned into V2 | Alert for reviewed replacement only; non-replacing account restore remains a task |
+| Delete account final `YO2-0` | U15 `5IZ-0`, validated typed/re-auth review | Alert; reviewed connected/public deletion and retention policy, remote copies cannot be erased |
+| Delete fit memory `YSO-0` | Shared private L163 detail | Action sheet; actual V2 private caller return; cleanup only unreferenced AQD-owned media after commit, preserve other memories and original Photos |
+| Remove fit photo `YUG-0` | Shared private L162 editor | Action sheet; current photo/draft scope, not saved parent or Photos |
+| Remove piece photo `YW9-0` | Current piece draft | Direct action/result reference, not a confirmation; metadata/prior media retained, Save disabled until valid photo, dirty exit protected separately |
+| Remove plan entry `ZGW-0` | P02 `2K0-0`, selected entry | Action sheet; occurrence/future/all scope review when applicable |
+
+Every Cancel preserves the actual source record/draft, selection, scroll and invoking focus. A successful destructive operation returns to the surviving owner/list or resumes the pending exit; it must not return to a deleted detail or a hardcoded fixture. Failed operations keep prior data and show actionable status on the true owner. Unknown completion reconciles the same operation identity before any retry. Do not add success alerts for routine saves, a second confirmation for publication/report review, or executable future payment/moderation controls without their lifecycle.
+
+Foundations `4GB-0` retains generic critical-alert `FJ2-1` and action-sheet `ZGG-0` grammar only. Phase examples live in V1/V2; they are not native components copied verbatim into app code. Static review does not prove Dynamic Type, accessibility focus, native dismissal, iPad adaptation, persistence, authentication or service behavior.
 
 ## Presentation selection
 
@@ -36,7 +121,7 @@ Canonical screens, page-00 masters, larger-text references and V2 review copies 
 | Capture/selection (E06, W06, W14, W16) | Native sheet and system Photos/Camera picker where appropriate | Draft survives picker cancellation/denial; chooser scrolls and grows for accessibility. One presentation at a time. |
 | Forms and review (S09, S11, W17, W20, P03–P05, P08–P09, P12, I05, U02, U11, U15, A03, A06, A10, A19, A23) | Native sheet with a NavigationStack and content-appropriate detents | Use large/full-height form presentation when keyboard or content requires it. Single-view forms use the glass Back chevron leading, an independently centered title, and Save/Done trailing when applicable. Protect unsaved edits with a native keep/discard confirmation. Keep primary action clear, keyboard-safe and disabled/pending states truthful. A19 remains V2. |
 | Safety/request choices (S10, I04) | Native menu, confirmationDialog or sheet according to the content | A short choice uses native commands; report details/review use a sheet. Avoid an unrelated modal stacked on the current popup. |
-| Destructive actions (W12, U12 and committing account deletion) | Native confirmationDialog/alert after any necessary impact/typed review sheet | Explicit target and impact, destructive role and safe Cancel. Cancellation preserves records and drafts. Never treat an alert mockup as a custom full-screen dialog implementation. |
+| Destructive actions (W12, U12 and committing account deletion) | Native action sheet for bounded record choices; critical final alert after any necessary impact/typed review | Apply the risk table above; name target and impact, destructive role and Cancel. Preserve records/drafts on cancellation. The confirmation is a state over its true host, never a pushed full-screen page. |
 | Agent focus and conversation states (A01–A02, A30) | Native full-screen presentation with system navigation | Existing Agent exception: Back restores the originating tab/scroll. Clarification belongs to the conversation; no new modal for every reply. |
 | Response details (A18) | Native sheet; popover may be used in wide layouts | Read-only metadata, scrollable at larger text, no fabricated timing and no custom overlay stack. |
 | Permissions, sharing, text editing, dates | OS permission alert, share sheet, edit menu and date picker | Use the actual system UI; no imitation of a permission dialog or keyboard. E09 describes camera recovery/permission intent. |
@@ -45,7 +130,7 @@ App-owned destination choosers, including Closet Add, Add to Planner and the sha
 
 ## Global open-state appearance
 
-Page 00 **Components · Native controls and open menus** is the shared visual reference, with page-specific examples. These are authored static approximations, not imported Apple kit components. Use actual system components in the app; never reproduce their Paper rectangles as custom presentation code.
+Foundations owns generic native-presentation grammar; the phase-owned **Native controls and open menus** reference retains feature-specific examples. These are authored static approximations, not imported Apple kit components. Use actual system components in the app; never reproduce their Paper rectangles as custom presentation code.
 
 An open command menu uses regular native material, neutral semantic labels and trailing SF Symbols. Keep a fixed symbol lane, concise verb labels, native row spacing, and system section separators. Selected picker choices have a leading native checkmark. Put destructive commands last in a separate group with the system destructive role/red; AQD's muted error token describes inline errors, not native destructive chrome. Do not tint the entire menu blue. No custom header, close button, grabber, chevron or pointer on a short command menu. The system owns positioning, width, shadow, corner shape and any pointer. Paper's 264-point popup and 48-point row illustrate hierarchy only; grow for content, localization and accessibility.
 
@@ -104,13 +189,15 @@ Global acceptance: open/dismiss/reopen from each trigger; compare own/visitor/gu
 
 Only one task presentation owns focus at a time. Dismiss a command menu before pushing a destination or presenting its editor. Nested steps inside a sheet use the sheet's navigation stack; avoid piling unrelated sheets/popovers on top. System alerts may interrupt only when necessary. Return accessibility focus to the initiating control.
 
-For simple choosers, automatic dismissal changes no data. For editors, retain the draft and show a native keep/discard choice when an interactive dismissal would lose edits. Never disable swipe dismissal merely to force engagement. When saving is in flight, communicate the actual state and reconcile unknown completion rather than silently dropping input.
+For simple choosers, automatic dismissal changes no data. For editors, retain the draft and show a native Discard changes / Cancel choice when an interactive dismissal would lose edits; Cancel keeps editing. Intentional routine draft choices use an action sheet; critical unexpected unrecoverable loss uses an alert. Never disable swipe dismissal merely to force engagement. When saving is in flight, communicate the actual state and reconcile unknown completion rather than silently dropping input.
 
 Detents must fit content and adapt to Dynamic Type, keyboard, orientation and available height. Content scrolls at the large detent; controls remain in safe areas. Native dismissal, background dimming, Liquid Glass and Reduce Transparency/Increase Contrast remain system-owned. Paper dimensions and corner values are reference geometry, not values to override native presentation chrome.
 
 ## Paper review scope
 
-W30 is the Closet More native-menu popup reference. W05 now shows Closet beneath its dimmed native bottom sheet. Reviewed both for context, spacing, contrast, alignment and fit. Page 00 now includes a global open-state/control reference with per-page content and dark/opaque variants. X07 now separates a bottom-docked keyboard layout reference from search results. All drawings are authored approximations; the Apple kit components were not imported. This is design/docs only; device behavior, actual detents, dismissal, focus and materials remain implementation checks. No screenshots were saved.
+W30 is the Closet More native-menu popup reference. W05 shows Closet beneath its dimmed native chooser. Earlier context/spacing/contrast/alignment checks remain historical evidence. Feature-specific open menus and dark/opaque phone references now live in the owning phase; Foundations contains generic presentation/control grammar only. X07 separates a bottom-docked keyboard reference from search results. All drawings are authored approximations, not imported Apple kit components.
+
+The October6 confirmation pass covers the prepared state map above, source-context clones and generic Foundations alert/action-sheet grammar. Bounded family renders and measured action checks are recorded in [confirmation evidence](evidence/native-confirmations.json); they do not certify every canvas root. Actual native geometry, materials, dismissal, accessibility, persistence and service behavior remain implementation/device checks.
 
 Additional primary references: [Toggles](https://developer.apple.com/design/human-interface-guidelines/toggles), [Context menus](https://developer.apple.com/design/human-interface-guidelines/context-menus), and [SwiftUI modal presentations](https://developer.apple.com/documentation/swiftui/modal-presentations).
 

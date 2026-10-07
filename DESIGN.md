@@ -80,6 +80,8 @@ Photographic corners: 4 pt. Opaque input shells: 16 pt (multiline composers: 28 
 
 Profile/settings controls share an opaque grouped surface: white surface in light appearance, semantic dark surface in dark appearance, 12-point corners and 14-point inset row separators. Related rows touch within one group; section descriptions and identity summaries remain outside it. Use the same surface/spacing roles in V1, V2 and admin Settings, adapting typography and controls to each platform. [Settings group](docs/design/components.md#reusable-settings-group) owns the shared contract.
 
+Confirmations are contextual native overlay states, not extra pushed screens. Use critical alerts for uncommon irreversible/high-stakes loss and native action sheets for intentional bounded choices; retain necessary impact/typed review and verification before the final decision. Cancel always preserves the source and draft. Follow the [confirmation policy](docs/design/native-presentations.md#confirmation-states-not-pushed-screens); the OS owns appearance, adaptation and dismissal.
+
 Touch targets are at least 44 × 44 pt. Primary content action: base 50 pt tall, 17 pt medium label, 20 pt horizontal padding. Header Back and toolbar controls retain native chrome. Content secondary/cancel actions follow the plain text pattern with action-text labels, at least 44-point targets and regular weight; destructive and disabled states retain their semantic colors. One action dominates each task step. Loading preserves control width and blocks duplicate submission.
 
 ## Apply the foundations
