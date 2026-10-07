@@ -25,6 +25,9 @@ supabase/.branches/
 node_modules/
 *.log
 
+# Local Pi agent state
+/.pi/
+
 # Temporary design review captures; retain structured handoff records
 docs/design/evidence/*
 !docs/design/evidence/fit-journal-states.json
