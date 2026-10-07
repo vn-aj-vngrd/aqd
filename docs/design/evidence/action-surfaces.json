@@ -1,0 +1,3241 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "tokenHash": "fdeb7346",
+  "scope": "Bounded standalone selection/configuration-field affordance repair. Not a global app UI audit or native implementation.",
+  "mode": "Operate; existing AQD native-neutral visual world preserved",
+  "counts": {
+    "queryCandidates": 128,
+    "repairedRows": 16,
+    "styleTargets": 64,
+    "touchedRoots": 10
+  },
+  "ownDelta": {
+    "nodes": 0,
+    "roots": 0,
+    "tokens": 0,
+    "text": 0,
+    "icons": 0,
+    "reparenting": 0
+  },
+  "countPolicy": "Own operation ledger only; global root/node counts can change concurrently and are not attributed to this worker. No create/delete/clone/move/token/text operation occurred.",
+  "coverageQueries": [
+    {
+      "query": {
+        "pageId": "p-1-0",
+        "filters": [
+          {
+            "styleName": "borderBottomWidth",
+            "styleValue": "1px"
+          },
+          {
+            "styleName": "minHeight",
+            "styleValue": "54px"
+          },
+          {
+            "styleName": "gap",
+            "styleValue": "12px"
+          }
+        ],
+        "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0"
+      },
+      "count": 2
+    },
+    {
+      "query": {
+        "pageId": "p-2-0",
+        "filters": [
+          {
+            "styleName": "borderBottomWidth",
+            "styleValue": "1px"
+          },
+          {
+            "styleName": "minHeight",
+            "styleValue": "54px"
+          },
+          {
+            "styleName": "gap",
+            "styleValue": "12px"
+          }
+        ],
+        "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0"
+      },
+      "count": 21
+    },
+    {
+      "query": {
+        "pageId": "p-B-0",
+        "filters": [
+          {
+            "styleName": "borderBottomWidth",
+            "styleValue": "1px"
+          },
+          {
+            "styleName": "minHeight",
+            "styleValue": "54px"
+          },
+          {
+            "styleName": "gap",
+            "styleValue": "12px"
+          }
+        ],
+        "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0"
+      },
+      "count": 101
+    },
+    {
+      "query": {
+        "pageId": "p-1-0",
+        "filters": [
+          {
+            "styleName": "minHeight",
+            "styleValue": "32px"
+          },
+          {
+            "styleName": "gap",
+            "styleValue": "12px"
+          }
+        ],
+        "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0"
+      },
+      "count": 0
+    },
+    {
+      "query": {
+        "pageId": "p-2-0",
+        "filters": [
+          {
+            "styleName": "minHeight",
+            "styleValue": "32px"
+          },
+          {
+            "styleName": "gap",
+            "styleValue": "12px"
+          }
+        ],
+        "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0"
+      },
+      "count": 0
+    },
+    {
+      "query": {
+        "pageId": "p-B-0",
+        "filters": [
+          {
+            "styleName": "minHeight",
+            "styleValue": "32px"
+          },
+          {
+            "styleName": "gap",
+            "styleValue": "12px"
+          }
+        ],
+        "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0"
+      },
+      "count": 4
+    }
+  ],
+  "discoveryLimits": "Three page-scoped bottom-rule54pt/12-gap queries; follow-up compact32pt/12-gap queries and direct sibling/subtree inspection. No35k-node JSX/CSS sweep, no any-chevron-means-interactive assumption. Source contracts v1-interactions, components, planner-calendar, outfits-themes; V2 same retained source families/legacy copies. Matching ordinary fields and already opaque groups retained.",
+  "rows": [
+    {
+      "pageId": "p-2-0",
+      "rootId": "K4P-0",
+      "rootName": "04.03 \u00b7 L18 \u00b7 Suggest an outfit",
+      "nodeId": "K58-0",
+      "parentId": "K4R-0",
+      "label": {
+        "nodeId": "K5D-0",
+        "text": "Start with a piece"
+      },
+      "value": {
+        "nodeId": "K5C-0",
+        "text": "Cotton shirt \u00b7 Pinned"
+      },
+      "accessoryId": "K59-0",
+      "sourcePurpose": "Choose an owned starter piece and preserve pin in suggested-outfit draft; no generation or save on row activation (outfits-themes.md assisted creation).",
+      "changes": [
+        {
+          "nodeId": "K58-0",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px",
+            "borderBottomWidth": "1px",
+            "borderBottomStyle": "solid",
+            "borderBottomColor": "var(--color-line)"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "K5D-0",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "K5C-0",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "168px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "K59-0",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "K58-0",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "2QN-0",
+      "rootName": "W17 \u00b7 Suggest an outfit",
+      "nodeId": "2TS-0",
+      "parentId": "2TJ-0",
+      "label": {
+        "nodeId": "2TT-0",
+        "text": "Start with a piece"
+      },
+      "value": {
+        "nodeId": "2TU-0",
+        "text": "Cotton shirt \u00b7 Pinned"
+      },
+      "accessoryId": "2TV-0",
+      "sourcePurpose": "Choose an owned starter piece and preserve pin in suggested-outfit draft; no generation or save on row activation (outfits-themes.md assisted creation).",
+      "changes": [
+        {
+          "nodeId": "2TS-0",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "32px",
+            "gap": "12px",
+            "height": "32px",
+            "justifyContent": "center",
+            "paddingInline": "14px",
+            "flexShrink": "0"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "height": "fit-content",
+            "justifyContent": "center",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "paddingInline": "14px",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "2TT-0",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "14px",
+            "lineHeight": "20px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "14px",
+            "lineHeight": "20px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "2TU-0",
+          "before": {
+            "fontSize": "14px",
+            "maxWidth": "168px",
+            "textAlign": "right",
+            "lineHeight": "20px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "fontSize": "14px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "lineHeight": "20px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "2TV-0",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "2TS-0",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "QGO-0",
+      "rootName": "02.12 \u00b7 L94 \u00b7 Piece details",
+      "nodeId": "QH7-0",
+      "parentId": "QH0-0",
+      "label": {
+        "nodeId": "QHC-0",
+        "text": "Condition and time owned"
+      },
+      "value": {
+        "nodeId": "QHB-0",
+        "text": "Add"
+      },
+      "accessoryId": "QH8-0",
+      "sourcePurpose": "Open existing L95/W21 additional-details editor with actual capture/saved-piece context; retain prior fields and saved identity.",
+      "changes": [
+        {
+          "nodeId": "QH7-0",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px",
+            "borderBottomWidth": "1px",
+            "borderBottomStyle": "solid",
+            "borderBottomColor": "var(--color-line)"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "QHC-0",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "QHB-0",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "140px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "QH8-0",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "QH7-0",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "QGO-0",
+      "rootName": "02.12 \u00b7 L94 \u00b7 Piece details",
+      "nodeId": "QH1-0",
+      "parentId": "QH0-0",
+      "label": {
+        "nodeId": "QH6-0",
+        "text": "Prior wear estimate"
+      },
+      "value": {
+        "nodeId": "QH5-0",
+        "text": "0"
+      },
+      "accessoryId": "QH2-0",
+      "sourcePurpose": "Edit prior-wear estimate in existing piece draft; estimate is not actual recorded wear.",
+      "changes": [
+        {
+          "nodeId": "QH1-0",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "QH6-0",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "QH5-0",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "140px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "QH2-0",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "QH1-0",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "1UE-0",
+      "rootName": "W09 \u00b7 Piece details \u00b7 Saved-record editor",
+      "nodeId": "1VJ-0",
+      "parentId": "1VE-0",
+      "label": {
+        "nodeId": "1VK-0",
+        "text": "Condition and ownership age"
+      },
+      "value": {
+        "nodeId": "1VL-0",
+        "text": "Add"
+      },
+      "accessoryId": "1VM-0",
+      "sourcePurpose": "Open existing L95/W21 additional-details editor with actual capture/saved-piece context; retain prior fields and saved identity.",
+      "changes": [
+        {
+          "nodeId": "1VJ-0",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px",
+            "borderBottomWidth": "1px",
+            "borderBottomStyle": "solid",
+            "borderBottomColor": "var(--color-line)"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "1VK-0",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "1VL-0",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "140px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "1VM-0",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "1VJ-0",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "1UE-0",
+      "rootName": "W09 \u00b7 Piece details \u00b7 Saved-record editor",
+      "nodeId": "1VP-0",
+      "parentId": "1VE-0",
+      "label": {
+        "nodeId": "1VQ-0",
+        "text": "Prior wear estimate"
+      },
+      "value": {
+        "nodeId": "1VR-0",
+        "text": "0"
+      },
+      "accessoryId": "1VS-0",
+      "sourcePurpose": "Edit prior-wear estimate in existing piece draft; estimate is not actual recorded wear.",
+      "changes": [
+        {
+          "nodeId": "1VP-0",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "1VQ-0",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "1VR-0",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "140px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "1VS-0",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "1VP-0",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DPT-1",
+      "rootName": "12 \u00b7 Wardrobe lifecycle and history",
+      "nodeId": "DSI-1",
+      "parentId": "DSD-1",
+      "label": {
+        "nodeId": "DSJ-1",
+        "text": "Condition and ownership age"
+      },
+      "value": {
+        "nodeId": "DSK-1",
+        "text": "Add"
+      },
+      "accessoryId": "DSL-1",
+      "sourcePurpose": "Open existing L95/W21 additional-details editor with actual capture/saved-piece context; retain prior fields and saved identity.",
+      "changes": [
+        {
+          "nodeId": "DSI-1",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px",
+            "borderBottomWidth": "1px",
+            "borderBottomStyle": "solid",
+            "borderBottomColor": "var(--color-line)"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "DSJ-1",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "DSK-1",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "140px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "DSL-1",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "DSI-1",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DPT-1",
+      "rootName": "12 \u00b7 Wardrobe lifecycle and history",
+      "nodeId": "DSO-1",
+      "parentId": "DSD-1",
+      "label": {
+        "nodeId": "DSP-1",
+        "text": "Prior wear estimate"
+      },
+      "value": {
+        "nodeId": "DSQ-1",
+        "text": "0"
+      },
+      "accessoryId": "DSR-1",
+      "sourcePurpose": "Edit prior-wear estimate in existing piece draft; estimate is not actual recorded wear.",
+      "changes": [
+        {
+          "nodeId": "DSO-1",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "DSP-1",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "DSQ-1",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "140px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "DSR-1",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "DSO-1",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "22T-0",
+      "rootName": "REFERENCE \u00b7 D03 \u00b7 New piece \u00b7 Larger text",
+      "nodeId": "23T-0",
+      "parentId": "23S-0",
+      "label": {
+        "nodeId": "23U-0",
+        "text": "Photo"
+      },
+      "value": {
+        "nodeId": "23V-0",
+        "text": "1 selected"
+      },
+      "accessoryId": "23W-0",
+      "sourcePurpose": "Existing larger-text capture selection/detail entry; retain selected photo/metadata draft and canonical label size.",
+      "changes": [
+        {
+          "nodeId": "23T-0",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px",
+            "borderBottomWidth": "1px",
+            "borderBottomStyle": "solid",
+            "borderBottomColor": "var(--color-line)"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "23U-0",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "22px",
+            "lineHeight": "31px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "22px",
+            "lineHeight": "31px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "23V-0",
+          "before": {
+            "fontSize": "19px",
+            "maxWidth": "140px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "24px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "19px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "24px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "23W-0",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "23T-0",
+        "widthPx": 350,
+        "heightPx": 59,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "22T-0",
+      "rootName": "REFERENCE \u00b7 D03 \u00b7 New piece \u00b7 Larger text",
+      "nodeId": "23Z-0",
+      "parentId": "23S-0",
+      "label": {
+        "nodeId": "240-0",
+        "text": "More details"
+      },
+      "value": {
+        "nodeId": "241-0",
+        "text": ""
+      },
+      "accessoryId": "242-0",
+      "sourcePurpose": "Existing larger-text capture selection/detail entry; retain selected photo/metadata draft and canonical label size.",
+      "changes": [
+        {
+          "nodeId": "23Z-0",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "240-0",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "22px",
+            "lineHeight": "31px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "22px",
+            "lineHeight": "31px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "241-0",
+          "before": {
+            "fontSize": "19px",
+            "maxWidth": "140px",
+            "textAlign": "right",
+            "display": "none",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "24px",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "19px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "display": "none",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "24px",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "242-0",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "23Z-0",
+        "widthPx": 350,
+        "heightPx": 59,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5XK-0",
+      "rootName": "E12 \u00b7 First piece saved",
+      "nodeId": "5ZO-0",
+      "parentId": "5YN-0",
+      "label": {
+        "nodeId": "5ZP-0",
+        "text": "Set style preferences"
+      },
+      "value": {
+        "nodeId": "5ZQ-0",
+        "text": "Optional"
+      },
+      "accessoryId": "5ZR-0",
+      "sourcePurpose": "Open existing Style preference flow from first-piece receipt; preserve private piece and prior source.",
+      "changes": [
+        {
+          "nodeId": "5ZO-0",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px",
+            "borderBottomWidth": "1px",
+            "borderBottomStyle": "solid",
+            "borderBottomColor": "var(--color-line)"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "5ZP-0",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "#000000"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "#000000"
+          }
+        },
+        {
+          "nodeId": "5ZQ-0",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "168px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "5ZR-0",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "5ZO-0",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AT9-1",
+      "rootName": "01 \u00b7 Welcome and capture",
+      "nodeId": "B04-1",
+      "parentId": "AZR-1",
+      "label": {
+        "nodeId": "B05-1",
+        "text": "Set style preferences"
+      },
+      "value": {
+        "nodeId": "B06-1",
+        "text": "Optional"
+      },
+      "accessoryId": "B07-1",
+      "sourcePurpose": "Open existing Style preference flow from first-piece receipt; preserve private piece and prior source.",
+      "changes": [
+        {
+          "nodeId": "B04-1",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px",
+            "borderBottomWidth": "1px",
+            "borderBottomStyle": "solid",
+            "borderBottomColor": "var(--color-line)"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "B05-1",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "#000000"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "#000000"
+          }
+        },
+        {
+          "nodeId": "B06-1",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "168px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "B07-1",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "B04-1",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "SEL-0",
+      "rootName": "05.15 \u00b7 L155 \u00b7 New event or trip",
+      "nodeId": "SF9-0",
+      "parentId": "SEN-0",
+      "label": {
+        "nodeId": "SFE-0",
+        "text": "Timezone"
+      },
+      "value": {
+        "nodeId": "SFD-0",
+        "text": "Asia/Seoul"
+      },
+      "accessoryId": "SFA-0",
+      "sourcePurpose": "Existing timezone choice retains trip/plan date and parent draft; no implicit date shift or wear.",
+      "changes": [
+        {
+          "nodeId": "SF9-0",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px",
+            "borderBottomWidth": "1px",
+            "borderBottomStyle": "solid",
+            "borderBottomColor": "var(--color-line)"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "SFE-0",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "SFD-0",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "168px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "SFA-0",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "SF9-0",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "SEL-0",
+      "rootName": "05.15 \u00b7 L155 \u00b7 New event or trip",
+      "nodeId": "SF3-0",
+      "parentId": "SEN-0",
+      "label": {
+        "nodeId": "SF8-0",
+        "text": "Destination"
+      },
+      "value": {
+        "nodeId": "SF7-0",
+        "text": "Seoul"
+      },
+      "accessoryId": "SF4-0",
+      "sourcePurpose": "Existing inline Destination editor; hidden disclosure intentionally stays hidden, not converted into a new picker. Remove lone bottom rule only.",
+      "changes": [
+        {
+          "nodeId": "SF3-0",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px",
+            "padding": "14px",
+            "borderRadius": "16px",
+            "backgroundColor": "var(--color-surface)",
+            "borderBottomWidth": "1px",
+            "borderBottomStyle": "solid",
+            "borderBottomColor": "var(--color-line)"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "SF8-0",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "SF7-0",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "168px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "SF4-0",
+          "before": {
+            "width": "24px",
+            "display": "none",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "none",
+            "flexShrink": "0",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "SF3-0",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AU8-1",
+      "rootName": "06 \u00b7 Trip and packing",
+      "nodeId": "C37-1",
+      "parentId": "C2Y-1",
+      "label": {
+        "nodeId": "C38-1",
+        "text": "Timezone"
+      },
+      "value": {
+        "nodeId": "C39-1",
+        "text": "Asia/Seoul"
+      },
+      "accessoryId": "C3A-1",
+      "sourcePurpose": "Existing timezone choice retains trip/plan date and parent draft; no implicit date shift or wear.",
+      "changes": [
+        {
+          "nodeId": "C37-1",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px",
+            "borderBottomWidth": "1px",
+            "borderBottomStyle": "solid",
+            "borderBottomColor": "var(--color-line)"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "C38-1",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "C39-1",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "168px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "C3A-1",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "C37-1",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AU8-1",
+      "rootName": "06 \u00b7 Trip and packing",
+      "nodeId": "C3J-1",
+      "parentId": "C2Y-1",
+      "label": {
+        "nodeId": "C3K-1",
+        "text": "Choose outfits"
+      },
+      "value": {
+        "nodeId": "C3L-1",
+        "text": "14 dates"
+      },
+      "accessoryId": "C3M-1",
+      "sourcePurpose": "Existing trip outfit selection/review for14 dates; parent reviewed atomic Save remains boundary.",
+      "changes": [
+        {
+          "nodeId": "C3J-1",
+          "before": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "54px",
+            "gap": "12px"
+          },
+          "after": {
+            "display": "flex",
+            "alignItems": "center",
+            "minHeight": "52px",
+            "gap": "12px",
+            "flexShrink": "0",
+            "height": "fit-content",
+            "padding": "14px",
+            "borderRadius": "var(--radius-16)",
+            "backgroundColor": "var(--color-surface)"
+          }
+        },
+        {
+          "nodeId": "C3K-1",
+          "before": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          },
+          "after": {
+            "flexGrow": "1",
+            "flexBasis": "0%",
+            "fontSize": "17px",
+            "lineHeight": "24px",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "color": "var(--color-ink)"
+          }
+        },
+        {
+          "nodeId": "C3L-1",
+          "before": {
+            "fontSize": "15px",
+            "maxWidth": "168px",
+            "textAlign": "right",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          },
+          "after": {
+            "fontSize": "15px",
+            "maxWidth": "144px",
+            "textAlign": "right",
+            "minWidth": "0px",
+            "whiteSpace": "pre-wrap",
+            "fontFamily": "system-ui, sans-serif",
+            "fontWeight": 400,
+            "lineHeight": "18px",
+            "display": "flex",
+            "justifyContent": "end",
+            "flexWrap": "wrap",
+            "color": "var(--color-secondary)"
+          }
+        },
+        {
+          "nodeId": "C3M-1",
+          "before": {
+            "width": "24px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0"
+          },
+          "after": {
+            "width": "22px",
+            "display": "flex",
+            "justifyContent": "center",
+            "flexShrink": "0",
+            "alignItems": "center",
+            "height": "22px",
+            "minWidth": "22px"
+          }
+        }
+      ],
+      "renderedBounds": {
+        "nodeId": "C3J-1",
+        "widthPx": 350,
+        "heightPx": 52,
+        "scale": 1,
+        "method": "Rendered JPEG SOF header at 1x, not inactive-page null layout"
+      },
+      "textIdsChildrenParentsUnchanged": true
+    }
+  ],
+  "candidateDisposition": [
+    {
+      "pageId": "p-1-0",
+      "rootId": "4LD-0",
+      "nodeId": "NR4-0",
+      "parentId": "NQL-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (NR4-0) ?\u00d7?\n  Text \"Preference\" (NR9-0) ?\u00d7? \"Preference\"\n  Text \"Current value\" (NR8-0) ?\u00d7? \"Current value\"\n  Frame \"Frame\" (NR5-0) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (NR6-0) ?\u00d7?\n      SVGVisualElement \"Path\" (NR7-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-1-0",
+      "rootId": "4LD-0",
+      "nodeId": "NQY-0",
+      "parentId": "NQL-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (NQY-0) ?\u00d7?\n  Text \"Options\" (NR3-0) ?\u00d7? \"Options\"\n  Rectangle \"Rectangle\" (NR2-0) ?\u00d7?\n  Frame \"Frame\" (NQZ-0) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (NR0-0) ?\u00d7?\n      SVGVisualElement \"Path\" (NR1-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "K4P-0",
+      "nodeId": "K58-0",
+      "parentId": "K4R-0",
+      "disposition": "repaired-standalone-field",
+      "observedSemanticTree": "Frame \"Frame\" (K58-0) 350\u00d754\n  Text \"Start with a piece\" (K5D-0) 161\u00d724 \"Start with a piece\"\n  Text \"Cotton shirt \u00b7 Pinne\u2026\" (K5C-0) 141\u00d718 \"Cotton shirt \u00b7 Pinned\"\n  Frame \"Frame\" (K59-0) 24\u00d722\n    SVG \"SVG\" (K5A-0) 22\u00d722\n      SVGVisualElement \"Path\" (K5B-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "QKI-0",
+      "nodeId": "QLD-0",
+      "parentId": "QKK-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (QLD-0) ?\u00d7?\n  Text \"Saved outfits\" (QLI-0) ?\u00d7? \"Saved outfits\"\n  Text \"2 affected\" (QLH-0) ?\u00d7? \"2 affected\"\n  Frame \"Frame\" (QLE-0) ?\u00d7?\n    SVG \"SVG\" (QLF-0) ?\u00d7?\n      SVGVisualElement \"Path\" (QLG-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "QKI-0",
+      "nodeId": "QL7-0",
+      "parentId": "QKK-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (QL7-0) ?\u00d7?\n  Text \"Future plans\" (QLC-0) ?\u00d7? \"Future plans\"\n  Text \"1 becomes unassigned\" (QLB-0) ?\u00d7? \"1 becomes unassigned\"\n  Frame \"Frame\" (QL8-0) ?\u00d7?\n    SVG \"SVG\" (QL9-0) ?\u00d7?\n      SVGVisualElement \"Path\" (QLA-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "QSL-0",
+      "nodeId": "QT6-0",
+      "parentId": "QSN-0",
+      "disposition": "excluded-readonly-metadata-or-impact",
+      "observedSemanticTree": "Frame \"Frame\" (QT6-0) 350\u00d754\n  Frame \"Frame\" (QT8-0) 281\u00d724\n    Text \"Generated\" (QT9-0) 281\u00d724 \"Generated\"\n  Text \"9:41 AM\" (QT7-0) 57\u00d724 \"9:41 AM\""
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "QSL-0",
+      "nodeId": "QT2-0",
+      "parentId": "QSN-0",
+      "disposition": "excluded-readonly-metadata-or-impact",
+      "observedSemanticTree": "Frame \"Frame\" (QT2-0) 350\u00d754\n  Frame \"Frame\" (QT4-0) 304\u00d724\n    Text \"Response time\" (QT5-0) 304\u00d724 \"Response time\"\n  Text \"8.2 s\" (QT3-0) 34\u00d724 \"8.2 s\""
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "QSL-0",
+      "nodeId": "QSY-0",
+      "parentId": "QSN-0",
+      "disposition": "excluded-readonly-metadata-or-impact",
+      "observedSemanticTree": "Frame \"Frame\" (QSY-0) 350\u00d754\n  Frame \"Frame\" (QT0-0) 306\u00d724\n    Text \"First text appeared\" (QT1-0) 306\u00d724 \"First text appeared\"\n  Text \"1.4 s\" (QSZ-0) 32\u00d724 \"1.4 s\""
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "SEL-0",
+      "nodeId": "SF9-0",
+      "parentId": "SEN-0",
+      "disposition": "repaired-standalone-field",
+      "observedSemanticTree": "Frame \"Frame\" (SF9-0) 350\u00d754\n  Text \"Timezone\" (SFE-0) 230\u00d724 \"Timezone\"\n  Text \"Asia/Seoul\" (SFD-0) 72\u00d718 \"Asia/Seoul\"\n  Frame \"Frame\" (SFA-0) 24\u00d722\n    SVG \"SVG\" (SFB-0) 22\u00d722\n      SVGVisualElement \"Path\" (SFC-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "SEL-0",
+      "nodeId": "SF3-0",
+      "parentId": "SEN-0",
+      "disposition": "repaired-standalone-field",
+      "observedSemanticTree": "Frame \"Frame\" (SF3-0) 350\u00d754\n  Text \"Destination\" (SF8-0) 271\u00d724 \"Destination\"\n  Text \"Seoul\" (SF7-0) 39\u00d718 \"Seoul\"\n  Frame \"Frame\" (SF4-0) ?\u00d7?\n    SVG \"SVG\" (SF5-0) ?\u00d7?\n      SVGVisualElement \"Path\" (SF6-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "KU5-0",
+      "nodeId": "KUN-0",
+      "parentId": "KU7-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (KUN-0) 350\u00d754\n  Text \"Tonight\u2019s outfit\" (KUS-0) 260\u00d724 \"Tonight\u2019s outfit\"\n  Text \"Today\" (KUR-0) 42\u00d718 \"Today\"\n  Frame \"Frame\" (KUO-0) 24\u00d722\n    SVG \"SVG\" (KUP-0) 22\u00d722\n      SVGVisualElement \"Path\" (KUQ-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "KU5-0",
+      "nodeId": "KUH-0",
+      "parentId": "KU7-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (KUH-0) 350\u00d754\n  Text \"Office plan\" (KUM-0) 234\u00d724 \"Office plan\"\n  Text \"Yesterday\" (KUL-0) 68\u00d718 \"Yesterday\"\n  Frame \"Frame\" (KUI-0) 24\u00d722\n    SVG \"SVG\" (KUJ-0) 22\u00d722\n      SVGVisualElement \"Path\" (KUK-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "SJC-0",
+      "nodeId": "SJU-0",
+      "parentId": "SJE-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (SJU-0) 350\u00d754\n  Text \"Tonight\u2019s outfit\" (SJZ-0) 260\u00d724 \"Tonight\u2019s outfit\"\n  Text \"Today\" (SJY-0) 42\u00d718 \"Today\"\n  Frame \"Frame\" (SJV-0) 24\u00d722\n    SVG \"SVG\" (SKK-0) 22\u00d722\n      SVGVisualElement \"Path\" (SKL-0) 13\u00d79"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "SJC-0",
+      "nodeId": "SJO-0",
+      "parentId": "SJE-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (SJO-0) 350\u00d754\n  Text \"Office plan\" (SJT-0) 234\u00d724 \"Office plan\"\n  Text \"Yesterday\" (SJS-0) 68\u00d718 \"Yesterday\"\n  Frame \"Frame\" (SJP-0) 24\u00d722\n    SVG \"SVG\" (SJQ-0) 22\u00d722\n      SVGVisualElement \"Path\" (SJR-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "S1G-0",
+      "nodeId": "XZ0-0",
+      "parentId": "XYZ-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (XZ0-0) 350\u00d754\n  Text \"Tonight\u2019s outfit\" (XZ1-0) 260\u00d724 \"Tonight\u2019s outfit\"\n  Text \"Today\" (XZ2-0) 42\u00d718 \"Today\"\n  Frame \"Frame\" (XZ3-0) 24\u00d722\n    SVG \"SVG\" (XZ4-0) 22\u00d722\n      SVGVisualElement \"Path\" (XZ5-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "S1G-0",
+      "nodeId": "XZ6-0",
+      "parentId": "XYZ-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (XZ6-0) 350\u00d754\n  Text \"Office plan\" (XZ7-0) 234\u00d724 \"Office plan\"\n  Text \"Yesterday\" (XZ8-0) 68\u00d718 \"Yesterday\"\n  Frame \"Frame\" (XZ9-0) 24\u00d722\n    SVG \"SVG\" (XZA-0) 22\u00d722\n      SVGVisualElement \"Path\" (XZB-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "QGO-0",
+      "nodeId": "QH7-0",
+      "parentId": "QH0-0",
+      "disposition": "repaired-standalone-field",
+      "observedSemanticTree": "Frame \"Frame\" (QH7-0) 350\u00d754\n  Text \"Condition and time o\u2026\" (QHC-0) 274\u00d724 \"Condition and time owned\"\n  Text \"Add\" (QHB-0) 28\u00d718 \"Add\"\n  Frame \"Frame\" (QH8-0) 24\u00d722\n    SVG \"SVG\" (QH9-0) 22\u00d722\n      SVGVisualElement \"Path\" (QHA-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "22T-0",
+      "nodeId": "23T-0",
+      "parentId": "23S-0",
+      "disposition": "repaired-standalone-field",
+      "observedSemanticTree": "Frame \"Frame\" (23T-0) 350\u00d754\n  Text \"Photo\" (23U-0) 216\u00d731 \"Photo\"\n  Text \"1 selected\" (23V-0) 86\u00d724 \"1 selected\"\n  Frame \"Frame\" (23W-0) 24\u00d722\n    SVG \"SVG\" (23X-0) 22\u00d722\n      SVGVisualElement \"Path\" (23Y-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "X7B-0",
+      "nodeId": "4JO-0",
+      "parentId": "4JN-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4JO-0) 322\u00d754\n  Text \"Add piece\" (4JP-0) 288\u00d724 \"Add piece\"\n  Frame \"Frame\" (4JR-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (WRP-0) 22\u00d722\n      SVGVisualElement \"Path\" (WRQ-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "X7B-0",
+      "nodeId": "4JU-0",
+      "parentId": "4JN-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4JU-0) 322\u00d754\n  Text \"Build outfit\" (4JV-0) 288\u00d724 \"Build outfit\"\n  Frame \"Frame\" (4JX-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (WRS-0) 22\u00d722\n      SVGVisualElement \"Path\" (WRT-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "K9I-0",
+      "nodeId": "KA1-0",
+      "parentId": "K9U-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (KA1-0) 322\u00d754\n  Text \"Details\" (KA6-0) 143\u00d724 \"Details\"\n  Text \"Cotton \u00b7 Relaxed fit\" (KA5-0) 131\u00d718 \"Cotton \u00b7 Relaxed fit\"\n  Frame \"Frame\" (KA2-0) 24\u00d722\n    SVG \"SVG\" (KA3-0) 22\u00d722\n      SVGVisualElement \"Path\" (KA4-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "RX0-0",
+      "nodeId": "XLC-0",
+      "parentId": "XLB-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (XLC-0) 322\u00d754\n  Text \"Details\" (XLD-0) 143\u00d724 \"Details\"\n  Text \"Cotton \u00b7 Relaxed fit\" (XLE-0) 131\u00d718 \"Cotton \u00b7 Relaxed fit\"\n  Frame \"Frame\" (XLF-0) 24\u00d722\n    SVG \"SVG\" (XLG-0) 22\u00d722\n      SVGVisualElement \"Path\" (XLH-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-2-0",
+      "rootId": "QKI-0",
+      "nodeId": "YQ5-0",
+      "parentId": "YQ4-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (YQ5-0) 322\u00d754\n  Text \"Details\" (YQ6-0) 143\u00d724 \"Details\"\n  Text \"Cotton \u00b7 Relaxed fit\" (YQ7-0) 131\u00d718 \"Cotton \u00b7 Relaxed fit\"\n  Frame \"Frame\" (YQ8-0) 24\u00d722\n    SVG \"SVG\" (YQ9-0) 22\u00d722\n      SVGVisualElement \"Path\" (YQA-0) 6\u00d711"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5U6-0",
+      "nodeId": "5V7-0",
+      "parentId": "5UQ-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (5V7-0) ?\u00d7?\n  Text \"Terms of service\" (5V8-0) ?\u00d7? \"Terms of service\"\n  Rectangle \"Rectangle\" (5V9-0) ?\u00d7?\n  Frame \"Frame\" (5VA-0) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (5VB-0) ?\u00d7?\n      SVGVisualElement \"Path\" (5VC-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5XK-0",
+      "nodeId": "5ZO-0",
+      "parentId": "5YN-0",
+      "disposition": "repaired-standalone-field",
+      "observedSemanticTree": "Frame \"Frame\" (5ZO-0) ?\u00d7?\n  Text \"Set style preference\u2026\" (5ZP-0) ?\u00d7? \"Set style preferences\"\n  Text \"Optional\" (5ZQ-0) ?\u00d7? \"Optional\"\n  Frame \"Frame\" (5ZR-0) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (5ZS-0) ?\u00d7?\n      SVGVisualElement \"Path\" (5ZT-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "UF-0",
+      "nodeId": "VH-0",
+      "parentId": "UX-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (VH-0) ?\u00d7?\n  Text \"Make my version\" (VI-0) ?\u00d7? \"Make my version\"\n  Rectangle \"Rectangle\" (VJ-0) ?\u00d7?\n  Frame \"Frame\" (VK-0) 24\u00d7?\n    SVG \"SVG\" (VL-0) ?\u00d7?\n      SVGVisualElement \"Path\" (VM-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "XB-0",
+      "nodeId": "XZ-0",
+      "parentId": "XT-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (XZ-0) ?\u00d7?\n  Text \"Report this post\" (Y0-0) ?\u00d7? \"Report this post\"\n  Rectangle \"Rectangle\" (Y1-0) ?\u00d7?\n  Frame \"Frame\" (Y2-0) 24\u00d7?\n    SVG \"SVG\" (Y3-0) ?\u00d7?\n      SVGVisualElement \"Path\" (Y4-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "XB-0",
+      "nodeId": "Y6-0",
+      "parentId": "XT-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (Y6-0) ?\u00d7?\n  Text \"Report profile\" (Y7-0) ?\u00d7? \"Report profile\"\n  Rectangle \"Rectangle\" (Y8-0) ?\u00d7?\n  Frame \"Frame\" (Y9-0) 24\u00d7?\n    SVG \"SVG\" (YA-0) ?\u00d7?\n      SVGVisualElement \"Path\" (YB-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "1C6-0",
+      "nodeId": "1DA-0",
+      "parentId": "1CQ-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (1DA-0) ?\u00d7?\n  Text \"Blue layers\" (1DB-0) ?\u00d7? \"Blue layers\"\n  Text \"Outfit\" (1DC-0) ?\u00d7? \"Outfit\"\n  Frame \"Frame\" (1DD-0) 24\u00d7?\n    SVG \"SVG\" (1DE-0) ?\u00d7?\n      SVGVisualElement \"Path\" (1DF-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "21M-0",
+      "nodeId": "24X-0",
+      "parentId": "24U-0",
+      "disposition": "excluded-readonly-metadata-or-impact",
+      "observedSemanticTree": "Frame \"Frame\" (24X-0) ?\u00d7?\n  Text \"Saved outfits\" (24Y-0) ?\u00d7? \"Saved outfits\"\n  Text \"2 affected\" (24Z-0) ?\u00d7? \"2 affected\"\n  Frame \"Frame\" (250-0) 24\u00d7?\n    SVG \"SVG\" (251-0) ?\u00d7?\n      SVGVisualElement \"Path\" (252-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "21M-0",
+      "nodeId": "253-0",
+      "parentId": "24U-0",
+      "disposition": "excluded-readonly-metadata-or-impact",
+      "observedSemanticTree": "Frame \"Frame\" (253-0) ?\u00d7?\n  Text \"Future plans\" (254-0) ?\u00d7? \"Future plans\"\n  Text \"1 becomes unassigned\" (255-0) ?\u00d7? \"1 becomes unassigned\"\n  Frame \"Frame\" (256-0) 24\u00d7?\n    SVG \"SVG\" (257-0) ?\u00d7?\n      SVGVisualElement \"Path\" (258-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "2AY-0",
+      "nodeId": "2C4-0",
+      "parentId": "2BK-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (2C4-0) ?\u00d7?\n  Text \"Publish this look\" (2C5-0) ?\u00d7? \"Publish this look\"\n  Rectangle \"Rectangle\" (2C6-0) ?\u00d7?\n  Frame \"Frame\" (2C7-0) 24\u00d7?\n    SVG \"SVG\" (2C8-0) ?\u00d7?\n      SVGVisualElement \"Path\" (2C9-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "ZVD-0",
+      "nodeId": "ZVM-0",
+      "parentId": "ZVF-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (ZVM-0) ?\u00d7?\n  Text \"Publish this look\" (ZVR-0) ?\u00d7? \"Publish this look\"\n  Rectangle \"Rectangle\" (ZVQ-0) ?\u00d7?\n  Frame \"Frame\" (ZVN-0) 24\u00d7?\n    SVG \"SVG\" (ZVO-0) ?\u00d7?\n      SVGVisualElement \"Path\" (ZVP-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "34E-0",
+      "nodeId": "37U-0",
+      "parentId": "37N-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (37U-0) ?\u00d7?\n  Text \"Office plan\" (37V-0) ?\u00d7? \"Office plan\"\n  Text \"Yesterday\" (37W-0) ?\u00d7? \"Yesterday\"\n  Frame \"Frame\" (37X-0) 24\u00d7?\n    SVG \"SVG\" (37Y-0) ?\u00d7?\n      SVGVisualElement \"Path\" (37Z-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "6HG-0",
+      "nodeId": "6I2-0",
+      "parentId": "6HY-0",
+      "disposition": "excluded-readonly-metadata-or-impact",
+      "observedSemanticTree": "Frame \"Frame\" (6I2-0) ?\u00d7?\n  Frame \"Frame\" (6I3-0) ?\u00d7?\n    Text \"Generated\" (6I4-0) ?\u00d7? \"Generated\"\n  Text \"9:41 AM\" (6I5-0) ?\u00d7? \"9:41 AM\""
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "6HG-0",
+      "nodeId": "6I7-0",
+      "parentId": "6HY-0",
+      "disposition": "excluded-readonly-metadata-or-impact",
+      "observedSemanticTree": "Frame \"Frame\" (6I7-0) ?\u00d7?\n  Frame \"Frame\" (6I8-0) ?\u00d7?\n    Text \"Total response time\" (6I9-0) ?\u00d7? \"Total response time\"\n  Text \"8.2 s\" (6IA-0) ?\u00d7? \"8.2 s\""
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "6HG-0",
+      "nodeId": "6IL-0",
+      "parentId": "6HY-0",
+      "disposition": "excluded-readonly-metadata-or-impact",
+      "observedSemanticTree": "Frame \"Frame\" (6IL-0) ?\u00d7?\n  Frame \"Frame\" (6IM-0) ?\u00d7?\n    Text \"First text appeared\" (6IN-0) ?\u00d7? \"First text appeared\"\n  Text \"1.4 s\" (6IO-0) ?\u00d7? \"1.4 s\""
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "3HL-0",
+      "nodeId": "3KB-0",
+      "parentId": "3K4-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (3KB-0) ?\u00d7?\n  Text \"View profile\" (3KC-0) ?\u00d7? \"View profile\"\n  Rectangle \"Rectangle\" (3KD-0) ?\u00d7?\n  Frame \"Frame\" (3KE-0) 24\u00d7?\n    SVG \"SVG\" (3KF-0) ?\u00d7?\n      SVGVisualElement \"Path\" (3KG-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "3HL-0",
+      "nodeId": "3KL-0",
+      "parentId": "3K4-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (3KL-0) ?\u00d7?\n  Text \"Report conversation\" (3KM-0) ?\u00d7? \"Report conversation\"\n  Rectangle \"Rectangle\" (3KN-0) ?\u00d7?\n  Frame \"Frame\" (3KO-0) 24\u00d7?\n    SVG \"SVG\" (3KP-0) ?\u00d7?\n      SVGVisualElement \"Path\" (3KQ-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "34Y-0",
+      "nodeId": "39S-0",
+      "parentId": "39D-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (39S-0) ?\u00d7?\n  Text \"Preview public post\" (39T-0) ?\u00d7? \"Preview public post\"\n  Rectangle \"Rectangle\" (39U-0) ?\u00d7?\n  Frame \"Frame\" (39V-0) 24\u00d7?\n    SVG \"SVG\" (39W-0) ?\u00d7?\n      SVGVisualElement \"Path\" (39X-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "34Y-0",
+      "nodeId": "39Y-0",
+      "parentId": "39D-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (39Y-0) ?\u00d7?\n  Text \"Update snapshot\" (39Z-0) ?\u00d7? \"Update snapshot\"\n  Rectangle \"Rectangle\" (3A0-0) ?\u00d7?\n  Frame \"Frame\" (3A1-0) 24\u00d7?\n    SVG \"SVG\" (3A2-0) ?\u00d7?\n      SVGVisualElement \"Path\" (3A3-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "609-0",
+      "nodeId": "616-0",
+      "parentId": "615-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (616-0) ?\u00d7?\n  Text \"Account closet\" (617-0) ?\u00d7? \"Account closet\"\n  Text \"Review records\" (618-0) ?\u00d7? \"Review records\"\n  Frame \"Frame\" (619-0) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (61A-0) ?\u00d7?\n      SVGVisualElement \"Path\" (61B-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "1UE-0",
+      "nodeId": "1VJ-0",
+      "parentId": "1VE-0",
+      "disposition": "repaired-standalone-field",
+      "observedSemanticTree": "Frame \"Additional details \u2192 W21; saved piece ID\" (1VJ-0) ?\u00d7?\n  Text \"Condition and owners\u2026\" (1VK-0) ?\u00d7? \"Condition and ownership age\"\n  Text \"Add\" (1VL-0) ?\u00d7? \"Add\"\n  Frame \"Frame\" (1VM-0) 24\u00d7?\n    SVG \"SVG\" (1VN-0) ?\u00d7?\n      SVGVisualElement \"Path\" (1VO-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "3B1-0",
+      "nodeId": "4CH-0",
+      "parentId": "4CG-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4CH-0) ?\u00d7?\n  Text \"Account\" (4CI-0) ?\u00d7? \"Account\"\n  Text \"maya@example.com\" (4CJ-0) ?\u00d7? \"maya@example.com\"\n  Frame \"Frame\" (4CK-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W5Y-0) 22\u00d722\n      SVGVisualElement \"Path\" (W5Z-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "3B1-0",
+      "nodeId": "4CN-0",
+      "parentId": "4CG-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4CN-0) ?\u00d7?\n  Text \"Privacy\" (4CO-0) ?\u00d7? \"Privacy\"\n  Rectangle \"Rectangle\" (4CP-0) ?\u00d7?\n  Frame \"Frame\" (4CQ-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W5J-0) 22\u00d722\n      SVGVisualElement \"Path\" (W5K-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "3B1-0",
+      "nodeId": "4D6-0",
+      "parentId": "4D5-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Style \u2014 UP01 edit mode \u2014 Save returns U05\" (4D6-0) ?\u00d7?\n  Text \"Style\" (4D7-0) ?\u00d7? \"Style\"\n  Rectangle \"Rectangle\" (4D8-0) ?\u00d7?\n  Frame \"Frame\" (4D9-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W61-0) 22\u00d722\n      SVGVisualElement \"Path\" (W62-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "3B1-0",
+      "nodeId": "4DC-0",
+      "parentId": "4D5-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Your data \u2192 U09 local/account; no private gate\" (4DC-0) ?\u00d7?\n  Text \"Your data\" (4DD-0) ?\u00d7? \"Your data\"\n  Rectangle \"Rectangle\" (4DE-0) ?\u00d7?\n  Frame \"Frame\" (4DF-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W5M-0) 22\u00d722\n      SVGVisualElement \"Path\" (W5N-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "3B1-0",
+      "nodeId": "4DI-0",
+      "parentId": "4D5-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4DI-0) ?\u00d7?\n  Text \"Help and legal\" (4DJ-0) ?\u00d7? \"Help and legal\"\n  Rectangle \"Rectangle\" (4DK-0) ?\u00d7?\n  Frame \"Frame\" (4DL-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W5D-0) 22\u00d722\n      SVGVisualElement \"Path\" (W5E-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "3B1-0",
+      "nodeId": "4DO-0",
+      "parentId": "NRA-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4DO-0) ?\u00d7?\n  Text \"Sign out\" (4DP-0) ?\u00d7? \"Sign out\"\n  Rectangle \"Rectangle\" (4DQ-0) ?\u00d7?\n  Frame \"Frame\" (4DR-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W5G-0) 22\u00d722\n      SVGVisualElement \"Path\" (W5H-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "4F6-0",
+      "nodeId": "4GW-0",
+      "parentId": "NRZ-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4GW-0) ?\u00d7?\n  Text \"Public content\" (4GX-0) ?\u00d7? \"Public content\"\n  Text \"Manage\" (4GY-0) ?\u00d7? \"Manage\"\n  Frame \"Frame\" (4GZ-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W7B-0) 22\u00d722\n      SVGVisualElement \"Path\" (W7C-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "4F6-0",
+      "nodeId": "4H2-0",
+      "parentId": "NRZ-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4H2-0) ?\u00d7?\n  Text \"Blocked people\" (4H3-0) ?\u00d7? \"Blocked people\"\n  Text \"2\" (4H4-0) ?\u00d7? \"2\"\n  Frame \"Frame\" (4H5-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W71-0) 22\u00d722\n      SVGVisualElement \"Path\" (W72-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "4F6-0",
+      "nodeId": "4HE-0",
+      "parentId": "NSO-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4HE-0) ?\u00d7?\n  Text \"Agent context\" (4HF-0) ?\u00d7? \"Agent context\"\n  Rectangle \"Rectangle\" (4HG-0) ?\u00d7?\n  Frame \"Frame\" (4HH-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W6V-0) 22\u00d722\n      SVGVisualElement \"Path\" (W6W-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "4LE-0",
+      "nodeId": "4LY-0",
+      "parentId": "NTD-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4LY-0) ?\u00d7?\n  Text \"Messages\" (4LZ-0) ?\u00d7? \"Messages\"\n  Frame \"Frame\" (4M0-0) 48\u00d730\n    Rectangle \"Rectangle\" (4M1-0) 26\u00d726"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "4LE-0",
+      "nodeId": "4M2-0",
+      "parentId": "NTD-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4M2-0) ?\u00d7?\n  Text \"Message requests\" (4M3-0) ?\u00d7? \"Message requests\"\n  Frame \"Frame\" (4M4-0) 48\u00d730\n    Rectangle \"Rectangle\" (4M5-0) 26\u00d726"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "4LE-0",
+      "nodeId": "4M6-0",
+      "parentId": "NTD-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (4M6-0) ?\u00d7?\n  Text \"Product updates\" (4M7-0) ?\u00d7? \"Product updates\"\n  Frame \"Frame\" (4M8-0) 48\u00d730\n    Rectangle \"Rectangle\" (4M9-0) 26\u00d726"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "50P-0",
+      "nodeId": "51P-0",
+      "parentId": "NU2-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (51P-0) ?\u00d7?\n  Text \"Export account data\" (51Q-0) ?\u00d7? \"Export account data\"\n  Rectangle \"Rectangle\" (51R-0) ?\u00d7?\n  Frame \"Frame\" (51S-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W6S-0) 22\u00d722\n      SVGVisualElement \"Path\" (W6T-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "50P-0",
+      "nodeId": "51V-0",
+      "parentId": "NU2-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (51V-0) ?\u00d7?\n  Text \"Backup and sync\" (51W-0) ?\u00d7? \"Backup and sync\"\n  Text \"Connected\" (51X-0) ?\u00d7? \"Connected\"\n  Frame \"Frame\" (51Y-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W7E-0) 22\u00d722\n      SVGVisualElement \"Path\" (W7F-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "50P-0",
+      "nodeId": "521-0",
+      "parentId": "NU2-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (521-0) ?\u00d7?\n  Text \"Restore account clos\u2026\" (522-0) ?\u00d7? \"Restore account closet\"\n  Rectangle \"Rectangle\" (523-0) ?\u00d7?\n  Frame \"Frame\" (524-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W7H-0) 22\u00d722\n      SVGVisualElement \"Path\" (W7I-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "53R-0",
+      "nodeId": "59F-0",
+      "parentId": "NVG-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (59F-0) ?\u00d7?\n  Text \"Private pieces\" (59G-0) ?\u00d7? \"Private pieces\"\n  Text \"Review records\" (59H-0) ?\u00d7? \"Review records\"\n  Frame \"Frame\" (59I-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (WBG-0) 22\u00d722\n      SVGVisualElement \"Path\" (WBH-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "53R-0",
+      "nodeId": "59L-0",
+      "parentId": "NVG-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (59L-0) ?\u00d7?\n  Text \"Outfits and themes\" (59M-0) ?\u00d7? \"Outfits and themes\"\n  Text \"Review records\" (59N-0) ?\u00d7? \"Review records\"\n  Frame \"Frame\" (59O-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (WB4-0) 22\u00d722\n      SVGVisualElement \"Path\" (WB5-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5DE-0",
+      "nodeId": "5DY-0",
+      "parentId": "NWU-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (5DY-0) ?\u00d7?\n  Text \"Using your closet\" (5DZ-0) ?\u00d7? \"Using your closet\"\n  Rectangle \"Rectangle\" (5E0-0) ?\u00d7?\n  Frame \"Frame\" (5E1-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W8A-0) 22\u00d722\n      SVGVisualElement \"Path\" (W8B-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5DE-0",
+      "nodeId": "5E4-0",
+      "parentId": "NWU-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (5E4-0) ?\u00d7?\n  Text \"Privacy and sharing\" (5E5-0) ?\u00d7? \"Privacy and sharing\"\n  Rectangle \"Rectangle\" (5E6-0) ?\u00d7?\n  Frame \"Frame\" (5E7-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W8S-0) 22\u00d722\n      SVGVisualElement \"Path\" (W8T-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5DE-0",
+      "nodeId": "5EA-0",
+      "parentId": "NWU-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (5EA-0) ?\u00d7?\n  Text \"Get support\" (5EB-0) ?\u00d7? \"Get support\"\n  Rectangle \"Rectangle\" (5EC-0) ?\u00d7?\n  Frame \"Frame\" (5ED-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W8M-0) 22\u00d722\n      SVGVisualElement \"Path\" (W8N-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5DE-0",
+      "nodeId": "5EG-0",
+      "parentId": "NWU-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (5EG-0) ?\u00d7?\n  Text \"Terms of service\" (5EH-0) ?\u00d7? \"Terms of service\"\n  Rectangle \"Rectangle\" (5EI-0) ?\u00d7?\n  Frame \"Frame\" (5EJ-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W8P-0) 22\u00d722\n      SVGVisualElement \"Path\" (W8Q-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5DE-0",
+      "nodeId": "5EM-0",
+      "parentId": "NWU-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (5EM-0) ?\u00d7?\n  Text \"Privacy policy\" (5EN-0) ?\u00d7? \"Privacy policy\"\n  Rectangle \"Rectangle\" (5EO-0) ?\u00d7?\n  Frame \"Frame\" (5EP-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W8J-0) 22\u00d722\n      SVGVisualElement \"Path\" (W8K-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5DE-0",
+      "nodeId": "5ES-0",
+      "parentId": "NWU-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (5ES-0) ?\u00d7?\n  Text \"Data retention\" (5ET-0) ?\u00d7? \"Data retention\"\n  Rectangle \"Rectangle\" (5EU-0) ?\u00d7?\n  Frame \"Frame\" (5EV-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (W8D-0) 22\u00d722\n      SVGVisualElement \"Path\" (W8E-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "6FD-0",
+      "nodeId": "6XY-0",
+      "parentId": "6XS-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (6XY-0) ?\u00d7?\n  Frame \"Frame\" (6XZ-0) ?\u00d7?\n    Text \"Response details\" (6Y0-0) ?\u00d7? \"Response details\"\n  Rectangle \"Rectangle\" (6Y1-0) ?\u00d7?\n  SVG \"SVG\" (6Y2-0) ?\u00d7?\n    SVGVisualElement \"Path\" (6Y3-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "6FD-0",
+      "nodeId": "6Y5-0",
+      "parentId": "6XS-0",
+      "disposition": "excluded-inline-command",
+      "observedSemanticTree": "Frame \"Frame\" (6Y5-0) ?\u00d7?\n  Frame \"Frame\" (6Y6-0) ?\u00d7?\n    Text \"Update feedback\" (6Y7-0) ?\u00d7? \"Update feedback\"\n  Rectangle \"Rectangle\" (6Y8-0) ?\u00d7?\n  SVG \"SVG\" (6Y9-0) ?\u00d7?\n    SVGVisualElement \"Path\" (6YA-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "XSH-0",
+      "nodeId": "XTN-0",
+      "parentId": "XT3-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (XTN-0) ?\u00d7?\n  Text \"Publish this look\" (XTO-0) ?\u00d7? \"Publish this look\"\n  Rectangle \"Rectangle\" (XTP-0) ?\u00d7?\n  Frame \"Frame\" (XTQ-0) 24\u00d7?\n    SVG \"SVG\" (XTR-0) ?\u00d7?\n      SVGVisualElement \"Path\" (XTS-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "XUH-0",
+      "nodeId": "XV1-0",
+      "parentId": "XUY-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (XV1-0) ?\u00d7?\n  Text \"Saved outfits\" (XV2-0) ?\u00d7? \"Saved outfits\"\n  Text \"2 affected\" (XV3-0) ?\u00d7? \"2 affected\"\n  Frame \"Frame\" (XV4-0) 24\u00d7?\n    SVG \"SVG\" (XV5-0) ?\u00d7?\n      SVGVisualElement \"Path\" (XV6-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "XUH-0",
+      "nodeId": "XV7-0",
+      "parentId": "XUY-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (XV7-0) ?\u00d7?\n  Text \"Future plans\" (XV8-0) ?\u00d7? \"Future plans\"\n  Text \"1 becomes unassigned\" (XV9-0) ?\u00d7? \"1 becomes unassigned\"\n  Frame \"Frame\" (XVA-0) 24\u00d7?\n    SVG \"SVG\" (XVB-0) ?\u00d7?\n      SVGVisualElement \"Path\" (XVC-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "Y87-0",
+      "nodeId": "Y9C-0",
+      "parentId": "Y8T-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (Y9C-0) ?\u00d7?\n  Text \"Preview public post\" (Y9D-0) ?\u00d7? \"Preview public post\"\n  Rectangle \"Rectangle\" (Y9E-0) ?\u00d7?\n  Frame \"Frame\" (Y9F-0) 24\u00d7?\n    SVG \"SVG\" (Y9G-0) ?\u00d7?\n      SVGVisualElement \"Path\" (Y9H-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "Y87-0",
+      "nodeId": "Y9I-0",
+      "parentId": "Y8T-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (Y9I-0) ?\u00d7?\n  Text \"Update snapshot\" (Y9J-0) ?\u00d7? \"Update snapshot\"\n  Rectangle \"Rectangle\" (Y9K-0) ?\u00d7?\n  Frame \"Frame\" (Y9L-0) 24\u00d7?\n    SVG \"SVG\" (Y9M-0) ?\u00d7?\n      SVGVisualElement \"Path\" (Y9N-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "YCT-0",
+      "nodeId": "YDM-0",
+      "parentId": "YDF-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (YDM-0) ?\u00d7?\n  Text \"Office plan\" (YDN-0) ?\u00d7? \"Office plan\"\n  Text \"Yesterday\" (YDO-0) ?\u00d7? \"Yesterday\"\n  Frame \"Frame\" (YDP-0) 24\u00d7?\n    SVG \"SVG\" (YDQ-0) ?\u00d7?\n      SVGVisualElement \"Path\" (YDR-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "1LK-0",
+      "nodeId": "1M6-0",
+      "parentId": "1M5-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (1M6-0) ?\u00d7?\n  Text \"Add piece\" (1M7-0) ?\u00d7? \"Add piece\"\n  Text \"Photo or details\" (1M8-0) ?\u00d7? \"Photo or details\"\n  Frame \"Frame\" (1M9-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (WSG-0) 22\u00d722\n      SVGVisualElement \"Path\" (WSH-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "1LK-0",
+      "nodeId": "1MC-0",
+      "parentId": "1M5-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (1MC-0) ?\u00d7?\n  Text \"Build outfit\" (1MD-0) ?\u00d7? \"Build outfit\"\n  Text \"Choose owned pieces\" (1ME-0) ?\u00d7? \"Choose owned pieces\"\n  Frame \"Frame\" (1MF-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (WSJ-0) 22\u00d722\n      SVGVisualElement \"Path\" (WSK-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "1Q9-0",
+      "nodeId": "1TV-0",
+      "parentId": "1TU-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (1TV-0) ?\u00d7?\n  Text \"Details\" (1TW-0) ?\u00d7? \"Details\"\n  Text \"Cotton \u00b7 Relaxed fit\" (1TX-0) ?\u00d7? \"Cotton \u00b7 Relaxed fit\"\n  Frame \"Frame\" (1TY-0) 24\u00d7?\n    SVG \"SVG\" (1TZ-0) ?\u00d7?\n      SVGVisualElement \"Path\" (1U0-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5B1-0",
+      "nodeId": "XFT-0",
+      "parentId": "XFS-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (XFT-0) ?\u00d7?\n  Text \"Account\" (XFU-0) ?\u00d7? \"Account\"\n  Text \"maya@example.com\" (XFV-0) ?\u00d7? \"maya@example.com\"\n  Frame \"Frame\" (XFW-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XFX-0) 22\u00d722\n      SVGVisualElement \"Path\" (XFY-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5B1-0",
+      "nodeId": "XFZ-0",
+      "parentId": "XFS-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (XFZ-0) ?\u00d7?\n  Text \"Privacy\" (XG0-0) ?\u00d7? \"Privacy\"\n  Rectangle \"Rectangle\" (XG1-0) ?\u00d7?\n  Frame \"Frame\" (XG2-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XG3-0) 22\u00d722\n      SVGVisualElement \"Path\" (XG4-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5B1-0",
+      "nodeId": "XGI-0",
+      "parentId": "XGH-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Style \u2014 UP01 edit mode \u2014 Save returns U05\" (XGI-0) ?\u00d7?\n  Text \"Style\" (XGJ-0) ?\u00d7? \"Style\"\n  Rectangle \"Rectangle\" (XGK-0) ?\u00d7?\n  Frame \"Frame\" (XGL-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XGM-0) 22\u00d722\n      SVGVisualElement \"Path\" (XGN-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5B1-0",
+      "nodeId": "XGO-0",
+      "parentId": "XGH-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Your data \u2192 U09 local/account; no private gate\" (XGO-0) ?\u00d7?\n  Text \"Your data\" (XGP-0) ?\u00d7? \"Your data\"\n  Rectangle \"Rectangle\" (XGQ-0) ?\u00d7?\n  Frame \"Frame\" (XGR-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XGS-0) 22\u00d722\n      SVGVisualElement \"Path\" (XGT-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5B1-0",
+      "nodeId": "XGU-0",
+      "parentId": "XGH-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (XGU-0) ?\u00d7?\n  Text \"Help and legal\" (XGV-0) ?\u00d7? \"Help and legal\"\n  Rectangle \"Rectangle\" (XGW-0) ?\u00d7?\n  Frame \"Frame\" (XGX-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XGY-0) 22\u00d722\n      SVGVisualElement \"Path\" (XGZ-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "5B1-0",
+      "nodeId": "XH9-0",
+      "parentId": "XH8-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (XH9-0) ?\u00d7?\n  Text \"Sign out\" (XHA-0) ?\u00d7? \"Sign out\"\n  Rectangle \"Rectangle\" (XHB-0) ?\u00d7?\n  Frame \"Frame\" (XHC-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XHD-0) 22\u00d722\n      SVGVisualElement \"Path\" (XHE-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "6FD-0",
+      "nodeId": "7BM-0",
+      "parentId": "7BJ-0",
+      "disposition": "excluded-inline-command",
+      "observedSemanticTree": "Frame \"Frame\" (7BM-0) ?\u00d7?\n  Frame \"Frame\" (7BN-0) ?\u00d7?\n    Text \"Copy text\" (7BO-0) ?\u00d7? \"Copy text\"\n  Rectangle \"Rectangle\" (7BP-0) ?\u00d7?\n  SVG \"SVG\" (7BQ-0) ?\u00d7?\n    SVGVisualElement \"Path\" (7BR-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "YKL-0",
+      "nodeId": "YLL-0",
+      "parentId": "YLK-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (YLL-0) ?\u00d7?\n  Text \"Export account data\" (YLM-0) ?\u00d7? \"Export account data\"\n  Rectangle \"Rectangle\" (YLN-0) ?\u00d7?\n  Frame \"Frame\" (YLO-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (YLP-0) 22\u00d722\n      SVGVisualElement \"Path\" (YLQ-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "YKL-0",
+      "nodeId": "YLR-0",
+      "parentId": "YLK-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (YLR-0) ?\u00d7?\n  Text \"Backup and sync\" (YLS-0) ?\u00d7? \"Backup and sync\"\n  Text \"Connected\" (YLT-0) ?\u00d7? \"Connected\"\n  Frame \"Frame\" (YLU-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (YLV-0) 22\u00d722\n      SVGVisualElement \"Path\" (YLW-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "YKL-0",
+      "nodeId": "YLX-0",
+      "parentId": "YLK-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (YLX-0) ?\u00d7?\n  Text \"Restore account clos\u2026\" (YLY-0) ?\u00d7? \"Restore account closet\"\n  Rectangle \"Rectangle\" (YLZ-0) ?\u00d7?\n  Frame \"Frame\" (YM0-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (YM1-0) 22\u00d722\n      SVGVisualElement \"Path\" (YM2-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AT9-1",
+      "nodeId": "B04-1",
+      "parentId": "AZR-1",
+      "disposition": "repaired-standalone-field",
+      "observedSemanticTree": "Frame \"Frame\" (B04-1) ?\u00d7?\n  Text \"Set style preference\u2026\" (B05-1) ?\u00d7? \"Set style preferences\"\n  Text \"Optional\" (B06-1) ?\u00d7? \"Optional\"\n  Frame \"Frame\" (B07-1) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (B08-1) ?\u00d7?\n      SVGVisualElement \"Path\" (B09-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "ATG-1",
+      "nodeId": "B4A-1",
+      "parentId": "B3Y-1",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (B4A-1) ?\u00d7?\n  Text \"Terms of service\" (B4B-1) ?\u00d7? \"Terms of service\"\n  Rectangle \"Rectangle\" (B4C-1) ?\u00d7?\n  Frame \"Frame\" (B4D-1) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (B4E-1) ?\u00d7?\n      SVGVisualElement \"Path\" (B4F-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "ATN-1",
+      "nodeId": "BI6-1",
+      "parentId": "BHM-1",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (BI6-1) ?\u00d7?\n  Text \"Publish this look\" (BI7-1) ?\u00d7? \"Publish this look\"\n  Rectangle \"Rectangle\" (BI8-1) ?\u00d7?\n  Frame \"Frame\" (BI9-1) 24\u00d7?\n    SVG \"SVG\" (BIA-1) ?\u00d7?\n      SVGVisualElement \"Path\" (BIB-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "ATU-1",
+      "nodeId": "BMQ-1",
+      "parentId": "BM6-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (BMQ-1) ?\u00d7?\n  Text \"Publish this look\" (BMR-1) ?\u00d7? \"Publish this look\"\n  Rectangle \"Rectangle\" (BMS-1) ?\u00d7?\n  Frame \"Frame\" (BMT-1) 24\u00d7?\n    SVG \"SVG\" (BMU-1) ?\u00d7?\n      SVGVisualElement \"Path\" (BMV-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AU1-1",
+      "nodeId": "BQV-1",
+      "parentId": "BQB-1",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (BQV-1) ?\u00d7?\n  Text \"Publish this look\" (BQW-1) ?\u00d7? \"Publish this look\"\n  Rectangle \"Rectangle\" (BQX-1) ?\u00d7?\n  Frame \"Frame\" (BQY-1) 24\u00d7?\n    SVG \"SVG\" (BQZ-1) ?\u00d7?\n      SVGVisualElement \"Path\" (BR0-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AU1-1",
+      "nodeId": "BS2-1",
+      "parentId": "BRT-1",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (BS2-1) ?\u00d7?\n  Text \"Outfit\" (BS3-1) ?\u00d7? \"Outfit\"\n  Text \"An easy afternoon\" (BS4-1) ?\u00d7? \"An easy afternoon\"\n  Frame \"Frame\" (BS5-1) 24\u00d7?\n    SVG \"SVG\" (BS6-1) ?\u00d7?\n      SVGVisualElement \"Path\" (BS7-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AU1-1",
+      "nodeId": "C0M-1",
+      "parentId": "C03-1",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (C0M-1) ?\u00d7?\n  Text \"Correct a record\" (C0N-1) ?\u00d7? \"Correct a record\"\n  Rectangle \"Rectangle\" (C0O-1) ?\u00d7?\n  Frame \"Frame\" (C0P-1) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (C0Q-1) ?\u00d7?\n      SVGVisualElement \"Path\" (C0R-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AU8-1",
+      "nodeId": "C37-1",
+      "parentId": "C2Y-1",
+      "disposition": "repaired-standalone-field",
+      "observedSemanticTree": "Frame \"Frame\" (C37-1) ?\u00d7?\n  Text \"Timezone\" (C38-1) ?\u00d7? \"Timezone\"\n  Text \"Asia/Seoul\" (C39-1) ?\u00d7? \"Asia/Seoul\"\n  Frame \"Frame\" (C3A-1) 24\u00d7?\n    SVG \"SVG\" (C3B-1) ?\u00d7?\n      SVGVisualElement \"Path\" (C3C-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AU8-1",
+      "nodeId": "C7E-1",
+      "parentId": "C71-1",
+      "disposition": "handoff-legacy-grouped-form-structural-sync",
+      "observedSemanticTree": "Frame \"Frame\" (C7E-1) ?\u00d7?\n  Text \"Timezone\" (C7F-1) ?\u00d7? \"Timezone\"\n  Text \"Asia/Seoul\" (C7G-1) ?\u00d7? \"Asia/Seoul\"\n  Frame \"Frame\" (C7H-1) 24\u00d7?\n    SVG \"SVG\" (C7I-1) ?\u00d7?\n      SVGVisualElement \"Path\" (C7J-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AU8-1",
+      "nodeId": "C7K-1",
+      "parentId": "C71-1",
+      "disposition": "handoff-legacy-grouped-form-structural-sync",
+      "observedSemanticTree": "Frame \"Frame\" (C7K-1) ?\u00d7?\n  Text \"Outfit plan\" (C7L-1) ?\u00d7? \"Outfit plan\"\n  Text \"14 days \u00b7 2 gaps\" (C7M-1) ?\u00d7? \"14 days \u00b7 2 gaps\"\n  Frame \"Frame\" (C7N-1) 24\u00d7?\n    SVG \"SVG\" (C7O-1) ?\u00d7?\n      SVGVisualElement \"Path\" (C7P-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AUF-1",
+      "nodeId": "CAQ-1",
+      "parentId": "CA6-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (CAQ-1) ?\u00d7?\n  Text \"Publish this look\" (CAR-1) ?\u00d7? \"Publish this look\"\n  Rectangle \"Rectangle\" (CAS-1) ?\u00d7?\n  Frame \"Frame\" (CAT-1) 24\u00d7?\n    SVG \"SVG\" (CAU-1) ?\u00d7?\n      SVGVisualElement \"Path\" (CAV-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AUF-1",
+      "nodeId": "CDF-1",
+      "parentId": "CD0-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (CDF-1) ?\u00d7?\n  Text \"Preview public post\" (CDG-1) ?\u00d7? \"Preview public post\"\n  Rectangle \"Rectangle\" (CDH-1) ?\u00d7?\n  Frame \"Frame\" (CDI-1) 24\u00d7?\n    SVG \"SVG\" (CDJ-1) ?\u00d7?\n      SVGVisualElement \"Path\" (CDK-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "AUF-1",
+      "nodeId": "CDL-1",
+      "parentId": "CD0-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (CDL-1) ?\u00d7?\n  Text \"Update snapshot\" (CDM-1) ?\u00d7? \"Update snapshot\"\n  Rectangle \"Rectangle\" (CDN-1) ?\u00d7?\n  Frame \"Frame\" (CDO-1) 24\u00d7?\n    SVG \"SVG\" (CDP-1) ?\u00d7?\n      SVGVisualElement \"Path\" (CDQ-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DHO-1",
+      "nodeId": "DIF-1",
+      "parentId": "DIE-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (DIF-1) ?\u00d7?\n  Text \"Export my data\" (DIG-1) ?\u00d7? \"Export my data\"\n  Rectangle \"Rectangle\" (DIH-1) ?\u00d7?\n  Frame \"Frame\" (DII-1) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (DIJ-1) ?\u00d7?\n      SVGVisualElement \"Path\" (DIK-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DHO-1",
+      "nodeId": "DIL-1",
+      "parentId": "DIE-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (DIL-1) ?\u00d7?\n  Text \"Backup and sync\" (DIM-1) ?\u00d7? \"Backup and sync\"\n  Text \"Connected\" (DIN-1) ?\u00d7? \"Connected\"\n  Frame \"Frame\" (DIO-1) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (DIP-1) ?\u00d7?\n      SVGVisualElement \"Path\" (DIQ-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DHO-1",
+      "nodeId": "DIR-1",
+      "parentId": "DIE-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (DIR-1) ?\u00d7?\n  Text \"Restore account clos\u2026\" (DIS-1) ?\u00d7? \"Restore account closet\"\n  Rectangle \"Rectangle\" (DIT-1) ?\u00d7?\n  Frame \"Frame\" (DIU-1) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (DIV-1) ?\u00d7?\n      SVGVisualElement \"Path\" (DIW-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DHO-1",
+      "nodeId": "DM5-1",
+      "parentId": "DM2-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (DM5-1) ?\u00d7?\n  Text \"Private pieces\" (DM6-1) ?\u00d7? \"Private pieces\"\n  Text \"Review records\" (DM7-1) ?\u00d7? \"Review records\"\n  Frame \"Frame\" (DM8-1) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (DM9-1) ?\u00d7?\n      SVGVisualElement \"Path\" (DMA-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DHO-1",
+      "nodeId": "DMB-1",
+      "parentId": "DM2-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (DMB-1) ?\u00d7?\n  Text \"Outfits and themes\" (DMC-1) ?\u00d7? \"Outfits and themes\"\n  Text \"Review records\" (DMD-1) ?\u00d7? \"Review records\"\n  Frame \"Frame\" (DME-1) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (DMF-1) ?\u00d7?\n      SVGVisualElement \"Path\" (DMG-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DPT-1",
+      "nodeId": "DV1-1",
+      "parentId": "DUY-1",
+      "disposition": "excluded-readonly-metadata-or-impact",
+      "observedSemanticTree": "Frame \"Frame\" (DV1-1) ?\u00d7?\n  Text \"Saved outfits\" (DV2-1) ?\u00d7? \"Saved outfits\"\n  Text \"2 affected\" (DV3-1) ?\u00d7? \"2 affected\"\n  Frame \"Frame\" (DV4-1) 24\u00d7?\n    SVG \"SVG\" (DV5-1) ?\u00d7?\n      SVGVisualElement \"Path\" (DV6-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DPT-1",
+      "nodeId": "DV7-1",
+      "parentId": "DUY-1",
+      "disposition": "excluded-readonly-metadata-or-impact",
+      "observedSemanticTree": "Frame \"Frame\" (DV7-1) ?\u00d7?\n  Text \"Future plans\" (DV8-1) ?\u00d7? \"Future plans\"\n  Text \"1 becomes unassigned\" (DV9-1) ?\u00d7? \"1 becomes unassigned\"\n  Frame \"Frame\" (DVA-1) 24\u00d7?\n    SVG \"SVG\" (DVB-1) ?\u00d7?\n      SVGVisualElement \"Path\" (DVC-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DPT-1",
+      "nodeId": "DYB-1",
+      "parentId": "DXS-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (DYB-1) ?\u00d7?\n  Text \"Correct a record\" (DYC-1) ?\u00d7? \"Correct a record\"\n  Rectangle \"Rectangle\" (DYD-1) ?\u00d7?\n  Frame \"Frame\" (DYE-1) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (DYF-1) ?\u00d7?\n      SVGVisualElement \"Path\" (DYG-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DYR-1",
+      "nodeId": "DZS-1",
+      "parentId": "DZJ-1",
+      "disposition": "handoff-legacy-grouped-form-structural-sync",
+      "observedSemanticTree": "Frame \"Frame\" (DZS-1) ?\u00d7?\n  Text \"Timezone\" (DZT-1) ?\u00d7? \"Timezone\"\n  Text \"Asia/Manila\" (DZU-1) ?\u00d7? \"Asia/Manila\"\n  Frame \"Frame\" (DZV-1) 24\u00d7?\n    SVG \"SVG\" (DZW-1) ?\u00d7?\n      SVGVisualElement \"Path\" (DZX-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DYR-1",
+      "nodeId": "DZY-1",
+      "parentId": "DZJ-1",
+      "disposition": "handoff-legacy-grouped-form-structural-sync",
+      "observedSemanticTree": "Frame \"Frame\" (DZY-1) ?\u00d7?\n  Text \"Repeat days\" (DZZ-1) ?\u00d7? \"Repeat days\"\n  Text \"Monday to Friday\" (E00-1) ?\u00d7? \"Monday to Friday\"\n  Frame \"Frame\" (E01-1) 24\u00d7?\n    SVG \"SVG\" (E02-1) ?\u00d7?\n      SVGVisualElement \"Path\" (E03-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DYR-1",
+      "nodeId": "E1Q-1",
+      "parentId": "E12-1",
+      "disposition": "handoff-legacy-grouped-form-structural-sync",
+      "observedSemanticTree": "Frame \"Frame\" (E1Q-1) ?\u00d7?\n  Text \"Occasion\" (E1R-1) ?\u00d7? \"Occasion\"\n  Text \"Office\" (E1S-1) ?\u00d7? \"Office\"\n  Frame \"Frame\" (E1T-1) 24\u00d7?\n    SVG \"SVG\" (E1U-1) ?\u00d7?\n      SVGVisualElement \"Path\" (E1V-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "E8H-1",
+      "nodeId": "EII-1",
+      "parentId": "EIF-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (EII-1) ?\u00d7?\n  Text \"Report this post\" (EIJ-1) ?\u00d7? \"Report this post\"\n  Rectangle \"Rectangle\" (EIK-1) ?\u00d7?\n  Frame \"Frame\" (EIL-1) 24\u00d7?\n    SVG \"SVG\" (EIM-1) ?\u00d7?\n      SVGVisualElement \"Path\" (EIN-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "E8H-1",
+      "nodeId": "EIO-1",
+      "parentId": "EIF-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (EIO-1) ?\u00d7?\n  Text \"Report profile\" (EIP-1) ?\u00d7? \"Report profile\"\n  Rectangle \"Rectangle\" (EIQ-1) ?\u00d7?\n  Frame \"Frame\" (EIR-1) 24\u00d7?\n    SVG \"SVG\" (EIS-1) ?\u00d7?\n      SVGVisualElement \"Path\" (EIT-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "EQO-1",
+      "nodeId": "EXO-1",
+      "parentId": "EXI-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (EXO-1) ?\u00d7?\n  Text \"View profile\" (EXP-1) ?\u00d7? \"View profile\"\n  Rectangle \"Rectangle\" (EXQ-1) ?\u00d7?\n  Frame \"Frame\" (EXR-1) 24\u00d7?\n    SVG \"SVG\" (EXS-1) ?\u00d7?\n      SVGVisualElement \"Path\" (EXT-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "EQO-1",
+      "nodeId": "EXY-1",
+      "parentId": "EXI-1",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (EXY-1) ?\u00d7?\n  Text \"Report conversation\" (EXZ-1) ?\u00d7? \"Report conversation\"\n  Rectangle \"Rectangle\" (EY0-1) ?\u00d7?\n  Frame \"Frame\" (EY1-1) 24\u00d7?\n    SVG \"SVG\" (EY2-1) ?\u00d7?\n      SVGVisualElement \"Path\" (EY3-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "D5W-1",
+      "nodeId": "D9T-1",
+      "parentId": "D9S-1",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (D9T-1) ?\u00d7?\n  Text \"Account closet\" (D9U-1) ?\u00d7? \"Account closet\"\n  Text \"Review records\" (D9V-1) ?\u00d7? \"Review records\"\n  Frame \"Frame\" (D9W-1) 24\u00d7?\n    SVG \"Icon \u2014 chevron\" (D9X-1) ?\u00d7?\n      SVGVisualElement \"Path\" (D9Y-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DPT-1",
+      "nodeId": "DSI-1",
+      "parentId": "DSD-1",
+      "disposition": "repaired-standalone-field",
+      "observedSemanticTree": "Frame \"Additional details \u2192 W21; saved piece ID\" (DSI-1) ?\u00d7?\n  Text \"Condition and owners\u2026\" (DSJ-1) ?\u00d7? \"Condition and ownership age\"\n  Text \"Add\" (DSK-1) ?\u00d7? \"Add\"\n  Frame \"Frame\" (DSL-1) 24\u00d7?\n    SVG \"SVG\" (DSM-1) ?\u00d7?\n      SVGVisualElement \"Path\" (DSN-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "D5W-1",
+      "nodeId": "XN1-0",
+      "parentId": "XN0-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (XN1-0) ?\u00d7?\n  Text \"Account\" (XN2-0) ?\u00d7? \"Account\"\n  Text \"maya@example.com\" (XN3-0) ?\u00d7? \"maya@example.com\"\n  Frame \"Frame\" (XN4-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XN5-0) 22\u00d722\n      SVGVisualElement \"Path\" (XN6-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "D5W-1",
+      "nodeId": "XN7-0",
+      "parentId": "XN0-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (XN7-0) ?\u00d7?\n  Text \"Privacy\" (XN8-0) ?\u00d7? \"Privacy\"\n  Rectangle \"Rectangle\" (XN9-0) ?\u00d7?\n  Frame \"Frame\" (XNA-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XNB-0) 22\u00d722\n      SVGVisualElement \"Path\" (XNC-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "D5W-1",
+      "nodeId": "XNQ-0",
+      "parentId": "XNP-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Style \u2014 UP01 edit mode \u2014 Save returns U05\" (XNQ-0) ?\u00d7?\n  Text \"Style\" (XNR-0) ?\u00d7? \"Style\"\n  Rectangle \"Rectangle\" (XNS-0) ?\u00d7?\n  Frame \"Frame\" (XNT-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XNU-0) 22\u00d722\n      SVGVisualElement \"Path\" (XNV-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "D5W-1",
+      "nodeId": "XNW-0",
+      "parentId": "XNP-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Your data \u2192 U09 local/account; no private gate\" (XNW-0) ?\u00d7?\n  Text \"Your data\" (XNX-0) ?\u00d7? \"Your data\"\n  Rectangle \"Rectangle\" (XNY-0) ?\u00d7?\n  Frame \"Frame\" (XNZ-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XO0-0) 22\u00d722\n      SVGVisualElement \"Path\" (XO1-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "D5W-1",
+      "nodeId": "XO2-0",
+      "parentId": "XNP-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (XO2-0) ?\u00d7?\n  Text \"Help and legal\" (XO3-0) ?\u00d7? \"Help and legal\"\n  Rectangle \"Rectangle\" (XO4-0) ?\u00d7?\n  Frame \"Frame\" (XO5-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XO6-0) 22\u00d722\n      SVGVisualElement \"Path\" (XO7-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "D5W-1",
+      "nodeId": "XOH-0",
+      "parentId": "XOG-0",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (XOH-0) ?\u00d7?\n  Text \"Sign out\" (XOI-0) ?\u00d7? \"Sign out\"\n  Rectangle \"Rectangle\" (XOJ-0) ?\u00d7?\n  Frame \"Frame\" (XOK-0) 22\u00d722\n    SVG \"Icon \u2014 chevron\" (XOL-0) 22\u00d722\n      SVGVisualElement \"Path\" (XOM-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "DPT-1",
+      "nodeId": "DQV-1",
+      "parentId": "DQU-1",
+      "disposition": "already-surface",
+      "observedSemanticTree": "Frame \"Frame\" (DQV-1) ?\u00d7?\n  Text \"Details\" (DQW-1) ?\u00d7? \"Details\"\n  Text \"Cotton \u00b7 Relaxed fit\" (DQX-1) ?\u00d7? \"Cotton \u00b7 Relaxed fit\"\n  Frame \"Frame\" (DQY-1) 24\u00d7?\n    SVG \"SVG\" (DQZ-1) ?\u00d7?\n      SVGVisualElement \"Path\" (DR0-1) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "2QN-0",
+      "nodeId": "2TS-0",
+      "parentId": "2TJ-0",
+      "disposition": "repaired-standalone-field",
+      "observedSemanticTree": "Frame \"Frame\" (2TS-0) ?\u00d732\n  Text \"Start with a piece\" (2TT-0) ?\u00d7? \"Start with a piece\"\n  Text \"Cotton shirt \u00b7 Pinne\u2026\" (2TU-0) ?\u00d7? \"Cotton shirt \u00b7 Pinned\"\n  Frame \"Frame\" (2TV-0) 24\u00d7?\n    SVG \"SVG\" (2TW-0) ?\u00d7?\n      SVGVisualElement \"Path\" (2TX-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "34E-0",
+      "nodeId": "37O-0",
+      "parentId": "37N-0",
+      "disposition": "excluded-navigation-command-outside-configuration-field-family",
+      "observedSemanticTree": "Frame \"Frame\" (37O-0) ?\u00d732\n  Text \"Tonight\u2019s outfit\" (37P-0) ?\u00d7? \"Tonight\u2019s outfit\"\n  Text \"Today\" (37Q-0) ?\u00d7? \"Today\"\n  Frame \"Frame\" (37R-0) 24\u00d7?\n    SVG \"SVG\" (37S-0) ?\u00d7?\n      SVGVisualElement \"Path\" (37T-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "YCT-0",
+      "nodeId": "YDG-0",
+      "parentId": "YDF-0",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (YDG-0) ?\u00d732\n  Text \"Tonight\u2019s outfit\" (YDH-0) ?\u00d7? \"Tonight\u2019s outfit\"\n  Text \"Today\" (YDI-0) ?\u00d7? \"Today\"\n  Frame \"Frame\" (YDJ-0) 24\u00d7?\n    SVG \"SVG\" (YDK-0) ?\u00d7?\n      SVGVisualElement \"Path\" (YDL-0) ?\u00d7?"
+    },
+    {
+      "pageId": "p-B-0",
+      "rootId": "ATN-1",
+      "nodeId": "BCQ-1",
+      "parentId": "BCH-1",
+      "disposition": "excluded-collaborator/native",
+      "observedSemanticTree": "Frame \"Frame\" (BCQ-1) ?\u00d732\n  Text \"Start with a piece\" (BCR-1) ?\u00d7? \"Start with a piece\"\n  Text \"Cotton shirt \u00b7 Pinne\u2026\" (BCS-1) ?\u00d7? \"Cotton shirt \u00b7 Pinned\"\n  Frame \"Frame\" (BCT-1) 24\u00d7?\n    SVG \"SVG\" (BCU-1) ?\u00d7?\n      SVGVisualElement \"Path\" (BCV-1) ?\u00d7?"
+    }
+  ],
+  "excludedRoots": [
+    "10GK-0",
+    "5B1-0",
+    "7JN-0",
+    "7L6-0",
+    "7MP-0",
+    "7X5-0",
+    "ADU-1",
+    "AQF-1",
+    "ATG-1",
+    "ATN-1",
+    "AU1-1",
+    "DAI-1",
+    "JMF-0",
+    "KBP-0",
+    "MLN-0",
+    "Q5Q-0",
+    "QKI-0",
+    "QWN-0",
+    "RX0-0",
+    "RXW-0",
+    "RYS-0",
+    "RZO-0",
+    "S0K-0",
+    "S1G-0",
+    "SG4-0",
+    "XQI-0",
+    "XSH-0",
+    "XUH-0",
+    "XWH-0",
+    "XZQ-0",
+    "Y1U-0",
+    "Y45-0",
+    "Y5M-0",
+    "Y87-0",
+    "YAI-0",
+    "YCT-0",
+    "YEJ-0",
+    "YI7-0",
+    "YKL-0",
+    "YMR-0",
+    "YO2-0",
+    "YSO-0",
+    "YUG-0",
+    "YW9-0",
+    "Z01-0",
+    "Z1X-0",
+    "Z3U-0",
+    "Z6J-0",
+    "Z8G-0",
+    "ZAS-0",
+    "ZCU-0",
+    "ZE7-0",
+    "ZGW-0",
+    "ZMA-0"
+  ],
+  "additionalExclusions": {
+    "Q5Q-0": "Newest user override; parent owns entire L86 root and docs. Other Closet Search Filters controls held unchanged.",
+    "FJ2-1/ZGG-0/4GB-0/native-kit/API/SF-masters": "Concurrent native writer and OS-owned presentation, not ordinary field shells.",
+    "Today-owned": "All13 named root exclusions plus source-body/header equivalents; no new widgets or private Home mutation.",
+    "ordinaryInputs": "Name and unrelated labelled fields; existing4FO/DNK16radius14padding retained. Height/detail label/unit44 unchanged.",
+    "alreadyOpaque": "Profile/Settings grouped12corner surfaces remain intact; no blanket all-frame background update.",
+    "inline": "Retry/Undo/help/destructive commands and read-only statistics are not field-card candidates."
+  },
+  "legacyGroupedFormsHandoff": {
+    "nodeIds": [
+      "C7E-1",
+      "C7K-1",
+      "C7Q-1",
+      "DZS-1",
+      "DZY-1",
+      "E04-1",
+      "E1Q-1",
+      "E1W-1"
+    ],
+    "reason": "Source contract requires a single related-row group, not floating individual cards. Existing legacy Screen content also owns unrelated Name/date/activities/actions, so repainting it would create nested cards and violate style-only ownership. No changes made to these8 rows; structural snapshot sync is explicitly not claimed complete.",
+    "roots": [
+      "AU8-1",
+      "DYR-1"
+    ],
+    "copiedStartPieceHeld": {
+      "rootId": "ATN-1",
+      "labelId": "BCR-1",
+      "rowId": "BCQ-1",
+      "reason": "Today collaborator exclusion; original K4P and canonical W17 repaired, do not mutate this strip independently."
+    }
+  },
+  "proposedSharedContractHandoff": {
+    "components.md": "Distinguish primary solid Button, standalone selection/configuration FormRow, inline commands and read-only metadata. A real standalone field uses opaque surface/night-surface16 corners14 padding52 minimum, native44 whole-row target, flexible preserved15/17 label/value and existing fixed22 disclosure. Real grouped forms reuse native/grouped chrome; no surrounding glass/decorative border/shadow. Whole Label+value+accessory activates the retained task; values wrap without shrinking. Preserve focus/invalid/disabled/Increase Contrast feedback.",
+    "rules.md": "Synchronize registered standalone field snapshot geometry across actual affected V1/V2 source families. Never infer interaction from chevrons alone; do not restyle OS Menu/alert/dialog/toolbars, inline Undo/Retry/help or footer/stat metadata. Root/field IDs and task semantics stay stable; preserve approved grouped-form composition rather than repainting allFrames.",
+    "ownership": "Parent reconciles shared docs once all writers finish; this worker did not edit shared Markdown, manifests, app or delivery status."
+  },
+  "verification": {
+    "visualRound": [
+      {
+        "nodeId": "K4P-0",
+        "verdict": "Pass: visible opaque Start piece control;52px; pinned metadata and gap intact; primary dominates."
+      },
+      {
+        "nodeId": "2QN-0",
+        "verdict": "Pass: former32px row now52; retained15px compact label; no glyph/text change."
+      },
+      {
+        "nodeId": "DSD-1",
+        "verdict": "Pass: legacy piece-details fields exposed; season field untouched; trailing22 lane consistent."
+      },
+      {
+        "nodeId": "SEL-0",
+        "verdict": "Pass: standalone timezone visible and destination border removed; unrelated Name/date/activities unchanged; intentionally hidden inline-destination chevron remains hidden."
+      },
+      {
+        "nodeId": "3B1-0",
+        "verdict": "Pass: existing Settings groups correctly surfaced and unchanged; native policy retained."
+      }
+    ],
+    "corrections": 0,
+    "measurementNote": "Follow-up scalar JPEG SOF measurement retry: initial decoder assumed PNG but MCP emitted JPEG; first attempt aborted before persisting dimensions. JPEG decoding confirms all16 rows350x52 or350x59. This is static reference-size measurement, not native hit testing.",
+    "allChangedRowBoundsAtLeast44": true,
+    "unchangedRootIdentity": true,
+    "unchangedTextAndDescendantIdentity": true,
+    "runtimeUnverified": [
+      "VoiceOver combined label/value and role/focus return",
+      "Dynamic Type/localization wrap and adaptive grouped form",
+      "native44 hit regions, safe areas/keyboard, iOS18/26/27 native component behavior",
+      "night/Increase Contrast/focus/invalid state runtime"
+    ],
+    "nativeQualification": "Opaque ordinary content FormRow/nativeButton grammar only; no Liquid Glass or certified SDK27 pixel claim."
+  },
+  "releasedTouchedRoots": [
+    "1UE-0",
+    "22T-0",
+    "2QN-0",
+    "5XK-0",
+    "AT9-1",
+    "AU8-1",
+    "DPT-1",
+    "K4P-0",
+    "QGO-0",
+    "SEL-0"
+  ]
+}

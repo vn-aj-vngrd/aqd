@@ -1,0 +1,88 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "date": "2026-10-07",
+  "scope": "Reference-only shared local V1/V2 background-removal design; no app implementation or mask-quality verification",
+  "provenance": "/tmp/aqd-background-removal-design.json",
+  "provenancePolicy": "Portable bounded extract of frozen worker artifact plus explicit parent policy override; temporary artifact is historical provenance, not a portable dependency. Earlier copy/confirmation audits remain frozen.",
+  "currentInventory": {"rootArtboards":518,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":138,"nestedOfflineReferences":4,"pages":[{"id":"p-1-0","count":25,"canonicalCount":0,"rootReferenceCount":25},{"id":"p-2-0","count":206,"canonicalCount":169,"rootReferenceCount":37},{"id":"p-B-0","count":287,"canonicalCount":211,"rootReferenceCount":76}],"nodeCounts":[2046,11504,22218],"totalNodes":35768,"tokenHash":"fdeb7346","evidence":"feedback-variants.json","nodeCountStatus":"Feedback worker final three-page aggregates; frozen earlier scoped checks unchanged, not rerun"},
+  "historicalBackgroundRemovalInventory": {
+    "rootArtboards":502,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":122,"nestedOfflineReferences":4,
+    "pages":[{"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},{"id":"p-2-0","name":"01 · V1","count":197,"canonicalCount":169,"rootReferenceCount":28},{"id":"p-B-0","name":"02 · V2","count":287,"canonicalCount":211,"rootReferenceCount":76}],
+    "nodeCounts":[1847,10952,21913],"totalNodes":34712,"tokenHash":"fdeb7346",
+    "nodeCountStatus":"Frozen worker before/after and final independent parent live three-page basic-info agree;502 roots/34712 nodes, static only",
+    "evidence":"background-removal.json"
+  },
+  "attribution": {
+    "historicalParentConfirmedBaseline":{"roots":496,"nodes":34456,"pageRoots":[18,192,286],"pageNodes":[1847,10760,21849],"evidence":"ui-refinements.json#historicalUIRefinementInventory"},
+    "delta":{"roots":6,"nodes":256,"pageRoots":[0,5,1],"pageNodes":[0,192,64]},
+    "canonicalRouteAdditions":0,
+    "unchanged":"380 canonical identity triples; Foundations; global tokens/hash fdeb7346; existing L78 controls and L77/W31 crop controls"
+  },
+  "references": [
+    {"rootId":"1010-0","pageId":"p-2-0","phoneId":"1012-0","state":"Processing","runtimePushRoute":false,"controls":{"Cancel":"101E-0","disabledUsePhoto":"101W-0"},"captionTextId":"1023-0"},
+    {"rootId":"1025-0","pageId":"p-2-0","phoneId":"1028-0","state":"Original selected","runtimePushRoute":false,"controls":{"Cancel":"102P-0","Original":"1035-0","Removed":"1037-0","UsePhoto":"102B-0"},"captionTextId":"1027-0"},
+    {"rootId":"103A-0","pageId":"p-2-0","phoneId":"103D-0","state":"Removed selected","runtimePushRoute":false,"controls":{"Cancel":"1040-0","Original":"103I-0","Removed":"103G-0","UsePhoto":"103M-0"},"captionTextId":"103C-0"},
+    {"rootId":"104E-0","pageId":"p-2-0","phoneId":"104H-0","state":"Execution/no-subject/empty-output/render failure, not count-only ambiguity","historicalPaperName":"REFERENCE · Background removal · Failed / ambiguous","runtimePushRoute":false,"controls":{"Cancel":"104Y-0","TryAgain":"106B-0","CropManually":"106D-0"},"captionTextId":"104G-0"},
+    {"rootId":"105C-0","pageId":"p-2-0","phoneId":"105F-0","state":"Unavailable","runtimePushRoute":false,"controls":{"Cancel":"105W-0","CropManually":"105I-0"},"captionTextId":"105E-0"},
+    {"rootId":"1011-0","pageId":"p-B-0","phoneId":"106F-0","callerCloneId":"106G-0","state":"Actual W27 accepted draft with shared native Menu open","runtimePushRoute":false,"menuId":"107V-0","controls":{"ChoosePhoto":"107W-0","TakePhoto":"107Y-0","RemoveBackground":"1080-0","RemovePhoto":"1082-0","Back":"106S-0","inheritedHiddenCancel":"106W-0","Change":"1072-0","EditPhoto":"1078-0","MoreDetails":"107J-0","SavePiece":"107T-0"},"captionTextId":"1086-0"}
+  ],
+  "entry": {
+    "v1":{"route":"L78","rootId":"OIZ-0","pageId":"p-2-0","menuId":"OKE-0","newControlId":"100X-0","newLabelId":"100Y-0","retainedControls":["OKF-0","OKH-0","OKJ-0"],"menuChildren":["OKF-0","OKH-0","100X-0","OKJ-0"]},
+    "v2":{"route":"W27","rootId":"AMO-1","Change":"OKO-0","sharedMenu":"L78 OIZ-0","referenceRootId":"1011-0"},
+    "gate":"Accepted media, verified local capability, no competing photo operation. Original default; explicit contextual Menu only. No automatic/no-photo/body action or extra confirmation.",
+    "destination":"Dismiss Menu; one local job →1010-0 or runtime unavailable105C-0"
+  },
+  "operationContract": {
+    "request":"Local Vision; VN iOS17+ / Swift iOS18+ chosen by deployment; off UI thread, bounded memory and one active job; independent of Apple Intelligence",
+    "pending":"Retain accepted media/fields; Use photo disabled until rendered preview. Cancel abandons UI immediately and invalidates identity; compute cancellation best effort.",
+    "identity":"draftID/sourceRevision/jobToken checked before preview and apply; invalidate on Cancel, replacement/retake, retry, dismissal or Save; ignore stale completion/errors",
+    "comparison":"Original/Removed provisional only; same full-image Fit/input extent/aspect and current crop/rotation; required user inspection, not automatic semantic approval",
+    "apply":"Use photo applies selected recipe/rendition to originating draft only; no saved-record mutation, Save, receipt/readiness increment, upload or consent change; original/fields preserved",
+    "cancel":"Return to actual accepted draft, discard unaccepted preview only, retain original/prior accepted recipe/fields and restore trigger focus",
+    "failure":"Execution/no subject/empty output/render failure →104E-0; Try again one fresh job1010-0, Crop manually L77 OG7-0 / W31 OKR-0, Cancel retained accepted draft; original remains savable",
+    "multipleInstances":"Preview union of detected foreground instances. Count>1 alone is neither failure nor proof of multiple garments/pieces (pair of shoes valid); no semantic instance chooser, single-item gate or quality-confidence threshold. User may reject person/hanger/clutter via Original/Cancel.",
+    "unavailable":"105C-0 Crop manually L77/W31 or Cancel; no cloud fallback or Foundation Models/Apple Intelligence gate",
+    "reset":"L77/W31 restores normalized original orientation/full-image Fit/no cleanup; editor Cancel keeps prior accepted recipe; Use returns originating draft",
+    "v2":"Same local operation; no account/sync/publication triggered. Sync preserves recipe/revision; later explicit publication reviews exact accepted rendition, never original implicitly."
+  },
+  "parentPolicyOverride": {
+    "supersedes":"Frozen worker conditional count>1 ambiguity/failure proposal; frozen artifact unchanged",
+    "decision":"Multiple labels alone are not failure. Preview their union, including legitimate pairs; no garment-count inference or semantic chooser.",
+    "parentPaperMutation":{"rootId":"104E-0","nodeId":"104G-0","text":"REFERENCE ONLY · Execution/no-subject/render failure. Multiple labels alone are not failure: preview their union (e.g. a pair of shoes). No garment-count inference.","rootDelta":0,"nodeDelta":0,"phoneUIOrControlChanges":false},
+    "historicalRootNamePreserved":true,
+    "parentUnavailableCopyMutation":{"rootId":"105C-0","nodeId":"105L-0","before":"It isn’t available on this device. Keep your original or crop it manually. Nothing is uploaded.","after":"It isn’t available on this device. Keep your original or crop it manually. No photo is sent for removal.","reason":"Scope privacy claim to removal; separately authorized V2 sync is not ruled out","rootDelta":0,"nodeDelta":0,"IDsUnchanged":true,"parentPhoneScreenshot":"105F-0; static fit remains two lines"}
+  },
+  "sourceImageProof": {
+    "authorizedFixtureSourceNode":"OJS-0",
+    "url":"https://app.paper.design/file-assets/01M3SM2KBHBZG6MA0Q744Y9NW0/42HDR1JSMFRHPVM0X8T7ZCE755.png",
+    "asset":"../assets/welcome/garment-atlas-original.png",
+    "provenance":"Existing generated Welcome atlas, not real user garment/production asset proof",
+    "photoNodes":["101M-0","102L-0","103W-0","104U-0","105S-0","1074-0"],
+    "samePixels":true,"genuineOriginalCutoutPairVerified":false,"newMaskOrImprovedPixels":false,"newImageGeneration":false,
+    "honesty":"Original/Removed reuse identical existing atlas pixels and Fit atlas-cell geometry, not a mask; external captions outside390×844 explicitly identify illustrative unimplemented mask/unverified result imagery"
+  },
+  "renderEvidence": {
+    "worker":"Static scale1 screenshots of OIZ-0 and all six roots; fixed V2 menu stacking and selected segment pill; confirmed1025-0/103A-0/1011-0. >=44 targets;50 buttons/menu rows;117×44 segments;80×44 Cancel. Roots390×950 include external106 caption; phone390×844.",
+    "parentReported":"Final live1010-0,1025-0,103A-0,104E-0 after104G-0 annotation,105C-0,1011-0 independently screenshotted; static clear/unclipped, external identical-pixels caption visible.105F-0 phone also confirmed after105L-0 helper correction. No more Paper writes planned.",
+    "limit":"No local PNG copies; transcript attachments/static only; no native accessibility/material/hit-testing or mask proof"
+  },
+  "integrationChecks":{"result":"Passed","checks":["12 design JSON files parse without duplicate keys","380 canonical identity triples unchanged versus HEAD","502 unique root ownership entries;18/197/287 pages;122 root references plus4 nested offline references","All current evidence inventories agree502/34712 and1847/10952/21913 nodes","Six new references runtimePushRoute false","167 local Markdown links and26 heading anchors resolve in nine owned Markdown files","git diff --check and new evidence whitespace pass"],"boundary":"Repository/static registry consistency only; not native/mask quality"},
+  "parentReportedToolingCheck":{"command":"pnpm check","result":"38 tests passed","boundary":"Repository tooling only, not native behavior"},
+  "coverageAudit": {
+    "scope":"Read-only all-page exact-label and bounded ancestor-style inspection; no Paper/application mutations. Differently named or icon-only actions are not exhaustively certified.",
+    "visibleIndependentMenus":[{"menu":"OKE-0","action":"100X-0"},{"menu":"107V-0","action":"1080-0"}],
+    "confirmedMissingIndependentMenus":[],
+    "explicitSharedCaptureEntries":["OKO-0","WBP-0","WU3-0","WUD-0"],
+    "savedPhotoEditor":"L132 RJR-0 has Change RKM-0 and Edit photo RKE-0; V2 W08 Edit piece 1U9-0 / DR9-1 does not explicitly name this photo-editor destination. W09/W21 and W09 copy are metadata-only. Global saved-photo entry/return coverage remains unresolved, not a proven runtime defect.",
+    "downstream":"Closet/detail/search/outfit/Planner accepted-rendition and cache-revision propagation is not established by static imagery. Existing public snapshots must not change implicitly.",
+    "exclusions":["No-photo/source chooser","Journal fit photos","Avatars","Agent attachments","Standalone public-post/try-on media","Inert confirmation caller clones"],
+    "verdict":"Shared piece-capture Menu coverage confirmed within inspection; global saved-photo and downstream wiring not verified. No implementation exists on this planning branch."
+  },
+  "nativeRuntimeEvaluationGaps": [
+    "No Vision execution, actual mask/alpha or garment/edge quality verified; identical fixture is not a before/after pair",
+    "Physical oldest/modern devices and API boundaries, offline/no uploads, latency/memory/UI responsiveness unverified",
+    "Cancel/retake/retry/dismiss/save identity races and stale-result rejection need executable native tests",
+    "30–50 consented photo corpus including legitimate pairs, clutter, worn/mannequin/hanger, overlap, low contrast, sheer/lace/fringe/straps/shadows/reflections; human target retention/halos/clipping and unwanted foreground inspection required",
+    "Enlarged inspection, dark/contrast/transparency, Dynamic Type/VoiceOver/focus/selected traits, small phone/landscape/iPad and keyboard-safe adaptation unverified"
+  ]
+}

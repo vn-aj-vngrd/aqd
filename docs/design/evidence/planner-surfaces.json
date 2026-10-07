@@ -1,0 +1,664 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "scope": "Paper-only planner form choice groups and planned-look agenda surfaces",
+  "tokenHash": "fdeb7346",
+  "authorityRead": ["DESIGN.md", "docs/design/quality-criteria.md", "docs/design/rules.md", "docs/design/components.md#reusable-settings-group", "docs/design/native-presentations.md", "docs/design/planner-calendar.md", "Paper full MCP guide"],
+  "formInventory": [
+    {"screen": "L10", "artboard": "JZY-0", "content": "K00-0", "newGroup": "T6I-0", "preservedRows": ["K0B-0", "K05-0"], "fieldShells": ["K0M-0", "K0I-0"]},
+    {"screen": "L36", "artboard": "L9S-0", "content": "L9U-0", "newGroup": "T66-0", "preservedRows": ["LAF-0", "LA9-0", "LA3-0"], "fieldShells": ["LAQ-0", "LAM-0"]},
+    {"screen": "L37", "artboard": "LBA-0", "content": "LBC-0", "newGroup": "T6G-0", "preservedRows": ["LBN-0", "LBH-0"], "fieldShells": ["LCD-0", "LC9-0"]},
+    {"screen": "L38", "artboard": "LCX-0", "content": "LCZ-0", "newGroup": "T6A-0", "preservedRows": ["LDE-0", "LD8-0", "LD2-0"], "fieldShells": ["LDT-0", "LDP-0", "LDL-0"]},
+    {"screen": "P03", "artboard": "2SF-0", "content": "2WC-0", "newGroup": "T6E-0", "preservedRows": ["2WL-0", "2WR-0"], "fieldShells": ["2WF-0", "2WJ-0"]},
+    {"screen": "P04", "artboard": "2XC-0", "content": "30M-0", "newGroup": "T68-0", "preservedRows": ["30V-0", "311-0", "317-0"], "fieldShells": ["30P-0", "30T-0"]},
+    {"screen": "P05", "artboard": "34X-0", "content": "38A-0", "newGroup": "T6K-0", "preservedRows": ["38W-0", "392-0"], "fieldShells": ["38D-0", "38H-0"]},
+    {"screen": "P06", "artboard": "3DI-0", "content": "3GJ-0", "newGroup": "T6C-0", "preservedRows": ["3GW-0", "3H2-0", "3H8-0"], "fieldShells": ["3GM-0", "3GQ-0", "3GU-0"]}
+  ],
+  "agendaInventory": [
+    {"screen": "L09", "artboard": "JXA-0", "content": "JY0-0", "cards": ["JYI-0", "JY9-0"], "covers": ["ORA-0", "OY0-0"], "textLanes": ["JYL-0", "JYC-0"], "chevrons": ["JYJ-0", "JYA-0"], "headings": ["JYP-0", "JYG-0"]},
+    {"screen": "L85", "artboard": "PRM-0", "content": "PS6-0", "cards": ["PSL-0"], "hiddenCard": "PS9-0", "covers": ["PSR-0", "PSF-0"], "heading": "PSW-0"},
+    {"screen": "P01", "artboard": "2CK-0", "content": "2D3-0", "cards": ["2DY-0", "2E7-0"], "covers": ["OUP-0", "OUV-0"], "headings": ["2DU-0", "2E5-0"]},
+    {"screen": "P02", "artboard": "2K0-0", "content": "2NS-0", "cards": ["2Q3-0"], "cover": "OV1-0", "heading": "2Q1-0"},
+    {"screen": "L82", "artboard": "P8B-0", "content": "P8V-0", "hiddenCard": "P8Y-0", "emptyState": "PMC-0"},
+    {"screen": "L84", "artboard": "PFY-0", "content": "PGI-0", "cards": ["PGX-0"], "hiddenCard": "PGL-0", "cover": "PH3-0", "receipt": "PMG-0"}
+  ],
+  "structuralProcedure": "Each new group was inserted into its existing content parent, moved before the first original choice row using sibling-relative move_nodes, then populated by moving original rows in their original order. No row or action was recreated.",
+  "computedMetrics": {
+    "groups": {"backgroundColor": "var(--color-surface)", "borderRadius": "var(--radius-12)", "resolvedRadiusPx": 12, "paddingInlinePx": 14, "rowGapPx": 0, "border": "none", "measuredWidthPxV1": 350, "measuredTwoRowHeightPxV1": 108, "measuredThreeRowHeightPxV1": 162},
+    "choiceRows": {"minHeightPx": 54, "paddingBlockPx": 8, "internalGapPx": 12, "innerWidthPxV1": 322, "separator": "1px solid var(--color-line), between only, inset 14px by group", "lastRowBorder": "none", "label": {"flexGrow": 1, "flexBasis": "0%", "minWidthPx": 0, "fontSizePx": 17, "lineHeightPx": 24}, "value": {"flexShrink": 0, "fontSizePx": 15, "lineHeightPx": 21}, "accessory": {"widthPx": 22, "flexShrink": 0}},
+    "separateFields": {"backgroundColor": "var(--color-surface)", "borderRadius": "var(--radius-16)", "minHeightPx": 52, "paddingInlinePx": 14, "paddingBlockPx": 12, "border": "none"},
+    "visibleAgendaCards": {"backgroundColor": "var(--color-surface)", "borderRadius": "var(--radius-12)", "paddingPx": 14, "internalGapPx": 12, "minHeightPx": 108, "measuredHeightPxWeekV1": 108, "measuredWidthPxWeekV1": 350, "border": "none", "coverPx": [64, 80], "coverFlexShrink": 0, "chevronPx": [22, 22], "chevronFlexShrink": 0, "titlePx": [17, 24], "metadataPx": [15, 21], "titleMetadataGapPx": 4, "measuredTextLanePxWeekV1": [212, 49], "measuredChildXOffsetsPxBothWeekV1Cards": {"cover": 14, "text": 90, "chevron": 314}},
+    "sectionSpacing": {"contentInsetPx": 20, "headingFrameToCardPx": 12, "weekCardToComingUpTextPx": 24, "weekContentGapPx": 12, "comingUpHeadingPaddingTopPx": 12, "monthContentGapPx": 12},
+    "viewport": {"widthPx": 390, "heightPx": 844, "v2BoardsChangedFromFitContentToFixed": ["2SF-0", "2XC-0", "34X-0", "3DI-0", "2K0-0"], "formContentMaxHeightPx": 680, "agendaContentMaxHeightPx": 630, "existingFormHomeIndicators": {"position": "absolute", "bottomPx": 8, "leftPx": 130, "sizePx": [130, 5]}, "formHomeIndicatorNodesInspected": ["JZZ-0", "L9T-0", "LBB-0", "LCY-0", "2X6-0", "33G-0", "3BO-0", "3HJ-0", "2QR-0"]}
+  },
+  "screenshotReview": {
+    "method": "paper_get_screenshot at default 1x; actual rendered images inspected, not inferred from JSX",
+    "firstBatch": ["JZY-0", "L9S-0", "LBA-0", "LCX-0", "2SF-0", "2XC-0", "34X-0", "3DI-0", "JXA-0", "PRM-0", "2CK-0", "2K0-0", "P8B-0", "PFY-0"],
+    "verdicts": {
+      "JZY-0": "Pass: continuous two-row surface, separate fields, legible lanes, all actions fit.",
+      "L9S-0": "Pass: one three-row surface, two inset separators, no final line, actions fit.",
+      "LBA-0": "Pass: occasion/repetition grouped; weekday choices and editing notice unchanged; review action fits.",
+      "LCX-0": "Pass: three labelled fields remain separate; trip choices grouped; Review trip fits.",
+      "2SF-0": "Pass: matching two-row group; original Thursday fixture and actions retained.",
+      "2XC-0": "Pass: matching three-row group; form/action stack fits.",
+      "34X-0": "Pass: matching routine group; supporting notice remains readable.",
+      "3DI-0": "Pass: matching trip group and separate fields; no action clipping.",
+      "JXA-0": "Pass: both 108px cards share image/text/accessory lanes; coherent Coming up spacing.",
+      "PRM-0": "Pass: visible selected-date card fits beneath unchanged month grid; hidden coffee stays absent.",
+      "2CK-0": "Pass: actual afternoon/Office days fixtures preserved; matching surfaces and lanes; create action fits.",
+      "2K0-0": "Fix: reduce content gap from 16 to 12 to meet heading-to-card contract; card and actions otherwise fit.",
+      "P8B-0": "Pass: empty-day message/action remain truthful and visible; hidden coffee remains hidden.",
+      "PFY-0": "Pass: saved-date card matches shared geometry; saved receipt and Undo remain visible."
+    },
+    "oneFixBatch": {"node": "2NS-0", "change": "gap 16px to 12px"},
+    "confirmationBatch": ["2K0-0"],
+    "confirmationVerdict": "Pass: selected-day heading/card now use 12px spacing; unchanged calendar, subsequent controls and bottom safe area fit.",
+    "overall": "Static spacing, hierarchy, contrast, alignment, repetition and artboard fit reviewed. No observed clipping in the affected visible content.",
+    "screenshotsSaved": false
+  },
+  "preserved": ["original row IDs", "actual values, labels and dates", "outfit compositions and image sources", "actions and route references", "draft/save/unassigned contracts", "calendar Month/Week state", "selected calendar dates", "empty-date message", "saved receipt and Undo", "all navigation/tab/header icons and Closet segments", "existing unrelated dirty repository changes"],
+  "scrollContract": "Content frames are named as native safe-area scroll content. Native implementation must scroll full content above stable system footer/tab safe areas; reference 844px viewport is not expanded for overflow. Paper normalized requested overflowY:auto to overflow:clip, so static drawing is not proof of scroll interaction.",
+  "exceptions": [
+    {"scope": "Hidden coffee templates PS9-0, P8Y-0, PGL-0", "detail": "Surface, radius, padding and minimum height updated while display:none was preserved. Paper drops inert flex gap/alignment and descendant flex-shrink/lane properties under hidden parents. These hidden layouts are not visually certified; apply the visible card contract when a real scroll/viewport state reveals them."},
+    {"scope": "Foundations", "detail": "Existing content/form and settings-group masters inspected. Optional new master reference not added; no board created."},
+    {"scope": "Navigation", "detail": "Existing nav selection/slot contents shown in screenshots belong to another writer and were not changed or certified by this scoped pass."},
+    {"scope": "Other error/draft screens", "detail": "No error-screen template was modified; existing failure/draft references and behavior remain unchanged. Static review does not verify persistence or recovery at runtime."}
+  ],
+  "nativeVerificationRequired": ["scroll and footer safe-area behavior on short phones", "keyboard avoidance", "Dynamic Type and long localized values", "VoiceOver order and full-row targets", "native picker/dismissal and draft restoration", "persistence, retry, conflict and Undo behavior"],
+  "parentFollowUp": {"node": "2EE-0", "screen": "P01", "change": "Compact trip summary also surfaced: 12-point corners, 14-point horizontal padding, 54-point minimum, flexible 17/24 title, 15/21 date and fixed 22-point disclosure", "verification": "Parent default Paper export inspected after worker completion; native behavior unverified"},
+  "runtimeOrImplementationClaims": false,
+  "externalResearch": false,
+  "generatedImages": false,
+  "repositoryWrites": ["docs/design/evidence/planner-surfaces.json"],
+  "historicalEvidencePolicy": {
+    "status": "Historical / superseded",
+    "fields": [
+      "fileId",
+      "scope",
+      "tokenHash",
+      "authorityRead",
+      "formInventory",
+      "agendaInventory",
+      "structuralProcedure",
+      "computedMetrics",
+      "screenshotReview",
+      "preserved",
+      "scrollContract",
+      "exceptions",
+      "nativeVerificationRequired",
+      "parentFollowUp",
+      "runtimeOrImplementationClaims",
+      "externalResearch",
+      "generatedImages",
+      "repositoryWrites"
+    ],
+    "note": "Original scoped procedure, screenshots, counts, styles, actions and positions are preserved as dated history, not current live proof. latestRefinement owns affected current contracts; paper-manifest.json owns inventory."
+  },
+  "latestRefinement": {
+    "designSync": {"evidence":"design-sync.json","scope":"Coherent named-look/date/Theme fixtures, shared capture/review structure, blank Create mode and Foundations rows","runtimeComplete":false},
+    "emptyStateConsistency": {"visual": "Unboxed canvas; leading20/26 heading15/21–22 explanation,8-point message gap,12 before full-width50 primary and plain50 secondary", "placement": "One intrinsic stack centered in flexible remaining body, below controls and above navigation/composer/footer, never viewport-center coordinates", "overflow": "Safe center + nonshrinking content; overflowing Dynamic Type top-aligns and scrolls natively, not proven by static Paper", "foundations": {"inventoryEntries": 25, "centered": 11, "contextualExemptions": 14, "regionIds": ["4E9-0", "4FA-0", "4G0-0", "WJC-0", "WJF-0", "WJI-0", "WJL-0", "WJO-0", "WJR-0", "WJU-0", "WK3-0"], "proof": "All regions/stacks computed-checked; six bounded representative renders; inactive measurements unavailable"}, "v1": {"priorChangedRoots": 34, "centeredRoots": 27, "proof": "All27 regions computed-checked and rendered; inline conversation QOO/QQX/QV1 restored and rerendered", "representativeGeometry": {"L91Region": "WJX-0 350×552", "stack": "56-point message +12gap+50Retry", "equalFreeSpace": 217}, "discoveryLimit": "Reuse existing target map;131 other roots not freshly re-audited"}, "v2": {"priorStates": 48, "centeredStates": 27, "contextualExemptions": 21, "changedRoots": 24, "proof": "All target regions computed/raster measured,113 computed nodes,15 representative screens; no region errors", "inventoryLimit": "Inherited71 unparsed nodes remain"}, "preserved": ["Headers/search/scope/filter controls", "Actual records and opaque result/form surfaces", "Inline failures beside their related content", "Native sheet/alert button placement", "Copy, illustration, destinations, consent and selected traits", "50-point actions and compact controls", "Root positions/sizes/tokens"], "parentReview": "V1/V2 read-failure renders and sampled remaining-region styles independently checked", "nativeCertified": false},
+    "v1ThemeOutfitLists": {"changed": [{"screen": "L34", "root": "L7F-0", "body": "L7H-0"}, {"screen": "L32", "root": "L3D-0", "body": "L43-0"}, {"screen": "L88", "root": "Q8P-0", "body": "Q8R-0"}, {"screen": "L164", "root": "UUA-0", "body": "UUC-0"}, {"screen": "L123", "root": "RBR-0", "body": "VXQ-0"}, {"screen": "L135", "root": "RNP-0", "body": "RNR-0"}], "domain": "Theme groups outfits; membership removal/deletion never deletes the outfit", "fixtureSources": {"afternoon": "Existing K81-0 under L20", "coffee": "Existing OTN-0 under L34 and RO6-0 under L135"}, "treatment": "Collection previews on lists; L34 full-width composition covers/name/piece count/native disclosure; original selected members retained", "verification": "Six root screenshots and computed geometry/registered disclosures reviewed; parent independently checks representative render", "limits": ["Latest sync: L88/W23 query Weekend matches Weekend · 8 outfits detail L34/W18 with the same two represented outfit covers; no six other members fabricated", "Actual native selection must retain theme ID; generic fixture mismatch resolved statically", "Native navigation/membership persistence/scroll/hit testing/Dynamic Type unverified"], "rootDelta": 0, "tokensChanged": false},
+    "searchBodyRefinement": {"screens": ["L92", "L86", "L87", "L88", "L89", "L93"], "finalOverrides": ["Empty guidance on canvas, no surface/card fill", "L89 Clear search primary; Add a piece plain secondary", "Filters surface moved above result grid"], "surfaces": {"resultCards": "Opaque semantic surface,12 corners,14 padding,full-image Fit", "filters": "Same surface; original label/summary/route; before grid", "emptyStacks": "Transparent, zero-padding/radius, screen-aligned"}, "actions": {"primary": ["Browse pieces", "Clear search", "L93 Add a piece"], "secondary": ["L89 Add a piece"], "minHeight": 50, "gap": 12, "labels": "17/24"}, "verification": "Worker rendered all6 roots, recaptured final override states and checked styles/parent order; original IDs, image sources and counts preserved", "subsequentChanges": "Parent removed14 matching V1/V2 Your closet · Only you captions; Outfit/Theme card parity is a separate follow-up", "nativeLimits": "Keyboard, Dynamic Type, focus, retained navigation/search state and filter-header persistence unverified", "rootCountDelta": 0},
+    "captureFooterSpacing": {"screens": ["L04", "L75", "L76", "L79"], "viewport": [390, 844], "saveBottomClearance": 64, "contentPaddingBottom": {"JQI-0": 42, "ONT-0": 64, "ODO-0": 32, "OEZ-0": 32}, "selectedStackGap": 8, "preserved": "50-point action, Fit preview, fields, validation and home indicators", "proof": "Parent reviewed all4 rendered footer/body references; root dimensions unchanged", "native": "Use actual safe-area/keyboard insets and scrolling, not fixed64 at every device/text size"},
+    "date": "2026-10-06",
+    "foundationsFlowMap": "planner-navigation.json#latestRefinement.foundationsFlowMap",
+    "foundationsLibrary": {"evidence": "foundations-library.json", "scope": "Reusable Foundations: 12 boards + 6 headers; 14 feature boards and product subtrees moved to phase references; canonical IDs unchanged", "supersedes": "foundationsFlowMap", "nativeVerified": false},
+    "v1FinalFlowMap": "planner-navigation.json#latestRefinement.v1FinalFlowMap",
+    "v2Profile": "fit-journal-states.json#latestRefinement.v2Profile",
+    "newTokens": 0,
+    "newColors": 0,
+    "newIconRoles": 7,
+    "historicalUIRefinementInventoryVerification": {"method":"Read-only three-page basic-info integration observation","rootCounts":[18,192,286],"nodeCounts":[1847,10760,21849],"totalRoots":496,"totalNodes":34456,"tokenHash":"fdeb7346","currentCountSource":"evidence/ui-refinements.json","limits":"Historical parent-confirmed496 checkpoint; latest inventory below; no native/whole-app certification"},
+    "historicalNativeConfirmationInventoryVerification": {
+      "method": "Frozen V1/V2 artifacts plus parent final three-page live counts;V2 all283 root IDs individually verified by worker",
+      "rootCounts": [
+        18,
+        191,
+        283
+      ],
+      "nodeCounts": [
+        1847,
+        10595,
+        21611
+      ],
+      "totalRoots": 492,
+      "totalNodes": 34053,
+      "tokenHash": "fdeb7346",
+      "currentCountSource": "native-confirmations.json",
+      "limits": "Baseline classification/candidates historical;bounded current39 cases plus rich review. No whole-root raster proof/native certification."
+    },
+    "v2CoreAlignment": {
+      "sourceArtifact": "/tmp/aqd-v2-core-alignment.json", "sourcePortability": "Local provenance, not a portable asset or Markdown image link",
+      "modifiedFamilies": 22, "screenshotsReviewed": 29, "newArtboards": 0,
+      "changedRoots": [
+        {"screen": "W06", "root": "1NJ-0"}, {"screen": "W07", "root": "1ON-0"}, {"screen": "W18", "root": "2X8-0"}, {"screen": "W19", "root": "33K-0"}, {"screen": "W27", "root": "AMO-1"},
+        {"screen": "A03", "root": "2QT-0"}, {"screen": "W21", "root": "3GI-0"}, {"screen": "A46", "root": "H75-0"}, {"screen": "A36", "root": "GJ9-0"}, {"screen": "A51", "root": "HJ3-0"},
+        {"screen": "A40", "root": "GST-0"}, {"screen": "A49", "root": "HEB-0"}, {"screen": "A53", "root": "HNV-0"}, {"screen": "A54", "root": "HQ9-0"},
+        {"screen": "W10", "root": "1W8-0"}, {"screen": "W22", "root": "9RC-0"}, {"screen": "W23", "root": "9SN-0"}, {"screen": "W24", "root": "9U1-0"}, {"screen": "W25", "root": "9VD-0"}, {"screen": "W26", "root": "9WP-0"},
+        {"screen": "P01", "root": "2CK-0"}, {"screen": "P02", "root": "2K0-0"}],
+      "changedControlIds": ["1NJ-0", "1NK-0", "1NV-0", "1O3-0", "1OL-0", "1P7-0", "1PI-0", "1PK-0", "1PO-0", "1PU-0", "1PX-0", "1Q0-0", "2EK-0", "2QA-0", "2QG-0", "2QJ-0", "2VZ-0", "2W2-0", "2W5-0", "2Z0-0", "2Z7-0", "359-0", "35C-0", "9E6-0", "9E7-0", "9E8-0", "9E9-0", "9EA-0", "9EB-0", "9EC-0", "9ED-0", "9EE-0", "9EF-0", "9S1-0", "9S2-0", "9S3-0", "9S4-0", "9S5-0", "9S6-0", "9S7-0", "9S8-0", "9S9-0", "9SA-0", "9TC-0", "9TD-0", "9TE-0", "9TF-0", "9TG-0", "9TH-0", "9TI-0", "9TJ-0", "9TK-0", "9TL-0", "9UQ-0", "9UR-0", "9US-0", "9UT-0", "9UU-0", "9UV-0", "9UW-0", "9UX-0", "9UY-0", "9UZ-0", "9W2-0", "9W3-0", "9W4-0", "9W5-0", "9W6-0", "9W7-0", "9W8-0", "9W9-0", "9WA-0", "9WB-0", "9XE-0", "9XF-0", "9XG-0", "9XH-0", "9XI-0", "9XJ-0", "9XK-0", "9XL-0", "9XM-0", "9XN-0", "AMX-1", "AMY-1", "HJQ-0", "HJR-0", "HK1-0", "HKB-0", "HKL-0", "HL3-0", "HX2-0", "HX3-0", "HXD-0", "HXN-0", "I0O-0", "I5O-0", "I5P-0", "I5Z-0", "I67-0", "I83-0", "I9C-0", "I9S-0", "WBM-0"],
+      "cloneIds": {"W06": ["W90-0", "W9A-0", "W9K-0", "WAA-0", "WAB-0", "WAY-0"], "W07": ["WBM-0", "WBN-0", "WBR-0", "WBV-0"], "A51": ["WCV-0", "WCW-0", "WD9-0", "WCX-0", "WD3-0", "WDA-0", "WDG-0"]},
+      "removedNodes": ["1NK-0", "1NV-0", "1O3-0", "1OL-0"],
+      "hiddenNodes": ["2EK-0", "2QA-0", "1PO-0", "1Q0-0", "HKL-0", "HKB-0", "HK1-0", "HJR-0"],
+      "search": {"screens": ["W10", "W22", "W23", "W24", "W25", "W26"], "rails": ["9E6-0", "9S1-0", "9TC-0", "9UQ-0", "9W2-0", "9XE-0"], "labelPx": [14, 20], "segmentPx": 32, "railPx": 36, "insetGapPx": 2, "nativeMinHitPx": 44, "appearance": "Flat, no blur/border/shadow; only selected segment opaque surface", "exit": "One Cancel preserved; no Back added"},
+      "sharedGeometry": {"surface": "var(--color-surface)", "cornerPx": 12, "rowMinHeightPx": 54, "inlinePaddingPx": 14, "lanePx": 22, "interiorRules": "none", "tertiaryActions": {"ids": ["I0O-0", "I83-0", "I9C-0", "I9S-0"], "bottomPx": 176, "heightPx": 50, "insetPx": 20}, "A51": "T73-0 opaque starter clone; intentional accessibility contrast boundary"},
+      "actionSemantics": {
+        "W06": "Add photo opens shared native source sheet; scoped Photos/camera, Close preserves draft",
+        "W07/W27": "Change uses native options, Edit photo shared editor; Save requires accepted photo/name/category and actual persistence",
+        "W21": "Color moved here and retained with manual/classifier detail inputs",
+        "A51": "Starters populate editable drafts, never auto-send; Start with a piece → A36",
+        "A36/A46": "Explicit selected context only; retained draft, no private/Inbox context by default",
+        "A40": "Retry/Choose another photo; Remove attachment retains other text/media",
+        "A49": "Try again fresh response, Edit message retains request; Build outfit manually never replays writes",
+        "A53": "Choose photo/Open Settings; Keep typing returns retained task",
+        "A54": "Describe photo/Add piece manually/Remove photo; no implied analysis or cloud switch",
+        "W10/W22-W26": "Cancel restores origin; clear retains scope; detail Back restores query/tab/filter/scroll",
+        "P01/P02": "Duplicate creation hidden at 2EK-0/2QA-0; toolbar plus retains selected date/local timezone. No plan creation/deletion or wear mutation"},
+      "preservedExtensions": ["Today/All/Following discovery and community", "Labelled44 Inbox and five private destinations", "Public projection/publication, account/auth, backup/sync and model-connected consent remain additive; no automatic cloud/posting"],
+      "verification": {"modifiedRoots": "All 22 family roots captured and statically reviewed by worker; no observed unresolved P0/P1 in that bounded inventory", "unchangedRepresentatives": ["E06", "S15", "S16", "S17", "S18", "S48", "P07"], "wholeAppAlignment": false, "nativeVerified": false, "resumedNodeDelta": 0, "resumedRootDelta": 0, "originalNodeDelta": "Unknown, no pre-interruption baseline"},
+      "unreviewed": "Other E/W/P/A variants beyond listed roots; public/social, auth, Inbox and U Profile/Settings/questionnaires were outside worker scope. Separate parent Profile/Settings reviews do not certify all these states.",
+      "nativeGaps": ["Draft/save/undo persistence and receipts", "Permissions/model availability/connected consent and privacy enforcement", "Small phones/landscape/largest Dynamic Type/VoiceOver/RTL/focus/hit testing/keyboard-safe layouts", "Dark appearance/Increase Contrast/Reduce Transparency", "Closed no-photo/landscape/missing-photo V2 variants not separately inventoried"]
+    },
+    "settingsFamily": {
+      "sourceArtifact": "/tmp/af56cf6d-46ba-4a9-recovery.json", "sourcePortability": "Local recovery provenance only",
+      "roots": [{"screen": "U05", "root": "3B1-0"}, {"screen": "U06", "root": "4F6-0"}, {"screen": "U09", "root": "50P-0"}, {"screen": "U10", "root": "52I-0"}, {"screen": "U11", "root": "53R-0"}, {"screen": "U12", "root": "5B1-0"}, {"screen": "U13", "root": "5DE-0"}, {"screen": "U14", "root": "5GG-0"}],
+      "recoveryGlyphInstances": 42, "currentGlyphInstances": 43, "newRoots": 0,
+      "actualCloneSources": {"back": "4PA-0", "rightChevron": "4Q0-0", "check": "4QI-0", "selectedCheck": "4QK-0"},
+      "handoffMasterCorrection": {"source": "Recovery mutation calls, icon-manifest.json and read-only live node_info", "incorrectSuppliedRoles": {"4RH-0": "Actually calendar selected SVG, not check circle", "4RR-0": "Actually arrow.up specification Text, not unchecked", "4PU-0": "Actually bookmark specification Text, not check", "4PG-0": "Actually heart specification Frame, not close"}, "decision": "Record actual registered clone sources from recovery; do not invent additional check/close replacements or new icon roles"},
+      "replacementMaps": {
+        "chevron": {"4CL-0": "W5Y-0", "4CR-0": "W5J-0", "4D3-0": "W5P-0", "4DA-0": "W61-0", "4DG-0": "W5M-0", "4DM-0": "W5D-0", "4DS-0": "W5G-0", "4DY-0": "W5S-0", "8GN-0": "W5A-0", "8GU-0": "W5V-0", "4H0-0": "W7B-0", "4H6-0": "W71-0", "4HI-0": "W6V-0", "4HO-0": "W7K-0", "51T-0": "W6S-0", "51Z-0": "W7E-0", "525-0": "W7H-0", "52B-0": "W74-0", "59J-0": "WBG-0", "59P-0": "WB4-0", "59V-0": "WB7-0", "5C5-0": "WB1-0", "5E2-0": "W8A-0", "5E8-0": "W8S-0", "5EE-0": "W8M-0", "5EK-0": "W8P-0", "5EQ-0": "W8J-0", "5EW-0": "W8D-0", "5F2-0": "W8G-0", "5I4-0": "W87-0"},
+        "back": {"3BI-0": "WCF-0", "4GO-0": "WC6-0", "51K-0": "WBX-0", "52V-0": "WCI-0", "544-0": "WC9-0", "5BE-0": "WC0-0", "5DT-0": "WCC-0", "5GW-0": "WC3-0"},
+        "check": {"533-0": "WBD-0", "539-0": "WBA-0", "53F-0": "WBJ-0", "Q0G-0": "W6Y-0"}},
+      "geometry": {"glyphPx": 22, "lanePx": 22, "backTargetPx": 44, "socialRowMinHeightPx": 54, "inlinePaddingPx": 14, "backInk": "var(--color-ink)", "socialSlotsRotate": 0},
+      "appearance": {"source": "M0K-0", "intro": "W77-0", "children": ["W78-0", "W79-0"], "content": "5HI-0", "paddingTopPx": 24, "gapPx": 20, "systemDefault": "Retained; accessibility extension preserved"},
+      "prose": {"shells": ["4HC-0", "52D-0", "53M-0", "59X-0", "5C7-0"], "text": ["4HD-0", "52E-0", "53N-0", "59Y-0", "5C8-0"], "style": "Transparent, zero decorative padding/radius; secondary semantic text"},
+      "separator": {"retained": "4DI-0", "reason": "Legitimate native internal Help grouped separator"},
+      "tourReplay": {"screen": "U05", "group": "4D5-0", "row": "WE7-0", "registeredChevron": "WEB-0", "destination": ["L62", "L63", "L64", "L65", "L66"], "return": "U05", "mutatesRecordsOrPreferences": false},
+      "review": {"workerScreenshots": ["U05", "U06", "U09", "U10", "U11", "U12", "U13", "U14"], "parentScreenshots": ["U05", "U18"], "scope": "Bounded static lanes/groups/type/fit and safeguards only; no whole-app audit", "nativeVerified": false},
+      "unreviewed": "U15–U24 except separate parent U18 check; W20/E05 and Profile outside Settings worker ownership",
+      "nativeGaps": ["Dynamic Type/VoiceOver/keyboard/toggle behavior", "Persistence/native transitions/source return", "Connected service and consent enforcement"]
+    },
+    "status": "Prepared static reference; shared contracts only",
+    "runtimeComplete": false,
+    "verificationSource": "Parent-reported rendered checks and final actual-position proof; inventory worker used read-only Paper counts and node inspection",
+    "retirement": {
+      "canonicalDarkScreens": [
+        {
+          "id": "L53",
+          "nodeId": "M2Y-0"
+        },
+        {
+          "id": "L54",
+          "nodeId": "M3Y-0"
+        },
+        {
+          "id": "L55",
+          "nodeId": "M6G-0"
+        },
+        {
+          "id": "L56",
+          "nodeId": "M8G-0"
+        },
+        {
+          "id": "L57",
+          "nodeId": "MAE-0"
+        },
+        {
+          "id": "L58",
+          "nodeId": "MCE-0"
+        },
+        {
+          "id": "L59",
+          "nodeId": "MDT-0"
+        },
+        {
+          "id": "L67",
+          "nodeId": "MY9-0"
+        }
+      ],
+      "foundationsDarkPhoneRoots": [
+        "1YD-0",
+        "21N-0"
+      ],
+      "obsoleteV1HeadingRoots": [
+        "N0B-0",
+        "SIH-0",
+        "SIL-0",
+        "SIP-0",
+        "SIT-0",
+        "SIX-0",
+        "SJ1-0",
+        "SJ5-0"
+      ],
+      "allDarkPhonesRemoved": 10,
+      "v2DarkPhonesFound": 0,
+      "darkSupport": "Paired light/dark tokens and native dark appearance remain required; dark component masters are retained."
+    },
+    "currentInventory": {"rootArtboards":518,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":138,"nestedOfflineReferences":4,"pages":[{"id":"p-1-0","count":25,"canonicalCount":0,"rootReferenceCount":25},{"id":"p-2-0","count":206,"canonicalCount":169,"rootReferenceCount":37},{"id":"p-B-0","count":287,"canonicalCount":211,"rootReferenceCount":76}],"nodeCounts":[2046,11504,22218],"totalNodes":35768,"tokenHash":"fdeb7346","evidence":"feedback-variants.json","nodeCountStatus":"Feedback worker final three-page aggregates; frozen earlier scoped checks unchanged, not rerun"},
+    "historicalBackgroundRemovalInventory": {
+      "rootArtboards":502,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":122,"nestedOfflineReferences":4,
+      "pages":[{"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},{"id":"p-2-0","name":"01 · V1","count":197,"canonicalCount":169,"rootReferenceCount":28},{"id":"p-B-0","name":"02 · V2","count":287,"canonicalCount":211,"rootReferenceCount":76}],
+      "nodeCounts":[1847,10952,21913],"totalNodes":34712,"tokenHash":"fdeb7346","nodeCountStatus":"Parent-confirmed live three-page counts after background-removal design froze; static only","evidence":"background-removal.json"
+    },
+    "historicalNativeConfirmationInventory": {
+      "rootArtboards": 463,
+      "canonicalScreens": 380,
+      "v1CanonicalScreens": 169,
+      "v2CanonicalScreens": 211,
+      "rootReferences": 83,
+      "nestedOfflineReferences": 4,
+      "pages": [
+        {
+          "id": "p-1-0",
+          "name": "00 · Foundations",
+          "count": 18,
+          "canonicalCount": 0,
+          "rootReferenceCount": 18
+        },
+        {
+          "id": "p-2-0",
+          "name": "01 · V1",
+          "count": 183,
+          "canonicalCount": 169,
+          "rootReferenceCount": 14
+        },
+        {
+          "id": "p-B-0",
+          "name": "02 · V2",
+          "count": 262,
+          "canonicalCount": 211,
+          "rootReferenceCount": 51
+        }
+      ]
+    },
+    "nativeVerificationRequired": [
+      "Native tab/search/menu/picker behavior and dismissal/focus",
+      "Hit testing, VoiceOver, Dynamic Type, localization",
+      "Safe-area scrolling, short phones and keyboard",
+      "Preference drafts, validation/gating, atomic Save and recovery",
+      "Calendar/date, plan/wear save, conflicts, retry and Undo"
+    ],
+    "week": {
+      "screens": [
+        "L09",
+        "L33",
+        "P01"
+      ],
+      "roots": [
+        "JXA-0",
+        "L5M-0",
+        "2CK-0"
+      ],
+      "strips": [
+        "PY0-0",
+        "UOE-0",
+        "2D8-0"
+      ],
+      "surface": "White / semantic opaque surface",
+      "radiusPx": 12,
+      "paddingPx": 8,
+      "heightPx": 80,
+      "dateCellPx": [
+        44,
+        64
+      ],
+      "removedTodayOrDateAdd": [
+        "JYQ-0",
+        "UTC-0",
+        "2DW-0",
+        "P9M-0",
+        "PH9-0",
+        "PSX-0"
+      ],
+      "removalScreens": [
+        "L09",
+        "L33",
+        "P01",
+        "L82",
+        "L84",
+        "L85"
+      ],
+      "retainedActions": "Toolbar + remains; L82 empty-date primary remains"
+    },
+    "packing": {
+      "screen": "L39",
+      "root": "LED-0",
+      "preservedRows": [
+        "LF3-0",
+        "LEW-0",
+        "LER-0",
+        "LEM-0"
+      ],
+      "v2Screen": "P07",
+      "clonedRows": [
+        "UWU-0",
+        "UXN-0",
+        "UX5-0",
+        "UXE-0"
+      ],
+      "rowMinHeightPx": 80,
+      "radiusPx": 12,
+      "paddingBlockInlinePx": [
+        12,
+        14
+      ],
+      "gapPx": 12,
+      "thumbnailPx": [
+        48,
+        56
+      ],
+      "imagery": "Full-image Fit canonical shirt / jeans / sneakers / bag; actual composition preserved",
+      "checkboxTargets": [
+        "UWK-0",
+        "UWM-0",
+        "UWQ-0",
+        "UWO-0"
+      ],
+      "checkboxTargetPx": 44,
+      "reviewGroups": [
+        "LEG-0",
+        "3MC-0"
+      ],
+      "reviewRowMinHeightPx": 54
+    },
+    "forms": {
+      "groups": [
+        "T6I-0",
+        "T66-0",
+        "T6G-0",
+        "T6A-0",
+        "T6E-0",
+        "T68-0",
+        "T6K-0",
+        "T6C-0"
+      ],
+      "change": "All interior separator rules removed; existing groups and rows retained",
+      "primaryScreenshotsVerifiedByParent": [
+        "L36",
+        "P06"
+      ],
+      "choiceMinHeightPx": 54
+    },
+    "reviewAndWear": {
+      "screens": [
+        {
+          "id": "L40",
+          "root": "LFS-0",
+          "rows": [
+            "LGC-0",
+            "LG5-0",
+            "LFZ-0"
+          ]
+        },
+        {
+          "id": "L42",
+          "root": "LIA-0",
+          "rows": [
+            "LIQ-0",
+            "LIJ-0"
+          ]
+        },
+        {
+          "id": "L83",
+          "root": "PEP-0",
+          "rows": [
+            "PF3-0",
+            "PEX-0"
+          ],
+          "newCover": "UWS-0"
+        },
+        {
+          "id": "L10",
+          "root": "JZY-0",
+          "separatorRemovedFrom": "K0B-0"
+        },
+        {
+          "id": "L11",
+          "root": "K16-0",
+          "rows": [
+            "K1I-0",
+            "K1C-0"
+          ],
+          "newCover": "UXY-0"
+        },
+        {
+          "id": "L12",
+          "root": "K2G-0",
+          "rows": [
+            "K34-0",
+            "K2X-0",
+            "K2R-0",
+            "K2L-0"
+          ],
+          "newCover": "UY6-0"
+        },
+        {
+          "id": "L136",
+          "root": "RP6-0",
+          "rows": [
+            "RPI-0",
+            "RPC-0"
+          ],
+          "newCover": "UY0-0"
+        },
+        {
+          "id": "P03",
+          "root": "2SF-0",
+          "separatorRemovedFrom": "2WL-0"
+        },
+        {
+          "id": "P08",
+          "root": "3O3-0",
+          "rows": [
+            "4YT-0",
+            "4Z0-0",
+            "4Z7-0"
+          ]
+        },
+        {
+          "id": "P09",
+          "root": "50O-0",
+          "rows": [
+            "5AG-0",
+            "5AM-0"
+          ],
+          "newCover": "UY2-0"
+        },
+        {
+          "id": "P10",
+          "root": "5B0-0",
+          "rows": [
+            "5CJ-0",
+            "5CQ-0",
+            "5CX-0",
+            "5D3-0"
+          ],
+          "newCover": "UY4-0"
+        },
+        {
+          "id": "P12",
+          "root": "5GJ-0",
+          "rows": [
+            "5IA-0",
+            "5IH-0"
+          ]
+        }
+      ],
+      "cards": {
+        "surface": "Opaque semantic surface",
+        "radiusPx": 12,
+        "paddingPx": 14,
+        "minHeightPx": 108,
+        "coverPx": [
+          64,
+          80
+        ],
+        "imagery": "Real included-piece compositions, full-image Fit"
+      },
+      "choices": {
+        "minHeightPx": 54,
+        "interiorRules": "none"
+      },
+      "nativeChecks": "Persistence, date semantics, conflicts, retry, wear mutation and Undo outstanding"
+    },
+    "themes": {
+      "lists": [
+        {
+          "screen": "L32",
+          "root": "L3D-0",
+          "rows": [
+            "L4M-0",
+            "L4F-0",
+            "L47-0"
+          ]
+        },
+        {
+          "screen": "W03",
+          "root": "1GG-0",
+          "rows": [
+            "1HA-0",
+            "1HH-0",
+            "1HQ-0"
+          ]
+        }
+      ],
+      "radiusPx": 12,
+      "paddingPx": 14,
+      "gapPx": 12,
+      "coverPx": [
+        64,
+        80
+      ],
+      "removedCreationFooterNodes": ["L45-0", "1HX-0"],
+      "creationAction": "Toolbar plus retained; no redundant Create theme footer on populated L32/W03",
+      "removedFooterNodes": [
+        "L7K-0",
+        "L7I-0",
+        "2ZE-0",
+        "2ZK-0"
+      ],
+      "detailScreens": [
+        "L34",
+        "W18"
+      ],
+      "menuContract": "planner-navigation.json#latestRefinement.themeMenus"
+    },
+    "agentContext": {
+      "groups": [
+        {
+          "screen": "L28",
+          "root": "KWC-0",
+          "group": "UVJ-0",
+          "rows": [
+            "KWX-0",
+            "KWT-0",
+            "KWP-0"
+          ],
+          "included": "KWJ-0"
+        },
+        {
+          "screen": "A06",
+          "root": "3C7-0",
+          "group": "UW1-0",
+          "rows": [
+            "3FV-0",
+            "3FZ-0",
+            "3G3-0"
+          ],
+          "included": "3G7-0"
+        }
+      ],
+      "groupPx": [
+        350,
+        192
+      ],
+      "rowHeightPx": 64,
+      "touchingRows": 3,
+      "interiorRules": "none",
+      "includedMinHeightPx": 54,
+      "Done": "Visible",
+      "privacy": "Unchanged; no implicit context sharing"
+    },
+    "visualReview": {
+      "scope": "Parent visually checked affected surfaces only; no full whole-app audit",
+      "surfaces": [
+        "Packing",
+        "Week",
+        "Themes",
+        "Menu",
+        "Review/Conflict",
+        "Wear",
+        "Agent context"
+      ],
+      "native": "Unverified"
+    },
+    "nativeConfirmations": {
+      "date": "2026-10-06",
+      "evidence": "native-confirmations.json",
+      "scope": "Final V1 copy/native overlays and V2 reviewed native/direct/review contracts; static references, no native certification",
+      "caseCount": 39,
+      "nativeDecisionCount": 38,
+      "directActionResultCount": 1,
+      "richReviewCount": 1,
+      "illustratedViews": 40,
+      "caseCountMeaning": "39 case entries:17 V1 native +21 V2 native (including nested U12 DAI-1)+1 V2 direct-action result YW9-0. Native decisions=38:37 root states plus one nested state. Additional rich-review reference ZMA-0 makes40 illustrated views, not40 native confirmations.",
+      "newReferenceRoots": 29,
+      "canonicalIdsRetained": 380,
+      "retainedCanonicalStateRoots": 10,
+      "retainedNestedConvertedStates": 1,
+      "canonicalRouteAdditions": 0,
+      "tokenHash": "fdeb7346",
+      "nativeCertified": false,
+      "wholeRootVisualProof": false,
+      "supersedes": "Only affected current inventory/control contracts; earlier measured logs, copy pass and scoped renders remain historical."
+    },
+    "historicalInventoryVerifications": [
+      {
+        "status": "Historical pre-copy/native-overlay inventory checkpoint",
+        "supersededBy": "native-confirmations.json",
+        "evidence": {
+          "source": "Parent-reported final read-only Paper basic_info on all three pages",
+          "rootCounts": [
+            18,
+            183,
+            262
+          ],
+          "nodeCounts": [
+            1834,
+            9709,
+            19947
+          ],
+          "totalRoots": 463,
+          "totalNodes": 31490,
+          "currentSource": "foundations-library.json; cleanup finalRoots enumerates all pages; four nested references excluded",
+          "supersededCheckpoint": {
+            "rootCounts": [
+              32,
+              179,
+              248
+            ],
+            "nodeCounts": [
+              3549,
+              9433,
+              18322
+            ]
+          },
+          "historicalFieldScope": "source and limits describe superseded checkpoint, not current cleanup proof",
+          "priorCheckpoint": {
+            "rootCounts": [
+              32,
+              174,
+              248
+            ],
+            "nodeCounts": [
+              3478,
+              9072,
+              18059
+            ]
+          },
+          "tokenHash": "fdeb7346",
+          "limits": "Foundations complete32 root list; V1/V2 lists truncated100, counts not truncated. Parent nodeInfo/screenshots verified splash/U25/U26. No inventory scout artifact was produced."
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "date": "2026-10-06",
+  "status": "Thirty reported static discrepancies resolved; six clarification items specified and represented",
+  "scope": "Foundations, V1/V2 shared controls, named fixtures, review/recovery copies and active handoff docs; no app implementation or whole-app/native certification",
+  "tokenHash": "fdeb7346",
+  "inventory": {
+    "rootArtboards":459,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":79,"nestedOfflineReferences":4,
+    "pages":[{"id":"p-1-0","roots":32,"nodes":3549},{"id":"p-2-0","roots":179,"nodes":9433},{"id":"p-B-0","roots":248,"nodes":18322}],
+    "method":"Parent final live basic_info on all three explicit pages; manifest canonical IDs independently counted. Lists truncate after100 on V1/V2, count properties do not.",
+    "baseline":{"roots":455,"screens":376},"delta":{"sharedV1V2PreferenceStates":4,"removedRoots":0,"newTokens":0}
+  },
+  "issues": [
+    {"id":1,"status":"resolved-static","targets":["Q8P-0","9SN-0","L7F-0","2X8-0"],"result":"Weekend query/result/detail all Weekend · 8 outfits, same two represented covers; no unrepresented memberships manufactured"},
+    {"id":2,"status":"resolved-static","targets":["BSM-1","BUL-1","UAO-0"],"result":"Planner selected in third of five equal slots"},
+    {"id":3,"status":"resolved-static","targets":["C5A-1","C5U-1"],"result":"Conflict October18 Afternoon Asia/Seoul inside Oct18–31 trip; no unrelated office-example mutation"},
+    {"id":4,"status":"resolved-static","targets":["KBP-0","K16-0","BVD-1","BYA-1","BZN-1"],"result":"V1 Oct5 and V2 Oct1 Asia/Manila carried through current wear review; historic Sep30/Sep28 unchanged; Oct1 post-confirmation illustration added"},
+    {"id":5,"status":"resolved-static","targets":["KBP-0","MLN-0","7JN-0","BVD-1"],"result":"V1 Oct5–11 zero actual wear with Monday today outline; V2 Oct1 summary two represented recorded days/six unique pieces, no future recorded markers"},
+    {"id":6,"status":"resolved-static","targets":["AWW-1","WUG-0","WV6-0"],"result":"Current W06 source-sheet-over-retained-no-photo-draft cloned into review"},
+    {"id":7,"status":"resolved-static","targets":["AXX-1","WU1-0","WTY-0"],"result":"168×224 whole-image Fit, Change and Edit photo; current parent draft preserved"},
+    {"id":8,"status":"resolved-static","targets":["CM0-1","WUB-0","WU8-0"],"result":"Manual recovery same accepted-photo review/editor; no classifier/account prerequisite"},
+    {"id":9,"status":"resolved-static-and-contract","targets":["3B1-0","50P-0","WWJ-0","WVT-0"],"result":"Account-independent on-device assistance and local archive/export/restore/erase separated from connected account operations"},
+    {"id":10,"status":"resolved-doc","files":["../native-ios.md"],"result":"V1 Home/V2 Today private Closet search; only V2 All/Following public search"},
+    {"id":11,"status":"resolved-static","targets":["3TD-0","3TF-0","4I8-0","4IA-0","4IC-0"],"result":"Enabled small labels semantic ink;11.099:1 on incumbent line ground"},
+    {"id":12,"status":"resolved-static","targets":["A9N-0","AA7-0","Q6J-0","Q99-0","7K9-0"],"result":"Two Foundations and74 V1/V2 selected labels medium500; inactive400 and36/32/2 geometry preserved. Live selection, not stale audit text, determined targets."},
+    {"id":13,"status":"resolved-static","targets":["WT1-0","WT4-0","WT7-0","X6J-0","X6M-0","X6P-0","X6S-0","X6V-0"],"result":"All eight legacy arrows replaced by registered SYG-0 geometry; whole-file *↑* search count0; existing44pt buttons retained"},
+    {"id":14,"status":"resolved-static","targets":["55R-0","ANJ-1","PFE-0","QHR-0"],"result":"Eight Foundations and81 global ordinary field shells synchronized to14pt padding/16 corners/50pt base, plus capture-specific shells; native search/composer/OS/Increase Contrast exceptions preserved"},
+    {"id":15,"status":"resolved-static","targets":["55T-0","55Z-0","563-0","582-0","588-0","58X-0"],"result":"Grouped/surfaced form and agenda rows; legitimate Settings inset separators retained"},
+    {"id":16,"status":"resolved-static","targets":["4K9-0","4KI-0","4KM-0"],"result":"Explicit Photo/empty Name/unchosen Category draft and disabled Save; parent independently restored centered20/26 task title"},
+    {"id":17,"status":"resolved-static","targets":["JMS-0","KE8-0","MNU-0"],"result":"Home root title; Today remains content/mode"},
+    {"id":18,"status":"resolved-static","targets":["MWT-0"],"result":"Closet tour names Pieces/Outfits/Themes and separate Planner tab"},
+    {"id":19,"status":"resolved-static","targets":["BN6-1","BO7-1","BOD-1","BNM-1"],"result":"More commands retained; duplicate bottom Add/Edit hidden"},
+    {"id":20,"status":"resolved-static","targets":["2D7-0","BT6-1"],"result":"Month alternate action retains selected date"},
+    {"id":21,"status":"resolved-static","targets":["BSZ-1","BTV-1","BUJ-1"],"result":"Populated Planner toolbar+ only; duplicate Add/Create hidden"},
+    {"id":22,"status":"resolved-static","targets":["360-0","386-0"],"result":"A05 header compose retained; duplicate New conversation footer hidden"},
+    {"id":23,"status":"resolved-static","targets":["WY9-0","WYE-0","WYJ-0","WYO-0","WYT-0","WYY-0","WZ3-0","WZ8-0","WZD-0"],"result":"Nine44pt labelled Inbox entries with root/offline origin; EQO-1 is Inbox-only, not a root-entry omission"},
+    {"id":24,"status":"resolved-static","targets":["IG-0","CKL-1","5U2-0","CLU-1"],"result":"Equivalent Not now hidden; Back sole exit, Photos/manual/Settings distinct recovery actions"},
+    {"id":25,"status":"resolved-doc","files":["../screens.md","../../product/decisions.md","../../features/wardrobe.md"],"result":"Unnumbered titles and separate seven-step progress; refusals/no-skip/consentOff retained"},
+    {"id":26,"status":"resolved-doc","files":["../components.md","../../../DESIGN.md"],"result":"L79 compact Add photo recovery explicitly adopted"},
+    {"id":27,"status":"resolved-doc","files":["../native-ios.md","../liquid-glass.md"],"result":"Flat content actions/filters/segments/fields; native navigation/search/presentation/scoped composer material retained; historical material counts identified as superseded"},
+    {"id":28,"status":"resolved-doc","files":["../v2-requirements.md"],"result":"U01/U25 private journal, U26/U02 explicit public projection; local controls additive to account lifecycle"},
+    {"id":29,"status":"resolved-doc","files":["../screens.md"],"result":"E07 native Back, no duplicate Skip"},
+    {"id":30,"status":"resolved-static","targets":["1KV-0","267-0","KE8-0","LSY-0","2IB-0"],"result":"Two Foundations and49 V1/V2 actual root titles32/38; introduction/section labels and compact20/26 excluded"}
+  ],
+  "clarifications": {
+    "captureFooter":"W27/W07 and selected review/recovery forms share50pt action and64pt base-reference bottom clearance; runtime scroll/safe-area/keyboard remains adaptive",
+    "selectedRecords":"Independent examples use canonical An easy afternoon four-piece composition/Weekend two represented covers; native actual IDs and source dates never come from fixture constants",
+    "createTheme":{"control":"1MI-0","destination":"shared L134 RML-0 initially blank/None selected; L135 changes parent membership draft; source-aware V2 return","existingEdit":"W19 preserves existing theme ID; never initial Create destination"},
+    "captureDetails":"AMX-1/AYW-1/1PU-0/CN3-1/WA3-0/WUM-0 use L94/L95 draft-only; W09/W21/DRH saved-record Save changes remains scoped to existing ID",
+    "firstCaptureExit":"AVS-1 AW8 Skip/AWM explore hidden; Back retains source, Choose photo source sheet and Keep draft no-photo/manual input are distinct tasks",
+    "preferenceVariants":[{"id":"L174","node":"WZT-0","x":1920,"y":3018,"state":"Answered Review, body useOff, enabled atomicSave"},{"id":"L175","node":"X1H-0","x":2390,"y":3018,"state":"Explicit all-declined Review, body useOff, enabled atomicSave"},{"id":"L176","node":"X35-0","x":2860,"y":3018,"state":"161/160 graphemes retained, error/disabled Use; no silent truncation"},{"id":"L177","node":"X53-0","x":3330,"y":3018,"state":"Confirmed save failure retains answers/prior saved state; same-operationRetry, Review and native discard decision"}]
+  },
+  "privateRecovery": {"scope":"localDevice","source":"U09/U05 retained scroll/focus, not forced L13","export":"WW2-0 → L14","restore":"WVY-0 → Files/L15 validated exact-impact review; local transactional commit only","erase":"WVU-0 → L16 typed impact/native confirmation, no remote deletion enqueued","assistance":"WWJ-0 → L52 actual local capability reason/manual fallback","accountBoundary":"Local erase/restore does not delete or associate connected account, public posts or remote backups; actual sync isolation/service behavior requires implementation verification"},
+  "parentVerification": {
+    "renders":["4K9-0","4LD-0","BSM-1","KBP-0","Q8P-0","C5A-1","AMO-1","AWW-1","50P-0","WZT-0","X35-0","X53-0","X56-0"],
+    "styles":["3TD-0","A9N-0","AA7-0","4KM-0","55R-0","1KV-0","Q99-0","Q6J-0","KE8-0","2IB-0","AMR-1","ANJ-1","WY9-0","X6J-0"],
+    "newRootPlacement":"Parent relocated variants from provisional bottom-of-page34400 to adjacent onboarding row3018. Each390×844 rectangle checked against all175 measured prior V1 roots and each other: no overlaps. Parent live node_info confirmed all positions. Tour roots unmoved; layer ordinals01.18–01.22.",
+    "corrections":"Centered Foundations modal header restored; new L177 Discard draft is centered plain50pt native-decision command without misleading forward disclosure",
+    "checks":"Tooling38 tests, JSON uniqueness/inventory and local Markdown reference checks recorded in delivery verification",
+    "renderStorage":"Tool-response renders inspected, not committed screenshot assets. IDs support live recapture."
+  },
+  "provenanceArtifacts": ["/tmp/aqd-sync-fix-foundations.json","/tmp/aqd-sync-fix-flows.json","/tmp/aqd-sync-fix-capture-settings.json","/tmp/aqd-sync-fix-global.json"],
+  "limits": ["Targeted rendered/style confirmation, not all459 roots visually certified","Global style artifact has36 exact changed node IDs without root-name mapping; node style checks are not missing or invented root coverage","Eight-member Theme fixture has only two represented members; no remaining membership/production data inferred","Native VoiceOver/Dynamic Type/RTL/localization/keyboard/safe-area/hit testing and focus/scroll returns unverified","Atomic persistence/media preparation/restore/erase isolation/retry reconciliation and actual model/account/service behavior unverified"],
+  "appImplemented": false,
+  "runtimeComplete": false,
+  "commitOrPush": false,
+  "historicalEvidencePolicy": {
+    "status": "Historical pre-copy/native-overlay design-sync checkpoint",
+    "fields": [
+      "inventory",
+      "issues",
+      "parentVerification"
+    ],
+    "supersededAffectedContractsBy": "native-confirmations.json",
+    "note": "Preserve measured counts, old repairs and scoped renders; no claims of newly rendering all old states."
+  },
+  "currentInventory": {"rootArtboards":518,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":138,"nestedOfflineReferences":4,"pages":[{"id":"p-1-0","count":25,"canonicalCount":0,"rootReferenceCount":25},{"id":"p-2-0","count":206,"canonicalCount":169,"rootReferenceCount":37},{"id":"p-B-0","count":287,"canonicalCount":211,"rootReferenceCount":76}],"nodeCounts":[2046,11504,22218],"totalNodes":35768,"tokenHash":"fdeb7346","evidence":"feedback-variants.json","nodeCountStatus":"Feedback worker final three-page aggregates; frozen earlier scoped checks unchanged, not rerun"},
+  "historicalBackgroundRemovalInventory": {
+    "rootArtboards":502,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":122,"nestedOfflineReferences":4,
+    "pages":[{"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},{"id":"p-2-0","name":"01 · V1","count":197,"canonicalCount":169,"rootReferenceCount":28},{"id":"p-B-0","name":"02 · V2","count":287,"canonicalCount":211,"rootReferenceCount":76}],
+    "nodeCounts":[1847,10952,21913],"totalNodes":34712,"tokenHash":"fdeb7346","nodeCountStatus":"Parent-confirmed live three-page counts after background-removal design froze; static only","evidence":"background-removal.json"
+  },
+  "historicalNativeConfirmationInventory": {
+    "rootArtboards": 492,
+    "canonicalScreens": 380,
+    "v1CanonicalScreens": 169,
+    "v2CanonicalScreens": 211,
+    "rootReferences": 112,
+    "nestedOfflineReferences": 4,
+    "pages": [
+      {
+        "id": "p-1-0",
+        "name": "00 · Foundations",
+        "count": 18,
+        "canonicalCount": 0,
+        "rootReferenceCount": 18
+      },
+      {
+        "id": "p-2-0",
+        "name": "01 · V1",
+        "count": 191,
+        "canonicalCount": 169,
+        "rootReferenceCount": 22
+      },
+      {
+        "id": "p-B-0",
+        "name": "02 · V2",
+        "count": 283,
+        "canonicalCount": 211,
+        "rootReferenceCount": 72
+      }
+    ],
+    "nodeCounts": [
+      1847,
+      10595,
+      21611
+    ],
+    "totalNodes": 34053,
+    "tokenHash": "fdeb7346",
+    "nodeCountStatus": "Final frozen worker artifacts reconciled with parent verified three-page counts",
+    "canonicalMeaning": "380 unchanged registered IDs:169 V1/211 V2, including 10 retained canonical STATE roots. V2 210 feature roots plus U12 STATE;72 root references, not 73. Four nested offline references excluded from root counts."
+  },
+  "nativeConfirmationRefinement": {
+    "date": "2026-10-06",
+    "evidence": "native-confirmations.json",
+    "scope": "Final V1 copy/native overlays and V2 reviewed native/direct/review contracts; static references, no native certification",
+    "caseCount": 39,
+    "nativeDecisionCount": 38,
+    "directActionResultCount": 1,
+    "richReviewCount": 1,
+    "illustratedViews": 40,
+    "caseCountMeaning": "39 case entries:17 V1 native +21 V2 native (including nested U12 DAI-1)+1 V2 direct-action result YW9-0. Native decisions=38:37 root states plus one nested state. Additional rich-review reference ZMA-0 makes40 illustrated views, not40 native confirmations.",
+    "newReferenceRoots": 29,
+    "canonicalIdsRetained": 380,
+    "retainedCanonicalStateRoots": 10,
+    "retainedNestedConvertedStates": 1,
+    "canonicalRouteAdditions": 0,
+    "tokenHash": "fdeb7346",
+    "nativeCertified": false,
+    "wholeRootVisualProof": false,
+    "supersedes": "Only affected current inventory/control contracts; earlier measured logs, copy pass and scoped renders remain historical."
+  }
+}

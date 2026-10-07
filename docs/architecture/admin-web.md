@@ -1,5 +1,7 @@
 # Web admin, landing page and operations
 
+Phase scope: V2 connected-product proposal. V1 needs no app backend, staff admin or paid entitlement service; see [V1 architecture](v1.md). Dated prices and recommendations below are historical planning assumptions, not refreshed purchasing quotes.
+
 Updated October 2, 2026. The user confirmed a web admin app for management, analytics, monitoring and controls, plus a public landing page. This document refines the architecture only; hosting, frameworks and providers remain proposals. See [architecture](architecture.md) and editable diagram **03**.
 
 ## Three clients, one small backend

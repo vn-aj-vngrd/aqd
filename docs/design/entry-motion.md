@@ -1,31 +1,35 @@
-# Welcome and first-piece motion
+# Welcome wardrobe motion
 
-Visual source: Paper E02, E06 and page 00 **Motion · Welcome and first piece**. This is a native motion specification with static keyframes, not a working animation or performance result. Do not recreate a local gallery.
+Updated October 5, 2026. Shared V1/V2 visual design: Paper E02, V1 L60/L67, the connected review copy, and the phase-owned **Motion · Welcome and first piece** reference. This is a native motion handoff with static keyframes, not working animation or measured performance. UI remains in Paper; no local gallery or product code is added.
 
-## Reference and intent
+## Intent and imagery
 
-Reviewed the signed-in [Mobbin welcome collection](https://mobbin.com/search/apps/ios?content_type=screens&sort=trending&filter=screenPatterns.Welcome+%26+Get+Started), including [Luma](https://mobbin.com/screens/501e618c-bd44-44cf-8ef6-57bbb2d03cb0) and [Shop](https://mobbin.com/screens/cfb5f163-40cf-438f-a57a-99624e6120a9), on October 1, 2026. Luma establishes depth through overlapping imagery; Shop puts product imagery around a clear message and action. These observations inform composition, not copied artwork or measured animation timings.
+Twelve original garment cutouts make the wardrobe feel full and useful. Pieces gather, briefly form looks, then settle into a calm composition around the message **More from what you already own.** The text, wordmark and actions remain stationary and usable throughout. The illustration shows possibilities; it does not promise those exact looks, actual user inventory or an automated purchase.
 
-AQD uses one clothing-led entrance: the look stays anchored while two piece photographs unfold outward into a balanced composition. On Start my closet, the shirt photograph carries into the first-piece frame. This continuity connects browsing possibilities with adding one real piece. Reference photographs are illustrative; they are not a literal outfit assembled from those exact pieces and are never added to the user's inventory.
+[Original imagery and provenance](assets/welcome/README.md) replace the earlier stock/lifestyle Welcome collage. The [atlas layout](assets/welcome/atlas-layout.json) records exact source crops and layer positions; the twelve garments are individually editable Paper layers. V1 light/dark, V2 Welcome and connected review share this asset/composition. Welcome uses the atlas alpha on a transparent hero ground in both appearances. Dark controls use night tokens; preserve garment separation and test dark garment visibility on real screens.
 
-## Shared motion values
+## Sequence
 
-[Global motion](motion.md#global-values) is the single timing/policy definition. Use motion.arrival (320 ms), motion.arrivalStagger (40 ms), motion.arrivalOffset (12 pt horizontal / up to 6 pt vertical), and motion.reduced (0–120 ms). Native navigation owns entry continuity timing. This supersedes the earlier 600/680 ms welcome and fixed 360 ms navigation timings.
+[Global motion](motion.md#global-values) owns timing. Use the dedicated Welcome sequence only for first arrival; routine navigation keeps its native timing.
 
-## Sequence and behavior
+| Frame | Target | Behavior |
+| --- | --- | --- |
+| Gathered · 0 ms | Twelve visible pieces, gently collected toward the hero center; 0.96 scale and small initial rotations | Copy and both actions already enabled. No blank loading reveal or splash delay. |
+| Looks forming · 520 ms | Tops, bottoms and shoes align into small outfit groups; other pieces stay within the hero | Smooth ease-out movement and small rotations. Stagger groups by at most 80 ms within this phase, not twelve accumulating delays. |
+| Settled · 1,200 ms | Full twelve-piece wardrobe composition used by E02/L60/L67 | Ease into final positions, scale 1 and authored rotations. Stop completely; no idle float, endless loop or replay on Back. |
+| Reduce Motion | Settled frame immediately | Remove travel, scale, rotation and staggering. Native reduced navigation or up to 120 ms opacity-only transition where appropriate. |
 
-1. Launch uses the normal system launch screen; no artificial splash delay. When ready, E02 shows its wordmark, message and both actions immediately. All hero images are visible from the first frame.
-2. The shirt starts 12 pt left and 6 pt down from its final location; the shoe starts 12 pt left and 6 pt up. Animate translation to zero. Keep photographic corners and image crops stable. No rotation, zoom, blur animation, floating loop or text stagger.
-3. The shirt begins at 0 ms and the shoe at 40 ms. Both settle by 360 ms. The look anchor, text, controls and screen layout do not move.
-4. Start my closet acts immediately even during entrance. Cancel the entrance and navigate to E06. Use one shared image identity for the illustrative shirt where native navigation supports it; native source-matched navigation carries it to the receiving frame with system-owned timing. Preserve system Back gestures. If shared-element navigation conflicts with the system transition, use the standard navigation transition instead of two simultaneous animations.
-5. E06 keeps Choose a photo and Add without a photo immediately enabled. Opening Photos or manual entry remains a system transition. The illustration is never treated as a chosen photo, uploaded item or saved record.
-6. Returning to Welcome shows its settled state without replaying the entrance. Pause/cancel on backgrounding or interruption; restore the final state. There is no replay loop or required swipe carousel.
+The 350 × 324 reference hero bounds all travel; maximum planned movement is about 230 pt horizontally / 190 pt vertically between poses. These are static keyframe positions, not instructions to relayout each frame. Animate transforms on stable layers. Do not move clothing into the text/buttons or add elastic bounce, full-screen particles, blur animation or independent camera movement.
 
-## Accessibility and performance
+## Routing and interruption
 
-- Reduce Motion: show final hero positions immediately; use standard reduced-motion navigation or a short crossfade. No spatial card travel.
-- VoiceOver: treat the hero as one decorative illustration or one concise image description, not three focus stops. No announcements of animation frames. Keep reading order title, supporting text, primary action, account action.
-- Large text/compact phones: preserve readable text and 44 pt targets; allow vertical scrolling. Scale or shorten the bounded hero before sacrificing the actions. Avoid absolute positioning for text or buttons.
-- Use packaged, licensed, predecoded image assets in production. If images fail, keep the copy and actions usable; do not show an indefinite loading animation.
-- Animate only the two bounded image layers, using transforms rather than relayout per frame. No new animation library, live shaders, particle systems or continuous blur. Measure frame pacing, memory and tap responsiveness on the minimum supported device and a current device.
-- Verify first launch, immediate tap, rapid Back, interrupted launch, image failure, Reduce Motion, VoiceOver and accessibility text. Static Paper frames do not prove these runtime behaviors.
+Start my closet acts immediately during any pose, cancels the sequence, then uses native navigation: V1 L61 private onboarding; V2 E06 first-piece flow. V1 Take a quick tour opens L62; V2 returning-account action opens the identity flow. No illustrative garment is carried in as a selected photo or saved record. Keep native Back gestures and draft protection.
+
+Returning to Welcome uses the settled pose. On backgrounding, disappearance, interrupted navigation or reduced-motion preference changes, cancel the sequence and restore settled; never replay or stack timers. Failed/missing image decoding preserves copy/actions with a quiet static fallback. No network fetch is required for packaged imagery.
+
+## Accessibility and delivery checks
+
+- Treat the entire hero as decorative, or one concise image description; never twelve focus stops or frame announcements. Reading order stays heading, supporting text, primary action and phase-specific secondary action.
+- Larger text/localization/compact phones use a scrollable content layout and a smaller bounded hero before sacrificing readable text or 44 pt actions. Text/buttons do not use absolute motion positions.
+- Use native SwiftUI/UIKit layer transforms and the shared policy; no animation framework, backend, shader or video dependency. Decode the atlas once and crop/cache appropriately; avoid twelve independent full-resolution decodes. Record actual peak memory and asset quality rather than claiming Retina/performance from a static screenshot.
+- Verify minimum supported/current devices, first arrival, immediate/rapid taps, Back, background interruption, unavailable image, both appearances, Reduce Motion/Transparency, VoiceOver and larger text. Native motion, frame pacing and accessibility remain unverified until authorized implementation.

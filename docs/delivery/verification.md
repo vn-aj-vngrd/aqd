@@ -2,58 +2,257 @@
 
 ## Release evidence
 
-The current checkout has no tracked iOS app/build baseline. Historical build and simulator results cannot be reproduced from tracked source here. All full-V1 device, live-service, security, accessibility and distribution checks remain unverified.
+Recorded source checkpoint: `13011c8`, `van/v1-v2-product-plan`, October 7, 2026. PR #5 is pending; required Codex review was pending at last check. No fresh GitHub or Paper inspection is claimed by this documentation cleanup.
 
-| Boundary | Status | Evidence / next check |
+| Scope | Result | Evidence / limitation |
 | --- | --- | --- |
-| Product and design requirements | Specified | [Feature acceptance](../features/README.md), [V1 release](../product/v1-release.md), and [design handoff](../design/README.md). Requirements and static drawings are not passing runtime tests. |
-| Paper inventory | Recorded design reference | [iOS manifest](../design/paper-manifest.json) and [web manifest](../design/web-paper-manifest.json). Reopen Paper for live visual acceptance. |
-| Native build / device behavior | Unverified for current source | Establish a reproducible source/build baseline; verify navigation, keyboard, accessibility, camera and model behavior. |
-| Connected services / production | Unverified | Resolve [service gates](../product/decisions.md), then verify identity, sync, publication/revocation, Inbox and operations. |
-| Distribution | Unverified | Repository release, TestFlight and App Store delivery have separate gates. |
+| Source/build baseline | Not established | No tracked Swift source, Xcode project or Swift package build definition under `apps/ios`. Historical native checks cannot certify this checkout. |
+| Requirements | Specified, not executed | [V1 LOCAL acceptance](../product/v1-release.md#local-acceptance), [features](../features/README.md) and [design contracts](../design/README.md). |
+| Latest recorded Paper confirmation checkpoint | Bounded static review | [Vector repair](../design/evidence/native-dialog-vector-repair.json): editable source-derived kit geometry, preserved registered identities; not exact native optics or AQD runtime. [Original receipt](archive/verification-2026-10-02–07.md#october7-editable-confirmation-repair--current). |
+| Native kit provenance | Inspected/imported source evidence | [Native repair](../design/evidence/native-dialog-repair.json) distinguishes official 27 kit resources and historical UIKit 26.5 research captures from unverified AQD/SwiftUI/iOS 27 execution. |
+| Today / action / input references | Scoped static evidence | [Today](../design/evidence/today-customization.json), [action surfaces](../design/evidence/action-surfaces.json), [input consistency](../design/evidence/input-component-consistency.json). Held/excluded rows remain explicit; no whole-app claim. |
+| Retained Today Note/Photo deletion | Contract refinement only | [Recorded PR-review follow-up](archive/verification-2026-10-02–07.md#october7-pr-review-follow-up--retained-personal-content); no new Paper roots or runtime check. |
+| Optional local identity clearing | Contract refinement only | Codex review of `86a9b6e` identified missing avatar removal. [Identity contract](../features/profile-account.md#local-identity-editing-v1-shared-private-v2) and V1 interaction coverage now specify draft clear/remove, cancellation, acknowledgment/reconciliation and reference-safe cleanup. No new Paper or runtime evidence; changed head requires fresh review. |
+| Agent connected-action phase gates | Contract correction only | Codex review of `7edd153` identified mixed local/public authority rows and unqualified human-send/publication acceptance. [Agent](../features/agent.md#capability-and-authority-map) now separates local privacy/delete from V2-only publication/public privacy and human messaging; proposal text and A9 reinforce absent V1 connected tools/controls, distinct from private conversation turns. Local consent uses existing explicit native flow, never inferred chat approval. Static phase/authority cross-check only; runtime unverified. |
+| Outfit detail phase actions | Contract correction only | Codex review of `6c4730e` exposed unqualified publication actions below the shared feature's V1 boundary. [Outfits](../features/outfits-themes.md) now consistently gates Share/publication to V2 and explicitly lists V1 Pieces/Plan/Record wear plus More → Edit/Favorite/Delete, matching the [interaction ledger](../design/v1-interactions.md#action-to-destination-checklist). Save remains private and never creates wear/plan/publication. Static phase/action cross-check only; native execution unverified. |
+| Today weather fixture date | Documentation correction only | Codex review of `3037f71` identified a contradictory Wed7 requirement beside retained Mon5 evidence. [V1 flow](../design/v1-flow.md#optional-weather-and-source-returns) now matches the recorded `10GK-0` Mon5/Manila fixture and explicitly separates static date/temperature values from runtime formatting. Cross-checked Today/weather/interactions ownership; no Paper or native execution and no certified attribution. |
+| Executable slice exits / native catalog | Contract corrections only | Codex review of `0dda2d2` identified prematurely comprehensive slice exits and an obsolete native-catalog root name. [Plan](implementation-plan.md#v1--small-local-mvp) now distinguishes executable domain-scoped evidence from complete acceptance, places all-domain recovery after Today/Agent/Profile, and reserves full journey/archive/device exits for integration. Native catalog names Today with legacy aliases explicit. Release acceptance is unchanged; no app or runtime pass. |
+| Remaining acceptance/native terminology | Contract correction only | Codex review of `77bd38f` exposed coverage/native acceptance sources outside the earlier targeted origin scan. A broader current Markdown sweep now aligns private-root, plan, weather, capture, resume and motion terminology with Today; retained historical/public/component identifiers are explicitly legacy aliases. Source fixtures do not fix Today ordering/counts, private header Search stays absent, and public V2 scopes/Search remain reachable independently of optional Community posts placement. Independent24-file focused review passed; `pnpm check` passed38 tests and359 edited-file local targets resolve, with old-heading backlink/whitespace checks passing. This is documentation evidence only, not native/Paper execution. |
+| Current Planner/source terminology | Contract correction only | Codex review of `5813b32` identified Planner's obsolete Home link origin. Product/Planner/release/journey/current-flow sources now say Today, including launch/return/weather-task wording; V2 scopes and internal dated evidence locators remain distinct. Heading backlinks were checked before current headings changed; no new app/Paper/runtime evidence. |
+| Current phase-handoff terminology | Contract correction only | Codex review of `3159a8b` identified obsolete Home in the V2 phase inventory. Current backlog/definition/flow/Profile-setting inventories now name Today; V2's canonical Home/community section is explicitly an internal legacy alias, not a visible destination name. Historical evidence stays unchanged; no app/Paper behavior is certified. |
+| V2 device view / pre-Today migration | Static copy and contract refinement | Codex review of `3f6b234` identified the remaining obsolete V2 diagram roots/Inbox-tab implication and no explicit legacy Today initialization. The device view now separates five roots from Inbox's toolbar entry. [Versioned migration](../features/today.md#versioned-pre-today-migration) stages supported pre-Today sources, preserves records/media, generates stock instance IDs once, validates migrated results and reconciles retries; corrupt/current/newer gaps never permit reset. V1/V2 restore/association pointers agree; no runtime migration or full-board render is certified. |
+| Closet-only private search origin | Contract correction only | Codex review of `dd6b4e5` identified a nonexistent Home origin in the V1 search ledger. Entry/return now belongs only to the originating Closet segment; Today exposes Customize, while public All/Following search remains V2. Remaining current release/native-root title inventories use Today; internal/historical Home locators remain distinct. No app or new Paper evidence. |
+| Architecture / specified controls inventory | Static artifact corrections only | Codex review of `ca6d4a0` identified the four-root V1 device-view label, obsolete selected-day Add retention and missing retained-card mappings. Excalidraw now lists all five Today roots; the manifest corrects Planner policy and maps retained-card/local-identity logical controls, caller references and native grammar with null new control-node IDs. These mappings do not certify newly drawn states, native routing or runtime behavior. |
+| V1 journal persistence inventory | Contract refinement only | Codex review of `b4008f1` identified implicit journal records in [V1 minimum data](../architecture/v1.md#minimum-data). Minimum/export/restore inventories now name stable memory IDs, calendar dates/timezones, notes, outfit links/snapshots and photo/media relationships, matching J1–J7 without a new feature or implementation claim. |
+| Connected Today durability | Contract refinement only | Codex review of `6e731be` identified an obsolete ADR root inventory and missing Today records in the V2 model. [ADR0002](../adr/0002-device-only-v1-and-connected-v2.md) now aligns all five roots without changing the device-only decision. [V2 architecture](../architecture/v2.md#today-association-sync-and-recovery) and DATA acceptance explicitly cover reviewed Today configuration/content/media/recovery state, stable identities, conflicts, deletion and account isolation; no provider approval, provisioning, app or runtime evidence. |
+| Tour destination / Today erase review | Copy inspected; erase contract refined | Codex review of `76e087a` identified stale tour Home labels and an incomplete erase checklist. [Manifest copy review](../design/paper-manifest.json) records three live Paper text repairs (tour preview/completion and Restore completion), checked screenshots and unchanged380 identities/inventory. [Interaction coverage](../design/v1-interactions.md) includes all retained Today content/configuration/drafts/Undo, reference-safe cleanup and acknowledged failure/unknown states. `pnpm check` passed38 tests; JSON/canonical-entry comparison and whitespace checks passed. Erase review additions are not new drawn states or native/runtime verification; changed head requires fresh CI/Codex. |
+| Latest known PR tooling | Passed, 19 seconds | Recorded handoff for `13011c8`; repository tooling only, not native tests. No new CI result inferred. |
+| Native runtime / durability / capability | Not run for current source | Navigation/focus/returns, media/model quality, atomic writes/reconciliation/Undo/restart, permissions, accessibility, appearance and physical performance remain required. |
+| Connected / distribution | Unverified | V2 service/security/operations gates and native distribution are separate from repository checks and static design. |
 
-## Documentation maintenance — October 2, 2026
+## Active blockers
 
-Grouped documentation by responsibility, consolidated duplicate scope/decisions/assets, and separated historical prototype and Paper review records from current evidence. Validated against the working tree based on `08ded4b`; existing staged design/product refinements were preserved. This work changes documentation and documentation-path diagnostics only.
+- **Numerical weather:** hidden attribution row; details-only compliance unverified. Withhold numbers until Apple-required assets/legal placement pass. [Policy](../product/v1-release.md#optional-live-weather-contract), [UI](../design/weather-context.md), [historical owner override](archive/verification-2026-10-02–07.md#owner-follow-up--remove-home-attribution-row).
+- **Native feasibility:** icon-only five-tab public API/HIG exception, deployment/API guards and native 18/26/27 behavior remain acceptance gates under [native iOS](../design/native-ios.md). Kit imports are not runtime tests.
+- **Background removal:** identical reference pixels do not prove masks. Physical Vision quality/performance and saved-photo propagation remain unverified; [scoped audit](archive/verification-2026-10-02–07.md#october-7-2026--background-removal-coverage-audit).
+- **Delivery:** required latest-head CI/Codex and review-thread gates must pass before an authorized protected SHA-bound squash; post-merge release validation is separate. See [delivery stages](../agents/delivery-stages.md). Pending is not passed.
 
-| Check | Result | Evidence / limits |
-| --- | --- | --- |
-| Local documentation links and heading anchors | Passed | 378 tracked local references resolve; every Markdown page is reachable from the documentation/agent indexes. Historical local screenshots are labeled untracked paths rather than portable evidence links. |
-| Migration integrity | Passed | All 56 mapped destinations exist; feature acceptance IDs, historical verification headings and external asset sources remain present. |
-| Paper manifest contracts | Passed | 212 recorded Markdown references resolve; both JSON manifests parse. Artboard data was retained. |
-| Repository tooling | Passed | `node --test scripts/*.test.mjs`: 30 tests passed using installed Node v26.4.0. The repository targets Node 24; this is evidence for the local runtime used. |
-| Package-manager entry point | Passed during commit | The initial pinned-runtime download failed; the commit hook subsequently ran `pnpm check` with pnpm 10.12.1 successfully (30 tests). Installed Node remains v26.4.0, outside the repository's Node 24 target. |
-| Whitespace | Passed | `git diff HEAD --check` on the final working tree. |
+## Documentation context cleanup · October 7, 2026
 
-No native build, live Paper review, connected-service test or deployment was performed for this documentation cleanup.
+Scope: documentation only, based on `13011c8`; no app code, Paper, GitHub, commit/push or merge changes. Validation on Node 24.20.0 / pnpm 10.12.1: `pnpm check` passed 38 repository-tooling tests, 0 failures (7.606 seconds); `git diff --check` passed. A temporary scoped Markdown checker examined 103 Markdown files and 1,248 local links, including 230 heading fragments: zero missing targets/anchors. Seven archived bodies compare equal to HEAD originals after only relative-link rebasing; lifecycle delivery stages 5–8 compare exactly equal. Unrelated personal research and ignored Local.xcconfig hashes are unchanged. Tracked iOS listing still contains no source/build baseline. No native/runtime, live Paper, GitHub CI/Codex or distribution checks ran. Measured general UI-implementation entry load (AGENTS, lifecycle, status, foundations, procedure, DQ and design router; previously also blanket full plan) falls from 98,278 to 45,117 bytes before selecting the affected contract/plan slice. This is an explicitly enumerated load set, not a claim that every task loads the same documents. This task can complete its documentation checks without waiving any required implementation acceptance.
 
 ## Historical evidence
 
-- [Prototype verification](archive/prototype-verification.md): original build/test/simulator reports and their limits.
-- [Design review log](archive/design-review-log.md): dated static Paper review history, including superseded refinements.
-- [Prototype implementation](archive/prototype-implementation.md): prior behavior and migration context.
-- [Prototype backend setup](archive/prototype-backend-setup.md): historical configuration procedure, not approval to provision a backend.
+The complete previous verification text is frozen in [October 2–7 snapshot](archive/verification-2026-10-02–07.md). Once-current inventories and verdicts there are superseded by the boundaries above, not recertified. [Status snapshot](archive/implementation-status-2026-10-07.md) retains the corresponding chronology. [Archive router](archive/README.md) also links prototype and earlier design history.
 
-New verification entries must identify the scope, actual result, source revision/environment and remaining limitations. Keep detailed chronological captures in the archive; summarize current release evidence here.
+New current entries identify scope, revision/environment, observed result and limits. Put chronological detailed receipts in the archive; retain current blockers and scoped evidence here. Historical heading redirects below preserve incoming anchors without loading their bodies.
+
+## Historical checkpoint redirects
+
+## October7 editable confirmation repair — current
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october7-editable-confirmation-repair--current). Historical scope; current boundaries above apply.
+
+## October7 PR review follow-up — retained personal content
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october7-pr-review-follow-up--retained-personal-content). Historical scope; current boundaries above apply.
+
+## October7 final Today / native / action reconciliation — historical pre-vector checkpoint
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october7-final-today--native--action-reconciliation--historical-pre-vector-checkpoint). Historical scope; current boundaries above apply.
+
+## App-owned semantic feedback variants
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#app-owned-semantic-feedback-variants). Historical scope; current boundaries above apply.
+
+## Input component consistency — role-directed global audit
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#input-component-consistency--role-directed-global-audit). Historical scope; current boundaries above apply.
+
+## Owner follow-up — remove Home attribution row
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#owner-follow-up--remove-home-attribution-row). Historical scope; current boundaries above apply.
+
+## October 7, 2026 — Home header consistency
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-7-2026--home-header-consistency). Historical scope; current boundaries above apply.
+
+## October 7, 2026 — Transparency · Native iOS Foundations references
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-7-2026--transparency--native-ios-foundations-references). Historical scope; current boundaries above apply.
+
+## October 7, 2026 — bounded Weather grid spacing correction
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-7-2026--bounded-weather-grid-spacing-correction). Historical scope; current boundaries above apply.
+
+## October 7, 2026 — V1 canvas spacing follow-up
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-7-2026--v1-canvas-spacing-follow-up). Historical scope; current boundaries above apply.
+
+## October 7, 2026 — complete V1 canvas organization only
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-7-2026--complete-v1-canvas-organization-only). Historical scope; current boundaries above apply.
+
+## October 7, 2026 — optional native WeatherKit documentation/Paper handoff
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-7-2026--optional-native-weatherkit-documentationpaper-handoff). Historical scope; current boundaries above apply.
+
+## October 7, 2026 — background-removal coverage audit
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-7-2026--background-removal-coverage-audit). Historical scope; current boundaries above apply.
+
+## October 7, 2026 — shared local background removal
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-7-2026--shared-local-background-removal). Historical scope; current boundaries above apply.
+
+## October 7, 2026 — scoped Planner, native More, preference Review and Height rows
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-7-2026--scoped-planner-native-more-preference-review-and-height-rows). Historical scope; current boundaries above apply.
+
+## October6,2026 — V1 copy and contextual native confirmations
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october62026--v1-copy-and-contextual-native-confirmations). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Foundations library and complete icon catalog
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--foundations-library-and-complete-icon-catalog). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Foundations/V1/V2 synchronization repairs
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--foundationsv1v2-synchronization-repairs). Historical scope; current boundaries above apply.
+
+## Documentation maintenance — October 2, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#documentation-maintenance--october-2-2026). Historical scope; current boundaries above apply.
 
 ## Foundation release review fix — October 2, 2026
 
-Codex's earlier PR review identified successful commit A being skipped when newer main commit B failed CI. Added a serialized, fast-forward-only `release` publication cursor, selected by semantic-release, so only successful main CI commits enter publication. Final verification checks both the exact-HEAD version tag and its published non-draft GitHub release.
-
-Passed locally: 33 tooling tests, including real Git fixtures for successful A/newer failing B, same-SHA retry, newer successful C, tag refresh, delayed A, mismatched checkout and divergent history. Standards/spec review checked the final release logic against issue #1; the standards review's missing-GitHub-release finding was fixed. Final-head CI/Codex review and post-merge main CI/release remain required live gates. No native/service deployment was added.
+[Original dated receipt](archive/verification-2026-10-02–07.md#foundation-release-review-fix--october-2-2026). Historical scope; current boundaries above apply.
 
 ## Final-head Codex review recovery fixes — October 2, 2026
 
-Codex reviewed `efeefff` and found two follow-ups. Publication now retries a missing GitHub release from its existing exact-HEAD version tag, or publishes a draft left by a partial upload, without deleting/recreating tags. Tests cover a tag surviving semantic-release failure, API creation failure/retry, idempotent success, missing tags and draft publication failure/retry. All 37 tooling tests pass locally.
-
-Converted 57 archived local screenshot links to labeled untracked capture paths. Re-ran the local-link/heading/reachability check against `git ls-files`, rather than filesystem existence: all 378 portable references pass. Historical captures are not evidence available in a fresh clone. Fresh final-head CI/Codex review and live merge/release verification remain required.
+[Original dated receipt](archive/verification-2026-10-02–07.md#final-head-codex-review-recovery-fixes--october-2-2026). Historical scope; current boundaries above apply.
 
 ## Publication queue review fix — October 2, 2026
 
-Codex reviewed `14412af` and identified failed CI workflow runs replacing pending successful releases through workflow-level concurrency. Moved concurrency to the trusted-success-guarded release job and selected GitHub's `queue: max`; failed/skipped workflows no longer occupy the publication group, and eligible pending releases queue instead of replacing each other. The workflow contract test verifies no top-level release concurrency, the job-level queue, no cancellation, and trusted-success conditions. All 37 tooling tests pass; final-head CI/Codex and post-merge publication remain live gates.
+[Original dated receipt](archive/verification-2026-10-02–07.md#publication-queue-review-fix--october-2-2026). Historical scope; current boundaries above apply.
 
 ## Tagged ancestor recovery review — October 2, 2026
 
-Codex reviewed `b57fc15` and identified tagged A being skipped after successful B advanced the publication cursor. A tagged ancestor now runs existing-tag publication recovery without changing the cursor; untagged ancestors still skip safely. The regression verifies recovered A is eligible while the remote release cursor remains at C; an additional test verifies untagged ancestor skipping. All 38 tooling tests pass locally.
+[Original dated receipt](archive/verification-2026-10-02–07.md#tagged-ancestor-recovery-review--october-2-2026). Historical scope; current boundaries above apply.
 
-The review also claimed `queue: max` is unsupported. Current [GitHub workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idconcurrency) explicitly documents the job concurrency queue property and its 100-pending-job bound. The finding is inapplicable; the supported native queue remains. Final-head CI/Codex and merge/release verification remain live gates.
+## V1/V2 planning and Paper refactor — October 5, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#v1v2-planning-and-paper-refactor--october-5-2026). Historical scope; current boundaries above apply.
+
+## V1 onboarding action hierarchy — October 6, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#v1-onboarding-action-hierarchy--october-6-2026). Historical scope; current boundaries above apply.
+
+## Agent navigation icon — October 6, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#agent-navigation-icon--october-6-2026). Historical scope; current boundaries above apply.
+
+## Shared Profile and Settings surfaces — October 6, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#shared-profile-and-settings-surfaces--october-6-2026). Historical scope; current boundaries above apply.
+
+## Today title/date spacing — October 6, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#today-titledate-spacing--october-6-2026). Historical scope; current boundaries above apply.
+
+## New piece photo actions — October 6, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#new-piece-photo-actions--october-6-2026). Historical scope; current boundaries above apply.
+
+## Today secondary action — October 6, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#today-secondary-action--october-6-2026). Historical scope; current boundaries above apply.
+
+## Crisp blue palette — October 6, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#crisp-blue-palette--october-6-2026). Historical scope; current boundaries above apply.
+
+## Plain onboarding alternatives — October 6, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#plain-onboarding-alternatives--october-6-2026). Historical scope; current boundaries above apply.
+
+## Entry action spacing and weight — October 6, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#entry-action-spacing-and-weight--october-6-2026). Historical scope; current boundaries above apply.
+
+## Plain secondary actions across surfaces — October 6, 2026
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#plain-secondary-actions-across-surfaces--october-6-2026). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Compact controls and form consistency
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--compact-controls-and-form-consistency). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Global Welcome action spacing
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--global-welcome-action-spacing). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — First-piece photo flow
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--first-piece-photo-flow). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Photo prerequisite and capture labels
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--photo-prerequisite-and-capture-labels). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — L61 lighter private-start introduction
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--l61-lighter-private-start-introduction). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Agent device availability
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--agent-device-availability). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Realistic V1/V2 demo imagery
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--realistic-v1v2-demo-imagery). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Criteria-led V1/V2 polish
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--criteria-led-v1v2-polish). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Ready-to-begin visual
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--ready-to-begin-visual). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Returning Home insight card
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--returning-home-insight-card). Historical scope; current boundaries above apply.
+
+## October 6, 2026 · V1 destinations and state expansion
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--v1-destinations-and-state-expansion). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Photo selector comparison (proposal only)
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--photo-selector-comparison-proposal-only). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Private fit journal, Planner root and grouped controls
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--private-fit-journal-planner-root-and-grouped-controls). Historical scope; current boundaries above apply.
+
+## October 6, 2026 — Numbered Foundations and shared private core
+
+[Original dated receipt](archive/verification-2026-10-02–07.md#october-6-2026--numbered-foundations-and-shared-private-core). Historical scope; current boundaries above apply.
+
+### Conversations footer refinement
+
+[Original receipt](archive/verification-2026-10-02–07.md#conversations-footer-refinement).
+
+### Approved L04 replacement
+
+[Original receipt](archive/verification-2026-10-02–07.md#approved-l04-replacement).
+
+### Single Add photo entry and native source sheet
+
+[Original receipt](archive/verification-2026-10-02–07.md#single-add-photo-entry-and-native-source-sheet).
+
+### Populated Week footer simplification
+
+[Original receipt](archive/verification-2026-10-02–07.md#populated-week-footer-simplification).

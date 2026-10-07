@@ -1,10 +1,14 @@
 # W — Wardrobe
 
+## Phase boundary
+
+V1 completes local manual single-photo capture/search/filter/sort/edit/availability/archive/lifecycle and activation. Agent reuses piece capture. Private Profile More → Add fit creates a journal memory, not a wardrobe piece; the separate V2 public collection Add scope may reuse piece capture. Verified single-photo on-device cleanup/editable tag proposals belong in V1 with manual fallback. Saved inspiration (W11), advanced/provider visual workflows and connected backup are V2. Use LOCAL checks for the private release. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
+
 ## Outcome and entry points
 
-The user has a durable, searchable record of owned clothing, footwear, and accessories. Entry: Closet → Pieces → Add; Profile's Add opens the same capture flow; Agent requests capture through that flow. Owner-only management is separate from public presentation in [Profile](profile-account.md).
+The user has a durable, searchable record of owned clothing, footwear, and accessories. Entry: Closet → Pieces → Add; Agent requests capture through that flow. Private Profile More → Add fit opens the [fit journal](../design/profile-fit-journal.md) draft; V2 public collection Add, when enabled for owned pieces, reuses wardrobe capture rather than redefining private Add fit. Owner-only management is separate from public presentation in [Profile](profile-account.md).
 
-First use offers a private empty closet, with optional samples explicitly identified. A short optional style setup asks go-to occasions and preferences; skip is supported. No required avatar, body measurements, item quota, or style quiz blocks the first save. Show the next useful task after saving: add another piece or build an outfit. Suggestions depend on available categories, not a fixed “five items” onboarding threshold.
+First use offers a private empty closet, with optional samples explicitly identified. Style setup uses the [shared seven-step preference flow](../design/onboarding-personalization.md) from onboarding and Settings: six explicit answers or No preference/refusals plus review, unnumbered navigation titles with separate Step n of 7/progress and no questionnaire skip controls. Explore first remains outside the entered questionnaire. No required avatar, body measurements, account, item quota or AI capability blocks the manual first save. Show the next useful task after saving: add another piece or build an outfit. Suggestions depend on available categories, not a fixed “five items” onboarding threshold.
 
 ## Saved inspiration shortcut
 
@@ -19,7 +23,7 @@ Community hearts remain in Profile → Settings → Liked posts. Hearts on owned
 | ID and ownership | Stable identity; managed by the app, not editable in the form. |
 | Name | Required, trimmed, 1–80 characters. |
 | Category | Required: Tops, Bottoms, Dresses, Layers, Shoes, Accessories. |
-| Photo | Optional cover image in the first slice. User selects it or captures it; missing image has a category placeholder. |
+| Photo | One accepted, locally prepared cover image is needed to save a new piece. User selects or captures it. Existing records with missing media retain a category placeholder. |
 | Color, brand, size, fit, material, season, tags | Optional, searchable metadata. Empty means unknown; fit is not silently inferred as Regular for new items. |
 | Condition and ownership age | Optional descriptive values; approximate ages are not converted into fabricated purchase dates. |
 | Prior wear count | User estimate, integer 0–10,000; separate from dated AQD wear records. |
@@ -31,21 +35,21 @@ Text defaults: optional single-value metadata up to 80 characters, up to 20 tags
 
 ## Capture and classification
 
-V1 classification is manual. Automatic photo classification/tagging and visual cleanup are [V2 enhancements](../product/v2-backlog.md); the capability behavior below is future guidance, not required launch work.
+Manual classification is always available in V1 and V2. Verified single-photo on-device cleanup and editable tagging proposals follow the [V1 capability contract](../architecture/v1.md#apple-intelligence-limits). Advanced visual analysis/imports and provider processing remain [V2 enhancements](../product/v2-backlog.md). The proposal/review/fallback behavior below applies wherever a supported capability is enabled; local availability and real-photo quality require implementation evidence.
 
-1. Select Photos, Camera, or manual entry. Choose a cover photo or continue without one.
+1. Select Photos or Camera for the cover photo; enter classification manually if needed. A draft may start without media, but a new piece cannot save until a photo is accepted.
 2. Preserve the draft while loading/preparing media. Preview the image before saving.
 3. Provide name/category; expand optional details when needed.
 4. If classification is supported, present proposed fields for review. User changes win; uncertain fields remain unknown. If unsupported or failed, manual completion remains available.
 5. Save atomically, show the saved item, and expose add-another/build-outfit actions.
 
-Use the existing photo normalization where suitable; read source for exact image limits. Picker cancellation keeps the draft. Denied camera access offers Photos/manual entry. Corrupt/unsupported images show an error without losing metadata. Photo replacement applies only after preparation succeeds. Batch uploads, receipt import, shopping databases, scanning, selfie garment extraction, background cleanup, and multiple photos are later slices, not prerequisites.
+Use the existing photo normalization where suitable; read source for exact image limits. Picker cancellation keeps the draft. Denied camera access offers Photos or Keep draft; entered metadata remains intact and Save stays disabled without an accepted photo. Corrupt/unsupported images show an error without losing metadata. Photo replacement applies only after preparation succeeds. Batch uploads, receipt import, shopping databases, scanning, selfie garment extraction, advanced background/edge repair and multiple photos are later slices, not prerequisites. The bounded V1 local foreground-removal action follows the [capture cleanup contract](../design/capture-photo.md); it requires an explicit preview/application and never gates manual save or promises garment-only extraction.
 
 ## Browse and lifecycle
 
 ### First-outfit activation and repeated capture
 
-W27 reviews a selected photo beside the required name/category fields. Optional metadata lives in More details; Change photo uses the same picker. Manual/no-photo capture uses W07. If a supported classifier proposes fields, identify them as proposals and let edits win; loading/failure must not block manual entry or imply image cleanup.
+W27 reviews a selected photo above the required name/category fields. Optional metadata lives in More details; Change photo uses the same picker. Manual classification uses W07 with the same photo prerequisite. If a supported classifier proposes fields, identify them as proposals and let edits win; loading/failure must not block manual entry or imply image cleanup.
 
 After the first confirmed save, E12 offers Build my first outfit and Open my closet. The former carries the saved piece into W28/W29 and the outfit builder. W28 shows only missing categories for the requested form and links each to the normal capture/editor with the category suggested, not silently committed. Saving or cancelling returns to the same starter task with the pinned piece intact. Do not replay Welcome, preferences or acquisition prompts for each addition. Failed saves retain both metadata and prepared photo and do not advance readiness.
 
@@ -61,8 +65,8 @@ Empty closet offers Add. Empty filtered results offer clear filters. Loading is 
 
 ## Acceptance
 
-- W1: Save a manually classified shoe without photo or optional details; reopen it after app restart.
-- W2: Cancel/deny/fail photo capture; entered name/category remain and manual save works.
+- W1: Save a manually classified shoe with a photo and no additional metadata; reopen it after app restart. Labels read Photo, Name and Category without requirement qualifiers.
+- W2: Cancel/deny/fail photo capture; entered name/category remain, Save is disabled without accepted media, and choosing a valid photo restores eligibility.
 - W3: Edit an imported item without changing its ID; a failed write changes neither the stored nor visible record.
 - W4: Search a color and apply category/archive filters; clearing them restores expected results.
 - W5: Archive/restore a used piece without losing outfit or wear history.
@@ -79,3 +83,9 @@ Empty closet offers Add. Empty filtered results offer clear filters. Loading is 
 First slice needs local persistence, media picker, item editor, detail, and collection. Assisted tagging and connected backup are separately gated capabilities. Treat this as a complete vertical feature, not merely a clothing-card component.
 
 Closet search has Pieces / Outfits / Themes scope tabs with owner-only results and preserved per-tab query/filter/scroll state. Reuse [Search and feeds](../design/search-and-feeds.md) for loading, empty, read failure, image fallback, stale data and pagination. Local search remains available without a community network connection; an unavailable remote service must not block owned local records.
+
+### Local photo framing
+
+V1/V2 share [photo capture and editing](../design/capture-photo.md): empty/selected photo, 3:4 portrait presentation with full-source Fit, optional crop/pan/zoom/90-degree rotation/reset, replacement/removal and cancellation. Preserve a metadata-minimized app-private original and edit recipe; do not alter the user’s Photos asset. Editing and fitting are deterministic on-device operations, independent of model availability. Photo, name and category must all be valid before a new piece can save. Visible field labels omit Required/Optional; More details contains the extra metadata. V2 adds sync/publication of explicitly reviewed renditions without removing the local editor.
+
+- W12: Landscape/portrait sources preserve the whole garment under Fit. Crop is explicit; rotate/reset/cancel preserve draft fields and prior accepted media. Photo import/edit/save failures never fabricate a save or lose the previous record.

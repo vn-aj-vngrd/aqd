@@ -1,8 +1,10 @@
 # Agent response experience
 
-Release boundary: [V1](../product/v1-release.md) requires basic history, response rendering, cancel/retry/copy and proposal/receipt details. Response-version comparison and server-collected evaluation feedback below are [V2](../product/v2-backlog.md) design targets, not launch controls.
+Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses its [dedicated local flow](v1-flow.md), with A33 shared under the [optional native weather contract](weather-context.md), and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
-[Paper page 05](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-A-1) owns the screen designs; [page 00](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-1-0) owns reusable response components. This contract supplements [Agent capabilities](../features/agent.md). Designs and sample timings are illustrative, not runtime or service validation.
+Release boundary: [V1](../product/v1-release.md) and the V2 connected core both require local/private history, response rendering, cancel/retry/copy and proposal/receipt details. Response-version comparison and server-collected evaluation feedback below are [V2](../product/v2-backlog.md) design targets, not launch controls.
+
+[Paper page 02 · V2, section 05 · Agent](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-B-0) owns the screen designs; phase-owned references retain response lifecycle/composer examples, while [Foundations](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-1-0) owns the reusable controls, icons and generic states. This contract supplements [Agent capabilities](../features/agent.md). Designs and sample timings are illustrative, not runtime or service validation.
 
 ## Conversation lifecycle
 
@@ -10,7 +12,7 @@ The page-00 Status and progress spinner also owns the app-wide indeterminate loa
 
 A11 prepares a response, A12 streams it, and A13 completes it. A14 preserves a stopped response, A15 preserves an interrupted response, and A16 explains slow work. A17 exposes real task progress. A29 distinguishes a message that never reached the runtime from a reply that failed midway. A30 asks for missing information before acting. With no matching pieces, explain the constraint and offer Add piece or the manual builder. For an unsupported request, name the supported closet task without pretending a tool ran. If context capacity is reached, offer a new conversation with a user-reviewed summary; never silently omit a material instruction.
 
-Send is enabled only for valid nonempty input and an available runtime. During generation, Stop replaces Send in the same 44-point target. Keep an editable next-message draft; do not send it implicitly. Stop remains available while cancellation is pending, with duplicate taps suppressed and an announced stopping state. Confirm Stopped only after acknowledgement. Preserve partial text and label it incomplete. Retry creates another response version; it does not append a fabricated continuation or repeat a write.
+[Agent input](agent-input.md#one-native-glass-composer) owns Send eligibility, including supported attachment-only input and runtime availability; response lifecycle consumes that validated send intent. During generation, Stop replaces Send in the same 44-point target. Keep an editable next-message draft; do not send it implicitly. Stop remains available while cancellation is pending, with duplicate taps suppressed and an announced stopping state. Confirm Stopped only after acknowledgement. Preserve partial text and label it incomplete. Retry creates another response version; it does not append a fabricated continuation or repeat a write.
 
 Streaming appends text in readable chunks without animating every character. Follow the bottom only while the reader is already there. If they scroll away, preserve position and expose a 44-point “Jump to latest” control with an unread-update indicator. Do not steal focus, repeatedly announce tokens, or resize the composer. VoiceOver announces preparation, completion, interruption and cancellation once; the reply remains navigable by paragraph. Respect Reduce Motion; use a static status label instead of a flashing caret or skeleton shimmer.
 
@@ -44,7 +46,7 @@ Slow and hard-timeout thresholds belong to runtime configuration, not the visual
 
 ## Response actions and versions
 
-V1 completed assistant responses have Copy, Try another response when supported, and More/details. V2 adds Helpful and Not helpful. Symbols use the shared icon catalog with 44-point targets, labels and selected traits. Selected feedback uses a thicker symbol and accent-soft background. Actions attach to the displayed response version, not the entire conversation. Copy and feedback remain available on a clearly labelled partial response; Retry never transfers prior approvals.
+V2 completed assistant responses have Copy, Try another response when supported, and More/details. V2 adds Helpful and Not helpful. Symbols use the shared icon catalog with 44-point targets, labels and selected traits. Selected feedback uses a thicker symbol and accent-soft background. Actions attach to the displayed response version, not the entire conversation. Copy and feedback remain available on a clearly labelled partial response; Retry never transfers prior approvals.
 
 Copy writes rendered text in reading order without hidden prompts, tool payloads or internal IDs. Include a visible incomplete marker for partial replies. Announce “Response copied” only after clipboard success; on failure announce the failure and retain a retry action. A27 shows the copied/selected state. A28 retains previous versions with disabled first/last navigation edges. Feedback and receipts remain associated with their original version. Details may expose context sources, tool outcomes and timing; never hidden reasoning, secrets or an invented confidence score.
 
@@ -57,6 +59,10 @@ Default content sharing is off. The consent review names the exact response text
 Suggested versioned feedback envelope: feedback ID/idempotency key, response ID, response version, run ID, rating, reason enums, optional user note, consent version and explicitly selected attachments. Runtime/model version and application version support evaluation grouping; do not infer them. Stable pseudonymous identifiers are sufficient; no email or username is needed. Respect analytics/privacy preferences and the approved retention/deletion policy before enabling collection.
 
 Operational measurements: first-text latency, total response duration, cancellation and error outcomes, actual tool result, proposal approval/rejection and persisted receipt. Missing metrics are unknown. Ratings are subjective signals, not correctness ground truth. Evaluate authorization, correct item references, stale-data handling, unsupported claims, draft validity and recovery separately using consented examples or synthetic fixtures. Report sample sizes and runtime/version cohorts; do not show a fabricated quality score to users.
+
+## Optional current weather context
+
+Basic native WeatherKit is shared V1/V2, not external research or a cloud LLM. Weather availability is independent of Agent eligibility: it can work when Foundation Models cannot. A33 retains its existing canonical identity and returns to the actual context/response draft without sending or saving. [Weather context](weather-context.md) owns opt-in/off, Apple city-query disclosure, explicit location gesture, matching place/date/timezone, source/provider/fetch timestamps, required attribution and bounded fresh/Saved/unavailable states. Fresh explicitly selected data may inform a next request; stale context is never silently treated as fresh, and model prose cannot invent weather. Cancel/Continue without weather preserves the private task and manual styling; no closet/photo/body/chat uploads or changes to body-use consent. Forecast coverage uses returned periods up to ten days, never a two-week or historical-weather promise.
 
 ## Approval and recovery
 
@@ -78,8 +84,8 @@ Use [Global motion](motion.md), particularly C-stream, C-receipt and C-save. No 
 
 [Agent input](agent-input.md) now owns autofocus, multiline growth, media/file capture, selected closet context, voice dictation, busy-label shimmer and their recovery/accessibility contracts. A34–A55 extend the existing lifecycle; A01 and all existing composers use the same richer shell. Page 00 owns the multimodal composer and shimmer/recovery masters. These remain Paper/design targets, not an implemented streaming or speech runtime.
 
-For V1, completed responses expose Copy, Retry when supported and More/details. Helpful / Not helpful and version comparisons described in the future sections above remain V2. The user-requested shimmer applies only to the active status label, with a static Reduce Motion/VoiceOver equivalent; streamed prose never shimmers.
+For V2, completed responses expose Copy, Retry when supported and More/details. Helpful / Not helpful and version comparisons described in the future sections above remain V2. The user-requested shimmer applies only to the active status label, with a static Reduce Motion/VoiceOver equivalent; streamed prose never shimmers.
 
 ## Selective assistance indicators
 
-Agent supplies an explicit assistance context. Its starter prompts, response toolbar, regeneration, Refresh draft, Try again, resend and native Retry menu use ordinary task labels and symbols without an AI badge. Keep the shared badge on focused model-powered assistance in Closet, Home and planning where it clarifies an otherwise ordinary action. See [the badge contract](icons.md#ai-assistance-badge).
+Agent supplies an explicit assistance context. Its starter prompts, response toolbar, regeneration, Refresh draft, Try again, resend and native Retry menu use ordinary task labels and symbols without an AI badge. Keep the shared badge on focused model-powered assistance in Closet, Today and planning where it clarifies an otherwise ordinary action. See [the badge contract](icons.md#ai-assistance-badge).

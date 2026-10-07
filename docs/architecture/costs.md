@@ -1,6 +1,14 @@
 # Launch costs
 
+Phase scope: V2 connected-product proposal. V1 needs no app backend, staff admin or paid entitlement service; see [V1 architecture](v1.md). Dated prices and recommendations below are historical planning assumptions, not refreshed purchasing quotes.
+
 Pricing snapshot: October 1, 2026. All figures are USD, before taxes and currency conversion. This is a recommended budget, not a paid-service selection or purchase authorization.
+
+## V1 cost boundary
+
+The [device-only V1](v1.md) has no required recurring AQD backend/database/media/AI/email/push cost. Apple developer distribution, devices, optional static support/domain hosting, design tools and support/legal work remain separate expenses. Optional native Apple WeatherKit now belongs to V1 and is inherited by V2: Developer Program membership and App ID entitlement are required; the included allowance is **500,000 calls/month per membership**, shared across users/devices, not a per-user quota or unlimited free service. Higher usage may require paid capacity. AQD's foreground/coalescing/cache/cooldown limits are product budgets, not Apple quotas; aggregate demand remains unvalidated. See [Apple evidence](../references/weatherkit-v1.md) and the [confirmed contract](../product/v1-release.md#optional-live-weather-contract). No purchase is approved here. The figures below are the preserved October 1 V2 connected-product snapshot; recheck official prices/allowances before budgeting or provisioning.
+
+## V2 historical budget
 
 ## Assumptions
 
@@ -46,7 +54,7 @@ Free-tier email is not unlimited: Resend Free has a **100-email daily cap**. Con
 
 ## Costs excluded from the baseline
 
-Development time/compensation, hardware, purchased assets, outsourced content, legal review, business registration/accounting, paid acquisition, taxes, app-sale commissions/refunds, SMS, external weather and any future cloud AI. These need separate estimates rather than a fabricated zero cost. Supabase database backups should not be treated as proof of complete photo backup/recovery; design and verify the required media lifecycle separately.
+Development time/compensation, hardware, purchased assets, outsourced content, legal review, business registration/accounting, paid acquisition, taxes, app-sale commissions/refunds, SMS, WeatherKit capacity beyond the included membership allowance, advanced external weather providers and any future cloud AI. These need separate estimates rather than a fabricated zero cost. Supabase database backups should not be treated as proof of complete photo backup/recovery; design and verify the required media lifecycle separately.
 
 ## Sources
 

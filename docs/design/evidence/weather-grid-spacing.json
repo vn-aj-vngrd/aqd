@@ -1,0 +1,84 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "pageId": "p-2-0",
+  "date": "2026-10-07",
+  "scope": "Bounded local Weather grid correction only; seven root left changes, nine external technical-note visibility changes, three external warning labels, one existing section-02 header description append. App UI, tokens, masters, canonical IDs, Foundations and V2 untouched.",
+  "parentScopeCurrentBlueprint": "v1-canvas-spacing.json supplies the complete 206-root geometry; apply only these nine footprint overrides and seven x overrides. All other coordinates/footprints remain authoritative there. Older Weather coordinates are historical.",
+  "reason": "Screenshot showed excessive Weather phone gaps: invisible-on-dark technical notes at x410 width300 forced 710px footprints and 790px pitch, yielding 400px phone-edge gaps. Ordinary phones had 80px gaps. Remove technical notes from the visual grid without deleting them.",
+  "roots": [
+    {"nodeId":"108S-0","beforeX":1770,"x":1450,"y":6018,"footprint":{"x":0,"y":0,"width":390,"height":844},"hiddenNoteId":"10LX-0"},
+    {"nodeId":"109R-0","beforeX":2560,"x":1920,"y":6018,"footprint":{"x":0,"y":0,"width":390,"height":844},"hiddenNoteId":"10LZ-0"},
+    {"nodeId":"10AQ-0","beforeX":3350,"x":2390,"y":6018,"footprint":{"x":0,"y":0,"width":390,"height":844},"hiddenNoteId":"10M5-0"},
+    {"nodeId":"10BP-0","beforeX":40,"x":40,"y":6974,"footprint":{"x":0,"y":-32,"width":390,"height":876},"hiddenNoteId":"10M7-0"},
+    {"nodeId":"10CO-0","beforeX":830,"x":510,"y":6974,"footprint":{"x":0,"y":-32,"width":390,"height":876},"hiddenNoteId":"10LV-0"},
+    {"nodeId":"10DN-0","beforeX":1620,"x":980,"y":6974,"footprint":{"x":0,"y":0,"width":390,"height":844},"hiddenNoteId":"10M1-0"},
+    {"nodeId":"10EM-0","beforeX":2410,"x":1450,"y":6974,"footprint":{"x":0,"y":0,"width":390,"height":844},"hiddenNoteId":"10MB-0"},
+    {"nodeId":"10FL-0","beforeX":3200,"x":1920,"y":6974,"footprint":{"x":0,"y":0,"width":390,"height":844},"hiddenNoteId":"10M3-0"},
+    {"nodeId":"10GK-0","beforeX":980,"x":980,"y":6018,"footprint":{"x":0,"y":-32,"width":390,"height":876},"hiddenNoteId":"10M9-0"}
+  ],
+  "hiddenNotes": {
+    "styleChange": {"display":"none"},
+    "originalGeometryRetained": {"x":410,"y":0,"width":300},
+    "preservation": "Original Text IDs, names, parents and full text retained in Paper layers; text not passed to any mutation. Full original text is duplicated below for portable recovery. Original weatherkit-v1.json remains untouched.",
+    "originalTexts": {
+      "10LX-0": "REFERENCE ONLY · V1 + V2\nReused A33; canonical ID remains V2.\nEntries: Settings Weather; Suggest Weather context; Planner Add → Plan a look Weather context; Agent Closet context → Weather context.\nDefault Off. Toggle On reviews disclosure; only Use weather confirms. Empty city/day disables Use weather. Selected city + native date enables it. Off purges all weather snapshots.\nBack restores actual origin, selection, scroll, focus and draft, without activation. Continue without weather removes this draft context, not an existing plan/outfit. No record Save.\nPrivacy: WeatherKit receives selected coordinates; Maps receives city query before typing disclosure. No wardrobe/photos/body/chat. No signup, API key or AI gate.\nAll new weather dates/values in this family are illustrative, not actual forecasts.",
+      "10LZ-0": "REFERENCE ONLY · Illustrative city result\nNative searchable; focus only after visible Apple Maps query disclosure. 400ms debounce; cancel superseded searches; resolve selected result only. Offline new search says internet needed; saved resolved city remains selectable.\nCity result returns setup with coordinates + timezone; no WeatherKit fetch before Use weather. Cancel returns setup with prior selection.\nUse current location alone requests When In Use, one-shot foreground; approximate accepted. Never Always or background tracking. Denial/restricted/off/timeout → manual city alternative. System alert is OS-owned.\nPlace timezone unresolved: resolve or show unknown; never silently use device timezone.",
+      "10M5-0": "REFERENCE ONLY · Date illustrative\nNative shared circular ProgressView. Header Back cancels pending request, returns setup; no apply. Keep origin outfit/plan Save available.\nForeground active views only. Coalesce one in-flight request per resolved location + dataset/date-range query across Home/Planner/Agent. Request identity changes on city/date; ignore late old responses.\nFreshness ends at earliest required dataset expirationDate or fetched-at +30min, whichever first. Foreground recheck only when visible; no timer/background traffic. Refresh/Retry user-driven, 60s cooldown, no retry loop.",
+      "10M7-0": "REFERENCE ONLY · Illustrative numbers/date\nNOT an actual forecast; NOT a certified Apple mark. Gray reservation is layout only. Runtime must load WeatherService.attribution combinedMarkLightURL / combinedMarkDarkURL plus legalPageURL. Withhold weather numbers if required attribution unavailable. Never draw/generate logo or substitute source text for mark.\nFresh forecast matches selected place/local date. Home detail uses Now, 5 Oct 2026, current dataset instead; never current-as-future substitution.\nUse weather attaches fresh context to invoking draft only; no outfit/plan record Save. Back dismisses unchanged. Legal opens SDK URL via system browser and returns same context. No minute feed, alerts, historical or advanced providers in V1.",
+      "10LV-0": "REFERENCE ONLY · Illustrative values/date\nSaved is explicitly stale, not Now/fresh. Same place/date only and fetched-at age ≤24h; never fresh Agent/recommendation input. At >24h hide numbers → unavailable. Off purges. Bounded five location snapshots, ten daily entries each; no location history.\nReserve cached exact SDK combined mark + legal URL; gray space is NOT a certified mark. Runtime hides numerical weather if attribution is missing.\nRetry → loading, coalesced request +60s manual cooldown; Back restores origin draft. Home cached inline uses Saved / updated qualifier or date-only when unavailable; never fresh-looking saved data.",
+      "10M1-0": "REFERENCE ONLY · Illustrative future date\nForecast horizon actual returned data, at most ten days/~240h. No weather for two-week/month routine or distant trip. Empty/missing dataset is not no-rain.\nKeep planning returns to exact selected local date/timezone and unchanged draft, omitting weather. Back returns setup. Never shift date, fabricate conditions or substitute current weather. DatePicker remains unrestricted by weather horizon for manual planning.\nDST/day bounds use destination timezone. Local-AI availability and weather availability are independent.",
+      "10MB-0": "REFERENCE ONLY\nDenied, restricted, location services off or one-shot timeout offers Choose city. No repeat prompt or precision escalation. Manual lookup needs internet but not device-location permission.\nChoose city → shared lookup, preserving weather draft/date and parent draft. Back → setup, unchanged source. Core app and Save outfit/plan remain available.\nNative permission alert is not imitated on canvas. Signed-device permission/approximate-location tests remain outstanding.",
+      "10M3-0": "REFERENCE ONLY · Illustrative date\nNo cache, expired >24h, offline/service/entitlement/attribution failure: withhold numbers and claims. Retry user-driven → loading; one coalesced request, manual60s cooldown. Back restores origin draft with no weather apply.\nNo forced sign-in/API key/cloud model/Apple Intelligence gate. Native WeatherKit needs developer entitlement, not end-user account.\nNative runtime/service, accessibility, keyboard, Dynamic Type, dark mode and cache/privacy tests are not established by Paper.",
+      "10M9-0": "REFERENCE ONLY · Explicitly enabled Home\nMon 5 = Monday, 5 October 2026, preserved L23 fixture. 29° is illustrative, not live data.\nCompact inline date + native condition symbol + temperature, NOT a card. The16pt cloud.sun.fill fixture is exported from macOS AppKit SF Symbols, not hand-drawn or AI-generated. Actual iOS CurrentWeather.symbolName mapping/rendering remains unverified.\nWeather44pt target → shared details: Manila, Now,5 Oct2026 Asia/Manila; provider/update time + exact mark/legal.\nGray adjacent SDK-mark reservation is NOT a certified mark. Detail-only attribution compliance is UNVERIFIED. Runtime requires visible SDK mark + Data sources beside Home numbers; missing attribution withholds numbers.\nOff/unavailable Home shows DATE ONLY. Cached inline adds Saved/updated qualifier. City changes NEVER shift Home plan/journal date; if destination local day differs from Home displayed day, omit inline numbers and show actual place/day in detail.\nNo Home Settings shortcut."
+    }
+  },
+  "warnings": {
+    "nodes": [{"nodeId":"10N7-0","parentId":"10GK-0"},{"nodeId":"10N3-0","parentId":"10BP-0"},{"nodeId":"10N5-0","parentId":"10CO-0"}],
+    "before": {"x":410,"y":-32,"width":300,"height":24,"text":"mark asset unverified"},
+    "after": {"x":0,"y":-32,"width":390,"height":24,"fontSize":14,"lineHeight":24,"color":"#A4A6AC","text":"Illustrative weather · SDK mark unverified"}
+  },
+  "header": {
+    "rootId":"MZ7-0",
+    "parentId":"MZ8-0",
+    "descriptionId":"MZA-0",
+    "originalText":"Home → photo source → accepted media / crop → classification → first save. Final row: shared dirty-exit and save recovery for all editors.",
+    "appendedText":"Weather examples are illustrative, not live. Apple attribution and iOS rendering remain unverified; detailed notes are retained in layers and docs.",
+    "measuredDescriptionBounds":{"width":2230,"height":56,"worldX":80,"worldY":5824},
+    "headerSizeUnchanged":[2860,170]
+  },
+  "checks": {
+    "rootXChanges": 7,
+    "rootYChanges": 0,
+    "rootDelta": 0,
+    "nodeDelta": 0,
+    "liveV1BeforeAndAfter": {"roots":206,"nodes":11410},
+    "wholeFileCountsRetainedFromParent": {"roots":511,"nodes":35203,"method":"V1 live counts unchanged; Foundations/V2 untouched, parent aggregate retained, not rescanned."},
+    "tokenHashBeforeAndAfter": "fdeb7346",
+    "canonicalTriplesEqualHEAD": 380,
+    "nonWeatherPositionsEqualSpacingMap": 197,
+    "geometryGuard": {"roots":206,"pairs":21115,"failures":0,"minimumRectangleClearance":80,"method":"Each rectangle uses root position plus footprint x/y offsets; every pair must separate by at least80px on one axis. Parent geometry reused; only seven Weather x and nine footprints overridden."},
+    "phoneRows": [{"y":6018,"x":[40,510,980,1450,1920,2390]},{"y":6974,"x":[40,510,980,1450,1920]}],
+    "warningTextFit": {"font":"Helvetica Neue","size":14,"measuredAdvance":257.208,"frameWidth":390,"method":"AppKit NSString size(withAttributes:font:) using installed Paper preview font; verifies one-line horizontal capacity, not external canvas rendering."},
+    "phonePitch": 470,
+    "phoneEdgeGap": 80,
+    "afterBounds": {"x":40,"y":0,"right":3250,"bottom":42513,"width":3210,"height":42513},
+    "liveStyleReadback": "All nine roots390×844 at expected x/y; nine notes display:none with unchanged x410/y0/width300 and no measured rendered size. Paper node_info isVisible remains true (layer flag); display:none is the verified render guard, not that flag. Three warnings x0/y-32/390×24,14px text,#A4A6AC. Setup root parent/size and all warning parent/world bounds sampled.",
+    "notesReadback": "All nine full original text strings and parent IDs read before and after mutation and compared directly; no technical-note text mutation. Portable originalTexts above preserve them exactly.",
+    "noteTextSha256": {
+      "10LX-0":"d6230e6a1e4ab4ea74bcfa5fdf419bc082910300ea1b0293d1ecc71dc9e96d7d",
+      "10LZ-0":"0e01a015fd95365fb889a31335fd6bb2b280d08372461375fb7d2ce2fde68b37",
+      "10M5-0":"703106d30a32ca37091ee76e7085ddb3e40d49d14ec4534e93141c2f5d6e21c8",
+      "10M7-0":"c51937c0b4f2255e650ac57bc55f94d932f824b5c589e5af585a91bbeb947754",
+      "10LV-0":"9f57c677ddb9a1909007b6f5cc0e0ea3c93b0787a021320c58d4f104d39ffdad",
+      "10M1-0":"8683cf5706c37bf26dc19b1fbfed6fc30eeb3ee93c0494d94c37de2358f3ce96",
+      "10MB-0":"46180387299122977acadf7c0b9452ff043c4802b3c34a956674ba382c89f49d",
+      "10M3-0":"69288f5c4055d88fcfcc31531eb54698917b2f80a757be7c69b626abe0e8f134",
+      "10M9-0":"9a406cde48c652a716ccce4f3ab8662c69c149db9f0164990ddb3dc603c12f09"
+    },
+    "weatherGlyphSha256": "b8bcccc21bee2130cfbb8a69dda14e80e7c56eb453cb58c8c7ed28697858301b",
+    "jsonChecks": "Manifest and three relevant evidence JSON files parse without duplicate keys; nine Weather locators agree with manifest;380 canonical triples equal HEAD;197 other positions equal parent geometry; glyph SHA256 unchanged;git diff --check passes.",
+    "screenshots": "Bounded enabled Home/setup/header screenshots show retained internal UI and unclipped two-line description. Negative-y warning child screenshot returned blank; bounds/styles/text confirmed instead. Cropped artboards do not establish rendered neighboring placement or external-label appearance; geometry provides spacing proof.",
+    "testsNotRun": "pnpm check (previous38 tooling tests not repeated for canvas annotations/coordinates), native builds/API/accessibility, web detector (no changed web UI)."
+  },
+  "limits": "Static canvas only. No new native/API/permission/attribution/accessibility claim. No whole-canvas screenshot, repeated descendant census, app implementation, commit or push."
+}

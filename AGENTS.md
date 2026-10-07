@@ -1,14 +1,10 @@
 # AQD agent guidance
 
-Read only the documents relevant to the task; [docs/README.md](docs/README.md) routes by responsibility.
+[Documentation router](docs/README.md) selects task branches and authoritative owners. Read the affected contracts, not entire folder catalogs.
 
-- **Product/spec work:** read [product definition](docs/product/definition.md), the relevant [feature](docs/features/README.md), and applicable [decisions](docs/product/decisions.md). [V1 release](docs/product/v1-release.md) owns launch scope; [V2 backlog](docs/product/v2-backlog.md) owns deferred work.
-- **Implementation/fixes/reviews:** follow [lifecycle](docs/agents/lifecycle.md) within the user's authorized scope. Read [plan](docs/delivery/implementation-plan.md) and [current status](docs/delivery/implementation-status.md); update status and [verification](docs/delivery/verification.md) with actual evidence. Product refinement authorizes documentation, not app implementation.
-- **UI work:** read [design rules](docs/design/rules.md) and root [DESIGN.md](DESIGN.md), then the affected component/flow contract through the [design index](docs/design/README.md).
-- **Commits/PRs/releases:** read [workflow](docs/delivery/workflow.md). Use Conventional Commits and PR titles; ticket references belong in the body.
-
-## Agent skills
-
-- **Issue tracker:** GitHub Issues in `vn-aj-vngrd/aqd`; read [tracker configuration](docs/agents/issue-tracker.md) before ticket operations.
-- **Triage labels:** five confirmed default states; read [label mapping](docs/agents/triage-labels.md) before assigning labels.
-- **Domain docs:** root [CONTEXT.md](CONTEXT.md) is the glossary; [docs/adr/](docs/adr/README.md) holds lasting decisions. Read [domain guidance](docs/agents/domain.md) for domain/architecture work.
+- **Engineering:** read [lifecycle authority](docs/agents/lifecycle.md) and select only the authorized stage. Establish [current status](docs/delivery/implementation-status.md); read the [plan](docs/delivery/implementation-plan.md) when selecting/changing an implementation slice. Record changed scope and actual evidence in [verification](docs/delivery/verification.md). Product refinement authorizes documentation, not app implementation.
+- **Product/spec:** read [definition](docs/product/definition.md), affected [feature](docs/features/README.md), applicable [decision](docs/product/decisions.md) and phase release acceptance. [V1 release](docs/product/v1-release.md) owns launch scope; [V2 backlog](docs/product/v2-backlog.md) retains deferred work.
+- **UI:** read [foundations](DESIGN.md), [procedure](docs/design/rules.md), then the affected feature/design contract via [design routing](docs/design/README.md). Apply [quality criteria](docs/design/quality-criteria.md) to changed inventory; specialist catalogs fire only for their branch. V1 control changes update [interaction coverage](docs/design/v1-interactions.md), including state/return behavior.
+- **Commit/PR/release:** read [workflow](docs/delivery/workflow.md) only when those operations are authorized. Preserve required CI/Codex, protection and SHA-bound squash gates. Conventional Commit/PR titles; ticket references in the body.
+- **Issues:** read [tracker configuration](docs/agents/issue-tracker.md) before operations and [triage labels](docs/agents/triage-labels.md) before assigning labels.
+- **Domain/architecture:** [CONTEXT.md](CONTEXT.md) owns vocabulary; read [domain guidance](docs/agents/domain.md) for terminology/architecture changes and [ADRs](docs/adr/README.md) for lasting decisions.

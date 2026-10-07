@@ -1,60 +1,56 @@
 # AQD design system
 
-Authoritative visual foundations, October 2, 2026. This specifies the intended app; implementation and verification are tracked separately.
+Visual foundations for the intended app, not proof of implementation. [Status](docs/delivery/implementation-status.md) and [verification](docs/delivery/verification.md) own observed capability and evidence.
 
 ## Authority
 
-[AQD iOS in Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0) is the iOS visual source: edit tokens, page 00 component masters, and screen composition there. This document records roles and native behavior. [Screen map](docs/design/screens.md) owns routes and state coverage; [Components](docs/design/components.md) owns reusable contracts. Product and feature specifications retain behavior and access rules. The former local gallery and renderers have been retired after Paper coverage verification.
-
-The separate [web Paper file](https://app.paper.design/file/01M3W6P0PN9SSQ1J3N6V23A9WK) contains designs for the public landing and protected admin apps, with shared AQD brand foundations. [Web design](docs/design/web.md) owns web patterns, proposed routes, app boundaries, and static verification scope. Web controls adapt the brand without copying native iOS material behavior.
-
-For UI work, read this document and the affected screen contract before inspecting implementation. Record divergence from the design as a gap. Update Paper and the relevant specification together when the design changes. Verify actual native behavior separately from static canvas review.
+[iOS Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0) owns tokens, component masters and composition; [web Paper](https://app.paper.design/file/01M3W6P0PN9SSQ1J3N6V23A9WK) owns landing/admin references. Product releases own phase scope, features own behavior, design contracts own visual/interaction requirements. [Design router](docs/design/README.md) selects the affected branch. Update the affected specification with authorized design changes; static canvas review never establishes native behavior.
 
 ## Direction
 
-Premium through restraint: clothing photography, precise alignment, quiet surfaces, and native interaction. Light surfaces use limestone and graphite; dark surfaces use neutral charcoal. Heritage blue is reserved for actions and selection; dark appearance uses muted powder blue. The initial flat garment illustrations were rejected as childish. Use photographic pieces and looks; the AQD wordmark and small Heritage blue accent provide the brand.
+Premium through restraint: clothing photography, precise alignment, quiet opaque semantic surfaces and native interaction. Cool neutrals/graphite in light appearance, neutral charcoal in dark; crisp blue for primary actions and selection. Brand character comes from content and proportion, not boxes or separators around every explanation. Use photographic pieces/looks, not childish flat garment illustrations. Landing may be expressive; roots prioritize their tasks.
 
-Root screens prioritize the task. Landing is the expressive introduction. Home combines Today’s private dashboard with All / Following discovery; Closet is private management. Whitespace and separators group ordinary content. Grouped backgrounds belong to forms/settings; image grounds support clothing. Brand character comes from content and proportion rather than decorations around every element.
+Today · Closet · Planner · Agent · Profile are the shared destination identities. Detailed navigation and source returns belong to [V1 flow](docs/design/v1-flow.md) and [V2 flow](docs/design/v2-flow.md), not this foundation. The Today house glyph remains unchanged.
 
 ## Color
 
 | Role / light Paper token | Light | Dark |
 | --- | --- | --- |
-| Canvas / `--color-canvas` | `#F3F3F1` | `#1C1C1E` |
+| Canvas / `--color-canvas` | `#F5F5F7` | `#1C1C1E` |
 | Surface / `--color-surface` | `#FFFFFF` | `#2C2C2E` |
 | Primary text / `--color-ink` | `#292C30` | `#F2F2F7` |
 | Supporting text / `--color-secondary` | `#686C72` | `#B8B8BD` |
 | Divider / `--color-line` | `#E2E5E9` | `#48484A` |
 | Image ground / `--color-image-ground` | `#F0F0EE` | `#242426` |
-| Primary accent / `--color-accent` | `#285A93` | `#B7C9DE` |
+| Primary accent / `--color-accent` | `#006FEE` | `#338EF7` |
+| Action text / `--color-action-text` | `#005BC4` | `#66AAF9` |
 | On accent / `--color-on-accent` | `#FFFFFF` | `#1C1C1E` |
-| Soft selection / `--color-accent-soft` | `#E8EDF3` | `#2B394B` |
+| Soft selection / `--color-accent-soft` | `#E6F1FE` | `#142B47` |
 | Control boundary / `--color-control-border` | `#7B8088` | `#8E8E93` |
 | Regular glass / `--color-glass` | `rgb(255 255 255 / 88%)` | `rgb(44 44 46 / 94%)` |
-| Prominent glass / `--color-glass-prominent` | `rgb(40 90 147 / 94%)` | `rgb(183 201 222 / 94%)` |
+| Prominent glass / `--color-glass-prominent` | `var(--color-accent)` | `var(--color-night-accent)` |
 | Glass edge / `--color-glass-edge` | `rgb(255 255 255 / 70%)` | `rgb(255 255 255 / 12%)` |
 | Segment track / `--color-segment-track` | `rgb(118 118 128 / 10%)` | `rgb(118 118 128 / 24%)` |
 | Control shadow / `--color-shadow` | `rgb(20 20 22 / 8%)` | `rgb(0 0 0 / 22%)` |
-| Error / destructive / `--color-error` | `#A1403A` | `#FFB4AB` |
-| Error surface / `--color-error-soft` | `#F5E9E7` | `#462F2E` |
+| Error / destructive / `--color-error` | `#D4142A` | `#FF6472` |
+| Danger fill / `--color-danger-fill` | `#E02335` | `#FF6472` |
+| Error surface / `--color-error-soft` | `#FFF0F2` | `#422027` |
 | Success / `--color-success` | `#416451` | `#B8D0BF` |
 | Success surface / `--color-success-soft` | `#E8EFEA` | `#293B30` |
 | Warning / `--color-warning` | `#795B2E` | `#DCC7A2` |
 | Warning surface / `--color-warning-soft` | `#F3EEE4` | `#403728` |
-| Information / `--color-info` | `#285A93` | `#B7C9DE` |
-| Information surface / `--color-info-soft` | `#E8EDF3` | `#2B394B` |
+| Information / `--color-info` | `#005BC4` | `#66AAF9` |
+| Information surface / `--color-info-soft` | `#E6F1FE` | `#142B47` |
 
-Primary actions use white on the light accent, dark ink on the dark accent. Native alerts retain semantic system colors. Selection also has a check, fill, weight, or label. Glass responds to content and accessibility settings. Text contrast targets 4.5:1, or 3:1 for large text; soft surfaces do not require soft text.
+Dark partners use `--color-night-*`; existing `--color-dark`, `--color-dark-surface`, `--color-dark-ink`, `--color-dark-secondary` alias night counterparts. Preserve all 25 paired roles and token usage descriptions even without dark phone duplicates. Native dark support remains required.
 
-Dark partners use `--color-night-*`. Existing `--color-dark`, `--color-dark-surface`, `--color-dark-ink` and `--color-dark-secondary` are aliases to their night equivalents. Page 00 **Foundations · Color palette · Heritage blue** shows all 23 light/dark role pairs with live token swatches. Every color token has a usage description.
+Primary labels use white on light accent, dark ink on dark accent. Primary content buttons are solid without blur/shadow; secondary actions are plain regular-weight action-text without fill/border/blur/shadow. Soft-blue Back/View outfit capsules retain flat accent-soft treatment. Menus/disabled controls stay neutral. Selection also has check/fill/weight/label. Success means acknowledged completion, warning means risk/unknown requiring reconciliation, destructive intent uses red. Native alerts keep system semantics without injected icons. [Feedback](docs/design/components.md#app-owned-semantic-feedback) owns app-message variants; explanations remain unboxed, related actionable lists use opaque surfaces.
 
-Blue comes from tailored wool; limestone and neutral graphite keep photography prominent. Secondary controls, menus and disabled controls remain neutral. Success green is reserved for a confirmed status, never branding; warning uses muted amber, and error/destructive intent uses red. Pair status color with text or a symbol. Information aliases the visual blue family but requires an explicit message so it cannot be confused with selection. Use soft status grounds only when a notice needs containment; ordinary content remains unboxed. Native alerts and destructive chrome retain system semantic colors.
-
-Solid-color contrast: primary labels 7.06:1 light / 10.07:1 dark; supporting text 4.75:1 on light canvas / 7.05:1 on dark surface; control boundaries 3.58:1 light / 4.27:1 dark. All defined status foregrounds exceed 4.5:1 on their matching soft grounds. These ratios do not certify translucent glass over arbitrary content. Regular/prominent glass, edge, track and shadow alpha tokens are static Paper approximations; Reduced Transparency uses opaque semantic surfaces. Native materials own runtime alpha and optics.
+Text targets 4.5:1 (3:1 large), meaningful control boundaries 3:1; color is never the sole cue. Recorded solid ratios: primary 4.66:1 light/5.15:1 dark, action text on soft fill 5.58:1, supporting text >4.5:1, boundaries 3.58:1/4.27:1, status foregrounds >4.5:1 on matching grounds. White/danger-fill 4.71:1; error/soft 4.83:1. These do not certify translucent content. Paper alpha/edge/shadow tokens are approximations; runtime materials own optics and accessibility adaptation.
 
 ## Typography
 
-Use Apple's system font and semantic Dynamic Type styles. SF Pro is the implementation face. Paper previews with Helvetica Neue because SF Pro is unavailable there; it is not a production font dependency.
+Apple system font and semantic Dynamic Type; SF Pro in implementation, Helvetica Neue only for Paper preview, not a production dependency.
 
 | Style | Base size / line, pt | Weight | Native role |
 | --- | --- | --- | --- |
@@ -66,46 +62,48 @@ Use Apple's system font and semantic Dynamic Type styles. SF Pro is the implemen
 | Supporting | 15 / 21 | Regular | Subheadline |
 | Metadata | 13 / 18 | Regular | Footnote |
 
-Display tracking is `-0.025em`; body uses system tracking. The small AQD wordmark uses medium weight and `0.10em` tracking. Native tab labels use OS type. At accessibility sizes, wrap labels, stack action peers, and collapse grids to one column. Preserve useful image sizes instead of shrinking the entire layout.
+Display tracking `-0.025em`; body system tracking; small wordmark medium with `0.10em`. Native tab labels use OS type. Accessibility text wraps labels, stacks action peers and collapses grids to one column; preserve useful images rather than shrinking the layout.
 
 ## Layout and shape
 
-Phone reference: 390 × 844 pt, with native status and safe areas. Screen inset: 20 pt; brand compositions may use 24 pt. Space tokens: 4, 8, 12, 16, 20, 24, 32, 40, 48 pt. Related controls use 8–12, content groups 16–24, major transitions 32–40.
+Phone reference 390 × 844 pt with native status/safe areas. Screen inset 20 pt (brand 24). Space scale: 4, 8, 12, 16, 20, 24, 32, 40, 48. Related controls 8–12, groups 16–24, transitions 32–40.
 
-Photographic corners: 4 pt. Input glass shells: 16 pt (multiline composers: 28 pt). Grouped content surfaces: 12 pt. Compositions: 12–16 pt when containment helps. Sheets use system corners. Pills belong to buttons, filters, and native glass chrome. Ordinary content has neither shadow nor outline. Choose separator or elevation according to function.
+Paper navigation reference: 66-point bar, 16-point side/26-point bottom insets, indicator 8 points above bottom. Five equal slots, centered icons, explicit Today/Closet/Planner/Agent/Profile accessibility names and selected traits. Hit areas ≥44 × 44, nonoverlapping. Anchor chrome to viewport, not content height; keep tour actions above it and final content scroll-reachable. Native uses OS tab bar/safe areas with device, keyboard and accessibility adaptation, not those fixed coordinates.
 
-Touch targets are at least 44 × 44 pt. Primary content action: base 50 pt tall, 17 pt medium label, 20 pt horizontal padding. Cancel and dismiss actions use neutral semantic ink on regular glass (light charcoal / dark light ink). Blue is reserved for primary actions and selected states; secondary actions use neutral native controls. One action dominates each task step. Loading preserves control width and blocks duplicate submission.
+Photography corners 4 pt; inputs 16 (multiline composer 28); grouped surfaces 12; contained compositions 12–16; sheets system corners. Pills for buttons/filters/native chrome; ordinary content has no shadow/outline. Choose separator or elevation by function, never a trailing separator after the last/only row.
+
+Primary content action: 50-point base height, 17-point medium label, 20-point horizontal padding. Secondary/cancel: plain regular action-text, ≥44 target. One action dominates; loading preserves label/width and prevents duplicate submission. Primary/secondary stacks have a dedicated 12-point gap independent of section spacing. Three-action tertiary alternatives use a plain 50-point safe-area footer, not a competing primary.
+
+Opaque fields use 16 corners/14 padding without decorative border/blur/shadow; preserve focus/invalid/disabled/Increase Contrast. Compact filters are 32-point visuals with 6 vertical/12 horizontal padding, 14/20 labels, 6 inner gap. Segments have a 2-point inset, 32-point segments/36-point rail; only selected segment filled/medium. Visual compactness never shrinks ≥44 native targets; Dynamic Type expands. Selected square checkboxes use accent/white check without gray outline; unchecked uses control-border. [Components](docs/design/components.md) owns reusable rows/settings and detailed states.
+
+## Transparency · Native iOS
+
+Native-first: OS owns controls, material, presentation adaptation and dismissal; AQD owns content, hierarchy and semantic tint. Ordinary content stays opaque; use one justified functional glass shell, never extra glass on native glass or a painted current-OS replica. Reduced Transparency keeps usable opaque semantic surfaces.
+
+[Native iOS](docs/design/native-ios.md) owns deployment/build targets, API guards/fallbacks and icon-only-tab feasibility; [presentations](docs/design/native-presentations.md) owns exits, risk/confirmation and source restoration; [Liquid Glass](docs/design/liquid-glass.md) owns material choices. Native critical confirmations retain explicit Cancel/destructive roles; routine supported cancellation writes nothing. Exact target/impact, typed/auth review, dirty-draft protection and unknown-write reconciliation remain required. Source-kit inspection/import is not AQD runtime certification.
 
 ## Apply the foundations
 
-Edit semantic values in Paper’s token panel and geometry in page-00 component masters, then update affected screen clones. Tokens update live; structural clones require synchronization. [Design rules](docs/design/rules.md) owns the review procedure.
+Foundations is the reusable token/component library, not a product funnel. Full phones, feature menus, walkthroughs and accessibility examples belong to phase reference areas. Preserve canonical IDs when moving references. Tokens update live; structural clones require synchronization and rendered review under [procedure](docs/design/rules.md).
 
-Five destinations remain Home, Closet, Agent, Inbox and Profile, with visible native labels. Agent opens full screen from the center entry or focused assistance; dismissal restores the prior destination and scroll position. AQD owns content and semantic tint; the operating system owns native controls, material behavior and accessibility adaptation.
-
-Read the contract for the affected branch:
-
-| Work | Authoritative contract |
-| --- | --- |
-| Shared content, selection, profile or Today modules | [Components](docs/design/components.md) |
-| Symbols and selective AI badges | [Icons](docs/design/icons.md) |
-| Native control material and input shells | [Liquid Glass](docs/design/liquid-glass.md) |
-| Menus/sheets, exits and title alignment | [Native presentations](docs/design/native-presentations.md) |
-| Animation, loading or feedback | [Motion](docs/design/motion.md) and [coverage](docs/design/motion-coverage.md) |
-| First use and authentication | [Entry](docs/design/entry-identity.md) and [entry motion](docs/design/entry-motion.md) |
-| Agent response or input | [Experience](docs/design/agent-experience.md) and [input](docs/design/agent-input.md) |
-| Search and continued feeds | [Search and feeds](docs/design/search-and-feeds.md) |
-| Landing or admin web UI | [Web](docs/design/web.md) |
+Load only the affected [design branch](docs/design/README.md): native API work reads native-ios; materials read Liquid Glass; presentation/exits read native-presentations; motion reads motion policy/assignments; assets read provenance. Shared components own geometry/states/accessibility; feature contracts own behavior.
 
 ## Imagery and copy
 
-Use user-selected garment photography and compositions of the actual included pieces. Preserve proportions and identifying details in piece detail. Community imagery is explicitly published by its creator. Missing photos use a quiet category symbol with the piece name.
+Use authorized clothing photography and compositions of actual included pieces; preserve proportions/details, full-image Fit until explicitly reviewed crop. Community imagery is explicitly published. Missing media uses quiet category symbol/name. Reference photos/cutouts/names/counts/chats are illustrative, not user records or cleared production assets; [asset mapping](docs/references/assets.md) owns licensing/identity/replacement.
 
-Paper reference photographs and names/counts/chats are illustrative fixtures. They are not actual user records or bundled production assets. Source URLs and replacement rules live in [Assets](docs/references/assets.md). Implementation uses authorized user media, real data, and honest unavailable states.
-
-Copy names the task: Add piece, Build outfit, Review changes, Save outfit, Publish look. Explain privacy at the choice it affects. AI output stays a draft until a receipt confirms saving. Human chat remains separate from Agent.
+Task copy: Add piece, Build outfit, Review changes, Save outfit, Publish look. Explain privacy at the affected choice. AI output remains a draft until a persisted receipt. Human chat stays separate from Agent. Keep leading AI badges 8 points from task labels; icons follow [catalog](docs/design/icons.md).
 
 ## Completion boundary
 
-[Screen contracts](docs/design/screens.md) and [V1 flow](docs/design/v1-flow.md) map the product paths. [iOS manifest](docs/design/paper-manifest.json) and [web manifest](docs/design/web-paper-manifest.json) own recorded inventories. [V1 release](docs/product/v1-release.md) and [V2 backlog](docs/product/v2-backlog.md) own scope.
+Releases own phase scope/acceptance, features own behavior; [screen map](docs/design/screens.md) owns canonical route classification and [manifests](docs/design/paper-manifest.json) recorded locators, not runtime proof. Static review does not establish keyboard/accessibility, durability, performance or services. Every changed UI inventory gets [DQ acceptance](docs/design/quality-criteria.md); required implementation acceptance cannot be waived by calling it deferred.
 
-Static Paper review does not establish native keyboard/accessibility behavior, runtime performance or production services. Record actual checks and limits in [verification](docs/delivery/verification.md); provider and policy gates stay in [decisions](docs/product/decisions.md).
+Privacy/release guardrails remain inline: no implicit wear, publication, body-use/AI/weather consent or private-photo uploads; weather-free private journeys stay offline-complete. Numerical weather is blocked until Apple-required assets/legal placement pass; current hidden attribution row/details-only placement is unverified. Withhold numbers rather than treating Paper slots as certified branding. [Weather policy](docs/product/v1-release.md#optional-live-weather-contract) owns budgets/privacy/attribution gates; [weather UI](docs/design/weather-context.md) owns states and caller returns.
+
+## Today and action-field refinement · October7
+
+[Today](docs/design/today.md) owns current customization; [standalone action fields](docs/design/components.md#today-stack-and-standalone-action-fields--current-october7) own reusable geometry. [Original refinement receipt](docs/delivery/archive/design-foundations-2026-10-07.md#today-and-action-field-refinement--october7) is historical provenance only.
+
+### Compact controls and flat forms — October 6, 2026
+
+Current cross-cutting controls are above; [capture](docs/design/capture-photo.md) owns photo/validation behavior. [Original refinement](docs/delivery/archive/design-foundations-2026-10-07.md#compact-controls-and-flat-forms--october-6-2026) preserves detailed historical wording. Other repair/provenance bodies from this foundation are retained in the [dated snapshot](docs/delivery/archive/design-foundations-2026-10-07.md), not routine implementation instructions.

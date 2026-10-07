@@ -1,0 +1,285 @@
+{
+  "asset": "garment-atlas-original.png",
+  "generatedOn": "2026-10-05",
+  "generator": "Built-in image_gen",
+  "dimensions": [
+    1448,
+    1086
+  ],
+  "pieces": [
+    {
+      "id": "shirt",
+      "name": "Powder-blue cotton shirt",
+      "rect": [
+        0,
+        0,
+        390,
+        380
+      ],
+      "x": 84,
+      "y": 44,
+      "w": 126,
+      "h": 135,
+      "r": -6
+    },
+    {
+      "id": "knit",
+      "name": "Ivory ribbed knit",
+      "rect": [
+        390,
+        0,
+        360,
+        380
+      ],
+      "x": 8,
+      "y": 22,
+      "w": 88,
+      "h": 87,
+      "r": -12
+    },
+    {
+      "id": "coat",
+      "name": "Navy trench coat",
+      "rect": [
+        750,
+        0,
+        330,
+        380
+      ],
+      "x": 174,
+      "y": 10,
+      "w": 108,
+      "h": 145,
+      "r": 8
+    },
+    {
+      "id": "overshirt",
+      "name": "Olive overshirt",
+      "rect": [
+        1080,
+        0,
+        368,
+        380
+      ],
+      "x": 244,
+      "y": 107,
+      "w": 105,
+      "h": 113,
+      "r": 12
+    },
+    {
+      "id": "trousers",
+      "name": "Charcoal tailored trousers",
+      "rect": [
+        0,
+        380,
+        390,
+        416
+      ],
+      "x": 132,
+      "y": 159,
+      "w": 99,
+      "h": 138,
+      "r": 4
+    },
+    {
+      "id": "linen",
+      "name": "Sand linen trousers",
+      "rect": [
+        390,
+        380,
+        360,
+        416
+      ],
+      "x": 262,
+      "y": 206,
+      "w": 82,
+      "h": 112,
+      "r": -8
+    },
+    {
+      "id": "dress",
+      "name": "Cream midi dress",
+      "rect": [
+        750,
+        380,
+        330,
+        416
+      ],
+      "x": 18,
+      "y": 131,
+      "w": 92,
+      "h": 146,
+      "r": -10
+    },
+    {
+      "id": "jeans",
+      "name": "Indigo jeans",
+      "rect": [
+        1080,
+        380,
+        368,
+        416
+      ],
+      "x": 255,
+      "y": -3,
+      "w": 69,
+      "h": 100,
+      "r": 9
+    },
+    {
+      "id": "loafers",
+      "name": "Oxblood loafers",
+      "rect": [
+        0,
+        796,
+        390,
+        290
+      ],
+      "x": 89,
+      "y": 245,
+      "w": 78,
+      "h": 76,
+      "r": -12
+    },
+    {
+      "id": "sneakers",
+      "name": "Ivory sneakers",
+      "rect": [
+        390,
+        796,
+        360,
+        290
+      ],
+      "x": 174,
+      "y": 249,
+      "w": 79,
+      "h": 70,
+      "r": 10
+    },
+    {
+      "id": "bag",
+      "name": "Tan crossbody",
+      "rect": [
+        750,
+        796,
+        330,
+        290
+      ],
+      "x": 5,
+      "y": 249,
+      "w": 83,
+      "h": 72,
+      "r": -4
+    },
+    {
+      "id": "belt",
+      "name": "Black belt",
+      "rect": [
+        1080,
+        796,
+        368,
+        290
+      ],
+      "x": 284,
+      "y": 45,
+      "w": 64,
+      "h": 48,
+      "r": 12
+    }
+  ],
+  "formingPositions": [
+    [
+      28,
+      28,
+      -2
+    ],
+    [
+      132,
+      78,
+      0
+    ],
+    [
+      130,
+      0,
+      3
+    ],
+    [
+      270,
+      154,
+      5
+    ],
+    [
+      43,
+      154,
+      -2
+    ],
+    [
+      254,
+      210,
+      -3
+    ],
+    [
+      243,
+      25,
+      4
+    ],
+    [
+      159,
+      182,
+      -3
+    ],
+    [
+      49,
+      250,
+      2
+    ],
+    [
+      158,
+      264,
+      0
+    ],
+    [
+      256,
+      147,
+      -4
+    ],
+    [
+      147,
+      243,
+      0
+    ]
+  ],
+  "prompt": "Create an ORIGINAL photorealistic garment cutout asset sheet for a premium private digital closet app AQD. This is NOT a UI screenshot. Deliver a large landscape transparent PNG contact sheet, exactly FOUR equal columns by THREE equal rows, twelve isolated objects, each entirely contained in its equal cell with generous clear transparent gutter and no overlap. Precise straight-on top-down catalog studio photography, gentle natural side lighting, true textile texture, beautifully arranged fabric with believable seams and folds, crisp edge alpha, no hangers. All garments are fresh ORIGINAL generic unbranded designs. NO logo, text, watermark, stripes shaped like trademarks, recognizable designer motifs, people, faces, references to existing brands, or background. Row1 cells left to right: relaxed powder-blue cotton button-down shirt; ivory ribbed knit short-sleeve top; deep navy long trench coat; muted olive lightweight overshirt. Row2 left to right: charcoal wide-leg tailored trousers; sand-colored straight-leg linen trousers; cream sleeveless midi dress; natural indigo straight-leg jeans. Row3 left to right: pair of plain oxblood leather loafers; pair of plain ivory low-top sneakers with clean gum soles and no side graphics; tan small soft leather crossbody bag with minimal plain strap and no hardware branding; simple black leather belt in a relaxed oval. Each item centered, equal cell visual balance, fully visible, sharp editorial quality rather than glossy AI imagery. The long garments can take more vertical space within the cell; preserve at least 8 percent inner margins. Small soft contact shadows may sit immediately beneath the objects but the canvas MUST be transparent. Aim for highest image quality, at least 2048 wide if supported. Exact 4x3 regular cell grid is critical because individual cells become independently animated clothing layers. No decorative frame or card, no borders, no labels. Distinct real fabric weave, stitching, cuffs, and laces. Original studio still life made specifically for AQD.",
+  "paper": {
+    "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+    "settledHero": "NEE-0",
+    "copies": [
+      {
+        "kind": "V2Welcome",
+        "nodeId": "NFI-0"
+      },
+      {
+        "kind": "V1WelcomeDark",
+        "nodeId": "NG8-0"
+      },
+      {
+        "kind": "V2ReviewWelcome",
+        "nodeId": "NGY-0"
+      },
+      {
+        "kind": "MotionGathered",
+        "nodeId": "NHO-0"
+      },
+      {
+        "kind": "MotionLooks",
+        "nodeId": "NIE-0"
+      },
+      {
+        "kind": "MotionSettled",
+        "nodeId": "NJ4-0"
+      }
+    ],
+    "motionBoard": "64C-0"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "fileId":"01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "scope":"Role-directed input consistency audit across registered Foundations/V1/V2 roots; repair confirmed decorative rest borders, not every border in the document",
+  "auditArtifact":"/tmp/aqd-input-component-audit.json",
+  "baseline":{"roots":517,"nodes":35353,"canonical":380,"tokenHash":"fdeb7346"},
+  "survey":{"opaqueNativeInputs":121,"systemSearchInputs":40,"agentOuterShells":73,"humanComposers":14,"pickerSelectionReferences":47,"heightUnitRows":5,"excludedNonInputs":1042,"webInputsPreserved":13,"standardFieldRegistryCount":105,"registeredRoots":517,"scopedStyleQueries":1079,"remainingQueryTruncations":0},
+  "limits":["Role/style/label inventory, not semantic certification of all35353 descendants or unnamed future input frames","Initial100-root truncation was detected and scoped queries were reconciled against the complete registered-root set","Native keyboard/focus/invalid/disabled/contrast/VoiceOver and actual OS material behavior remain unverified"],
+  "repairs":[
+    {"nodeId":"4FO-0","rootId":"4E1-0","pageId":"p-1-0","role":"Foundations validation Name field","label":"4FN-0","helper":"4FP-0","failure":"4FR-0"},
+    {"nodeId":"DNK-1","rootId":"DHO-1","pageId":"p-B-0","role":"Typed DELETE support reference","label":"DNJ-1"}
+  ],
+  "before":{"borderWidth":"1px","borderStyle":"solid","borderColor":"var(--color-control-border)","borderRadius":"12px","paddingBlock":"12px","paddingInline":"16px","minHeight":"52px","backgroundColor":"var(--color-surface)"},
+  "after":{"borderWidth":"0px","borderStyle":"none","borderRadius":"var(--radius-16)","paddingBlock":"14px","paddingInline":"14px","minHeight":"52px","backgroundColor":"var(--color-surface)"},
+  "sizeDecision":"Retain existing52-point minimum. Do not impose an unsupported54-point universal minimum on92 otherwise-valid50/52-point fields or resize multiline/Height/search controls.",
+  "nativeContract":{"ordinary":"Native plain TextField/UITextField/TextEditor inside one opaque semantic content surface, no decorative rest border/shadow/blur/glass","agent":"Justified floating Agent outer shell only may use guarded native26+ glass; inner editor remains transparent and readable","system":"Search, keyboard, alert fields and native presentation material remain OS-owned","accessibility":"Preserve native focus/invalid/disabled/Increase Contrast feedback and web focus rings","primarySource":"https://developer.apple.com/design/human-interface-guidelines/materials"},
+  "preserved":["All root positions/names/IDs/pages and380 canonical identities","Global tokens,41 glyph roles/12 aliases","Home/header/weather/date fixes and attribution-row removal","Height54-point rows and64×44 unit controls","Intentional multiline heights and growth","Picker/selection/tab/calendar/menu/photo-crop/glyph strokes","Typed gate, validation/error/helper text and draft semantics","Web/admin platform-specific borders and visible focus"],
+  "verification":{"parentBefore":"Both wrappers inspected directly: matching stale1px border/radius12/padding12×16, opaque surface/min52","mutation":"One batch updates only the two confirmed wrapper styles","parentAfterRenders":["4FK-0 validation family","DNI-1 typed DELETE field"],"verdict":"Borderless opaque fields match the existing ordinary field grammar; labels/helper/error content retained","rootDelta":0,"nodeDelta":0,"nativeTestsRun":false,"appImplementation":false},
+  "approvalBoundary":"Additional height changes and human-composer material reclassification were not applied; no new global glass policy or blanket stroke deletion."
+}

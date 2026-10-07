@@ -1,6 +1,8 @@
 # Global motion
 
-Paper page 00 **Foundations · Global motion** owns the visual reference. This contract owns named behaviors and implementation handoff for every screen. [Coverage](motion-coverage.md) assigns all 159 screen/state contracts and appearance variants. These are design specifications, not implemented animation or measured performance.
+Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+
+Paper page 00 **Foundations · Global motion** owns the visual reference. This contract owns named behaviors and implementation handoff for every screen. [Coverage](motion-coverage.md) assigns all 201 canonical screen/state contracts and appearance variants. Local L references inherit their source and shared native motion recipes, including optional tour navigation. These are design specifications, not implemented animation or measured performance.
 
 ## Apply the policy
 
@@ -8,6 +10,10 @@ Paper page 00 **Foundations · Global motion** owns the visual reference. This c
 2. Use the shared values below; do not invent per-screen delays, springs or animation libraries. Implement one `AQDMotion` policy in the existing native design system when app work is authorized.
 3. Scope animation to the changed component. Preserve focus, selection, drafts, stable record identity and scroll position.
 4. Apply the Reduce Motion alternative, interruption rules and verification cases before considering the native implementation complete.
+
+## Optional native weather inheritance
+
+Shared [WeatherKit](weather-context.md) uses OS push/sheet/search/permission transitions and existing C-form/C-load/C-select recipes. Grow/reflow only changed rows; bounded opacity fade for fresh/Saved/unavailable replacement, no animated numbers, decorative condition travel or looping forecast. Reduce Motion uses immediate or existing opacity-only state change; native progress remains OS-owned. Preserve caller draft/focus/scroll during city/date changes and invalidate late requests on Cancel. Settings confirmation writes only the optional local preference; weather apply is not outfit/plan Save or a receipt. [Weather evidence](evidence/weatherkit-v1.json) records static references, not measured motion.
 
 ## Global values
 
@@ -18,9 +24,9 @@ Durations below are AQD design choices, not Apple-prescribed timings. Never over
 | motion.press | 100 ms | Custom button feedback only; ease-out. Native buttons keep their own feedback. |
 | motion.crossfade | 150 ms | Local content/status/photo replacement; ease-out. |
 | motion.reflow | 220 ms | Small layout/selection/insert changes; smooth spring, zero extra bounce. |
-| motion.arrival | 320 ms | Welcome photo transforms only; ease-out. |
-| motion.arrivalOffset | 12 pt horizontal, maximum 6 pt vertical | Welcome cards; no general page rise. |
-| motion.arrivalStagger | 40 ms | Second welcome card only; both settled by 360 ms. |
+| motion.welcomeSequence | 1,200 ms total | First Welcome arrival only: 520 ms forming phase, then 680 ms settle; smooth ease-out, no elastic bounce. |
+| motion.welcomeTravel | Within bounded hero; about 230 pt horizontal / 190 pt vertical maximum | Twelve garment transforms use the authored keyframes; never overlap text/actions. |
+| motion.welcomeStagger | 0–80 ms per group within forming phase | Parallel outfit groups; no accumulating per-item delays. |
 | motion.reduced | 0–120 ms | Immediate state or opacity-only crossfade. No spatial travel. |
 | motion.pressScale | 0.98 minimum | Only a custom standalone button that lacks native press feedback; keep hit region unchanged. Never shrink text fields, rows, or navigation. |
 
@@ -42,7 +48,7 @@ Use SwiftUI `.smooth(duration:extraBounce: 0)` for bounded local reflow where su
 | C-message | Human message insert / conversation change | Native conversation navigation. One local insertion reflow; sent/pending/failed updates in place. Auto-follow only when already at latest or after own send; otherwise show new-message affordance. | Immediate insertion/status; no animated forced scroll. |
 | C-stream | Agent waiting, streaming, tools, stop, retry | Labelled native progress; status crossfade. Render chunks normally, not character-by-character animation. Coalesce layout updates; no animation per token or Markdown relayout. Keep Stop immediate and partial text on interruption. | Same content, static state transitions; preserve reading position. |
 | C-receipt | Copy, feedback, accepted request | Short local crossfade to confirmation, with accessible announcement; preserve context. Do not animate every icon or announce every stream fragment. | Immediate or short fade. |
-| E-arrival | First visit to Welcome | Two existing clothing photos settle from arrival offsets, using arrival duration and stagger. Text/actions are visible and active immediately. Replay only on a genuinely fresh introduction, not Back. | Final composition immediately. |
+| E-arrival | First visit to Welcome | Twelve original garment layers gather, form looks and settle using the dedicated Welcome sequence and authored keyframes. Text/actions are visible and active immediately. Replay only on a genuinely fresh introduction, not Back. | Final composition immediately. |
 
 ### Native ownership and Liquid Glass
 
@@ -53,7 +59,7 @@ For image-to-detail continuity, prototype native zoom with `matchedTransitionSou
 ## Flow decisions
 
 - **Entry:** splash has no timer. Welcome has the one authored arrival. Onboarding steps use native push/Back and retain drafts; selection responds immediately. Authentication/picker/permission UI remains native. First successful save produces an in-place receipt followed by user-directed continuation, never an auto-dismiss race. [Entry choreography](entry-motion.md) references these global values.
-- **Home:** root tabs and Today/All/Following preserve state. Today numbers update once after a confirmed wear, without counting up. Feed items and avatars crossfade only on first successful load or actual replacement; cached images do not repeatedly fade. The initial screen and scrolled continuation are the same view, not a transition pair.
+- **Today:** root tabs and V2 All/Following modes preserve state. Today numbers update once after a confirmed wear, without counting up. Feed items and avatars crossfade only on first successful load or actual replacement; cached images do not repeatedly fade. The initial screen and scrolled continuation are the same view, not a transition pair.
 - **Closet:** filtering changes data with C-select/C-load. Open a garment via N-photo; editing stays N-push/N-sheet. Camera and media permissions are native. Adding/removing pieces and outfit swaps use C-change; missing/unavailable items remain visibly explained. Do not animate the entire grid on sort or save. Theme edits share the same rules.
 - **Planning:** native date changes and sheet entry. Drag follows the finger; invalid drop returns to its original slot without persisting. Confirmed assignment/undo locally reflows; a planned date passing never creates wear. History and insights update only from records, without animated percentages, rings or score counting.
 - **Agent:** full-screen entry/dismissal uses native presentation and restores the origin. History opens with native navigation. Generation/streaming/tool steps use C-stream; elapsed time updates once per second with stable-width digits and no announcement per tick. Progress bars represent real measurable work only. Approved writes use C-save, not a “thinking” animation as proof of success. Feedback/copy use C-receipt; errors remain readable until action.

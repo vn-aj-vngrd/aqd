@@ -1,0 +1,89 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "date": "2026-10-07",
+  "scope": "Frozen Planner, outfit native More, preference Review and Height-row padding refinements only; no whole-app audit or runtime certification",
+  "provenance": ["/tmp/aqd-planner-surface-repair.json", "/tmp/aqd-outfit-native-menu.json", "/tmp/aqd-preferences-review-layout.json", "/tmp/aqd-body-detail-row-height.json"],
+  "provenancePolicy": "Temporary worker artifacts are not portable links. This record retains scoped outcomes, attribution and checks at the parent-confirmed historical496/34456 checkpoint in historicalUIRefinementInventory; historicalBackgroundRemovalInventory retains502/34712; currentInventory points to the weather511/35203 checkpoint. Prior checks are not rerun or recertified by updating inventory. Historical confirmation/copy ledgers remain frozen evidence, not current exhaustive certification.",
+  "currentInventory": {"rootArtboards":518,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":138,"nestedOfflineReferences":4,"pages":[{"id":"p-1-0","count":25,"canonicalCount":0,"rootReferenceCount":25},{"id":"p-2-0","count":206,"canonicalCount":169,"rootReferenceCount":37},{"id":"p-B-0","count":287,"canonicalCount":211,"rootReferenceCount":76}],"nodeCounts":[2046,11504,22218],"totalNodes":35768,"tokenHash":"fdeb7346","evidence":"feedback-variants.json","nodeCountStatus":"Feedback worker final three-page aggregates; frozen earlier scoped checks unchanged, not rerun"},
+  "historicalBackgroundRemovalInventory": {
+    "rootArtboards":502,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":122,"nestedOfflineReferences":4,
+    "pages":[{"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},{"id":"p-2-0","name":"01 · V1","count":197,"canonicalCount":169,"rootReferenceCount":28},{"id":"p-B-0","name":"02 · V2","count":287,"canonicalCount":211,"rootReferenceCount":76}],
+    "nodeCounts":[1847,10952,21913],"totalNodes":34712,"tokenHash":"fdeb7346",
+    "nodeCountStatus":"Parent-confirmed live three-page counts after background-removal design froze; static inventory only","evidence":"background-removal.json"
+  },
+  "historicalUIRefinementInventory": {
+    "rootArtboards": 496, "canonicalScreens": 380, "v1CanonicalScreens": 169, "v2CanonicalScreens": 211, "rootReferences": 116, "nestedOfflineReferences": 4,
+    "pages": [
+      {"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},
+      {"id":"p-2-0","name":"01 · V1","count":192,"canonicalCount":169,"rootReferenceCount":23},
+      {"id":"p-B-0","name":"02 · V2","count":286,"canonicalCount":211,"rootReferenceCount":75}
+    ],
+    "nodeCounts": [1847,10760,21849], "totalNodes":34456, "tokenHash":"fdeb7346",
+    "nodeCountStatus":"Parent live three-page counts independently confirmed after all workers froze;496 roots/34456 nodes",
+    "canonicalMeaning":"380 canonical identity triples preserved; four new menu references are not routes. Actual live split is192 V1/286 V2, not the proposed193/285. Truncated artboard lists are not count evidence."
+  },
+  "attribution": {
+    "baseline":{"roots":492,"nodes":34053,"pageRoots":[18,191,283],"pageNodes":[1847,10595,21611]},
+    "planner":{"rootDelta":0,"nodeDelta":0,"styleUpdates":27},
+    "outfit":{"rootDelta":4,"nodeDelta":372,"method":"Worker duplicate maps; includes contextual L124 caller and four reference roots; no deletions"},
+    "preferences":{"rootDelta":0,"nodeDelta":31,"pageNodeDeltas":{"p-2-0":24,"p-B-0":7},"method":"42 created/18 deleted V1 nodes;14 created/7 deleted V2 nodes; exact scoped tree/mutation receipts"},
+    "height":{"rootDelta":0,"nodeDelta":0,"method":"Five existing Height row padding updates only"},
+    "combined":{"rootDelta":4,"nodeDelta":403},
+    "reconciliation":"Outfit artifact called31 nodes concurrent/unmapped; preference scoped receipts account for all31. Live combined delta403 agrees. Frozen Height artifact confirms padding-only zero nodes/roots; parent live counts and Height render independently confirmed."
+  },
+  "planner": {
+    "changedRoots":["RQG-0","BSM-1","E52-1"],
+    "reviewedRoots":["JXA-0","L5M-0","PRM-0","P8B-0","PFY-0","RQG-0","2CK-0","2K0-0","BSM-1","E52-1","ZGW-0"],
+    "hiddenCommands":["RRR-0","E83-1"],
+    "metrics":{"surface":"var(--color-surface)","corners":12,"padding":14,"gap":12,"minimumHeight":108,"cover":[64,80],"title":[17,24],"metadata":[15,21],"textGap":4,"forwardLane":22},
+    "preserved":"Week/Month/date controls, selected date/timezone, empty October7 Plan an outfit, saved receipt/Undo, recorded versus planned semantics, garment assets/Fit, original row/root/control IDs and Inbox. L137 toolbar+ remains record wear, never plan creation.",
+    "limits":"Hidden source cards are not rendered certification; display:none ancestor and actual render establish effective visibility, not Paper isVisible. Generic Foundations agenda primitive excluded. Native scrolling/timezone/save/Undo unverified."
+  },
+  "outfit": {
+    "contextualState":{"screenId":"L124","root":"RCN-0","caller":"JVS-0","callerClone":"ZPL-0","trigger":"ZQE-0","menu":"RCP-0","commands":{"edit":"RCW-0","favorite":"RCT-0","delete":"RCQ-0"}},
+    "references":[
+      {"root":"ZRD-0","pageId":"p-2-0","source":"KVA-0","screenId":"L27","trigger":"ZS2-0","menu":"ZSL-0","commands":{"edit":"ZSW-0","conversation":"ZT4-0"}},
+      {"root":"ZTD-0","pageId":"p-B-0","source":"2XB-0","screenId":"A04","trigger":"ZU2-0","menu":"ZUL-0","commands":{"edit":"ZUW-0","conversation":"ZV4-0"}},
+      {"root":"ZVD-0","pageId":"p-B-0","source":"2AY-0","screenId":"W15","trigger":"ZWC-0","menu":"ZWV-0","commands":{"edit":"ZX6-0","favorite":"ZX1-0","delete":"ZWW-0"}},
+      {"root":"ZXE-0","pageId":"p-B-0","source":"6O8-0","screenId":"A20","trigger":"ZXU-0","menu":"ZYD-0","commands":{"conversation":"ZYW-0"}}
+    ],
+    "synchronizedJourneyHosts":["ATN-1","ATU-1","AU1-1","AUF-1"],
+    "registeredMenuExamples":["4KP-0","FD0-1"],
+    "conversationGuard":"Actual acknowledged Agent-origin operation or response-scoped feedback plus retained authorized conversation/response; omit for manual saves or unavailable context. Feedback exposes no outfit edit/favorite/delete.",
+    "edit":"Dismiss Menu; L133 RL6-0 Save changes in V1, W13 26F-0 editExisting(outfitId, expectedRevision, returnContext) in V2. Creation mode unchanged; same record/revision, never duplicate creation. Clean Back writes nothing; dirty exit protected; failed edit retains draft/prior record; unknown reconciles operation ID.",
+    "delete":"Destructive-last separate menu group; dismiss before L140 or V2 necessary ZMA-0 linked-publication review then XSH-0. Cancel preserves source; impact/ownership/revision revalidated. No automatic publication.",
+    "retiredBodyControls":["JVV-0","XK2-0","2CA-0","XTT-0","BIC-1","BMW-1","BR1-1","CAW-1","KVD-0","30F-0","BGR-1","6SM-0"],
+    "preserved":"Leading Back, outfit composition, Plan/Wear/Open primaries, V2 explicit Publish review and feedback Update action. A09/A22 and recovery journey unchanged; no success implied by pending/unknown writes.",
+    "geometry":"44-point trailing ellipsis More, registered22-point command glyphs; OS owns actual Menu geometry/material/adaptation; no disclosure chevrons/custom popup header/Close/grabber."
+  },
+  "preferences": {
+    "roots":[{"screenId":"L169","root":"V9I-0","nodeDelta":8},{"screenId":"L174","root":"WZT-0","nodeDelta":8},{"screenId":"L175","root":"X1H-0","nodeDelta":8},{"screenId":"UP07","root":"VM2-0","nodeDelta":7}],
+    "layout":"Two semantic-surface350-point groups,12-point corners,20-point separation: Goals/Occasions/Style then Fit/Body/Colors. Full-row Edit targets minimum80, intrinsic growing height,14-point all-side padding,12-point accessory gap;17/24 title,15/21 answer,4-point gap,flexible text,registered22-point decorative disclosure. Body consent second line grows row to98.",
+    "scroll":"390×844 reference: body top158,height580 ends738; separate opaque safe-area Save wrapper738..818, button350×50 at754; home indicator831 unchanged. Six responses visible; retained84-point privacy disclosure starts757 below initial viewport. About703-point content requires real native scrolling and bottom inset. Paper normalizes scroll to clip; not functioning scroll proof.",
+    "copy":{"incomplete":"6 questions remaining","answered":"6 of 6 questions answered","declined":"6 of 6 answered · All declined","generalDisclosure":"Save keeps all six responses private and saves them together. They rank owned pieces, never enable cloud processing or change body-use permission.","declinedDisclosure":"Save records all six choices together, privately. Declined details stay unknown; body use stays Off. Preferences rank owned pieces and never enable cloud processing."},
+    "semantics":"All six substantive answers or explicit No preference/Not sure/refusal required; Off toggle alone does not complete Body. Incomplete L169/UP07 disabled; valid L174/L175 enabled with consent Off. Full-row edits return same Review/draft; Back retains draft; dirty cancellation preserves prior saved preferences. Atomic Review Save only; onboarding→L04, Settings/Profile→actual source, pending L149, confirmed failure L177 same-operation retry, unknown L150 reconciliation.",
+    "privacy":"Optional height/shape and purpose-specific body use remain separate; Agent also needs Style context; V2 cloud provider/data scope separate. No implicit public/cloud/telemetry exposure or exact-fit inference.",
+    "description":"L173 nonblank≤160 grapheme draft; L176 retains161/160 with associated Remove1character error and disabled Use. Cancel restores prior picker; Use stages selection; Done updates question draft only; neither persists nor enables body use. L177 recovery unchanged.",
+    "excluded":"Question roots/picker/editor/failure geometry and Foundations untouched by Review worker; separately frozen Height-row padding is recorded below."
+  },
+  "heightRows": {
+    "worker":"ff4ac49e",
+    "rows":[{"screen":"L167","root":"V7G-0","pageId":"p-2-0","row":"VCE-0","unit":"VCG-0","bodyShape":"VCM-0"},{"screen":"UP05","root":"VJI-0","pageId":"p-B-0","row":"VK4-0","unit":"VK5-0","bodyShape":"VJY-0"},{"screen":"L171","root":"VPA-0","pageId":"p-2-0","row":"VPW-0","unit":"VPX-0","bodyShape":"VPQ-0"},{"screen":"L173","root":"WK5-0","pageId":"p-2-0","row":"WKS-0","unit":"WKU-0","bodyShape":"WL0-0"},{"screen":"L176","root":"X35-0","pageId":"p-2-0","row":"X4E-0","unit":"X4F-0","bodyShape":"X48-0"}],
+    "before":{"padding":"14px","row":[350,72],"unit":[64,44],"bodyShape":[350,54]},
+    "after":{"padding":"5px 14px","minimumHeight":54,"measuredActiveRows":[350,54],"unit":[64,44],"bodyShapePadding":"14px","bodyShapeMinimum":54,"gap":12,"radius":16},
+    "measurementLimit":"Four active V1 Height rows measured350x54; inactive UP05 derives54 from44+10 vertical padding, not measured geometry. No fixed height introduced; grows with content.",
+    "preserved":"All IDs/text/values/disclosures; optional units/clear/refusal and Off consent; Settings true-source return; L171 picker, L173 pending custom selection, retained invalid L176 and atomic Review Save; no Review mutation.",
+    "workerRender":"One V7G-0 screenshot pass: compact matching rhythm, typography/contrast/insets/centered controls, full privacy/refusal text, no base viewport clipping",
+    "parentRender":"Parent live V7G-0 render confirms matching compact rows, retained controls and unclipped copy",
+    "nativeVerified":false
+  },
+  "validation": {
+    "parentRepresentativeRenders":{"source":"Parent-inspected live screenshots","planner":["RQG-0","E52-1"],"review":["V9I-0","WZT-0"],"menus":["RCN-0","ZRD-0"],"height":["V7G-0"],"meaning":"Independent representative static confirmation; not whole-app/native certification"},
+    "static":"Worker bounded source/style/tree inspection and one scoped render batch plus one fix/confirmation batch per family passed reported spacing/type/contrast/alignment/repetition/reference fit. Integration performed read-only live basic-info, not a new visual audit.",
+    "repositoryChecks":{"result":"Passed","checks":["Nine owned JSON files parse with no duplicate keys","380 canonical identity triples unchanged versus HEAD","496 unique root/page ownership entries;18/192/286 page roots","116 root references plus four nested offline references;four new menu references runtimePushRoute false","Seven current evidence inventories and manifest agree496/34456 and1847/10760/21849 page nodes","Scoped git diff --check passes;new untracked evidence has no trailing whitespace","git check-ignore -v identifies explicit ui-refinements.json allow rule"],"tests":"Final parent pnpm check passed38 tooling tests; all design JSON duplicate-key checks and git diff --check passed","scope":"Documentation/registry consistency only; no native/whole-app certification"},
+    "snapshot":"checkSnapshot unavailable: /tmp/aqd-v2-mcp.py absent and no snapshot tool; no result fabricated",
+    "nativeVerified":false,
+    "nativeGaps":["OS Menu adaptation/dismissal/focus and origin/record revalidation","Real preference scroll/disclosure reachability, safeAreaInset/keyboard/short phones","Dynamic Type/localization/RTL/VoiceOver whole-row semantics and focus","Atomic persistence, drafts, consent gates, retry/unknown reconciliation, calendar/Undo"],
+    "parentRequired":"Parent confirmed final three-page counts and Height V7G-0 render, inspected documentation diff and ran final checks. Native/runtime acceptance remains required. No app/code implementation, commit or push."
+  }
+}
