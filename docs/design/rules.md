@@ -6,10 +6,10 @@ Apply [quality criteria](quality-criteria.md) during every review and handoff; r
 
 ## Design workflow
 
-1. Locate the route in [the screen map](screens.md) and its Paper artboard. Read the relevant feature specification for access and data behavior.
+1. Select the authorized task/phase through [design routing](README.md). Locate affected routes/states and Paper references; read the affected feature for access/data behavior. Record the exact reviewed inventory rather than loading every catalog.
 2. Reuse the logical component in [Components](components.md). Change visual tokens and component masters in Paper page 00, then update affected Paper screen instances. Do not recreate a parallel local design gallery or renderer.
 3. Apply shared changes across the affected Paper nodes, rather than adjusting each screen independently. Paper tokens control color/type/spacing references. Cloned geometry is not a live linked component; regeneration or a batched node update is required after a structural component change.
-4. Review rendered screens, including content fit, native safe areas, keyboard, accessibility text, light/dark, and Reduce Transparency. Record the scope in [Verification](../delivery/verification.md). A static design pass does not establish native behavior or performance.
+4. Inspect rendered screens/computed styles against each applicable DQ criterion, recording Pass/Fail/Not applicable/Native verification required. Check fit, safe areas, keyboard, accessibility text, appearances and opaque variants at the appropriate layer. Fix shared failures, synchronize structural copies, then inspect changed screens/representative variants in a final batch. Record inventory, fixes, exceptions and actual limits in [Verification](../delivery/verification.md); unseen screens and runtime behavior cannot be passed.
 
 ## Foundations ownership
 
@@ -19,7 +19,7 @@ Foundations contains reusable tokens, type/spacing/shape rules, the labelled app
 
 Use system navigation, TabView/UITabBarController, toolbar Button/Menu, searchable/UISearchController, grouped forms, sheets, alerts, Photos picker, share sheet, and date pickers. Allow the OS to supply Liquid Glass and scroll-edge behavior. The Paper representation is a visual reference, not instructions to implement a custom glass tab bar.
 
-The committed native target is deployment18/build stableSDK27, with availability guards for custom26 glass and optional27 APIs; see the [native API catalog](native-ios.md#transparency--native-ios-foundations-reference). Paper library role boards are structural specifications, not native captures. Retain opaque content, native older appearance and OS source anchoring; never force a routine dialog bottom or paint custom27 glass. Critical alerts have explicit Cancel; routine supported dismissal can be implicit and always writes nothing. Official27 alert/action-sheet kit masters are inspected and imported as reference evidence; current product diagrams are editable adaptations of that source, not exact27 runtime pixels. AQD/SwiftUI/iOS27 runtime acceptance remains unverified. Icon-only tabs are a HIG exception requiring public-API/native feasibility testing, not a custom bar.
+API/deployment/guards and tab feasibility belong to [native iOS](native-ios.md); presentation/exits/risk belong to [native presentations](native-presentations.md); material choice belongs to [Liquid Glass](liquid-glass.md). Load those for the affected native branch. Retain OS-owned rendering/anchoring, opaque content and no-write cancellation. Inspected/imported kit adaptations are reference evidence, not AQD runtime.
 
 Private Today uses native Customize Today instead of Search; Closet/global/public All/Following Search remains intact. [Today](today.md) owns the twelve private widget configurations and state/return contract. Keep Add and search in their other relevant toolbars. V1 search is local Pieces/Outfits/Themes; Planner keeps its local date/agenda controls. V2 search exposes its owner/community scope, clear, cancel, loading and no-result behavior; focusing it accommodates the system keyboard. Group related toolbar actions and keep destructive actions in their relevant menu or confirmation. Provide labels for every icon button and at least 44-point targets.
 

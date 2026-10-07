@@ -4,10 +4,7 @@ Use this checklist when creating, changing, reviewing or implementing AQD UI. Ap
 
 ## Review procedure
 
-1. Identify the phase, routes, states and shared components from the Paper manifest and flow contract. Record the exact inventory reviewed.
-2. Inspect rendered screens and computed styles against each criterion below. Classify evidence as Pass, Fail, Not applicable or Native verification required.
-3. Fix failures at the shared token/component level when possible, then synchronize structural copies. Preserve approved product behavior and V1/V2 boundaries.
-4. Confirm changed screens and representative variants in one final batch. Record fixes, exceptions and native acceptance gaps in [verification](../delivery/verification.md). Do not mark unseen screens or runtime behavior as passed.
+[Design workflow](rules.md#design-workflow) owns the ordered procedure. For each criterion below record Pass, Fail, Not applicable or Native verification required against the exact checked inventory. Unseen screens/runtime behavior cannot be passed; fixes synchronize shared copies and retain phase/privacy boundaries.
 
 ## Criteria
 
@@ -28,7 +25,7 @@ Use this checklist when creating, changing, reviewing or implementing AQD UI. Ap
 
 ### Native transparency/reference qualification
 
-For native-reference work, record deployment18/build stableSDK27, research-linked symbol availability, guarded26/27 enhancements and older/opaque fallback. OS chrome and opaque content have different ownership. A role diagram or legacy middle/bottom drawing is **not** a native27 screenshot; certify exact geometry only after licensed original-kit inspection or actual runtime captures. Source-anchored26+ routine choices may be inline on iPhone/iPad with implicit cancellation; critical alerts still require explicit Cancel. Verify native five-tab icon-only feasibility/label exception separately. Reference-only boards do not require new V1 control routes. [Transparency evidence](evidence/native-ios-transparency.json) records this bounded static pass; all runtime/device/accessibility checks remain required.
+For native-reference work apply [API/deployment/feasibility acceptance](native-ios.md), [presentation/exits](native-presentations.md) and [material/accessibility](liquid-glass.md). Record source provenance separately from AQD runtime; diagrams and source-kit adaptations are not execution proof. Reference-only boards need no invented canonical routes. All applicable native/device/accessibility checks remain required.
 
 ## Severity and completion
 
@@ -41,7 +38,7 @@ A static handoff is ready only when its recorded inventory has no unresolved P0/
 
 ## Approved component decisions
 
-- Home has no Settings shortcut. Settings belongs under Profile, including the local V1 profile and tour preview.
+- Today has no Settings shortcut. Settings belongs under Profile, including the local V1 profile and tour preview.
 - Header Edit uses a 22-point `square.and.pencil` symbol in the same 44-point circular control as Back, with semantic ink rather than action blue. Its native accessibility label is Edit plus the object name.
 - Piece/theme disclosure rows use opaque semantic surface, 12-point corners, 14-point horizontal padding, 54-point minimum height and a fixed 22-point trailing lane. Do not apply this to tabs, filter chips or statistics.
 - Empty-state garment artwork is illustrative; it must not imply an already-saved record. Decorative icons use SVG/SF Symbols, not text glyphs, and are hidden from accessibility.

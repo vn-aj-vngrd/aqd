@@ -2,6 +2,10 @@
 
 Updated October 5, 2026. The current owner request supersedes the earlier full-connected V1 scope. [V1 release](v1-release.md) and [V2 backlog](v2-backlog.md) own phase boundaries. Product refinement authorizes documentation, architecture and Paper designs only.
 
+## Read branches and authority
+
+Scope/authorization changes → applicable confirmation below. Unselected persistence or commercial choices → working-default row. Connected provider/policy selection → service-gate row. Implementation → the row's owner contract, not every dated approval body. Confirmations preserve what was approved; releases own phase acceptance, features own behavior, architecture owns mechanics and research owns source facts. Earlier terminology/receipts are historical where an owner supersedes them.
+
 ## Confirmed by the user
 
 - V1 is a small private personal digital closet and outfit-planning MVP running locally on the user's Apple device, with local clothing data and privacy by default.
@@ -28,7 +32,7 @@ Updated October 5, 2026. The current owner request supersedes the earlier full-c
 
 The owner approved moving basic live weather from V2 into V1, inherited by V2, using direct native Apple WeatherKit only. This is documentation/Paper authorization, not app implementation, commit, push or service provisioning. Local private storage/no AQD backend/account/social/cloud LLM and a fully offline manual core remain; V1 is not strictly zero-network. Weather is off until chosen and independent of Foundation Models eligibility. Retain C04 and broader requirements as V1 WeatherKit foundation plus V2 advanced providers/research/calendar/alerts/notifications/expanded travel/collaboration.
 
-The [V1 weather contract](v1-release.md#optional-live-weather-contract) confirms pre-action request/search disclosure, selected coordinates/date-range only, no closet/photos/body/chat payload, manual online Apple city lookup without device-location permission, explicit one-shot When In Use (approximate allowed, no Always/background tracking), cancellation and parent-draft-only Apply. Confirmed AQD policy: coalesced visible foreground requests, earliest provider expiry/30-minute freshness cap, automatic refresh ≥30 minutes only if missing/expired and visible, manual 60-second cooldown, ≤5 snapshots × ≤10 returned days, labelled saved data ≤24 hours never as fresh Agent input, hide numbers afterward, off purges, local units without refetch. Forecasts use actual returned bounds, not long-plan/historical inference; SDK Apple mark/legal attribution is required or numerical values are withheld. LOCAL-16 is an acceptance target, not device/quality/performance proof.
+The complete adopted [V1 weather policy](v1-release.md#optional-live-weather-contract) is authoritative for request/search disclosure, consent, payload exclusions, location permission, draft-only Apply, numerical budgets/cache/freshness, forecast bounds and attribution withholding. Changes to those approved boundaries require an owner decision; update that policy body rather than maintaining another executable copy here. LOCAL-16 remains required and unverified, not device/quality/performance proof.
 
 Apple Developer Program/App ID entitlement enables the native service, not an end-user account/backend. Included capacity is 500,000 calls/month **per membership**, potentially requiring paid capacity; AQD budgets are not Apple quotas. WeatherKit iOS 16+ does not lower the existing AQD manual iOS 18 target. [Research](../references/weatherkit-v1.md) owns source evidence; [weather context](../design/weather-context.md) owns UI states. No reproducible app/build baseline or native verification is claimed.
 

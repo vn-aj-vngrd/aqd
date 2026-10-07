@@ -2,11 +2,11 @@
 
 ## Phase boundary
 
-V1 completes local manual single-photo capture/search/filter/sort/edit/availability/archive/lifecycle and activation. Profile local Add and Agent reuse that flow. Verified single-photo on-device cleanup/editable tag proposals belong in V1 with manual fallback. Saved inspiration (W11), advanced/provider visual workflows and connected backup are V2. Use LOCAL checks for the private release. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
+V1 completes local manual single-photo capture/search/filter/sort/edit/availability/archive/lifecycle and activation. Agent reuses piece capture. Private Profile More → Add fit creates a journal memory, not a wardrobe piece; the separate V2 public collection Add scope may reuse piece capture. Verified single-photo on-device cleanup/editable tag proposals belong in V1 with manual fallback. Saved inspiration (W11), advanced/provider visual workflows and connected backup are V2. Use LOCAL checks for the private release. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
 
 ## Outcome and entry points
 
-The user has a durable, searchable record of owned clothing, footwear, and accessories. Entry: Closet → Pieces → Add; Profile's Add opens the same capture flow; Agent requests capture through that flow. Owner-only management is separate from public presentation in [Profile](profile-account.md).
+The user has a durable, searchable record of owned clothing, footwear, and accessories. Entry: Closet → Pieces → Add; Agent requests capture through that flow. Private Profile More → Add fit opens the [fit journal](../design/profile-fit-journal.md) draft; V2 public collection Add, when enabled for owned pieces, reuses wardrobe capture rather than redefining private Add fit. Owner-only management is separate from public presentation in [Profile](profile-account.md).
 
 First use offers a private empty closet, with optional samples explicitly identified. Style setup uses the [shared seven-step preference flow](../design/onboarding-personalization.md) from onboarding and Settings: six explicit answers or No preference/refusals plus review, unnumbered navigation titles with separate Step n of 7/progress and no questionnaire skip controls. Explore first remains outside the entered questionnaire. No required avatar, body measurements, account, item quota or AI capability blocks the manual first save. Show the next useful task after saving: add another piece or build an outfit. Suggestions depend on available categories, not a fixed “five items” onboarding threshold.
 

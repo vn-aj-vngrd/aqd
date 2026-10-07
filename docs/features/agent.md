@@ -8,7 +8,7 @@ V1 has a complete local Agent destination with conversation/history/cancel/retry
 
 One capability surface supports both full-screen Agent and focused app actions. Agent covers style, clothing, weather, travel, and everyday planning, using authorized wardrobe context and domain actions. General answers are distinct from personal facts and verified current information. Unsupported topics get a brief scope explanation and relevant next step.
 
-On-device AI remains the user's preference in both phases. Current Foundation Models code demonstrates limited text-based drafting, not image tagging, comprehensive multi-month planning, or a production tool loop. Unsupported device/model state opens the reason-specific availability screen; manual work remains available in Closet/Planner. Deterministic tools never pose as conversational AI. V2 includes a planned explicit LLM provider option; no provider is selected or provisioned by this design.
+On-device AI remains the user's preference in both phases. Historical Foundation Models prototype reports describe limited text-based drafting, not image tagging, comprehensive multi-month planning or a production tool loop. No tracked current app/build baseline establishes that behavior in this checkout; [status](../delivery/implementation-status.md) owns present evidence. Unsupported device/model state opens the reason-specific availability screen; manual work remains available in Closet/Planner. Deterministic tools never pose as conversational AI. V2 includes a planned explicit LLM provider option; no provider is selected or provisioned by this design.
 
 ## Capability and authority map
 

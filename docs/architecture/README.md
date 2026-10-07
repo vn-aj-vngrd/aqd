@@ -2,6 +2,8 @@
 
 Planning references only. The V1 local boundary is selected; persistence details and all V2 providers/policies remain proposals. No service is provisioned by this branch.
 
+Read the affected mechanics only: V1 local persistence/privacy/capability changes → V1; V2 association/sync/publication/Inbox → V2; staff/deployment → web operations. Provider selection → providers plus current official facts; purchasing → costs/current quotes; measured media/capacity migration → scalability; monetization → pricing. Historical/proposed references are not configured services or current price evidence.
+
 | Document | Owns |
 | --- | --- |
 | [Phase comparison](architecture.md) | The V1/V2 split and diagram routing. |

@@ -1,6 +1,6 @@
 # AQD V1 — optional native WeatherKit research
 
-Scope: user-approved move from V2 to V1; native Swift only. Research checked October 7, 2026 against Apple primary documentation. This document supports the [shared weather design](../design/weather-context.md); no application or generated-image work was performed. Recommendations below are **AQD policy**, not Apple guarantees. This is a product/implementation handoff, not device-tested evidence.
+Scope: user-approved move from V2 to V1; native Swift only. Research checked October 7, 2026 against Apple primary documentation. This document supports the [shared weather design](../design/weather-context.md); no application or generated-image work was performed. Recommendations/checklist below are the dated research handoff, not Apple guarantees or a second current policy owner. Adopted budgets/privacy/freshness/attribution and LOCAL-16 belong to the complete [V1 weather policy](../product/v1-release.md#optional-live-weather-contract); [architecture](../architecture/v1.md#optional-native-weather-boundary) owns mechanics and [weather design](../design/weather-context.md) owns interaction. Retain the recommendations as rationale; changes follow those owners. This is not device-tested evidence.
 
 ## Verified facts — five primary source groups
 

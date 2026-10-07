@@ -1,5 +1,7 @@
 # Product
 
+Releases own phase scope and acceptance; features own executable behavior; decisions own approvals/open questions, architecture owns mechanics and research owns dated facts/rationale. For a scoped change read relevant release rows and the affected feature, not every phase document. For readiness read the complete selected release acceptance. Consult V2 backlog only for connected/extension work or scope sequencing; its full vision remains retained.
+
 | Document | Read when |
 | --- | --- |
 | [Definition](definition.md) | Understanding the two-phase purpose, navigation and privacy boundaries. |

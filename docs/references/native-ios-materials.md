@@ -11,6 +11,8 @@ Context read: [DESIGN](../../DESIGN.md), [native iOS](../design/native-ios.md), 
 
 ## Recommendation
 
+Historical research recommendation, now adopted/superseded by [native iOS](../design/native-ios.md). Any “inspect/import later”, uninspected-kit, proposed Foundations or drawings-awaiting-replacement language below describes the initial research run, not current pending work. Current kit/source-derived geometry is recorded in the provenance links above; exact AQD/runtime execution remains unverified.
+
 - **Deployment minimum: recommend iOS 18.0**, retaining the existing V1 planning target. The selected manual/native APIs fit it; this is not evidence that an iOS 18 baseline has been implemented or tested.
 - **Build/reference target: published stable Xcode 27 / iOS 27 SDK**, not a guessed future SDK. iOS 26 introduced Liquid Glass; iOS 27 is now independently confirmed published. Use the latest stable maintenance release available when implementation begins; do not adopt a beta simply because live documentation includes one.
 - Use actual SwiftUI/UIKit controls on every supported OS. iOS 18 gets its own native appearance; 26/27 get their OS-owned appearance. Guard custom glass and newer conveniences by API availability; never emulate 27 on 18.
@@ -200,4 +202,4 @@ No native/UI tests were run. Before implementation is complete, verify a signed 
 - Material legibility over light/dark/photographic/moving content; opaque content unchanged; custom-shell 18 fallback; no duplicate glass. Physical-device Instruments check before claiming smoothness.
 - Optional weather, model and Vision capability unavailable/failed paths with manual core still usable; compile/check every selected 26/27 API guard against the actual SDK.
 
-Evidence boundary: primary publication/API research completed; kit inspection, exact 27 visual certification, app baseline, device behavior and performance are **not verified**. Only this research file is written; unrelated WeatherKit/canvas changes are preserved.
+Historical research-run boundary: primary publication/API research completed; that run did not verify kit inspection, exact 27 visual certification, app baseline, device behavior or performance. Subsequent kit inspection/import supersedes only the kit-inspection limitation; current AQD runtime/device/performance remains unverified. Only this research file is written; unrelated WeatherKit/canvas changes are preserved.

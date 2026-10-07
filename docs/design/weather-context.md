@@ -1,6 +1,6 @@
 # Optional Apple weather — shared V1/V2
 
-Owner-approved October 7, 2026: basic native WeatherKit moves into V1. This is a Paper/specification change, not a working service integration. [V1 release](../product/v1-release.md) owns launch scope; [Apple research](../references/weatherkit-v1.md) records API facts. Weather extends the local private app with an **optional Apple network service**, not an AQD backend or account.
+Owner-approved October 7, 2026: basic native WeatherKit moves into V1. This is a Paper/specification change, not a working service integration. [V1 release](../product/v1-release.md#optional-live-weather-contract) owns launch scope and complete weather budgets/privacy/freshness/attribution policy; [architecture](../architecture/v1.md#optional-native-weather-boundary) owns request/cache mechanics; this document owns interaction states, composition and source returns. [Apple research](../references/weatherkit-v1.md) records dated API facts. Weather extends the local private app with an **optional Apple network service**, not an AQD backend or account.
 
 ## Direction and placement
 
@@ -53,12 +53,7 @@ Paper weather numbers/timestamps are illustrative fixtures, not retrieved condit
 
 ## Shared fetching, cache and cancellation
 
-These are AQD policy budgets, not Apple per-device quotas or verified performance:
-
-- One in-flight/coalesced request per selected location plus required datasets/date range, shared across Home/Planner/outfit/Agent consumers. Fetch only datasets the active view needs; no polling or background refresh.
-- Automatic foreground refresh occurs only for a visible enabled feature with missing/expired data, no more often than every30 minutes. Explicit Refresh has a60-second cooldown and duplicate-request protection; user-driven retry is bounded.
-- Freshness ends at the earliest required provider `expirationDate` or a30-minute AQD cap. Check expiry on resume. Local fetch-completion time is distinct from condition/forecast period and provider request timestamps.
-- Cache at most five selected-location snapshots with up to ten returned daily entries each. Saved stale data may display for at most24 hours after fetch, only for the same place/date, explicitly labelled; afterwards hide weather numbers. Do not retain an indefinite location history. Turning Weather off clears cached weather and cancels requests.
+Apply the complete [approved budgets/cache/freshness policy](../product/v1-release.md#optional-live-weather-contract); its numerical limits are AQD choices, not Apple per-device quotas or verified performance. Request identity, timestamp storage and resume expiry mechanics belong to architecture. UI must expose pending/cooldown/unavailable/Saved states honestly, prevent duplicate actions and hide expired numbers according to that policy. Turning Weather off clears cache and cancels requests.
 - Debounce city search and cancel/ignore superseded queries; resolve only the selected result. Rapid city/date changes must not let a late response overwrite a newer selection or show city A's cache as city B.
 - Preserve caller/draft/selection/focus on cancellation or failure. Accept/apply requires current request identity and matching location, date, timezone and dataset. Cached stale context is excluded from fresh automated suggestions; explicit user-entered conditions remain separately labelled.
 - Store the weather preference locally; data export disclosures must cover any included selected-place setting. Numerical cache is disposable, not a durable wardrobe fact. Weather never changes wear, plan assignment, body-use consent or publication state.

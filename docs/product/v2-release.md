@@ -96,7 +96,9 @@ Notification permissions, push reminders and remote activity alerts are prepared
 
 ## Gap analysis against current evidence
 
-This is a documentation/current-checkout assessment, not a fresh audit of a running app. On October 1, `apps/ios` contains build/project scaffolding but no tracked Swift source or project build definition was found. [Implementation status](../delivery/implementation-status.md) and earlier verification describe historical prototype behavior. They cannot establish present buildability or complete release readiness. All checks in this document remain unverified for the V2 release until recorded on the actual delivered build.
+Historical October 1 gap snapshot, retained for traceability. Current source/runtime/review boundaries belong to [status](../delivery/implementation-status.md) and [verification](../delivery/verification.md); this table is not a current task list. Comments now have [S9/S10](../features/discovery-publishing.md#acceptance); connected execution remains unverified.
+
+This was a documentation/current-checkout assessment, not a fresh audit of a running app. On October 1, `apps/ios` contains build/project scaffolding but no tracked Swift source or project build definition was found. [Implementation status](../delivery/implementation-status.md) and earlier verification describe historical prototype behavior. They cannot establish present buildability or complete release readiness. All checks in this document remain unverified for the V2 release until recorded on the actual delivered build.
 
 | Gap | Evidence / risk | Required closure | Priority |
 | --- | --- | --- | --- |
@@ -108,7 +110,7 @@ This is a documentation/current-checkout assessment, not a fresh audit of a runn
 | Agent scope versus proof | Limited historical drafting is not evidence of shared approved execution or long-plan quality | Validate proposal/actions and physical-device quality; disclose supported model/rules states. | Core gap |
 | Weather evidence | Basic native Apple WeatherKit selected for V1/V2; entitlement, actual coverage and native behavior unverified; advanced providers undecided | Execute LOCAL-16 and A8/RELEASE checks before live claims; separately resolve advanced-source licensing/coverage. | Core gap |
 | Community lifecycle | Prototype posts do not prove all publication types, profiles/follows/search, revoke or block | Deploy actual access/media/moderation paths and pass S checks across two users. | Release blocker |
-| Comments acceptance traceability | Existing plain-text lifecycle contract is written, but lacks numbered acceptance IDs | Add S9/S10 for idempotent discussion and access/moderation/counts; verify connected behavior. | Core gap |
+| Comments acceptance traceability (historical, superseded) | Snapshot predates numbered S9/S10 | Numbering is now present in the feature acceptance; verify connected behavior on an actual build. | Runtime evidence gap |
 | Human Inbox | Transport, abuse, retention/deletion and delivery remain gates | Real two-account request/send/retry/read-state and access tests; settle operator policies. | Release blocker |
 | Operational readiness | Paper and unit tests cannot prove support, restore, service alerts or App Store readiness | Complete SAFETY/RELEASE evidence, launch pages and store preparation. | Release blocker |
 | Scope leakage | Paper includes exploration/feedback/notification states and monetization hypotheses | Treat Paper as design inventory, not a release checklist; gate extension controls until their real capability/service exists; retain every extension in the full V2 backlog. | Scope gap |

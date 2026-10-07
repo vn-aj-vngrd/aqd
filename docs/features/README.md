@@ -1,6 +1,6 @@
 # Feature specifications by phase
 
-[V1 release](../product/v1-release.md) owns the small local MVP and LOCAL checks. The detailed specs below retain the complete vision for V2; their phase headers identify what V1 reuses. Do not apply every broad feature acceptance ID to V1. [V2 core release](../product/v2-release.md) owns connected-core acceptance; [V2 backlog](../product/v2-backlog.md) owns all enhancements and [V2 designs](../design/v2-requirements.md) prepare their UX requirements.
+[V1 release](../product/v1-release.md) owns the small local MVP and LOCAL checks. Feature contracts own behavior and retain the complete vision; phase releases own inclusion and acceptance aggregation. For V1 work read the affected shared/private contract and dependencies, not unrelated V2 extension sections. Read connected sections only for connected behavior or migration seams; full-contract acceptance audits must cover all applicable IDs. Do not apply every broad feature acceptance ID to V1. [V2 core release](../product/v2-release.md) owns connected-core acceptance; [V2 backlog](../product/v2-backlog.md) owns all enhancements and [V2 designs](../design/v2-requirements.md) prepare their UX requirements.
 
 | ID | Feature | V1 | V2 |
 | --- | --- | --- | --- |

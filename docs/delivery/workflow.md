@@ -2,7 +2,7 @@
 
 ## GitHub identity
 
-Repository: [vn-aj-vngrd/aqd](https://github.com/vn-aj-vngrd/aqd). Use the personal account `vn-aj-vngrd`, associated with `vanajvanguardia@gmail.com`. Two GitHub accounts are configured locally. Verify `gh api user --jq .login`; if the wrong account is active, run `gh auth switch --hostname github.com --user vn-aj-vngrd` and retry. Diagnose connectivity and actual permission errors if switching does not help; never expose tokens.
+Repository: [vn-aj-vngrd/aqd](https://github.com/vn-aj-vngrd/aqd). Use the personal account `vn-aj-vngrd`, associated with `vanajvanguardia@gmail.com`. Verify `gh api user --jq .login`; if the wrong account is active, run `gh auth switch --hostname github.com --user vn-aj-vngrd` and retry. Diagnose connectivity and actual permission errors if switching does not help; never expose tokens.
 
 Read [the engineering lifecycle](../agents/lifecycle.md) for delivery authority and the full ticket → spec → review → PR → squash → release procedure. The same policy applies to Codex, Claude, and other agents. Agents whose runtime does not automatically load AGENTS.md must load it before work; it is the shared policy source.
 
@@ -10,7 +10,7 @@ Read [the engineering lifecycle](../agents/lifecycle.md) for delivery authority 
 
 Use Node 24 and pnpm 10.12.1. Run `pnpm install --frozen-lockfile`; the prepare script installs Lefthook locally. If lifecycle scripts were disabled, run `pnpm setup:hooks`. Existing custom `core.hooksPath` must be reconciled explicitly if Lefthook reports a conflict. CI skips local hook installation.
 
-The root package contains repository tooling only. The native application remains in `apps/ios/`; this does not introduce a JavaScript app framework.
+The root package contains repository tooling only. `apps/ios/` is the intended native location, not proof of tracked source/buildability; [current status](implementation-status.md) owns the source boundary. This does not introduce a JavaScript app framework.
 
 ## Branch and commit
 
