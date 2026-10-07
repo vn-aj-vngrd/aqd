@@ -72,7 +72,7 @@ Account deletion previews affected private/connected/public data, requires reaut
 - U5: Sign-in association/migration preserves local wardrobe IDs and media without automatic publishing.
 - U6: Sign-out/account switching prevents cross-account disclosure; cancellation preserves the current session/data.
 - U7: Export/recovery/deletion behavior matches the chosen service policy and is verified before production claims.
-- U8: Profile settings are reachable from Profile only; Home/Closet do not repeat account controls.
+- U8: Profile settings are reachable from Profile only; Today/Closet do not repeat account controls.
 
 ## Gates
 
