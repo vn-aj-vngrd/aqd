@@ -165,7 +165,7 @@ This defines native presentations for every V2 page; it adds no new feature scop
 | Paper page / context | Open content and entry | Native component / result |
 | --- | --- | --- |
 | 01 Entry & identity | Photo source: Choose photo, Take photo, Cancel (E06/W06); authentication and email entry | Native confirmationDialog for source choices, PhotosPicker/camera and OS permission UI. Native Apple sign-in and email fields. Verification errors stay inline. No new welcome overflow menu. |
-| 02 Home · Today | Existing Add / Build / Plan / Record wear actions and owner-scoped search | Existing editor/chooser sheets or navigation. No generic dashboard menu added. |
+| 02 Today · private | Customize Today and configured Add / Build / Plan / Record wear widget actions | Native customization/configuration tasks and existing editor/chooser navigation. Private header Search is replaced by Customize; public All/Following Search remains separate. |
 | 02 Home · other person's post or profile | Report post/person; Block person, last and destructive (S10) | Native Menu/contextMenu; Report opens S11 review, Block opens exact-person confirmation. Heart/bookmark remain inline native toggle buttons. |
 | 02 Home · own published content | Existing edit/publication review and Unpublish controls | Owner commands only; native review sheet and destructive confirmation for access revocation. Do not offer moderation actions on one's own content. |
 | 03 Closet · root | More → Saved inspiration (W30); Add → Add piece / Build outfit / Create theme / Suggest an outfit (W05) | Anchored native Menu; Add retains richer native bottom-sheet chooser. More identical across Pieces, Outfits, Themes and empty state. |

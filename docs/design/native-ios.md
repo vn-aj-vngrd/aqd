@@ -130,7 +130,7 @@ Every row supports **AQD deployment 18**. Introduction numbers describe the rese
 | Custom functional material | Material (15), glassEffect/GlassEffectContainer (26) / UIVisualEffectView (8), UIGlassEffect (26) | 18 standard Material or opaque shell; guard custom glass26, never wrap native component | `10RT-0` |
 | V2 official Apple sign-in | SignInWithAppleButton / AuthenticationServices | Within 18 baseline; approved native logo/style, not redraw; no V1 account gate | `10RX-0` |
 
-SDK27-specific acceptance additionally checks UIKit scene lifecycle/launch-screen configuration, native menu image policy, visible TabView selection, Text selection conflicts and sheet/popover environment reset. Optional 27 styles/minimization/document conveniences require guards; they do not approve new features or routes. Exact licensed kit inspection/runtime render and physical-device performance remain outstanding.
+SDK27-specific acceptance additionally checks UIKit scene lifecycle/launch-screen configuration, native menu image policy, visible TabView selection, Text selection conflicts and sheet/popover environment reset. Optional 27 styles/minimization/document conveniences require guards; they do not approve new features or routes. Official27 alert/action-sheet kit masters have been inspected; current editable adaptations and separate genuine reference renders are recorded in [vector evidence](evidence/native-dialog-vector-repair.json). AQD/SwiftUI/iOS27 runtime rendering, redistribution licensing and physical-device performance remain outstanding.
 
 ## Agent input acceptance
 
