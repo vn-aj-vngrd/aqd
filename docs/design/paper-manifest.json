@@ -19,6 +19,36 @@
     "excluded": "Hidden TN9-0 Home tab label, internal/historical Home names, public All/Following; no current visible Open Home action retained.",
     "runtimeComplete": false
   },
+  "specifiedPrivateControlInventory": {
+    "status": "Specified, not separately drawn or runtime-verified; logical control IDs below are not new canonical screens or Paper node IDs.",
+    "todayRetainedContent": {
+      "contract": "../features/today.md#retained-personal-cards--review-and-delete",
+      "ledger": "v1-interactions.md#retained-notephoto-actions--specified-review-follow-up",
+      "callerReferences": [{"referenceId":"TW08","rootId":"124M-0","role":"existing Note configuration grammar only"},{"referenceId":"TW09","rootId":"125V-0","role":"existing Photo configuration grammar only"}],
+      "controls": [
+        {"controlId":"today.retained.open","label":"Saved notes and photos","paperControlNodeId":null,"destination":"today.retained.list","return":"Unchanged parent draft/instance/scroll"},
+        {"controlId":"today.retained.select","label":"Select saved note/photo","paperControlNodeId":null,"destination":"Independent instance snapshot in the parent configuration draft; no store write"},
+        {"controlId":"today.retained.more","label":"More","paperControlNodeId":null,"destination":"Native selected-card command menu"},
+        {"controlId":"today.retained.deleteReview","label":"Delete saved note/photo","paperControlNodeId":null,"destination":"today.retained.deleteReview; exact card/impact/reference review"},
+        {"controlId":"today.retained.cancel","label":"Cancel","paperControlNodeId":null,"destination":"Selected retained row, focus/scroll unchanged; no write"},
+        {"controlId":"today.retained.confirmDelete","label":"Delete","paperControlNodeId":null,"destination":"Owner/revision/reference revalidation then one stable operation; acknowledged row removal only"},
+        {"controlId":"today.retained.retry","label":"Retry / Cancel","paperControlNodeId":null,"destination":"Confirmed failure retains card/media; unknown reconciles the same operation before retry"},
+        {"controlId":"today.retained.resolveReference","label":"Remove placement / Finish edits / Discard edits","paperControlNodeId":null,"destination":"Actual referenced layout/draft, with separate dirty-exit protection; no deletion while active/draft references remain"}
+      ],
+      "presentationReferences": {"criticalAlertMaster":"FJ2-1","routineDirtyExit":"L106 STATE","operationGrammarReferences":["TW15","TW16","TW17"],"policy":"Grammar references only, not drawn deletion controls or wired routes; critical review keeps explicit Cancel/Delete and discloses that card's Undo release."},
+      "cleanup": "Acknowledged reference-safe AQD-only cleanup; independent cards, original Photos, other records and exported copies survive. Pending/failed cleanup is not completed erasure.",
+      "drawn": false,
+      "runtimeVerified": false
+    },
+    "localIdentity": {
+      "contract": "../features/profile-account.md#local-identity-editing-v1-shared-private-v2",
+      "callerReference": {"screenId":"L49","rootId":"LT9-0","role":"Existing private identity editor, not new drawn removal states"},
+      "controls": [{"controlId":"profile.identity.clearName","label":"Clear name","paperControlNodeId":null,"destination":"Optional name becomes absent in draft only"},{"controlId":"profile.identity.photoOptions","label":"Choose photo / Remove photo","paperControlNodeId":null,"destination":"Native source options; Remove only with saved/draft reference, neutral draft avatar and stale-import invalidation"}],
+      "return": "Cancel/discard restores saved identity and Profile focus/journal scroll; acknowledged Save alone commits; failure/unknown/restart and reference-safe cleanup follow the contract.",
+      "drawn": false,
+      "runtimeVerified": false
+    }
+  },
   "currentLocatorAuthority": {"existingV1":"evidence/today-customization.json#currentV1LocatorOverrides","newTodayReferences":"referenceBoards entries TW01–TW20 and12ZP-0 below","policy":"Existing pre-Today position fields below remain historical checkpoints; current locator overrides are authoritative.168 later V1 roots moved top+5000 only; widths/IDs/section order preserved."},
   "currentNativeProvenance": {"evidence":"evidence/native-dialog-vector-repair.json","historicalCaptureEvidence":"evidence/native-dialog-repair.json","authorityBoard":"11H4-0","official27KitImages":6,"genericUIKit26_5Captures":2,"historicalCaseSpecificUIKit26_5Captures":38,"hiddenProductPhoneRasterLayers":38,"editableProductConfirmationCases":38,"editableGenericMasters":["FJ2-1","ZGG-0"],"kitImported":true,"native27Capture":false,"SwiftUI27Capture":false,"originalSemanticIDsAndGuardsRetained":true,"technicalProductPhoneAnnotationsHidden":true},
   "currentTodayContract": {"contract":"today.md","feature":"../features/today.md","kinds":12,"minimumInstances":1,"maximumInstances":null,"duplicatesAllowed":true,"phoneReferences":20,"catalogs":1,"scope":"private in-app stack; V2 inherits; optional existing connected feed scope only; no WidgetKit/external integrations or implicit consent","defaultKinds":["todayLook","weekInWear","closetInUse"],"customizeMaster":"11M4-0","sourceAssetSHA256":"b8634f70e51c94050a966ba03edd8449dbebb8388d418a71ead48e9ae1d3ca4b","runtimeComplete":false},
@@ -12883,10 +12913,10 @@
   },
   "plannerRootNavigationReview": {
     "date": "2026-10-06",
-    "scope": "Static design/docs only; native routes, hit testing and accessibility unverified",
-    "destinations": ["Home", "Closet", "Planner", "Agent", "Profile"],
+    "scope": "Dated static navigation checkpoint with current destination/control corrections; native routes, hit testing and accessibility unverified. Counts below remain the historical checkpoint, not the top-level current inventory.",
+    "destinations": ["Today", "Closet", "Planner", "Agent", "Profile"],
     "plannerDefault": "Week; Month alternate",
-    "populatedWeekFooterRefinement": {"screens": ["L09", "L33"], "removed": "Redundant Plan an outfit footer", "retained": "Toolbar +, selected-day Add and empty-date L82 primary action", "scope": "Static Paper/docs only; other month/V2 footer drawings unchanged"},
+    "populatedWeekFooterRefinement": {"screens": ["L09", "L33"], "removed": "Redundant Plan an outfit footer and selected-day Add", "retained": "Date-prefilled toolbar + and empty-date L82 primary Plan an outfit action only", "scope": "Current contract omits selected-day Add on L09/L33/P01/L82/L84/L85; historical static fixture evidence is not runtime certification"},
     "closetSegments": ["Pieces", "Outfits", "Themes"],
     "masterNodeId": "JKP-0",
     "barRootsUpdated": 66,

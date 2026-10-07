@@ -14,7 +14,7 @@ Updated October 6, 2026. This is the implementation route checklist for [Paper V
 | Saved personal card More → Delete saved note/photo | Exact card/impact/reference review, critical native Cancel/Delete | Active/recoverable-draft references refuse with Remove placement/finish or explicitly discard edits; pending/unknown reconciles first. Review discloses release of that card's retained layout Undo only. Cancel/dismiss returns row focus/scroll unchanged. |
 | Reviewed Delete | Stable-operation pending → acknowledged / definite failure / unknown reconciliation | Revalidate owner/content revision/references. Commit deletes eligible content/reference edges and disclosed Undo; acknowledged row removal only. Failure keeps card/media and Retry/Cancel; unknown checks operation before retry/restart. Reference-safe AQD-only media cleanup retries honestly; independent copies/original Photos/wardrobe/journal/exported copies unaffected. Success returns to next row or empty heading; Back restores unchanged layout draft. |
 
-[Feature contract](../features/today.md#retained-personal-cards--review-and-delete) owns complete privacy/media/operation semantics. These added states reuse native list/menu/critical-alert grammar; they are not separately drawn or runtime-verified in TW01–TW20.
+[Feature contract](../features/today.md#retained-personal-cards--review-and-delete) owns complete privacy/media/operation semantics. The manifest's `specifiedPrivateControlInventory` maps logical list/select/More/review/Cancel/Delete/retry/reference-resolution controls to existing Note/Photo caller references and native grammar; new control-node IDs remain null. These added states are not separately drawn or runtime-verified in TW01–TW20.
 
 ## Confirmation visual override · October7
 
