@@ -4,7 +4,7 @@ Read [rules](rules.md) and [DESIGN.md](../../DESIGN.md). [iOS Paper](https://app
 
 | Phase / contract | Owns |
 | --- | --- |
-| [V1 flow](v1-flow.md) and [coverage](v1-coverage.md) | Page 01 · V1 complete private local app plus optional native WeatherKit: Home/Closet/Planner/Agent/local Profile, complete private offline journeys, welcome/onboarding/tour, Settings and appearance/recovery. |
+| [V1 flow](v1-flow.md) and [coverage](v1-coverage.md) | Page 01 · V1 complete private local app plus optional native WeatherKit: Today/Closet/Planner/Agent/local Profile, complete private offline journeys, welcome/onboarding/tour, Settings and appearance/recovery. |
 | [V2 flow](v2-flow.md) and [coverage](v2-coverage.md) | Page 02 · V2, section 08: complete connected review and preserved core acceptance references. |
 | [V2 expansion requirements](v2-requirements.md) | Page 02 · V2, section 09: prepared requirements for every extension in the full backlog. |
 | [Screen map](screens.md) | Retained canonical V2 E/W/P/S/A/I/U routes and shared states. |

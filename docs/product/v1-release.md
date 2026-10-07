@@ -1,6 +1,6 @@
 # AQD V1 release definition
 
-Updated October 5, 2026 with the owner's clarification: **V1 is a complete usable private app on one Apple device, not a thin closet demo.** It has Home, Closet, Planner, Agent, a local Profile, complete Settings/onboarding and light/dark appearance. It delivers the private wardrobe/outfit/planning journey end to end without an app backend. V2 extends that same app and data with connected features and future enhancements. This branch remains documentation/design only.
+Updated October 5, 2026 with the owner's clarification: **V1 is a complete usable private app on one Apple device, not a thin closet demo.** It has Today, Closet, Planner, Agent, a local Profile, complete Settings/onboarding and light/dark appearance. It delivers the private wardrobe/outfit/planning journey end to end without an app backend. V2 extends that same app and data with connected features and future enhancements. This branch remains documentation/design only.
 
 The October 1 connected V1 is preserved in [V2 core release](v2-release.md); its private requirements are retained here where device-only operation applies. [V2 backlog](v2-backlog.md) preserves everything else. No feature is discarded by the phase split.
 
@@ -27,7 +27,7 @@ iPhone remains the first Apple-device target; additional iPad/Mac/Watch/Android/
 | V1-09 | Durable local records/media/drafts and safe migrations | Stable IDs, relationships, themes/plans/history/conversations/profile after restart; no cloud sync or automatic recovery. |
 | V1-10 | Versioned local archive export, validated reviewed restore and local erase | Full local archive replacement after staging/validation; no merge engine. Exported copies and original Photos assets are outside erase control. |
 | V1-12 | Optional basic native Apple WeatherKit context in Home/Outfit/Planner | Off until chosen; selected place/date, current temperature/condition and available daily low/high/precipitation. Independent of AI eligibility; unavailable weather preserves the complete manual core. See the contract below. |
-| V1-11 | Native complete states and appearance | Home/Closet/Planner/Agent/Profile, onboarding and Settings in light/dark; large text, VoiceOver, Reduce Motion/Transparency, keyboard/safe areas, permission/failure recovery and representative performance. |
+| V1-11 | Native complete states and appearance | Today/Closet/Planner/Agent/Profile, onboarding and Settings in light/dark; large text, VoiceOver, Reduce Motion/Transparency, keyboard/safe areas, permission/failure recovery and representative performance. |
 
 Read the complete private W/O/P/A contracts with their phase headers and U's [V1 journal contract](../features/profile-account.md#v1-private-fit-journal). S/U/I connected behaviors remain V2; V1 local Profile/Settings follows this definition. Beyond the approved optional native WeatherKit context, broad photo/speech/current-context features are enabled only when an on-device path is demonstrated; otherwise retain honest typed/metadata/manual paths and the future V2 requirement. Do not route an unavailable capability to a cloud provider silently.
 
@@ -55,7 +55,7 @@ Owner-approved October7: Today replaces the first destination label/accessibilit
 
 | Check | Required evidence on the implemented build |
 | --- | --- |
-| LOCAL-01 | Fresh welcome/onboarding → capture → outfit/theme → plan → wear works in airplane mode and after restart; Home/Closet/Planner/Agent/local Profile/Settings are all usable. No social/account entry is reachable. |
+| LOCAL-01 | Fresh welcome/onboarding → capture → outfit/theme → plan → wear works in airplane mode and after restart; Today/Closet/Planner/Agent/local Profile/Settings are all usable. No social/account entry is reachable. |
 | LOCAL-02 | Photo selection/cancellation, camera denial, invalid media and missing-photo validation preserve metadata/draft; block new-piece save without accepted media; copy selected images locally. First-save category guidance preserves the pinned task without replaying onboarding. |
 | LOCAL-03 | Search/filter/sort, edits/archive/restore/delete keep stable IDs and exact impact. Deletion invalidates affected future assignments while history remains interpretable. |
 | LOCAL-04 | Failed saves/migrations and corrupt/newer stores never overwrite good data or show false success. Drafts survive interruption; retries do not duplicate entities. |

@@ -32,7 +32,7 @@ Owner-approved [Today](../features/today.md) requires TODAY-01–07: first desti
 
 Use the existing smallest suitable app boundaries. Do not add server adapters, a distributed command bus, CloudKit, subscriptions, social tabs or generic future infrastructure. Any recovered legacy data needs a safe migration; this plan is not permission to discard it. [V1 release](../product/v1-release.md) owns the complete local baseline; private W/O/P/A contracts apply, while explicit connected/extension behaviors remain V2.
 
-The activation flow is V2-style Welcome → private onboarding / optional replayable tour → photo selection and editable manual details → saved piece → actual missing categories or manual composition → saved outfit → date → actual wear. Settings provides explicit local data control. No fixed item count, quiz/account or AI-capable hardware blocks first value. Home/Closet/Planner/Agent/local Profile/Settings, themes/routines/trips, onboarding and both appearances must be complete before V1 is handed to users.
+The activation flow is V2-style Welcome → private onboarding / optional replayable tour → photo selection and editable manual details → saved piece → actual missing categories or manual composition → saved outfit → date → actual wear. Settings provides explicit local data control. No fixed item count, quiz/account or AI-capable hardware blocks first value. Today/Closet/Planner/Agent/local Profile/Settings, themes/routines/trips, onboarding and both appearances must be complete before V1 is handed to users.
 
 ## V2 — Complete product
 

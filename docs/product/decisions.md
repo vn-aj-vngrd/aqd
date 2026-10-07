@@ -6,7 +6,7 @@ Updated October 5, 2026. The current owner request supersedes the earlier full-c
 
 - V1 is a small private personal digital closet and outfit-planning MVP running locally on the user's Apple device, with local clothing data and privacy by default.
 - Remove all social features from V1. Avoid backend/server infrastructure and recurring backend costs; prefer Apple-native/on-device capabilities, including Apple Intelligence where applicable.
-- V1 is a complete usable local app with Home, Closet, Planner, Agent, local Profile, Settings, welcome/onboarding and light/dark modes. Keep applicable private core features local; V2 simply extends V1 after real usage. No features are dropped.
+- V1 is a complete usable local app with Today, Closet, Planner, Agent, local Profile, Settings, welcome/onboarding and light/dark modes. Keep applicable private core features local; V2 simply extends V1 after real usage. No features are dropped.
 - Move the complete prior product vision into V2, including social/community, sync and its required infrastructure. Prepare design requirements for both phases in Paper.
 - Work on a new branch; do not implement features or production code. This supersedes the prior instruction that community, auth, account durability and Inbox were required in V1.
 - The retained broader vision includes Today/All/Following, private Pieces/Outfits/Themes, conversational Agent, human Inbox and social Profile; curated publication never exposes all owned data.
@@ -16,7 +16,7 @@ Updated October 5, 2026. The current owner request supersedes the earlier full-c
 
 ### Confirmed navigation refinement — October 6, 2026
 
-- Same five equal-width native slots in V1/V2: **Home · Closet · Planner · Agent · Profile**, icons only with explicit destination accessibility names, selected traits and full nonoverlapping hit areas ≥44 × 44 pt. Planner is a dedicated root (Week default, Month alternate), never a Closet segment; Closet has only Pieces/Outfits/Themes.
+- Same five equal-width native slots in V1/V2: **Today · Closet · Planner · Agent · Profile**, icons only with explicit destination accessibility names, selected traits and full nonoverlapping hit areas ≥44 × 44 pt. Planner is a dedicated root (Week default, Month alternate), never a Closet segment; Closet has only Pieces/Outfits/Themes.
 - Home plan links and outfit Plan actions retain date context; Back restores origin and preserved selection. Agent launches a native full-screen task from the fourth slot or focused assistance, dismissing to origin/scroll/selection with restored accessibility focus.
 - V2 Inbox remains human messaging through a persistent labelled 44-point root-toolbar entry → existing I01 → conversations, not a tab. Back restores origin root/scroll/selected tab; startup/incoming intents preserve origin. Real acknowledged unread only. V1 has no mirrored Inbox control.
 - Planner/private core are never account-gated. V1 Profile uses one More icon for Add fit/Edit profile/Style/Wear insights/Settings; Theme More holds Add outfits/Edit theme/Delete theme. Remove redundant body management actions and Today/selected-day Add; Planner toolbar + retains date context.

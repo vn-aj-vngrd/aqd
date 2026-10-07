@@ -24,7 +24,7 @@ Updated October 6, 2026. This is the implementation route checklist for [Paper V
 
 | Source / visible action | Destination or state | Return / outcome |
 | --- | --- | --- |
-| Global Home / Closet / Planner / Agent / Profile | L02 or L23 / L03 / L09 / L24 or L19/L80/L81 / L48 or L160 | Five equal native slots; restore each root's date/selection/scroll. Fourth-slot Agent presents full-screen and dismisses to origin. No V1 Inbox or Settings on Home. |
+| Global Today / Closet / Planner / Agent / Profile | L02 or L23 / L03 / L09 / L24 or L19/L80/L81 / L48 or L160 | Five equal native slots; the first destination and accessibility name are Today, with unchanged house icon. Restore each root's date/selection/scroll. Fourth-slot Agent presents full-screen and dismisses to origin. No V1 Inbox or Settings on Today. |
 | Welcome Start my closet / quick tour | L61 / L62 | Immediate navigation; cancel decorative Welcome motion. |
 | L61 Personalize my closet / Take the tour / Explore first | L152 / L62 / L02 | Setup can be skipped. Illustrations never create records. |
 | Tour Back / Next / Finish / Skip | L62–L66; L02, or source Settings on replay | Preserve preview isolation; no repeated onboarding for each piece. |
