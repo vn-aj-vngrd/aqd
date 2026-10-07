@@ -6,7 +6,7 @@ V1 completes local manual/assisted owned-item outfits/favorites/pin/replacement 
 
 ## Outcome
 
-Users compose and retain owned-wardrobe looks and organize them into reusable collections. Entry: Closet → Outfits/Themes; Add → Build an outfit; an item detail's “Style this”; focused assistance or [Agent](agent.md). Public display is a separate [publication](discovery-publishing.md).
+Users compose and retain owned-wardrobe looks and organize them into reusable collections. Entry: Closet → Outfits/Themes; Add → Build an outfit; an item detail's “Style this”; focused assistance or [Agent](agent.md). V2 public display is a separate [publication](discovery-publishing.md).
 
 ## Contracts
 
@@ -21,7 +21,7 @@ Migrate existing theme strings into theme records and memberships without renami
 1. Choose owned active items, including a preselected piece when entered from item detail.
 2. Preview the composition; select/deselect and replace pieces without losing name/context.
 3. Name the look and optionally choose/create themes.
-4. Save; show its detail and actions to plan, record wear, or publish.
+4. Save privately; show its detail and actions to Plan or Record wear. Only V2 adds a separate reviewed publication action.
 
 Filters/search apply to the chooser, not only the closet grid. Selected pieces remain visible when filtered out. Archive/removal during editing surfaces an invalid selection and offers remove/restore. Saving twice through retry creates one outfit for the same save operation. Cancelling dirty edits offers keep/discard. Save failure retains the draft.
 
@@ -37,9 +37,9 @@ A generated theme is a proposed name/description/membership; review each before 
 
 E12 and Today link to the same first-outfit task: W28 when categories are missing, W29/W17 when a complete suggestion is possible, or W13 for manual composition. Carry the first saved piece as an explicit pin; the user can unpin it. Readiness is evaluated against the requested outfit form and current availability, not a fixed inventory size. If no supported form can include the pinned piece, explain the gap and offer a different form, unpin or manual composition.
 
-Review the proposed owned pieces before saving; replacing a slot returns to the same review with name, occasion, pin and other pieces preserved. The saved outfit detail offers Plan, Record wear and Share as separate actions. Saving is private and does not create a calendar entry or actual wear. Runtime failure offers manual composition with the draft intact. Partial manual looks remain valid but are not labelled complete suggestions. No style quiz or theme membership is required for a first outfit.
+Review the proposed owned pieces before saving; replacing a slot returns to the same review with name, occasion, pin and other pieces preserved. V1 saved detail offers Pieces, Plan and Record wear, with trailing More → Edit outfit / Favorite / Delete using scoped draft/confirmation safeguards. There is no Share/publication control. V2 additionally offers Share as a separate reviewed-publication action. Saving is private and does not create a calendar entry or actual wear. Runtime failure offers manual composition with the draft intact. Partial manual looks remain valid but are not labelled complete suggestions. No style quiz or theme membership is required for a first outfit.
 
-Browse outfits with search, theme and favorites filters. Detail opens each piece, shows unavailable references, and supports edit, plan, wear, favorite, and reviewed publication. Theme detail contains member outfits and add/remove membership. Empty themes offer Add outfits. Favorites on owned outfits are distinct from community bookmarks.
+Browse outfits with search, theme and favorites filters. Detail opens each piece, shows unavailable references, and supports private edit, plan, wear, favorite and reviewed delete. Only V2 additionally supports reviewed publication. Theme detail contains member outfits and add/remove membership. Empty themes offer Add outfits. Favorites on owned outfits are distinct from community bookmarks.
 
 ## Acceptance
 
@@ -51,8 +51,8 @@ Browse outfits with search, theme and favorites filters. Detail opens each piece
 - O6: AI failure or unsupported devices offer manual creation; cancelling generation creates no saved record.
 - O7: Failed/retried saves retain edits and avoid duplicate outfits/themes.
 - O8: Create the first usable outfit from the capture/readiness path, preserving the pin through replacement; approve/save once and open the same persisted identity.
-- O9: Choose manual composition from missing-category, ready and unavailable-assistance states. Partial looks are identified and remain editable; planning, wear and publication occur only through their own reviewed actions.
+- O9: Choose manual composition from missing-category, ready and unavailable-assistance states. Partial looks are identified and remain editable; planning and wear occur only through their own reviewed actions; publication is V2-only and requires its own review.
 
 ## Dependencies
 
-[Wardrobe](wardrobe.md) IDs/lifecycle are required. Manual composition precedes assisted composition. Publishing and planning consume the same saved outfit identity; neither is required for the first manual slice.
+[Wardrobe](wardrobe.md) IDs/lifecycle are required. Manual composition precedes assisted composition. Planning and V2-only publishing consume the same saved outfit identity; neither is required for the first manual slice. V1 never exposes a connected publication action.
