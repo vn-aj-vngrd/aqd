@@ -26,6 +26,10 @@ Use this checklist when creating, changing, reviewing or implementing AQD UI. Ap
 | DQ11 | Fit and accessibility | At the reference viewport, content is not obscured by chrome or clipped unintentionally. Long content scrolls; bottom actions remain reachable. Native acceptance covers smaller phones, landscape, largest accessibility text, VoiceOver order/names, keyboard, Reduce Motion and interruptions. A Paper screenshot verifies only static composition. |
 | DQ12 | Implementation handoff | Reuse named components and tokens. Specify initial, selected, disabled, loading, error and success states where relevant, plus save/cancel semantics. Link the route, feature contract and Paper reference. Keep demo fixtures separate from actual user data. |
 
+### Native transparency/reference qualification
+
+For native-reference work, record deployment18/build stableSDK27, research-linked symbol availability, guarded26/27 enhancements and older/opaque fallback. OS chrome and opaque content have different ownership. A role diagram or legacy middle/bottom drawing is **not** a native27 screenshot; certify exact geometry only after licensed original-kit inspection or actual runtime captures. Source-anchored26+ routine choices may be inline on iPhone/iPad with implicit cancellation; critical alerts still require explicit Cancel. Verify native five-tab icon-only feasibility/label exception separately. Reference-only boards do not require new V1 control routes. [Transparency evidence](evidence/native-ios-transparency.json) records this bounded static pass; all runtime/device/accessibility checks remain required.
+
 ## Severity and completion
 
 - **P0:** A misleading destructive action, privacy breach or blocked core task. Resolve before handoff.

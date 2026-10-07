@@ -4,6 +4,12 @@ Phase scope: shared native/visual rules apply to both phases. Five-destination b
 
 Design refinement, October 1, 2026. [Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0) remains the visual source. The supplied ChatGPT screenshots guide the floating composer, capsule controls and anchored menu treatment; they do not establish which private implementation APIs ChatGPT uses.
 
+## Current native target and transparency boundary
+
+October7 [primary research](../references/native-ios-materials.md) confirms stable SDK27 publication and the Apple27 Design Resources listing. Deployment minimum is **18.0**, build stable **27** (latest maintenance checked at implementation). Native controls adopt the running OS's automatic appearance;18 retains older native materials. Custom `glassEffect`/`GlassEffectContainer`/`UIGlassEffect` and glass button styles require26;27-only conveniences are optional and guarded. Standard Material15+/opaque semantic fallback supports18. Optional model26 readiness never raises the manual minimum.
+
+Foundations **Transparency · Native iOS** (`10N9-0`) adds role/API reference boards and a [complete native catalog](native-ios.md#complete-aqd-native-component--api--baselineenhancement--foundation-row). No native27 kit/capture was inspected or imported; exact dialog variants are unverified. Existing alpha/blur/geometry drawings are illustrative, not rendering instructions. Critical alerts remain native `.alert` with explicit Cancel/destructive; routine source-anchored choices adapt inline on UIKit26+ iPhone/iPad and may omit visible Cancel. Do not force bottom placement or simulate27 optics. All existing phase scenes/control positions and master IDs stay unchanged.
+
 ## Control matrix
 
 | Role | V2 native choice | Paper reference / state contract |
@@ -27,7 +33,7 @@ Design refinement, October 1, 2026. [Paper](https://app.paper.design/file/01M3SM
 
 Use regular glass by default only for the navigation, search, presentation and scoped composer roles above. Ordinary fields, content actions and compact selection controls follow the flat semantic-surface contract. Clear is reserved for floating controls over rich media when contrast remains readable. Native variants, tint and interactive behavior are the supported design decisions; do not treat whole-view opacity as a native material transparency setting. Paper alpha/blur/edge/shadow tokens are static approximations, not runtime rendering instructions or a universal opacity slider.
 
-The OS adapts to light/dark appearance, Reduce Transparency and Increase Contrast. Provide an opaque semantic surface with the same geometry when transparency is reduced; stronger boundaries and validation text must remain visible. Keep 44 pt targets, native Dynamic Type, selected/disabled traits and focus order. Group adjacent custom effects with GlassEffectContainer where appropriate. Never apply a second glass modifier to native glass chrome or nest a glass editor background within the composer's glass shell. A native control inside that shell retains its own standard system rendering.
+The OS adapts to light/dark appearance, Reduce Transparency and Increase Contrast. For app-owned custom shells, provide an opaque semantic surface retaining intent and usable content when transparency is reduced; let native components own their own fallback geometry; stronger boundaries and validation text must remain visible. Keep 44 pt targets, native Dynamic Type, selected/disabled traits and focus order. Group adjacent custom effects with GlassEffectContainer where appropriate. Never apply a second glass modifier to native glass chrome or nest a glass editor background within the composer's glass shell. A native control inside that shell retains its own standard system rendering.
 
 Photographs, wardrobe grids, message bubbles, notices, Markdown responses, review summaries and ordinary grouped content keep their content surfaces. Glass identifies system navigation/presentation chrome and the scoped composer, not every functional control or container.
 

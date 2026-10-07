@@ -36,3 +36,16 @@ docs/design/evidence/*
 !docs/design/evidence/native-confirmations.json
 !docs/design/evidence/ui-refinements.json
 !docs/design/evidence/background-removal.json
+!docs/design/evidence/weatherkit-v1.json
+!docs/design/evidence/v1-canvas-organization.json
+!docs/design/evidence/v1-canvas-spacing.json
+!docs/design/evidence/weather-grid-spacing.json
+!docs/design/evidence/native-ios-transparency.json
+!/docs/design/evidence/home-header-style.json
+!docs/design/evidence/input-component-consistency.json
+!docs/design/evidence/feedback-variants.json
+!docs/design/evidence/today-customization.json
+!docs/design/evidence/action-surfaces.json
+!docs/design/evidence/native-dialog-repair.json
+!docs/design/evidence/native-dialog-vector-repair.json
+!docs/design/evidence/search-filter-removal.json

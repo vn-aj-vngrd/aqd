@@ -6,11 +6,12 @@ The visual master is Paper page 00 **Foundations · Icons and navigation states*
 
 ## Complete app-owned catalog
 
-The usage inventory identifies **41 semantic roles**, with aliases and selected variants listed separately. Phase columns show actual icon evidence in that phase's canonical/reference designs, not a claim about feature availability or unique visible live-instance counts. Geometry classification covers the supplied exports plus recent repairs; representative live checks reconcile new/uncertain symbols. Exact sources and limits belong to the [Foundations library evidence](evidence/foundations-library.json). Native names are implementation assignments, not proof that schematic Paper vectors are Apple assets.
+The current usage inventory identifies **45 semantic roles**, with aliases and selected variants listed separately. Phase columns show actual icon evidence in that phase's canonical/reference designs, not a claim about feature availability or unique visible live-instance counts. Geometry classification covers the supplied exports plus recent repairs; representative live checks reconcile new/uncertain symbols. Exact sources and limits belong to the [Foundations library evidence](evidence/foundations-library.json). Native names are implementation assignments, not proof that schematic Paper vectors are Apple assets.
 
 | Role | Native symbol / implementation | V1 | V2 |
 | --- | --- | --- | --- |
-| Home | `house` | Yes | Yes |
+| Today (retained Home glyph role) | `house` | Yes | Yes |
+| Customize Today | `slider.horizontal.3` | Yes | Yes |
 | Closet | `hanger` | Yes | Yes |
 | Agent | `sparkle` | Yes | Yes |
 | Inbox | `envelope` | — | Yes |
@@ -51,8 +52,19 @@ The usage inventory identifies **41 semantic roles**, with aliases and selected 
 | Block | `nosign` | — | Yes |
 | Information | `info.circle` | — | Yes |
 | Indeterminate progress | Native `ProgressView`; schematic circular spinner | Yes | Yes |
+| Status success | `checkmark.circle` | Yes | Yes |
+| Status warning | `exclamationmark.triangle` | Yes | Yes |
+| Status danger | `exclamationmark.octagon` | Yes | Yes |
 
 Aliases reuse geometry: Planner/Plan a day → calendar (Plan a day may use the checked variant); attachment → plus; image file → photo; remove attachment → close; finish recording → check; response details → more; previous/next response → back/forward; category placeholder/Make look → context; Agent empty state → Agent. Selected/disabled tint and documented stroke weight do not create new roles. CSS-rendered checkmarks and Stop squares retain the Check/Stop semantics.
+
+### App-owned feedback symbols
+
+Three new roles are registered on generic Foundations feedback board `10S3-0`: success `10ST-0`, warning `10T0-0`, danger `10T7-0`. Info reuses `XCR-0`; neutral uses that same geometry with secondary tint. Bare selected check `4QI-0` retains its identity and is not a completion symbol. Native code uses SF system names; [asset provenance](assets/feedback/README.md) records actual macOS AppKit exports configured18pt regular, alpha-preserving semantic retints and iOS limits. Historical41-role census and44-role feedback checkpoint remain frozen; current Today catalog45, aliases12. [Feedback evidence](evidence/feedback-variants.json) records actual fills, target mappings and partial geometry checks. No native alert glyph injection or fake Toast.
+
+### Customize Today source
+
+Registered11M4-0 under4MI-0 uses actual AppKit `NSImage(systemSymbolName:)`22pt regular, secondary-gray alpha-preserving export,22 optical slot/44 target. [Provenance](assets/today/README.md) and [Today evidence](evidence/today-customization.json) distinguish native macOS glyph source from unverified iOS rendering. Search/house masters unchanged; historical41/44-role checkpoints stay historical. Current45 roles/12 aliases.
 
 ### System-owned symbols
 
@@ -62,9 +74,13 @@ October 6 Settings repair: registered regular/selected masters retain IDs `4Q8-0
 
 Back and disclosure mirror in right-to-left interfaces. Disabled controls use the semantic secondary foreground and native disabled state. Decorative symbols are hidden from VoiceOver. Native status, Apple sign-in, keyboard and other OS chrome keep their system-owned glyphs. The page 00 icon board lists every inventoried app-owned role with native names and phase usage, plus registered variants/aliases and system-ownership guidance. It is an icon library, not a collection of app screens. The edit master reuses the existing square-and-pencil reference from the Trip plan header, rather than the rejected one-off Profile drawing. Send arrows are vector masters, not Unicode text glyphs. This catalog consolidation is not a claim that every pre-existing screen icon has been migrated.
 
-Both phases use Home · Closet · Planner · Agent · Profile. Planner clones the registered calendar master; the envelope is V2's root-toolbar Inbox action, not a sixth tab. V1 has no Inbox control.
+Both phases use Today · Closet · Planner · Agent · Profile; retained internal `home` role still uses house. Planner clones the registered calendar master; the envelope is V2's root-toolbar Inbox action, not a sixth tab. V1 has no Inbox control.
 
 Agent navigation uses a single four-point sparkle in the same 22-point optical box as the other tab icons. Keep the Agent label and existing selection pill. Inactive uses semantic secondary gray; selected uses the shared accent and stronger symbol weight. Dark appearance follows night-secondary/night-accent. Paper uses the matching schematic vector; native implementation uses SF Symbols `sparkle`. This navigation symbol identifies the destination and does not indicate model availability, generation or successful saving.
+
+## WeatherKit dynamic native family
+
+Shared V1/V2 Home weather uses the OS/WeatherKit dynamic condition family via `Image(systemName: CurrentWeather.symbolName)`, not a new fixed cloud icon or AI badge. Enabled reference10GK-0 shows parent-extracted native macOS `cloud.sun.fill` at16-point node10LD-0 inside72minwidth×44minheight target10LC-0. The original [AppKit PNG](assets/weather/cloud-sun-fill-macos.png) came from `NSImage(systemSymbolName:)`; current Paper uses its alpha-preserving [secondary-grey variant](assets/weather/cloud-sun-fill-macos-secondary.png), matching date/temperature at `#686C72`. Source shape/alpha are retained; runtime uses semantic `.foregroundStyle(.secondary)`. [Header evidence](evidence/home-header-style.json) records the thirteen normalized references and actual stored fill. This supersedes the worker's blank-slot claim; it is a macOS fixture glyph, not verified iOS `CurrentWeather.symbolName` API mapping/appearance. Preserve all41 concrete roles/12 aliases and Foundations masters. The SDK Apple Weather combined mark is attribution, not a condition glyph or a handcrafted app-icon master:10LM-0/10L3-0/10KU-0 are explicitly unverified layout slots. [Weather contract](weather-context.md) and [bounded evidence](evidence/weatherkit-v1.json) own state/freshness/mark/legal behavior; no iOS runtime symbol mapping/appearance or certified attribution is established.
 
 ## Agent response actions
 

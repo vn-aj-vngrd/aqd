@@ -11,6 +11,10 @@ Paper page 00 **Foundations · Global motion** owns the visual reference. This c
 3. Scope animation to the changed component. Preserve focus, selection, drafts, stable record identity and scroll position.
 4. Apply the Reduce Motion alternative, interruption rules and verification cases before considering the native implementation complete.
 
+## Optional native weather inheritance
+
+Shared [WeatherKit](weather-context.md) uses OS push/sheet/search/permission transitions and existing C-form/C-load/C-select recipes. Grow/reflow only changed rows; bounded opacity fade for fresh/Saved/unavailable replacement, no animated numbers, decorative condition travel or looping forecast. Reduce Motion uses immediate or existing opacity-only state change; native progress remains OS-owned. Preserve caller draft/focus/scroll during city/date changes and invalidate late requests on Cancel. Settings confirmation writes only the optional local preference; weather apply is not outfit/plan Save or a receipt. [Weather evidence](evidence/weatherkit-v1.json) records static references, not measured motion.
+
 ## Global values
 
 Durations below are AQD design choices, not Apple-prescribed timings. Never override system transition duration with these values.

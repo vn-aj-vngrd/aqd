@@ -1,0 +1,430 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "pageId": "p-2-0",
+  "verifiedOn": "2026-10-07",
+  "scope": "V1 canvas root left/top only; no internal UI or hierarchy changes.",
+  "supersedesCurrentLocators": "v1-canvas-organization.json (historical checkpoint retained)",
+  "currentWeatherLocatorOverride": "weather-grid-spacing.json overrides only seven Weather x positions and nine visible footprints; this artifact retains the original spacing checkpoint unchanged. All other locators/footprints remain current here.",
+  "geometrySource": "Complete, parent-verified organization artifact, including three y=-32 Weather labels. No repeated descendant census.",
+  "counts": {
+    "roots": 206,
+    "nodes": 11410,
+    "wholeFileRootsBaseline": 511,
+    "wholeFileNodesBaseline": 35203,
+    "canonicalTriples": 380
+  },
+  "layout": {
+    "gap": 80,
+    "sectionGap": 120,
+    "subsectionGap": 80,
+    "maxBoardsPerRow": 6,
+    "phonePitch": 470,
+    "weatherPitch": 790,
+    "maxRowWidth": 4020.0,
+    "order": "Same groups, same row membership and row-major owner-adjacent references; top baselines aligned."
+  },
+  "beforeBounds": {
+    "x": 40,
+    "y": 0,
+    "right": 4750,
+    "bottom": 43769.0,
+    "width": 4710,
+    "height": 43769.0
+  },
+  "afterBounds": {
+    "x": 40,
+    "y": 0,
+    "right": 4060.0,
+    "bottom": 42513.0,
+    "width": 4020.0,
+    "height": 42513.0
+  },
+  "movedRootCount": 205,
+  "checks": {
+    "pairs": 21115,
+    "minimumRectangleClearance": 80.0,
+    "canonicalTriplesEqualParentBaseline": true,
+    "rootSetEqualRegistryAndOrganization": true,
+    "mutationWhitelist": [
+      "left",
+      "top"
+    ],
+    "liveVerification": "All206 root left/top match via one compacted computed-style result (full CSS discarded from context); non-position root styles equal previous verified snapshot. Final pages206/11410,18/1847,287/21946; whole511/35203. Five live baseline samples, phone pair470px, three negative-y labels and three bounded root screenshots checked. No repeated descendant census or whole-canvas screenshot.",
+    "nonPositionRootStylesEqualPreviousSnapshot": true,
+    "liveCounts": {
+      "v1": [
+        206,
+        11410
+      ],
+      "foundations": [
+        18,
+        1847
+      ],
+      "v2": [
+        287,
+        21946
+      ],
+      "whole": [
+        511,
+        35203
+      ]
+    },
+    "negativeCaptionWorldRects": {
+      "10N7-0": [
+        1390,
+        5986,
+        300,
+        24
+      ],
+      "10N3-0": [
+        450,
+        6942,
+        300,
+        24
+      ],
+      "10N5-0": [
+        1240,
+        6942,
+        300,
+        24
+      ]
+    },
+    "repositoryChecks": {"toolingTestsPassed": 38, "duplicateKeyJSONParses": 14, "positionOnlyRegistryChanges": 205, "localMarkdownLinks": 84, "postLiveFootprintPairs": 21115, "weatherGlyphSha256EqualParentBaseline": true, "gitDiffCheck": "pass"},
+    "representativeScreenshots": [
+      "10GK-0",
+      "ZRD-0",
+      "1025-0"
+    ],
+    "limits": "Static canvas-only evidence; screenshot crops do not prove neighboring placement. Geometry from parent-verified artifact; no whole-descendant/content comparison, native acceptance, app advancement, commit or push."
+  },
+  "groups": [
+    {
+      "name": "00 · Scope and journey",
+      "count": 1,
+      "first": {
+        "x": 40,
+        "y": 0
+      }
+    },
+    {
+      "name": "01 · Welcome, onboarding & tour",
+      "count": 24,
+      "first": {
+        "x": 40,
+        "y": 820.0
+      }
+    },
+    {
+      "name": "01 · Welcome and first-piece motion",
+      "count": 1,
+      "first": {
+        "x": 40,
+        "y": 4766.0
+      }
+    },
+    {
+      "name": "02 · Capture & photo editing",
+      "count": 1,
+      "first": {
+        "x": 40,
+        "y": 5736.0
+      }
+    },
+    {
+      "name": "02 · Home and shared WeatherKit",
+      "count": 11,
+      "first": {
+        "x": 40,
+        "y": 6018.0
+      }
+    },
+    {
+      "name": "02 · Capture, editing and photo cleanup",
+      "count": 25,
+      "first": {
+        "x": 40,
+        "y": 7898.0
+      }
+    },
+    {
+      "name": "02 · Capture accessibility and shared examples",
+      "count": 2,
+      "first": {
+        "x": 40,
+        "y": 12624.0
+      }
+    },
+    {
+      "name": "03 · Closet, search & themes",
+      "count": 32,
+      "first": {
+        "x": 40,
+        "y": 13848.0
+      }
+    },
+    {
+      "name": "04 · Outfit creation & review",
+      "count": 14,
+      "first": {
+        "x": 40,
+        "y": 19682.0
+      }
+    },
+    {
+      "name": "05 · Planner, routines & trips",
+      "count": 22,
+      "first": {
+        "x": 40,
+        "y": 22761.0
+      }
+    },
+    {
+      "name": "06 · Actual wear, history & insights",
+      "count": 11,
+      "first": {
+        "x": 40,
+        "y": 26747.0
+      }
+    },
+    {
+      "name": "07 · Agent, conversations & recovery",
+      "count": 30,
+      "first": {
+        "x": 40,
+        "y": 28885.0
+      }
+    },
+    {
+      "name": "07 · Shared private task compositions",
+      "count": 1,
+      "first": {
+        "x": 40,
+        "y": 33755.0
+      }
+    },
+    {
+      "name": "08 · Profile & private fit journal",
+      "count": 11,
+      "first": {
+        "x": 40,
+        "y": 36509.0
+      }
+    },
+    {
+      "name": "09 · Settings, preferences & local data",
+      "count": 20,
+      "first": {
+        "x": 40,
+        "y": 38647.0
+      }
+    }
+  ],
+  "roots": [
+    {"nodeId":"JK8-0","before":{"x":40,"y":0},"after":{"x":40,"y":0},"footprint":{"x":0,"y":0,"width":1440.0,"height":700.0},"group":"00 · Scope and journey"},
+    {"nodeId":"MZ2-0","before":{"x":40,"y":860},"after":{"x":40,"y":820.0},"footprint":{"x":0,"y":0,"width":2350.0,"height":170.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"W6B-0","before":{"x":40,"y":1110},"after":{"x":40,"y":1070.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"MJJ-0","before":{"x":840,"y":1110},"after":{"x":510.0,"y":1070.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"MKC-0","before":{"x":1640,"y":1110},"after":{"x":980.0,"y":1070.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"JL8-0","before":{"x":2440,"y":1110},"after":{"x":1450.0,"y":1070.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"SAH-0","before":{"x":3240,"y":1110},"after":{"x":1920.0,"y":1070.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"SBD-0","before":{"x":4040,"y":1110},"after":{"x":2390.0,"y":1070.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"SC9-0","before":{"x":40,"y":2034.0},"after":{"x":40,"y":1994.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"V6F-0","before":{"x":840,"y":2034.0},"after":{"x":510.0,"y":1994.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"V7G-0","before":{"x":1640,"y":2034.0},"after":{"x":980.0,"y":1994.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"V8H-0","before":{"x":2440,"y":2034.0},"after":{"x":1450.0,"y":1994.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"V9I-0","before":{"x":3240,"y":2034.0},"after":{"x":1920.0,"y":1994.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"VO9-0","before":{"x":4040,"y":2034.0},"after":{"x":2390.0,"y":1994.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"VPA-0","before":{"x":40,"y":2958.0},"after":{"x":40,"y":2918.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"WK5-0","before":{"x":840,"y":2958.0},"after":{"x":510.0,"y":2918.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"WZT-0","before":{"x":1640,"y":2958.0},"after":{"x":980.0,"y":2918.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"X1H-0","before":{"x":2440,"y":2958.0},"after":{"x":1450.0,"y":2918.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"X35-0","before":{"x":3240,"y":2958.0},"after":{"x":1920.0,"y":2918.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"X53-0","before":{"x":4040,"y":2958.0},"after":{"x":2390.0,"y":2918.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"MLN-0","before":{"x":40,"y":3882.0},"after":{"x":40,"y":3842.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"MO5-0","before":{"x":840,"y":3882.0},"after":{"x":510.0,"y":3842.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"MQ5-0","before":{"x":1640,"y":3882.0},"after":{"x":980.0,"y":3842.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"MS3-0","before":{"x":2440,"y":3882.0},"after":{"x":1450.0,"y":3842.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"MU3-0","before":{"x":3240,"y":3882.0},"after":{"x":1920.0,"y":3842.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"01 · Welcome, onboarding & tour"},
+    {"nodeId":"64C-0","before":{"x":40,"y":4886.0},"after":{"x":40,"y":4766.0},"footprint":{"x":0,"y":0,"width":1320.0,"height":850.0},"group":"01 · Welcome and first-piece motion"},
+    {"nodeId":"MZ7-0","before":{"x":40,"y":5976.0},"after":{"x":40,"y":5736.0},"footprint":{"x":0,"y":0,"width":2860.0,"height":170.0},"group":"02 · Capture & photo editing"},
+    {"nodeId":"JMF-0","before":{"x":40,"y":6258},"after":{"x":40,"y":6018.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Home and shared WeatherKit"},
+    {"nodeId":"KBP-0","before":{"x":840,"y":6258},"after":{"x":510.0,"y":6018.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Home and shared WeatherKit"},
+    {"nodeId":"10GK-0","before":{"x":1640,"y":6258},"after":{"x":980.0,"y":6018.0},"footprint":{"x":0,"y":-32,"width":710,"height":876.0},"group":"02 · Home and shared WeatherKit"},
+    {"nodeId":"108S-0","before":{"x":2440,"y":6258},"after":{"x":1770.0,"y":6018.0},"footprint":{"x":0,"y":0,"width":710,"height":844.0},"group":"02 · Home and shared WeatherKit"},
+    {"nodeId":"109R-0","before":{"x":3240,"y":6258},"after":{"x":2560.0,"y":6018.0},"footprint":{"x":0,"y":0,"width":710,"height":844.0},"group":"02 · Home and shared WeatherKit"},
+    {"nodeId":"10AQ-0","before":{"x":4040,"y":6258},"after":{"x":3350.0,"y":6018.0},"footprint":{"x":0,"y":0,"width":710,"height":844.0},"group":"02 · Home and shared WeatherKit"},
+    {"nodeId":"10BP-0","before":{"x":40,"y":7214},"after":{"x":40,"y":6974.0},"footprint":{"x":0,"y":-32,"width":710,"height":876.0},"group":"02 · Home and shared WeatherKit"},
+    {"nodeId":"10CO-0","before":{"x":840,"y":7214},"after":{"x":830,"y":6974.0},"footprint":{"x":0,"y":-32,"width":710,"height":876.0},"group":"02 · Home and shared WeatherKit"},
+    {"nodeId":"10DN-0","before":{"x":1640,"y":7214},"after":{"x":1620,"y":6974.0},"footprint":{"x":0,"y":0,"width":710,"height":844.0},"group":"02 · Home and shared WeatherKit"},
+    {"nodeId":"10EM-0","before":{"x":2440,"y":7214},"after":{"x":2410,"y":6974.0},"footprint":{"x":0,"y":0,"width":710,"height":844.0},"group":"02 · Home and shared WeatherKit"},
+    {"nodeId":"10FL-0","before":{"x":3240,"y":7214},"after":{"x":3200,"y":6974.0},"footprint":{"x":0,"y":0,"width":710,"height":844.0},"group":"02 · Home and shared WeatherKit"},
+    {"nodeId":"JPZ-0","before":{"x":40,"y":8154.0},"after":{"x":40,"y":7898.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"SOI-0","before":{"x":840,"y":8154.0},"after":{"x":510.0,"y":7898.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"ODL-0","before":{"x":1640,"y":8154.0},"after":{"x":980.0,"y":7898.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"OEW-0","before":{"x":2440,"y":8154.0},"after":{"x":1450.0,"y":7898.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"OG7-0","before":{"x":3240,"y":8154.0},"after":{"x":1920.0,"y":7898.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"Z3U-0","before":{"x":4040,"y":8154.0},"after":{"x":2390.0,"y":7898.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"OIZ-0","before":{"x":40,"y":9078.0},"after":{"x":40,"y":8822.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"1010-0","before":{"x":840,"y":9078.0},"after":{"x":510.0,"y":8822.0},"footprint":{"x":0,"y":0,"width":390.0,"height":950.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"1025-0","before":{"x":1640,"y":9078.0},"after":{"x":980.0,"y":8822.0},"footprint":{"x":0,"y":0,"width":390.0,"height":950.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"103A-0","before":{"x":2440,"y":9078.0},"after":{"x":1450.0,"y":8822.0},"footprint":{"x":0,"y":0,"width":390.0,"height":950.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"104E-0","before":{"x":3240,"y":9078.0},"after":{"x":1920.0,"y":8822.0},"footprint":{"x":0,"y":0,"width":390.0,"height":950.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"105C-0","before":{"x":4040,"y":9078.0},"after":{"x":2390.0,"y":8822.0},"footprint":{"x":0,"y":0,"width":390.0,"height":950.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"OMU-0","before":{"x":40,"y":10108.0},"after":{"x":40,"y":9852.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"QXJ-0","before":{"x":840,"y":10108.0},"after":{"x":510.0,"y":9852.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"QYF-0","before":{"x":1640,"y":10108.0},"after":{"x":980.0,"y":9852.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"RIV-0","before":{"x":2440,"y":10108.0},"after":{"x":1450.0,"y":9852.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"QGO-0","before":{"x":3240,"y":10108.0},"after":{"x":1920.0,"y":9852.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"QIB-0","before":{"x":4040,"y":10108.0},"after":{"x":2390.0,"y":9852.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"JRU-0","before":{"x":40,"y":11032.0},"after":{"x":40,"y":10776.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"LJG-0","before":{"x":840,"y":11032.0},"after":{"x":510.0,"y":10776.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"LKC-0","before":{"x":1640,"y":11032.0},"after":{"x":980.0,"y":10776.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"QWN-0","before":{"x":2440,"y":11032.0},"after":{"x":1450.0,"y":10776.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"S6S-0","before":{"x":3240,"y":11032.0},"after":{"x":1920.0,"y":10776.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"S7O-0","before":{"x":4040,"y":11032.0},"after":{"x":2390.0,"y":10776.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"K3U-0","before":{"x":40,"y":11956.0},"after":{"x":40,"y":11700.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture, editing and photo cleanup"},
+    {"nodeId":"X71-0","before":{"x":40,"y":12960.0},"after":{"x":40,"y":12624.0},"footprint":{"x":0,"y":0,"width":2860.0,"height":180.0},"group":"02 · Capture accessibility and shared examples"},
+    {"nodeId":"22T-0","before":{"x":40,"y":13220.0},"after":{"x":40,"y":12884.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"02 · Capture accessibility and shared examples"},
+    {"nodeId":"MZC-0","before":{"x":40,"y":14304.0},"after":{"x":40,"y":13848.0},"footprint":{"x":0,"y":0,"width":2350.0,"height":170.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"JNX-0","before":{"x":40,"y":14554.0},"after":{"x":40,"y":14098.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"K70-0","before":{"x":840,"y":14554.0},"after":{"x":510.0,"y":14098.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"S2C-0","before":{"x":1640,"y":14554.0},"after":{"x":980.0,"y":14098.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"R7B-0","before":{"x":2440,"y":14554.0},"after":{"x":1450.0,"y":14098.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"K9I-0","before":{"x":3240,"y":14554.0},"after":{"x":1920.0,"y":14098.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"R87-0","before":{"x":4040,"y":14554.0},"after":{"x":2390.0,"y":14098.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"R93-0","before":{"x":40,"y":15478.0},"after":{"x":40,"y":15022.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"RJR-0","before":{"x":840,"y":15478.0},"after":{"x":510.0,"y":15022.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"RX0-0","before":{"x":1640,"y":15478.0},"after":{"x":980.0,"y":15022.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"QJE-0","before":{"x":2440,"y":15478.0},"after":{"x":1450.0,"y":15022.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"QKI-0","before":{"x":3240,"y":15478.0},"after":{"x":1920.0,"y":15022.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"R6F-0","before":{"x":4040,"y":15478.0},"after":{"x":2390.0,"y":15022.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"QE0-0","before":{"x":40,"y":16402.0},"after":{"x":40,"y":15946.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"Q5Q-0","before":{"x":840,"y":16402.0},"after":{"x":510.0,"y":15946.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"Q77-0","before":{"x":1640,"y":16402.0},"after":{"x":980.0,"y":15946.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"Q8P-0","before":{"x":2440,"y":16402.0},"after":{"x":1450.0,"y":15946.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"QA4-0","before":{"x":3240,"y":16402.0},"after":{"x":1920.0,"y":15946.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"QFC-0","before":{"x":4040,"y":16402.0},"after":{"x":2390.0,"y":15946.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"QBG-0","before":{"x":40,"y":17326.0},"after":{"x":40,"y":16870.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"QCU-0","before":{"x":840,"y":17326.0},"after":{"x":510.0,"y":16870.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"R9Z-0","before":{"x":1640,"y":17326.0},"after":{"x":980.0,"y":16870.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"RAV-0","before":{"x":2440,"y":17326.0},"after":{"x":1450.0,"y":16870.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"L3D-0","before":{"x":3240,"y":17326.0},"after":{"x":1920.0,"y":16870.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"S38-0","before":{"x":4040,"y":17326.0},"after":{"x":2390.0,"y":16870.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"RML-0","before":{"x":40,"y":18250.0},"after":{"x":40,"y":17794.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"L7F-0","before":{"x":840,"y":18250.0},"after":{"x":510.0,"y":17794.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"UUA-0","before":{"x":1640,"y":18250.0},"after":{"x":980.0,"y":17794.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"RBR-0","before":{"x":2440,"y":18250.0},"after":{"x":1450.0,"y":17794.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"L8P-0","before":{"x":3240,"y":18250.0},"after":{"x":1920.0,"y":17794.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"RNP-0","before":{"x":4040,"y":18250.0},"after":{"x":2390.0,"y":17794.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"RXW-0","before":{"x":40,"y":19174.0},"after":{"x":40,"y":18718.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"03 · Closet, search & themes"},
+    {"nodeId":"MZH-0","before":{"x":40,"y":20258.0},"after":{"x":40,"y":19682.0},"footprint":{"x":0,"y":0,"width":2350.0,"height":170.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"JT0-0","before":{"x":40,"y":20508.0},"after":{"x":40,"y":19932.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"QM0-0","before":{"x":840,"y":20508.0},"after":{"x":510.0,"y":19932.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"QNN-0","before":{"x":1640,"y":20508.0},"after":{"x":980.0,"y":19932.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"K4P-0","before":{"x":2440,"y":20508.0},"after":{"x":1450.0,"y":19932.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"JUF-0","before":{"x":3240,"y":20508.0},"after":{"x":1920.0,"y":19932.0},"footprint":{"x":0,"y":0,"width":390.0,"height":861.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"REF-0","before":{"x":4040,"y":20508.0},"after":{"x":2390.0,"y":19932.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"KVA-0","before":{"x":40,"y":21449.0},"after":{"x":40,"y":20873.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"ZRD-0","before":{"x":840,"y":21449.0},"after":{"x":510.0,"y":20873.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"JVS-0","before":{"x":1640,"y":21449.0},"after":{"x":980.0,"y":20873.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"RCN-0","before":{"x":2440,"y":21449.0},"after":{"x":1450.0,"y":20873.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"RL6-0","before":{"x":3240,"y":21449.0},"after":{"x":1920.0,"y":20873.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"RYS-0","before":{"x":4040,"y":21449.0},"after":{"x":2390.0,"y":20873.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"R5J-0","before":{"x":40,"y":22373.0},"after":{"x":40,"y":21797.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"04 · Outfit creation & review"},
+    {"nodeId":"MZM-0","before":{"x":40,"y":23457.0},"after":{"x":40,"y":22761.0},"footprint":{"x":0,"y":0,"width":3210.0,"height":170.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"JXA-0","before":{"x":40,"y":23707.0},"after":{"x":40,"y":23011.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"L5M-0","before":{"x":840,"y":23707.0},"after":{"x":510.0,"y":23011.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"PRM-0","before":{"x":1640,"y":23707.0},"after":{"x":980.0,"y":23011.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"P8B-0","before":{"x":2440,"y":23707.0},"after":{"x":1450.0,"y":23011.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"RFB-0","before":{"x":3240,"y":23707.0},"after":{"x":1920.0,"y":23011.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"PEP-0","before":{"x":4040,"y":23707.0},"after":{"x":2390.0,"y":23011.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"JZY-0","before":{"x":40,"y":24631.0},"after":{"x":40,"y":23935.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"SH0-0","before":{"x":840,"y":24631.0},"after":{"x":510.0,"y":23935.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"PFY-0","before":{"x":1640,"y":24631.0},"after":{"x":980.0,"y":23935.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"RG7-0","before":{"x":2440,"y":24631.0},"after":{"x":1450.0,"y":23935.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"SG4-0","before":{"x":3240,"y":24631.0},"after":{"x":1920.0,"y":23935.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"S9L-0","before":{"x":4040,"y":24631.0},"after":{"x":2390.0,"y":23935.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"L9S-0","before":{"x":40,"y":25555.0},"after":{"x":40,"y":24859.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"LBA-0","before":{"x":840,"y":25555.0},"after":{"x":510.0,"y":24859.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"RH3-0","before":{"x":1640,"y":25555.0},"after":{"x":980.0,"y":24859.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"SEL-0","before":{"x":2440,"y":25555.0},"after":{"x":1450.0,"y":24859.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"LCX-0","before":{"x":3240,"y":25555.0},"after":{"x":1920.0,"y":24859.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"LED-0","before":{"x":4040,"y":25555.0},"after":{"x":2390.0,"y":24859.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"LFS-0","before":{"x":40,"y":26479.0},"after":{"x":40,"y":25783.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"ZAS-0","before":{"x":840,"y":26479.0},"after":{"x":510.0,"y":25783.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"LIA-0","before":{"x":1640,"y":26479.0},"after":{"x":980.0,"y":25783.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"05 · Planner, routines & trips"},
+    {"nodeId":"MZR-0","before":{"x":40,"y":27563.0},"after":{"x":40,"y":26747.0},"footprint":{"x":0,"y":0,"width":2350.0,"height":170.0},"group":"06 · Actual wear, history & insights"},
+    {"nodeId":"K16-0","before":{"x":40,"y":27813.0},"after":{"x":40,"y":26997.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"06 · Actual wear, history & insights"},
+    {"nodeId":"S0K-0","before":{"x":840,"y":27813.0},"after":{"x":510.0,"y":26997.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"06 · Actual wear, history & insights"},
+    {"nodeId":"RHZ-0","before":{"x":1640,"y":27813.0},"after":{"x":980.0,"y":26997.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"06 · Actual wear, history & insights"},
+    {"nodeId":"RP6-0","before":{"x":2440,"y":27813.0},"after":{"x":1450.0,"y":26997.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"06 · Actual wear, history & insights"},
+    {"nodeId":"RZO-0","before":{"x":3240,"y":27813.0},"after":{"x":1920.0,"y":26997.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"06 · Actual wear, history & insights"},
+    {"nodeId":"K2G-0","before":{"x":4040,"y":27813.0},"after":{"x":2390.0,"y":26997.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"06 · Actual wear, history & insights"},
+    {"nodeId":"RQG-0","before":{"x":40,"y":28737.0},"after":{"x":40,"y":27921.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"06 · Actual wear, history & insights"},
+    {"nodeId":"S44-0","before":{"x":840,"y":28737.0},"after":{"x":510.0,"y":27921.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"06 · Actual wear, history & insights"},
+    {"nodeId":"LH2-0","before":{"x":1640,"y":28737.0},"after":{"x":980.0,"y":27921.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"06 · Actual wear, history & insights"},
+    {"nodeId":"S50-0","before":{"x":2440,"y":28737.0},"after":{"x":1450.0,"y":27921.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"06 · Actual wear, history & insights"},
+    {"nodeId":"MZW-0","before":{"x":40,"y":29821.0},"after":{"x":40,"y":28885.0},"footprint":{"x":0,"y":0,"width":2350.0,"height":170.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"KPT-0","before":{"x":40,"y":30071.0},"after":{"x":40,"y":29135.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"RDJ-0","before":{"x":840,"y":30071.0},"after":{"x":510.0,"y":29135.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"N0G-0","before":{"x":1640,"y":30071.0},"after":{"x":980.0,"y":29135.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"KWC-0","before":{"x":2440,"y":30071.0},"after":{"x":1450.0,"y":29135.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"NC6-0","before":{"x":3240,"y":30071.0},"after":{"x":1920.0,"y":29135.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"KXH-0","before":{"x":4040,"y":30071.0},"after":{"x":2390.0,"y":29135.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"KZ2-0","before":{"x":40,"y":30995.0},"after":{"x":40,"y":30059.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"L0T-0","before":{"x":840,"y":30995.0},"after":{"x":510.0,"y":30059.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"KRR-0","before":{"x":1640,"y":30995.0},"after":{"x":980.0,"y":30059.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"QSL-0","before":{"x":2440,"y":30995.0},"after":{"x":1450.0,"y":30059.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"QOO-0","before":{"x":3240,"y":30995.0},"after":{"x":1920.0,"y":30059.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"QQX-0","before":{"x":4040,"y":30995.0},"after":{"x":2390.0,"y":30059.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"QV1-0","before":{"x":40,"y":31919.0},"after":{"x":40,"y":30983.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"LMY-0","before":{"x":840,"y":31919.0},"after":{"x":510.0,"y":30983.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"LNT-0","before":{"x":1640,"y":31919.0},"after":{"x":980.0,"y":30983.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"KU5-0","before":{"x":2440,"y":31919.0},"after":{"x":1450.0,"y":30983.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"SJC-0","before":{"x":3240,"y":31919.0},"after":{"x":1920.0,"y":30983.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"S1G-0","before":{"x":4040,"y":31919.0},"after":{"x":2390.0,"y":30983.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"QTQ-0","before":{"x":40,"y":32843.0},"after":{"x":40,"y":31907.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"QUC-0","before":{"x":840,"y":32843.0},"after":{"x":510.0,"y":31907.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"N43-0","before":{"x":1640,"y":32843.0},"after":{"x":980.0,"y":31907.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"N5P-0","before":{"x":2440,"y":32843.0},"after":{"x":1450.0,"y":31907.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"Z8G-0","before":{"x":3240,"y":32843.0},"after":{"x":1920.0,"y":31907.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"N7F-0","before":{"x":4040,"y":32843.0},"after":{"x":2390.0,"y":31907.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"N91-0","before":{"x":40,"y":33767.0},"after":{"x":40,"y":32831.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"NAN-0","before":{"x":840,"y":33767.0},"after":{"x":510.0,"y":32831.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"K63-0","before":{"x":1640,"y":33767.0},"after":{"x":980.0,"y":32831.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"OPA-0","before":{"x":2440,"y":33767.0},"after":{"x":1450.0,"y":32831.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"OQA-0","before":{"x":3240,"y":33767.0},"after":{"x":1920.0,"y":32831.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"07 · Agent, conversations & recovery"},
+    {"nodeId":"X7B-0","before":{"x":40,"y":34771.0},"after":{"x":40,"y":33755.0},"footprint":{"x":0,"y":0,"width":1320.0,"height":2634.0},"group":"07 · Shared private task compositions"},
+    {"nodeId":"N01-0","before":{"x":40,"y":37645.0},"after":{"x":40,"y":36509.0},"footprint":{"x":0,"y":0,"width":2350.0,"height":170.0},"group":"08 · Profile & private fit journal"},
+    {"nodeId":"SV6-0","before":{"x":40,"y":37895.0},"after":{"x":40,"y":36759.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"08 · Profile & private fit journal"},
+    {"nodeId":"SZ4-0","before":{"x":840,"y":37895.0},"after":{"x":510.0,"y":36759.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"08 · Profile & private fit journal"},
+    {"nodeId":"T2C-0","before":{"x":1640,"y":37895.0},"after":{"x":980.0,"y":36759.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"08 · Profile & private fit journal"},
+    {"nodeId":"Z1X-0","before":{"x":2440,"y":37895.0},"after":{"x":1450.0,"y":36759.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"08 · Profile & private fit journal"},
+    {"nodeId":"Z6J-0","before":{"x":3240,"y":37895.0},"after":{"x":1920.0,"y":36759.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"08 · Profile & private fit journal"},
+    {"nodeId":"LS0-0","before":{"x":4040,"y":37895.0},"after":{"x":2390.0,"y":36759.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"08 · Profile & private fit journal"},
+    {"nodeId":"V0A-0","before":{"x":40,"y":38819.0},"after":{"x":40,"y":37683.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"08 · Profile & private fit journal"},
+    {"nodeId":"T3X-0","before":{"x":840,"y":38819.0},"after":{"x":510.0,"y":37683.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"08 · Profile & private fit journal"},
+    {"nodeId":"Z01-0","before":{"x":1640,"y":38819.0},"after":{"x":980.0,"y":37683.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"08 · Profile & private fit journal"},
+    {"nodeId":"LT9-0","before":{"x":2440,"y":38819.0},"after":{"x":1450.0,"y":37683.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"08 · Profile & private fit journal"},
+    {"nodeId":"N06-0","before":{"x":40,"y":39903.0},"after":{"x":40,"y":38647.0},"footprint":{"x":0,"y":0,"width":2350.0,"height":170.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"KGU-0","before":{"x":40,"y":40153.0},"after":{"x":40,"y":38897.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"LU7-0","before":{"x":840,"y":40153.0},"after":{"x":510.0,"y":38897.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"LV5-0","before":{"x":1640,"y":40153.0},"after":{"x":980.0,"y":38897.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"LW3-0","before":{"x":2440,"y":40153.0},"after":{"x":1450.0,"y":38897.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"LLB-0","before":{"x":3240,"y":40153.0},"after":{"x":1920.0,"y":38897.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"KHP-0","before":{"x":4040,"y":40153.0},"after":{"x":2390.0,"y":38897.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"QZB-0","before":{"x":40,"y":41077.0},"after":{"x":40,"y":39821.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"R07-0","before":{"x":840,"y":41077.0},"after":{"x":510.0,"y":39821.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"R13-0","before":{"x":1640,"y":41077.0},"after":{"x":980.0,"y":39821.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"KIK-0","before":{"x":2440,"y":41077.0},"after":{"x":1450.0,"y":39821.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"ZCU-0","before":{"x":3240,"y":41077.0},"after":{"x":1920.0,"y":39821.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"R1Z-0","before":{"x":4040,"y":41077.0},"after":{"x":2390.0,"y":39821.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"R2V-0","before":{"x":40,"y":42001.0},"after":{"x":40,"y":40745.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"R3R-0","before":{"x":840,"y":42001.0},"after":{"x":510.0,"y":40745.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"R4N-0","before":{"x":1640,"y":42001.0},"after":{"x":980.0,"y":40745.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"S5W-0","before":{"x":2440,"y":42001.0},"after":{"x":1450.0,"y":40745.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"KKA-0","before":{"x":3240,"y":42001.0},"after":{"x":1920.0,"y":40745.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"KJF-0","before":{"x":4040,"y":42001.0},"after":{"x":2390.0,"y":40745.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"},
+    {"nodeId":"ZE7-0","before":{"x":40,"y":42925.0},"after":{"x":40,"y":41669.0},"footprint":{"x":0,"y":0,"width":390.0,"height":844.0},"group":"09 · Settings, preferences & local data"}
+  ]
+}

@@ -4,7 +4,7 @@ V1 section 05 in [Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW
 
 ## Views and navigation
 
-- **Planner is a dedicated root tab** in both V1 and V2: Home · Closet · Planner · Agent · Profile. Closet contains only Pieces · Outfits · Themes. V2 human Inbox is a persistent root-toolbar entry, not a sixth tab; V1 has no Inbox. Home/outfit Plan links enter Planner with their date/outfit context and preserve the source for Back.
+- **Planner is a dedicated root tab** in both V1 and V2: Today · Closet · Planner · Agent · Profile. Closet contains only Pieces · Outfits · Themes. V2 human Inbox is a persistent root-toolbar entry, not a sixth tab; V1 has no Inbox. Home/outfit Plan links enter Planner with their date/outfit context and preserve the source for Back.
 - **Default is Week**, as shown by L09 and the existing L33 Planner reference. Show the current week, selected-day agenda and upcoming plans. Month is an explicit alternate view, not a replacement default.
 - **Month** opens L85. Display the real month grid, previous/next month controls, selected date and its agenda. Week returns to the week containing the selected date. Switching views preserves selection, scroll context and existing plans.
 - Filled accent marks selection; an outlined current date remains visible when another date is selected. Dots indicate dates with plans. Accessibility labels state the full date, today/selected status and plan count; dots are not the only cue.

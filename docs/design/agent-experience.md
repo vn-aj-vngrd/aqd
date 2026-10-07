@@ -1,6 +1,6 @@
 # Agent response experience
 
-Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses its [dedicated local flow](v1-flow.md), with A33 shared under the [optional native weather contract](weather-context.md), and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
 Release boundary: [V1](../product/v1-release.md) and the V2 connected core both require local/private history, response rendering, cancel/retry/copy and proposal/receipt details. Response-version comparison and server-collected evaluation feedback below are [V2](../product/v2-backlog.md) design targets, not launch controls.
 
@@ -59,6 +59,10 @@ Default content sharing is off. The consent review names the exact response text
 Suggested versioned feedback envelope: feedback ID/idempotency key, response ID, response version, run ID, rating, reason enums, optional user note, consent version and explicitly selected attachments. Runtime/model version and application version support evaluation grouping; do not infer them. Stable pseudonymous identifiers are sufficient; no email or username is needed. Respect analytics/privacy preferences and the approved retention/deletion policy before enabling collection.
 
 Operational measurements: first-text latency, total response duration, cancellation and error outcomes, actual tool result, proposal approval/rejection and persisted receipt. Missing metrics are unknown. Ratings are subjective signals, not correctness ground truth. Evaluate authorization, correct item references, stale-data handling, unsupported claims, draft validity and recovery separately using consented examples or synthetic fixtures. Report sample sizes and runtime/version cohorts; do not show a fabricated quality score to users.
+
+## Optional current weather context
+
+Basic native WeatherKit is shared V1/V2, not external research or a cloud LLM. Weather availability is independent of Agent eligibility: it can work when Foundation Models cannot. A33 retains its existing canonical identity and returns to the actual context/response draft without sending or saving. [Weather context](weather-context.md) owns opt-in/off, Apple city-query disclosure, explicit location gesture, matching place/date/timezone, source/provider/fetch timestamps, required attribution and bounded fresh/Saved/unavailable states. Fresh explicitly selected data may inform a next request; stale context is never silently treated as fresh, and model prose cannot invent weather. Cancel/Continue without weather preserves the private task and manual styling; no closet/photo/body/chat uploads or changes to body-use consent. Forecast coverage uses returned periods up to ten days, never a two-week or historical-weather promise.
 
 ## Approval and recovery
 

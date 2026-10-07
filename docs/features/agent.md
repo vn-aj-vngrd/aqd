@@ -2,7 +2,7 @@
 
 ## Phase boundary
 
-V1 has a complete local Agent destination with conversation/history/cancel/retry/copy/Markdown, grounded local queries, outfit/theme/plan drafts and reviewed local actions. On-device/rules/manual availability states are required. Online research/weather/social/message tools and server feedback are V2; photo/speech context needs verified on-device support. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
+V1 has a complete local Agent destination with conversation/history/cancel/retry/copy/Markdown, grounded local queries, outfit/theme/plan drafts and reviewed local actions. On-device/rules/manual availability states are required. Optional basic native WeatherKit selected-place/date context is V1, governed by the [weather contract](../product/v1-release.md#optional-live-weather-contract), not an unrestricted weather tool. Advanced external weather providers/context, online research/social/message tools and server feedback are V2; photo/speech context needs verified on-device support. See [V1 release](../product/v1-release.md), [V2 backlog](../product/v2-backlog.md) and [V2 design](../design/v2-requirements.md).
 
 ## Scope and outcome
 
@@ -22,7 +22,7 @@ On-device AI remains the user's preference in both phases. Current Foundation Mo
 | Wear | Item set/date/plan entry; proposed wear or correction | Review; enforce history duplicate rules. |
 | Publication/privacy/delete | Exact targets, impact, public preview | Explicit review and confirmation. |
 | Human message | Recipient/conversation and content/reference draft | Explicit send approval; no default Inbox reading. |
-| Weather/current information | Selected location/date and permitted retrieval | State source, timestamp, missing coverage; unsupported retrieval is visible. |
+| Weather/current information | Explicit selected location/date and permitted native WeatherKit retrieval in V1/V2; advanced sources V2 | Only fresh matching returned data is Agent input; source/place/timezone/date/freshness and SDK attribution required. Saved/expired/missing/out-of-range context is not current fact. No wardrobe/photos/body/chat sent to weather/search services; unavailable weather never blocks manual work. |
 
 Full ownership/access validation happens when actions execute, not only during prompt construction. User notes, generated text, public captions, and imported metadata cannot authorize a tool call. Photos/private notes are absent from current model context; adding them requires a scoped reviewed feature.
 
@@ -93,6 +93,8 @@ Use [SystemLanguageModel availability](https://developer.apple.com/documentation
 | Available | Existing Agent conversation/composer | Revalidate before sending. Availability alone does not prove output quality or image/speech capability. |
 
 The fourth-slot Agent launches the existing native full-screen task. Back/dismissal restores the originating tab/task, preserved selection, scroll and accessibility focus; Open Closet selects Closet without losing the previous task. Preserve local conversations, drafts, selected context and approvals when availability changes. Existing conversation history stays readable through history/data controls, with no composer or write action that requires an unavailable model. A running attempt that loses availability stops safely, retains received content/draft and requires fresh validation before a new attempt. The same reason applies to focused Suggest/Style/Plan actions: explain it in context, retain pins/fields and offer manual creation. Do not replace model chat with an unlabeled rules engine. Re-check on foreground return and explicit Check again; do not spin indefinitely.
+
+WeatherKit is independent of this model gate: unavailable Agent/AI does not disable optional weather in Home/Outfit/Planner. LOCAL-16 tests this distinction; models cannot invent live forecasts or silently retrieve weather without the weather contract's consent/request budgets.
 
 V2 adds a user-selected LLM provider option, including on iPhones without Apple Intelligence. On-device remains available where supported; cloud use is opt-in, never inferred from opening Agent, a failed local request or app upgrade. Before the first cloud request, show provider identity, included text/closet/media context, where processing occurs, relevant retention/deletion terms, connectivity and actual pricing/quota requirements. No automatic failover between providers. Provider/network/quota errors preserve the draft and offer an explicit retry/change provider/manual route. Provider changes affect new attempts; old history keeps provider provenance and existing local tool approval/ownership/revision checks apply equally. V1 shows no nonfunctional provider picker or promised release date. Provider, model, credentials/backend, billing and retention implementation are unresolved V2 decisions.
 

@@ -6,7 +6,7 @@ V2 only. V1 has no human messaging, requests, unread state, social notification 
 
 ## Outcome
 
-People can discuss looks and share accessible wardrobe content. Agent conversations stay in Agent. Entry: persistent labelled 44-point Inbox toolbar control on V2 roots, or Message from a public creator profile. The five base slots remain Home · Closet · Planner · Agent · Profile; Inbox is not a tab. Toolbar entry opens existing I01, then a conversation; Back restores origin root/scroll/selected tab. Startup/incoming Inbox intents open Inbox while retaining the origin (default Home for a fresh session); conversation Back returns through I01. No unread badge is shown without actual acknowledged unread state. V1 has no mirrored entry.
+People can discuss looks and share accessible wardrobe content. Agent conversations stay in Agent. Entry: persistent labelled 44-point Inbox toolbar control on V2 roots, or Message from a public creator profile. The five base slots remain Today · Closet · Planner · Agent · Profile; Inbox is not a tab. Toolbar entry opens existing I01, then a conversation; Back restores origin root/scroll/selected tab. Startup/incoming Inbox intents open Inbox while retaining the origin (default Home for a fresh session); conversation Back returns through I01. No unread badge is shown without actual acknowledged unread state. V1 has no mirrored entry.
 
 Working first scope: one-to-one text and references to public wardrobe content. Inbox sections are Chats and Requests. Social activity (follows/reactions) is deferred; it is not mixed into messages merely because the supplied Alta reference proposed “activity.” Group chats, calls, arbitrary media uploads, location sharing, and private wardrobe attachments are excluded from the first slice.
 

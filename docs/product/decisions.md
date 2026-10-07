@@ -24,21 +24,39 @@ Updated October 5, 2026. The current owner request supersedes the earlier full-c
 - Onboarding and Settings share six preference questions plus review, with unnumbered navigation titles, seven numbered steps and separate Step n of 7/progress; no Skip question/Skip setup controls. Every question accepts an explicit answer or honest No preference/refusal; fit/comfort/colors and self-described height/body shape remain private, with body details optional. Body use starts off, unknown stays unknown, no photo inference or exact-size guarantee, and no automatic cloud/public exposure.
 - Scope is documentation/plans and Paper only. Five-slot native baseline, cross-root selection/returns, Inbox toolbar/incoming intents, VoiceOver/Dynamic Type/keyboard/safe areas require later native evidence; no app wiring/build or verification pass is claimed.
 
+### Confirmed optional WeatherKit scope change
+
+The owner approved moving basic live weather from V2 into V1, inherited by V2, using direct native Apple WeatherKit only. This is documentation/Paper authorization, not app implementation, commit, push or service provisioning. Local private storage/no AQD backend/account/social/cloud LLM and a fully offline manual core remain; V1 is not strictly zero-network. Weather is off until chosen and independent of Foundation Models eligibility. Retain C04 and broader requirements as V1 WeatherKit foundation plus V2 advanced providers/research/calendar/alerts/notifications/expanded travel/collaboration.
+
+The [V1 weather contract](v1-release.md#optional-live-weather-contract) confirms pre-action request/search disclosure, selected coordinates/date-range only, no closet/photos/body/chat payload, manual online Apple city lookup without device-location permission, explicit one-shot When In Use (approximate allowed, no Always/background tracking), cancellation and parent-draft-only Apply. Confirmed AQD policy: coalesced visible foreground requests, earliest provider expiry/30-minute freshness cap, automatic refresh ≥30 minutes only if missing/expired and visible, manual 60-second cooldown, ≤5 snapshots × ≤10 returned days, labelled saved data ≤24 hours never as fresh Agent input, hide numbers afterward, off purges, local units without refetch. Forecasts use actual returned bounds, not long-plan/historical inference; SDK Apple mark/legal attribution is required or numerical values are withheld. LOCAL-16 is an acceptance target, not device/quality/performance proof.
+
+Apple Developer Program/App ID entitlement enables the native service, not an end-user account/backend. Included capacity is 500,000 calls/month **per membership**, potentially requiring paid capacity; AQD budgets are not Apple quotas. WeatherKit iOS 16+ does not lower the existing AQD manual iOS 18 target. [Research](../references/weatherkit-v1.md) owns source evidence; [weather context](../design/weather-context.md) owns UI states. No reproducible app/build baseline or native verification is claimed.
+
+### Confirmed native target / transparency refinement · October 7, 2026
+
+Docs/Paper-only scope: commit deployment **iOS18.0** for complete manual core, build published stable **SDK27/Xcode27**, latest stable maintenance at implementation. [Primary research](../references/native-ios-materials.md) owns source evidence, not native build proof. Optional Foundation Models26/runtime eligibility, custom glass26 and27 styles do not raise minimum18; physical-device quality and optional weather network/entitlement remain separate gates. Use actual native controls with each running OS's appearance, opaque content and guarded custom material fallback. Critical alerts require explicit Cancel/destructive; routine related choices retain their actual source and26+ inline/implicit-cancel adaptation instead of guaranteed bottom placement. Preserve all confirmation safety scopes/IDs, no-write cancellation and unknown-operation reconciliation.
+
+Five icon-only native tabs are an explicit HIG-label exception; public UIKit nil-title items are a feasibility route to test, not a tested implementation. No fake glass tab bar/private hacks. Foundations adds bounded **Transparency · Native iOS** API/reference boards, no phase scenes/routes. Official27 resources listing is verified; exact27 dialog kit content/licensing/assets remain uninspected, so older middle/bottom drawings are illustrative only. No app implementation or acceptance advancement.
+
+### Confirmed Today customization · October7
+
+The owner approved **Today** as the first destination label/accessibility name, with unchanged house visual. Private header Search becomes native Customize Today (`slider.horizontal.3`); public All/Following and Closet/global Search remain. [Twelve in-app AQD widgets](../features/today.md), including independent local notes/photos, may be added/configured/duplicated/removed/reordered with minimum one and no arbitrary maximum. Stock Today’s look/Your week in wear/Closet in use is the absent-store default, never a silent personalized reset. No external integrations or WidgetKit. Weather is an existing Off/setup/details launcher, not new numerical data or implicit consent. V2 inherits local configuration and may explicitly use its existing connected feed store. Atomic drafts/Done/Undo, minimum/required-content validation, failures/unknown reconciliation, source/media recovery and all accessibility states are required. This authorizes Paper/docs only; no app, ticket, goal, commit or push.
+
 ## Working defaults for V1
 
 | Choice | Proposed practical default | Owner contract |
 | --- | --- | --- |
-| Device | iPhone first; retain existing manual iOS 18 target subject to reproducible build review | [V1 release](v1-release.md) |
-| Navigation | Home · Closet · Planner · Agent · Profile in both phases; dedicated Planner root, Pieces/Outfits/Themes-only Closet, Settings from Profile/toolbar; V2-only persistent Inbox root-toolbar entry | [V1 flow](../design/v1-flow.md) |
+| Device | iPhone first; committed deployment18.0 / build stableSDK27, native baseline/build acceptance still required | [V1 release](v1-release.md) |
+| Navigation | Today · Closet · Planner · Agent · Profile in both phases; dedicated Planner root, Pieces/Outfits/Themes-only Closet, Settings from Profile/toolbar; V2-only persistent Inbox root-toolbar entry | [V1 flow](../design/v1-flow.md) |
 | Capture | Photo/name/category validated before new-piece save; labels omit Required/Optional; one cover photo, editable optional metadata, manual classification with verified local proposals/cleanup | [Wardrobe](../features/wardrobe.md) |
 | Storage | Versioned local database and protected media; no account; disable CloudKit; exclude AQD data from automatic backup | [V1 architecture](../architecture/v1.md) |
 | Recovery | User-initiated archive export and reviewed full local restore; disclose device/app-loss risk | [V1 release data contract](v1-release.md#data-contract) |
-| Outfits/planning | Owned outfits/favorites/themes, dates/routines/trips/packing, actual wear/history/insights; no external service dependency | [V1 release](v1-release.md) |
+| Outfits/planning | Owned outfits/favorites/themes, dates/routines/trips/packing, actual wear/history/insights; no external service dependency for manual work; optional native WeatherKit context | [V1 release](v1-release.md) |
 | Fit journal | One optional photo via shared native Photos/camera source sheet; optional outfit link/note ≤500 user-perceived characters, stable local date/timezone. Protected drafts/imports, scoped confirmed deletion, minimal outfit snapshot after outfit deletion; journal media/data included in explicit export/restore, excluded from automatic backup | [Profile journal](../features/profile-account.md#v1-private-fit-journal) |
 | Assistance | Complete local Agent/history and focused reviewed actions with Foundation Models when available; labelled rules/manual fallback | [V1 architecture](../architecture/v1.md) |
-| Commercial | Free local MVP; no subscription/entitlement infrastructure | [Pricing proposals](../architecture/pricing-strategy.md) |
+| Commercial | Free local MVP; no subscription/billing entitlement infrastructure; WeatherKit developer capability is separate | [Pricing proposals](../architecture/pricing-strategy.md) |
 
-These implementation defaults make the plan concrete without claiming the user chose a specific persistence API or OS/device matrix. Verify them against restored source before implementation; no cloud service is needed to resolve V1.
+These implementation defaults make the plan concrete without claiming the user chose a specific persistence API or OS/device matrix. Verify them against restored source before implementation; no AQD cloud service is needed; optional WeatherKit and Apple city lookup are the approved direct online exception.
 
 ## V1 implementation evidence needed
 
@@ -54,7 +72,7 @@ Restore or establish a reproducible iOS baseline; validate schema/migration, med
 | Community safety | Audience/age policy, block/report, rate limits, operator enforcement, appeals/support | Public discovery/comments and messaging |
 | Messaging | Transport, retention, request policy, durable send/read acknowledgments, encryption claims, media scanning | Human Inbox and richer chat |
 | AI/context | Supported image/speech/tools, bounded generation, physical-device quality; explicit cloud processing consent if ever chosen | Rich Agent/capture/current context |
-| Weather/calendar/push | Source/licensing/coverage, selected-location consent, calendar permission/conflicts, APNs lifecycle | Contextual planning and notifications |
+| Advanced weather/calendar/push | Inherit confirmed V1 WeatherKit contract; additional source/licensing/coverage/consent, calendar permission/conflicts, APNs lifecycle | Advanced contextual planning and notifications |
 | Try-on/shopping | Provider/rights/consent/retention, real-photo quality, cost/latency/retry; catalog/licensing/affiliate terms | Optional previews and commerce |
 | Billing/platforms | Purchase/restore/cancellation/entitlement policy, store requirements and native layouts | Paid tiers and additional clients |
 | Operations | Provider/region/budget, backups/restore, role/MFA/audit, telemetry, alerts/SLOs and launch workload | Connected production release |

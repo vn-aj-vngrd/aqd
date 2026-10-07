@@ -6,9 +6,10 @@
 | --- | --- | --- | --- |
 | W | [Wardrobe](wardrobe.md) | Local manual single-photo capture, search/edit/archive/lifecycle | Full capture/visual automation/inspiration/connected data |
 | O | [Outfits and themes](outfits-themes.md) | Complete local outfits/favorites/themes and focused assistance | Themes, rich styling and publication |
-| P | [Planning and history](planning-history.md) | Complete local plans/routines/trips/packing and wear/history/insights | Bulk plans, routines/events/trips/packing, weather and richer insights |
-| A | [Agent](agent.md) | Complete local Agent/chat/history and reviewed private actions | Full conversation/actions/tools/rich input/history/feedback |
-| S | [Discovery and publishing](discovery-publishing.md) | Private Today concepts only | Feeds/publication/social search/follows/comments/inspiration |
+| P | [Planning and history](planning-history.md) | Complete local plans/routines/trips/packing and wear/history/insights; optional basic native WeatherKit | Inherit basic weather; advanced providers/context, bulk plans, routines/events/trips/packing and richer insights |
+| A | [Agent](agent.md) | Complete local Agent/chat/history and reviewed private actions; explicit fresh WeatherKit context, independent weather availability | Full conversation/actions/tools/rich input/history/feedback |
+| T | [Today customization](today.md) | Twelve private in-app widgets and personal notes/photos, minimum one, durable drafts/atomic layout | Inherit private configuration; optional existing connected feed scope |
+| S | [Discovery and publishing](discovery-publishing.md) | Private Today, optional sourced native WeatherKit context | Feeds/publication/social search/follows/comments/inspiration |
 | U | [Profile and account](profile-account.md) | Local Profile/preferences and complete Settings | Profile/auth/association/sync/recovery/account lifecycle |
 | I | [Inbox](inbox.md) | Absent | Human chats, requests, delivery/access and richer messaging |
 | Future | [Virtual try-on](virtual-try-on.md) | Absent | Capability-gated private appearance previews; no fit prediction |

@@ -2,7 +2,7 @@
 
 Coverage retained from October 1 and reclassified October 5, 2026 against [V2 release definition](../product/v2-release.md). [Open Paper page 02 · V2, section 08](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-B-0). Board 00 is the overview; 01–16 are screen strips with conditional/independent branches; 17 is the coverage/launch gate map; 18 identifies V2; 19 consolidates the offline review examples and notes; 20 covers Agent input, voice and streaming. Every strip starts at step 00. Screen copies are static review references; V2 sections 01–07 own canonical screens.
 
-All 15 V2 groups have a design route/state reference. This establishes specification coverage, not complete runtime behavior or approved service policies. Shared states/native controls handle variations without adding a separate artboard for every network response. Provider, sync/conflict/deletion, moderation and weather decisions remain launch gates.
+All 15 V2 groups have a design route/state reference. This establishes specification coverage, not complete runtime behavior or approved service policies. Shared states/native controls handle variations without adding a separate artboard for every network response. Connected provider, sync/conflict/deletion and moderation policies remain launch gates. Basic native Apple WeatherKit is approved/shared with V1 under [weather context](weather-context.md); native validation and advanced-provider decisions remain separate gates.
 
 | V2 group | Workflow | Review boards | Canonical references | Coverage / boundary |
 | --- | --- | --- | --- | --- |
@@ -37,7 +37,7 @@ Use [SCREENS](screens.md) for route/state ownership. Email progress/invalid/rese
 
 U17 opens U24 for explicit competing fields; cancellation preserves both revisions. U18/U23 cover partial media restore. Loading/no-cache/error/revocation inherit X01–X08 and the shared media/search/feed contracts. Routine dirty dismissal, bounded theme/outfit/piece deletion, block and sign-out use contextual native action sheets; critical global erase/replacing restore/account deletion use final alerts after real impact/typed/auth review. Date/occasion selection, share/export and permission remain their native picker/system tasks. Exact authorized target/revision/impact stays visible; confirmation references are not pushed screens. See [risk policy](native-presentations.md#confirmation-states-not-pushed-screens).
 
-A33 uses native selected-place/date controls and states for source/time, retrieval failure and unsupported coverage. Missing context never becomes live weather. A31/A32 use the same draft/review/save/unknown/stale contract as outfit proposals. A10 remains human message review, with no default Inbox read access.
+A33 remains on its existing canonical page/node and is shared with V1 under [weather context](weather-context.md). Native selected-place/date controls carry source/timezone/freshness/attribution and off/Saved/loading/failure/actual ≤ten-day forecast bounds. Restore the actual caller/draft/focus; Apply context never saves wardrobe records. Missing context never becomes live weather. A31/A32 use the same draft/review/save/unknown/stale contract as outfit proposals. A10 remains human message review, with no default Inbox read access.
 
 ### Shared local background-removal coverage
 
@@ -52,7 +52,7 @@ All six roots are reference-only, not canonical routes. [Capture contract](captu
 
 - Final identity methods/callbacks and legacy password migration; Apple/email links remain a working default.
 - Actual sync revision/conflict, retention, export/deletion and recovery policies; illustrative statuses are not confirmed service behavior.
-- Weather provider/coverage and physical-device on-device quality; long plans and every approved action require tests.
+- Shared native WeatherKit entitlement/attribution/permission/freshness/actual forecast coverage and physical-device on-device quality remain unverified; advanced weather providers stay V2. Long plans and every approved action require tests.
 - Moderation: report → scoped operator queue → review → action → access revocation → user-visible result. Board 17 records this operating requirement; no operator app is designed here. Assign an operator and choose the protected workflow before launch.
 - Landing/support/privacy/terms/Facebook presence and store readiness are operational launch surfaces, not new phone tabs. Board 17 maps the requirement; final branded web/Facebook layouts are outside this app-screen pass.
 - Accessibility/keyboard/larger text, persistence/restart, real two-account journeys, server access, deployment/restore and workload checks remain unverified by static Paper. No native code was implemented.

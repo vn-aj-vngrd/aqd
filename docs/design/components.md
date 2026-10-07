@@ -1,19 +1,26 @@
 # AQD component contracts
 
-Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
+## Today stack and standalone action fields · current October7
+
+[Today](today.md) owns opaque16-padding/16-corner in-app widgets and native List/Editor configuration; [feature contract](../features/today.md) owns twelve kinds, local personal data, minimum-one and atomic draft/state behavior. No WidgetKit, arbitrary instance maximum, external integration or implicit weather/body/AI consent.
+
+A genuine standalone selection/configuration row has opaque surface/night-surface16 corners,14 padding and52 minimum height; flexible preserved17/15 label/value, semantic-gray value,12 gap and fixed22 disclosure lane. Entire labelled row is a native44-min target. Fields remain borderless with native focus/invalid/disabled/Increase Contrast feedback. Real grouped forms retain a single related-row group, not floating cards; OS Menu/alerts/dialogs/toolbars retain native ownership. Passive metadata, Undo/Retry/help and statistics are not forcibly surfaced. [Action evidence](evidence/action-surfaces.json) records16 style-only repaired rows, not universal coverage. Eight legacy grouped rows in AU8-1/DYR-1 remain a structural handoff, not falsely fixed; excluded Today copy BCQ-1 was not changed by that worker.
+
+
+Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses its [dedicated local flow](v1-flow.md), with existing A33 shared under [optional native weather](weather-context.md), and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
 Shared visual definitions live on [Paper page 00](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-1-0). [DESIGN.md](../../DESIGN.md) owns usage and the native target; [screen map](screens.md) owns routes. Feature specs own data rules. These are logical components, not a requirement to create one file per row.
 
 ## Foundations and native chrome
 
-Shared confirmation primitives live in Foundations `4GB-0`: critical alert `FJ2-1` and routine action-sheet specimen `ZGG-0` (choice group `ZGJ-0`, destructive row `ZGO-0`, separate Cancel `ZGR-0`). These are generic structure, not feature screens. Product confirmation states clone their actual originating scene in V1/V2; apply the [risk-based native policy](native-presentations.md#confirmation-states-not-pushed-screens). The OS supplies runtime appearance and dismissal; no custom dialog renderer or extra pushed confirmation route.
+Shared confirmation primitives live in Foundations `4GB-0`: critical alert `FJ2-1` and routine action-sheet specimen `ZGG-0` (choice group `ZGJ-0`, destructive row `ZGO-0`, separate Cancel `ZGR-0`). These retained IDs now contain crisp editable official27-kit-derived text/frame geometry: 300-point critical and260-point routine shells,34-point corners and48-point pill actions. Legacy choice wrapper `ZGJ-0` and separate Cancel `ZGR-0` are hidden; original text/action IDs remain. [Vector repair](evidence/native-dialog-vector-repair.json) also restores all38 product-phone hosts and semantic controls while hiding their raster replacements and engineering contracts. Adapted copy/material/font previews are not exact native27 pixels or runtime proof. Native critical alerts require explicit Cancel; source-anchored routine UIKit26+ dialogs may appear inline on iPhone/iPad with implicit no-write cancellation. The new [Transparency · Native iOS catalog](native-ios.md#transparency--native-ios-foundations-reference) maps all AQD native roles to Foundation rows, deployment18 and guarded26/27 enhancements. Product confirmation states clone their actual originating scene in V1/V2; apply the [risk-based native policy](native-presentations.md#confirmation-states-not-pushed-screens). The OS supplies runtime appearance and dismissal; no custom dialog renderer or extra pushed confirmation route.
 
 | Component | Canonical builder | Native implementation | Contract |
 | --- | --- | --- | --- |
 | Semantic tokens | `TOKENS`, `DARK_TOKENS` | Asset/semantic colors and system text styles | One place to change colors, type roles, space, radii. Dark mapping is semantic, not inverted photography. |
 | Status/safe area | `status` | System-owned | Keep native status, home indicator, keyboard and safe-area insets. Reference status markup is illustrative. |
 | Root/detail header | `header` | NavigationStack/UINavigationController | Root title versus compact detail title; native glass Back and toolbar actions, system back label/history and swipe gesture; preserve title at large text. |
-| Glass tab bar | `nav` | TabView/UITabBarController | Same five named slots in V1/V2: Home · Closet · Planner · Agent · Profile. Equal native widths, centered icons without visible captions, full nonoverlapping hit areas ≥44 × 44 pt, explicit destination accessibility names, selection, restored navigation state and accessible selected trait. Agent presentation exception is in DESIGN.md. |
+| Glass tab bar | `nav` | TabView/UITabBarController | Same five named slots in V1/V2: Today · Closet · Planner · Agent · Profile. Equal native widths, centered icons without visible captions, full nonoverlapping hit areas ≥44 × 44 pt, explicit destination accessibility names, selection, restored navigation state and accessible selected trait. Agent presentation exception is in DESIGN.md. Icon-only tabs are also an explicit HIG exception: test public UIKit nil-title items and native adaptation; never recreate a custom glass bar. |
 | Toolbar icon button | `icon`, `header` | Button/ToolbarItem or UIBarButtonItem | 44-point target; SF Symbol plus accessibility label; loading/disabled/destructive semantics. Search/Add may group by task. |
 | Search | `search` | searchable/UISearchController | Explicit scope, query, clear, cancel, keyboard, loading/results/empty/error, retained selection and scroll state. |
 | Primary/secondary action | `button` | Native Button with semantic solid primary / flat secondary styling | Standalone primary uses solid accent fill; secondary content actions use plain regular-weight action-text labels with no background, border, blur or shadow. Flat soft-blue Back/View outfit capsules retain their explicit contracts. Primary buttons have no blur or shadow. Inline content actions retain native plain style. One primary action; label retained during progress; duplicate submission prevented; disabled reason explained beside decision. |
@@ -26,6 +33,10 @@ Paper phone chrome follows the viewport geometry in [DESIGN.md](../../DESIGN.md#
 Today’s look uses a flat secondary capsule for View outfit, matching tour Back: accent-soft background, action-text label, no border, blur or shadow. Dark appearance uses the corresponding night roles. Retain the existing equal-width action slots and minimum 44-point targets; Record wear remains prominent. This content-card exception applies to the shared Home reference and its V1/V2 copies.
 
 Welcome and onboarding alternatives (Take the tour, Take a quick tour, Open Home and Explore first) use centered plain action-text labels without filled capsules, borders, blur or shadows. Use regular-weight plain secondary labels and 50-point reference targets throughout matching entry flows. Group adjacent primary/secondary actions with a dedicated 12-point-gap action stack, matching Welcome. This applies to entry, piece detail, outfit/planner forms, confirmation and recovery flows in V1/V2 and equivalent admin action stacks. Content sections retain their own spacing; do not let their 16/20/24-point gap space individual buttons. Equivalent V2 Welcome account links use the same target and regular weight. Tour step Back/Next remain their existing capsules, and Settings replay remains a grouped row.
+
+## Compact Home weather context
+
+[Weather context](weather-context.md) owns this shared V1/V2 component. Home uses the locale-formatted short date + native condition symbol + temperature, not a separate card. Keep a ≥44-point details target and conservative visible runtime Apple Weather mark/legal line below the date. Show inline numbers only after opt-in, fresh retrieval and matching Home/selected-place day/timezone; off/unavailable/mismatch leaves date only, stale uses explicit Saved/updated text. The weather city never changes plan/journal day. Details expose selected place/day/timezone, source/freshness and actual available forecast fields. Missing attribution with no valid cached asset suppresses numbers. Paper's unverified SDK-asset slot illustrates placement, not certified Apple branding or service retrieval. Use existing grouped rows/system text and native growing layout; settings/source actions return to the actual caller without saving wardrobe records.
 
 ## Reusable content
 
@@ -58,6 +69,22 @@ Keep identity, section titles, explanations and warnings outside the group, with
 ## Native surfaces represented by contracts
 
 Apple sign-in, Photos/Camera picker, Share sheet, date picker, keyboard, system permission alerts, context menus, destructive confirmations and text-selection/edit menus use standard system controls. Their exact geometry is OS-owned. Reference artboards illustrate entry/return and task copy, not a requirement to reproduce the OS in custom views.
+
+## App-owned semantic feedback
+
+Foundations `10S3-0` owns five generic variants, not phone screens or a Toast component. Existing saved row `4F2-0` / text `4F3-0` now uses confirmed-success check plus success-soft while retaining15/21 text and identity. [Portable evidence](evidence/feedback-variants.json) records146 reviewed targets, exclusions, synchronized copies and limits.
+
+| Role | Symbol / foreground | Meaning |
+| --- | --- | --- |
+| Neutral | `info.circle` / secondary | Draft/bookkeeping/privacy assurance; not a save receipt |
+| Info | `info.circle` / info | Guidance/cached context; active work keeps shared progress |
+| Success | `checkmark.circle` / success | Actual acknowledged completion only |
+| Warning | `exclamationmark.triangle` / warning | Recoverable risk, offline capability, conflict or unknown result; reconcile before retry |
+| Danger | `exclamationmark.octagon` / error | Actual blocking validation/failure; retained draft and recovery |
+
+This is AQD app-owned Label/status grammar, not a universal iOS severity component. Reuse paired semantic/night tokens; primary message text stays ink. Use an18-point fixed symbol lane,8-point gap and first-line alignment; wrap flexible text without shrinking existing15/21–22,17/24 or13/24 helper roles. Contained notices may use matching opaque soft grounds; inline helpers remain unboxed. One message group gets one symbol, not one per paragraph. Persistent Name/Category labels, action text, native critical titles, progress and pristine instructions are excluded. `JNB-0` remains neutral privacy assurance; cached results are info, offline capability warning, pending/unknown never success.
+
+Native implementation uses SwiftUI `Label` (iOS14, within deployment18), meaningful combined text and decorative-symbol accessibility hiding. Associate validation with its field, focus the first invalid field and announce real transitions once. VoiceOver, Dynamic Type, RTL, Night and native material checks are acceptance targets, not verified Paper behavior. Native alerts/dialogs retain platform title/text/actions; see [icon limits](native-presentations.md#native-ios-alert-icon-policy).
 
 ## Shared behavior
 
@@ -117,7 +144,7 @@ Skeletons reserve content geometry and do not constitute a second animated busy 
 
 ### Destructive action hierarchy
 
-A destructive confirmation has one destructive commit action and a safe neutral Cancel/Keep editing action. Delete can be the task's main action without becoming AQD blue. Use native destructive roles and semantic system red for Delete, Block, Discard and Unpublish commands; navigation titles and impact copy remain neutral. Menu/list commands and secondary delete entries use destructive text on native regular material. A confirmed full-task destructive commit may use the existing red prominent treatment; it never uses the blue primary tint. Native alerts/confirmation dialogs retain system action layout and red destructive labels rather than custom glass button stacks. Disabled destructive commits are neutral/disabled, with no blue fill and no enabled red affordance. Cancellation changes no records; failure retains the target and draft.
+A destructive confirmation has one deliberate native destructive commit and safe neutral cancellation. Critical alerts require explicit Cancel/Keep editing; routine source-anchored dialogs may use OS-supported implicit outside cancellation without a visible button. Delete can be the task's main action without becoming AQD blue. Use native destructive roles and semantic system red for Delete, Block, Discard and Unpublish commands; navigation titles and impact copy remain neutral. Menu/list commands and secondary delete entries use destructive text on native regular material. A confirmed full-task destructive commit may use the existing red prominent treatment; it never uses the blue primary tint. Native alerts/confirmation dialogs retain system action layout and red destructive labels rather than custom glass button stacks. Disabled destructive commits are neutral/disabled, with no blue fill and no enabled red affordance. Cancellation changes no records; failure retains the target and draft.
 
 Composition previews reserve at least 245 pt so their photo columns fit. `screenLayout` keeps docked message composers outside scrolling content; native implementations use safe-area/keyboard insets.
 
@@ -240,6 +267,12 @@ Share chooser offers Piece, Outfit and Theme. Every photo requires at least one 
 E15–E17, U16–U24 and A31–A33 reuse status/header/home indicator, body/metadata hierarchy, native rows, primary/secondary action stacks and shared save/error states. Exact account, record/revision, artifact and operation status is supplied by real records. Conflict choice opens U24 without discarding either revision. Export/deletion progress/failed/unknown variants retain the operation; native share, reauthentication, confirmation and place/date pickers remain platform-owned. See [V2 coverage](v2-coverage.md).
 
 Shared V1/V2 connected-core response actions are Copy, Retry and Details. Helpful/Not helpful and version-comparison masters prepare V2 extensions; show them when their real lifecycle is enabled. V1 omits Notifications and the acquisition survey. V2 connected core gates those controls until V2-E09/E15 transport/collection is enabled. Inbox gates remote mute until its notification transport exists. No unavailable toggle implies a service exists.
+
+## Input consistency and native material
+
+Ordinary editable fields use one opaque semantic surface,16-point corners and14-point padding, without decorative resting border, blur or shadow. Use native plain editing; do not choose SDK27 bordered-field styling merely because it exists. Preserve approved value/label/helper roles and native focus, invalid, disabled and Increase Contrast feedback. Existing50/52-point single-line references exceed44-point target requirements;54-point choice rows are a different role, not a universal text-input minimum. Multiline fields grow; preserve the specialized Height/unit geometry.
+
+Liquid Glass belongs to justified native functional chrome or a floating Agent outer shell, not ordinary form content or a second inner editor shell. Native search/keyboard/alert material remains OS-owned; web/admin retain their separate boundary/focus rules. The [input audit and repairs](evidence/input-component-consistency.json) reviewed ordinary fields/search/Agent/human composers and excluded non-input strokes; it repaired the two stale validation/typed-DELETE examples without indiscriminate border deletion or resizing92 otherwise-valid fields. Native behavior and unnamed future frames remain unverified.
 
 ## Liquid Glass across controls
 

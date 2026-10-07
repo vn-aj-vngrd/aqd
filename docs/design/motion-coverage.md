@@ -192,7 +192,8 @@ Every Paper screen/state inherits [Global motion](motion.md), including interrup
 | U23 · Restore failed | N-push | C-form, C-load, C-save | Preserve drafts/revisions and announce actual terminal status; no invented percentage or premature receipt. |
 | A31 · Review theme | N-push | C-form, C-load, C-save | Preserve drafts/revisions and announce actual terminal status; no invented percentage or premature receipt. |
 | A32 · Review changes | N-push | C-form, C-load, C-save | Preserve drafts/revisions and announce actual terminal status; no invented percentage or premature receipt. |
-| A33 · Weather context | N-push | C-form, C-load, C-save | Preserve drafts/revisions and announce actual terminal status; no invented percentage or premature receipt. |
+| A33 +108S-0–10FL-0 · Shared V1/V2 WeatherKit states | Native push/search/permission | C-form, C-load, C-select | OS transitions/growing rows/bounded fade; Reduce Motion immediate or opacity-only. Preserve actual source/draft/focus; Settings confirms optional preference, outfit/plan/Agent apply context only. No invented progress or save receipt. See [weather](weather-context.md). |
+|10GK-0 · Enabled Home inline weather | Native Home/details push | C-load, C-select | Date/symbol/temperature only, no card/number animation; source/time/Saved announced, day mismatch omits values. Return to same Home; legal system-browser return preserves focus. |
 | U24 · Review conflicting edits | N-push | C-form, C-load, C-save | Preserve drafts/revisions and announce actual terminal status; no invented percentage or premature receipt. |
 
 | W30 · Closet options | Native Menu | None | Anchored toolbar presentation; selection dismisses then pushes S08/S29; dismissal preserves Closet state. |

@@ -184,7 +184,8 @@
       "v2DarkPhonesFound": 0,
       "darkSupport": "Paired light/dark tokens and native dark appearance remain required; dark component masters are retained."
     },
-    "currentInventory": {
+    "currentInventory": {"rootArtboards":518,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":138,"nestedOfflineReferences":4,"pages":[{"id":"p-1-0","count":25,"canonicalCount":0,"rootReferenceCount":25},{"id":"p-2-0","count":206,"canonicalCount":169,"rootReferenceCount":37},{"id":"p-B-0","count":287,"canonicalCount":211,"rootReferenceCount":76}],"nodeCounts":[2046,11504,22218],"totalNodes":35768,"tokenHash":"fdeb7346","evidence":"feedback-variants.json","nodeCountStatus":"Feedback worker final three-page aggregates; frozen earlier scoped checks unchanged, not rerun"},
+    "historicalBackgroundRemovalInventory": {
       "rootArtboards":502,"canonicalScreens":380,"v1CanonicalScreens":169,"v2CanonicalScreens":211,"rootReferences":122,"nestedOfflineReferences":4,
       "pages":[{"id":"p-1-0","name":"00 · Foundations","count":18,"canonicalCount":0,"rootReferenceCount":18},{"id":"p-2-0","name":"01 · V1","count":197,"canonicalCount":169,"rootReferenceCount":28},{"id":"p-B-0","name":"02 · V2","count":287,"canonicalCount":211,"rootReferenceCount":76}],
       "nodeCounts":[1847,10952,21913],"totalNodes":34712,"tokenHash":"fdeb7346","nodeCountStatus":"Parent-confirmed live three-page counts after background-removal design froze; static only","evidence":"background-removal.json"

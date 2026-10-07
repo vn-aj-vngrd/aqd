@@ -17,6 +17,14 @@ _Avoid_: Asset when naming the user-facing object; a photo is media attached to 
 
 **Wear record**: A record of items actually worn, distinct from a future intention or saved outfit.
 
+## Today
+
+**Today**: The private first destination containing a personally arranged stack of in-app AQD cards; it keeps the house navigation symbol.
+
+**Today widget**: One configured in-app card showing existing AQD records, a chosen local note/photo, or explicit local task shortcuts. It is not an operating-system Home Screen widget or an external integration.
+
+**Today configuration**: The person’s ordered collection of widget instances and their chosen presentation/content, with at least one instance. Repeated kinds may serve different purposes; source records remain distinct from the presentation.
+
 ## Personal planning
 
 **Planner**: The personal workspace for scheduling outfits and managing clothing needs over time.

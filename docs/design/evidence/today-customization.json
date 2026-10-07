@@ -1,0 +1,2751 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "canonical": 380,
+  "checks": {"pnpmCheck":{"tests":38,"passed":38,"failed":0,"scope":"repository tooling, not app/native tests"},"jsonFilesParsed":27,"markdownFilesChecked":94,"localFileLinksChecked":893,"missingFileLinks":0,"fragmentAnchorsSeparatelyChecked":false,"gitDiffCheck":0,"referenceEntries":164,"rootReferences":160,"existingNestedReferences":4,"baselineWeatherPNGMatches":true,"all168ShiftedRootXUnchanged":true,"newPhoneAndNeighborFootprintsChecked":true,"allPagePairwiseBoundsRerun":false,"nativeRuntimeVerified":false,"nativeBackAndToolbarHitRectsVerified":false,"appearanceAccessibilityVerified":false,"commitPushOrAppCode":false},
+  "nativeAndQualityGates": ["Native18/26/27 controls/44-point hit rects/source-anchor/focus/safe-area return","Dynamic Type/VoiceOver/RTL/Night/contrast/Reduce Transparency/keyboard/permission states","Atomic durable local content/media/revisions, failure/unknown reconciliation, Undo/backups","Eight preexisting grouped configuration rows held","Numerical-weather details-only attribution remains unverified/release-blocking"],
+  "tokenHash": "fdeb7346",
+  "sources": [
+    {
+      "root": "JMF-0",
+      "canonical": "L02",
+      "header": "JMR-0",
+      "title": "JMS-0",
+      "searchWrapper": null,
+      "searchGlyph": null,
+      "change": "add Customize Today; no existing Search",
+      "newCustomizeWrapper": "11M7-0",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "display": "flex",
+        "width": "44px",
+        "height": "44px",
+        "flexShrink": "0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "borderRadius": "999px",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "KBP-0",
+      "canonical": "L23",
+      "header": "KE3-0",
+      "title": "KE8-0",
+      "searchWrapper": "KE4-0",
+      "searchGlyph": "KE5-0",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "minWidth": "44px",
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0",
+        "height": "var(--spacing-control-height)",
+        "width": "var(--spacing-control-height)",
+        "borderRadius": "var(--radius-999)",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-glass-edge) 0px 1px 0px inset, var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "10GK-0",
+      "canonical": null,
+      "header": "10JC-0",
+      "title": "10JH-0",
+      "searchWrapper": "10JD-0",
+      "searchGlyph": "10JE-0",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "minWidth": "44px",
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0",
+        "height": "var(--spacing-control-height)",
+        "width": "var(--spacing-control-height)",
+        "borderRadius": "var(--radius-999)",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-glass-edge) 0px 1px 0px inset, var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "MLN-0",
+      "canonical": "L62",
+      "header": "MNP-0",
+      "title": "MNU-0",
+      "searchWrapper": "MNQ-0",
+      "searchGlyph": "MNR-0",
+      "interaction": "tour remains inert preview",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "minWidth": "44px",
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0",
+        "height": "var(--spacing-control-height)",
+        "width": "var(--spacing-control-height)",
+        "borderRadius": "var(--radius-999)",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-glass-edge) 0px 1px 0px inset, var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "7JN-0",
+      "canonical": "S15",
+      "header": "7JZ-0",
+      "title": "7K0-0",
+      "toolbarGroup": "UN6-0",
+      "searchWrapper": "7K1-0",
+      "searchGlyph": "7K2-0",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "minWidth": "44px",
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0",
+        "height": "var(--spacing-control-height)",
+        "width": "var(--spacing-control-height)",
+        "borderRadius": "var(--radius-999)",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-glass-edge) 0px 1px 0px inset, var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "7L6-0",
+      "canonical": "S16",
+      "header": "7LI-0",
+      "title": "7LJ-0",
+      "toolbarGroup": "UN8-0",
+      "searchWrapper": "7LK-0",
+      "searchGlyph": "7LL-0",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "minWidth": "44px",
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0",
+        "height": "var(--spacing-control-height)",
+        "width": "var(--spacing-control-height)",
+        "borderRadius": "var(--radius-999)",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-glass-edge) 0px 1px 0px inset, var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "7MP-0",
+      "canonical": "S17",
+      "header": "7N1-0",
+      "title": "7N2-0",
+      "toolbarGroup": "UNC-0",
+      "searchWrapper": "7N3-0",
+      "searchGlyph": "7N4-0",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "minWidth": "44px",
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0",
+        "height": "var(--spacing-control-height)",
+        "width": "var(--spacing-control-height)",
+        "borderRadius": "var(--radius-999)",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-glass-edge) 0px 1px 0px inset, var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "7X5-0",
+      "canonical": "S18",
+      "header": "7XH-0",
+      "title": "7XI-0",
+      "toolbarGroup": "UNE-0",
+      "searchWrapper": "7XJ-0",
+      "searchGlyph": "7XK-0",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "minWidth": "44px",
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0",
+        "height": "var(--spacing-control-height)",
+        "width": "var(--spacing-control-height)",
+        "borderRadius": "var(--radius-999)",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-glass-edge) 0px 1px 0px inset, var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "AQF-1",
+      "canonical": "S48",
+      "header": "ARQ-1",
+      "title": "ARV-1",
+      "toolbarGroup": "UNA-0",
+      "searchWrapper": "ARR-1",
+      "searchGlyph": "ARS-1",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "minWidth": "44px",
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0",
+        "height": "var(--spacing-control-height)",
+        "width": "var(--spacing-control-height)",
+        "borderRadius": "var(--radius-999)",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-glass-edge) 0px 1px 0px inset, var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "ADU-0",
+      "canonical": null,
+      "header": "AE5-0",
+      "title": "AE6-0",
+      "searchWrapper": null,
+      "searchGlyph": null,
+      "inspectionRequired": "bounded live header inspection; cached audit does not establish current Search presence; do not confuse AE7 body with toolbar",
+      "newCustomizeWrapper": "11MQ-0",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "display": "flex",
+        "width": "44px",
+        "height": "44px",
+        "flexShrink": "0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "borderRadius": "999px",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "ATG-1",
+      "canonical": null,
+      "header": "B8L-1",
+      "title": "B8M-1",
+      "searchWrapper": "B8N-1",
+      "searchGlyph": "B8O-1",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "minWidth": "44px",
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0",
+        "height": "var(--spacing-control-height)",
+        "width": "var(--spacing-control-height)",
+        "borderRadius": "var(--radius-999)",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-glass-edge) 0px 1px 0px inset, var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "ATN-1",
+      "canonical": null,
+      "header": "BAG-1",
+      "title": "BAH-1",
+      "searchWrapper": "BAI-1",
+      "searchGlyph": "BAJ-1",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "minWidth": "44px",
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0",
+        "height": "var(--spacing-control-height)",
+        "width": "var(--spacing-control-height)",
+        "borderRadius": "var(--radius-999)",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-glass-edge) 0px 1px 0px inset, var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    },
+    {
+      "root": "AU1-1",
+      "canonical": null,
+      "header": "BVO-1",
+      "title": "BVP-1",
+      "searchWrapper": "BVQ-1",
+      "searchGlyph": "BVR-1",
+      "titleLiveVerified": "Today",
+      "wrapperStyles": {
+        "minWidth": "44px",
+        "display": "flex",
+        "justifyContent": "center",
+        "alignItems": "center",
+        "flexShrink": "0",
+        "height": "var(--spacing-control-height)",
+        "width": "var(--spacing-control-height)",
+        "borderRadius": "var(--radius-999)",
+        "backdropFilter": "blur(16px)",
+        "boxShadow": "var(--color-glass-edge) 0px 1px 0px inset, var(--color-shadow) 0px 2px 8px",
+        "backgroundColor": "var(--color-glass)"
+      }
+    }
+  ],
+  "newReferences": [
+    {
+      "referenceId": "TW01",
+      "nodeId": "11PD-0",
+      "pageId": "p-2-0",
+      "name": "Today \u00b7 Personalized stack",
+      "position": {
+        "x": 40,
+        "y": 7898
+      },
+      "runtimeComplete": false,
+      "body": "11PU-0"
+    },
+    {
+      "referenceId": "TW02",
+      "nodeId": "11R5-0",
+      "pageId": "p-2-0",
+      "name": "Customize Today \u00b7 Edit",
+      "position": {
+        "x": 510,
+        "y": 7898
+      },
+      "runtimeComplete": false,
+      "body": "11RP-0"
+    },
+    {
+      "referenceId": "TW03",
+      "nodeId": "11TE-0",
+      "pageId": "p-2-0",
+      "name": "Widget library",
+      "position": {
+        "x": 980,
+        "y": 7898
+      },
+      "runtimeComplete": false,
+      "body": "11TY-0"
+    },
+    {
+      "referenceId": "TW04",
+      "nodeId": "11WR-0",
+      "pageId": "p-2-0",
+      "name": "Configure \u00b7 Current or pinned record",
+      "position": {
+        "x": 1450,
+        "y": 7898
+      },
+      "runtimeComplete": false,
+      "body": "11XB-0"
+    },
+    {
+      "referenceId": "TW05",
+      "nodeId": "11YT-0",
+      "pageId": "p-2-0",
+      "name": "Configure \u00b7 Collection",
+      "position": {
+        "x": 1920,
+        "y": 7898
+      },
+      "runtimeComplete": false,
+      "body": "11ZD-0"
+    },
+    {
+      "referenceId": "TW06",
+      "nodeId": "120O-0",
+      "pageId": "p-2-0",
+      "name": "Configure \u00b7 Reporting period",
+      "position": {
+        "x": 2390,
+        "y": 7898
+      },
+      "runtimeComplete": false,
+      "body": "1218-0"
+    },
+    {
+      "referenceId": "TW07",
+      "nodeId": "1226-0",
+      "pageId": "p-2-0",
+      "name": "Configure \u00b7 Quick actions and Weather",
+      "position": {
+        "x": 40,
+        "y": 8822
+      },
+      "runtimeComplete": false,
+      "body": "122Q-0"
+    },
+    {
+      "referenceId": "TW08",
+      "nodeId": "124M-0",
+      "pageId": "p-2-0",
+      "name": "Note \u00b7 Editor",
+      "position": {
+        "x": 510,
+        "y": 8822
+      },
+      "runtimeComplete": false,
+      "body": "1256-0"
+    },
+    {
+      "referenceId": "TW09",
+      "nodeId": "125V-0",
+      "pageId": "p-2-0",
+      "name": "Photo \u00b7 Editor",
+      "position": {
+        "x": 980,
+        "y": 8822
+      },
+      "runtimeComplete": false,
+      "body": "126F-0"
+    },
+    {
+      "referenceId": "TW10",
+      "nodeId": "12AR-0",
+      "pageId": "p-2-0",
+      "name": "Widget actions \u00b7 Native menu",
+      "position": {
+        "x": 1450,
+        "y": 8822
+      },
+      "runtimeComplete": false,
+      "body": "12BB-0"
+    },
+    {
+      "referenceId": "TW11",
+      "nodeId": "12DY-0",
+      "pageId": "p-2-0",
+      "name": "Reorder \u00b7 Accessible list",
+      "position": {
+        "x": 1920,
+        "y": 8822
+      },
+      "runtimeComplete": false,
+      "body": "12EI-0"
+    },
+    {
+      "referenceId": "TW12",
+      "nodeId": "12GK-0",
+      "pageId": "p-2-0",
+      "name": "Minimum one \u00b7 Removal prevented",
+      "position": {
+        "x": 2390,
+        "y": 8822
+      },
+      "runtimeComplete": false,
+      "body": "12H4-0"
+    },
+    {
+      "referenceId": "TW13",
+      "nodeId": "12HW-0",
+      "pageId": "p-2-0",
+      "name": "Discard changes \u00b7 Scoped native decision",
+      "position": {
+        "x": 40,
+        "y": 9746
+      },
+      "runtimeComplete": false,
+      "body": "12IG-0",
+      "deferredNativeDiscard": true
+    },
+    {
+      "referenceId": "TW14",
+      "nodeId": "12K0-0",
+      "pageId": "p-2-0",
+      "name": "Restore defaults \u00b7 Layout review",
+      "position": {
+        "x": 510,
+        "y": 9746
+      },
+      "runtimeComplete": false,
+      "body": "12KK-0"
+    },
+    {
+      "referenceId": "TW15",
+      "nodeId": "12LQ-0",
+      "pageId": "p-2-0",
+      "name": "Done \u00b7 Saving",
+      "position": {
+        "x": 980,
+        "y": 9746
+      },
+      "runtimeComplete": false,
+      "body": "12MA-0"
+    },
+    {
+      "referenceId": "TW16",
+      "nodeId": "12NM-0",
+      "pageId": "p-2-0",
+      "name": "Done \u00b7 Failed",
+      "position": {
+        "x": 1450,
+        "y": 9746
+      },
+      "runtimeComplete": false,
+      "body": "12O6-0"
+    },
+    {
+      "referenceId": "TW17",
+      "nodeId": "12PK-0",
+      "pageId": "p-2-0",
+      "name": "Done \u00b7 Unknown and reconciliation",
+      "position": {
+        "x": 1920,
+        "y": 9746
+      },
+      "runtimeComplete": false,
+      "body": "12Q4-0"
+    },
+    {
+      "referenceId": "TW18",
+      "nodeId": "12RL-0",
+      "pageId": "p-2-0",
+      "name": "Today \u00b7 Independent source states",
+      "position": {
+        "x": 2390,
+        "y": 9746
+      },
+      "runtimeComplete": false,
+      "body": "12S2-0"
+    },
+    {
+      "referenceId": "TW19",
+      "nodeId": "12TD-0",
+      "pageId": "p-2-0",
+      "name": "Personal media \u00b7 Recovery",
+      "position": {
+        "x": 40,
+        "y": 10670
+      },
+      "runtimeComplete": false,
+      "body": "12TX-0"
+    },
+    {
+      "referenceId": "TW20",
+      "nodeId": "12V1-0",
+      "pageId": "p-2-0",
+      "name": "Customize Today \u00b7 Large text and keyboard",
+      "body": "12VL-0",
+      "position": {
+        "x": 510,
+        "y": 10670
+      },
+      "runtimeComplete": false
+    }
+  ],
+  "roles": 45,
+  "aliases": 12,
+  "symbolMaster": "11M4-0",
+  "asset": "assets/today/slider-horizontal-3-macos-secondary.png",
+  "renders": {
+    "round": "final bounded batch after correction; all13 headers, all20 reference phones, catalog, icon catalog and genuine native authority board",
+    "directory": "/tmp/aqd-today-renders",
+    "headerContact": "headers.png",
+    "stateContacts": [
+      "states-1.png",
+      "states-2.png",
+      "states-3.png",
+      "states-4.png"
+    ],
+    "sourceRootIDs": [
+      "JMF-0",
+      "KBP-0",
+      "10GK-0",
+      "MLN-0",
+      "7JN-0",
+      "7L6-0",
+      "7MP-0",
+      "7X5-0",
+      "AQF-1",
+      "ADU-0",
+      "ATG-1",
+      "ATN-1",
+      "AU1-1"
+    ],
+    "referenceRootIDs": [
+      "11PD-0",
+      "11R5-0",
+      "11TE-0",
+      "11WR-0",
+      "11YT-0",
+      "120O-0",
+      "1226-0",
+      "124M-0",
+      "125V-0",
+      "12AR-0",
+      "12DY-0",
+      "12GK-0",
+      "12HW-0",
+      "12K0-0",
+      "12LQ-0",
+      "12NM-0",
+      "12PK-0",
+      "12RL-0",
+      "12TD-0",
+      "12V1-0"
+    ],
+    "nativeRuntimeVerified": false,
+    "confirmationRootIDs": [
+      "11PD-0",
+      "12RL-0",
+      "12DY-0",
+      "11WR-0",
+      "11YT-0",
+      "11R5-0",
+      "12AR-0",
+      "12HW-0",
+      "12K0-0",
+      "12LQ-0",
+      "12PK-0",
+      "B8L-1",
+      "BAG-1",
+      "BVO-1"
+    ],
+    "reviewVerdict": "All20 state renders reviewed; corrections address date anchoring, preview action safety, boundary disables, explicit More, provisional Undo/Done, and pending guard. Native/appearance/accessibility behavior unverified."
+  },
+  "positionOnlyShifts": [
+    {
+      "nodeId": "JPZ-0",
+      "fromY": 7898.0,
+      "toY": 12898.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "SOI-0",
+      "fromY": 7898.0,
+      "toY": 12898.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "ODL-0",
+      "fromY": 7898.0,
+      "toY": 12898.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "OEW-0",
+      "fromY": 7898.0,
+      "toY": 12898.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "OG7-0",
+      "fromY": 7898.0,
+      "toY": 12898.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "Z3U-0",
+      "fromY": 7898.0,
+      "toY": 12898.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "OIZ-0",
+      "fromY": 8822.0,
+      "toY": 13822.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "1010-0",
+      "fromY": 8822.0,
+      "toY": 13822.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "1025-0",
+      "fromY": 8822.0,
+      "toY": 13822.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "103A-0",
+      "fromY": 8822.0,
+      "toY": 13822.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "104E-0",
+      "fromY": 8822.0,
+      "toY": 13822.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "105C-0",
+      "fromY": 8822.0,
+      "toY": 13822.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "OMU-0",
+      "fromY": 9852.0,
+      "toY": 14852.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QXJ-0",
+      "fromY": 9852.0,
+      "toY": 14852.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QYF-0",
+      "fromY": 9852.0,
+      "toY": 14852.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RIV-0",
+      "fromY": 9852.0,
+      "toY": 14852.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QGO-0",
+      "fromY": 9852.0,
+      "toY": 14852.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QIB-0",
+      "fromY": 9852.0,
+      "toY": 14852.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "JRU-0",
+      "fromY": 10776.0,
+      "toY": 15776.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LJG-0",
+      "fromY": 10776.0,
+      "toY": 15776.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LKC-0",
+      "fromY": 10776.0,
+      "toY": 15776.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QWN-0",
+      "fromY": 10776.0,
+      "toY": 15776.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "S6S-0",
+      "fromY": 10776.0,
+      "toY": 15776.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "S7O-0",
+      "fromY": 10776.0,
+      "toY": 15776.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "K3U-0",
+      "fromY": 11700.0,
+      "toY": 16700.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "X71-0",
+      "fromY": 12624.0,
+      "toY": 17624.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "22T-0",
+      "fromY": 12884.0,
+      "toY": 17884.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "MZC-0",
+      "fromY": 13848.0,
+      "toY": 18848.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "JNX-0",
+      "fromY": 14098.0,
+      "toY": 19098.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "K70-0",
+      "fromY": 14098.0,
+      "toY": 19098.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "S2C-0",
+      "fromY": 14098.0,
+      "toY": 19098.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R7B-0",
+      "fromY": 14098.0,
+      "toY": 19098.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "K9I-0",
+      "fromY": 14098.0,
+      "toY": 19098.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R87-0",
+      "fromY": 14098.0,
+      "toY": 19098.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R93-0",
+      "fromY": 15022.0,
+      "toY": 20022.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RJR-0",
+      "fromY": 15022.0,
+      "toY": 20022.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RX0-0",
+      "fromY": 15022.0,
+      "toY": 20022.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QJE-0",
+      "fromY": 15022.0,
+      "toY": 20022.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QKI-0",
+      "fromY": 15022.0,
+      "toY": 20022.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R6F-0",
+      "fromY": 15022.0,
+      "toY": 20022.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QE0-0",
+      "fromY": 15946.0,
+      "toY": 20946.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "Q5Q-0",
+      "fromY": 15946.0,
+      "toY": 20946.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "Q77-0",
+      "fromY": 15946.0,
+      "toY": 20946.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "Q8P-0",
+      "fromY": 15946.0,
+      "toY": 20946.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QA4-0",
+      "fromY": 15946.0,
+      "toY": 20946.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QFC-0",
+      "fromY": 15946.0,
+      "toY": 20946.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QBG-0",
+      "fromY": 16870.0,
+      "toY": 21870.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QCU-0",
+      "fromY": 16870.0,
+      "toY": 21870.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R9Z-0",
+      "fromY": 16870.0,
+      "toY": 21870.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RAV-0",
+      "fromY": 16870.0,
+      "toY": 21870.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "L3D-0",
+      "fromY": 16870.0,
+      "toY": 21870.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "S38-0",
+      "fromY": 16870.0,
+      "toY": 21870.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RML-0",
+      "fromY": 17794.0,
+      "toY": 22794.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "L7F-0",
+      "fromY": 17794.0,
+      "toY": 22794.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "UUA-0",
+      "fromY": 17794.0,
+      "toY": 22794.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RBR-0",
+      "fromY": 17794.0,
+      "toY": 22794.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "L8P-0",
+      "fromY": 17794.0,
+      "toY": 22794.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RNP-0",
+      "fromY": 17794.0,
+      "toY": 22794.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RXW-0",
+      "fromY": 18718.0,
+      "toY": 23718.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "MZH-0",
+      "fromY": 19682.0,
+      "toY": 24682.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "JT0-0",
+      "fromY": 19932.0,
+      "toY": 24932.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QM0-0",
+      "fromY": 19932.0,
+      "toY": 24932.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QNN-0",
+      "fromY": 19932.0,
+      "toY": 24932.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "K4P-0",
+      "fromY": 19932.0,
+      "toY": 24932.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "JUF-0",
+      "fromY": 19932.0,
+      "toY": 24932.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "REF-0",
+      "fromY": 19932.0,
+      "toY": 24932.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KVA-0",
+      "fromY": 20873.0,
+      "toY": 25873.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "ZRD-0",
+      "fromY": 20873.0,
+      "toY": 25873.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "JVS-0",
+      "fromY": 20873.0,
+      "toY": 25873.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RCN-0",
+      "fromY": 20873.0,
+      "toY": 25873.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RL6-0",
+      "fromY": 20873.0,
+      "toY": 25873.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RYS-0",
+      "fromY": 20873.0,
+      "toY": 25873.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R5J-0",
+      "fromY": 21797.0,
+      "toY": 26797.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "MZM-0",
+      "fromY": 22761.0,
+      "toY": 27761.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "JXA-0",
+      "fromY": 23011.0,
+      "toY": 28011.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "L5M-0",
+      "fromY": 23011.0,
+      "toY": 28011.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "PRM-0",
+      "fromY": 23011.0,
+      "toY": 28011.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "P8B-0",
+      "fromY": 23011.0,
+      "toY": 28011.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RFB-0",
+      "fromY": 23011.0,
+      "toY": 28011.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "PEP-0",
+      "fromY": 23011.0,
+      "toY": 28011.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "JZY-0",
+      "fromY": 23935.0,
+      "toY": 28935.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "SH0-0",
+      "fromY": 23935.0,
+      "toY": 28935.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "PFY-0",
+      "fromY": 23935.0,
+      "toY": 28935.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RG7-0",
+      "fromY": 23935.0,
+      "toY": 28935.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "SG4-0",
+      "fromY": 23935.0,
+      "toY": 28935.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "S9L-0",
+      "fromY": 23935.0,
+      "toY": 28935.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "L9S-0",
+      "fromY": 24859.0,
+      "toY": 29859.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LBA-0",
+      "fromY": 24859.0,
+      "toY": 29859.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RH3-0",
+      "fromY": 24859.0,
+      "toY": 29859.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "SEL-0",
+      "fromY": 24859.0,
+      "toY": 29859.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LCX-0",
+      "fromY": 24859.0,
+      "toY": 29859.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LED-0",
+      "fromY": 24859.0,
+      "toY": 29859.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LFS-0",
+      "fromY": 25783.0,
+      "toY": 30783.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "ZAS-0",
+      "fromY": 25783.0,
+      "toY": 30783.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LIA-0",
+      "fromY": 25783.0,
+      "toY": 30783.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "MZR-0",
+      "fromY": 26747.0,
+      "toY": 31747.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "K16-0",
+      "fromY": 26997.0,
+      "toY": 31997.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "S0K-0",
+      "fromY": 26997.0,
+      "toY": 31997.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RHZ-0",
+      "fromY": 26997.0,
+      "toY": 31997.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RP6-0",
+      "fromY": 26997.0,
+      "toY": 31997.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RZO-0",
+      "fromY": 26997.0,
+      "toY": 31997.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "K2G-0",
+      "fromY": 26997.0,
+      "toY": 31997.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RQG-0",
+      "fromY": 27921.0,
+      "toY": 32921.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "S44-0",
+      "fromY": 27921.0,
+      "toY": 32921.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LH2-0",
+      "fromY": 27921.0,
+      "toY": 32921.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "S50-0",
+      "fromY": 27921.0,
+      "toY": 32921.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "MZW-0",
+      "fromY": 28885.0,
+      "toY": 33885.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KPT-0",
+      "fromY": 29135.0,
+      "toY": 34135.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "RDJ-0",
+      "fromY": 29135.0,
+      "toY": 34135.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "N0G-0",
+      "fromY": 29135.0,
+      "toY": 34135.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KWC-0",
+      "fromY": 29135.0,
+      "toY": 34135.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "NC6-0",
+      "fromY": 29135.0,
+      "toY": 34135.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KXH-0",
+      "fromY": 29135.0,
+      "toY": 34135.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KZ2-0",
+      "fromY": 30059.0,
+      "toY": 35059.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "L0T-0",
+      "fromY": 30059.0,
+      "toY": 35059.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KRR-0",
+      "fromY": 30059.0,
+      "toY": 35059.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QSL-0",
+      "fromY": 30059.0,
+      "toY": 35059.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QOO-0",
+      "fromY": 30059.0,
+      "toY": 35059.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QQX-0",
+      "fromY": 30059.0,
+      "toY": 35059.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QV1-0",
+      "fromY": 30983.0,
+      "toY": 35983.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LMY-0",
+      "fromY": 30983.0,
+      "toY": 35983.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LNT-0",
+      "fromY": 30983.0,
+      "toY": 35983.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KU5-0",
+      "fromY": 30983.0,
+      "toY": 35983.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "SJC-0",
+      "fromY": 30983.0,
+      "toY": 35983.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "S1G-0",
+      "fromY": 30983.0,
+      "toY": 35983.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QTQ-0",
+      "fromY": 31907.0,
+      "toY": 36907.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QUC-0",
+      "fromY": 31907.0,
+      "toY": 36907.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "N43-0",
+      "fromY": 31907.0,
+      "toY": 36907.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "N5P-0",
+      "fromY": 31907.0,
+      "toY": 36907.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "Z8G-0",
+      "fromY": 31907.0,
+      "toY": 36907.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "N7F-0",
+      "fromY": 31907.0,
+      "toY": 36907.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "N91-0",
+      "fromY": 32831.0,
+      "toY": 37831.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "NAN-0",
+      "fromY": 32831.0,
+      "toY": 37831.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "K63-0",
+      "fromY": 32831.0,
+      "toY": 37831.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "OPA-0",
+      "fromY": 32831.0,
+      "toY": 37831.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "OQA-0",
+      "fromY": 32831.0,
+      "toY": 37831.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "X7B-0",
+      "fromY": 33755.0,
+      "toY": 38755.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "N01-0",
+      "fromY": 36509.0,
+      "toY": 41509.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "SV6-0",
+      "fromY": 36759.0,
+      "toY": 41759.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "SZ4-0",
+      "fromY": 36759.0,
+      "toY": 41759.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "T2C-0",
+      "fromY": 36759.0,
+      "toY": 41759.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "Z1X-0",
+      "fromY": 36759.0,
+      "toY": 41759.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "Z6J-0",
+      "fromY": 36759.0,
+      "toY": 41759.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LS0-0",
+      "fromY": 36759.0,
+      "toY": 41759.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "V0A-0",
+      "fromY": 37683.0,
+      "toY": 42683.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "T3X-0",
+      "fromY": 37683.0,
+      "toY": 42683.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "Z01-0",
+      "fromY": 37683.0,
+      "toY": 42683.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LT9-0",
+      "fromY": 37683.0,
+      "toY": 42683.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "N06-0",
+      "fromY": 38647.0,
+      "toY": 43647.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KGU-0",
+      "fromY": 38897.0,
+      "toY": 43897.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LU7-0",
+      "fromY": 38897.0,
+      "toY": 43897.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LV5-0",
+      "fromY": 38897.0,
+      "toY": 43897.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LW3-0",
+      "fromY": 38897.0,
+      "toY": 43897.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "LLB-0",
+      "fromY": 38897.0,
+      "toY": 43897.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KHP-0",
+      "fromY": 38897.0,
+      "toY": 43897.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "QZB-0",
+      "fromY": 39821.0,
+      "toY": 44821.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R07-0",
+      "fromY": 39821.0,
+      "toY": 44821.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R13-0",
+      "fromY": 39821.0,
+      "toY": 44821.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KIK-0",
+      "fromY": 39821.0,
+      "toY": 44821.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "ZCU-0",
+      "fromY": 39821.0,
+      "toY": 44821.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R1Z-0",
+      "fromY": 39821.0,
+      "toY": 44821.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R2V-0",
+      "fromY": 40745.0,
+      "toY": 45745.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R3R-0",
+      "fromY": 40745.0,
+      "toY": 45745.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "R4N-0",
+      "fromY": 40745.0,
+      "toY": 45745.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "S5W-0",
+      "fromY": 40745.0,
+      "toY": 45745.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KKA-0",
+      "fromY": 40745.0,
+      "toY": 45745.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "KJF-0",
+      "fromY": 40745.0,
+      "toY": 45745.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    },
+    {
+      "nodeId": "ZE7-0",
+      "fromY": 41669.0,
+      "toY": 46669.0,
+      "xUnchanged": true,
+      "stylesChanged": "root top only; preexisting live left retained"
+    }
+  ],
+  "catalog": {
+    "nodeId": "12ZP-0",
+    "pageId": "p-2-0",
+    "position": {
+      "x": 40,
+      "y": 11594
+    },
+    "canonical": false
+  },
+  "demoPhoto": {
+    "sourceNode": "WWU-0",
+    "sourceURL": "https://app.paper.design/file-assets/01M3SM2KBHBZG6MA0Q744Y9NW0/42HDR1JSMFRHPVM0X8T7ZCE755.png",
+    "meaning": "existing illustrative atlas only; no new user record"
+  },
+  "plannerOverrides": [
+    "No arbitrary Note2000/title80/caption500 caps",
+    "Weather remains launcher, not numerical card",
+    "Public Search retained",
+    "No engineering text inside product phones"
+  ],
+  "nativeDiscard": {
+    "nodeId": "135H-0",
+    "source": "Apple-linked27 UI Kit Action Sheets/Light CABE2C74-7EC2-4664-A556-E7A268742764",
+    "sourceImageNode": "11HJ-0",
+    "geometry": "260-wide original;30-corner shell;14-inset48-high24-corner actions;adapted title/body/action count",
+    "classification": "source-derived component with AQD user-facing text, not exact27 pixels or runtime capture",
+    "native27Capture": false
+  },
+  "nativeMenu": {
+    "nodeId": "134Y-0",
+    "source": "RCP-0",
+    "anchor": "Note instance row",
+    "actions": [
+      "Edit note",
+      "Move up",
+      "Move down",
+      "Remove widget"
+    ],
+    "nativeVerified": false
+  },
+  "invalidNoteApplyParent": "125L-0",
+  "chromeFix": "TW01/TW18 root32/38 + native gray22/44 Customize; date14/20 at116; reused five-slot native nav; fixture keyboard from N14-0",
+  "reviewCorrections": [
+    "TW01/TW18 metadata reparented to actual viewport",
+    "TW11 first/last moves visibly disabled",
+    "TW04 preview source actions hidden and nested containment removed",
+    "TW05 populated-source copy corrected",
+    "TW15/TW17 mutation rows disabled; pending text neutral",
+    "Section02 caption explicitly illustrative and names Today customization"
+  ],
+  "affordanceCorrections": [
+    "TW02/TW10/TW13 explicit native44 More per instance; passive widget-editor metadata, Menu Edit/Configure is the action; actual standalone configuration disclosures retain chevrons",
+    "TW14 provisional restored layout uses Done and real draft Undo, not contradictory second Restore"
+  ],
+  "finalInventory": {
+    "pages": [
+      {
+        "id": "p-1-0",
+        "roots": 26,
+        "nodes": 2100
+      },
+      {
+        "id": "p-2-0",
+        "roots": 227,
+        "nodes": 13055
+      },
+      {
+        "id": "p-B-0",
+        "roots": 287,
+        "nodes": 22291
+      }
+    ],
+    "roots": 540,
+    "nodes": 37446,
+    "canonical": 380,
+    "method": "one final get_basic_info per explicit page after all writers completed; root lists truncate100, aggregates do not",
+    "tokenHash": "fdeb7346"
+  },
+  "canonicalVerification": {
+    "count": 380,
+    "exactBaselineTriplesEqual": true,
+    "baseline": "/tmp/aqd-v1-regroup-parent-baseline.json",
+    "qualification": "repository registered IDs/node/page triples; not independent380-root raster census"
+  },
+  "currentV1LocatorOverrides": {
+    "JK8-0": {
+      "x": 40.0,
+      "y": 0.0
+    },
+    "MZ2-0": {
+      "x": 40.0,
+      "y": 820.0
+    },
+    "W6B-0": {
+      "x": 40.0,
+      "y": 1070.0
+    },
+    "MJJ-0": {
+      "x": 510.0,
+      "y": 1070.0
+    },
+    "MKC-0": {
+      "x": 980.0,
+      "y": 1070.0
+    },
+    "JL8-0": {
+      "x": 1450.0,
+      "y": 1070.0
+    },
+    "SAH-0": {
+      "x": 1920.0,
+      "y": 1070.0
+    },
+    "SBD-0": {
+      "x": 2390.0,
+      "y": 1070.0
+    },
+    "SC9-0": {
+      "x": 40.0,
+      "y": 1994.0
+    },
+    "V6F-0": {
+      "x": 510.0,
+      "y": 1994.0
+    },
+    "V7G-0": {
+      "x": 980.0,
+      "y": 1994.0
+    },
+    "V8H-0": {
+      "x": 1450.0,
+      "y": 1994.0
+    },
+    "V9I-0": {
+      "x": 1920.0,
+      "y": 1994.0
+    },
+    "VO9-0": {
+      "x": 2390.0,
+      "y": 1994.0
+    },
+    "VPA-0": {
+      "x": 40.0,
+      "y": 2918.0
+    },
+    "WK5-0": {
+      "x": 510.0,
+      "y": 2918.0
+    },
+    "WZT-0": {
+      "x": 980.0,
+      "y": 2918.0
+    },
+    "X1H-0": {
+      "x": 1450.0,
+      "y": 2918.0
+    },
+    "X35-0": {
+      "x": 1920.0,
+      "y": 2918.0
+    },
+    "X53-0": {
+      "x": 2390.0,
+      "y": 2918.0
+    },
+    "MLN-0": {
+      "x": 40.0,
+      "y": 3842.0
+    },
+    "MO5-0": {
+      "x": 510.0,
+      "y": 3842.0
+    },
+    "MQ5-0": {
+      "x": 980.0,
+      "y": 3842.0
+    },
+    "MS3-0": {
+      "x": 1450.0,
+      "y": 3842.0
+    },
+    "MU3-0": {
+      "x": 1920.0,
+      "y": 3842.0
+    },
+    "64C-0": {
+      "x": 40.0,
+      "y": 4766.0
+    },
+    "MZ7-0": {
+      "x": 40.0,
+      "y": 5736.0
+    },
+    "JMF-0": {
+      "x": 40.0,
+      "y": 6018.0
+    },
+    "KBP-0": {
+      "x": 510.0,
+      "y": 6018.0
+    },
+    "10GK-0": {
+      "x": 980.0,
+      "y": 6018.0
+    },
+    "108S-0": {
+      "x": 1450.0,
+      "y": 6018.0
+    },
+    "109R-0": {
+      "x": 1920.0,
+      "y": 6018.0
+    },
+    "10AQ-0": {
+      "x": 2390.0,
+      "y": 6018.0
+    },
+    "10BP-0": {
+      "x": 40.0,
+      "y": 6974.0
+    },
+    "10CO-0": {
+      "x": 510.0,
+      "y": 6974.0
+    },
+    "10DN-0": {
+      "x": 980.0,
+      "y": 6974.0
+    },
+    "10EM-0": {
+      "x": 1450.0,
+      "y": 6974.0
+    },
+    "10FL-0": {
+      "x": 1920.0,
+      "y": 6974.0
+    },
+    "JPZ-0": {
+      "x": 40.001,
+      "y": 12898.0
+    },
+    "SOI-0": {
+      "x": 510.0,
+      "y": 12898.0
+    },
+    "ODL-0": {
+      "x": 980.0,
+      "y": 12898.0
+    },
+    "OEW-0": {
+      "x": 1450.0,
+      "y": 12898.0
+    },
+    "OG7-0": {
+      "x": 1920.0,
+      "y": 12898.0
+    },
+    "Z3U-0": {
+      "x": 2390.0,
+      "y": 12898.0
+    },
+    "OIZ-0": {
+      "x": 40.001,
+      "y": 13822.0
+    },
+    "1010-0": {
+      "x": 510.0,
+      "y": 13822.0
+    },
+    "1025-0": {
+      "x": 980.0,
+      "y": 13822.0
+    },
+    "103A-0": {
+      "x": 1450.0,
+      "y": 13822.0
+    },
+    "104E-0": {
+      "x": 1920.0,
+      "y": 13822.0
+    },
+    "105C-0": {
+      "x": 2390.0,
+      "y": 13822.0
+    },
+    "OMU-0": {
+      "x": 40.001,
+      "y": 14852.0
+    },
+    "QXJ-0": {
+      "x": 510.0,
+      "y": 14852.0
+    },
+    "QYF-0": {
+      "x": 980.0,
+      "y": 14852.0
+    },
+    "RIV-0": {
+      "x": 1450.0,
+      "y": 14852.0
+    },
+    "QGO-0": {
+      "x": 1920.0,
+      "y": 14852.0
+    },
+    "QIB-0": {
+      "x": 2390.0,
+      "y": 14852.0
+    },
+    "JRU-0": {
+      "x": 40.001,
+      "y": 15776.0
+    },
+    "LJG-0": {
+      "x": 510.0,
+      "y": 15776.0
+    },
+    "LKC-0": {
+      "x": 980.0,
+      "y": 15776.0
+    },
+    "QWN-0": {
+      "x": 1450.0,
+      "y": 15776.0
+    },
+    "S6S-0": {
+      "x": 1920.0,
+      "y": 15776.0
+    },
+    "S7O-0": {
+      "x": 2390.0,
+      "y": 15776.0
+    },
+    "K3U-0": {
+      "x": 40.001,
+      "y": 16700.0
+    },
+    "X71-0": {
+      "x": 40.001,
+      "y": 17624.0
+    },
+    "22T-0": {
+      "x": 40.0,
+      "y": 17884.0
+    },
+    "MZC-0": {
+      "x": 40.001,
+      "y": 18848.0
+    },
+    "JNX-0": {
+      "x": 40.001,
+      "y": 19098.0
+    },
+    "K70-0": {
+      "x": 510.0,
+      "y": 19098.0
+    },
+    "S2C-0": {
+      "x": 980.0,
+      "y": 19098.0
+    },
+    "R7B-0": {
+      "x": 1450.0,
+      "y": 19098.0
+    },
+    "K9I-0": {
+      "x": 1920.0,
+      "y": 19098.0
+    },
+    "R87-0": {
+      "x": 2390.0,
+      "y": 19098.0
+    },
+    "R93-0": {
+      "x": 40.001,
+      "y": 20022.0
+    },
+    "RJR-0": {
+      "x": 510.0,
+      "y": 20022.0
+    },
+    "RX0-0": {
+      "x": 980.0,
+      "y": 20022.0
+    },
+    "QJE-0": {
+      "x": 1450.0,
+      "y": 20022.0
+    },
+    "QKI-0": {
+      "x": 1920.0,
+      "y": 20022.0
+    },
+    "R6F-0": {
+      "x": 2390.0,
+      "y": 20022.0
+    },
+    "QE0-0": {
+      "x": 40.0,
+      "y": 20946.0
+    },
+    "Q5Q-0": {
+      "x": 510.0,
+      "y": 20946.0
+    },
+    "Q77-0": {
+      "x": 980.0,
+      "y": 20946.0
+    },
+    "Q8P-0": {
+      "x": 1450.0,
+      "y": 20946.0
+    },
+    "QA4-0": {
+      "x": 1920.0,
+      "y": 20946.0
+    },
+    "QFC-0": {
+      "x": 2390.0,
+      "y": 20946.0
+    },
+    "QBG-0": {
+      "x": 40.0,
+      "y": 21870.0
+    },
+    "QCU-0": {
+      "x": 510.0,
+      "y": 21870.0
+    },
+    "R9Z-0": {
+      "x": 980.0,
+      "y": 21870.0
+    },
+    "RAV-0": {
+      "x": 1450.0,
+      "y": 21870.0
+    },
+    "L3D-0": {
+      "x": 1920.0,
+      "y": 21870.0
+    },
+    "S38-0": {
+      "x": 2390.0,
+      "y": 21870.0
+    },
+    "RML-0": {
+      "x": 40.0,
+      "y": 22794.0
+    },
+    "L7F-0": {
+      "x": 510.0,
+      "y": 22794.0
+    },
+    "UUA-0": {
+      "x": 980.0,
+      "y": 22794.0
+    },
+    "RBR-0": {
+      "x": 1450.0,
+      "y": 22794.0
+    },
+    "L8P-0": {
+      "x": 1920.0,
+      "y": 22794.0
+    },
+    "RNP-0": {
+      "x": 2390.0,
+      "y": 22794.0
+    },
+    "RXW-0": {
+      "x": 40.0,
+      "y": 23718.0
+    },
+    "MZH-0": {
+      "x": 40.0,
+      "y": 24682.0
+    },
+    "JT0-0": {
+      "x": 40.0,
+      "y": 24932.0
+    },
+    "QM0-0": {
+      "x": 510.0,
+      "y": 24932.0
+    },
+    "QNN-0": {
+      "x": 980.0,
+      "y": 24932.0
+    },
+    "K4P-0": {
+      "x": 1450.0,
+      "y": 24932.0
+    },
+    "JUF-0": {
+      "x": 1920.0,
+      "y": 24932.0
+    },
+    "REF-0": {
+      "x": 2390.0,
+      "y": 24932.0
+    },
+    "KVA-0": {
+      "x": 40.0,
+      "y": 25873.0
+    },
+    "ZRD-0": {
+      "x": 510.0,
+      "y": 25873.0
+    },
+    "JVS-0": {
+      "x": 980.0,
+      "y": 25873.0
+    },
+    "RCN-0": {
+      "x": 1450.0,
+      "y": 25873.0
+    },
+    "RL6-0": {
+      "x": 1920.0,
+      "y": 25873.0
+    },
+    "RYS-0": {
+      "x": 2390.0,
+      "y": 25873.0
+    },
+    "R5J-0": {
+      "x": 40.0,
+      "y": 26797.0
+    },
+    "MZM-0": {
+      "x": 40.0,
+      "y": 27761.0
+    },
+    "JXA-0": {
+      "x": 40.0,
+      "y": 28011.0
+    },
+    "L5M-0": {
+      "x": 510.0,
+      "y": 28011.0
+    },
+    "PRM-0": {
+      "x": 980.0,
+      "y": 28011.0
+    },
+    "P8B-0": {
+      "x": 1450.0,
+      "y": 28011.0
+    },
+    "RFB-0": {
+      "x": 1920.0,
+      "y": 28011.0
+    },
+    "PEP-0": {
+      "x": 2390.0,
+      "y": 28011.0
+    },
+    "JZY-0": {
+      "x": 40.0,
+      "y": 28935.0
+    },
+    "SH0-0": {
+      "x": 510.0,
+      "y": 28935.0
+    },
+    "PFY-0": {
+      "x": 980.0,
+      "y": 28935.0
+    },
+    "RG7-0": {
+      "x": 1450.0,
+      "y": 28935.0
+    },
+    "SG4-0": {
+      "x": 1920.0,
+      "y": 28935.0
+    },
+    "S9L-0": {
+      "x": 2390.0,
+      "y": 28935.0
+    },
+    "L9S-0": {
+      "x": 40.0,
+      "y": 29859.0
+    },
+    "LBA-0": {
+      "x": 510.0,
+      "y": 29859.0
+    },
+    "RH3-0": {
+      "x": 980.0,
+      "y": 29859.0
+    },
+    "SEL-0": {
+      "x": 1450.0,
+      "y": 29859.0
+    },
+    "LCX-0": {
+      "x": 1920.0,
+      "y": 29859.0
+    },
+    "LED-0": {
+      "x": 2390.0,
+      "y": 29859.0
+    },
+    "LFS-0": {
+      "x": 40.0,
+      "y": 30783.0
+    },
+    "ZAS-0": {
+      "x": 510.0,
+      "y": 30783.0
+    },
+    "LIA-0": {
+      "x": 980.0,
+      "y": 30783.0
+    },
+    "MZR-0": {
+      "x": 40.0,
+      "y": 31747.0
+    },
+    "K16-0": {
+      "x": 40.0,
+      "y": 31997.0
+    },
+    "S0K-0": {
+      "x": 510.0,
+      "y": 31997.0
+    },
+    "RHZ-0": {
+      "x": 980.0,
+      "y": 31997.0
+    },
+    "RP6-0": {
+      "x": 1450.0,
+      "y": 31997.0
+    },
+    "RZO-0": {
+      "x": 1920.0,
+      "y": 31997.0
+    },
+    "K2G-0": {
+      "x": 2390.0,
+      "y": 31997.0
+    },
+    "RQG-0": {
+      "x": 40.0,
+      "y": 32921.0
+    },
+    "S44-0": {
+      "x": 510.0,
+      "y": 32921.0
+    },
+    "LH2-0": {
+      "x": 980.0,
+      "y": 32921.0
+    },
+    "S50-0": {
+      "x": 1450.0,
+      "y": 32921.0
+    },
+    "MZW-0": {
+      "x": 40.0,
+      "y": 33885.0
+    },
+    "KPT-0": {
+      "x": 40.0,
+      "y": 34135.0
+    },
+    "RDJ-0": {
+      "x": 510.0,
+      "y": 34135.0
+    },
+    "N0G-0": {
+      "x": 980.0,
+      "y": 34135.0
+    },
+    "KWC-0": {
+      "x": 1450.0,
+      "y": 34135.0
+    },
+    "NC6-0": {
+      "x": 1920.0,
+      "y": 34135.0
+    },
+    "KXH-0": {
+      "x": 2390.0,
+      "y": 34135.0
+    },
+    "KZ2-0": {
+      "x": 40.0,
+      "y": 35059.0
+    },
+    "L0T-0": {
+      "x": 510.0,
+      "y": 35059.0
+    },
+    "KRR-0": {
+      "x": 980.0,
+      "y": 35059.0
+    },
+    "QSL-0": {
+      "x": 1450.0,
+      "y": 35059.0
+    },
+    "QOO-0": {
+      "x": 1920.0,
+      "y": 35059.0
+    },
+    "QQX-0": {
+      "x": 2390.0,
+      "y": 35059.0
+    },
+    "QV1-0": {
+      "x": 40.0,
+      "y": 35983.0
+    },
+    "LMY-0": {
+      "x": 510.0,
+      "y": 35983.0
+    },
+    "LNT-0": {
+      "x": 980.0,
+      "y": 35983.0
+    },
+    "KU5-0": {
+      "x": 1450.0,
+      "y": 35983.0
+    },
+    "SJC-0": {
+      "x": 1920.0,
+      "y": 35983.0
+    },
+    "S1G-0": {
+      "x": 2390.0,
+      "y": 35983.0
+    },
+    "QTQ-0": {
+      "x": 40.0,
+      "y": 36907.0
+    },
+    "QUC-0": {
+      "x": 510.0,
+      "y": 36907.0
+    },
+    "N43-0": {
+      "x": 980.0,
+      "y": 36907.0
+    },
+    "N5P-0": {
+      "x": 1450.0,
+      "y": 36907.0
+    },
+    "Z8G-0": {
+      "x": 1920.0,
+      "y": 36907.0
+    },
+    "N7F-0": {
+      "x": 2390.0,
+      "y": 36907.0
+    },
+    "N91-0": {
+      "x": 40.0,
+      "y": 37831.0
+    },
+    "NAN-0": {
+      "x": 510.0,
+      "y": 37831.0
+    },
+    "K63-0": {
+      "x": 980.0,
+      "y": 37831.0
+    },
+    "OPA-0": {
+      "x": 1450.0,
+      "y": 37831.0
+    },
+    "OQA-0": {
+      "x": 1920.0,
+      "y": 37831.0
+    },
+    "X7B-0": {
+      "x": 40.0,
+      "y": 38755.0
+    },
+    "N01-0": {
+      "x": 40.0,
+      "y": 41509.0
+    },
+    "SV6-0": {
+      "x": 40.0,
+      "y": 41759.0
+    },
+    "SZ4-0": {
+      "x": 510.0,
+      "y": 41759.0
+    },
+    "T2C-0": {
+      "x": 980.0,
+      "y": 41759.0
+    },
+    "Z1X-0": {
+      "x": 1450.0,
+      "y": 41759.0
+    },
+    "Z6J-0": {
+      "x": 1920.0,
+      "y": 41759.0
+    },
+    "LS0-0": {
+      "x": 2390.0,
+      "y": 41759.0
+    },
+    "V0A-0": {
+      "x": 40.0,
+      "y": 42683.0
+    },
+    "T3X-0": {
+      "x": 510.0,
+      "y": 42683.0
+    },
+    "Z01-0": {
+      "x": 980.0,
+      "y": 42683.0
+    },
+    "LT9-0": {
+      "x": 1450.0,
+      "y": 42683.0
+    },
+    "N06-0": {
+      "x": 40.0,
+      "y": 43647.0
+    },
+    "KGU-0": {
+      "x": 40.0,
+      "y": 43897.0
+    },
+    "LU7-0": {
+      "x": 510.0,
+      "y": 43897.0
+    },
+    "LV5-0": {
+      "x": 980.0,
+      "y": 43897.0
+    },
+    "LW3-0": {
+      "x": 1450.0,
+      "y": 43897.0
+    },
+    "LLB-0": {
+      "x": 1920.0,
+      "y": 43897.0
+    },
+    "KHP-0": {
+      "x": 2390.0,
+      "y": 43897.0
+    },
+    "QZB-0": {
+      "x": 40.0,
+      "y": 44821.0
+    },
+    "R07-0": {
+      "x": 510.0,
+      "y": 44821.0
+    },
+    "R13-0": {
+      "x": 980.0,
+      "y": 44821.0
+    },
+    "KIK-0": {
+      "x": 1450.0,
+      "y": 44821.0
+    },
+    "ZCU-0": {
+      "x": 1920.0,
+      "y": 44821.0
+    },
+    "R1Z-0": {
+      "x": 2390.0,
+      "y": 44821.0
+    },
+    "R2V-0": {
+      "x": 40.0,
+      "y": 45745.0
+    },
+    "R3R-0": {
+      "x": 510.0,
+      "y": 45745.0
+    },
+    "R4N-0": {
+      "x": 980.0,
+      "y": 45745.0
+    },
+    "S5W-0": {
+      "x": 1450.0,
+      "y": 45745.0
+    },
+    "KKA-0": {
+      "x": 1920.0,
+      "y": 45745.0
+    },
+    "KJF-0": {
+      "x": 2390.0,
+      "y": 45745.0
+    },
+    "ZE7-0": {
+      "x": 40.0,
+      "y": 46669.0
+    }
+  },
+  "geometryVerification": {
+    "newPhoneFootprints": "20 x390x844, six lanes470 pitch/80 gaps;924 row pitch/80 gaps",
+    "catalogFootprint": "2730x1100 at40/11594;80 below last phone row,204 before shifted capture",
+    "existingV1RootsRead": 206,
+    "positionOnlyShiftCount": 168,
+    "allExpectedRootYOffsetsMatch": true,
+    "rootWidthsNotMutated": true,
+    "scope": "new-reference/neighbor footprints and position-only receipt; historical all21115 pair proof not rerun for all pages"
+  },
+  "sourceAssetSHA256": "b8634f70e51c94050a966ba03edd8449dbebb8388d418a71ead48e9ae1d3ca4b",
+  "weatherSourceHashes": {
+    "docs/design/assets/weather/cloud-sun-fill-macos.png": "b8bcccc21bee2130cfbb8a69dda14e80e7c56eb453cb58c8c7ed28697858301b",
+    "docs/design/assets/weather/cloud-sun-fill-macos-secondary.png": "6dfe388288ca99a9e24c29beb4205bef5c3a9fe7692a62e4425cb7224c22bee2"
+  },
+  "baselineWeatherHash": "b8bcccc21bee2130cfbb8a69dda14e80e7c56eb453cb58c8c7ed28697858301b",
+  "nativeRepairReconciliation": {
+    "evidence": "evidence/native-dialog-repair.json",
+    "official27KitImported": true,
+    "official27KitImages": 6,
+    "genericUIKit26_5Captures": 2,
+    "caseSpecificUIKit26_5Captures": 38,
+    "casePNGBytes": 23119613,
+    "native27Capture": false,
+    "SwiftUI27Capture": false,
+    "AQDNativeRuntimeVerified": false,
+    "rootAdded": 1,
+    "latestFollowupImageNodesAdded": 38,
+    "originalIDsAndGuardsRetained": true,
+    "technicalProductPhoneAnnotationsHidden": true
+  },
+  "actionSurfaceReconciliation": {
+    "evidence": "evidence/action-surfaces.json",
+    "repairedStandaloneRows": 16,
+    "rootDelta": 0,
+    "nodeDelta": 0,
+    "heldGroupedRows": 8,
+    "notUniversalCoverage": true
+  },
+  "searchFilterReconciliation": {
+    "evidence": "evidence/search-filter-removal.json",
+    "root": "Q5Q-0",
+    "hiddenControl": "Q5T-0",
+    "queryAndPiecesScopeOnly": true,
+    "otherFiltersPreserved": true,
+    "rootDelta": 0,
+    "nodeDelta": 0
+  }
+}

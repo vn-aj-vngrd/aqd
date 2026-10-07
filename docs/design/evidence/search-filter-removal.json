@@ -1,0 +1,13 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "scope": "Owner-requested L86 Pieces search only; not a global filter removal",
+  "root": "Q5Q-0",
+  "hiddenControl": "Q5T-0",
+  "before": "Visible Filters card, Available · Recently added summary,76px height plus12px flow gap",
+  "after": "display:none; original IDs/text retained, scope tabs followed directly by results; automatic flex reflow",
+  "protected": ["query Blue", "Pieces/Outfits/Themes controls", "Cancel", "result IDs/images", "main Closet filters", "other search-state filter controls"],
+  "semanticContract": "L86 results use query and Pieces scope, not invisible active filters. Originating Closet browse filters remain preserved separately on Cancel/return.",
+  "verification": "Parent rendered Q5Q-0 once after mutation; Filters absent, results below scope tabs, no residual gap. No native/runtime filter execution claim.",
+  "delta": {"nodes":0,"roots":0},
+  "docs": ["docs/design/search-and-feeds.md", "docs/design/v1-interactions.md"]
+}
