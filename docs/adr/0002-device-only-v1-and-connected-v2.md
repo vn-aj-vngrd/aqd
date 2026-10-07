@@ -1,6 +1,6 @@
 # ADR 0002 — Device-only V1 and connected V2
 
-Status: accepted product boundary; persistence/provider details remain proposals. Date: October 5, 2026.
+Status: accepted product boundary; persistence/provider details remain proposals. Date: October 5, 2026. Root inventory clarified to match the approved October 7 Today/Planner navigation; the device-only decision is unchanged.
 
 ## Context
 
@@ -8,7 +8,7 @@ The earlier V1 definition required the full connected wardrobe/social/Inbox prod
 
 ## Decision
 
-V1 stores AQD clothing data/media locally, has no sign-in, social UI, managed cloud sync or app backend, and supports complete Home/Closet/Agent/local Profile/Settings/onboarding, outfits/themes/plans/routines/trips/wear with explicit archive export/restore. Prefer native APIs and complete local Agent/history and optional on-device generation with a manual/rules path. Exclude AQD stores/media from automatic backup by default; disclose device-loss risk and the exception for user-selected exports. iPhone is the first target, not a new all-Apple-platform commitment.
+V1 stores AQD clothing data/media locally, has no sign-in, social UI, managed cloud sync or app backend, and supports complete Today/Closet/Planner/Agent/local Profile roots plus Settings/onboarding, outfits/themes/plans/routines/trips/wear with explicit archive export/restore. Prefer native APIs and complete local Agent/history and optional on-device generation with a manual/rules path. Exclude AQD stores/media from automatic backup by default; disclose device-loss risk and the exception for user-selected exports. iPhone is the first target, not a new all-Apple-platform commitment.
 
 V2 extends those same private features and records and retains all prior connected core and deferred enhancements, with the required backend/auth/media/sync/social/Inbox/moderation/admin infrastructure and prepared design requirements. Sign-in/association/upload must be explicit and must never publish private records automatically.
 

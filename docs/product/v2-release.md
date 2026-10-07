@@ -57,10 +57,10 @@ V2 requires working signed-in durability; selecting a backend is an outstanding 
 
 | Check | Required evidence |
 | --- | --- |
-| DATA-01 | Private local save/restart and migration preserve stable item/outfit/theme/plan/history IDs and media; corrupt/newer storage cannot be overwritten by an empty reset. |
+| DATA-01 | Private local save/restart and migration preserve stable item/outfit/theme/plan/history, journal and Today instance/content IDs, configuration/order and media; corrupt/newer storage cannot be overwritten by an empty reset. |
 | DATA-02 | Signing in associates only reviewed local records; association interruption/retry has one result. Collisions remain separate until an explicit resolution; no automatic merge. |
 | DATA-03 | Backup/sync status distinguishes local saved, pending upload, confirmed backed up and failed. Offline private edits remain usable and retry without duplication. |
-| DATA-04 | Restore the signed-in closet on a clean install/second device, including media, plans, theme memberships and wear history. Concurrent edits/deletes have a documented revision/conflict policy; conflicts never silently discard changes or resurrect deletion. |
+| DATA-04 | Restore the signed-in closet on a clean install/second device, including reviewed Today layout/repeated instances, off-layout notes/photos/media and recovery references, private Profile/journal/Agent history, plans, theme memberships and wear history. Excluded local-only state is not claimed recovered. Concurrent edits/deletes have a documented revision/conflict policy; conflicts never silently discard changes or resurrect deletion. |
 | DATA-05 | Export produces a usable versioned artifact with the owner's records/media and clear limits; it excludes other people's private messages. Guest device-only risk is disclosed before claiming recoverability. |
 | DATA-06 | Reauthenticated deletion removes account/public access immediately under the selected policy, processes owned media/data deletion reliably and explains backup retention and remaining conversation history. Sign-out, app removal and account deletion are distinct actions. |
 
