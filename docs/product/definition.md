@@ -10,7 +10,7 @@ An iPhone user can catalog owned clothing, create outfits, assign them to dates,
 | --- | --- |
 | Today | Private customizable in-app widget stack: twelve AQD kinds including own local notes/photos; minimum one, no arbitrary maximum. Stock look/week-in-wear/closet-in-use; complete manual first-use and recovery. No external integrations or All/Following feeds. [Today contract](../features/today.md). |
 | Closet | Only Pieces/Outfits/Themes segments, search/capture/lifecycle/favorites and wear/history/insight access. |
-| Planner | Dedicated root: dates/routines/trips/packing; Week default, Month alternate. Home plan links and outfit Plan actions preserve date and return context. |
+| Planner | Dedicated root: dates/routines/trips/packing; Week default, Month alternate. Today plan links and outfit Plan actions preserve date and return context. |
 | Agent | Complete local conversation/history, supported on-device wardrobe assistance, focused actions, reviewed edits and truthful receipts/recovery. |
 | Profile | Local optional name/photo/preferences and personal collection/history/insight shortcuts. No social identity or followers. |
 | Settings, from Profile More | System/Light/Dark appearance, local privacy/help/permissions and export/restore/erase. No online account. |

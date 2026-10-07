@@ -4,7 +4,7 @@ V1 section 05 in [Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW
 
 ## Views and navigation
 
-- **Planner is a dedicated root tab** in both V1 and V2: Today · Closet · Planner · Agent · Profile. Closet contains only Pieces · Outfits · Themes. V2 human Inbox is a persistent root-toolbar entry, not a sixth tab; V1 has no Inbox. Home/outfit Plan links enter Planner with their date/outfit context and preserve the source for Back.
+- **Planner is a dedicated root tab** in both V1 and V2: Today · Closet · Planner · Agent · Profile. Closet contains only Pieces · Outfits · Themes. V2 human Inbox is a persistent root-toolbar entry, not a sixth tab; V1 has no Inbox. Today/outfit Plan links enter Planner with their date/outfit context and preserve the source for Back.
 - **Default is Week**, as shown by L09 and the existing L33 Planner reference. Show the current week, selected-day agenda and upcoming plans. Month is an explicit alternate view, not a replacement default.
 - **Month** opens L85. Display the real month grid, previous/next month controls, selected date and its agenda. Week returns to the week containing the selected date. Switching views preserves selection, scroll context and existing plans.
 - Filled accent marks selection; an outlined current date remains visible when another date is selected. Dots indicate dates with plans. Accessibility labels state the full date, today/selected status and plan count; dots are not the only cue.
@@ -37,7 +37,7 @@ Recorded-wear agenda entries in L137 and populated calendar journey copies use t
 
 Agenda entries use consistent opaque 12-corner surfaces, 14-point padding, 12-point cover/text/disclosure gaps, real 64 × 80-point outfit covers, a flexible text lane and a fixed 22-point disclosure. The baseline card is at least 108 points; long titles and accessibility text increase height. Titles use 17/24 and metadata 15/21, with 4 points inside the text stack. Keep 8–12 points from a section heading to its card and 24 points between agenda sections. Standalone cards do not inherit table-style bottom rules. Compact trip summary rows without covers use the same opaque 12-corner ground and 14-point horizontal inset, a 54-point minimum target, flexible title, retained date lane and fixed disclosure. No fake entries on an empty date; hidden/offscreen examples do not establish a scroll implementation.
 
-Planner selection persists while switching Week/Month or pushing an editor. Returning from Home/outfit contextual entry restores the source state; switching root tabs preserves each root's calendar selection and scroll. Native safe areas and growing scroll content keep the five-slot bar stable. Neither selecting a date nor creating/editing/deleting a plan records actual wear.
+Planner selection persists while switching Week/Month or pushing an editor. Returning from Today/outfit contextual entry restores the source state; switching root tabs preserves each root's calendar selection and scroll. Native safe areas and growing scroll content keep the five-slot bar stable. Neither selecting a date nor creating/editing/deleting a plan records actual wear.
 
 ## Native acceptance
 

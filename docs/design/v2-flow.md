@@ -22,7 +22,7 @@ V1 is page 01; V2 is page 02. V2 sections 01–07 contain canonical features, se
 | --- | --- | --- |
 | 00 · V2 overview | Scope and route overview | Read before the screen strips. |
 | 01 · Welcome and capture | E02 → E06 → W06 → W27 → E12 → W28 / W29 | W07 provides manual classification with the same photo requirement before saving. W28 appears only for actual missing categories; its capture loop returns to the same pinned task. Ready closets skip W28. |
-| 02 · Optional auth and Home | E03 → E10 → E04 → E08 → E07 → Home | Apple can bypass email. E08 only if local association is unresolved; E07 only if a new social profile is needed. Home illustration is S48; choose the actual record-derived state. Existing accounts skip unnecessary setup. |
+| 02 · Optional auth and Today | E03 → E10 → E04 → E08 → E07 → Today | Apple can bypass email. E08 only if local association is unresolved; E07 only if a new social profile is needed. Today illustration is S48; choose the actual record-derived state. Existing accounts skip unnecessary setup. |
 | 03 · Suggest, replace and save | S48 → W17 → A03 → W16 → A03 → A04 → W15 | Replacement is optional and returns to the same review. Pin and other slots remain. Receipt follows successful approved execution. A07 gives manual fallback. |
 | 04 · Manual outfits and themes | W13 → W14 → W15; optional W18 / W19 | Themes are independent and optional; partial manual looks are identified. W05 Create theme reuses shared blank L134/L135 with V2 source-return; W19 edits an existing theme only. No AI runtime requirement. |
 | 05 · Plan, wear and history | W15 → P03 → P01 → S15 → P09 → P10 → P11 | Review before plan save. Planner and Today are separate entry points into the same records. Planned does not mean worn; history/stats require actual records. |
@@ -44,13 +44,15 @@ Supplementary strips 09–16 show conditional/independent cases, not one compuls
 
 ## Shared roots and V2 Inbox access
 
-Both phases retain five equal-width icon-only native slots Today · Closet · Planner · Agent · Profile, explicit destination accessibility names and full hit areas ≥44 × 44 pt. Closet segments are only Pieces/Outfits/Themes. Dedicated Planner defaults to Week, with Month alternate; Home plan links and outfit Plan actions carry date context, and Back restores origin/selection. Fourth-slot Agent opens a native full-screen task, dismissing to origin/scroll/selection. Account setup never gates Planner/private core.
+Both phases retain five equal-width icon-only native slots Today · Closet · Planner · Agent · Profile, explicit destination accessibility names and full hit areas ≥44 × 44 pt. Closet segments are only Pieces/Outfits/Themes. Dedicated Planner defaults to Week, with Month alternate; Today plan links and outfit Plan actions carry date context, and Back restores origin/selection. Fourth-slot Agent opens a native full-screen task, dismissing to origin/scroll/selection. Account setup never gates Planner/private core.
 
 V2 alone has a persistent labelled 44-point Inbox root-toolbar entry → existing I01 → conversations, not a tab. Back restores origin root/scroll/selected tab; startup/incoming Inbox intents preserve origin. Real acknowledged unread only; V1 has no mirrored entry. Verify native VoiceOver/focus, Dynamic Type, keyboard/safe areas and return behavior after implementation; Paper evidence is pending, not a runtime pass.
 
-## Home state and return rules
+## Today state and return rules
 
-| Actual records | Today state | Primary route |
+These retained source fixtures describe look/readiness content within the configured Today stack, not a replacement layout or authority to remove configured instances; [Today](today.md) owns stable/repeated cards and their empty/source states.
+
+| Actual records | Retained look/readiness source state | Primary route |
 | --- | --- | --- |
 | No pieces | S16 · First piece | Same capture/editor; manual eligible. |
 | Pieces, no outfits, missing categories | First-outfit guidance using S48 hierarchy | W28; add the relevant category or build a partial look manually. |
@@ -58,7 +60,7 @@ V2 alone has a persistent labelled 44-point Inbox root-toolbar entry → existin
 | Saved outfits, no current plan | S17 · No planned look | Choose a saved outfit, then plan. |
 | Current planned outfit | S15 · Today | Review actual wear; Planner edits the intention. |
 
-Eligibility reflects current availability and requested form, including whether a pinned piece can be included. Accessories/layers are optional. Readiness re-evaluates after edits/archive/save; it is not a stored checklist. Returning users restore the last Home mode/scroll position. Auth cancellation preserves the originating task and private drafts. Signing in never publishes inventory.
+Eligibility reflects current availability and requested form, including whether a pinned piece can be included. Accessories/layers are optional. Readiness re-evaluates after edits/archive/save; it is not a stored checklist. Returning users restore the last Today/All/Following scope and scroll position. Auth cancellation preserves the originating task and private drafts. Signing in never publishes inventory.
 
 ## Selected workflow coverage and remaining gates
 
@@ -81,7 +83,7 @@ The [Alta reference](../references/alta-notes.md) separates official advertised 
 ## Synchronized fixture and draft modes
 
 - Search examples now use Weekend → Weekend · 8 outfits with the same two represented member covers, and Afternoon → An easy afternoon with its canonical four-piece composition. Runtime supplies the actual selected record ID; no six unrepresented Theme memberships are invented.
-- Board 05 Today/Record wear review retains October 1, 2026, Asia/Manila. Its post-confirmation history illustration adds October 1 without changing September 30/28 records. Canonical P09's September 30 snapshot is an independent backdated mode, never a forced date for Today entry. V1 Home/Record wear use October 5; the current-week summary has no future recorded wear. Board 06 trip conflict is October 18 · Afternoon · Asia/Seoul, within the October 18–31 trip.
+- Board 05 Today/Record wear review retains October 1, 2026, Asia/Manila. Its post-confirmation history illustration adds October 1 without changing September 30/28 records. Canonical P09's September 30 snapshot is an independent backdated mode, never a forced date for Today entry. V1 Today/Record wear use October 5; the current-week summary has no future recorded wear. Board 06 trip conflict is October 18 · Afternoon · Asia/Seoul, within the October 18–31 trip.
 - Capture More details reuses L94/L95 to apply only to its parent draft; W09/W21 Save changes edit an existing saved record. W05 Create theme reuses initially blank L134/L135, never populated W19 Edit Weekend.
 - Private U09 local archive/restore/erase and U05 on-device assistance are account-independent. Local erase enters the real shared L16 impact/typed ERASE task first; YKL-0 is its final alert only after valid exact ERASE and overlays L16, never U09 directly. Cancel keeps typed review/input/store and held U09 origin. Local tasks carry localDevice scope and U09/U05 return/focus; local erase does not delete the connected account, public posts or remote backups. Account lifecycle remains separately reviewed/service-gated.
 

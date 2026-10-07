@@ -147,7 +147,7 @@ UP01 Goals → UP02 Occasions → UP03 Style → UP04 Fit/comfort → UP05 optio
 
 | ID | Screen | Next screens | Contract and states |
 | --- | --- | --- | --- |
-| P01 | [Planner](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-B-0) | P02, P03, P04, P06 | Dedicated third root in V1/V2, not a Closet segment; Week default, Month alternate. Home/outfit Plan links carry date context and Back restores origin/selection. Plans are intentions; date passage never records wear. |
+| P01 | [Planner](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-B-0) | P02, P03, P04, P06 | Dedicated third root in V1/V2, not a Closet segment; Week default, Month alternate. Today/outfit Plan links carry date context and Back restores origin/selection. Plans are intentions; date passage never records wear. |
 | P02 | [October 2026](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-B-0) | P01, P03 | Month and agenda preserve selected date. Multiple entries per calendar date; explicit plan timezone. |
 | P03 | [Plan a look](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-B-0) | P01, W02 | Date-only semantics. Editing outfit revisions flags future entries; assigning never marks worn. |
 | P04 | [New plan](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-B-0) | P05, P08, A08 | Two weeks or up to three calendar months. Resolved dates, gaps and conflicts are reviewed before save. Trip creation uses destination/activities instead of routine recurrence; V2 section 08 shows the same form variant. |
