@@ -45,7 +45,7 @@ Display the SDK-supplied light/dark Apple Weather mark and SDK legal attribution
 
 ## Welcome, onboarding and tour
 
-Reuse V2's editorial Welcome with Start my closet and Take a quick tour. Onboarding explains optional/manual capture, device-only privacy and export/loss limits. The four-step Home/Closet/Agent/Profile tour is skippable, replayable from Settings and labelled preview-only; it never inserts demo records. Persist completion/resume locally, retain drafts, and return to the correct entry. Existing users do not repeat it when V2 arrives. [V1 flow](../design/v1-flow.md#welcome-onboarding-and-tour-contract) owns exact routes and accessibility.
+Reuse V2's editorial Welcome with Start my closet and Take a quick tour. Onboarding explains optional/manual capture, device-only privacy and export/loss limits. The four-step Today/Closet/Agent/Profile tour is skippable, replayable from Settings and labelled preview-only; it never inserts demo records. Persist completion/resume locally, retain drafts, and return to the correct entry. Existing users do not repeat it when V2 arrives. [V1 flow](../design/v1-flow.md#welcome-onboarding-and-tour-contract) owns exact routes and accessibility.
 
 ## Today customization acceptance
 

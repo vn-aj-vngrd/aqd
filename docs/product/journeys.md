@@ -2,7 +2,7 @@
 October 5, 2026. Requirements and Paper references, not implemented behavior. [V1 flow](../design/v1-flow.md) and [V2 flow](../design/v2-flow.md) own the walkthroughs.
 
 ## V1 — Complete personal app on one device
-1. V2-style Welcome → private onboarding → optional Home/Closet/Agent/Profile tour → first piece or empty Home. Skip and Settings replay never add sample data or discard drafts.
+1. V2-style Welcome → private onboarding → optional Today/Closet/Agent/Profile tour → first piece or empty Today. Skip and Settings replay never add sample data or discard drafts.
 2. Photo/camera/manual capture → editable name/category → private save → actual missing-category guidance/readiness. Denial/cancel/failure keeps manual entry and the draft.
 3. Manual or supported on-device outfit drafting → pin/replace → optional independent themes/favorites → explicit save → reopen after restart.
 4. Dedicated Planner root → dated look, event, two-week schedule, three-calendar-month routine or trip → review exact conflicts → atomic save → deduplicated packing. Optional selected-place/date native WeatherKit context → disclosed city/request actions → review → Apply to parent draft only; cancel changes nothing. No external calendar or live-weather dependency; manual planning stays complete offline.

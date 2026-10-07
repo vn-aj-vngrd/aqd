@@ -6,6 +6,19 @@
   "screenCount": 380,
   "artboardCount": 540,
   "currentInventory": {"roots":540,"nodes":37451,"canonical":380,"rootReferences":160,"pages":[{"id":"p-1-0","roots":26,"nodes":2101},{"id":"p-2-0","roots":227,"nodes":13055},{"id":"p-B-0","roots":287,"nodes":22295}],"tokenHash":"fdeb7346","roles":45,"aliases":12,"evidence":"evidence/native-dialog-vector-repair.json","method":"Explicit final three-page aggregate after vector repair; original380 repository ID/node/page triples equal baseline; no full live380 raster census","runtimeComplete":false},
+  "currentTourCopyReview": {
+    "scope": "Live Paper tour and Restore completion visible-copy repair; V2 inherits L62–L66, with no separate V2 Preview only or completion counterpart found by scoped text search.",
+    "changes": [
+      {"rootId":"MLN-0","screenId":"L62","pageId":"p-2-0","nodeId":"MWB-0","before":"Home","after":"Today"},
+      {"rootId":"MU3-0","screenId":"L66","pageId":"p-2-0","nodeId":"MW1-0","before":"Open Home","after":"Open Today"},
+      {"rootId":"R4N-0","screenId":"L115","pageId":"p-2-0","nodeId":"R4Y-0","before":"Open Home","after":"Open Today"}
+    ],
+    "screenshots": {"method":"Live get_screenshot session captures, 1x; not exported","rootIds":["MLN-0","MU3-0","R4N-0"],"viewport":"390×844","result":"Pass: visible Today preview/header and Open Today fit; spacing, typography, contrast, alignment and hierarchy preserved."},
+    "inventory": {"method":"V1/V2 get_basic_info before/after","pages":[{"id":"p-2-0","roots":227,"nodes":13055},{"id":"p-B-0","roots":287,"nodes":22295}],"rootDelta":0,"nodeDelta":0,"canonicalTriplesChanged":0,"tokenHash":"fdeb7346"},
+    "preserved": "Existing IDs, layouts, routes, source/cancel behavior, drafts and historical evidence. Parent v1-flow.md Today/Open Today tour contract matches repaired copy.",
+    "excluded": "Hidden TN9-0 Home tab label, internal/historical Home names, public All/Following; no current visible Open Home action retained.",
+    "runtimeComplete": false
+  },
   "currentLocatorAuthority": {"existingV1":"evidence/today-customization.json#currentV1LocatorOverrides","newTodayReferences":"referenceBoards entries TW01–TW20 and12ZP-0 below","policy":"Existing pre-Today position fields below remain historical checkpoints; current locator overrides are authoritative.168 later V1 roots moved top+5000 only; widths/IDs/section order preserved."},
   "currentNativeProvenance": {"evidence":"evidence/native-dialog-vector-repair.json","historicalCaptureEvidence":"evidence/native-dialog-repair.json","authorityBoard":"11H4-0","official27KitImages":6,"genericUIKit26_5Captures":2,"historicalCaseSpecificUIKit26_5Captures":38,"hiddenProductPhoneRasterLayers":38,"editableProductConfirmationCases":38,"editableGenericMasters":["FJ2-1","ZGG-0"],"kitImported":true,"native27Capture":false,"SwiftUI27Capture":false,"originalSemanticIDsAndGuardsRetained":true,"technicalProductPhoneAnnotationsHidden":true},
   "currentTodayContract": {"contract":"today.md","feature":"../features/today.md","kinds":12,"minimumInstances":1,"maximumInstances":null,"duplicatesAllowed":true,"phoneReferences":20,"catalogs":1,"scope":"private in-app stack; V2 inherits; optional existing connected feed scope only; no WidgetKit/external integrations or implicit consent","defaultKinds":["todayLook","weekInWear","closetInUse"],"customizeMaster":"11M4-0","sourceAssetSHA256":"b8634f70e51c94050a966ba03edd8449dbebb8388d418a71ead48e9ae1d3ca4b","runtimeComplete":false},
