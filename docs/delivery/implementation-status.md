@@ -1,14 +1,14 @@
 # Implementation status
 
-## Current boundary · October 7, 2026
+## Current boundary · October 9, 2026
 
-Checked source revision: `13011c8`, branch `van/v1-v2-product-plan`. PR #5 is open/pending; required Codex review was pending at the last check. This is a recorded checkpoint, not a fresh GitHub check. This documentation cleanup does not advance implementation, merge or release status.
+PR #5 merged through protected latest-head review/CI and SHA-bound squash to `cccdc24`; merged-main CI and repository release passed, and non-draft `v1.0.1` points to that commit. This is a repository release, not native distribution. The separate owner-authorized full private V1 implementation is tracked in [#6](https://github.com/vn-aj-vngrd/aqd/issues/6), with baseline/capture [#7](https://github.com/vn-aj-vngrd/aqd/issues/7) on `van/issue-7/native-v1-baseline`.
 
-There is no tracked Swift app source, Xcode project or Swift package build definition under `apps/ios` in this checkout. Historical prototype/build reports do not establish a reproducible baseline. The owner authorized complete private V1 implementation after PR #5 merges, followed by real implementation tickets and a branch from merged main. That merge-first gate remains pending at the recorded checkpoint; specifications and static Paper evidence are not implemented functionality.
+Native app/project/shared scheme, Foundation core, persistence/media and public UI tests are prepared on the baseline branch from `cccdc24`, awaiting protected PR delivery. Independent full-diff standards/spec reviews and final correction reviews passed after recovery fixes. Latest unsigned runners passed **20 Core tests, 40 native tests and 6 public UI tests** on both iPhone16Pro/iOS18.1 and iPhone17Pro/iOS26.5, Xcode26.5/Swift6.3.2; the final unsigned Release simulator build passed. Real PhotosPicker capture, crop/rotate/reset/cancel, acknowledged save/receipt/Closet search/edit and process relaunch are exercised with explicitly synthetic pixels. Saved Today stock identities survive reopening. Queued photo cleanup reconciles after restart without depending on vanished UI operation state. Screenshot review found and repaired a double-offset crop preview; the subsequent genuine UI pixel-landmark RED→GREEN compares preview against the accepted rendition. No whole LOCAL/TODAY/PREF/J ID, complete V1, physical VoiceOver/device/media performance, SDK27, weather or Vision acceptance is claimed.
 
 | Area | Current truth | Required next evidence |
 | --- | --- | --- |
-| V1 | Complete private Today/Closet/Planner/Agent/Profile/Settings scope specified; manual core remains offline-complete, with optional native WeatherKit. | [LOCAL acceptance](../product/v1-release.md#local-acceptance) on reproducible native source. |
+| V1 | Full private scope specified; scoped native baseline #7 is verified/reviewed, awaiting protected delivery. Pieces UI exists; other root capabilities and complete Today customization are unfinished, with explicit baseline placeholders. | [LOCAL acceptance](../product/v1-release.md#local-acceptance) on reproducible native source. |
 | V2 | Full connected core and extension vision retained, additive to V1. | [Service decisions](../product/decisions.md), authorized slices and connected/native/browser acceptance. |
 | Design | Prepared phase journeys, shared foundations and source-derived native references. | Rendered native navigation, keyboard, accessibility, permissions, materials and durability/recovery. |
 | Repository tooling | Available; commands belong to `package.json`. | [Actual scoped results](verification.md); tooling is not app testing. |
@@ -16,13 +16,13 @@ There is no tracked Swift app source, Xcode project or Swift package build defin
 
 ## Blockers and next authorized action
 
-- No reproducible tracked native baseline; local durability, model/media quality and all runtime acceptance remain unverified.
+- Protected baseline delivery remains pending. Review findings were fixed and final standards/spec reviews passed; actual20 Core/40 native/6 UI checks on iOS18.1 and26.5 include stale-draft recovery, availability/sort, dirty framing exits, outside-dismiss→archive/undo→fresh deletion and receipt return to the Closet root. Native remote CI/Codex and protected merge/release remain unverified. Complete outfits/themes, Planner/wear, Today, Agent, Profile/journal/preferences/Settings and all-domain recovery are not implemented.
 - Numerical weather is release-blocked: the Paper attribution row is hidden and details-only legal placement is unverified. Withhold numbers until required Apple assets/placement are satisfied; [weather policy](../product/v1-release.md#optional-live-weather-contract) and [UI contract](../design/weather-context.md) retain the full gates.
 - Icon-only native tabs remain a public-API/HIG feasibility gate. Current accessibility destination is **Today**, not the historical Home name; [native target](../design/native-ios.md) owns availability and acceptance.
 - Static cleanup/removal fixtures use identical pixels, not validated Vision masks. Native/dialog kit inspection is source provenance, not AQD runtime certification.
-- PR #5 remains pending. Latest-head CI, required Codex review, resolved findings, protected SHA-bound squash and post-merge release checks remain required when delivery is authorized; see [lifecycle](../agents/lifecycle.md).
+- SDK27 and physical-device capability/quality evidence remain unavailable; current toolchain evidence is baseline-only. Numerical weather remains withheld, with its legal/entitlement gates intact.
 
-This pass is documentation-only. Resume the approved implementation sequence after confirming PR #5 merged: create the V1 tickets, branch from merged main, select a [plan slice](implementation-plan.md), and satisfy its required acceptance rather than silently deferring it.
+The merge-first gate is complete. Continue #7 under the [implementation plan](implementation-plan.md) and [lifecycle](../agents/lifecycle.md); full #6 remains open. Scoped test/build results are not complete release acceptance, and no required item is silently waived.
 
 ## Current evidence and history
 

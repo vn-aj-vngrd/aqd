@@ -1,0 +1,296 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A00000000000000000000001 /* AQDCore in Frameworks */ = {isa = PBXBuildFile; productRef = A00000000000000000000031 /* AQDCore */; };
+		A00000000000000000000002 /* AQDCore in Frameworks */ = {isa = PBXBuildFile; productRef = A00000000000000000000032 /* AQDCore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A00000000000000000000003 = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00000000000000000000020 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A00000000000000000000021;
+			remoteInfo = AQD;
+		};
+		B00000000000000000000001 = {isa = PBXContainerItemProxy; containerPortal = A00000000000000000000020 /* Project object */; proxyType = 1; remoteGlobalIDString = A00000000000000000000021; remoteInfo = AQD; };
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A00000000000000000000004 /* AQD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AQD.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00000000000000000000005 /* AQDTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AQDTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00000000000000000000006 /* AppInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AppInfo.plist; sourceTree = "<group>"; };
+		B00000000000000000000002 /* AQDUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AQDUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A00000000000000000000007 /* AQD */ = {isa = PBXFileSystemSynchronizedRootGroup; path = AQD; sourceTree = "<group>"; };
+		A00000000000000000000008 /* AQDTests */ = {isa = PBXFileSystemSynchronizedRootGroup; path = AQDTests; sourceTree = "<group>"; };
+		B00000000000000000000003 /* AQDUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; path = AQDUITests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A00000000000000000000009 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A00000000000000000000001 /* AQDCore in Frameworks */,); runOnlyForDeploymentPostprocessing = 0; };
+		A0000000000000000000000A = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A00000000000000000000002 /* AQDCore in Frameworks */,); runOnlyForDeploymentPostprocessing = 0; };
+		B00000000000000000000004 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A00000000000000000000010 = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000007 /* AQD */,
+				A00000000000000000000008 /* AQDTests */,
+				B00000000000000000000003 /* AQDUITests */,
+				A00000000000000000000011 /* Configuration */,
+				A00000000000000000000012 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A00000000000000000000011 /* Configuration */ = {isa = PBXGroup; children = (A00000000000000000000006 /* AppInfo.plist */,); path = Configuration; sourceTree = "<group>"; };
+		A00000000000000000000012 /* Products */ = {isa = PBXGroup; children = (A00000000000000000000004 /* AQD.app */, A00000000000000000000005 /* AQDTests.xctest */, B00000000000000000000002 /* AQDUITests.xctest */,); name = Products; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A00000000000000000000021 /* AQD */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00000000000000000000041;
+			buildPhases = (A00000000000000000000013, A00000000000000000000009, A00000000000000000000014,);
+			buildRules = ();
+			dependencies = ();
+			fileSystemSynchronizedGroups = (A00000000000000000000007 /* AQD */,);
+			name = AQD;
+			packageProductDependencies = (A00000000000000000000031 /* AQDCore */,);
+			productName = AQD;
+			productReference = A00000000000000000000004 /* AQD.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A00000000000000000000022 /* AQDTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00000000000000000000042;
+			buildPhases = (A00000000000000000000015, A0000000000000000000000A, A00000000000000000000016,);
+			buildRules = ();
+			dependencies = (A00000000000000000000023,);
+			fileSystemSynchronizedGroups = (A00000000000000000000008 /* AQDTests */,);
+			name = AQDTests;
+			packageProductDependencies = (A00000000000000000000032 /* AQDCore */,);
+			productName = AQDTests;
+			productReference = A00000000000000000000005 /* AQDTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B00000000000000000000005 /* AQDUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B00000000000000000000009;
+			buildPhases = (B00000000000000000000006, B00000000000000000000004, B00000000000000000000007,);
+			buildRules = ();
+			dependencies = (B00000000000000000000008,);
+			fileSystemSynchronizedGroups = (B00000000000000000000003 /* AQDUITests */,);
+			name = AQDUITests;
+			packageProductDependencies = ();
+			productName = AQDUITests;
+			productReference = B00000000000000000000002 /* AQDUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000000000000000000020 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2650;
+				LastUpgradeCheck = 2650;
+				TargetAttributes = {
+					A00000000000000000000021 = {CreatedOnToolsVersion = 26.5; };
+					A00000000000000000000022 = {CreatedOnToolsVersion = 26.5; TestTargetID = A00000000000000000000021; };
+					B00000000000000000000005 = {CreatedOnToolsVersion = 26.5; TestTargetID = A00000000000000000000021; };
+				};
+			};
+			buildConfigurationList = A00000000000000000000040;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base,);
+			mainGroup = A00000000000000000000010;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (A00000000000000000000030 /* Core */,);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A00000000000000000000012 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (A00000000000000000000021 /* AQD */, A00000000000000000000022 /* AQDTests */, B00000000000000000000005 /* AQDUITests */,);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A00000000000000000000014 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A00000000000000000000016 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		B00000000000000000000007 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A00000000000000000000013 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A00000000000000000000015 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		B00000000000000000000006 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A00000000000000000000023 = {isa = PBXTargetDependency; target = A00000000000000000000021 /* AQD */; targetProxy = A00000000000000000000003; };
+		B00000000000000000000008 = {isa = PBXTargetDependency; target = A00000000000000000000021 /* AQD */; targetProxy = B00000000000000000000001; };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		A00000000000000000000050 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = ("DEBUG=1", "$(inherited)",);
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		A00000000000000000000051 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A00000000000000000000052 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Configuration/AppInfo.plist;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks",);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aqd.private;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A00000000000000000000053 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Configuration/AppInfo.plist;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks",);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aqd.private;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A00000000000000000000054 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@loader_path/Frameworks",);
+				PRODUCT_BUNDLE_IDENTIFIER = com.aqd.private.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AQD.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AQD";
+			};
+			name = Debug;
+		};
+		A00000000000000000000055 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@loader_path/Frameworks",);
+				PRODUCT_BUNDLE_IDENTIFIER = com.aqd.private.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AQD.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AQD";
+			};
+			name = Release;
+		};
+		B00000000000000000000010 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@loader_path/Frameworks",);
+				PRODUCT_BUNDLE_IDENTIFIER = com.aqd.private.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AQD;
+			};
+			name = Debug;
+		};
+		B00000000000000000000011 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@loader_path/Frameworks",);
+				PRODUCT_BUNDLE_IDENTIFIER = com.aqd.private.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AQD;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A00000000000000000000040 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000050 /* Debug */, A00000000000000000000051 /* Release */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A00000000000000000000041 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000052 /* Debug */, A00000000000000000000053 /* Release */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A00000000000000000000042 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000054 /* Debug */, A00000000000000000000055 /* Release */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		B00000000000000000000009 = {isa = XCConfigurationList; buildConfigurations = (B00000000000000000000010 /* Debug */, B00000000000000000000011 /* Release */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		A00000000000000000000030 /* Core */ = {isa = XCLocalSwiftPackageReference; relativePath = Core; };
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A00000000000000000000031 /* AQDCore */ = {isa = XCSwiftPackageProductDependency; package = A00000000000000000000030 /* Core */; productName = AQDCore; };
+		A00000000000000000000032 /* AQDCore */ = {isa = XCSwiftPackageProductDependency; package = A00000000000000000000030 /* Core */; productName = AQDCore; };
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A00000000000000000000020 /* Project object */;
+}

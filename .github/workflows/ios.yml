@@ -1,0 +1,70 @@
+name: Native iOS
+
+on:
+  pull_request:
+    paths:
+      - 'apps/ios/**'
+      - 'scripts/test-ios.sh'
+      - 'scripts/seed-ios-test-photo.sh'
+      - '.github/workflows/ios.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/ios/**'
+      - 'scripts/test-ios.sh'
+      - 'scripts/seed-ios-test-photo.sh'
+      - '.github/workflows/ios.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native-tests:
+    name: Native iOS tests
+    runs-on: macos-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record available toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+          xcrun simctl list --json > /tmp/aqd-ci-simulators.json
+      - name: Select installed iPhone simulator (iOS18 or newer)
+        run: |
+          python3 - <<'PY'
+          import json, os
+          with open('/tmp/aqd-ci-simulators.json') as source:
+              inventory = json.load(source)
+          runtimes = sorted(
+              (r for r in inventory['runtimes'] if r.get('isAvailable') and r['identifier'].startswith('com.apple.CoreSimulator.SimRuntime.iOS-')),
+              key=lambda r: tuple(int(p) for p in r['version'].split('.')), reverse=True)
+          for runtime in runtimes:
+              if int(runtime['version'].split('.')[0]) < 18:
+                  continue
+              phones = [d for d in inventory['devices'].get(runtime['identifier'], []) if d.get('isAvailable') and d['name'].startswith('iPhone')]
+              if not phones:
+                  continue
+              device = next((d for d in phones if d['name'] == 'iPhone 17 Pro'), phones[0])
+              print(f"Selected {device['name']} / iOS{runtime['version']} ({device['udid']}); not SDK27 certification")
+              with open(os.environ['GITHUB_ENV'], 'a') as env:
+                  env.write(f"IOS_DESTINATION=platform=iOS Simulator,id={device['udid']}\n")
+                  env.write(f"IOS_DERIVED_DATA={os.environ['RUNNER_TEMP']}/aqd-derived\n")
+              break
+          else:
+              raise SystemExit('No installed iPhone simulator with iOS18 or newer; refusing to skip native tests')
+          PY
+      - name: Run Core, native persistence/media and real UI tests
+        run: ./scripts/test-ios.sh
+      - name: Retain actual native results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-ios-results
+          path: ${{ runner.temp }}/aqd-derived/Logs/Test/*.xcresult
+          if-no-files-found: warn
