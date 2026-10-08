@@ -104,7 +104,8 @@ final class AppState {
         do {
             let recovered = try store.newPieceDraft()
             capture = CaptureModel(state: self, draft: recovered?.draft ?? PieceDraft(),
-                                   operationID: recovered?.operationID ?? UUID())
+                                   operationID: recovered?.operationID ?? UUID(),
+                                   saved: try recovered.flatMap { try store.pendingSavedPiece(for: $0) })
         } catch {
             collectionError = "The saved draft couldn’t open. It hasn’t been replaced."
         }
@@ -119,7 +120,8 @@ final class AppState {
                 photoID: piece.photoID, baseRevision: piece.revision, details: piece.details,
                 availability: piece.availability, photoRecipe: piece.photoRecipe)
             capture = CaptureModel(state: self, draft: draft,
-                                   operationID: recovered?.operationID ?? UUID())
+                                   operationID: recovered?.operationID ?? UUID(),
+                                   saved: try recovered.flatMap { try store.pendingSavedPiece(for: $0) })
         } catch {
             collectionError = "This piece’s saved draft couldn’t open. It hasn’t been replaced."
         }
@@ -161,14 +163,19 @@ final class CaptureModel: Identifiable {
     private static let photoImportError = "That photo couldn’t be prepared. Your fields and previous photo are unchanged. Choose another photo or keep the draft."
 
     var isImporting: Bool { importGate.pending != nil }
-    var canSave: Bool { (try? draft.validated()) != nil && !isSaving && !isImporting && !draftSaveFailed }
+    var canSave: Bool { saved == nil && (try? draft.validated()) != nil && !isSaving && !isImporting && !draftSaveFailed }
+    var receiptIsHistorical: Bool {
+        guard let saved, let current = try? state.store?.piece(id: saved.id) else { return false }
+        return current.revision > saved.revision
+    }
 
-    init(state: AppState, draft: PieceDraft, operationID: UUID) {
+    init(state: AppState, draft: PieceDraft, operationID: UUID, saved: WardrobePiece? = nil) {
         self.id = draft.id
         self.state = state
         self.draft = draft
         self.operationID = operationID
-        persistDraft()
+        self.saved = saved
+        if saved == nil { persistDraft() }
     }
 
     func update<Value>(_ keyPath: WritableKeyPath<PieceDraft, Value>, value: Value) {
@@ -199,6 +206,7 @@ final class CaptureModel: Identifiable {
     }
 
     func importPhoto(load: @escaping @MainActor () async throws -> Data?) {
+        guard !isSaving, saved == nil else { return }
         cancelImport()
         let request = importGate.begin(for: draft)
         if errorText == Self.photoImportError { errorText = nil }
@@ -240,7 +248,7 @@ final class CaptureModel: Identifiable {
         isSaving = true
         defer { isSaving = false }
         do {
-            saved = try store.savePiece(draft, operationID: operationID)
+            saved = try store.savePiece(draft, operationID: operationID, retainForPresentation: true)
             state.reloadPieces()
             errorText = nil
         } catch PieceStore.StoreError.staleRevision {
@@ -252,6 +260,12 @@ final class CaptureModel: Identifiable {
 
     func leave() {
         cancelImport()
+        if saved != nil {
+            guard acknowledgePresentation() else { return }
+            state.capture = nil
+            state.retryPhotoCleanup()
+            return
+        }
         persistDraft()
         if !draftSaveFailed {
             state.capture = nil
@@ -260,6 +274,7 @@ final class CaptureModel: Identifiable {
     }
 
     func discard() {
+        guard saved == nil else { return }
         cancelImport()
         guard let store = state.store else { return }
         do {
@@ -271,8 +286,24 @@ final class CaptureModel: Identifiable {
         }
     }
 
+    private func acknowledgePresentation() -> Bool {
+        guard let store = state.store else {
+            errorText = "The saved receipt couldn’t be acknowledged. It is still here. Retry Back or Open my closet."
+            return false
+        }
+        do {
+            try store.acknowledgePiecePresentation(draftID: draft.id, operationID: operationID)
+            state.reloadPieces() // Present current records, never the historical receipt snapshot.
+            errorText = nil
+            return true
+        } catch {
+            errorText = "The saved receipt couldn’t be acknowledged. It is still here. Retry Back or Open my closet."
+            return false
+        }
+    }
+
     func openCloset() {
-        guard saved != nil else { return }
+        guard saved != nil, acknowledgePresentation() else { return }
         state.closetPath = []
         state.closetScope = "Pieces"
         state.selection = 1

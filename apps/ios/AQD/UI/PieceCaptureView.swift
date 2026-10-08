@@ -79,7 +79,7 @@ struct PieceCaptureView: View {
             }
         }
         .tint(AppTheme.actionText)
-        .interactiveDismissDisabled(model.isSaving || model.draftSaveFailed)
+        .interactiveDismissDisabled(model.isSaving || model.draftSaveFailed || model.saved != nil)
         .photosPicker(isPresented: $pickerPresented, selection: $selectedPhoto, matching: .images)
         .onChange(of: selectedPhoto) { _, item in
             guard let item else { return }
@@ -235,17 +235,29 @@ struct PieceCaptureView: View {
     }
 
     private func receipt(_ piece: WardrobePiece) -> some View {
-        VStack(alignment: .leading, spacing: 24) {
-            Text(piece.name).font(.title2.weight(.medium))
-            Text("Saved privately on this device.").foregroundStyle(AppTheme.secondary)
-            if let data = model.photoData(), let image = UIImage(data: data) {
-                Image(uiImage: image).resizable().scaledToFit()
-                    .frame(maxWidth: .infinity, maxHeight: 280)
-            }
-            Spacer()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                Text(piece.name).font(.title2.weight(.medium))
+                Text("Saved privately on this device.").foregroundStyle(AppTheme.secondary)
+                if model.receiptIsHistorical {
+                    Text("This receipt shows an earlier saved revision. Your closet opens the current piece.")
+                        .font(.subheadline).foregroundStyle(AppTheme.secondary)
+                }
+                if let error = model.errorText {
+                    Text(error).font(.subheadline).foregroundStyle(AppTheme.error)
+                }
+                if let data = model.photoData(), let image = UIImage(data: data) {
+                    Image(uiImage: image).resizable().scaledToFit()
+                        .frame(maxWidth: .infinity, maxHeight: 280)
+                }
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
+        }
+        .safeAreaInset(edge: .bottom) {
             PrimaryAction(title: "Open my closet") { model.openCloset() }
                 .accessibilityIdentifier("capture.openCloset")
-        }.padding(20)
+                .padding(.horizontal, 20).padding(.vertical, 12)
+                .background(AppTheme.canvas)
+        }
     }
 
     private func sourceRow(_ title: String, symbol: String, source: PhotoSource) -> some View {

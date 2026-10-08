@@ -1487,7 +1487,8 @@ struct PiecePersistenceTests {
         return try await PhotoPreparer().prepare(data: #require(image.jpegData(compressionQuality: 1)))
     }
 
-    @Test func failedDatabaseWritePreservesPriorPieceAndCreatesNoReceipt() async throws {
+    @Test(arguments: [false, true])
+    func failedDatabaseWritePreservesPriorPieceAndCreatesNoReceipt(retainForPresentation: Bool) async throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         // Let the test host reclaim temporary stores after exit, never unlink open SQLite files.
         let image = UIGraphicsImageRenderer(size: CGSize(width: 20, height: 30)).image { context in
@@ -1504,16 +1505,298 @@ struct PiecePersistenceTests {
         let rejected = PieceDraft(name: "Second pair", category: .shoes, photoID: photo)
         let operation = UUID()
         var readOnly: PieceStore? = try PieceStore(directory: directory, allowsSave: false)
-        #expect(throws: (any Error).self) { try #require(readOnly).savePiece(rejected, operationID: operation) }
+        #expect(throws: (any Error).self) {
+            try #require(readOnly).savePiece(rejected, operationID: operation, retainForPresentation: retainForPresentation)
+        }
+        #expect(try #require(readOnly).latestDraft() == nil)
         let retained = try #require(readOnly).piece(id: original.id)
         #expect(retained == original)
         let absent = try #require(readOnly).piece(id: rejected.itemID)
         #expect(absent == nil)
         readOnly = nil
         let recovered = try PieceStore(directory: directory)
-        let retried = try recovered.savePiece(rejected, operationID: operation)
+        let retried = try recovered.savePiece(rejected, operationID: operation, retainForPresentation: retainForPresentation)
+        #expect(try recovered.pendingSavedPiece(for: RecoverablePieceDraft(draft: rejected, operationID: operation)) == (retainForPresentation ? retried : nil))
         #expect(retried.name == "Second pair")
         #expect(retried.id == rejected.itemID)
+    }
+
+    @Test func addPieceAfterCommitBeforePresentationRecoversSavedReceiptWithoutCreatingDuplicate() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let draft = PieceDraft(name: "Committed before receipt", category: .tops, photoID: source.id,
+            details: PieceDetails(notes: "Recover this exact save"))
+        let operation = UUID()
+        let committed: WardrobePiece
+        do {
+            let store = try PieceStore(directory: directory)
+            _ = try store.acceptPhoto(source)
+            try store.saveDraft(draft, operationID: operation)
+            let state = AppState(store: store)
+            state.addPiece()
+            let capture = try #require(state.capture)
+            try #require(capture.draft == draft)
+            try #require(capture.operationID == operation)
+            try #require(capture.canSave)
+
+            // Commit the real Save transaction, but never deliver its return to
+            // CaptureModel.save(). Releasing this scope models process exit in
+            // the gap before its `saved` assignment/presentation.
+            // The original primitive produced six runtime issues in the 56-test
+            // native RED run (/tmp/aqd-pending-receipt-red.log), before this API
+            // existed. Opt in exactly as production now does; not a signature RED.
+            committed = try store.savePiece(capture.draft, operationID: capture.operationID, retainForPresentation: true)
+            #expect(capture.saved == nil)
+            #expect(committed.id == draft.itemID)
+            #expect(committed.revision == 1)
+            #expect(try store.pieces() == [committed])
+        }
+
+        // Recovery must read the durable acknowledgment, not re-save the draft.
+        // Read-only reopening makes a new commit impossible; no retry Save is
+        // called, and the ordinary user's database is never opened.
+        let reopened = try PieceStore(directory: directory, allowsSave: false)
+        #expect(try reopened.piece(id: draft.itemID) == committed)
+        #expect(try reopened.pieces() == [committed])
+        let relaunched = AppState(store: reopened)
+        relaunched.addPiece()
+        let receipt = try #require(relaunched.capture)
+        #expect(receipt.saved == committed)
+        #expect(receipt.saved?.id == draft.itemID)
+        #expect(receipt.saved?.revision == committed.revision)
+        // Keep these non-optional identity checks even if saved is nil: a blank
+        // creation must not silently replace the committed draft/operation.
+        #expect(receipt.draft == draft)
+        #expect(receipt.draft.itemID == committed.id)
+        #expect(receipt.operationID == operation)
+        #expect(try reopened.piece(id: committed.id) == committed)
+        #expect(try reopened.pieces() == [committed])
+        #expect(try reopened.originalPhoto(id: source.id) == source.originalData)
+    }
+
+    @Test(arguments: [false, true])
+    func pendingReceiptAcknowledgmentFailureRetryAndFreshRoutes(edit: Bool) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let operation = UUID()
+        let draft: PieceDraft
+        let committed: WardrobePiece
+        do {
+            let store = try PieceStore(directory: directory)
+            _ = try store.acceptPhoto(source)
+            if edit {
+                let original = try store.savePiece(PieceDraft(name: "Original", category: .tops, photoID: source.id), operationID: UUID())
+                draft = PieceDraft(itemID: original.id, name: "Pending edit", category: .tops,
+                    photoID: source.id, baseRevision: original.revision)
+            } else {
+                draft = PieceDraft(name: "Pending creation", category: .tops, photoID: source.id)
+            }
+            // Direct saves also insert the link atomically, without prior saveDraft.
+            committed = try store.savePiece(draft, operationID: operation, retainForPresentation: true)
+        }
+        let state = AppState(store: try PieceStore(directory: directory, allowsSave: false))
+        if edit {
+            #expect(try #require(state.store).newPieceDraft() == nil)
+            state.editPiece(committed)
+        } else { state.addPiece() }
+        let model = try #require(state.capture)
+        #expect(model.saved == committed)
+        #expect(model.draft == draft)
+        #expect(model.operationID == operation)
+        #expect(!model.draftSaveFailed)
+        #expect(!model.canSave)
+        model.update(\.name, value: "Must not mutate")
+        model.applyDetails(PieceDetails(notes: "Must not mutate"), availability: .unavailable)
+        model.importPhoto { Issue.record("Saved receipt must not load a photo"); return nil }
+        model.save()
+        model.discard()
+        #expect(!model.isImporting)
+        #expect(model.draft == draft)
+        #expect(model.operationID == operation)
+        #expect(state.capture === model)
+        state.selection = 4
+        state.closetPath = [committed.id]
+        state.closetScope = "Outfits"
+        model.openCloset()
+        #expect(state.capture === model)
+        #expect(state.selection == 4)
+        #expect(state.closetPath == [committed.id])
+        #expect(state.closetScope == "Outfits")
+        #expect(model.errorText != nil)
+        model.leave()
+        #expect(state.capture === model)
+        #expect(try #require(state.store).pendingSavedPiece(for: RecoverablePieceDraft(draft: draft, operationID: operation)) == committed)
+
+        state.store = nil
+        state.store = try PieceStore(directory: directory)
+        if edit { model.leave() } else { model.openCloset() }
+        #expect(state.capture == nil)
+        #expect(model.errorText == nil)
+        if !edit {
+            #expect(state.selection == 1)
+            #expect(state.closetPath.isEmpty)
+            #expect(state.closetScope == "Pieces")
+        }
+        let store = try #require(state.store)
+        try store.acknowledgePiecePresentation(draftID: draft.id, operationID: operation)
+        #expect(try store.savePiece(draft, operationID: operation, retainForPresentation: true) == committed)
+        #expect(try store.latestDraft() == nil) // Historical retry must not recreate acknowledged links.
+        state.editPiece(committed)
+        let freshEdit = try #require(state.capture)
+        #expect(freshEdit.saved == nil)
+        #expect(freshEdit.draft.baseRevision == committed.revision)
+        #expect(freshEdit.operationID != operation)
+        freshEdit.discard()
+        state.addPiece()
+        let freshAdd = try #require(state.capture)
+        #expect(freshAdd.saved == nil)
+        #expect(freshAdd.draft.itemID != committed.id)
+        #expect(freshAdd.draft.baseRevision == nil)
+    }
+
+    @Test func pendingHistoricalReceiptNeverRewindsCurrentAndDeletionNeverResurrects() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let draft = PieceDraft(name: "Historical creation", category: .tops, photoID: source.id)
+        let operation = UUID()
+        let store = try PieceStore(directory: directory)
+        _ = try store.acceptPhoto(source)
+        let saved = try store.savePiece(draft, operationID: operation, retainForPresentation: true)
+        let newer = try store.setArchived(id: saved.id, archived: true, expectedRevision: saved.revision, operationID: UUID())
+        let state = AppState(store: store)
+        state.addPiece()
+        let model = try #require(state.capture)
+        #expect(model.saved == saved)
+        #expect(model.receiptIsHistorical)
+        #expect(try store.piece(id: saved.id) == newer)
+        model.openCloset()
+        #expect(try store.piece(id: saved.id) == newer)
+        #expect(try store.newPieceDraft() == nil)
+        // Another pending edit is removed with the current record and all its proof.
+        let edit = PieceDraft(itemID: saved.id, name: "Pending deletion", category: .tops,
+            photoID: source.id, baseRevision: newer.revision)
+        let editOperation = UUID()
+        let edited = try store.savePiece(edit, operationID: editOperation, retainForPresentation: true)
+        try store.deletePiece(id: edited.id, expectedRevision: edited.revision, operationID: UUID())
+        #expect(try store.recoverableDraft(itemID: saved.id) == nil)
+        #expect(try store.pendingSavedPiece(for: RecoverablePieceDraft(draft: edit, operationID: editOperation)) == nil)
+        #expect(throws: (any Error).self) { try store.savePiece(edit, operationID: editOperation, retainForPresentation: true) }
+        #expect(try store.piece(id: saved.id) == nil)
+    }
+
+    @Test(arguments: Array(0...12))
+    func invalidPendingProofRefusesRecoveryAndAcknowledgmentWithoutBlankFallback(corruption: Int) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let operation = UUID()
+        let draft = PieceDraft(name: "Validate exact pending proof", category: .tops, photoID: source.id)
+        let saved: WardrobePiece
+        do {
+            let store = try PieceStore(directory: directory)
+            _ = try store.acceptPhoto(source)
+            saved = try store.savePiece(draft, operationID: operation, retainForPresentation: true)
+        }
+        // Corrupt real native rows, not a mock adapter or synthetic filesystem.
+        do {
+            let schema = Schema(versionedSchema: LocalSchemaV2.self)
+            let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema,
+                url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)])
+            let context = ModelContext(container)
+            let link = try #require(context.fetch(FetchDescriptor<StoredPieceDraft>()).first)
+            let proof = try #require(context.fetch(FetchDescriptor<StoredPieceSave>()).first)
+            let current = try #require(context.fetch(FetchDescriptor<StoredPiece>()).first)
+            let snapshot = StoredPiece(saved)
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.sortedKeys]
+            switch corruption {
+            case 0: proof.draftDigest = "wrong"
+            case 1: proof.itemID = UUID()
+            case 2: proof.snapshot = Data("not-json".utf8)
+            case 3: link.itemID = UUID()
+            case 4: link.operationID = UUID()
+            case 5: link.payload = Data("not-json".utf8)
+            case 6: snapshot.category = PieceCategory.shoes.rawValue; proof.snapshot = try encoder.encode(snapshot.value())
+            case 7: snapshot.photoQuarterTurns = 1; proof.snapshot = try encoder.encode(snapshot.value())
+            case 8: snapshot.revision += 1; proof.snapshot = try encoder.encode(snapshot.value())
+            case 9: current.name = "Different same revision"
+            case 10: context.delete(current)
+            case 11:
+                let competitor = PieceDraft(itemID: draft.itemID, name: "Competing")
+                context.insert(StoredPieceDraft(draft: competitor, operationID: UUID(), payload: try encoder.encode(competitor)))
+            default: proof.snapshot.append(0x20) // Noncanonical snapshot bytes.
+            }
+            try context.save()
+        }
+        let store = try PieceStore(directory: directory, allowsSave: false)
+        let recovered = RecoverablePieceDraft(draft: draft, operationID: operation)
+        #expect(throws: (any Error).self) { try store.pendingSavedPiece(for: recovered) }
+        #expect(throws: (any Error).self) { try store.recoverableDraft(itemID: draft.itemID) }
+        #expect(throws: (any Error).self) { try store.acknowledgePiecePresentation(draftID: draft.id, operationID: operation) }
+        let state = AppState(store: store)
+        state.addPiece()
+        #expect(state.capture == nil)
+        #expect(state.collectionError != nil)
+        state.editPiece(saved)
+        #expect(state.capture == nil)
+        #expect(state.collectionError != nil)
+    }
+
+    @Test func pendingDraftAloneRetainsSupersededMediaUntilAcknowledgment() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let replacement = try await preparedPhoto()
+        let recipe = PhotoEditRecipe(quarterTurns: 1)
+        let draft = PieceDraft(name: "Temporary receipt media owner", category: .tops, photoID: source.id, photoRecipe: recipe)
+        let operation = UUID()
+        let store = try PieceStore(directory: directory)
+        _ = try store.acceptPhoto(source)
+        _ = try store.acceptPhoto(replacement)
+        let edit = try await PhotoPreparer().render(data: source.originalData, sourcePhotoID: source.id, recipe: recipe)
+        try store.acceptPhotoEdit(edit)
+        let saved = try store.savePiece(draft, operationID: operation, retainForPresentation: true)
+        // Model a newer current revision in the native database; the original
+        // pending draft must remain untouched as historical presentation proof.
+        do {
+            let schema = Schema(versionedSchema: LocalSchemaV2.self)
+            let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema,
+                url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)])
+            let context = ModelContext(container)
+            let current = try #require(context.fetch(FetchDescriptor<StoredPiece>()).first)
+            let newer = WardrobePiece(id: saved.id, name: saved.name, category: saved.category,
+                photoID: replacement.id, details: saved.details, availability: saved.availability,
+                revision: saved.revision + 1, isArchived: saved.isArchived,
+                createdAt: saved.createdAt, updatedAt: Date(), photoRecipe: .fitOriginal)
+            current.apply(newer)
+            try context.save()
+        }
+        try store.reconcilePendingPhotoCleanup()
+        #expect(try store.originalPhoto(id: source.id) == source.originalData)
+        #expect(try store.photoRendition(id: source.id, recipe: recipe) == edit.renditionData)
+        #expect(try store.pendingSavedPiece(for: RecoverablePieceDraft(draft: draft, operationID: operation)) == saved)
+        #expect(throws: (any Error).self) { try store.acknowledgePiecePresentation(draftID: draft.id, operationID: UUID()) }
+        #expect(try store.latestDraft()?.draft == draft)
+        try store.acknowledgePiecePresentation(draftID: draft.id, operationID: operation)
+        try store.reconcilePendingPhotoCleanup()
+        #expect(throws: (any Error).self) { try store.originalPhoto(id: source.id) }
+        #expect(throws: (any Error).self) { try store.photoRendition(id: source.id, recipe: recipe) }
+        #expect(try store.originalPhoto(id: replacement.id) == replacement.originalData)
+        #expect(try store.savePiece(draft, operationID: operation, retainForPresentation: true) == saved)
+        #expect(try store.latestDraft() == nil)
+    }
+
+    @Test func legacySaveReturnStillAcknowledgesWithoutPresentationLink() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let store = try PieceStore(directory: directory)
+        _ = try store.acceptPhoto(source)
+        let draft = PieceDraft(name: "Legacy caller", category: .tops, photoID: source.id)
+        let operation = UUID()
+        try store.saveDraft(draft, operationID: operation)
+        let saved = try store.savePiece(draft, operationID: operation)
+        #expect(try store.latestDraft() == nil)
+        #expect(try store.pendingSavedPiece(for: RecoverablePieceDraft(draft: draft, operationID: operation)) == nil)
+        #expect(try store.savePiece(draft, operationID: operation, retainForPresentation: true) == saved)
+        #expect(try store.newPieceDraft() == nil)
     }
 
     @Test func retryAfterReopeningReturnsTheSameAcknowledgedSave() async throws {

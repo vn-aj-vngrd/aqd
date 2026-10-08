@@ -465,11 +465,12 @@ final class PieceStore {
         guard let (stored, draft) = matches.first else { return nil }
         try ensureUnusedDeletionOperation(stored.operationID, context: context)
         let operationID = stored.operationID
-        guard try context.fetch(FetchDescriptor<StoredPieceSave>(predicate: #Predicate { $0.id == operationID })).isEmpty,
-              try context.fetch(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.itemID == itemID })).isEmpty else {
+        guard try context.fetch(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.itemID == itemID })).isEmpty else {
             throw StoreError.invalidRecord
         }
-        return RecoverablePieceDraft(draft: draft, operationID: operationID)
+        let recovered = RecoverablePieceDraft(draft: draft, operationID: operationID)
+        _ = try pendingSavedPiece(for: recovered)
+        return recovered
     }
 
     /// Add piece resumes only a creation, never an existing piece's retained edit.
@@ -478,7 +479,9 @@ final class PieceStore {
         let context = ModelContext(container)
         let savedIDs = Set(try context.fetch(FetchDescriptor<StoredPiece>()).map { try $0.value().id })
         let drafts = try decodedDrafts(context).filter {
-            $0.1.baseRevision == nil && !savedIDs.contains($0.1.itemID)
+            guard $0.1.baseRevision == nil else { return false }
+            let pending = try pendingSavedPiece(for: RecoverablePieceDraft(draft: $0.1, operationID: $0.0.operationID))
+            return pending != nil || !savedIDs.contains($0.1.itemID)
         }.sorted {
             $0.0.updatedAt == $1.0.updatedAt ? $0.0.id.uuidString < $1.0.id.uuidString : $0.0.updatedAt > $1.0.updatedAt
         }
@@ -516,7 +519,9 @@ final class PieceStore {
         return try encoder.encode(value)
     }
 
-    func savePiece(_ draft: PieceDraft, operationID: UUID) throws -> WardrobePiece {
+    /// Opt-in keeps the exact draft as a temporary media owner and presentation link.
+    /// Retrying completed proof never recreates a link that was acknowledged.
+    func savePiece(_ draft: PieceDraft, operationID: UUID, retainForPresentation: Bool = false) throws -> WardrobePiece {
         try draft.validated()
         guard let photoID = draft.photoID, let category = draft.category else { throw StoreError.invalidRecord }
         let context = ModelContext(container)
@@ -588,9 +593,83 @@ final class PieceStore {
             existing.apply(result)
         } else { context.insert(StoredPiece(result)) }
         context.insert(StoredPieceSave(id: operationID, itemID: id, draftDigest: digest, snapshot: try encode(result)))
-        if let savedDraft { context.delete(savedDraft) }
+        if retainForPresentation {
+            if savedDraft == nil {
+                context.insert(StoredPieceDraft(draft: draft, operationID: operationID, payload: payload))
+            }
+        } else if let savedDraft { context.delete(savedDraft) }
         try commit(context)
         return result
+    }
+
+    /// Read-only recovery: completed proof alone is never a presentation link.
+    /// A newer current revision permits a historical receipt, never a record rewind.
+    func pendingSavedPiece(for recovered: RecoverablePieceDraft) throws -> WardrobePiece? {
+        let context = ModelContext(container)
+        let draft = recovered.draft
+        let draftID = draft.id
+        let operationID = recovered.operationID
+        let itemID = draft.itemID
+        guard let stored = try context.fetch(FetchDescriptor<StoredPieceDraft>(predicate: #Predicate { $0.id == draftID })).first else {
+            return nil
+        }
+        let payload = try encode(draft)
+        guard stored.itemID == itemID, stored.operationID == operationID, stored.payload == payload else {
+            throw StoreError.invalidRecord
+        }
+        try ensureUnusedDeletionOperation(operationID, context: context)
+        guard try context.fetch(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.itemID == itemID })).isEmpty else {
+            throw StoreError.deletedPiece
+        }
+        guard let proof = try context.fetch(FetchDescriptor<StoredPieceSave>(predicate: #Predicate { $0.id == operationID })).first else {
+            // A consumed payload under a different operation is not a fresh draft.
+            let payloadDigest = digest(payload)
+            guard try context.fetch(FetchDescriptor<StoredPieceSave>()).allSatisfy({ $0.draftDigest != payloadDigest }) else {
+                throw StoreError.invalidRecord
+            }
+            return nil
+        }
+        guard try decodedDrafts(context).filter({ $0.1.itemID == itemID }).count == 1,
+              try context.fetch(FetchDescriptor<StoredPieceDraft>(predicate: #Predicate { $0.operationID == operationID })).count == 1 else {
+            throw StoreError.invalidRecord
+        }
+        try draft.validated()
+        let snapshot = try JSONDecoder().decode(WardrobePiece.self, from: proof.snapshot)
+        try snapshot.photoRecipe.validated()
+        guard proof.itemID == itemID, proof.draftDigest == digest(payload),
+              proof.snapshot == (try encode(snapshot)), snapshot.id == itemID,
+              snapshot.name == draft.name.trimmingCharacters(in: .whitespacesAndNewlines),
+              snapshot.category == draft.category, snapshot.photoID == draft.photoID,
+              snapshot.photoRecipe == draft.photoRecipe, snapshot.details == draft.details,
+              snapshot.availability == draft.availability,
+              snapshot.revision > 0, snapshot.revision - 1 == (draft.baseRevision ?? 0),
+              let current = try piece(id: itemID), current.createdAt == snapshot.createdAt,
+              current == snapshot || current.revision > snapshot.revision else {
+            throw StoreError.invalidRecord
+        }
+        return snapshot
+    }
+
+    /// Atomically relinquish only the validated pending link, preserving immutable proof.
+    /// Missing links are already acknowledged; mismatched identities are refused.
+    func acknowledgePiecePresentation(draftID: UUID, operationID: UUID) throws {
+        let context = ModelContext(container)
+        guard let stored = try context.fetch(FetchDescriptor<StoredPieceDraft>(predicate: #Predicate { $0.id == draftID })).first else {
+            guard try context.fetch(FetchDescriptor<StoredPieceDraft>(predicate: #Predicate { $0.operationID == operationID })).isEmpty else {
+                throw StoreError.operationConflict
+            }
+            return
+        }
+        guard stored.operationID == operationID else { throw StoreError.operationConflict }
+        let draft = try JSONDecoder().decode(PieceDraft.self, from: stored.payload)
+        guard try pendingSavedPiece(for: RecoverablePieceDraft(draft: draft, operationID: operationID)) != nil else {
+            throw StoreError.invalidRecord
+        }
+        if let photoID = draft.photoID {
+            try queueCleanup(photoID: photoID, recipeDigest: try cleanupRecipeDigest(draft.photoRecipe), context: context)
+        }
+        context.delete(stored)
+        try commit(context)
     }
 
     func piece(id: UUID) throws -> WardrobePiece? {

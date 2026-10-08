@@ -184,12 +184,21 @@ final class NativeFlowTests: XCTestCase {
         app.buttons["Choose from Photos"].tap()
         // System PhotosPicker accessibility, not an app media injection.
         let photo = app.images.matching(NSPredicate(format: "identifier == 'LibraryPhoto' OR identifier == 'PXGGridLayout-Info'")).firstMatch
-        XCTAssertTrue(photo.waitForExistence(timeout: 15), app.debugDescription)
+        let accessiblePhoto = photo.waitForExistence(timeout: 15)
         attachScreenshot("Real Photos picker with seeded synthetic fixture")
-        // iOS26 PhotosPicker exposes visible grid images without an XCUI hit point.
-        // Tap the observed image center using public coordinates, never an app media hook.
-        if photo.isHittable { photo.tap() }
-        else { photo.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        // The remote PhotosUI service can render its grid without publishing it
+        // in AQD's accessibility subtree. Never tap a guessed screen location:
+        // fallback requires the seeded fixture's white/blue/red/yellow pixels.
+        if let point = syntheticPickerPhotoPoint(app.screenshot().image) {
+            attachScreenshot("Verified synthetic picker landmark coordinate")
+            app.coordinate(withNormalizedOffset: CGVector(dx: point.x, dy: point.y)).tap()
+        } else if accessiblePhoto {
+            if photo.isHittable { photo.tap() }
+            else { photo.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        } else {
+            XCTFail("The real picker must expose its photo or render the complete synthetic landmark pattern. \(app.debugDescription)")
+            return
+        }
         let done = app.buttons["Done"]
         if done.waitForExistence(timeout: 2) { done.tap() }
         XCTAssertTrue(app.buttons["capture.editPhoto"].waitForExistence(timeout: 15), app.debugDescription)
@@ -313,6 +322,15 @@ final class NativeFlowTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Synthetic blue"].exists)
         XCTAssertFalse(app.staticTexts["Photo unavailable"].exists)
         attachScreenshot("Saved edited record after process relaunch")
+        // The process exited before receipt acknowledgment. Edit re-entry must
+        // recover that exact committed result, not open another mutable draft.
+        app.buttons["piece.edit"].tap()
+        XCTAssertTrue(app.navigationBars["Piece saved"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts[editedName].exists)
+        XCTAssertFalse(name.exists)
+        attachScreenshot("Recovered committed edit receipt after process relaunch")
+        app.buttons["capture.back"].tap() // Observable receipt acknowledgment.
+        XCTAssertTrue(app.buttons["piece.edit"].waitForExistence(timeout: 5))
         app.buttons["More piece options"].tap()
         app.buttons["Delete"].tap()
         XCTAssertTrue(app.staticTexts["Delete this piece?"].waitForExistence(timeout: 5))
@@ -396,6 +414,46 @@ final class NativeFlowTests: XCTestCase {
     }
 
     /// Compare rendered output at the public UI seam, not implementation geometry.
+    /// Matches only the seeded portrait fixture in the observed three-column
+    /// system picker, not arbitrary photos or app controls. Coordinates refer to
+    /// the public screenshot; this neither injects media nor bypasses PhotosUI.
+    private func syntheticPickerPhotoPoint(_ image: UIImage) -> CGPoint? {
+        guard let source = image.cgImage else { return nil }
+        let width = source.width, height = source.height
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+        let drawn = pixels.withUnsafeMutableBytes { buffer -> Bool in
+            guard let context = CGContext(data: buffer.baseAddress, width: width, height: height,
+                                          bitsPerComponent: 8, bytesPerRow: width * 4,
+                                          space: CGColorSpaceCreateDeviceRGB(),
+                                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue) else { return false }
+            context.draw(source, in: CGRect(x: 0, y: 0, width: width, height: height))
+            return true
+        }
+        guard drawn else { return nil }
+        let unit = Double(width) / (3 * 240)
+        func color(_ x: Int, _ y: Int, _ dx: Double, _ dy: Double) -> (UInt8, UInt8, UInt8)? {
+            let px = x + Int(dx * unit), py = y + Int(dy * unit)
+            guard px >= 0, px < width, py >= 0, py < height else { return nil }
+            let offset = (py * width + px) * 4
+            return (pixels[offset], pixels[offset + 1], pixels[offset + 2])
+        }
+        func blue(_ rgb: (UInt8, UInt8, UInt8)?) -> Bool {
+            guard let (r, g, b) = rgb else { return false }
+            return r < 60 && g > 75 && b > 180
+        }
+        for y in stride(from: 0, to: height, by: 4) {
+            for x in stride(from: 0, to: width, by: 4) {
+                guard let (r, g, b) = color(x, y, 0, 0), r > 250, g > 250, b > 250,
+                      blue(color(x, y, -30, 0)), blue(color(x, y, 30, 0)),
+                      blue(color(x, y, 0, -30)), blue(color(x, y, 0, 30)),
+                      let red = color(x, y, -60, -100), red.0 > 200, red.1 < 100, red.2 < 100,
+                      let yellow = color(x, y, 60, 75), yellow.0 > 200, yellow.1 > 160, yellow.2 < 100 else { continue }
+                return CGPoint(x: Double(x) / Double(width), y: Double(y) / Double(height))
+            }
+        }
+        return nil
+    }
+
     /// Only the seeder's synthetic blue field/white landmark is meaningful here.
     private func syntheticWhiteLandmark(_ image: UIImage) -> CGPoint? {
         guard let source = image.cgImage else { return nil }
