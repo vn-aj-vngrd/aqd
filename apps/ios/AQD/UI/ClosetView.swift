@@ -62,7 +62,7 @@ struct ClosetView: View {
             .onChange(of: archived) { refresh() }
             .onChange(of: availability) { refresh() }
             .onChange(of: sort) { refresh() }
-            .onChange(of: state.pieces) { refresh() }
+            .onChange(of: state.collectionRefreshID) { refresh() }
         }
         .tint(AppTheme.actionText)
     }
@@ -225,7 +225,7 @@ struct PieceDetailView: View {
             }
         }
         .onAppear(perform: refresh)
-        .onChange(of: state.pieces) { refresh() }
+        .onChange(of: state.collectionRefreshID) { refresh() }
         .onChange(of: deleteDecision) { _, presented in
             if !presented { cancelDeleteReview() }
         }

@@ -8,6 +8,71 @@ import UIKit
 
 @MainActor
 struct PiecePersistenceTests {
+    @Test func keepingDraftAfterReadOnlyFailureRecoversExactChangesAndClearsFailureMessage() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let initial = PieceDraft(name: "Before retry", category: .tops)
+        let initialOperation = UUID()
+        do {
+            let store = try PieceStore(directory: directory)
+            try store.saveDraft(initial, operationID: initialOperation)
+        }
+        let state = AppState(store: try PieceStore(directory: directory, allowsSave: false))
+        state.addPiece()
+        let model = try #require(state.capture)
+        #expect(model.draft == initial)
+        model.update(\.name, value: "Keep these exact changes")
+        let expectedDraft = model.draft
+        let expectedOperation = model.operationID
+        model.leave()
+        try #require(model.draftSaveFailed)
+        #expect(model.errorText == "These changes couldn’t be kept as a recoverable draft. Keep editing or discard this draft before leaving.")
+        #expect(state.capture === model)
+        #expect(try #require(state.store).newPieceDraft() == RecoverablePieceDraft(
+            draft: initial, operationID: initialOperation))
+
+        // Retry Keep draft against the same durable store, now writable.
+        state.store = nil
+        state.store = try PieceStore(directory: directory)
+        model.leave()
+        #expect(!model.draftSaveFailed)
+        #expect(model.errorText == nil)
+        #expect(state.capture == nil)
+        #expect(model.draft == expectedDraft)
+        #expect(model.operationID == expectedOperation)
+        state.store = nil
+        let reopened = try PieceStore(directory: directory, allowsSave: false)
+        #expect(try reopened.newPieceDraft() == RecoverablePieceDraft(
+            draft: expectedDraft, operationID: expectedOperation))
+        #expect(try reopened.pieces().isEmpty)
+    }
+
+    // Added after the draft retry fix; no test-first RED is claimed for this guardrail.
+    @Test(arguments: [false, true])
+    func successfulDraftUpdatePreservesUnrelatedImportAndSaveErrors(importFailure: Bool) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let state = AppState(store: try PieceStore(directory: directory))
+        // A missing source is recoverable in a draft, but cannot become a saved piece.
+        let draft = PieceDraft(name: "Retained fields", category: .tops, photoID: UUID())
+        let model = CaptureModel(state: state, draft: draft, operationID: UUID())
+        let expectedError: String
+        if importFailure {
+            model.importPhoto { throw CocoaError(.fileReadNoPermission) }
+            while model.isImporting { await Task.yield() }
+            expectedError = "That photo couldn’t be prepared. Your fields and previous photo are unchanged. Choose another photo or keep the draft."
+        } else {
+            try #require(model.canSave)
+            model.save()
+            expectedError = "Save didn’t finish. Your draft is still here. Retry checks the same operation before writing again."
+        }
+        try #require(model.errorText == expectedError)
+        #expect(model.saved == nil)
+        model.update(\.name, value: "Updated recoverable fields")
+        #expect(!model.draftSaveFailed)
+        #expect(model.errorText == expectedError)
+        #expect(try #require(state.store).newPieceDraft() == RecoverablePieceDraft(
+            draft: model.draft, operationID: model.operationID))
+    }
+
     @Test(arguments: [false, true])
     func interruptedFirstUseWithoutMarkerFinishesAndPreservesTodayIdentities(todayWasCommitted: Bool) throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)

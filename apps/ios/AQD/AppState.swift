@@ -14,6 +14,7 @@ final class AppState {
     var store: PieceStore?
     var openingError: String?
     var pieces: [WardrobePiece] = []
+    var collectionRefreshID = UUID()
     var capture: CaptureModel?
     var collectionError: String?
     var today: TodayConfiguration?
@@ -21,6 +22,14 @@ final class AppState {
     var photoCleanupError: String?
 
     init() { openStore() }
+
+    /// Use an explicitly isolated store without opening the ordinary local closet.
+    init(store: PieceStore) {
+        self.store = store
+        reloadPieces()
+        reloadToday()
+        retryPhotoCleanup()
+    }
 
     func openStore() {
         do {
@@ -59,6 +68,8 @@ final class AppState {
         do {
             pieces = try store.pieces()
             collectionError = nil
+            // Archived edits can change detail data without changing the active pieces array.
+            collectionRefreshID = UUID()
         } catch {
             collectionError = "Your pieces couldn’t be read. The saved collection has not been cleared."
         }
@@ -146,6 +157,7 @@ final class CaptureModel: Identifiable {
     @ObservationIgnored private let preparer = PhotoPreparer()
     @ObservationIgnored private var importTask: Task<Void, Never>?
     @ObservationIgnored private var previewCache: (id: UUID, recipe: PhotoEditRecipe, data: Data)?
+    private static let draftPersistenceError = "These changes couldn’t be kept as a recoverable draft. Keep editing or discard this draft before leaving."
 
     var isImporting: Bool { importGate.pending != nil }
     var canSave: Bool { (try? draft.validated()) != nil && !isSaving && !isImporting && !draftSaveFailed }
@@ -178,9 +190,10 @@ final class CaptureModel: Identifiable {
         do {
             try store.saveDraft(draft, operationID: operationID)
             draftSaveFailed = false
+            if errorText == Self.draftPersistenceError { errorText = nil }
         } catch {
             draftSaveFailed = true
-            errorText = "These changes couldn’t be kept as a recoverable draft. Keep editing or discard this draft before leaving."
+            errorText = Self.draftPersistenceError
         }
     }
 

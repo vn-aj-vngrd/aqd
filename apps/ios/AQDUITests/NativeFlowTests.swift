@@ -231,6 +231,12 @@ final class NativeFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["Fit entire photo"].isSelected)
         app.buttons["Rotate"].tap()
         app.buttons["Portrait 3:4"].tap()
+        // Preview rendering is asynchronous. Hosted runners can still display
+        // the explicitly marked old preview while Use is disabled; compare only
+        // the settled recipe that the user is allowed to accept.
+        let usePhoto = app.buttons["Use photo"]
+        let ready = XCTNSPredicateExpectation(predicate: NSPredicate(format: "enabled == true"), object: usePhoto)
+        XCTAssertEqual(XCTWaiter.wait(for: [ready], timeout: 20), .completed)
         attachScreenshot("Explicit crop and rotation preview")
         let editorPreview = app.descendants(matching: .any)["photo.editor.preview"]
         XCTAssertTrue(editorPreview.exists)
@@ -369,12 +375,24 @@ final class NativeFlowTests: XCTestCase {
         app.buttons["More piece options"].tap()
         app.buttons["Archive"].tap()
         app.buttons["Archive"].tap()
-        app.buttons["Undo archive"].tap()
+        app.buttons["piece.edit"].tap()
+        XCTAssertTrue(name.waitForExistence(timeout: 5))
+        name.tap()
+        name.typeText(" archived")
+        let archivedEditName = (name.value as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        XCTAssertTrue(archivedEditName.contains("archived"))
+        app.buttons["capture.save"].tap()
+        XCTAssertTrue(app.navigationBars["Piece saved"].waitForExistence(timeout: 10))
+        app.buttons["capture.back"].tap() // Ordinary receipt Back retains the archived detail.
+        XCTAssertTrue(app.staticTexts[archivedEditName].waitForExistence(timeout: 5), "Archived details must refresh after editing even when the active collection is unchanged")
+        app.buttons["More piece options"].tap()
+        app.buttons["Restore"].tap()
+        XCTAssertFalse(app.staticTexts["Archived"].exists, "Restore must use the refreshed saved revision")
         app.buttons["More piece options"].tap()
         app.buttons["Delete"].tap()
         app.buttons["Delete"].tap()
         XCTAssertTrue(app.navigationBars["Closet"].waitForExistence(timeout: 10), "A cancelled review must not retain Archive’s operation or an old revision")
-        XCTAssertFalse(app.staticTexts[editedName].exists)
+        XCTAssertFalse(app.staticTexts[archivedEditName].exists)
     }
 
     /// Compare rendered output at the public UI seam, not implementation geometry.
