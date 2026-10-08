@@ -33,6 +33,14 @@ private struct AppRootView: View {
             }
         }
         .tint(AppTheme.actionText)
+        .alert("Saved data unavailable", isPresented: Binding(
+            get: { state.collectionError != nil },
+            set: { if !$0 { state.collectionError = nil } }
+        )) {
+            Button("OK", role: .cancel) { state.collectionError = nil }
+        } message: {
+            Text(state.collectionError ?? "Keep your existing app data for recovery.")
+        }
         .sheet(item: $state.capture) { model in
             PieceCaptureView(model: model).environment(state)
         }

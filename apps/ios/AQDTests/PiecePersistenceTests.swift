@@ -8,6 +8,221 @@ import UIKit
 
 @MainActor
 struct PiecePersistenceTests {
+    @Test(arguments: [false, true])
+    func interruptedFirstUseWithoutMarkerFinishesAndPreservesTodayIdentities(todayWasCommitted: Bool) throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let today = TodayConfiguration(ownerID: UUID())
+        // Both crash windows use the real current native schema: before the first
+        // Today commit, and after it but before the external marker is written.
+        do {
+            let schema = Schema(versionedSchema: LocalSchemaV2.self)
+            let configuration = ModelConfiguration(schema: schema,
+                url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
+            let container = try ModelContainer(for: schema, configurations: [configuration])
+            let context = ModelContext(container)
+            if todayWasCommitted { context.insert(StoredTodayConfiguration(today)) }
+            try context.save()
+        }
+        let marker = directory.appendingPathComponent("schema-version")
+        #expect(!FileManager.default.fileExists(atPath: marker.path))
+        var recovered: PieceStore? = try PieceStore(directory: directory)
+        let first = try #require(recovered).todayConfiguration()
+        if todayWasCommitted { #expect(first == today) }
+        #expect(first.revision == 1)
+        #expect(first.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse])
+        #expect(Set(first.instances.map(\.id)).count == 3)
+        #expect(try #require(recovered).pieces().isEmpty)
+        #expect(try #require(recovered).latestDraft() == nil)
+        #expect(try !#require(recovered).hasPendingPhotoCleanup())
+        #expect(try Data(contentsOf: marker) == Data("AQD-piece-store:2".utf8))
+        recovered = nil
+        let reopened = try PieceStore(directory: directory, allowsSave: false)
+        #expect(try reopened.todayConfiguration() == first)
+        #expect(try reopened.pieces().isEmpty)
+    }
+
+    @Test(arguments: Array(0...13))
+    func unmarkedNonBootstrapLayoutsAreRefusedWithoutChangingBytes(layout: Int) throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let media = directory.appendingPathComponent("media", isDirectory: true)
+        try FileManager.default.createDirectory(at: media, withIntermediateDirectories: true)
+        let sentinel = media.appendingPathComponent("unknown.jpg")
+        let sentinelBytes = Data("Preserve unrecognized media".utf8)
+        try sentinelBytes.write(to: sentinel)
+        let database = directory.appendingPathComponent("wardrobe.store")
+        if layout < 10 || layout > 11 {
+            do {
+                let schema: Schema
+                switch layout {
+                case 8: schema = Schema(versionedSchema: LocalSchemaV1.self)
+                case 9: schema = Schema([StoredPhoto.self]) // Valid SQLite, not the app schema.
+                default: schema = Schema(versionedSchema: LocalSchemaV2.self)
+                }
+                let configuration = ModelConfiguration(schema: schema, url: database, cloudKitDatabase: .none)
+                let container = try ModelContainer(for: schema, configurations: [configuration])
+                let context = ModelContext(container)
+                let draft = PieceDraft(name: "Not first use")
+                if layout < 6 { context.insert(StoredTodayConfiguration(TodayConfiguration(ownerID: UUID()))) }
+                switch layout {
+                case 0: context.insert(StoredPiece(WardrobePiece(id: UUID(), name: "Keep", category: .tops, photoID: UUID())))
+                case 1: context.insert(StoredPhoto(id: UUID(), pixelWidth: 20, pixelHeight: 30))
+                case 2: context.insert(StoredPieceDraft(draft: draft, operationID: UUID(), payload: try JSONEncoder().encode(draft)))
+                case 3: context.insert(StoredPieceSave(id: UUID(), itemID: UUID(), draftDigest: "Keep proof", snapshot: Data()))
+                case 4: context.insert(StoredPieceDeletion(operationID: UUID(), itemID: UUID(), expectedRevision: 1, pendingPhotoIDs: []))
+                case 5: context.insert(StoredPhotoCleanup(photoID: UUID()))
+                case 6:
+                    let invalid = StoredTodayConfiguration(TodayConfiguration(ownerID: UUID()))
+                    invalid.kindIDs = ["unknown"]
+                    context.insert(invalid)
+                case 7:
+                    var customized = TodayConfiguration(ownerID: UUID())
+                    customized.revision = 2
+                    customized.instances = [TodayWidgetInstance(kind: .personalNote)]
+                    context.insert(StoredTodayConfiguration(customized))
+                case 12:
+                    var nonStock = TodayConfiguration(ownerID: UUID())
+                    nonStock.instances = [TodayWidgetInstance(kind: .personalNote)]
+                    context.insert(StoredTodayConfiguration(nonStock))
+                case 13:
+                    context.insert(StoredTodayConfiguration(TodayConfiguration(ownerID: UUID())))
+                    let extra = StoredTodayConfiguration(TodayConfiguration(ownerID: UUID()))
+                    extra.id = 2
+                    context.insert(extra)
+                default: break
+                }
+                try context.save()
+            }
+        } else if layout == 10 {
+            try Data("Not SQLite".utf8).write(to: database)
+        }
+        let marker = directory.appendingPathComponent("schema-version")
+        if layout == 11 {
+            // A recognized marker without its database is corruption, unlike a
+            // fresh directory containing unrelated media, which may initialize.
+            try Data("AQD-piece-store:2".utf8).write(to: marker)
+        }
+        // SQLite's shared-memory reader index changes even on read-only opens.
+        // Preserve authoritative database/WAL/marker bytes, not volatile reader bookkeeping.
+        let files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+            .filter { $0.lastPathComponent != "media" && !$0.lastPathComponent.hasSuffix("-shm") }
+        let bytes = try files.map { try Data(contentsOf: $0) }
+        #expect(throws: (any Error).self) { try PieceStore(directory: directory) }
+        for (file, original) in zip(files, bytes) {
+            #expect(try Data(contentsOf: file) == original, "Refused store changed \(file.lastPathComponent)")
+        }
+        #expect(try Data(contentsOf: sentinel) == sentinelBytes)
+        if layout == 11 {
+            #expect(try Data(contentsOf: marker) == Data("AQD-piece-store:2".utf8))
+        } else {
+            #expect(!FileManager.default.fileExists(atPath: marker.path))
+        }
+        #expect(FileManager.default.fileExists(atPath: database.path) == (layout != 11))
+    }
+
+    @Test func fitOriginalUseSavesWithoutCreatingOrRetainingUnusedEditFiles() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let media = directory.appendingPathComponent("media")
+        let source = try await preparedPhoto()
+        var store: PieceStore? = try PieceStore(directory: directory)
+        _ = try #require(store).acceptPhoto(source)
+        let originalFiles = Set(["\(source.id.uuidString).jpg", "\(source.id.uuidString)-thumbnail.jpg"])
+        #expect(Set(try FileManager.default.contentsOfDirectory(atPath: media.path)) == originalFiles)
+        let fit = try await PhotoPreparer().render(data: source.originalData,
+            sourcePhotoID: source.id, recipe: .fitOriginal)
+        try #require(store).acceptPhotoEdit(fit)
+        // Public Fit reads bypass edit files, so inventory is the external media
+        // boundary that detects otherwise invisible persistent duplicates.
+        #expect(Set(try FileManager.default.contentsOfDirectory(atPath: media.path)) == originalFiles)
+        let saved = try #require(store).savePiece(PieceDraft(name: "Unchanged Fit", category: .tops,
+            photoID: source.id, photoRecipe: .fitOriginal), operationID: UUID())
+        try #require(store).reconcilePendingPhotoCleanup()
+        #expect(Set(try FileManager.default.contentsOfDirectory(atPath: media.path)) == originalFiles)
+        #expect(try #require(store).photoRendition(id: source.id, recipe: .fitOriginal) == source.originalData)
+        #expect(try #require(store).photoThumbnail(id: source.id, recipe: .fitOriginal) == source.thumbnailData)
+        store = nil
+        let reopened = try PieceStore(directory: directory)
+        try reopened.reconcilePendingPhotoCleanup()
+        #expect(try reopened.piece(id: saved.id) == saved)
+        #expect(Set(try FileManager.default.contentsOfDirectory(atPath: media.path)) == originalFiles)
+        #expect(try reopened.originalPhoto(id: source.id) == source.originalData)
+        #expect(try reopened.thumbnailPhoto(id: source.id) == source.thumbnailData)
+        #expect(try !reopened.hasPendingPhotoCleanup())
+    }
+
+    @Test func legacyFitCleanupPreservesPieceAndDraftSourcesSharedRecipesAndUnknownFiles() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let media = directory.appendingPathComponent("media")
+        let pieceSource = try await preparedPhoto()
+        let draftSource = try await preparedPhoto()
+        var store: PieceStore? = try PieceStore(directory: directory)
+        for source in [pieceSource, draftSource] { _ = try #require(store).acceptPhoto(source) }
+        let saved = try #require(store).savePiece(PieceDraft(name: "Live original Fit", category: .tops,
+            photoID: pieceSource.id), operationID: UUID())
+        let draft = PieceDraft(name: "Draft-only original Fit", photoID: draftSource.id)
+        let draftOperation = UUID()
+        try #require(store).saveDraft(draft, operationID: draftOperation)
+        let rotation = try await PhotoPreparer().render(data: pieceSource.originalData,
+            sourcePhotoID: pieceSource.id, recipe: .init(quarterTurns: 1))
+        let portraitRecipe = try PhotoEditRecipe.portrait(originalWidth: pieceSource.pixelWidth,
+            originalHeight: pieceSource.pixelHeight)
+        let portrait = try await PhotoPreparer().render(data: pieceSource.originalData,
+            sourcePhotoID: pieceSource.id, recipe: portraitRecipe)
+        try #require(store).acceptPhotoEdit(rotation)
+        try #require(store).acceptPhotoEdit(portrait)
+        let rotatedDraft = PieceDraft(name: "Shared rotated Fit", photoID: pieceSource.id, photoRecipe: rotation.recipe)
+        let rotatedOperation = UUID()
+        try #require(store).saveDraft(rotatedDraft, operationID: rotatedOperation)
+        let portraitPiece = try #require(store).savePiece(PieceDraft(name: "Shared portrait", category: .tops,
+            photoID: pieceSource.id, photoRecipe: portrait.recipe), operationID: UUID())
+        try #require(store).reconcilePendingPhotoCleanup()
+        #expect(try !#require(store).hasPendingPhotoCleanup())
+        let retainedFiles = Set(try FileManager.default.contentsOfDirectory(atPath: media.path))
+        #expect(retainedFiles.count == 8) // Two source pairs and two derived pairs.
+        store = nil
+        // Old Fit staging may already have been acknowledged. Arrange artifacts
+        // without a cleanup intent, independently of the now no-write acceptance.
+        let fitDigest = try PhotoPreparer.recipeDigest(.fitOriginal)
+        var legacyFiles: [URL] = []
+        for source in [pieceSource, draftSource] {
+            for (kind, bytes) in [("rendition", source.originalData), ("thumbnail", source.thumbnailData)] {
+                let file = media.appendingPathComponent("\(source.id.uuidString)-edit-\(fitDigest)-\(kind).jpg")
+                try bytes.write(to: file)
+                legacyFiles.append(file)
+            }
+        }
+        // Even a well-formed derived filename must survive when its recipe is
+        // unknown: live-source legacy cleanup probes only the exact Fit paths.
+        let unknownName = "\(pieceSource.id.uuidString)-edit-\(String(repeating: "a", count: 64))-rendition.jpg"
+        let unknown = media.appendingPathComponent(unknownName)
+        let unknownBytes = Data("Keep unrelated recipe bytes".utf8)
+        try unknownBytes.write(to: unknown)
+        var recovered: PieceStore? = try PieceStore(directory: directory)
+        try #require(recovered).reconcilePendingPhotoCleanup()
+        for file in legacyFiles { #expect(!FileManager.default.fileExists(atPath: file.path)) }
+        #expect(Set(try FileManager.default.contentsOfDirectory(atPath: media.path)) == retainedFiles.union([unknownName]))
+        recovered = nil
+        let reopened = try PieceStore(directory: directory)
+        try reopened.reconcilePendingPhotoCleanup()
+        #expect(Set(try FileManager.default.contentsOfDirectory(atPath: media.path)) == retainedFiles.union([unknownName]))
+        #expect(try reopened.piece(id: saved.id) == saved)
+        #expect(try reopened.piece(id: portraitPiece.id) == portraitPiece)
+        #expect(try reopened.recoverableDraft(itemID: draft.itemID) == RecoverablePieceDraft(draft: draft, operationID: draftOperation))
+        #expect(try reopened.recoverableDraft(itemID: rotatedDraft.itemID) == RecoverablePieceDraft(draft: rotatedDraft, operationID: rotatedOperation))
+        for source in [pieceSource, draftSource] {
+            #expect(try reopened.originalPhoto(id: source.id) == source.originalData)
+            #expect(try reopened.thumbnailPhoto(id: source.id) == source.thumbnailData)
+            #expect(try reopened.photoRendition(id: source.id, recipe: .fitOriginal) == source.originalData)
+            #expect(try reopened.photoThumbnail(id: source.id, recipe: .fitOriginal) == source.thumbnailData)
+        }
+        for edit in [rotation, portrait] {
+            #expect(try reopened.photoRendition(id: pieceSource.id, recipe: edit.recipe) == edit.renditionData)
+            #expect(try reopened.photoThumbnail(id: pieceSource.id, recipe: edit.recipe) == edit.thumbnailData)
+        }
+        #expect(try Data(contentsOf: unknown) == unknownBytes)
+        #expect(try !reopened.hasPendingPhotoCleanup())
+    }
+
     @Test func versionOneMigrationPreservesPieceDraftPhotoAndTodayIdentities() async throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let media = directory.appendingPathComponent("media", isDirectory: true)

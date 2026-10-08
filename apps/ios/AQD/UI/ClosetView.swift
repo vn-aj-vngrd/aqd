@@ -8,23 +8,22 @@ struct ClosetView: View {
     @State private var archived = false
     @State private var availability: PieceAvailability?
     @State private var sort = PieceSort.name
-    @State private var scope = "Pieces"
     @State private var results: [WardrobePiece] = []
     @State private var error: String?
 
     var body: some View {
         NavigationStack(path: Binding(get: { state.closetPath }, set: { state.closetPath = $0 })) {
             VStack(spacing: 0) {
-                Picker("Closet collection", selection: $scope) {
+                Picker("Closet collection", selection: Binding(get: { state.closetScope }, set: { state.closetScope = $0 })) {
                     Text("Pieces").tag("Pieces")
                     Text("Outfits").tag("Outfits")
                     Text("Themes").tag("Themes")
                 }.pickerStyle(.segmented).padding(.horizontal, 20).padding(.bottom, 12)
-                if scope == "Pieces" {
+                if state.closetScope == "Pieces" {
                     collection
                 } else {
-                    ContentUnavailableView("\(scope) aren’t implemented yet", systemImage: "square.stack",
-                                           description: Text("This baseline currently supports pieces. Full private \(scope.lowercased()) remain part of V1 implementation."))
+                    ContentUnavailableView("\(state.closetScope) aren’t implemented yet", systemImage: "square.stack",
+                                           description: Text("This baseline currently supports pieces. Full private \(state.closetScope.lowercased()) remain part of V1 implementation."))
                 }
             }
             .background(AppTheme.canvas)
@@ -52,7 +51,7 @@ struct ClosetView: View {
                             Text("Recently added").tag(PieceSort.recentlyAdded)
                         }
                     } label: { Label("Filter pieces", systemImage: "line.3.horizontal.decrease") }
-                    .disabled(scope != "Pieces")
+                    .disabled(state.closetScope != "Pieces")
                 }
             }
             .searchable(text: $query, prompt: "Search pieces")

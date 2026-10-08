@@ -1,12 +1,16 @@
 import AQDCore
 import Foundation
 import Observation
+#if DEBUG
+import SwiftData
+#endif
 
 @MainActor
 @Observable
 final class AppState {
     var selection = 0
     var closetPath: [UUID] = []
+    var closetScope = "Pieces"
     var store: PieceStore?
     var openingError: String?
     var pieces: [WardrobePiece] = []
@@ -26,13 +30,20 @@ final class AppState {
             #if DEBUG
             // UI automation uses a fresh, stable test-store identity. Never reset the ordinary closet.
             let process = ProcessInfo.processInfo
+            var isolatedUITestStore = false
             if process.arguments.contains("--aqd-ui-testing"),
                let value = process.environment["AQD_TEST_STORE_ID"], let identifier = UUID(uuidString: value) {
                 directory = support.appendingPathComponent("AQD-UITests", isDirectory: true)
                     .appendingPathComponent(identifier.uuidString, isDirectory: true)
+                isolatedUITestStore = true
             }
             #endif
             store = try PieceStore(directory: directory)
+            #if DEBUG
+            if isolatedUITestStore, process.environment["AQD_TEST_CORRUPT_DRAFT"] == "1" {
+                try seedUnreadableUITestDraft(in: directory)
+            }
+            #endif
             openingError = nil
             reloadPieces()
             reloadToday()
@@ -102,6 +113,22 @@ final class AppState {
             collectionError = "This piece’s saved draft couldn’t open. It hasn’t been replaced."
         }
     }
+
+    #if DEBUG
+    /// Real malformed native input, isolated to the explicitly identified UI-test store.
+    /// This fixture cannot mutate the ordinary closet and is absent from Release.
+    private func seedUnreadableUITestDraft(in directory: URL) throws {
+        let schema = Schema(versionedSchema: LocalSchemaV2.self)
+        let configuration = ModelConfiguration(schema: schema,
+            url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
+        let fixtureContainer = try ModelContainer(for: schema, configurations: [configuration])
+        let context = ModelContext(fixtureContainer)
+        guard try context.fetch(FetchDescriptor<StoredPieceDraft>()).isEmpty else { return }
+        let draft = PieceDraft(name: "Unreadable retained UI-test draft")
+        context.insert(StoredPieceDraft(draft: draft, operationID: UUID(), payload: Data("not-json".utf8)))
+        try context.save()
+    }
+    #endif
 }
 
 @MainActor
@@ -233,6 +260,7 @@ final class CaptureModel: Identifiable {
     func openCloset() {
         guard saved != nil else { return }
         state.closetPath = []
+        state.closetScope = "Pieces"
         state.selection = 1
         state.capture = nil
         state.retryPhotoCleanup()

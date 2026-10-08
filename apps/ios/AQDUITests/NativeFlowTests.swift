@@ -56,6 +56,24 @@ final class NativeFlowTests: XCTestCase {
         attachScreenshot("Native icon-only root tabs")
     }
 
+    func testUnreadableRetainedDraftShowsRecoveryRefusalWithoutOpeningCapture() {
+        app.terminate()
+        app.launchEnvironment["AQD_TEST_CORRUPT_DRAFT"] = "1"
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        tab("Closet").tap()
+        app.buttons["closet.addPiece"].tap()
+        let refusal = app.alerts["Saved data unavailable"]
+        XCTAssertTrue(refusal.waitForExistence(timeout: 5))
+        XCTAssertTrue(refusal.staticTexts["The saved draft couldn’t open. It hasn’t been replaced."].exists)
+        XCTAssertFalse(app.textFields["capture.field.name"].exists)
+        attachScreenshot("Malformed retained draft remains preserved with visible recovery refusal")
+        refusal.buttons["OK"].tap()
+        XCTAssertTrue(app.staticTexts["Your closet starts here"].exists)
+        app.buttons["closet.addPiece"].tap()
+        XCTAssertTrue(refusal.waitForExistence(timeout: 5), "Retry must refuse the same retained bytes, not reset to an empty draft")
+    }
+
     func testPieceAvailabilityAndSortControlsKeepTheEmptyCollectionHonest() {
         tab("Closet").tap()
         app.buttons["Filter pieces"].tap()
@@ -149,7 +167,13 @@ final class NativeFlowTests: XCTestCase {
         let originalName = "Picker shoes \(UUID().uuidString.prefix(8))"
         let editedName = originalName + " edited"
         tab("Closet").tap()
-        app.buttons["closet.addPiece"].tap()
+        app.segmentedControls.buttons["Outfits"].tap()
+        XCTAssertTrue(app.staticTexts["Outfits aren’t implemented yet"].waitForExistence(timeout: 5))
+        tab("Today").tap()
+        let todayAdd = app.buttons["Add piece"]
+        if !todayAdd.isHittable { app.swipeUp() }
+        XCTAssertTrue(todayAdd.isHittable)
+        todayAdd.tap()
         let name = app.textFields["capture.field.name"]
         XCTAssertTrue(name.waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["capture.save"].isEnabled)

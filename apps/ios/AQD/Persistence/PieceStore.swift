@@ -235,9 +235,10 @@ final class PieceStore {
         let previousVersion = Data("AQD-piece-store:1".utf8)
         let hasStore = FileManager.default.fileExists(atPath: storeURL.path)
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
+        let schema = Schema(versionedSchema: LocalSchemaV2.self)
+        var needsTodaySeed = !hasStore
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
-        if hasStore || hasVersion {
-            guard hasVersion else { throw StoreError.unsupportedStore }
+        if hasVersion {
             let marker = try Data(contentsOf: versionURL)
             guard marker == version || marker == previousVersion else { throw StoreError.unsupportedStore }
             guard hasStore else { throw StoreError.corruptStore }
@@ -245,12 +246,14 @@ final class PieceStore {
                 _ = try NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: NSSQLiteStoreType, at: storeURL,
                                                                                options: [NSReadOnlyPersistentStoreOption: true])
             } catch { throw StoreError.corruptStore }
-        } else if !allowsSave {
-            throw StoreError.corruptStore
+        } else if hasStore {
+            // Recognize only the two current-schema first-use crash windows,
+            // before any writable open or migration can alter unmarked bytes.
+            needsTodaySeed = try Self.interruptedBootstrapNeedsToday(storeURL: storeURL, schema: schema)
         }
+        if needsTodaySeed && !allowsSave { throw StoreError.corruptStore }
         try Self.createProtectedDirectory(directory)
         try Self.createProtectedDirectory(mediaDirectory)
-        let schema = Schema(versionedSchema: LocalSchemaV2.self)
         let configuration = ModelConfiguration(
             schema: schema,
             url: storeURL,
@@ -263,8 +266,9 @@ final class PieceStore {
             // No reset, fallback container or byte deletion on incompatible/corrupt stores.
             throw StoreError.unsupportedStore
         }
-        if !hasVersion {
-            // Only an absent first-use store may seed. Existing missing/corrupt layouts are recovery.
+        if needsTodaySeed {
+            // Seed only fresh or validated empty bootstrap storage. A committed
+            // stock Today row retains its original owner and widget identities.
             let context = ModelContext(container)
             context.insert(StoredTodayConfiguration(TodayConfiguration(ownerID: UUID())))
             try commit(context)
@@ -272,6 +276,51 @@ final class PieceStore {
         // Advance the marker only after the native preservation migration succeeds.
         if allowsSave { try version.write(to: versionURL, options: [.atomic, .completeFileProtection]) }
         try protectStoreFiles()
+    }
+
+    private static func interruptedBootstrapNeedsToday(storeURL: URL, schema: Schema) throws -> Bool {
+        do {
+            let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
+                ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
+            let model: NSManagedObjectModel?
+            if #available(iOS 26, *) {
+                model = NSManagedObjectModel.makeManagedObjectModel(for: schema)
+            } else {
+                model = NSManagedObjectModel().makeManagedObjectModel(for: schema)
+            }
+            guard let model,
+                  let hashes = metadata[NSStoreModelVersionHashesKey] as? [String: Data],
+                  hashes == model.entityVersionHashesByName,
+                  model.isConfiguration(withName: nil, compatibleWithStoreMetadata: metadata) else {
+                throw StoreError.unsupportedStore
+            }
+            // No migration plan, no writable connection: exact native schema
+            // compatibility must precede inspection of the narrowly allowed rows.
+            let configuration = ModelConfiguration(schema: schema, url: storeURL,
+                allowsSave: false, cloudKitDatabase: .none)
+            let readOnly = try ModelContainer(for: schema, configurations: [configuration])
+            let context = ModelContext(readOnly)
+            guard try context.fetchCount(FetchDescriptor<StoredPiece>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredPhoto>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredPieceDraft>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredPieceSave>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredPieceDeletion>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredPhotoCleanup>()) == 0 else {
+                throw StoreError.unsupportedStore
+            }
+            let records = try context.fetch(FetchDescriptor<StoredTodayConfiguration>())
+            if records.isEmpty { return true }
+            guard records.count == 1, let record = records.first else { throw StoreError.unsupportedStore }
+            let today = try record.value()
+            guard today.revision == 1,
+                  today.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse] else {
+                throw StoreError.unsupportedStore
+            }
+            return false
+        } catch {
+            // Refuse unmarked corrupt/foreign/populated layouts without reset.
+            throw StoreError.unsupportedStore
+        }
     }
 
     func todayConfiguration() throws -> TodayConfiguration {
@@ -615,8 +664,21 @@ final class PieceStore {
         // may still have media referenced only by completed receipts. Their validated
         // snapshots provide exact cleanup candidates, never a directory-wide sweep.
         let pieces = try context.fetch(FetchDescriptor<StoredPiece>()).map { try $0.value() }
-        _ = try decodedDrafts(context)
+        let drafts = try decodedDrafts(context).map { $0.1 }
         let receipts = try decodedReceipts(context)
+        // Older Fit acceptance wrote unused derivatives, and its staging intent
+        // may already have been acknowledged while the original remained live.
+        // Probe only the two exact Fit paths for validated live source identities.
+        let fitDigest = try PhotoPreparer.recipeDigest(.fitOriginal)
+        let livePhotoIDs = Set(pieces.map(\.photoID) + drafts.compactMap(\.photoID))
+        for photoID in livePhotoIDs.sorted(by: { $0.uuidString < $1.uuidString }) {
+            let fitFiles = try ["rendition", "thumbnail"].map {
+                try editURL(id: photoID, recipe: .fitOriginal, kind: $0)
+            }
+            if fitFiles.contains(where: { (try? FileManager.default.attributesOfItem(atPath: $0.path)) != nil }) {
+                try queueCleanup(photoID: photoID, recipeDigest: fitDigest, context: context)
+            }
+        }
         for (_, snapshot) in receipts where !pieces.contains(where: {
             $0.id == snapshot.id && $0.photoID == snapshot.photoID && $0.photoRecipe == snapshot.photoRecipe
         }) {
@@ -686,7 +748,8 @@ final class PieceStore {
         for photoID in photoIDs where references.contains(photoID) {
             let recipes = pieces.filter { $0.photoID == photoID }.map(\.photoRecipe)
                 + drafts.filter { $0.photoID == photoID }.map(\.photoRecipe)
-            let retained = Set(try recipes.map { try PhotoPreparer.recipeDigest($0) })
+            // Fit reads the source files, never its historical edit artifacts.
+            let retained = Set(try recipes.filter { $0 != .fitOriginal }.map { try PhotoPreparer.recipeDigest($0) })
             for digest in stagedRecipeDigests where !retained.contains(digest) {
                 for kind in ["rendition", "thumbnail"] {
                     try removeOwnedMediaFile(mediaDirectory.appendingPathComponent("\(photoID.uuidString)-edit-\(digest)-\(kind).jpg"))
@@ -758,6 +821,12 @@ final class PieceStore {
             if (try? FileManager.default.attributesOfItem(atPath: url.path)) != nil {
                 guard try readMedia(url) == data else { throw StoreError.conflictingMedia }
             }
+        }
+        if edit.recipe == .fitOriginal {
+            // Keep ownership/digest/path/conflict validation above, but no Fit
+            // derivatives are needed: both public reads use the accepted source.
+            _ = try thumbnailPhoto(id: id)
+            return
         }
         try queueCleanup(photoID: id, recipeDigest: edit.recipeDigest, context: context)
         try commit(context)
