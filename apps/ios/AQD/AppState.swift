@@ -80,7 +80,7 @@ final class AppState {
     func addPiece() {
         guard let store else { return }
         do {
-            let recovered = try store.latestDraft()
+            let recovered = try store.newPieceDraft()
             capture = CaptureModel(state: self, draft: recovered?.draft ?? PieceDraft(),
                                    operationID: recovered?.operationID ?? UUID())
         } catch {

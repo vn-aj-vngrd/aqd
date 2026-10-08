@@ -210,12 +210,16 @@ final class NativeFlowTests: XCTestCase {
         attachScreenshot("Explicit crop and rotation preview")
         let editorPreview = app.descendants(matching: .any)["photo.editor.preview"]
         XCTAssertTrue(editorPreview.exists)
-        let previewLandmark = syntheticWhiteLandmark(editorPreview.screenshot().image)
+        let previewViewport = portraitViewportScreenshot(editorPreview, size: CGSize(width: 240, height: 320))
+        attachImage(previewViewport, name: "Crop preview viewport")
+        let previewLandmark = syntheticWhiteLandmark(previewViewport)
         XCTAssertNotNil(previewLandmark, "The explicit crop preview must retain the fixture's central white landmark")
         app.buttons["Use photo"].tap()
         let selectedCrop = app.images["Selected piece photo, portrait crop"]
         XCTAssertTrue(selectedCrop.waitForExistence(timeout: 15))
-        let acceptedLandmark = syntheticWhiteLandmark(selectedCrop.screenshot().image)
+        let acceptedViewport = portraitViewportScreenshot(selectedCrop, size: CGSize(width: 168, height: 224))
+        attachImage(acceptedViewport, name: "Accepted crop viewport")
+        let acceptedLandmark = syntheticWhiteLandmark(acceptedViewport)
         XCTAssertNotNil(acceptedLandmark)
         if let previewLandmark, let acceptedLandmark {
             XCTAssertEqual(previewLandmark.x, acceptedLandmark.x, accuracy: 0.06, "Preview and accepted rendition must show the same crop")
@@ -242,9 +246,21 @@ final class NativeFlowTests: XCTestCase {
         // not create competing drafts that permanently block Save.
         app.buttons["capture.back"].tap()
         XCTAssertTrue(app.buttons["piece.edit"].waitForExistence(timeout: 5))
+        app.navigationBars["Piece"].buttons["Closet"].tap()
+        let searchCancel = app.buttons["Cancel"]
+        if searchCancel.exists { searchCancel.tap() }
+        else if app.buttons["Close"].exists { app.buttons["Close"].tap() }
+        app.buttons["closet.addPiece"].tap()
+        XCTAssertTrue(app.navigationBars["Add piece"].waitForExistence(timeout: 5), "Add must not reopen an unrelated saved-item edit")
+        XCTAssertNotEqual(name.value as? String, editedName)
+        XCTAssertFalse(app.buttons["capture.save"].isEnabled)
+        app.buttons["capture.back"].tap()
+        let existingPiece = app.staticTexts[originalName].firstMatch
+        XCTAssertTrue(existingPiece.waitForExistence(timeout: 5))
+        existingPiece.tap()
         app.buttons["piece.edit"].tap()
         XCTAssertTrue(name.waitForExistence(timeout: 5))
-        XCTAssertEqual(name.value as? String, editedName)
+        XCTAssertEqual(name.value as? String, editedName, "Creating a new draft must not replace this piece’s retained edit")
         app.swipeUp()
         app.buttons["More details"].tap()
         let color = app.textFields["capture.field.color"]
@@ -368,8 +384,41 @@ final class NativeFlowTests: XCTestCase {
             }
         }
         guard whiteCount > 5, maxX > minX, maxY > minY else { return nil }
-        return CGPoint(x: (whiteX / Double(whiteCount) - Double(minX)) / Double(maxX - minX),
-                       y: (whiteY / Double(whiteCount) - Double(minY)) / Double(maxY - minY))
+        // Both portrait targets have exact 3:4 viewports. Normalize against that
+        // viewport, not inferred blue-color bounds: native blurred chrome can
+        // desaturate an obscured edge without changing the actual crop geometry.
+        return CGPoint(x: (whiteX / Double(whiteCount)) / Double(width),
+                       y: (whiteY / Double(whiteCount)) / Double(height))
+    }
+
+    private func portraitViewportScreenshot(_ element: XCUIElement, size: CGSize) -> UIImage {
+        let frame = element.frame
+        let screenshot = element.screenshot().image
+        guard let image = screenshot.cgImage, frame.width > 0 else {
+            XCTFail("The rendered photo viewport must be measurable")
+            return screenshot
+        }
+        // SwiftUI can expose the centered preview's full-width accessibility
+        // wrapper. Inspect its actual fixed portrait viewport, not side padding.
+        let scale = CGFloat(image.width) / frame.width
+        let width = size.width * scale, height = size.height * scale
+        let viewport = CGRect(x: (CGFloat(image.width) - width) / 2,
+                              y: (CGFloat(image.height) - height) / 2,
+                              width: width, height: height).integral
+        guard let cropped = image.cropping(to: viewport),
+              abs(CGFloat(cropped.width) - width) <= 2,
+              abs(CGFloat(cropped.height) - height) <= 2 else {
+            XCTFail("The full expected portrait viewport must be captured")
+            return screenshot
+        }
+        return UIImage(cgImage: cropped, scale: screenshot.scale, orientation: screenshot.imageOrientation)
+    }
+
+    private func attachImage(_ image: UIImage, name: String) {
+        let attachment = XCTAttachment(image: image)
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
     }
 
     private func searchAndOpen(_ name: String) {

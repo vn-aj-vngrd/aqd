@@ -127,6 +127,8 @@ final class StoredPhoto {
     }
 }
 
+/// Exact operation acknowledgment proof, not a historical media owner.
+/// A retry returns this immutable result even if superseded media has been released.
 @Model
 final class StoredPieceSave {
     @Attribute(.unique) var id: UUID
@@ -360,6 +362,23 @@ final class PieceStore {
         return RecoverablePieceDraft(draft: draft, operationID: operationID)
     }
 
+    /// Add piece resumes only a creation, never an existing piece's retained edit.
+    /// Validate recovery records before selection; do not erase unrelated/stale drafts.
+    func newPieceDraft() throws -> RecoverablePieceDraft? {
+        let context = ModelContext(container)
+        let savedIDs = Set(try context.fetch(FetchDescriptor<StoredPiece>()).map { try $0.value().id })
+        let drafts = try decodedDrafts(context).filter {
+            $0.1.baseRevision == nil && !savedIDs.contains($0.1.itemID)
+        }.sorted {
+            $0.0.updatedAt == $1.0.updatedAt ? $0.0.id.uuidString < $1.0.id.uuidString : $0.0.updatedAt > $1.0.updatedAt
+        }
+        guard let (stored, draft) = drafts.first else { return nil }
+        // Item recovery also refuses competing drafts and consumed operation identities.
+        guard let recovered = try recoverableDraft(itemID: draft.itemID),
+              recovered.operationID == stored.operationID else { throw StoreError.invalidRecord }
+        return recovered
+    }
+
     func latestDraft() throws -> RecoverablePieceDraft? {
         let context = ModelContext(container)
         let drafts = try context.fetch(FetchDescriptor<StoredPieceDraft>()).sorted {
@@ -449,7 +468,15 @@ final class PieceStore {
                                   details: draft.details, availability: draft.availability,
                                   revision: (existing?.revision ?? 0) + 1, isArchived: existing?.isArchived ?? false,
                                   createdAt: existing?.createdAt ?? date, updatedAt: date, photoRecipe: draft.photoRecipe)
-        if let existing { existing.apply(result) } else { context.insert(StoredPiece(result)) }
+        if let existing {
+            if existing.photoID != photoID || existingRecipe != draft.photoRecipe {
+                // Relinquish the old current owner in the same record transaction.
+                // Keep acknowledgment snapshots intact; they do not own these bytes.
+                try queueCleanup(photoID: existing.photoID,
+                                 recipeDigest: try cleanupRecipeDigest(try existing.recipe()), context: context)
+            }
+            existing.apply(result)
+        } else { context.insert(StoredPiece(result)) }
         context.insert(StoredPieceSave(id: operationID, itemID: id, draftDigest: digest, snapshot: try encode(result)))
         if let savedDraft { context.delete(savedDraft) }
         try commit(context)
@@ -582,16 +609,37 @@ final class PieceStore {
     /// Relaunch recovery uses durable acknowledgments, not a vanished screen's operation ID.
     /// Only durable, explicitly staged candidates are considered; unknown files are never swept.
     func reconcilePendingPhotoCleanup() throws {
+        guard allowsSave else { throw StoreError.cleanupPending }
         let context = ModelContext(container)
+        // Stores written before replacement queued the relinquished current photo
+        // may still have media referenced only by completed receipts. Their validated
+        // snapshots provide exact cleanup candidates, never a directory-wide sweep.
+        let pieces = try context.fetch(FetchDescriptor<StoredPiece>()).map { try $0.value() }
+        _ = try decodedDrafts(context)
+        let receipts = try decodedReceipts(context)
+        for (_, snapshot) in receipts where !pieces.contains(where: {
+            $0.id == snapshot.id && $0.photoID == snapshot.photoID && $0.photoRecipe == snapshot.photoRecipe
+        }) {
+            try queueCleanup(photoID: snapshot.photoID,
+                             recipeDigest: try cleanupRecipeDigest(snapshot.photoRecipe), context: context)
+        }
+        try commit(context)
+        var firstFailure: (any Error)?
         let acknowledgments = try context.fetch(FetchDescriptor<StoredPieceDeletion>())
             .filter { !$0.pendingPhotoIDs.isEmpty }.sorted { $0.id.uuidString < $1.id.uuidString }
-        for acknowledgment in acknowledgments { try finishCleanup(acknowledgment, context: context) }
+        for acknowledgment in acknowledgments {
+            do { try finishCleanup(acknowledgment, context: context) }
+            catch { context.rollback(); if firstFailure == nil { firstFailure = error } }
+        }
         let candidates = try context.fetch(FetchDescriptor<StoredPhotoCleanup>()).sorted { $0.id.uuidString < $1.id.uuidString }
         for candidate in candidates {
-            try cleanPhotos([candidate.id], stagedRecipeDigests: candidate.recipeDigests, context: context)
-            context.delete(candidate)
-            try commit(context)
+            do {
+                try cleanPhotos([candidate.id], stagedRecipeDigests: candidate.recipeDigests, context: context)
+                context.delete(candidate)
+                try commit(context)
+            } catch { context.rollback(); if firstFailure == nil { firstFailure = error } }
         }
+        if let firstFailure { throw firstFailure }
     }
 
     private func decodedDrafts(_ context: ModelContext) throws -> [(StoredPieceDraft, PieceDraft)] {
@@ -626,15 +674,17 @@ final class PieceStore {
         // Recompute the live graph on every retry, not the graph at deletion time.
         let pieces = try context.fetch(FetchDescriptor<StoredPiece>()).map { try $0.value() }
         let drafts = try decodedDrafts(context).map { $0.1 }
-        let receipts = try decodedReceipts(context).map { $0.1 }
-        let references = Set(pieces.map(\.photoID) + drafts.compactMap(\.photoID) + receipts.map(\.photoID))
+        // Corrupt acknowledgment proof still blocks cleanup, even though completed
+        // snapshots are not owners. Only current pieces and recoverable drafts own bytes.
+        _ = try decodedReceipts(context)
+        let references = Set(pieces.map(\.photoID) + drafts.compactMap(\.photoID))
         // A failed editor can leave an unused rendition even when its source is saved.
         // Only exact durably staged recipes may be pruned from a shared source.
         guard stagedRecipeDigests.allSatisfy({ $0.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil }) else {
             throw StoreError.invalidRecord
         }
         for photoID in photoIDs where references.contains(photoID) {
-            let recipes = (pieces + receipts).filter { $0.photoID == photoID }.map(\.photoRecipe)
+            let recipes = pieces.filter { $0.photoID == photoID }.map(\.photoRecipe)
                 + drafts.filter { $0.photoID == photoID }.map(\.photoRecipe)
             let retained = Set(try recipes.map { try PhotoPreparer.recipeDigest($0) })
             for digest in stagedRecipeDigests where !retained.contains(digest) {
