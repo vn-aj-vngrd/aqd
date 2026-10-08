@@ -46,6 +46,69 @@ struct PiecePersistenceTests {
         #expect(try reopened.pieces().isEmpty)
     }
 
+    @Test(arguments: [false, true])
+    func emptyOrCancelledPhotoImportPreservesActiveDraftFailure(cancelPending: Bool) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let initial = PieceDraft(name: "Before failed update", category: .tops, photoID: source.id,
+            details: PieceDetails(notes: "Retain these fields"))
+        let initialOperation = UUID()
+        do {
+            let store = try PieceStore(directory: directory)
+            _ = try store.acceptPhoto(source)
+            try store.saveDraft(initial, operationID: initialOperation)
+        }
+        let state = AppState(store: try PieceStore(directory: directory, allowsSave: false))
+        state.addPiece()
+        let model = try #require(state.capture)
+        #expect(model.draft == initial)
+        model.update(\.name, value: "Unsaved exact changes")
+        let expectedDraft = model.draft
+        let expectedOperation = model.operationID
+        let expectedError = "These changes couldn’t be kept as a recoverable draft. Keep editing or discard this draft before leaving."
+        try #require(model.draftSaveFailed)
+        try #require(model.errorText == expectedError)
+        // Valid fields/photo isolate the Save block to the persistence failure.
+        _ = try expectedDraft.validated()
+
+        var pendingLoad: CheckedContinuation<Data?, Never>?
+        var loadCompleted = false
+        defer { pendingLoad?.resume(returning: nil) }
+        model.importPhoto {
+            let data = await withCheckedContinuation { pendingLoad = $0 }
+            loadCompleted = true
+            return data
+        }
+        // Bounded scheduling, with a released continuation even if setup fails.
+        for _ in 0..<100 {
+            if pendingLoad != nil { break }
+            await Task.yield()
+        }
+        let load = try #require(pendingLoad)
+        try #require(model.isImporting)
+        if cancelPending { model.cancelImport() }
+        pendingLoad = nil
+        load.resume(returning: nil)
+        for _ in 0..<100 {
+            if loadCompleted && !model.isImporting { break }
+            await Task.yield()
+        }
+        try #require(loadCompleted)
+        try #require(!model.isImporting)
+
+        #expect(model.errorText == expectedError)
+        #expect(model.draftSaveFailed)
+        #expect(!model.canSave)
+        #expect(model.draft == expectedDraft)
+        #expect(model.operationID == expectedOperation)
+        #expect(model.originalPhotoData() == source.originalData)
+        #expect(state.capture === model)
+        #expect(model.saved == nil)
+        #expect(try #require(state.store).newPieceDraft() == RecoverablePieceDraft(
+            draft: initial, operationID: initialOperation))
+        #expect(try #require(state.store).pieces().isEmpty)
+    }
+
     // Added after the draft retry fix; no test-first RED is claimed for this guardrail.
     @Test(arguments: [false, true])
     func successfulDraftUpdatePreservesUnrelatedImportAndSaveErrors(importFailure: Bool) async throws {

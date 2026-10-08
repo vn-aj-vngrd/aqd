@@ -1,6 +1,7 @@
 import AQDCore
 import Foundation
 import CryptoKit
+import Darwin
 import CoreData
 import SwiftData
 
@@ -233,7 +234,9 @@ final class PieceStore {
         let versionURL = directory.appendingPathComponent("schema-version")
         let version = Data("AQD-piece-store:2".utf8)
         let previousVersion = Data("AQD-piece-store:1".utf8)
-        let hasStore = FileManager.default.fileExists(atPath: storeURL.path)
+        // A dangling symlink is existing storage too, not permission to create
+        // a fresh store through a redirected path.
+        let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
         let schema = Schema(versionedSchema: LocalSchemaV2.self)
         var needsTodaySeed = !hasStore
@@ -279,6 +282,64 @@ final class PieceStore {
     }
 
     private static func interruptedBootstrapNeedsToday(storeURL: URL, schema: Schema) throws -> Bool {
+        // Even read-only Core Data/SwiftData opens may change SQLite sidecars or
+        // metadata. Only inspect a disposable copy, never the unmarked source.
+        let inspectionDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("AQD-bootstrap-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: inspectionDirectory) }
+        do {
+            try createProtectedDirectory(inspectionDirectory)
+            let sourceDirectory = storeURL.deletingLastPathComponent()
+            guard try FileManager.default.attributesOfItem(atPath: sourceDirectory.path)[.type] as? FileAttributeType == .typeDirectory else {
+                throw StoreError.unsupportedStore
+            }
+            // First-use stores are tiny. Bound both memory and transient disk use;
+            // large unmarked stores are not a supported bootstrap recovery case.
+            var remainingBytes = 32 * 1024 * 1024
+            for suffix in ["", "-wal"] {
+                let source = sourceDirectory.appendingPathComponent(storeURL.lastPathComponent + suffix)
+                let attributes: [FileAttributeKey: Any]
+                do { attributes = try FileManager.default.attributesOfItem(atPath: source.path) }
+                catch let error as CocoaError where error.code == .fileReadNoSuchFile && suffix == "-wal" { continue }
+                guard attributes[.type] as? FileAttributeType == .typeRegular,
+                      source.resolvingSymlinksInPath().standardizedFileURL == sourceDirectory.resolvingSymlinksInPath()
+                        .appendingPathComponent(source.lastPathComponent).standardizedFileURL else {
+                    throw StoreError.unsupportedStore
+                }
+                // O_NOFOLLOW also refuses a leaf symlink substituted after the
+                // path check. fstat validates the file actually being copied.
+                let descriptor = open(source.path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK)
+                guard descriptor >= 0 else { throw StoreError.unsupportedStore }
+                let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+                defer { try? handle.close() }
+                var status = stat()
+                guard fstat(descriptor, &status) == 0,
+                      status.st_mode & S_IFMT == S_IFREG,
+                      status.st_size >= 0, status.st_size <= remainingBytes else {
+                    throw StoreError.unsupportedStore
+                }
+                var bytes = Data()
+                while let chunk = try handle.read(upToCount: min(64 * 1024, remainingBytes - bytes.count + 1)), !chunk.isEmpty {
+                    guard chunk.count <= remainingBytes - bytes.count else { throw StoreError.unsupportedStore }
+                    bytes.append(chunk)
+                }
+                guard bytes.count == status.st_size else { throw StoreError.unsupportedStore }
+                remainingBytes -= bytes.count
+                let destination = inspectionDirectory.appendingPathComponent(source.lastPathComponent)
+                try bytes.write(to: destination, options: [.atomic, .completeFileProtection])
+                try protect(destination)
+            }
+            // Copy the exact WAL when present (not SHM, media or unknown files),
+            // so committed rows not yet checkpointed into the DB remain visible.
+            let needsToday = try inspectBootstrapCopyNeedsToday(
+                storeURL: inspectionDirectory.appendingPathComponent(storeURL.lastPathComponent), schema: schema)
+            // Fail closed on cleanup failure; defer retries on every error path.
+            try FileManager.default.removeItem(at: inspectionDirectory)
+            return needsToday
+        } catch { throw StoreError.unsupportedStore }
+    }
+
+    private static func inspectBootstrapCopyNeedsToday(storeURL: URL, schema: Schema) throws -> Bool {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])

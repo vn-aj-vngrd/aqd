@@ -4,6 +4,7 @@ import PhotosUI
 import SwiftUI
 
 struct PieceCaptureView: View {
+    @Environment(\.openURL) private var openURL
     @Bindable var model: CaptureModel
     @State private var sourceSheet = false
     @State private var pickerPresented = false
@@ -15,6 +16,7 @@ struct PieceCaptureView: View {
     @State private var showPhotoEditor = false
     @State private var discardDecision = false
     @State private var cameraDenied = false
+    @State private var cameraRestricted = false
     @State private var cameraUnavailable = false
     @AccessibilityFocusState private var photoFocused: Bool
 
@@ -57,10 +59,19 @@ struct PieceCaptureView: View {
                      : "Discard removes only this recoverable edit and its unused AQD photo edits. Saved pieces and original Photos stay unchanged.")
             }
             .alert("Camera access is off", isPresented: $cameraDenied) {
+                Button("Open Settings") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+                }
                 Button("Choose from Photos") { pickerPresented = true }
                 Button("Keep draft", role: .cancel) {}
             } message: {
                 Text("Allow Camera in iPhone Settings to take a photo, or choose an existing photo. Your entered fields are unchanged.")
+            }
+            .alert("Camera access is restricted", isPresented: $cameraRestricted) {
+                Button("Choose from Photos") { pickerPresented = true }
+                Button("Keep draft", role: .cancel) {}
+            } message: {
+                Text("A device restriction prevents camera access. Choose an existing photo or keep this draft. Your entered fields are unchanged.")
             }
             .alert("Camera isn’t available", isPresented: $cameraUnavailable) {
                 Button("Choose from Photos") { pickerPresented = true }
@@ -264,13 +275,20 @@ struct PieceCaptureView: View {
         guard UIImagePickerController.isSourceTypeAvailable(.camera) else { cameraUnavailable = true; return }
         Task {
             let status = AVCaptureDevice.authorizationStatus(for: .video)
-            let allowed: Bool
             switch status {
-            case .authorized: allowed = true
-            case .notDetermined: allowed = await AVCaptureDevice.requestAccess(for: .video)
-            default: allowed = false
+            case .authorized: cameraPresented = true
+            case .denied: cameraDenied = true
+            case .restricted: cameraRestricted = true
+            case .notDetermined:
+                if await AVCaptureDevice.requestAccess(for: .video) {
+                    cameraPresented = true
+                } else if AVCaptureDevice.authorizationStatus(for: .video) == .restricted {
+                    cameraRestricted = true
+                } else {
+                    cameraDenied = true
+                }
+            @unknown default: cameraUnavailable = true
             }
-            if allowed { cameraPresented = true } else { cameraDenied = true }
         }
     }
 

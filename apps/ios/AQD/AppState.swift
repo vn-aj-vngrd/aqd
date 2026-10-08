@@ -158,6 +158,7 @@ final class CaptureModel: Identifiable {
     @ObservationIgnored private var importTask: Task<Void, Never>?
     @ObservationIgnored private var previewCache: (id: UUID, recipe: PhotoEditRecipe, data: Data)?
     private static let draftPersistenceError = "These changes couldn’t be kept as a recoverable draft. Keep editing or discard this draft before leaving."
+    private static let photoImportError = "That photo couldn’t be prepared. Your fields and previous photo are unchanged. Choose another photo or keep the draft."
 
     var isImporting: Bool { importGate.pending != nil }
     var canSave: Bool { (try? draft.validated()) != nil && !isSaving && !isImporting && !draftSaveFailed }
@@ -200,7 +201,7 @@ final class CaptureModel: Identifiable {
     func importPhoto(load: @escaping @MainActor () async throws -> Data?) {
         cancelImport()
         let request = importGate.begin(for: draft)
-        errorText = nil
+        if errorText == Self.photoImportError { errorText = nil }
         importTask = Task { [weak self] in
             guard let self else { return }
             do {
@@ -217,7 +218,7 @@ final class CaptureModel: Identifiable {
             } catch {
                 guard importGate.canAccept(request, for: draft) else { return }
                 importGate.cancel()
-                errorText = "That photo couldn’t be prepared. Your fields and previous photo are unchanged. Choose another photo or keep the draft."
+                if !draftSaveFailed { errorText = Self.photoImportError }
             }
         }
     }
