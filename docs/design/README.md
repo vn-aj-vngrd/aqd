@@ -8,6 +8,7 @@ For UI creation/review/implementation: [foundations](../../DESIGN.md) → [proce
 | Change journey/navigation | [V1 flow](v1-flow.md); connected additions [V2 flow](v2-flow.md) | Readable journeys, root/source returns. |
 | Change a V1 control/return | [Interactions](v1-interactions.md) | Action/destination/state/return exceptions and recovery coverage. |
 | Acceptance/phase coverage audit | [V1 coverage](v1-coverage.md), [V2 coverage](v2-coverage.md), phase release | Requirement-to-reference traceability; IDs remain stable. |
+| Verify every Paper V1 screen is functional | [Implementation coverage](v1-implementation-coverage.md), [per-root ledger](evidence/v1-implementation-coverage.json) | Live227-root inventory versus source, missing behavior and explicit runtime evidence; static design completion is not implementation. |
 | Shared geometry/state/accessibility | Affected heading in [Components](components.md); public/social/account only → [connected components](components-connected.md) | Reusable contracts, not feature lifecycle authority. |
 | Native API/deployment/feasibility | [Native iOS](native-ios.md) | API guards, target, fallback and runtime acceptance. |
 | Presentation/exits/confirmation | [Native presentations](native-presentations.md) | Native open states, exits, source restoration, risk policy. |
