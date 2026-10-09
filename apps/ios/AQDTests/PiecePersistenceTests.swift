@@ -246,6 +246,57 @@ struct PiecePersistenceTests {
         #expect(try #require(state.store).thumbnailPhoto(id: source.id) == source.thumbnailData)
     }
 
+    @Test(arguments: [false, true])
+    func failedPhotoEditPreservesActiveDraftWriteFailure(hasDraftWriteFailure: Bool) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let writable = try PieceStore(directory: directory)
+        let state = AppState(store: writable)
+        defer { state.store = nil }
+        _ = try writable.acceptPhoto(source)
+        let initial = PieceDraft(name: "Durable original framing", category: .tops, photoID: source.id)
+        try writable.saveDraft(initial, operationID: UUID())
+        state.addPiece()
+        let model = try #require(state.capture)
+        state.store = try PieceStore(directory: directory, allowsSave: false)
+        let expectedError: String
+        if hasDraftWriteFailure {
+            model.update(\.name, value: "Changes not yet durable")
+            expectedError = "These changes couldn’t be kept as a recoverable draft. Keep editing or discard this draft before leaving."
+            try #require(model.draftSaveFailed)
+            try #require(model.errorText == expectedError)
+        } else {
+            expectedError = "These photo edits couldn’t be prepared. Your previous photo and framing are unchanged. Try again or keep the original."
+            try #require(!model.draftSaveFailed)
+        }
+        let reviewedDraft = model.draft
+        let reviewedOperation = model.operationID
+        let accepted = await model.applyPhotoEdit(PhotoEditRecipe(quarterTurns: 1),
+            sourceID: source.id, previousRecipe: .fitOriginal)
+        #expect(!accepted)
+        #expect(model.errorText == expectedError)
+        #expect(model.draftSaveFailed == hasDraftWriteFailure)
+        #expect(model.draft == reviewedDraft)
+        #expect(model.operationID == reviewedOperation)
+        #expect(!model.isImporting)
+        #expect(model.saved == nil)
+        #expect(try writable.newPieceDraft()?.draft == initial)
+        #expect(try writable.originalPhoto(id: source.id) == source.originalData)
+        #expect(try writable.thumbnailPhoto(id: source.id) == source.thumbnailData)
+        if hasDraftWriteFailure {
+            #expect(!model.canSave)
+            model.leave()
+            #expect(state.capture?.id == model.id)
+            #expect(model.errorText == expectedError)
+            state.store = writable
+            model.persistDraft()
+            #expect(!model.draftSaveFailed)
+            #expect(model.errorText == nil)
+            #expect(model.canSave)
+            #expect(try writable.newPieceDraft()?.draft == reviewedDraft)
+        }
+    }
+
     @Test(arguments: [0, 1, 2])
     func acceptedPhotoEditPreservesUnrelatedErrorsAndActiveDraftWriteFailure(errorKind: Int) async throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)

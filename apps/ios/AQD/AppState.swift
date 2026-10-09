@@ -456,7 +456,7 @@ final class CaptureModel: Identifiable {
         } catch {
             guard importGate.canAccept(request, for: draft) else { return false }
             importGate.cancel()
-            errorText = Self.photoEditError
+            if !draftSaveFailed { errorText = Self.photoEditError }
             return false
         }
     }
