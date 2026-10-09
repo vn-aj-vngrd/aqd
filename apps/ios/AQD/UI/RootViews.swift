@@ -9,10 +9,6 @@ struct TodayView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     Text(Date.now, format: .dateTime.weekday(.abbreviated).day())
                         .font(.subheadline).foregroundStyle(AppTheme.secondary)
-                    if let error = state.photoCleanupError {
-                        Text(error).font(.subheadline).foregroundStyle(AppTheme.warning)
-                        Button("Retry photo cleanup") { state.retryPhotoCleanup() }.frame(minHeight: 44)
-                    }
                     if let error = state.todayError {
                         Text(error).font(.subheadline).foregroundStyle(AppTheme.error)
                         Button("Retry Today") { state.reloadToday() }.frame(minHeight: 44)

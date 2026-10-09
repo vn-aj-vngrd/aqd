@@ -2,12 +2,84 @@ import AQDCore
 import Foundation
 import CryptoKit
 import SwiftData
+import SwiftUI
 import Testing
 import UIKit
 @testable import AQD
 
+@Suite(.serialized)
 @MainActor
 struct PiecePersistenceTests {
+    // Postimplementation observation guard; no test-first RED is claimed.
+    @Test(arguments: [0, 2])
+    func heldPhotoCleanupFooterObservesActualFailureAndRecovery(pendingRequests: Int) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let state = AppState(store: try PieceStore(directory: directory))
+        defer { state.store = nil }
+        let marker = directory.appendingPathComponent("schema-version")
+        let markerBytes = try Data(contentsOf: marker)
+        try #require(state.photoCleanupError == nil)
+
+        // Construct once, just like the native root builders. Never replace
+        // rootView: the existing SwiftUI body must observe both transitions.
+        let host = UIHostingController(rootView: PhotoCleanupRecoveryView().environment(state))
+        let heldView = try #require(host.view)
+        heldView.frame = CGRect(x: 0, y: 0, width: 390, height: 1000)
+        let proposal = CGSize(width: 390, height: 1000)
+        let initialHeight = await cleanupFooterHeight(host, proposal: proposal, visible: false)
+        #expect(initialHeight == 0)
+
+        state.store = nil
+        if pendingRequests > 0 {
+            // Real persisted cleanup intents, not fake error text or a mock
+            // store. These unowned IDs intentionally have no media bytes.
+            do {
+                let schema = Schema(versionedSchema: LocalSchemaV2.self)
+                let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema,
+                    url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)])
+                let context = ModelContext(container)
+                for _ in 0..<pendingRequests { context.insert(StoredPhotoCleanup(photoID: UUID())) }
+                try context.save()
+                #expect(try context.fetch(FetchDescriptor<StoredPhotoCleanup>()).count == pendingRequests)
+            }
+        }
+        state.store = try PieceStore(directory: directory, allowsSave: false)
+        #expect(try #require(state.store).hasPendingPhotoCleanup() == (pendingRequests > 0))
+        state.retryPhotoCleanup()
+        try #require(state.photoCleanupError != nil)
+        // Even the empty-queue case must surface the actual reconciliation
+        // failure; it is not evidence of incomplete erasure of any bytes.
+        let failureHeight = await cleanupFooterHeight(host, proposal: proposal, visible: true)
+        #expect(failureHeight > 44)
+        #expect(host.view === heldView)
+
+        state.store = nil
+        state.store = try PieceStore(directory: directory)
+        state.retryPhotoCleanup()
+        try #require(state.photoCleanupError == nil)
+        #expect(try !#require(state.store).hasPendingPhotoCleanup())
+        let recoveredHeight = await cleanupFooterHeight(host, proposal: proposal, visible: false)
+        #expect(recoveredHeight == 0)
+        #expect(host.view === heldView)
+        #expect(try Data(contentsOf: marker) == markerBytes)
+    }
+
+    private func cleanupFooterHeight<Content: View>(
+        _ host: UIHostingController<Content>, proposal: CGSize, visible: Bool
+    ) async -> CGFloat {
+        var height: CGFloat = 0
+        // Bounded main-actor scheduling and native layout, without taking over
+        // any application window or assuming screenshots prove observation.
+        for _ in 0..<100 {
+            await Task.yield()
+            host.view.setNeedsLayout()
+            host.view.layoutIfNeeded()
+            height = host.sizeThatFits(in: proposal).height
+            if visible ? height > 44 : height == 0 { break }
+        }
+        return height
+    }
+
     @Test func keepingDraftAfterReadOnlyFailureRecoversExactChangesAndClearsFailureMessage() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let initial = PieceDraft(name: "Before retry", category: .tops)

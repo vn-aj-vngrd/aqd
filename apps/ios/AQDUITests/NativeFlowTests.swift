@@ -74,6 +74,64 @@ final class NativeFlowTests: XCTestCase {
         XCTAssertTrue(refusal.waitForExistence(timeout: 5), "Retry must refuse the same retained bytes, not reset to an empty draft")
     }
 
+    func testPendingPhotoCleanupRemainsVisibleAcrossRootsAndRecoversAfterWritableRelaunch() {
+        app.terminate()
+        app.launchEnvironment["AQD_TEST_READONLY_CLEANUP"] = "1"
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+
+        // Real Schema 2 cleanup intent and read-only reopen; no photo bytes or fake error.
+        let warning = app.staticTexts.matching(NSPredicate(
+            format: "label BEGINSWITH %@", "AQD photo cleanup couldn’t finish."
+        )).firstMatch
+        let retry = app.buttons["Retry photo cleanup"]
+        func assertCleanupRecoveryVisible() {
+            XCTAssertTrue(warning.waitForExistence(timeout: 5), "Cleanup failure must remain explained on the current root")
+            XCTAssertTrue(warning.isHittable)
+            XCTAssertTrue(retry.exists)
+            XCTAssertTrue(retry.isHittable)
+            XCTAssertGreaterThanOrEqual(retry.frame.width, 44)
+            XCTAssertGreaterThanOrEqual(retry.frame.height, 44)
+        }
+
+        // First assertion deliberately targets Closet, not the existing Today-only warning.
+        tab("Closet").tap()
+        XCTAssertTrue(app.navigationBars["Closet"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Your closet starts here"].exists)
+        assertCleanupRecoveryVisible()
+        retry.tap()
+        assertCleanupRecoveryVisible() // Real retry still fails while this store is read-only.
+        for root in ["Today", "Planner", "Profile", "Agent"] {
+            tab(root).tap()
+            XCTAssertTrue(app.navigationBars[root].waitForExistence(timeout: 5))
+            assertCleanupRecoveryVisible()
+        }
+        app.navigationBars["Agent"].buttons["Back"].tap()
+        XCTAssertTrue(app.navigationBars["Profile"].waitForExistence(timeout: 5))
+        assertCleanupRecoveryVisible()
+        attachScreenshot("Pending photo cleanup remains explained across native roots")
+
+        app.terminate()
+        // Keep AQD_TEST_STORE_ID unchanged: normal writable recovery must reconcile
+        // the same durable intent, not replace the store or reseed another fixture.
+        app.launchEnvironment.removeValue(forKey: "AQD_TEST_READONLY_CLEANUP")
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        for root in ["Today", "Closet", "Planner", "Profile", "Agent"] {
+            tab(root).tap()
+            XCTAssertTrue(app.navigationBars[root].waitForExistence(timeout: 5))
+            XCTAssertFalse(warning.exists, "Writable relaunch must clear cleanup failure on \(root)")
+            XCTAssertFalse(retry.exists)
+            if root == "Closet" {
+                XCTAssertTrue(app.staticTexts["Your closet starts here"].exists)
+            }
+        }
+        app.navigationBars["Agent"].buttons["Back"].tap()
+        XCTAssertTrue(app.navigationBars["Profile"].waitForExistence(timeout: 5))
+        XCTAssertTrue(tab("Profile").isSelected)
+        attachScreenshot("Writable relaunch recovers cleanup without changing root navigation")
+    }
+
     func testPieceAvailabilityAndSortControlsKeepTheEmptyCollectionHonest() {
         tab("Closet").tap()
         app.buttons["Filter pieces"].tap()

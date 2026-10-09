@@ -27,7 +27,9 @@ jobs:
   native-tests:
     name: Native iOS tests
     runs-on: macos-latest
-    timeout-minutes: 25
+    # Hosted cold build/boot plus the full serial public UI suite exceeded 25m;
+    # keep every test mandatory and allow the observed workload to finish.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - name: Record available toolchain

@@ -52,6 +52,11 @@ final class AppState {
             if isolatedUITestStore, process.environment["AQD_TEST_CORRUPT_DRAFT"] == "1" {
                 try seedUnreadableUITestDraft(in: directory)
             }
+            if isolatedUITestStore, process.environment["AQD_TEST_READONLY_CLEANUP"] == "1" {
+                store = nil
+                try seedPendingUITestPhotoCleanup(in: directory)
+                store = try PieceStore(directory: directory, allowsSave: false)
+            }
             #endif
             openingError = nil
             reloadPieces()
@@ -128,6 +133,21 @@ final class AppState {
     }
 
     #if DEBUG
+    /// A durable cleanup intent for a known synthetic missing source, not erased-byte proof.
+    /// Called only after the DEBUG launch-argument/UUID guard selects an isolated writable store.
+    private func seedPendingUITestPhotoCleanup(in directory: URL) throws {
+        let photoID = UUID(uuidString: "E71EF667-186E-4E04-A676-115316C1B215")!
+        let schema = Schema(versionedSchema: LocalSchemaV2.self)
+        let configuration = ModelConfiguration(schema: schema,
+            url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
+        let fixtureContainer = try ModelContainer(for: schema, configurations: [configuration])
+        let context = ModelContext(fixtureContainer)
+        let existing = try context.fetch(FetchDescriptor<StoredPhotoCleanup>(predicate: #Predicate { $0.id == photoID }))
+        guard existing.isEmpty else { return }
+        context.insert(StoredPhotoCleanup(photoID: photoID))
+        try context.save()
+    }
+
     /// Real malformed native input, isolated to the explicitly identified UI-test store.
     /// This fixture cannot mutate the ordinary closet and is absent from Release.
     private func seedUnreadableUITestDraft(in directory: URL) throws {
