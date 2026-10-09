@@ -624,6 +624,170 @@ struct PiecePersistenceTests {
         #expect(try !store.hasPendingPhotoCleanup())
     }
 
+    // Test-first regression: native RED must be recorded before changing PieceStore.
+    @Test(arguments: [false, true])
+    func completedReplacementCleanupDoesNotRewriteStoreOnHeldOrReopenedReconciliation(replaceSource: Bool) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let media = directory.appendingPathComponent("media")
+        // Synthetic preparedPhoto pixels only; no application store or user media.
+        let source = try await preparedPhoto()
+        let replacement = replaceSource ? try await preparedPhoto() : source
+        let recipe = PhotoEditRecipe(quarterTurns: 1)
+        let edit = try await PhotoPreparer().render(data: source.originalData, sourcePhotoID: source.id, recipe: recipe)
+        var store: PieceStore? = try PieceStore(directory: directory)
+        _ = try #require(store).acceptPhoto(source)
+        try #require(store).acceptPhotoEdit(edit)
+        let initial = PieceDraft(name: "Immutable old framing", category: .tops, photoID: source.id, photoRecipe: recipe)
+        let operation = UUID()
+        let saved = try #require(store).savePiece(initial, operationID: operation)
+        try #require(store).reconcilePendingPhotoCleanup() // Acknowledge staging while it is still owned.
+        if replaceSource { _ = try #require(store).acceptPhoto(replacement) }
+        let updated = try #require(store).savePiece(PieceDraft(itemID: saved.id, name: "Current original Fit",
+            category: .tops, photoID: replacement.id, baseRevision: saved.revision), operationID: UUID())
+        try #require(try #require(store).hasPendingPhotoCleanup())
+
+        // Well-formed but unknown recipe on the live source is outside the exact
+        // relinquished candidates. Reconciliation must not turn into a media sweep.
+        let unknown = media.appendingPathComponent("\(replacement.id.uuidString)-edit-\(String(repeating: "a", count: 64))-rendition.jpg")
+        let unknownBytes = Data("Preserve unrelated recipe bytes".utf8)
+        try unknownBytes.write(to: unknown)
+        // Freeze only controlled media metadata, not SQLite metadata or sidecars.
+        let fixtureDate = Date(timeIntervalSince1970: 1_700_000_000)
+        for file in try FileManager.default.contentsOfDirectory(at: media, includingPropertiesForKeys: nil) {
+            try FileManager.default.setAttributes([.modificationDate: fixtureDate], ofItemAtPath: file.path)
+        }
+        try #require(store).reconcilePendingPhotoCleanup()
+        try #require(try !#require(store).hasPendingPhotoCleanup())
+        let digest = try PhotoPreparer.recipeDigest(recipe)
+        for kind in ["rendition", "thumbnail"] {
+            #expect(!FileManager.default.fileExists(atPath:
+                media.appendingPathComponent("\(source.id.uuidString)-edit-\(digest)-\(kind).jpg").path))
+        }
+        if replaceSource {
+            for name in ["\(source.id.uuidString).jpg", "\(source.id.uuidString)-thumbnail.jpg"] {
+                #expect(!FileManager.default.fileExists(atPath: media.appendingPathComponent(name).path))
+            }
+        }
+        #expect(try #require(store).savePiece(initial, operationID: operation) == saved)
+        #expect(try #require(store).piece(id: saved.id) == updated)
+        #expect(try #require(store).originalPhoto(id: replacement.id) == replacement.originalData)
+        #expect(try #require(store).thumbnailPhoto(id: replacement.id) == replacement.thumbnailData)
+        let retainedMedia: Set<String> = ["\(replacement.id.uuidString).jpg",
+            "\(replacement.id.uuidString)-thumbnail.jpg", unknown.lastPathComponent]
+        #expect(Set(try FileManager.default.contentsOfDirectory(atPath: media.path)) == retainedMedia)
+
+        // No framework reopen between baseline and repeated checks: transient
+        // queue insertion/deletion can finish empty yet append real SQLite WAL frames.
+        let heldBytes = try authoritativeStoreBytes(directory)
+        for _ in 0..<2 {
+            try #require(store).reconcilePendingPhotoCleanup()
+            #expect(try authoritativeStoreBytes(directory) == heldBytes,
+                "Completed cleanup rewrote the held database/WAL from immutable historical proof")
+            #expect(try !#require(store).hasPendingPhotoCleanup())
+        }
+        store = nil
+        let reopened = try PieceStore(directory: directory)
+        // Opening SwiftData may checkpoint/change sidecars. Establish a separate
+        // baseline AFTER reopening, before its first reconciliation.
+        let reopenedBytes = try authoritativeStoreBytes(directory)
+        for _ in 0..<2 {
+            try reopened.reconcilePendingPhotoCleanup()
+            #expect(try authoritativeStoreBytes(directory) == reopenedBytes,
+                "Completed cleanup rewrote the reopened database/WAL from immutable historical proof")
+            #expect(try !reopened.hasPendingPhotoCleanup())
+        }
+        #expect(try reopened.savePiece(initial, operationID: operation) == saved)
+        #expect(try reopened.piece(id: saved.id) == updated)
+        #expect(try reopened.photoRendition(id: replacement.id, recipe: .fitOriginal) == replacement.originalData)
+        #expect(try reopened.photoThumbnail(id: replacement.id, recipe: .fitOriginal) == replacement.thumbnailData)
+        #expect(Set(try FileManager.default.contentsOfDirectory(atPath: media.path)) == retainedMedia)
+        #expect(try Data(contentsOf: unknown) == unknownBytes)
+    }
+
+    private func authoritativeStoreBytes(_ directory: URL) throws -> [String: Data] {
+        // Include WAL contents AND presence, never volatile SHM reader bookkeeping
+        // or file timestamps. Do not open a second SQLite/SwiftData connection.
+        var bytes = ["wardrobe.store": try Data(contentsOf: directory.appendingPathComponent("wardrobe.store"))]
+        let wal = directory.appendingPathComponent("wardrobe.store-wal")
+        do { bytes[wal.lastPathComponent] = try Data(contentsOf: wal) }
+        catch let error as CocoaError where error.code == .fileReadNoSuchFile { }
+        return bytes
+    }
+
+    // Postimplementation discovery guard; no test-first RED is claimed.
+    @Test(arguments: [0, 1, 2])
+    func legacyExactReceiptArtifactIsDiscoveredWithoutAnExistingCleanupQueue(artifact: Int) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let media = directory.appendingPathComponent("media", isDirectory: true)
+        try FileManager.default.createDirectory(at: media, withIntermediateDirectories: true)
+        let old = try await preparedPhoto()
+        let current = try await preparedPhoto()
+        let recipe: PhotoEditRecipe = artifact == 0 ? .fitOriginal : .init(quarterTurns: 1)
+        let draft = PieceDraft(name: "Legacy immutable proof", category: .tops, photoID: old.id, photoRecipe: recipe)
+        let saved = WardrobePiece(id: draft.itemID, name: draft.name, category: .tops, photoID: old.id,
+            photoRecipe: recipe)
+        let latest = WardrobePiece(id: saved.id, name: "Current source", category: .tops, photoID: current.id,
+            revision: 2, createdAt: saved.createdAt)
+        let operation = UUID()
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let digest = SHA256.hash(data: try encoder.encode(draft)).map { String(format: "%02x", $0) }.joined()
+        // Match the supported V1 migration fixture, but seed NO cleanup intent.
+        // Only historical proof can discover the solitary remaining old artifact.
+        do {
+            let schema = Schema(versionedSchema: LocalSchemaV1.self)
+            let configuration = ModelConfiguration(schema: schema,
+                url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
+            let container = try ModelContainer(for: schema, configurations: [configuration])
+            let context = ModelContext(container)
+            context.insert(StoredPiece(latest))
+            for photo in [old, current] {
+                context.insert(StoredPhoto(id: photo.id, pixelWidth: photo.pixelWidth, pixelHeight: photo.pixelHeight))
+            }
+            context.insert(StoredPieceSave(id: operation, itemID: saved.id, draftDigest: digest,
+                snapshot: try encoder.encode(saved)))
+            context.insert(StoredTodayConfiguration(TodayConfiguration(ownerID: UUID())))
+            try context.save()
+        }
+        try Data("AQD-piece-store:1".utf8).write(to: directory.appendingPathComponent("schema-version"))
+        try current.originalData.write(to: media.appendingPathComponent("\(current.id.uuidString).jpg"))
+        try current.thumbnailData.write(to: media.appendingPathComponent("\(current.id.uuidString)-thumbnail.jpg"))
+        let candidate: URL
+        if artifact == 0 {
+            // Source thumbnail ONLY: its original has already disappeared.
+            candidate = media.appendingPathComponent("\(old.id.uuidString)-thumbnail.jpg")
+            try old.thumbnailData.write(to: candidate)
+        } else {
+            let edit = try await PhotoPreparer().render(data: old.originalData, sourcePhotoID: old.id, recipe: recipe)
+            let kind = artifact == 1 ? "rendition" : "thumbnail"
+            candidate = media.appendingPathComponent("\(old.id.uuidString)-edit-\(edit.recipeDigest)-\(kind).jpg")
+            try (artifact == 1 ? edit.renditionData : edit.thumbnailData).write(to: candidate)
+        }
+        let unknownNames = ["unknown.jpg", "\(old.id.uuidString)-edit-not-a-digest-rendition.jpg"]
+        let unknownBytes = Data("Keep files outside managed candidates".utf8)
+        for name in unknownNames { try unknownBytes.write(to: media.appendingPathComponent(name)) }
+        let retained: Set<String> = Set(unknownNames + ["\(current.id.uuidString).jpg", "\(current.id.uuidString)-thumbnail.jpg"])
+        #expect(Set(try FileManager.default.contentsOfDirectory(atPath: media.path)) == retained.union([candidate.lastPathComponent]))
+        let store = try PieceStore(directory: directory)
+        try #require(try !store.hasPendingPhotoCleanup())
+        try #require(FileManager.default.fileExists(atPath: candidate.path))
+        try store.reconcilePendingPhotoCleanup()
+        #expect(!FileManager.default.fileExists(atPath: candidate.path))
+        #expect(try !store.hasPendingPhotoCleanup())
+        #expect(try store.savePiece(draft, operationID: operation) == saved)
+        #expect(try store.piece(id: saved.id) == latest)
+        let completedBytes = try authoritativeStoreBytes(directory)
+        for _ in 0..<2 {
+            try store.reconcilePendingPhotoCleanup()
+            #expect(try authoritativeStoreBytes(directory) == completedBytes,
+                "Discovered legacy cleanup must stay completed without database/WAL writes")
+        }
+        #expect(try store.originalPhoto(id: current.id) == current.originalData)
+        #expect(try store.thumbnailPhoto(id: current.id) == current.thumbnailData)
+        #expect(Set(try FileManager.default.contentsOfDirectory(atPath: media.path)) == retained)
+        for name in unknownNames { #expect(try Data(contentsOf: media.appendingPathComponent(name)) == unknownBytes) }
+    }
+
     @Test func legacyCompletedSaveAndArchiveProofsReleaseSupersededMediaAfterMigration() async throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let media = directory.appendingPathComponent("media", isDirectory: true)

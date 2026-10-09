@@ -806,6 +806,20 @@ final class PieceStore {
         let pieces = try context.fetch(FetchDescriptor<StoredPiece>()).map { try $0.value() }
         let drafts = try decodedDrafts(context).map { $0.1 }
         let receipts = try decodedReceipts(context)
+        try ensureOwnedMediaDirectory()
+        var piecesByID: [UUID: WardrobePiece] = [:]
+        var retainedRecipeDigests: [UUID: Set<String>] = [:]
+        for piece in pieces {
+            guard piecesByID.updateValue(piece, forKey: piece.id) == nil else { throw StoreError.invalidRecord }
+            if piece.photoRecipe != .fitOriginal {
+                retainedRecipeDigests[piece.photoID, default: []].insert(try PhotoPreparer.recipeDigest(piece.photoRecipe))
+            }
+        }
+        for draft in drafts {
+            if let photoID = draft.photoID, draft.photoRecipe != .fitOriginal {
+                retainedRecipeDigests[photoID, default: []].insert(try PhotoPreparer.recipeDigest(draft.photoRecipe))
+            }
+        }
         // Older Fit acceptance wrote unused derivatives, and its staging intent
         // may already have been acknowledged while the original remained live.
         // Probe only the two exact Fit paths for validated live source identities.
@@ -815,17 +829,35 @@ final class PieceStore {
             let fitFiles = try ["rendition", "thumbnail"].map {
                 try editURL(id: photoID, recipe: .fitOriginal, kind: $0)
             }
-            if fitFiles.contains(where: { (try? FileManager.default.attributesOfItem(atPath: $0.path)) != nil }) {
+            if try fitFiles.contains(where: managedArtifactExists) {
                 try queueCleanup(photoID: photoID, recipeDigest: fitDigest, context: context)
             }
         }
-        for (_, snapshot) in receipts where !pieces.contains(where: {
-            $0.id == snapshot.id && $0.photoID == snapshot.photoID && $0.photoRecipe == snapshot.photoRecipe
-        }) {
-            try queueCleanup(photoID: snapshot.photoID,
-                             recipeDigest: try cleanupRecipeDigest(snapshot.photoRecipe), context: context)
+        var probedReceipts: Set<String> = []
+        for (_, snapshot) in receipts {
+            if let current = piecesByID[snapshot.id],
+               current.photoID == snapshot.photoID, current.photoRecipe == snapshot.photoRecipe { continue }
+            let recipeDigest = try PhotoPreparer.recipeDigest(snapshot.photoRecipe)
+            guard probedReceipts.insert("\(snapshot.photoID.uuidString):\(recipeDigest)").inserted else { continue }
+            let isOwned = livePhotoIDs.contains(snapshot.photoID)
+            // A live source is not obsolete merely because a historical receipt
+            // names it. Shared live recipes are owners; Fit derivatives were probed above.
+            if isOwned && (snapshot.photoRecipe == .fitOriginal
+                || retainedRecipeDigests[snapshot.photoID, default: []].contains(recipeDigest)) { continue }
+            var paths = try ["rendition", "thumbnail"].map {
+                try editURL(id: snapshot.photoID, recipe: snapshot.photoRecipe, kind: $0)
+            }
+            if !isOwned {
+                paths += [originalURL(id: snapshot.photoID),
+                          mediaDirectory.appendingPathComponent("\(snapshot.photoID.uuidString)-thumbnail.jpg")]
+            }
+            // Discover only exact, still-present legacy artifacts. Immutable proof
+            // alone must never recreate an already-reconciled candidate or write the store.
+            if try paths.contains(where: managedArtifactExists) {
+                try queueCleanup(photoID: snapshot.photoID, recipeDigest: recipeDigest, context: context)
+            }
         }
-        try commit(context)
+        if context.hasChanges { try commit(context) }
         var firstFailure: (any Error)?
         let acknowledgments = try context.fetch(FetchDescriptor<StoredPieceDeletion>())
             .filter { !$0.pendingPhotoIDs.isEmpty }.sorted { $0.id.uuidString < $1.id.uuidString }
@@ -842,6 +874,17 @@ final class PieceStore {
             } catch { context.rollback(); if firstFailure == nil { firstFailure = error } }
         }
         if let firstFailure { throw firstFailure }
+    }
+
+    /// Missing exact paths mean completed work; permission/I/O failures and redirected
+    /// or nonregular artifacts remain visible refusals, never false absence.
+    private func managedArtifactExists(_ url: URL) throws -> Bool {
+        do {
+            guard try FileManager.default.attributesOfItem(atPath: url.path)[.type] as? FileAttributeType == .typeRegular else {
+                throw StoreError.unsafeMediaPath
+            }
+            return true
+        } catch let error as CocoaError where error.code == .fileReadNoSuchFile { return false }
     }
 
     private func decodedDrafts(_ context: ModelContext) throws -> [(StoredPieceDraft, PieceDraft)] {
