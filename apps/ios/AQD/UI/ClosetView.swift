@@ -136,6 +136,46 @@ struct PieceThumbnail: View {
     }
 }
 
+/// A bounded public UIKit menu preserves a measurable native button target.
+/// SwiftUI's custom toolbar Menu label exposes nested, non-hittable button nodes
+/// on iOS 18; UIKit owns menu presentation, source anchoring and accessibility.
+private struct PieceOptionsButton: UIViewRepresentable {
+    let isArchived: Bool
+    let archiveDisabled: Bool
+    let archive: () -> Void
+    let delete: () -> Void
+
+    final class TargetButton: UIButton {
+        override var intrinsicContentSize: CGSize { CGSize(width: 48, height: 44) }
+    }
+
+    func makeUIView(context: Context) -> TargetButton {
+        let button = TargetButton(type: .system)
+        button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 22), forImageIn: .normal)
+        button.accessibilityLabel = "More piece options"
+        button.showsMenuAsPrimaryAction = true
+        button.setContentHuggingPriority(.required, for: .horizontal)
+        button.setContentHuggingPriority(.required, for: .vertical)
+        return button
+    }
+
+    func updateUIView(_ button: TargetButton, context: Context) {
+        button.tintColor = UIColor(AppTheme.actionText)
+        let archiveAction = UIAction(title: isArchived ? "Restore" : "Archive",
+                                     image: UIImage(systemName: isArchived ? "arrow.uturn.backward" : "archivebox"),
+                                     attributes: archiveDisabled ? .disabled : []) { _ in archive() }
+        let deleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"),
+                                    attributes: .destructive) { _ in delete() }
+        let destructiveGroup = UIMenu(options: .displayInline, children: [deleteAction])
+        button.menu = UIMenu(children: [archiveAction, destructiveGroup])
+    }
+
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: TargetButton, context: Context) -> CGSize? {
+        uiView.intrinsicContentSize
+    }
+}
+
 struct PieceDetailView: View {
     @Environment(AppState.self) private var state
     @Environment(\.dismiss) private var dismiss
@@ -197,31 +237,7 @@ struct PieceDetailView: View {
                         .tint(AppTheme.ink).accessibilityIdentifier("piece.edit")
                         .disabled(deleteInFlight)
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        if piece.isArchived {
-                            Button("Restore", systemImage: "arrow.uturn.backward") {
-                                setArchive(false, expectedRevision: piece.revision, operation: UUID())
-                            }.disabled(deleteInFlight)
-                        } else {
-                            Button("Archive", systemImage: "archivebox") {
-                                archiveOperationID = UUID(); reviewedArchive = piece; archiveDecision = true
-                            }.disabled(deleteInFlight)
-                        }
-                        Button("Delete", systemImage: "trash", role: .destructive) {
-                            if reviewedDelete == nil {
-                                reviewedDelete = DeleteReview(piece: piece, operationID: UUID())
-                            }
-                            deleteDecision = true
-                        }
-                    } label: { Label("More piece options", systemImage: "ellipsis") }
-                    .confirmationDialog("Delete this piece?", isPresented: $deleteDecision, titleVisibility: .visible) {
-                        Button("Cancel", role: .cancel) { cancelDeleteReview() }
-                        Button("Delete", role: .destructive) { delete() }
-                    } message: {
-                        Text("Delete \(reviewedDelete?.piece.name ?? "this piece"), its recovery drafts, and its unreferenced AQD photos. Original Photos are unchanged. This cannot be undone.")
-                    }
-                }
+                optionsToolbar(for: piece)
             }
         }
         .onAppear(perform: refresh)
@@ -235,6 +251,45 @@ struct PieceDetailView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: { Text("The piece keeps its identity and can be restored.") }
+    }
+
+    @ToolbarContentBuilder
+    private func optionsToolbar(for piece: WardrobePiece) -> some ToolbarContent {
+        if #available(iOS 26.0, *) {
+            ToolbarItem(placement: .topBarTrailing) {
+                optionsButton(for: piece)
+            }
+            // The automatic shared background clips custom menu content to a
+            // 36pt host on iOS26. Opt out using the public toolbar API so the
+            // native UIButton's 48×44 bounds also remain reachable by touch.
+            .sharedBackgroundVisibility(.hidden)
+        } else {
+            ToolbarItem(placement: .topBarTrailing) {
+                optionsButton(for: piece)
+            }
+        }
+    }
+
+    private func optionsButton(for piece: WardrobePiece) -> some View {
+        PieceOptionsButton(isArchived: piece.isArchived, archiveDisabled: deleteInFlight) {
+            if piece.isArchived {
+                setArchive(false, expectedRevision: piece.revision, operation: UUID())
+            } else {
+                archiveOperationID = UUID(); reviewedArchive = piece; archiveDecision = true
+            }
+        } delete: {
+            if reviewedDelete == nil {
+                reviewedDelete = DeleteReview(piece: piece, operationID: UUID())
+            }
+            deleteDecision = true
+        }
+        .frame(width: 48, height: 44)
+        .confirmationDialog("Delete this piece?", isPresented: $deleteDecision, titleVisibility: .visible) {
+            Button("Cancel", role: .cancel) { cancelDeleteReview() }
+            Button("Delete", role: .destructive) { delete() }
+        } message: {
+            Text("Delete \(reviewedDelete?.piece.name ?? "this piece"), its recovery drafts, and its unreferenced AQD photos. Original Photos are unchanged. This cannot be undone.")
+        }
     }
 
     private func detail(_ title: String, _ value: String) -> some View {
@@ -270,13 +325,12 @@ struct PieceDetailView: View {
     }
 
     private func delete() {
-        guard var review = reviewedDelete, let store = state.store else { return }
+        guard var review = reviewedDelete, state.store != nil else { return }
         review.submitted = true
         reviewedDelete = review
         do {
-            try store.deletePiece(id: review.piece.id, expectedRevision: review.piece.revision,
+            try state.deletePiece(id: review.piece.id, expectedRevision: review.piece.revision,
                                   operationID: review.operationID)
-            state.reloadPieces()
             dismiss()
         } catch { self.error = "Delete didn’t finish. Keep this record open and retry the same reviewed operation." }
     }

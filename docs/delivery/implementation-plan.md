@@ -1,6 +1,6 @@
 # Implementation plan by phase
 
-Read when selecting/changing an implementation slice, not for every review/docs task. This cleanup is documentation-only. The owner separately authorized complete private V1 implementation after PR #5 merges; [current status](implementation-status.md) records that gate and resumption sequence. Current checkout has no tracked Swift app/build definition matching historical prototype reports. [Status](implementation-status.md) owns capability; [verification](verification.md) owns actual results.
+Read when selecting/changing an implementation slice, not for every review/docs task. The owner authorized complete private V1 implementation after PR #5, now merged. A tracked native baseline is prepared in PR #9 but full V1 remains incomplete; [current status](implementation-status.md) owns delivered capability and protected gates, [verification](verification.md) owns actual results, and [Paper implementation coverage](../design/v1-implementation-coverage.md) retains every V1 screen/state without treating source or static design as acceptance.
 
 ## V1 — Small local MVP
 
@@ -68,4 +68,4 @@ Complete [policy/LOCAL-16](../product/v1-release.md#optional-live-weather-contra
 
 Specified/design-prepared: requirements/references exist. Source-ready: reproducible baseline. Capability-gated: actual supported device/provider quality. Verified: revision/environment and observed result recorded in verification. Native WeatherKit entitlement/attribution is independent of private manual availability; V2 service gates do not block V1 core.
 
-After separate authorization, deliver one slice under [lifecycle](../agents/lifecycle.md), with focused failure/domain tests and applicable rendered native/accessibility checks. Required implementation acceptance passes or is blocked unless the owner explicitly reduces scope. Documentation completion never waives it.
+For each authorized deliverable, follow [lifecycle](../agents/lifecycle.md), with focused failure/domain tests and applicable rendered native/accessibility checks. Required implementation acceptance passes or is blocked unless the owner explicitly reduces scope. Documentation completion never waives it.

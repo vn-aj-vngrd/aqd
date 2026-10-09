@@ -10,6 +10,298 @@ import UIKit
 @Suite(.serialized)
 @MainActor
 struct PiecePersistenceTests {
+    // Stage A native runner observed runtime RED before the recovery handler.
+    // Actual record acknowledgment followed by denied unlink, not fake error state.
+    @Test func acknowledgedDeletionWithDeniedPhotoCleanupRefreshesCollectionAndPublishesRecovery() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let original = directory.appendingPathComponent("media/\(source.id.uuidString).jpg")
+        let thumbnail = directory.appendingPathComponent("media/\(source.id.uuidString)-thumbnail.jpg")
+        var deniedOwnedUnlink = false
+        let state = AppState(store: try PieceStore(directory: directory, removeMediaFile: { url in
+            if url == original || url == thumbnail {
+                deniedOwnedUnlink = true
+                throw CocoaError(.fileWriteNoPermission)
+            }
+            try FileManager.default.removeItem(at: url)
+        }))
+        defer { state.store = nil }
+        _ = try #require(state.store).acceptPhoto(source)
+        let piece = try #require(state.store).savePiece(
+            PieceDraft(name: "Reviewed deletion", category: .tops, photoID: source.id), operationID: UUID())
+        state.reloadPieces()
+        try #require(state.pieces.contains { $0.id == piece.id })
+        try #require(state.photoCleanupError == nil)
+        let refreshID = state.collectionRefreshID
+
+        let operationID = UUID()
+        try state.deletePiece(id: piece.id, expectedRevision: piece.revision, operationID: operationID)
+        try #require(deniedOwnedUnlink)
+        #expect(try #require(state.store).piece(id: piece.id) == nil)
+        #expect(try #require(state.store).hasPendingPhotoCleanup())
+        #expect(!state.pieces.contains { $0.id == piece.id })
+        #expect(state.photoCleanupError != nil)
+        #expect(state.collectionRefreshID != refreshID)
+        #expect(try Data(contentsOf: original) == source.originalData)
+        #expect(try Data(contentsOf: thumbnail) == source.thumbnailData)
+
+        state.store = nil
+        var reopened: PieceStore? = try PieceStore(directory: directory, allowsSave: false)
+        #expect(try #require(reopened).piece(id: piece.id) == nil)
+        #expect(try #require(reopened).hasPendingPhotoCleanup())
+        #expect(try #require(reopened).isPieceDeletionAcknowledged(id: piece.id,
+            expectedRevision: piece.revision, operationID: operationID))
+        #expect(try Data(contentsOf: original) == source.originalData)
+        #expect(try Data(contentsOf: thumbnail) == source.thumbnailData)
+        reopened = nil
+        state.store = try PieceStore(directory: directory)
+        // The exact reviewed retry completes cleanup and clears old global feedback.
+        try state.deletePiece(id: piece.id, expectedRevision: piece.revision, operationID: operationID)
+        #expect(state.photoCleanupError == nil)
+        #expect(state.pieces.isEmpty)
+        #expect(try !#require(state.store).hasPendingPhotoCleanup())
+        #expect(!FileManager.default.fileExists(atPath: original.path))
+        #expect(!FileManager.default.fileExists(atPath: thumbnail.path))
+        #expect(throws: PieceStore.StoreError.deletedPiece) {
+            try #require(state.store).saveDraft(PieceDraft(itemID: piece.id, name: "Cannot resurrect"), operationID: UUID())
+        }
+    }
+
+    // Stage A regression: render and stage real synthetic media, then retry the
+    // same framing through CaptureModel, without assigning an error or source.
+    @Test func successfulPhotoEditRetryPersistsAcceptedFramingAndClearsItsFailure() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        var denyNextDerivativeWrite = true
+        var deniedDerivativeWrite = false
+        let state = AppState(store: try PieceStore(directory: directory, writeMediaFile: { data, url in
+            if denyNextDerivativeWrite && url.lastPathComponent.contains("-edit-") {
+                denyNextDerivativeWrite = false
+                deniedDerivativeWrite = true
+                throw CocoaError(.fileWriteNoPermission)
+            }
+            try data.write(to: url, options: [.atomic, .completeFileProtection])
+        }))
+        defer { state.store = nil }
+        _ = try #require(state.store).acceptPhoto(source)
+        let initial = PieceDraft(name: "Retained framing draft", category: .tops, photoID: source.id,
+            details: PieceDetails(color: "Blue", notes: "Keep this metadata through the framing retry"))
+        try #require(state.store).saveDraft(initial, operationID: UUID())
+        state.addPiece()
+        let model = try #require(state.capture)
+        let recipe = PhotoEditRecipe(quarterTurns: 1)
+        let failed = await model.applyPhotoEdit(recipe, sourceID: source.id, previousRecipe: .fitOriginal)
+        try #require(deniedDerivativeWrite)
+        try #require(!failed)
+        try #require(model.draft == initial)
+        try #require(!model.draftSaveFailed)
+        try #require(model.errorText == "These photo edits couldn’t be prepared. Your previous photo and framing are unchanged. Try again or keep the original.")
+        #expect(try #require(state.store).newPieceDraft()?.draft == initial)
+        #expect(model.originalPhotoData() == source.originalData)
+
+        let accepted = await model.applyPhotoEdit(recipe, sourceID: source.id, previousRecipe: .fitOriginal)
+        try #require(accepted)
+        var expectedDraft = initial
+        expectedDraft.photoRecipe = recipe
+        #expect(model.draft == expectedDraft)
+        #expect(!model.draftSaveFailed)
+        #expect(model.errorText == nil)
+        let expected = RecoverablePieceDraft(draft: model.draft, operationID: model.operationID)
+        #expect(try #require(state.store).newPieceDraft() == expected)
+        #expect(model.originalPhotoData() == source.originalData)
+        #expect(try #require(state.store).thumbnailPhoto(id: source.id) == source.thumbnailData)
+        #expect(try !#require(state.store).photoRendition(id: source.id, recipe: recipe).isEmpty)
+
+        state.capture = nil
+        state.store = nil
+        let reopened = try PieceStore(directory: directory, allowsSave: false)
+        #expect(try reopened.newPieceDraft() == expected)
+        #expect(try reopened.originalPhoto(id: source.id) == source.originalData)
+        #expect(try reopened.thumbnailPhoto(id: source.id) == source.thumbnailData)
+    }
+
+    @Test(arguments: [0, 1, 2])
+    func unacknowledgedDeletionPreservesReviewedRecordAndCollection(failure: Int) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let saveOperation = UUID()
+        let piece: WardrobePiece
+        do {
+            let store = try PieceStore(directory: directory)
+            _ = try store.acceptPhoto(source)
+            piece = try store.savePiece(PieceDraft(name: "Keep reviewed record", category: .tops,
+                photoID: source.id), operationID: saveOperation)
+            try store.reconcilePendingPhotoCleanup()
+        }
+        let state = AppState(store: try PieceStore(directory: directory, allowsSave: failure != 0))
+        defer { state.store = nil }
+        let operation = failure == 2 ? saveOperation : UUID()
+        let revision = failure == 1 ? piece.revision + 1 : piece.revision
+        let refreshID = state.collectionRefreshID
+        let cleanupError = state.photoCleanupError
+        let bytes = try authoritativeStoreBytes(directory)
+        #expect(throws: (any Error).self) {
+            try state.deletePiece(id: piece.id, expectedRevision: revision, operationID: operation)
+        }
+        #expect(try !#require(state.store).isPieceDeletionAcknowledged(id: piece.id,
+            expectedRevision: revision, operationID: operation))
+        #expect(try #require(state.store).piece(id: piece.id) == piece)
+        #expect(state.pieces == [piece])
+        #expect(state.collectionRefreshID == refreshID)
+        #expect(state.photoCleanupError == cleanupError)
+        #expect(try authoritativeStoreBytes(directory) == bytes)
+        #expect(try #require(state.store).originalPhoto(id: source.id) == source.originalData)
+        #expect(try #require(state.store).thumbnailPhoto(id: source.id) == source.thumbnailData)
+    }
+
+    @Test func deletionAcknowledgmentIsExactReadOnlyAndCompletedRetryNeverResurrects() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let state = AppState(store: try PieceStore(directory: directory))
+        defer { state.store = nil }
+        _ = try #require(state.store).acceptPhoto(source)
+        let draft = PieceDraft(name: "Deleted identity", category: .tops, photoID: source.id)
+        let piece = try #require(state.store).savePiece(draft, operationID: UUID())
+        let retained = try #require(state.store).savePiece(PieceDraft(name: "Shared source remains", category: .tops,
+            photoID: source.id), operationID: UUID())
+        let operation = UUID()
+        try state.deletePiece(id: piece.id, expectedRevision: piece.revision, operationID: operation)
+        let bytes = try authoritativeStoreBytes(directory)
+        for _ in 0..<2 {
+            #expect(try #require(state.store).isPieceDeletionAcknowledged(id: piece.id,
+                expectedRevision: piece.revision, operationID: operation))
+            #expect(try !#require(state.store).isPieceDeletionAcknowledged(id: piece.id,
+                expectedRevision: piece.revision, operationID: UUID()))
+            #expect(throws: PieceStore.StoreError.operationConflict) {
+                try #require(state.store).isPieceDeletionAcknowledged(id: retained.id,
+                    expectedRevision: retained.revision, operationID: operation)
+            }
+            #expect(throws: PieceStore.StoreError.operationConflict) {
+                try #require(state.store).isPieceDeletionAcknowledged(id: piece.id,
+                    expectedRevision: piece.revision + 1, operationID: operation)
+            }
+            #expect(throws: PieceStore.StoreError.operationConflict) {
+                try state.deletePiece(id: retained.id, expectedRevision: retained.revision, operationID: operation)
+            }
+            try state.deletePiece(id: piece.id, expectedRevision: piece.revision, operationID: operation)
+            #expect(try authoritativeStoreBytes(directory) == bytes)
+            #expect(state.pieces == [retained])
+            #expect(state.photoCleanupError == nil)
+        }
+        #expect(throws: PieceStore.StoreError.deletedPiece) {
+            try #require(state.store).savePiece(draft, operationID: UUID())
+        }
+        #expect(try #require(state.store).piece(id: piece.id) == nil)
+        #expect(try #require(state.store).piece(id: retained.id) == retained)
+        #expect(try #require(state.store).originalPhoto(id: source.id) == source.originalData)
+    }
+
+    @Test(arguments: [0, 1, 2, 3])
+    func corruptDeletionProofCannotAcknowledgeOrDismissReviewedRetry(corruption: Int) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let operation = UUID()
+        let piece: WardrobePiece
+        do {
+            let store = try PieceStore(directory: directory, removeMediaFile: { _ in
+                throw CocoaError(.fileWriteNoPermission)
+            })
+            _ = try store.acceptPhoto(source)
+            piece = try store.savePiece(PieceDraft(name: "Corrupt proof guard", category: .tops,
+                photoID: source.id), operationID: UUID())
+            #expect(throws: CocoaError(.fileWriteNoPermission)) {
+                try store.deletePiece(id: piece.id, expectedRevision: piece.revision, operationID: operation)
+            }
+        }
+        do {
+            let schema = Schema(versionedSchema: LocalSchemaV2.self)
+            let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema,
+                url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)])
+            let context = ModelContext(container)
+            let proof = try #require(context.fetch(FetchDescriptor<StoredPieceDeletion>()).first)
+            switch corruption {
+            case 0: proof.expectedRevision = 0
+            case 1: proof.pendingPhotoIDs = [source.id, source.id]
+            case 2: context.insert(StoredPiece(piece))
+            default: context.insert(StoredPieceSave(id: operation, itemID: UUID(), draftDigest: "Contradictory operation", snapshot: Data()))
+            }
+            try context.save()
+        }
+        let state = AppState(store: try PieceStore(directory: directory, allowsSave: false))
+        defer { state.store = nil }
+        let refreshID = state.collectionRefreshID
+        let cleanupError = state.photoCleanupError
+        let bytes = try authoritativeStoreBytes(directory)
+        #expect(throws: PieceStore.StoreError.invalidRecord) {
+            try #require(state.store).isPieceDeletionAcknowledged(id: piece.id,
+                expectedRevision: piece.revision, operationID: operation)
+        }
+        #expect(throws: PieceStore.StoreError.invalidRecord) {
+            try state.deletePiece(id: piece.id, expectedRevision: piece.revision, operationID: operation)
+        }
+        #expect(state.collectionRefreshID == refreshID)
+        #expect(state.photoCleanupError == cleanupError)
+        #expect(try authoritativeStoreBytes(directory) == bytes)
+        #expect(try #require(state.store).originalPhoto(id: source.id) == source.originalData)
+        #expect(try #require(state.store).thumbnailPhoto(id: source.id) == source.thumbnailData)
+    }
+
+    @Test(arguments: [0, 1, 2])
+    func acceptedPhotoEditPreservesUnrelatedErrorsAndActiveDraftWriteFailure(errorKind: Int) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        weak var activeState: AppState?
+        let writable = try PieceStore(directory: directory, writeMediaFile: { data, url in
+            try data.write(to: url, options: [.atomic, .completeFileProtection])
+            if errorKind == 2 && url.lastPathComponent.contains("-edit-")
+                && url.lastPathComponent.hasSuffix("-thumbnail.jpg") {
+                // Actual derivative staging succeeds, but the subsequent draft commit is refused.
+                activeState?.store = try PieceStore(directory: directory, allowsSave: false)
+            }
+        })
+        let state = AppState(store: writable)
+        activeState = state
+        defer { state.store = nil }
+        _ = try writable.acceptPhoto(source)
+        let initial = PieceDraft(name: "Preserve unrelated failure", category: .tops, photoID: source.id,
+            details: PieceDetails(color: "Blue", notes: "Retain fields despite the unrelated failure"))
+        try writable.saveDraft(initial, operationID: UUID())
+        state.addPiece()
+        let model = try #require(state.capture)
+        let expectedError: String
+        if errorKind == 0 {
+            state.store = try PieceStore(directory: directory, allowsSave: false)
+            model.save()
+            expectedError = "Save didn’t finish. Your draft is still here. Retry checks the same operation before writing again."
+            try #require(model.errorText == expectedError)
+            state.store = writable
+        } else if errorKind == 1 {
+            model.importPhoto { Data("not an image".utf8) }
+            while model.isImporting { await Task.yield() }
+            expectedError = "That photo couldn’t be prepared. Your fields and previous photo are unchanged. Choose another photo or keep the draft."
+            try #require(model.errorText == expectedError)
+        } else {
+            expectedError = "These changes couldn’t be kept as a recoverable draft. Keep editing or discard this draft before leaving."
+        }
+        let recipe = PhotoEditRecipe(quarterTurns: 1)
+        let accepted = await model.applyPhotoEdit(recipe, sourceID: source.id, previousRecipe: .fitOriginal)
+        #expect(accepted)
+        var expectedDraft = initial
+        expectedDraft.photoRecipe = recipe
+        #expect(model.draft == expectedDraft)
+        #expect(model.errorText == expectedError)
+        #expect(model.draftSaveFailed == (errorKind == 2))
+        if errorKind == 2 {
+            #expect(try writable.newPieceDraft()?.draft == initial)
+            #expect(!model.canSave)
+        } else {
+            #expect(try writable.newPieceDraft() == RecoverablePieceDraft(draft: model.draft, operationID: model.operationID))
+        }
+        #expect(model.saved == nil)
+        #expect(try writable.originalPhoto(id: source.id) == source.originalData)
+        #expect(try writable.thumbnailPhoto(id: source.id) == source.thumbnailData)
+    }
+
     // Postimplementation observation guard; no test-first RED is claimed.
     @Test(arguments: [0, 2])
     func heldPhotoCleanupFooterObservesActualFailureAndRecovery(pendingRequests: Int) async throws {
@@ -251,6 +543,10 @@ struct PiecePersistenceTests {
         let sentinelBytes = Data("Preserve unrecognized media".utf8)
         try sentinelBytes.write(to: sentinel)
         let database = directory.appendingPathComponent("wardrobe.store")
+        // Keep the fixture's writer alive through the preservation assertions.
+        // Scope exit alone cannot certify that native teardown/checkpointing ended.
+        var fixtureContainer: ModelContainer?
+        var fixtureContext: ModelContext?
         if layout < 10 || layout > 11 {
             do {
                 let schema: Schema
@@ -292,6 +588,8 @@ struct PiecePersistenceTests {
                 default: break
                 }
                 try context.save()
+                fixtureContainer = container
+                fixtureContext = context
             }
         } else if layout == 10 {
             try Data("Not SQLite".utf8).write(to: database)
@@ -304,20 +602,22 @@ struct PiecePersistenceTests {
         }
         // SQLite's shared-memory reader index changes even on read-only opens.
         // Preserve authoritative database/WAL/marker bytes, not volatile reader bookkeeping.
-        let files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
-            .filter { $0.lastPathComponent != "media" && !$0.lastPathComponent.hasSuffix("-shm") }
-        let bytes = try files.map { try Data(contentsOf: $0) }
-        #expect(throws: (any Error).self) { try PieceStore(directory: directory) }
-        for (file, original) in zip(files, bytes) {
-            #expect(try Data(contentsOf: file) == original, "Refused store changed \(file.lastPathComponent)")
+        try withExtendedLifetime((fixtureContainer, fixtureContext)) {
+            let files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+                .filter { $0.lastPathComponent != "media" && !$0.lastPathComponent.hasSuffix("-shm") }
+            let bytes = try files.map { try Data(contentsOf: $0) }
+            #expect(throws: (any Error).self) { try PieceStore(directory: directory) }
+            for (file, original) in zip(files, bytes) {
+                #expect(try Data(contentsOf: file) == original, "Refused store changed \(file.lastPathComponent)")
+            }
+            #expect(try Data(contentsOf: sentinel) == sentinelBytes)
+            if layout == 11 {
+                #expect(try Data(contentsOf: marker) == Data("AQD-piece-store:2".utf8))
+            } else {
+                #expect(!FileManager.default.fileExists(atPath: marker.path))
+            }
+            #expect(FileManager.default.fileExists(atPath: database.path) == (layout != 11))
         }
-        #expect(try Data(contentsOf: sentinel) == sentinelBytes)
-        if layout == 11 {
-            #expect(try Data(contentsOf: marker) == Data("AQD-piece-store:2".utf8))
-        } else {
-            #expect(!FileManager.default.fileExists(atPath: marker.path))
-        }
-        #expect(FileManager.default.fileExists(atPath: database.path) == (layout != 11))
     }
 
     @Test func fitOriginalUseSavesWithoutCreatingOrRetainingUnusedEditFiles() async throws {

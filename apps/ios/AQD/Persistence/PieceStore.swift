@@ -744,13 +744,35 @@ final class PieceStore {
         }
     }
 
+    /// Read-only proof of this exact record removal, not proof of erased media.
+    /// Missing operations are unacknowledged; mismatched or contradictory proof is refused.
+    func isPieceDeletionAcknowledged(id: UUID, expectedRevision: Int, operationID: UUID) throws -> Bool {
+        guard expectedRevision > 0 else { throw StoreError.invalidRecord }
+        let context = ModelContext(container)
+        let matches = try context.fetch(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.id == operationID }))
+        guard !matches.isEmpty else { return false }
+        guard matches.count == 1, let proof = matches.first,
+              proof.expectedRevision > 0,
+              Set(proof.pendingPhotoIDs).count == proof.pendingPhotoIDs.count else { throw StoreError.invalidRecord }
+        guard proof.itemID == id, proof.expectedRevision == expectedRevision else { throw StoreError.operationConflict }
+        guard try context.fetchCount(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.itemID == id })) == 1,
+              try context.fetchCount(FetchDescriptor<StoredPiece>(predicate: #Predicate { $0.id == id })) == 0,
+              try context.fetchCount(FetchDescriptor<StoredPieceDraft>(predicate: #Predicate { $0.itemID == id || $0.operationID == operationID })) == 0,
+              try context.fetchCount(FetchDescriptor<StoredPieceSave>(predicate: #Predicate { $0.itemID == id || $0.id == operationID })) == 0 else {
+            throw StoreError.invalidRecord
+        }
+        return true
+    }
+
     /// Piece-only deletion, not full LOCAL-03 or erase. Today/journal/outfit/plan/history
     /// owners must extend the reference graph before those models can retain media.
     /// Record acknowledgment and recoverable filesystem cleanup are separate commits.
     func deletePiece(id: UUID, expectedRevision: Int, operationID: UUID) throws {
         let context = ModelContext(container)
         if let prior = try context.fetch(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.id == operationID })).first {
-            guard prior.itemID == id, prior.expectedRevision == expectedRevision else { throw StoreError.operationConflict }
+            guard try isPieceDeletionAcknowledged(id: id, expectedRevision: expectedRevision, operationID: operationID) else {
+                throw StoreError.invalidRecord
+            }
             try finishCleanup(prior, context: context)
             return
         }

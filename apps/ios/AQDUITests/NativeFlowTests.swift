@@ -2,7 +2,8 @@ import XCTest
 import UIKit
 
 /// Tests the delivered native baseline, not the unfinished full V1 journey.
-/// No photo, persistence, network or permission substitute is injected.
+/// Real persistence and system flows; one explicitly guarded synthetic deletion
+/// fixture denies owned-file unlink at the filesystem boundary, never fakes UI state.
 @MainActor
 final class NativeFlowTests: XCTestCase {
     private var app: XCUIApplication!
@@ -130,6 +131,159 @@ final class NativeFlowTests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Profile"].waitForExistence(timeout: 5))
         XCTAssertTrue(tab("Profile").isSelected)
         attachScreenshot("Writable relaunch recovers cleanup without changing root navigation")
+    }
+
+    func testAcknowledgedDeletionReturnsToEmptyClosetWithRetryablePhotoCleanup() {
+        app.terminate()
+        app.launchEnvironment["AQD_TEST_DENIED_DELETE_CLEANUP"] = "1"
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        tab("Closet").tap()
+        let seededPiece = app.staticTexts["Synthetic cleanup piece"].firstMatch
+        XCTAssertTrue(seededPiece.waitForExistence(timeout: 10))
+        seededPiece.tap()
+        XCTAssertTrue(app.navigationBars["Piece"].waitForExistence(timeout: 5))
+        let more = app.buttons["More piece options"]
+        attachScreenshot("More piece options target before boundary checks")
+        let targetTree = XCTAttachment(string: app.debugDescription)
+        targetTree.name = "Public accessibility tree before More boundary checks"
+        targetTree.lifetime = .keepAlways
+        add(targetTree)
+        print("More piece options measured frame: \(more.frame)")
+        XCTAssertTrue(more.isHittable)
+        // Normalize only floating-point subtraction noise (44 can arrive as
+        // 43.999999999999986 at the fractional bar origin), not a pixel deficit.
+        let targetWidth = (more.frame.width * 1_000_000).rounded() / 1_000_000
+        let targetHeight = (more.frame.height * 1_000_000).rounded() / 1_000_000
+        XCTAssertGreaterThanOrEqual(targetWidth, 44)
+        XCTAssertGreaterThanOrEqual(targetHeight, 44)
+        // The native button has a measured 48×44 target. Exercise the horizontal
+        // 44pt span and points 1.5pt inside the vertical edges: exact ±22 vertical
+        // taps round outside iOS18's 44pt navigation bar at its fractional origin.
+        // The inset taps exercise 41pt vertically, not proof of a 44pt hit span;
+        // the strict frame checks above independently retain the minimum target.
+        func dismissFromQualifiedBlankBody(attachEvidence: Bool = false) {
+            // iOS26's native menu overlaps the navigation title. Use rendered
+            // blank body below the final detail and above the tab bar instead.
+            // A native inline confirmation adds its own scroll view. Qualify
+            // the owner by its rendered category rather than choosing that view.
+            let body = app.scrollViews.containing(.staticText, identifier: "Tops").firstMatch
+            let category = app.staticTexts["Tops"].firstMatch
+            let dismissPoint = CGPoint(x: seededPiece.frame.minX + 20,
+                                       y: (category.frame.maxY + app.tabBars.firstMatch.frame.minY) / 2)
+            XCTAssertTrue(body.frame.contains(dismissPoint))
+            XCTAssertGreaterThan(dismissPoint.y, category.frame.maxY)
+            XCTAssertLessThan(dismissPoint.y, app.tabBars.firstMatch.frame.minY)
+            for element in app.buttons.allElementsBoundByIndex
+                + app.staticTexts.allElementsBoundByIndex + app.images.allElementsBoundByIndex {
+                XCTAssertFalse(element.frame.contains(dismissPoint), "Outside dismissal must not activate \(element.label)")
+            }
+            if attachEvidence {
+                attachScreenshot("More open at left boundary with qualified blank body dismissal")
+            }
+            body.coordinate(withNormalizedOffset: .zero)
+                .withOffset(CGVector(dx: dismissPoint.x - body.frame.minX,
+                                     dy: dismissPoint.y - body.frame.minY)).tap()
+        }
+        for offset in [CGVector(dx: -22, dy: 0), CGVector(dx: 22, dy: 0),
+                       CGVector(dx: 0, dy: -20.5), CGVector(dx: 0, dy: 20.5)] {
+            more.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+                .withOffset(offset).tap()
+            XCTAssertTrue(app.buttons["Delete"].waitForExistence(timeout: 5))
+            dismissFromQualifiedBlankBody(attachEvidence: offset.dx == -22)
+            XCTAssertTrue(app.buttons["Delete"].waitForNonExistence(timeout: 5), "Dismiss menu before the next More tap")
+            XCTAssertFalse(app.staticTexts["Archive Synthetic cleanup piece?"].exists)
+            XCTAssertFalse(app.staticTexts["Delete this piece?"].exists)
+            XCTAssertTrue(seededPiece.exists)
+        }
+        // Native menu actions retain their reviewed confirmation/cancel paths.
+        more.tap()
+        app.buttons["Archive"].tap()
+        XCTAssertTrue(app.staticTexts["Archive Synthetic cleanup piece?"].waitForExistence(timeout: 5))
+        if app.buttons["Cancel"].exists { app.buttons["Cancel"].tap() }
+        else { dismissFromQualifiedBlankBody() }
+        XCTAssertTrue(app.staticTexts["Archive Synthetic cleanup piece?"].waitForNonExistence(timeout: 5))
+        XCTAssertTrue(seededPiece.exists)
+        XCTAssertFalse(app.staticTexts["Archived"].exists)
+        more.tap()
+        app.buttons["Archive"].tap()
+        app.buttons["Archive"].tap()
+        XCTAssertTrue(app.staticTexts["Archived"].waitForExistence(timeout: 5))
+        more.tap()
+        app.buttons["Restore"].tap()
+        XCTAssertFalse(app.staticTexts["Archived"].exists)
+        XCTAssertTrue(seededPiece.exists)
+
+        more.tap()
+        app.buttons["Delete"].tap()
+        XCTAssertTrue(app.staticTexts["Delete this piece?"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(
+            format: "label CONTAINS %@", "Original Photos are unchanged."
+        )).firstMatch.exists)
+        attachScreenshot("Native More menu reviewed deletion confirmation")
+        if app.buttons["Cancel"].exists { app.buttons["Cancel"].tap() }
+        else { dismissFromQualifiedBlankBody() }
+        XCTAssertTrue(app.staticTexts["Delete this piece?"].waitForNonExistence(timeout: 5))
+        XCTAssertTrue(seededPiece.exists, "Cancelling deletion must preserve the reviewed piece")
+        XCTAssertTrue(more.isHittable)
+        more.tap()
+        app.buttons["Delete"].tap()
+        XCTAssertTrue(app.staticTexts["Delete this piece?"].waitForExistence(timeout: 5))
+        app.buttons["Delete"].tap()
+        // Exact durable acknowledgment closes the detail. This is record removal,
+        // not an assertion that the denied synthetic media bytes were erased.
+        XCTAssertTrue(app.navigationBars["Closet"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["Your closet starts here"].waitForExistence(timeout: 5))
+        XCTAssertFalse(seededPiece.exists)
+        XCTAssertFalse(app.buttons["Retry reviewed delete"].exists)
+        let warning = app.staticTexts.matching(NSPredicate(
+            format: "label BEGINSWITH %@", "AQD photo cleanup couldn’t finish."
+        )).firstMatch
+        let retry = app.buttons["Retry photo cleanup"]
+        func assertRecoveryVisible() {
+            XCTAssertTrue(warning.waitForExistence(timeout: 5))
+            XCTAssertTrue(warning.isHittable)
+            XCTAssertTrue(retry.isHittable)
+            XCTAssertGreaterThanOrEqual(retry.frame.width, 44)
+            XCTAssertGreaterThanOrEqual(retry.frame.height, 44)
+        }
+        assertRecoveryVisible()
+        retry.tap()
+        assertRecoveryVisible() // Actual owned unlink remains denied, not a fake message.
+        for root in ["Today", "Planner", "Profile", "Agent"] {
+            tab(root).tap()
+            XCTAssertTrue(app.navigationBars[root].waitForExistence(timeout: 5))
+            assertRecoveryVisible()
+        }
+        app.navigationBars["Agent"].buttons["Back"].tap()
+        XCTAssertTrue(app.navigationBars["Profile"].waitForExistence(timeout: 5))
+        assertRecoveryVisible()
+        tab("Closet").tap()
+        XCTAssertTrue(app.staticTexts["Your closet starts here"].waitForExistence(timeout: 5))
+        XCTAssertFalse(seededPiece.exists)
+        assertRecoveryVisible()
+        attachScreenshot("Acknowledged record deletion with synthetic photo cleanup still pending")
+
+        app.terminate()
+        app.launchEnvironment.removeValue(forKey: "AQD_TEST_DENIED_DELETE_CLEANUP")
+        app.launch() // Same isolated UUID, now real writable filesystem cleanup.
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        for root in ["Today", "Closet", "Planner", "Profile", "Agent"] {
+            tab(root).tap()
+            XCTAssertTrue(app.navigationBars[root].waitForExistence(timeout: 5))
+            XCTAssertFalse(warning.exists, "Writable relaunch must clear cleanup failure on \(root)")
+            XCTAssertFalse(retry.exists)
+            if root == "Closet" {
+                XCTAssertTrue(app.staticTexts["Your closet starts here"].waitForExistence(timeout: 5))
+                XCTAssertFalse(seededPiece.exists, "Cleanup recovery must never resurrect the deleted piece")
+            }
+        }
+        app.navigationBars["Agent"].buttons["Back"].tap()
+        XCTAssertTrue(app.navigationBars["Profile"].waitForExistence(timeout: 5))
+        XCTAssertTrue(tab("Profile").isSelected)
+        XCTAssertFalse(warning.exists)
+        XCTAssertFalse(retry.exists)
+        attachScreenshot("Writable relaunch finishes synthetic photo cleanup without resurrecting the piece")
     }
 
     func testPieceAvailabilityAndSortControlsKeepTheEmptyCollectionHonest() {

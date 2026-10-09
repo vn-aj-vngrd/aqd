@@ -1,0 +1,2373 @@
+{
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "pageId": "p-2-0",
+  "pageName": "01 · V1",
+  "checkedOn": "2026-10-09",
+  "tokenHash": "fdeb7346",
+  "sourceHead": "91ace1364c275641f819852926113f65996a5e95",
+  "sourceState": "Working-tree recovery and toolbar changes; protected delivery pending",
+  "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
+  "liveCensus": {
+    "rootCount": 227,
+    "nodeCount": 13055,
+    "canonicalScreenStates": 169,
+    "todayReferenceStates": 20,
+    "otherReferenceRoots": 38,
+    "sortedRootIdsSha256": "f96b08fdc6ac804f72e7c438f0ddff34986a9c338ffebf6fc9b996536e93cbc7",
+    "method": "Live Paper get_basic_info explicitly scoped to V1 (first100 only), followed by uncapped root get_tree_summary(depth1). IDs transcribed from that complete227-root response and compared exactly with the registered manifest union. get_children also confirmed count227 but was capped at100; it was not treated as a complete list. Labels below come from the registered manifest, not a fresh per-node text export.",
+    "allRootIdsMatchRegisteredInventory": true
+  },
+  "counts": {
+    "missing": 172,
+    "placeholder": 5,
+    "source-partial": 39,
+    "structural-reference": 11
+  },
+  "verifiedCompleteScreenStates": 0,
+  "classificationLimits": [
+    "Source-partial means some real operations exist; it is not pixel-fidelity or complete-state acceptance.",
+    "Placeholder means the reachable destination explicitly announces missing functionality.",
+    "Missing means no corresponding complete functional screen/state was established by current source mapping.",
+    "Structural references are canvas headers/scope labels, not independent app routes. Their associated functionality remains required.",
+    "Reference-only Today, weather, media, native decision and accessibility boards are retained and mapped to owning behavior, not silently excluded or invented as extra push routes.",
+    "Weather/Vision/voice/model capability gates and manual offline fallbacks remain required; reference success states do not authorize unsupported capability or privacy claims."
+  ],
+  "evidence": {
+    "livePaperReads": [
+      "root_node_p-2-0 depth1 complete census",
+      "JNX-0 inline-styles JSX and screenshot",
+      "11R5-0 depth4 customization control tree",
+      "JXA-0 depth4 Planner control tree"
+    ],
+    "codeMappingAgent": "b7fc9bd9-baf1-485",
+    "finalLocalChecks": [
+      "/tmp/aqd-codex-round8-group-ios18.log:20 Core/71 native/9 UI,zero skips",
+      "/tmp/aqd-codex-round8-group-ios26.log:20 Core/71 native/9 UI,zero skips"
+    ],
+    "limits": [
+      "No per-root complete runtime exercise or Paper-to-native visual parity pass.",
+      "No Paper mutations; whole-canvas static quality not re-certified.",
+      "SDK27, physical Camera/Settings/VoiceOver, largest accessibility text, media-quality/performance and integrated full-domain acceptance unverified.",
+      "PR9 remains open; full issue6 remains incomplete."
+    ]
+  },
+  "domains": {
+    "01": {
+      "coverage": "missing",
+      "required": "Welcome/private onboarding/tour, preferences/review/refusal/body consent/resume",
+      "source": "apps/ios/AQD/AQDApp.swift:AppRootView directly opens roots; no onboarding/preferences entities"
+    },
+    "02": {
+      "coverage": "source-partial",
+      "required": "Complete capture/first-outfit activation; Today configuration and retained personal content; shared writes across all domains",
+      "source": "PieceCaptureView/PhotoEditorView/CaptureModel and stable Today instances; TodayView stock cards are placeholders"
+    },
+    "03": {
+      "coverage": "source-partial",
+      "required": "Full Pieces metadata/wear-aware sorts/cascades; Outfits/Themes/search and commands",
+      "source": "ClosetView/PieceDetailView/PieceStore; Outfits/Themes explicitly unimplemented"
+    },
+    "04": {
+      "coverage": "missing",
+      "required": "Builder/choosers/replacement/suggestion/review/saved detail/edit/favorite/delete/theme membership",
+      "source": "No outfit/theme entities or functional screens"
+    },
+    "05": {
+      "coverage": "placeholder",
+      "required": "Week/Month/date/agenda/plans/timezones/routines/trips/packing/conflicts",
+      "source": "PendingLocalView Planner; no persistence models"
+    },
+    "06": {
+      "coverage": "missing",
+      "required": "Wear dedup/backdate/correct/Undo/history/calendar/insights and durable snapshots",
+      "source": "priorWearCount is estimate only; no wear records"
+    },
+    "07": {
+      "coverage": "placeholder",
+      "required": "Capability states, conversations/composer/context/voice/streaming/cancel/proposals/approval/receipts/recovery",
+      "source": "BaselineAgentView only Back/Open Closet; native presentation exists"
+    },
+    "08": {
+      "coverage": "placeholder",
+      "required": "Profile More/local identity/avatar/private journal/fit memories/media lifecycle/source returns",
+      "source": "PendingLocalView Profile; no journal/identity models"
+    },
+    "09": {
+      "coverage": "missing",
+      "required": "Settings/Style/appearance/help/capability/tour replay/export/restore/global erase/recovery",
+      "source": "Semantic colors/protected persistence exist, but no functional Settings/local-data flows"
+    }
+  },
+  "roots": [
+    {
+      "nodeId": "Q5Q-0",
+      "canonicalId": "L86",
+      "referenceId": null,
+      "registeredLabel": "03.13 · L86 · Search · Pieces",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "Q77-0",
+      "canonicalId": "L87",
+      "referenceId": null,
+      "registeredLabel": "03.14 · L87 · Search · Outfits",
+      "flowSection": "03",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "Q8P-0",
+      "canonicalId": "L88",
+      "referenceId": null,
+      "registeredLabel": "03.15 · L88 · Search · Themes",
+      "flowSection": "03",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QA4-0",
+      "canonicalId": "L89",
+      "referenceId": null,
+      "registeredLabel": "03.16 · L89 · Search · No matches",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QE0-0",
+      "canonicalId": "L92",
+      "referenceId": null,
+      "registeredLabel": "03.12 · L92 · Search · Start",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QFC-0",
+      "canonicalId": "L93",
+      "referenceId": null,
+      "registeredLabel": "03.17 · L93 · Search · Empty closet",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QBG-0",
+      "canonicalId": "L90",
+      "referenceId": null,
+      "registeredLabel": "03.18 · L90 · Search · Loading",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QCU-0",
+      "canonicalId": "L91",
+      "referenceId": null,
+      "registeredLabel": "03.19 · L91 · Search · Failed",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "JK8-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "00 · V1 scope & journey",
+      "flowSection": null,
+      "functionalCoverage": "structural-reference",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "JL8-0",
+      "canonicalId": "L01",
+      "referenceId": null,
+      "registeredLabel": "01.03 · L01 · Your closet, privately",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "JMF-0",
+      "canonicalId": "L02",
+      "referenceId": null,
+      "registeredLabel": "02.00 · L02 · Today · Empty",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "JNX-0",
+      "canonicalId": "L03",
+      "referenceId": null,
+      "registeredLabel": "03.00 · L03 · Closet · Pieces",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "JPZ-0",
+      "canonicalId": "L04",
+      "referenceId": null,
+      "registeredLabel": "02.02 · L04 · New piece · No photo",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "SOI-0",
+      "canonicalId": "L159",
+      "referenceId": null,
+      "registeredLabel": "02.03 · L159 · Photo source · Shared",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "ODL-0",
+      "canonicalId": "L75",
+      "referenceId": null,
+      "registeredLabel": "02.04 · L75 · New piece · Photo selected",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "OIZ-0",
+      "canonicalId": "L78",
+      "referenceId": null,
+      "registeredLabel": "02.07 · L78 · Photo options · Shared",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "OEW-0",
+      "canonicalId": "L76",
+      "referenceId": null,
+      "registeredLabel": "02.05 · L76 · Landscape fit",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "OG7-0",
+      "canonicalId": "L77",
+      "referenceId": null,
+      "registeredLabel": "02.06 · L77 · Edit photo · Shared",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "N0G-0",
+      "canonicalId": "L68",
+      "referenceId": null,
+      "registeredLabel": "07.02 · L68 · Agent · Keyboard focused",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "N43-0",
+      "canonicalId": "L69",
+      "referenceId": null,
+      "registeredLabel": "07.20 · L69 · Voice · Permission",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "N5P-0",
+      "canonicalId": "L70",
+      "referenceId": null,
+      "registeredLabel": "07.21 · L70 · Voice · Listening",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "N7F-0",
+      "canonicalId": "L71",
+      "referenceId": null,
+      "registeredLabel": "07.22 · L71 · Voice · Transcribing",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "N91-0",
+      "canonicalId": "L72",
+      "referenceId": null,
+      "registeredLabel": "07.23 · L72 · Voice · Review transcript",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "NAN-0",
+      "canonicalId": "L73",
+      "referenceId": null,
+      "registeredLabel": "07.24 · L73 · Voice · Unavailable",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "NC6-0",
+      "canonicalId": "L74",
+      "referenceId": null,
+      "registeredLabel": "07.04 · L74 · Choose local context",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "JXA-0",
+      "canonicalId": "L09",
+      "referenceId": null,
+      "registeredLabel": "05.00 · L09 · Planner · Week",
+      "flowSection": "05",
+      "functionalCoverage": "placeholder",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "PRM-0",
+      "canonicalId": "L85",
+      "referenceId": null,
+      "registeredLabel": "05.02 · L85 · Planner · Month",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "JZY-0",
+      "canonicalId": "L10",
+      "referenceId": null,
+      "registeredLabel": "05.06 · L10 · Plan a look",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "P8B-0",
+      "canonicalId": "L82",
+      "referenceId": null,
+      "registeredLabel": "05.03 · L82 · Planner · Empty date",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "PFY-0",
+      "canonicalId": "L84",
+      "referenceId": null,
+      "registeredLabel": "05.08 · L84 · Planner · Saved date",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "PEP-0",
+      "canonicalId": "L83",
+      "referenceId": null,
+      "registeredLabel": "05.05 · L83 · Add plan · Selected date",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "K70-0",
+      "canonicalId": "L20",
+      "referenceId": null,
+      "registeredLabel": "03.01 · L20 · Closet · Outfits",
+      "flowSection": "03",
+      "functionalCoverage": "placeholder",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "K16-0",
+      "canonicalId": "L11",
+      "referenceId": null,
+      "registeredLabel": "06.00 · L11 · Record wear",
+      "flowSection": "06",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "K9I-0",
+      "canonicalId": "L21",
+      "referenceId": null,
+      "registeredLabel": "03.04 · L21 · Cotton shirt",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "K2G-0",
+      "canonicalId": "L12",
+      "referenceId": null,
+      "registeredLabel": "06.05 · L12 · Wear history",
+      "flowSection": "06",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "JRU-0",
+      "canonicalId": "L05",
+      "referenceId": null,
+      "registeredLabel": "02.14 · L05 · First piece saved",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "OMU-0",
+      "canonicalId": "L79",
+      "referenceId": null,
+      "registeredLabel": "02.08 · L79 · Photo missing",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "JT0-0",
+      "canonicalId": "L06",
+      "referenceId": null,
+      "registeredLabel": "04.00 · L06 · Build outfit",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "JVS-0",
+      "canonicalId": "L08",
+      "referenceId": null,
+      "registeredLabel": "04.07 · L08 · An easy afternoon",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "108S-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REF · V1/V2 WeatherKit · Setup / Off",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "K4P-0",
+      "canonicalId": "L18",
+      "referenceId": null,
+      "registeredLabel": "04.03 · L18 · Suggest an outfit",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "JUF-0",
+      "canonicalId": "L07",
+      "referenceId": null,
+      "registeredLabel": "04.04 · L07 · Review outfit",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "K3U-0",
+      "canonicalId": "L17",
+      "referenceId": null,
+      "registeredLabel": "02.20 · L17 · Save failed · Shared writes",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QWN-0",
+      "canonicalId": "L106",
+      "referenceId": null,
+      "registeredLabel": "02.17 · L106 · Dirty exit · Shared forms · Native overlay STATE",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RX0-0",
+      "canonicalId": "L138",
+      "referenceId": null,
+      "registeredLabel": "03.08 · L138 · Archive piece · Native overlay STATE",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RXW-0",
+      "canonicalId": "L139",
+      "referenceId": null,
+      "registeredLabel": "03.30 · L139 · Delete theme · Native overlay STATE",
+      "flowSection": "03",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RYS-0",
+      "canonicalId": "L140",
+      "referenceId": null,
+      "registeredLabel": "04.10 · L140 · Delete outfit · Native overlay STATE",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RZO-0",
+      "canonicalId": "L141",
+      "referenceId": null,
+      "registeredLabel": "06.04 · L141 · Undo wear · Native overlay STATE",
+      "flowSection": "06",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "S0K-0",
+      "canonicalId": "L142",
+      "referenceId": null,
+      "registeredLabel": "06.01 · L142 · Wear already recorded · Native overlay STATE",
+      "flowSection": "06",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "S1G-0",
+      "canonicalId": "L143",
+      "referenceId": null,
+      "registeredLabel": "07.17 · L143 · Delete conversation · Native overlay STATE",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "S2C-0",
+      "canonicalId": "L144",
+      "referenceId": null,
+      "registeredLabel": "03.02 · L144 · Outfits · Empty",
+      "flowSection": "03",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "S38-0",
+      "canonicalId": "L145",
+      "referenceId": null,
+      "registeredLabel": "03.23 · L145 · Themes · Empty",
+      "flowSection": "03",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "S44-0",
+      "canonicalId": "L146",
+      "referenceId": null,
+      "registeredLabel": "06.07 · L146 · Wear history · Empty",
+      "flowSection": "06",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "S50-0",
+      "canonicalId": "L147",
+      "referenceId": null,
+      "registeredLabel": "06.09 · L147 · Insights · Insufficient history",
+      "flowSection": "06",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "S5W-0",
+      "canonicalId": "L148",
+      "referenceId": null,
+      "registeredLabel": "09.14 · L148 · Restore · Failed",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "S6S-0",
+      "canonicalId": "L149",
+      "referenceId": null,
+      "registeredLabel": "02.18 · L149 · Saving · Shared writes",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "S7O-0",
+      "canonicalId": "L150",
+      "referenceId": null,
+      "registeredLabel": "02.19 · L150 · Save unknown · Shared writes",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QXJ-0",
+      "canonicalId": "L107",
+      "referenceId": null,
+      "registeredLabel": "02.09 · L107 · Photo error · Shared",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QYF-0",
+      "canonicalId": "L108",
+      "referenceId": null,
+      "registeredLabel": "02.10 · L108 · Camera permission · Shared",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QZB-0",
+      "canonicalId": "L109",
+      "referenceId": null,
+      "registeredLabel": "09.06 · L109 · Export · Preparing",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R07-0",
+      "canonicalId": "L110",
+      "referenceId": null,
+      "registeredLabel": "09.07 · L110 · Export · Ready",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R13-0",
+      "canonicalId": "L111",
+      "referenceId": null,
+      "registeredLabel": "09.08 · L111 · Export · Failed",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R1Z-0",
+      "canonicalId": "L112",
+      "referenceId": null,
+      "registeredLabel": "09.10 · L112 · Restore · Invalid archive",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R2V-0",
+      "canonicalId": "L113",
+      "referenceId": null,
+      "registeredLabel": "09.11 · L113 · Restore · Newer AQD needed",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R3R-0",
+      "canonicalId": "L114",
+      "referenceId": null,
+      "registeredLabel": "09.12 · L114 · Restore · Committing",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R4N-0",
+      "canonicalId": "L115",
+      "referenceId": null,
+      "registeredLabel": "09.13 · L115 · Restore · Complete",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R5J-0",
+      "canonicalId": "L116",
+      "referenceId": null,
+      "registeredLabel": "04.11 · L116 · Stale draft · Shared review",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R6F-0",
+      "canonicalId": "L117",
+      "referenceId": null,
+      "registeredLabel": "03.11 · L117 · Unavailable record · Shared",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KGU-0",
+      "canonicalId": "L13",
+      "referenceId": null,
+      "registeredLabel": "09.00 · L13 · Settings",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LS0-0",
+      "canonicalId": "L48",
+      "referenceId": null,
+      "registeredLabel": "08.03 · L48 · Profile · Local",
+      "flowSection": "08",
+      "functionalCoverage": "placeholder",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "V0A-0",
+      "canonicalId": "L165",
+      "referenceId": null,
+      "registeredLabel": "08.04 · L165 · Profile options · Open",
+      "flowSection": "08",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "SV6-0",
+      "canonicalId": "L160",
+      "referenceId": null,
+      "registeredLabel": "08.00 · L160 · Profile · Journal empty",
+      "flowSection": "08",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LT9-0",
+      "canonicalId": "L49",
+      "referenceId": null,
+      "registeredLabel": "08.06 · L49 · Edit local profile",
+      "flowSection": "08",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LU7-0",
+      "canonicalId": "L50",
+      "referenceId": null,
+      "registeredLabel": "09.01 · L50 · Appearance",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "S9L-0",
+      "canonicalId": "L151",
+      "referenceId": null,
+      "registeredLabel": "05.11 · L151 · Timezone · Shared dates",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "SAH-0",
+      "canonicalId": "L152",
+      "referenceId": null,
+      "registeredLabel": "01.04 · L152 · Preferences · Goals",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "V6F-0",
+      "canonicalId": "L166",
+      "referenceId": null,
+      "registeredLabel": "01.07 · L166 · Preferences · Fit & comfort",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "V7G-0",
+      "canonicalId": "L167",
+      "referenceId": null,
+      "registeredLabel": "01.08 · L167 · Preferences · Optional body details",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "VO9-0",
+      "canonicalId": "L170",
+      "referenceId": null,
+      "registeredLabel": "01.11 · L170 · Settings edit · Goals answered",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "VPA-0",
+      "canonicalId": "L171",
+      "referenceId": null,
+      "registeredLabel": "01.12 · L171 · Body shape picker · Open",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "V8H-0",
+      "canonicalId": "L168",
+      "referenceId": null,
+      "registeredLabel": "01.09 · L168 · Preferences · Colors & patterns",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "V9I-0",
+      "canonicalId": "L169",
+      "referenceId": null,
+      "registeredLabel": "01.10 · L169 · Review preferences",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "SBD-0",
+      "canonicalId": "L153",
+      "referenceId": null,
+      "registeredLabel": "01.05 · L153 · Preferences · Occasions",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "SC9-0",
+      "canonicalId": "L154",
+      "referenceId": null,
+      "registeredLabel": "01.06 · L154 · Preferences · Style",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R7B-0",
+      "canonicalId": "L118",
+      "referenceId": null,
+      "registeredLabel": "03.03 · L118 · Add to closet",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R87-0",
+      "canonicalId": "L119",
+      "referenceId": null,
+      "registeredLabel": "03.05 · L119 · Piece options",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R93-0",
+      "canonicalId": "L120",
+      "referenceId": null,
+      "registeredLabel": "03.06 · L120 · Availability",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "R9Z-0",
+      "canonicalId": "L121",
+      "referenceId": null,
+      "registeredLabel": "03.20 · L121 · Filter pieces",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RAV-0",
+      "canonicalId": "L122",
+      "referenceId": null,
+      "registeredLabel": "03.21 · L122 · Sort pieces",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RBR-0",
+      "canonicalId": "L123",
+      "referenceId": null,
+      "registeredLabel": "03.27 · L123 · Theme commands",
+      "flowSection": "03",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RCN-0",
+      "canonicalId": "L124",
+      "referenceId": null,
+      "registeredLabel": "04.08 · L124 · Outfit More · Contextual open STATE",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RDJ-0",
+      "canonicalId": "L125",
+      "referenceId": null,
+      "registeredLabel": "07.01 · L125 · Agent options",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "REF-0",
+      "canonicalId": "L126",
+      "referenceId": null,
+      "registeredLabel": "04.05 · L126 · Choose themes",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RFB-0",
+      "canonicalId": "L127",
+      "referenceId": null,
+      "registeredLabel": "05.04 · L127 · Add to Planner",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RG7-0",
+      "canonicalId": "L128",
+      "referenceId": null,
+      "registeredLabel": "05.09 · L128 · Plan entry",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RH3-0",
+      "canonicalId": "L129",
+      "referenceId": null,
+      "registeredLabel": "05.14 · L129 · Edit routine",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RHZ-0",
+      "canonicalId": "L130",
+      "referenceId": null,
+      "registeredLabel": "06.02 · L130 · Wear record",
+      "flowSection": "06",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RIV-0",
+      "canonicalId": "L131",
+      "referenceId": null,
+      "registeredLabel": "02.11 · L131 · Category · Shared picker",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LV5-0",
+      "canonicalId": "L51",
+      "referenceId": null,
+      "registeredLabel": "09.02 · L51 · Help and privacy",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LW3-0",
+      "canonicalId": "L52",
+      "referenceId": null,
+      "registeredLabel": "09.03 · L52 · Local Agent capability",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KHP-0",
+      "canonicalId": "L14",
+      "referenceId": null,
+      "registeredLabel": "09.05 · L14 · Export closet",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KIK-0",
+      "canonicalId": "L15",
+      "referenceId": null,
+      "registeredLabel": "09.09 · L15 · Restore closet",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KJF-0",
+      "canonicalId": "L16",
+      "referenceId": null,
+      "registeredLabel": "09.16 · L16 · Erase local closet",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KKA-0",
+      "canonicalId": "L22",
+      "referenceId": null,
+      "registeredLabel": "09.15 · L22 · Closet needs recovery",
+      "flowSection": "09",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "K63-0",
+      "canonicalId": "L19",
+      "referenceId": null,
+      "registeredLabel": "07.25 · L19 · Agent · Unsupported iPhone",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "OPA-0",
+      "canonicalId": "L80",
+      "referenceId": null,
+      "registeredLabel": "07.26 · L80 · Agent · Intelligence off",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "OQA-0",
+      "canonicalId": "L81",
+      "referenceId": null,
+      "registeredLabel": "07.27 · L81 · Agent · Model preparing",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KBP-0",
+      "canonicalId": "L23",
+      "referenceId": null,
+      "registeredLabel": "02.01 · L23 · Today · Planned outfit",
+      "flowSection": "02",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "109R-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "WeatherKit · City lookup",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "10AQ-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "WeatherKit · Loading",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "10BP-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "WeatherKit · Fresh details",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "10CO-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "WeatherKit · Saved offline",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "10DN-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "WeatherKit · Outside forecast",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "10EM-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "WeatherKit · Location unavailable",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "10FL-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "WeatherKit · Unavailable",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "10GK-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "WeatherKit · Enabled Home inline date",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KPT-0",
+      "canonicalId": "L24",
+      "referenceId": null,
+      "registeredLabel": "07.00 · L24 · Agent",
+      "flowSection": "07",
+      "functionalCoverage": "placeholder",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MJJ-0",
+      "canonicalId": "L60",
+      "referenceId": null,
+      "registeredLabel": "01.01 · L60 · Welcome",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MO5-0",
+      "canonicalId": "L63",
+      "referenceId": null,
+      "registeredLabel": "01.19 · L63 · Tour · Closet",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MKC-0",
+      "canonicalId": "L61",
+      "referenceId": null,
+      "registeredLabel": "01.02 · L61 · Start privately",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MU3-0",
+      "canonicalId": "L66",
+      "referenceId": null,
+      "registeredLabel": "01.22 · L66 · Ready to begin",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MS3-0",
+      "canonicalId": "L65",
+      "referenceId": null,
+      "registeredLabel": "01.21 · L65 · Tour · Profile",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MLN-0",
+      "canonicalId": "L62",
+      "referenceId": null,
+      "registeredLabel": "01.18 · L62 · Tour · Home",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QGO-0",
+      "canonicalId": "L94",
+      "referenceId": null,
+      "registeredLabel": "02.12 · L94 · Piece details",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QJE-0",
+      "canonicalId": "L96",
+      "referenceId": null,
+      "registeredLabel": "03.09 · L96 · Archived pieces",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QKI-0",
+      "canonicalId": "L97",
+      "referenceId": null,
+      "registeredLabel": "03.10 · L97 · Delete piece · Native overlay STATE",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QM0-0",
+      "canonicalId": "L98",
+      "referenceId": null,
+      "registeredLabel": "04.01 · L98 · Choose pieces · Shared",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QNN-0",
+      "canonicalId": "L99",
+      "referenceId": null,
+      "registeredLabel": "04.02 · L99 · Replace a piece",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QIB-0",
+      "canonicalId": "L95",
+      "referenceId": null,
+      "registeredLabel": "02.13 · L95 · Additional details",
+      "flowSection": "02",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QOO-0",
+      "canonicalId": "L100",
+      "referenceId": null,
+      "registeredLabel": "07.10 · L100 · Agent · Stopped",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QQX-0",
+      "canonicalId": "L101",
+      "referenceId": null,
+      "registeredLabel": "07.11 · L101 · Agent · Interrupted",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QSL-0",
+      "canonicalId": "L102",
+      "referenceId": null,
+      "registeredLabel": "07.09 · L102 · Response details",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QTQ-0",
+      "canonicalId": "L103",
+      "referenceId": null,
+      "registeredLabel": "07.18 · L103 · Conversations · Empty",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QUC-0",
+      "canonicalId": "L104",
+      "referenceId": null,
+      "registeredLabel": "07.19 · L104 · Conversations · Failed",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "QV1-0",
+      "canonicalId": "L105",
+      "referenceId": null,
+      "registeredLabel": "07.12 · L105 · Message · Failed",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MQ5-0",
+      "canonicalId": "L64",
+      "referenceId": null,
+      "registeredLabel": "01.20 · L64 · Tour · Agent",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "L3D-0",
+      "canonicalId": "L32",
+      "referenceId": null,
+      "registeredLabel": "03.22 · L32 · Closet · Themes",
+      "flowSection": "03",
+      "functionalCoverage": "placeholder",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "L9S-0",
+      "canonicalId": "L36",
+      "referenceId": null,
+      "registeredLabel": "05.12 · L36 · New routine",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "L5M-0",
+      "canonicalId": "L33",
+      "referenceId": null,
+      "registeredLabel": "05.01 · L33 · Planner · Retained week",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LBA-0",
+      "canonicalId": "L37",
+      "referenceId": null,
+      "registeredLabel": "05.13 · L37 · Office routine",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LLB-0",
+      "canonicalId": "L45",
+      "referenceId": null,
+      "registeredLabel": "09.04 · L45 · Style",
+      "flowSection": "09",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LCX-0",
+      "canonicalId": "L38",
+      "referenceId": null,
+      "registeredLabel": "05.16 · L38 · Trip plan",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LED-0",
+      "canonicalId": "L39",
+      "referenceId": null,
+      "registeredLabel": "05.17 · L39 · Packing list",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LFS-0",
+      "canonicalId": "L40",
+      "referenceId": null,
+      "registeredLabel": "05.18 · L40 · Review plan",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LH2-0",
+      "canonicalId": "L41",
+      "referenceId": null,
+      "registeredLabel": "06.08 · L41 · Wear insights",
+      "flowSection": "06",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LIA-0",
+      "canonicalId": "L42",
+      "referenceId": null,
+      "registeredLabel": "05.19 · L42 · Resolve a conflict",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LJG-0",
+      "canonicalId": "L43",
+      "referenceId": null,
+      "registeredLabel": "02.15 · L43 · First outfit · Missing categories",
+      "flowSection": "02",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LKC-0",
+      "canonicalId": "L44",
+      "referenceId": null,
+      "registeredLabel": "02.16 · L44 · First outfit · Ready",
+      "flowSection": "02",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "L7F-0",
+      "canonicalId": "L34",
+      "referenceId": null,
+      "registeredLabel": "03.25 · L34 · Weekend · Theme",
+      "flowSection": "03",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "UUA-0",
+      "canonicalId": "L164",
+      "referenceId": null,
+      "registeredLabel": "03.26 · L164 · Theme options · Open",
+      "flowSection": "03",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "L8P-0",
+      "canonicalId": "L35",
+      "referenceId": null,
+      "registeredLabel": "03.28 · L35 · Edit theme",
+      "flowSection": "03",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RJR-0",
+      "canonicalId": "L132",
+      "referenceId": null,
+      "registeredLabel": "03.07 · L132 · Edit piece",
+      "flowSection": "03",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RQG-0",
+      "canonicalId": "L137",
+      "referenceId": null,
+      "registeredLabel": "06.06 · L137 · Wear calendar",
+      "flowSection": "06",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RP6-0",
+      "canonicalId": "L136",
+      "referenceId": null,
+      "registeredLabel": "06.03 · L136 · Correct wear",
+      "flowSection": "06",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RL6-0",
+      "canonicalId": "L133",
+      "referenceId": null,
+      "registeredLabel": "04.09 · L133 · Edit outfit",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RNP-0",
+      "canonicalId": "L135",
+      "referenceId": null,
+      "registeredLabel": "03.29 · L135 · Theme · Choose outfits",
+      "flowSection": "03",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "SG4-0",
+      "canonicalId": "L156",
+      "referenceId": null,
+      "registeredLabel": "05.10 · L156 · Remove plan entry · Native overlay STATE",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "SEL-0",
+      "canonicalId": "L155",
+      "referenceId": null,
+      "registeredLabel": "05.15 · L155 · New event or trip",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "SH0-0",
+      "canonicalId": "L157",
+      "referenceId": null,
+      "registeredLabel": "05.07 · L157 · Choose one outfit · Shared",
+      "flowSection": "05",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "RML-0",
+      "canonicalId": "L134",
+      "referenceId": null,
+      "registeredLabel": "03.24 · L134 · Create theme",
+      "flowSection": "03",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KRR-0",
+      "canonicalId": "L25",
+      "referenceId": null,
+      "registeredLabel": "07.08 · L25 · Agent · Local response",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KVA-0",
+      "canonicalId": "L27",
+      "referenceId": null,
+      "registeredLabel": "04.06 · L27 · Outfit saved · Receipt",
+      "flowSection": "04",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "ZRD-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · V1 · L27 saved receipt · More open",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KU5-0",
+      "canonicalId": "L26",
+      "referenceId": null,
+      "registeredLabel": "07.15 · L26 · Conversations",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "SJC-0",
+      "canonicalId": "L158",
+      "referenceId": null,
+      "registeredLabel": "07.16 · L158 · Manage conversations",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KWC-0",
+      "canonicalId": "L28",
+      "referenceId": null,
+      "registeredLabel": "07.03 · L28 · Agent context",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LMY-0",
+      "canonicalId": "L46",
+      "referenceId": null,
+      "registeredLabel": "07.13 · L46 · Review theme",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "LNT-0",
+      "canonicalId": "L47",
+      "referenceId": null,
+      "registeredLabel": "07.14 · L47 · Review local changes",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KXH-0",
+      "canonicalId": "L29",
+      "referenceId": null,
+      "registeredLabel": "07.05 · L29 · Agent · Waiting",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "KZ2-0",
+      "canonicalId": "L30",
+      "referenceId": null,
+      "registeredLabel": "07.06 · L30 · Agent · Streaming",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "L0T-0",
+      "canonicalId": "L31",
+      "referenceId": null,
+      "registeredLabel": "07.07 · L31 · Agent · Complete",
+      "flowSection": "07",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MZ2-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "01 · Welcome, onboarding & tour",
+      "flowSection": null,
+      "functionalCoverage": "structural-reference",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MZ7-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "02 · Capture & photo editing",
+      "flowSection": null,
+      "functionalCoverage": "structural-reference",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MZC-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "03 · Closet, search & themes",
+      "flowSection": null,
+      "functionalCoverage": "structural-reference",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MZH-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "04 · Outfit creation & review",
+      "flowSection": null,
+      "functionalCoverage": "structural-reference",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MZM-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "05 · Planner, routines & trips",
+      "flowSection": null,
+      "functionalCoverage": "structural-reference",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MZR-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "06 · Actual wear, history & insights",
+      "flowSection": null,
+      "functionalCoverage": "structural-reference",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "MZW-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "07 · Agent, conversations & recovery",
+      "flowSection": null,
+      "functionalCoverage": "structural-reference",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "N01-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "08 · Profile & private fit journal",
+      "flowSection": null,
+      "functionalCoverage": "structural-reference",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "N06-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "09 · Settings, preferences & local data",
+      "flowSection": null,
+      "functionalCoverage": "structural-reference",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "SZ4-0",
+      "canonicalId": "L161",
+      "referenceId": null,
+      "registeredLabel": "08.01 · L161 · New fit · No content",
+      "flowSection": "08",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "T2C-0",
+      "canonicalId": "L162",
+      "referenceId": null,
+      "registeredLabel": "08.02 · L162 · New fit · Ready / edit",
+      "flowSection": "08",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "T3X-0",
+      "canonicalId": "L163",
+      "referenceId": null,
+      "registeredLabel": "08.05 · L163 · Private fit memory",
+      "flowSection": "08",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "W6B-0",
+      "canonicalId": "L172",
+      "referenceId": null,
+      "registeredLabel": "01.00 · L172 · Splash",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "WK5-0",
+      "canonicalId": "L173",
+      "referenceId": null,
+      "registeredLabel": "01.13 · L173 · Body shape · Custom description",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "X53-0",
+      "canonicalId": "L177",
+      "referenceId": null,
+      "registeredLabel": "01.17 · L177 · Preferences save failed · Shared",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "WZT-0",
+      "canonicalId": "L174",
+      "referenceId": null,
+      "registeredLabel": "01.14 · L174 · Preferences review · Answered",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "X1H-0",
+      "canonicalId": "L175",
+      "referenceId": null,
+      "registeredLabel": "01.15 · L175 · Preferences review · Declined",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "X35-0",
+      "canonicalId": "L176",
+      "referenceId": null,
+      "registeredLabel": "01.16 · L176 · Custom description · Over limit",
+      "flowSection": "01",
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "X71-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · V1 component and accessibility examples",
+      "flowSection": null,
+      "functionalCoverage": "structural-reference",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "22T-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · D03 · New piece · Larger text",
+      "flowSection": null,
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "64C-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · Motion · Welcome and first piece",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "X7B-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · Private task compositions",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "Z01-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · V1 native decision · Delete fit memory",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "Z1X-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · V1 native decision · Discard fit draft",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "Z3U-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · V1 native decision · Discard photo edits",
+      "flowSection": null,
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "Z6J-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · V1 native decision · Remove fit photo",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "Z8G-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · V1 native decision · Discard recording",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "ZAS-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · V1 native decision · Major unsaved loss",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "ZCU-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · V1 native decision · Restore commit",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "ZE7-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · V1 native decision · Erase commit",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "1010-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · Background removal · Processing · Shared local V1/V2",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "1025-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · Background preview · Original selected",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "104E-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · Background removal · Failed / ambiguous",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "105C-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · Background removal · Unavailable",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "103A-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "REFERENCE · Background preview · Removed selected",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "11PD-0",
+      "canonicalId": null,
+      "referenceId": "TW01",
+      "registeredLabel": "Today · Personalized stack",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "11R5-0",
+      "canonicalId": null,
+      "referenceId": "TW02",
+      "registeredLabel": "Customize Today · Edit",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "11TE-0",
+      "canonicalId": null,
+      "referenceId": "TW03",
+      "registeredLabel": "Widget library",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "11WR-0",
+      "canonicalId": null,
+      "referenceId": "TW04",
+      "registeredLabel": "Configure current or pinned record",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "11YT-0",
+      "canonicalId": null,
+      "referenceId": "TW05",
+      "registeredLabel": "Configure collection",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "120O-0",
+      "canonicalId": null,
+      "referenceId": "TW06",
+      "registeredLabel": "Configure reporting period",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "1226-0",
+      "canonicalId": null,
+      "referenceId": "TW07",
+      "registeredLabel": "Configure Quick actions and Weather",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "124M-0",
+      "canonicalId": null,
+      "referenceId": "TW08",
+      "registeredLabel": "Note editor validation",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "125V-0",
+      "canonicalId": null,
+      "referenceId": "TW09",
+      "registeredLabel": "Photo editor",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12AR-0",
+      "canonicalId": null,
+      "referenceId": "TW10",
+      "registeredLabel": "Widget native Menu",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12DY-0",
+      "canonicalId": null,
+      "referenceId": "TW11",
+      "registeredLabel": "Accessible reorder",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12GK-0",
+      "canonicalId": null,
+      "referenceId": "TW12",
+      "registeredLabel": "Minimum-one guard",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12HW-0",
+      "canonicalId": null,
+      "referenceId": "TW13",
+      "registeredLabel": "Source-derived scoped native discard",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12K0-0",
+      "canonicalId": null,
+      "referenceId": "TW14",
+      "registeredLabel": "Provisional default layout Done/Undo",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12LQ-0",
+      "canonicalId": null,
+      "referenceId": "TW15",
+      "registeredLabel": "Saving",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12NM-0",
+      "canonicalId": null,
+      "referenceId": "TW16",
+      "registeredLabel": "Definite save failure",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12PK-0",
+      "canonicalId": null,
+      "referenceId": "TW17",
+      "registeredLabel": "Unknown save/reconciliation",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12RL-0",
+      "canonicalId": null,
+      "referenceId": "TW18",
+      "registeredLabel": "Independent source states/offline",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12TD-0",
+      "canonicalId": null,
+      "referenceId": "TW19",
+      "registeredLabel": "Personal media recovery",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12V1-0",
+      "canonicalId": null,
+      "referenceId": "TW20",
+      "registeredLabel": "Large text/keyboard",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "12ZP-0",
+      "canonicalId": null,
+      "referenceId": null,
+      "registeredLabel": "Today twelve-kind feature catalog",
+      "flowSection": null,
+      "functionalCoverage": "missing",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    }
+  ]
+}

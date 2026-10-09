@@ -3,6 +3,7 @@ import Foundation
 import Observation
 #if DEBUG
 import SwiftData
+import UIKit
 #endif
 
 @MainActor
@@ -49,6 +50,19 @@ final class AppState {
             #endif
             store = try PieceStore(directory: directory)
             #if DEBUG
+            if isolatedUITestStore, process.environment["AQD_TEST_DENIED_DELETE_CLEANUP"] == "1" {
+                store = nil
+                let photoID = Self.deletionFixturePhotoID
+                let fixtureStore = try PieceStore(directory: directory, removeMediaFile: { url in
+                    if url.lastPathComponent == "\(photoID.uuidString).jpg"
+                        || url.lastPathComponent == "\(photoID.uuidString)-thumbnail.jpg" {
+                        throw CocoaError(.fileWriteNoPermission)
+                    }
+                    try FileManager.default.removeItem(at: url)
+                })
+                try seedDeniedDeletionUITestPiece(in: fixtureStore)
+                store = fixtureStore
+            }
             if isolatedUITestStore, process.environment["AQD_TEST_CORRUPT_DRAFT"] == "1" {
                 try seedUnreadableUITestDraft(in: directory)
             }
@@ -78,6 +92,20 @@ final class AppState {
         } catch {
             collectionError = "Your pieces couldn’t be read. The saved collection has not been cleared."
         }
+    }
+
+    func deletePiece(id: UUID, expectedRevision: Int, operationID: UUID) throws {
+        guard let store else { throw PieceStore.StoreError.corruptStore }
+        do {
+            try store.deletePiece(id: id, expectedRevision: expectedRevision, operationID: operationID)
+        } catch {
+            // Only exact, durable record-removal proof permits leaving the review.
+            // Missing/conflicting/corrupt proof preserves the original local retry error.
+            guard (try? store.isPieceDeletionAcknowledged(id: id, expectedRevision: expectedRevision,
+                                                         operationID: operationID)) == true else { throw error }
+        }
+        reloadPieces()
+        retryPhotoCleanup()
     }
 
     func retryPhotoCleanup() {
@@ -133,6 +161,31 @@ final class AppState {
     }
 
     #if DEBUG
+    private static let deletionFixturePhotoID = UUID(uuidString: "DB016980-1347-4ABF-A809-D0477DE40B1B")!
+
+    /// Known synthetic pixels only, through real draft/photo/piece persistence.
+    /// Called only with the guarded isolated UI-test store; no erasure claim.
+    private func seedDeniedDeletionUITestPiece(in store: PieceStore) throws {
+        let itemID = UUID(uuidString: "EED2443D-EEEA-46AE-B24C-C4E889DC58AC")!
+        guard try store.piece(id: itemID) == nil else { return }
+        let operationID = UUID(uuidString: "63036EFD-E1B7-4F3F-9D06-F357024C6528")!
+        let draft = PieceDraft(itemID: itemID, name: "Synthetic cleanup piece", category: .tops,
+                               photoID: Self.deletionFixturePhotoID)
+        // A deleted identity refuses this before any source is staged on relaunch.
+        do { try store.saveDraft(draft, operationID: operationID) }
+        catch PieceStore.StoreError.deletedPiece { return }
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 20, height: 30), format: format).image { context in
+            UIColor.blue.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 20, height: 30))
+        }
+        guard let data = image.jpegData(compressionQuality: 1) else { throw PhotoPreparationError.encodingFailed }
+        _ = try store.acceptPhoto(PreparedPhoto(id: Self.deletionFixturePhotoID, originalData: data,
+                                              thumbnailData: data, pixelWidth: 20, pixelHeight: 30))
+        _ = try store.savePiece(draft, operationID: operationID)
+    }
+
     /// A durable cleanup intent for a known synthetic missing source, not erased-byte proof.
     /// Called only after the DEBUG launch-argument/UUID guard selects an isolated writable store.
     private func seedPendingUITestPhotoCleanup(in directory: URL) throws {
@@ -181,6 +234,7 @@ final class CaptureModel: Identifiable {
     @ObservationIgnored private var previewCache: (id: UUID, recipe: PhotoEditRecipe, data: Data)?
     private static let draftPersistenceError = "These changes couldn’t be kept as a recoverable draft. Keep editing or discard this draft before leaving."
     private static let photoImportError = "That photo couldn’t be prepared. Your fields and previous photo are unchanged. Choose another photo or keep the draft."
+    private static let photoEditError = "These photo edits couldn’t be prepared. Your previous photo and framing are unchanged. Try again or keep the original."
 
     var isImporting: Bool { importGate.pending != nil }
     var canSave: Bool { saved == nil && (try? draft.validated()) != nil && !isSaving && !isImporting && !draftSaveFailed }
@@ -364,11 +418,12 @@ final class CaptureModel: Identifiable {
             draft.photoRecipe = recipe
             operationID = UUID()
             persistDraft()
+            if errorText == Self.photoEditError { errorText = nil }
             return true
         } catch {
             guard importGate.canAccept(request, for: draft) else { return false }
             importGate.cancel()
-            errorText = "These photo edits couldn’t be prepared. Your previous photo and framing are unchanged. Try again or keep the original."
+            errorText = Self.photoEditError
             return false
         }
     }

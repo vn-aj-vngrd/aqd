@@ -52,3 +52,4 @@ docs/design/evidence/*
 !docs/design/evidence/native-dialog-repair.json
 !docs/design/evidence/native-dialog-vector-repair.json
 !docs/design/evidence/search-filter-removal.json
+!docs/design/evidence/v1-implementation-coverage.json
