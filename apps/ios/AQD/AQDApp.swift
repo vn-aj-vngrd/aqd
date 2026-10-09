@@ -41,7 +41,7 @@ private struct AppRootView: View {
         } message: {
             Text(state.collectionError ?? "Keep your existing app data for recovery.")
         }
-        .sheet(item: $state.capture) { model in
+        .sheet(item: $state.capture, onDismiss: { state.retryPhotoCleanup() }) { model in
             PieceCaptureView(model: model).environment(state)
         }
     }

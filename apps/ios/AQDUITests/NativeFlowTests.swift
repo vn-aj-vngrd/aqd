@@ -286,6 +286,113 @@ final class NativeFlowTests: XCTestCase {
         attachScreenshot("Writable relaunch finishes synthetic photo cleanup without resurrecting the piece")
     }
 
+    func testInteractiveCaptureDismissalRetriesCleanupWithoutDiscardingDraft() {
+        app.terminate()
+        app.launchEnvironment["AQD_TEST_DENIED_CAPTURE_CLEANUP"] = "1"
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        tab("Closet").tap()
+        XCTAssertTrue(app.staticTexts["Your closet starts here"].waitForExistence(timeout: 5))
+        app.buttons["closet.addPiece"].tap()
+        XCTAssertTrue(app.buttons["capture.editPhoto"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.images["Selected piece photo, entire image fitted"].exists)
+        XCTAssertTrue(app.buttons["capture.save"].isEnabled)
+        app.buttons["Change"].tap()
+        app.buttons["Remove photo"].tap()
+
+        let name = app.textFields["capture.field.name"]
+        let warning = app.staticTexts.matching(NSPredicate(
+            format: "label BEGINSWITH %@", "AQD photo cleanup couldn’t finish."
+        )).firstMatch
+        let retry = app.buttons["Retry photo cleanup"]
+        func assertRetainedDraft() {
+            XCTAssertTrue(name.waitForExistence(timeout: 5))
+            XCTAssertEqual(name.value as? String, "Synthetic retained capture")
+            XCTAssertTrue(app.buttons["capture.category"].label.contains("Tops"))
+            XCTAssertTrue(app.buttons["capture.addPhoto"].exists)
+            XCTAssertFalse(app.buttons["capture.editPhoto"].exists)
+            XCTAssertFalse(app.buttons["capture.save"].isEnabled)
+            XCTAssertTrue(app.staticTexts["Add a photo to save this piece."].exists)
+        }
+        func captureEvidence(_ label: String) {
+            attachScreenshot(label)
+            let tree = XCTAttachment(string: app.debugDescription)
+            tree.name = label + " — public accessibility tree"
+            tree.lifetime = .keepAlways
+            add(tree)
+        }
+        func dismissFromNativeNavigationBar() {
+            let navigation = app.navigationBars["Add piece"]
+            XCTAssertTrue(navigation.waitForExistence(timeout: 5))
+            XCTAssertTrue(navigation.isHittable)
+            let start = CGPoint(x: navigation.frame.midX, y: navigation.frame.midY)
+            let end = CGPoint(x: start.x, y: app.frame.maxY - 60)
+            XCTAssertTrue(navigation.frame.contains(start))
+            XCTAssertTrue(app.frame.contains(end))
+            for button in navigation.buttons.allElementsBoundByIndex {
+                XCTAssertFalse(button.frame.contains(start), "Drag must start on native title chrome, not an action")
+            }
+            print("Qualified native capture dismissal: bar=\(navigation.frame), start=\(start), end=\(end)")
+            captureEvidence("Native capture sheet before qualified downward drag")
+            navigation.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+                .press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: .zero)
+                    .withOffset(CGVector(dx: end.x, dy: end.y)))
+            XCTAssertTrue(navigation.waitForNonExistence(timeout: 5), "Actual outer capture sheet must dismiss")
+            XCTAssertFalse(name.exists)
+            XCTAssertTrue(app.navigationBars["Closet"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.buttons["closet.addPiece"].isHittable)
+            XCTAssertTrue(app.staticTexts["Your closet starts here"].exists, "Swipe must not implicitly save a piece")
+            captureEvidence("Capture sheet gone; native Closet restored")
+        }
+        func assertCleanupRecovery() {
+            XCTAssertTrue(warning.waitForExistence(timeout: 5), "Swipe dismissal must publish real pending photo cleanup on the held root")
+            XCTAssertTrue(warning.isHittable)
+            XCTAssertFalse(warning.label.contains("reviewed deletion"),
+                           "Draft photo cleanup must not invent a reviewed record deletion")
+            XCTAssertTrue(retry.isHittable)
+            XCTAssertGreaterThanOrEqual(retry.frame.height, 44)
+            captureEvidence("Global cleanup footer after native capture dismissal")
+        }
+
+        assertRetainedDraft()
+        dismissFromNativeNavigationBar()
+        assertCleanupRecovery()
+        retry.tap()
+        assertCleanupRecovery() // Actual unlink is still denied.
+        app.buttons["closet.addPiece"].tap()
+        assertRetainedDraft()
+        dismissFromNativeNavigationBar()
+        assertCleanupRecovery()
+        retry.tap()
+        assertCleanupRecovery()
+
+        // Relaunch with the denied boundary still present must not reattach media.
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        tab("Closet").tap()
+        assertCleanupRecovery()
+        app.buttons["closet.addPiece"].tap()
+        assertRetainedDraft()
+        dismissFromNativeNavigationBar()
+        assertCleanupRecovery()
+
+        app.terminate()
+        app.launchEnvironment.removeValue(forKey: "AQD_TEST_DENIED_CAPTURE_CLEANUP")
+        app.launch() // Same isolated UUID; real writable recovery, no reseeding.
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        tab("Closet").tap()
+        XCTAssertTrue(app.staticTexts["Your closet starts here"].waitForExistence(timeout: 5))
+        XCTAssertFalse(warning.exists)
+        XCTAssertFalse(retry.exists)
+        app.buttons["closet.addPiece"].tap()
+        assertRetainedDraft()
+        dismissFromNativeNavigationBar()
+        XCTAssertFalse(warning.exists)
+        XCTAssertFalse(retry.exists)
+        captureEvidence("Writable recovery retains no-photo draft without creating a piece")
+    }
+
     func testPieceAvailabilityAndSortControlsKeepTheEmptyCollectionHonest() {
         tab("Closet").tap()
         app.buttons["Filter pieces"].tap()

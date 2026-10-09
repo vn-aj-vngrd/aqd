@@ -63,6 +63,19 @@ final class AppState {
                 try seedDeniedDeletionUITestPiece(in: fixtureStore)
                 store = fixtureStore
             }
+            if isolatedUITestStore, process.environment["AQD_TEST_DENIED_CAPTURE_CLEANUP"] == "1" {
+                store = nil
+                let photoID = Self.captureFixturePhotoID
+                let fixtureStore = try PieceStore(directory: directory, removeMediaFile: { url in
+                    if url.lastPathComponent == "\(photoID.uuidString).jpg"
+                        || url.lastPathComponent == "\(photoID.uuidString)-thumbnail.jpg" {
+                        throw CocoaError(.fileWriteNoPermission)
+                    }
+                    try FileManager.default.removeItem(at: url)
+                })
+                try seedDeniedCaptureUITestDraft(in: fixtureStore)
+                store = fixtureStore
+            }
             if isolatedUITestStore, process.environment["AQD_TEST_CORRUPT_DRAFT"] == "1" {
                 try seedUnreadableUITestDraft(in: directory)
             }
@@ -118,7 +131,7 @@ final class AppState {
             try store.reconcilePendingPhotoCleanup()
             photoCleanupError = nil
         } catch {
-            photoCleanupError = "AQD photo cleanup couldn’t finish. Deleted records are not reported as fully erased while their photo cleanup remains pending. Retry without changing the reviewed deletion."
+            photoCleanupError = "AQD photo cleanup couldn’t finish. Photo cleanup is still pending, so AQD does not report complete media erasure. Retry without changing saved records or retained drafts."
         }
     }
 
@@ -162,6 +175,26 @@ final class AppState {
 
     #if DEBUG
     private static let deletionFixturePhotoID = UUID(uuidString: "DB016980-1347-4ABF-A809-D0477DE40B1B")!
+    private static let captureFixturePhotoID = UUID(uuidString: "B9CE8A35-A322-456B-BDC3-4E77EA11D893")!
+
+    /// Real creation draft and accepted synthetic media, never a saved piece.
+    /// Retained drafts (including removed photos) are not reseeded on relaunch.
+    /// Only the DEBUG argument/UUID/environment guard above can invoke this.
+    private func seedDeniedCaptureUITestDraft(in store: PieceStore) throws {
+        guard try store.newPieceDraft() == nil else { return }
+        let draft = PieceDraft(name: "Synthetic retained capture", category: .tops,
+                               photoID: Self.captureFixturePhotoID)
+        try store.saveDraft(draft, operationID: UUID())
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 20, height: 30), format: format).image { context in
+            UIColor.blue.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 20, height: 30))
+        }
+        guard let data = image.jpegData(compressionQuality: 1) else { throw PhotoPreparationError.encodingFailed }
+        _ = try store.acceptPhoto(PreparedPhoto(id: Self.captureFixturePhotoID, originalData: data,
+                                              thumbnailData: data, pixelWidth: 20, pixelHeight: 30))
+    }
 
     /// Known synthetic pixels only, through real draft/photo/piece persistence.
     /// Called only with the guarded isolated UI-test store; no erasure claim.
