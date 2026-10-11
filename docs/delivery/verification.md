@@ -1,5 +1,15 @@
 # Current verification
 
+## Foundation planning receipt
+
+The owner requested a replacement plan and exactly ten issues: Foundation#20 plus Paper V1 sections01–09 (#21–29), one vertical-slice PR each. All ten were created and read back as open `enhancement`/`ready-for-agent` issues with actual-number dependencies, acceptance and section/reference inventories. Former #6–19 were already closed; no historical issue was reopened or mutated. Live GitHub confirmed baseline PR#9 merged at `c5e11c4`; this receipt supersedes pending-baseline routing, not historical test evidence.
+
+Read-only Paper MCP inspected Foundations `p-1-0` (26 roots/2,101 nodes), V1 `p-2-0` (227 roots/13,055 nodes) and the complete depth1 V1 root tree, with token hash `fdeb7346`; bounded TW02 depth3 inspection confirmed configuration/More/Add/reorder/defaults/Done affordances. No Paper mutation, full-control audit or native visual-parity claim. The new plan assigns all169 canonical states/58 references and retains required launch/capability acceptance.
+
+Documentation checks passed:93 local file targets across the four edited plan/status/coverage/native-readme documents resolve; exact ten issue titles/labels/body links/dependencies/single-PR scope passed live read-back; independent full-plan review passed; `pnpm check` passed38 tests (`/tmp/aqd-foundation-plan-check.log`) and whitespace passed. Native tests were not run for this documentation checkpoint.
+
+The owner then authorized Foundation implementation and committing the plan on `van/issue-20/native-ui-foundations`. Agreed verification seams: native reusable-component rendering/accessibility plus the existing real capture/save/relaunch journey. Installed Xcode26.5/build17F42 and booted iOS18.1/26.5 simulators are available; SDK27 and physical-device acceptance remain unverified. Implementation results will be recorded separately.
+
 ## Release evidence
 
 PR #5 was protected-squash merged to `cccdc24` on October 7, 2026 after latest-head Codex clearance and required CI. Exact merged-main [CI37683970487](https://github.com/vn-aj-vngrd/aqd/actions/runs/37683970487) and [Release37684034501](https://github.com/vn-aj-vngrd/aqd/actions/runs/37684034501) passed; published non-draft `v1.0.1`, `origin/main` and publication cursor matched that SHA. Reviewed and merged trees matched. Repository release does not certify the native app.

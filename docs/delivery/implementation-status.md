@@ -1,6 +1,14 @@
 # Implementation status
 
-## Current boundary · October 9, 2026
+## Active handoff · Foundation and nine V1 sections
+
+This handoff supersedes the pending-baseline and old issue-routing statements in the dated checkpoint below. Live GitHub inspection confirmed PR #9 merged on October9 at `c5e11c4`, now present on `main`; historical #6–19 are closed. Neither their closure nor the scoped native baseline certifies complete V1.
+
+The [active plan](implementation-plan.md) now has exactly ten issues: [Foundation#20](https://github.com/vn-aj-vngrd/aqd/issues/20), followed by Paper sections01–09 in [#21–29](https://github.com/vn-aj-vngrd/aqd/issues/21). Each issue owns one vertical-slice PR; dependencies, all227 V1 roots and final integrated acceptance remain explicit. Foundation implementation is owner-authorized on `van/issue-20/native-ui-foundations`; this branch first commits the plan, then implements shared native UI components/colors/themes. Other section capabilities remain unfinished. SDK27/physical-device/capability/distribution acceptance is still unverified.
+
+## Baseline checkpoint · October 9, 2026
+
+The following receipt predates the protected merge and ticket replacement above; retain its test/review history, not its old next-action routing.
 
 PR #5 merged through protected latest-head review/CI and SHA-bound squash to `cccdc24`; merged-main CI and repository release passed, and non-draft `v1.0.1` points to that commit. This is a repository release, not native distribution. The separate owner-authorized full private V1 implementation is tracked in [#6](https://github.com/vn-aj-vngrd/aqd/issues/6), with baseline/capture [#7](https://github.com/vn-aj-vngrd/aqd/issues/7) on `van/issue-7/native-v1-baseline`.
 
@@ -30,7 +38,7 @@ The owner requires **every screen/state on Paper’s V1 page and its controls to
 - Static cleanup/removal fixtures use identical pixels, not validated Vision masks. Native/dialog kit inspection is source provenance, not AQD runtime certification.
 - SDK27 and physical-device capability/quality evidence remain unavailable; current toolchain evidence is baseline-only. Numerical weather remains withheld, with its legal/entitlement gates intact.
 
-The merge-first gate is complete. Continue #7 under the [implementation plan](implementation-plan.md) and [lifecycle](../agents/lifecycle.md); full #6 remains open. Scoped test/build results are not complete release acceptance, and no required item is silently waived.
+Historical next-action routing is superseded by the active handoff above. Continue Foundation#20 under the [implementation plan](implementation-plan.md) and [lifecycle](../agents/lifecycle.md); complete V1 remains unverified. Scoped test/build results are not complete release acceptance, and no required item is silently waived.
 
 ## Current evidence and history
 

@@ -1,6 +1,6 @@
 # AQD native iOS
 
-Private V1 implementation in progress: epic [#6](https://github.com/vn-aj-vngrd/aqd/issues/6), baseline/capture [#7](https://github.com/vn-aj-vngrd/aqd/issues/7). This baseline is not the complete V1 release. Unimplemented root capabilities are explicitly labelled; no demonstration wardrobe or wear records are seeded.
+Private V1 follows the [ten-ticket implementation plan](../../docs/delivery/implementation-plan.md): [Foundation#20](https://github.com/vn-aj-vngrd/aqd/issues/20), then one vertical-slice issue/PR per Paper V1 section01–09 (#21–29). Native baseline PR#9 is merged at `c5e11c4`; former #6–19 are closed historical work, not full-V1 acceptance. This baseline is not the complete V1 release. Unimplemented root capabilities are explicitly labelled; no demonstration wardrobe or wear records are seeded.
 
 ## Build and test
 
