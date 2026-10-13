@@ -13,7 +13,7 @@ struct LabeledControl<Control: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.small) {
-            Text(title).font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
+            Text(title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             control()
                 .font(AppTypography.body)
@@ -54,6 +54,7 @@ struct LabeledControl<Control: View>: View {
 struct LabeledField: View {
     let title: String
     @Binding var text: String
+    var prompt: String? = nil
     var multiline = false
     var helper: String? = nil
     var validation: String? = nil
@@ -61,7 +62,9 @@ struct LabeledField: View {
 
     var body: some View {
         LabeledControl(title: title, helper: helper, validation: validation) {
-            TextField(title, text: $text, axis: multiline ? .vertical : .horizontal)
+            TextField(title, text: $text,
+                      prompt: Text(prompt ?? title).foregroundStyle(AppTheme.secondary),
+                      axis: multiline ? .vertical : .horizontal)
                 .lineLimit(multiline ? 3...8 : 1...1)
                 .textFieldStyle(.plain)
                 .accessibilityLabel(title)

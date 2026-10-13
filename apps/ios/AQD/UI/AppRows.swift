@@ -14,12 +14,14 @@ struct DisclosureRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: AppSpacing.medium) {
-                if typeSize.isAccessibilitySize {
-                    VStack(alignment: .leading, spacing: AppSpacing.xSmall) { labels }
-                } else {
-                    HStack(spacing: AppSpacing.medium) { labels }
+                Group {
+                    if typeSize.isAccessibilitySize {
+                        VStack(alignment: .leading, spacing: AppSpacing.xSmall) { labels }
+                    } else {
+                        HStack(spacing: AppSpacing.medium) { labels }
+                    }
                 }
-                Spacer(minLength: 0)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: "chevron.forward")
                     .font(.system(size: AppControlMetrics.disclosureLane))
                     .frame(width: AppControlMetrics.disclosureLane)
@@ -28,15 +30,13 @@ struct DisclosureRow: View {
             }
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, AppControlMetrics.fieldPadding)
-            .padding(.vertical, placement == .grouped ? AppSpacing.small : AppControlMetrics.fieldPadding)
-            .frame(maxWidth: .infinity,
-                   minHeight: placement == .standalone ? AppControlMetrics.fieldHeight : AppControlMetrics.rowHeight,
-                   alignment: .leading)
+            .padding(.vertical, AppSpacing.small)
+            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.rowHeight, alignment: .leading)
             .background(placement == .standalone ? AppTheme.surface : .clear,
-                        in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        in: RoundedRectangle(cornerRadius: AppRadius.group))
             .overlay {
                 if contrast == .increased && placement == .standalone {
-                    RoundedRectangle(cornerRadius: AppRadius.field)
+                    RoundedRectangle(cornerRadius: AppRadius.group)
                         .stroke(AppTheme.controlBoundary, lineWidth: 1).accessibilityHidden(true)
                 }
             }
@@ -51,8 +51,11 @@ struct DisclosureRow: View {
     @ViewBuilder private var labels: some View {
         Text(title).font(AppTypography.body)
             .foregroundStyle(isEnabled ? AppTheme.ink : AppTheme.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
         if let value {
             Text(value).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                .multilineTextAlignment(typeSize.isAccessibilitySize ? .leading : .trailing)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }
@@ -64,13 +67,17 @@ struct SurfaceGroup<Data: RandomAccessCollection, ID: Hashable, Row: View>: View
     let data: Data
     let id: KeyPath<Data.Element, ID>
     var separators = true
+    var separatorInsets: EdgeInsets
     @ViewBuilder let row: (Data.Element) -> Row
 
     init(_ data: Data, id: KeyPath<Data.Element, ID>, separators: Bool = true,
+         separatorInsets: EdgeInsets = EdgeInsets(top: 0, leading: AppControlMetrics.fieldPadding,
+                                                 bottom: 0, trailing: AppControlMetrics.fieldPadding),
          @ViewBuilder row: @escaping (Data.Element) -> Row) {
         self.data = data
         self.id = id
         self.separators = separators
+        self.separatorInsets = separatorInsets
         self.row = row
     }
 
@@ -80,7 +87,7 @@ struct SurfaceGroup<Data: RandomAccessCollection, ID: Hashable, Row: View>: View
                 row(element)
                 if separators && element[keyPath: id] != data.last.map({ $0[keyPath: id] }) {
                     Rectangle().fill(AppTheme.divider).frame(height: 1)
-                        .padding(.horizontal, AppControlMetrics.fieldPadding)
+                        .padding(separatorInsets)
                         .accessibilityHidden(true)
                 }
             }

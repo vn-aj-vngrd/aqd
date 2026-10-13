@@ -50,7 +50,8 @@ struct SemanticFeedback: View {
                 .accessibilityHidden(true)
         }
         .labelStyle(FeedbackLabelStyle())
-        .padding(contained ? AppControlMetrics.fieldPadding : 0)
+        .padding(.vertical, contained ? AppControlMetrics.fieldPadding : 0)
+        .padding(.horizontal, contained ? AppSpacing.large : 0)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(contained ? role.ground : .clear, in: RoundedRectangle(cornerRadius: AppRadius.group))
         .accessibilityElement(children: .ignore)

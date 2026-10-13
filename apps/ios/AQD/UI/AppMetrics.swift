@@ -40,6 +40,7 @@ enum AppTypography {
     static let body: Font = .body
     static let action: Font = .body.weight(.medium)
     static let supporting: Font = .subheadline
+    static let fieldLabel: Font = .subheadline.weight(.medium)
     static let metadata: Font = .footnote
 }
 

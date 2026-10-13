@@ -1,5 +1,17 @@
 # Current verification
 
+## Foundation #20 code-only Paper follow-up · October13
+
+**Scope:** follow-up to committed `38f32ac` on the existing Foundation branch. The owner explicitly deferred simulator/build/runtime work and requested exact reusable-role alignment with live Paper plus code review. No native process was restarted; unrelated research/harness work is excluded.
+
+- **Live read-only comparison:** [component matrix](../design/evidence/foundation-code-parity.json) records node-level styles, public-native adaptations and master/consumer weight variations. Only source-group `SQ2-0` received rendered inspection in this pass; screenshots requested elsewhere are not native rendering evidence. No Paper mutation or whole26-root/227-state parity claim.
+- **Corrections:** opaque disabled-line fill/regular text and a growing pill; medium secondary field labels and explicit secondary prompts;54pt disclosure/12pt corners/8pt insets, trailing values and one accessory gap;14pt vertical/16pt horizontal contained feedback; explicit native tab symbol tints. Capture keeps its tight reference spacing, metadata Photo label, plain More details link and distinct source commands/separator. The source sheet scrolls. Reset retries even at zero rotation; queued/active preparation blocks both the button and application seam, with stale retry results rejected.
+- **Code evidence:** static source comparison matches all25 color roles and4 alpha pairs. New/updated native regression cases are authored **not executed**. JSON/local-target parsing and whitespace checks pass; no native code executed.
+- **Independent reviews:** Standards and Spec compared full affected source, tests and contracts. Both found the same missing readiness wiring; both bounded correction rechecks pass with no remaining actionable source finding. Their other supplied Paper/docs mappings align; reviews are not compilation or runtime acceptance.
+- **Deferred:** all native builds/tests, unsigned Release, simulators, app launches, material/contrast, largest-text/landscape/RTL/keyboard/VoiceOver/source-return, minimum18/current27 and physical-device checks. Earlier runtime receipts do not validate these changed sources. Details landscape and compact Photo audit remain unresolved.
+
+Foundation#20 remains unaccepted; no PR/push/closure/merge or complete V1 is claimed.
+
 ## Foundation #20 delivery continuation · October13
 
 Resumed the existing branch and inherited native work at `2eb74a7`, against integration baseline `c5e11c4`. Unrelated autonomous-delivery research/harness changes are excluded from this issue's PR and remain in the working tree. The receipt below records the earlier writer's source, not final-head certification.

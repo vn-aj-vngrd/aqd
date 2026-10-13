@@ -86,7 +86,10 @@ struct PhotoEditorView: View {
                                 zoom = 1; positionX = 0.5; positionY = 0.5
                             }.frame(minHeight: 44)
                             Spacer()
-                            Button("Reset") { quarterTurns = 0; portrait = false; zoom = 1; positionX = 0.5; positionY = 0.5 }
+                            Button("Reset") {
+                                quarterTurns = 0; portrait = false; zoom = 1; positionX = 0.5; positionY = 0.5
+                                previewState.requestRetry()
+                            }
                                 .frame(minHeight: 44)
                         }
                         if portrait {
@@ -133,12 +136,14 @@ struct PhotoEditorView: View {
             .safeAreaInset(edge: .bottom) {
                 ActionFooter {
                     PrimaryAction(title: "Use photo", isPending: applying) { apply() }
-                        .disabled(applying || recipe == nil || previewImage == nil || previewState.quarterTurns != quarterTurns || previewState.error != nil || originalWidth == 0 || originalHeight == 0)
+                        .disabled(!previewState.canUsePhoto(quarterTurns: quarterTurns, applying: applying)
+                                  || recipe == nil || previewImage == nil || originalWidth <= 0 || originalHeight <= 0)
                 }
             }
         }.tint(AppTheme.actionText)
             .interactiveDismissDisabled(dirty || applying)
-            .task(id: quarterTurns) { await prepareRotatedPreview() }
+            // Reset must restart preparation even when the requested rotation is already zero.
+            .task(id: [quarterTurns, previewState.retryGeneration]) { await prepareRotatedPreview() }
             .onDisappear { cancel() }
     }
 
@@ -184,24 +189,28 @@ struct PhotoEditorView: View {
 
     private func prepareRotatedPreview() async {
         let requestedQuarterTurns = quarterTurns
+        let requestedRetryGeneration = previewState.retryGeneration
         previewState.beginPreparation()
-        guard let previewData, let sourceID else { return }
+        guard let previewData, let sourceID else { previewState.failPreparation(); return }
         do {
             // The same pixel renderer owns both preview rotation and the saved rendition.
             // A ≤320px source keeps slider/pan updates cheap; crop geometry stays normalized.
             let prepared = try await previewPreparer.render(data: previewData, sourcePhotoID: sourceID,
                                                            recipe: PhotoEditRecipe(quarterTurns: requestedQuarterTurns))
-            guard !Task.isCancelled, requestedQuarterTurns == quarterTurns else { return }
+            guard !Task.isCancelled, requestedQuarterTurns == quarterTurns,
+                  requestedRetryGeneration == previewState.retryGeneration else { return }
             rotatedPreview = UIImage(data: prepared.renditionData)
             previewState.finishPreparation(quarterTurns: requestedQuarterTurns)
         } catch {
-            guard !Task.isCancelled, requestedQuarterTurns == quarterTurns else { return }
+            guard !Task.isCancelled, requestedQuarterTurns == quarterTurns,
+                  requestedRetryGeneration == previewState.retryGeneration else { return }
             previewState.failPreparation()
         }
     }
 
     private func apply() {
-        guard let recipe, let sourceID, !applying else { return }
+        guard let recipe, let sourceID, previewImage != nil, originalWidth > 0, originalHeight > 0,
+              previewState.canUsePhoto(quarterTurns: quarterTurns, applying: applying) else { return }
         applying = true
         applicationTask = Task { @MainActor in
             let accepted = await model.applyPhotoEdit(recipe, sourceID: sourceID, previousRecipe: previousRecipe)
@@ -228,14 +237,29 @@ struct PhotoEditorView: View {
 struct PhotoPreviewState {
     private(set) var quarterTurns = 0
     private(set) var error: String?
+    private(set) var retryGeneration = 0
+    private var preparationPending = false
 
-    func isPreparing(quarterTurns requested: Int, applying: Bool) -> Bool {
-        quarterTurns != requested && !applying && error == nil
+    mutating func requestRetry() {
+        retryGeneration += 1
+        preparationPending = true
     }
 
-    mutating func beginPreparation() { error = nil }
-    mutating func finishPreparation(quarterTurns: Int) { self.quarterTurns = quarterTurns }
+    func canUsePhoto(quarterTurns requested: Int, applying: Bool) -> Bool {
+        !applying && error == nil && !isPreparing(quarterTurns: requested, applying: false)
+    }
+
+    func isPreparing(quarterTurns requested: Int, applying: Bool) -> Bool {
+        (preparationPending || quarterTurns != requested) && !applying && error == nil
+    }
+
+    mutating func beginPreparation() { error = nil; preparationPending = true }
+    mutating func finishPreparation(quarterTurns: Int) {
+        self.quarterTurns = quarterTurns
+        preparationPending = false
+    }
     mutating func failPreparation() {
+        preparationPending = false
         error = "The preview couldn’t be prepared. Your accepted photo and framing are unchanged. Reset or try again."
     }
 }

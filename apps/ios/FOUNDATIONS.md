@@ -11,13 +11,13 @@ Foundation #20 extends the existing capture app, not a component-gallery destina
 | `PrimaryAction`, `SecondaryAction` | Solid primary/plain secondary; wrapping, neutral disabled state, one pending spinner and duplicate-activation refusal | Capture/save/receipt, photo editor, details and Agent manual return |
 | `ActionStack`, `ActionFooter` | 12-point action gap and native safe-area content footer | Existing capture/editor/detail tasks; no viewport or keyboard offsets |
 | `LabeledControl`, `LabeledField` | Persistent label, opaque native input, associated validation/helper, Increase Contrast boundary | Name/metadata/notes; native Category and Availability Pickers |
-| `DisclosureRow`, `SurfaceGroup` | Whole-row navigation and container-owned separators only between rows | More details and native photo-source choices |
+| `DisclosureRow`, `SurfaceGroup` | Reference-backed54pt disclosure geometry; container-owned separators only between rows | Photo-source group consumes `SurfaceGroup`; `DisclosureRow` is ready for section-owned rows, not imposed on the plain More details link |
 | `SemanticFeedback`, `OperationProgress` | Explicit app-owned state, decorative symbol, one meaningful accessibility label/native spinner | Missing-photo/name validation, import/editor progress, acknowledged receipt, Today read failure |
 | `NativeTabs` | Public nil-title native tab items, stable root hosts, source-preserving full-screen Agent | Today / Closet / Planner / Agent / Profile |
 
 TextFields receive their spoken persistent name directly; the input shell must not overwrite a Picker's native selected-value label. Feedback severity is supplied by the caller, never guessed from error prose. Existing mixed failure/conflict/unknown-write channels keep their exact recovery text. Success appears only after a real acknowledgment. `AppAppearance` is a presentation utility; section09 owns persistence and Settings controls.
 
-The Closet destination uses registered `hanger`, not the `tshirt` garment-placeholder role. Selected tab symbols use native semibold configuration. UIKit owns geometry, materials, selected traits and accessibility targets; no private subview hacks or custom glass bar. The icon-only and Agent-as-tab-launch HIG exceptions remain explicit.
+The Closet destination uses registered `hanger`, not the `tshirt` garment-placeholder role. Selected tab symbols use native semibold configuration and explicit accent tint; inactive symbols use secondary tint. UIKit owns geometry, materials, selected traits and accessibility targets; no private subview hacks or custom glass bar. The icon-only and Agent-as-tab-launch HIG exceptions remain explicit.
 
 ## Paper reference inventory
 
@@ -38,6 +38,12 @@ Live read-only file `01M3SM2KBHBZG6MA0Q744Y9NW0`, Foundations `p-1-0`: 26 roots 
 | `11H4-0` | Official kit27 and historical UIKit26.5 provenance; not AQD runtime evidence or redistributable production UI |
 
 Affected live descendant trees: `14I-0`, `4LD-0`, `4E1-0`, `4GB-0`, `10S3-0`, `10NM-0`, `JKP-0`, `1JB-0`, `83E-0`, `11H4-0`; computed action/field/group/feedback/tab styles and the `14I-0` render were inspected. Official kit asset `11HE-0` was read for provenance, not copied into the app. V1 Foundation references `X71-0` and `X7B-0` were inspected: their sheet/capture/menu/proposal/Profile compositions remain reference-only, not permission to implement outfits or Profile in Foundation. Legacy internal Home labels in the native master do not change the app's Today identity.
+
+## Code-only parity follow-up
+
+The [bounded Paper/docs → source comparison](../../docs/design/evidence/foundation-code-parity.json) records concrete nodes, role geometry and reference variations. Actions preserve the pill when text grows; disabled fill is opaque `color-line`. Field labels follow the Foundations15pt medium/secondary master; ordinary helper text stays regular. Disclosure rows use54pt/12pt corners/8pt vertical insets, not the52pt/16pt-corner selection-field role. Feedback uses14pt vertical/16pt horizontal padding. Source commands retain their distinct56pt reference, label-aligned separator and no trailing chevrons; their native sheet content now scrolls. More details remains the plain supporting link in the capture reference.
+
+Reset now creates a new preview request even at zero rotation; pending work prevents accepting an unfinished zero-degree retry, and superseded results cannot replace it. New/updated native tests are authored **but not run**. No build, simulator or runtime verification ran in this follow-up. Pixel-level/native material, accessibility and acceptance remain deferred; conflicting master/consumer weights are disclosed rather than claimed identical.
 
 ## Keep storage and recovery at existing seams
 

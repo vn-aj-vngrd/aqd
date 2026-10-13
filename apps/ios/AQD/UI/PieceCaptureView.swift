@@ -88,16 +88,21 @@ struct PieceCaptureView: View {
         }
         .sheet(isPresented: $sourceSheet, onDismiss: presentPendingSource) {
             NavigationStack {
-                VStack(alignment: .leading, spacing: 20) {
-                    SurfaceGroup([PhotoSource.photos, .camera], id: \.self) { source in
-                        sourceRow(source == .photos ? "Choose from Photos" : "Take photo",
-                                  symbol: source == .photos ? "photo.on.rectangle" : "camera", source: source)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: AppSpacing.screen) {
+                        // Paper SQ4/SQE: 16pt inset + 24pt icon + 14pt gap;
+                        // the separator starts at the label, not beneath the icon.
+                        SurfaceGroup([PhotoSource.photos, .camera], id: \.self,
+                                     separatorInsets: EdgeInsets(top: 0, leading: 54, bottom: 0, trailing: 0)) { source in
+                            sourceRow(source == .photos ? "Choose from Photos" : "Take photo",
+                                      symbol: source == .photos ? "photo.on.rectangle" : "camera", source: source)
+                        }
+                        Text("Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.")
+                            .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                     }
-                    Text("Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.")
-                        .font(.footnote).foregroundStyle(AppTheme.secondary)
-                    Spacer(minLength: 0)
+                    .padding(AppSpacing.screen)
                 }
-                .padding(20).background(AppTheme.canvas)
+                .background(AppTheme.canvas)
                 .navigationTitle("Add photo").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -126,10 +131,10 @@ struct PieceCaptureView: View {
 
     private var form: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: AppSpacing.large) {
+                VStack(alignment: .leading, spacing: AppSpacing.small) {
                     HStack {
-                        Text("Photo").font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
+                        Text("Photo").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                         Spacer()
                         if model.draft.photoID != nil {
                             Menu("Change") {
@@ -153,15 +158,23 @@ struct PieceCaptureView: View {
                             .accessibilityIdentifier("capture.editPhoto")
                     } else {
                         Button { sourceSheet = true } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "photo").accessibilityHidden(true)
+                            HStack(spacing: AppSpacing.large) {
+                                Image(systemName: "photo")
+                                    .font(.system(size: AppControlMetrics.disclosureLane))
+                                    .foregroundStyle(AppTheme.actionText)
+                                    .accessibilityHidden(true)
                                 Text(model.draft.photoID == nil ? "Add photo" : "Replace unavailable photo")
-                                Spacer()
-                                Image(systemName: "chevron.right").accessibilityHidden(true)
+                                    .font(AppTypography.body)
+                                    .foregroundStyle(AppTheme.actionText)
+                                Spacer(minLength: 0)
+                                Image(systemName: "chevron.forward")
+                                    .font(.system(size: AppControlMetrics.disclosureLane))
+                                    .frame(width: AppControlMetrics.disclosureLane)
+                                    .foregroundStyle(AppTheme.secondary)
+                                    .accessibilityHidden(true)
                             }
-                            .padding(20).frame(minHeight: 88)
-                            .foregroundStyle(AppTheme.ink)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                            .padding(AppSpacing.screen).frame(minHeight: 88)
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
                         }
                         .buttonStyle(.plain)
                         .accessibilityIdentifier("capture.addPhoto")
@@ -177,19 +190,29 @@ struct PieceCaptureView: View {
                 }
                 LabeledField(title: "Name", text: Binding(get: { model.draft.name },
                                                          set: { model.update(\.name, value: $0) }),
-                             validation: nameValidation, accessibilityID: "capture.field.name")
-                LabeledControl(title: "Category") {
-                    Picker("Category", selection: Binding(get: { model.draft.category },
-                                                          set: { model.update(\.category, value: $0) })) {
-                        Text("Choose category").tag(Optional<PieceCategory>.none)
-                        ForEach(PieceCategory.allCases, id: \.self) { category in
-                            Text(category.rawValue).tag(Optional(category))
+                             prompt: "e.g. Cotton shirt", validation: nameValidation, accessibilityID: "capture.field.name")
+                VStack(alignment: .leading, spacing: AppSpacing.small) {
+                    LabeledControl(title: "Category") {
+                        Picker("Category", selection: Binding(get: { model.draft.category },
+                                                              set: { model.update(\.category, value: $0) })) {
+                            Text("Choose category").foregroundStyle(AppTheme.secondary).tag(Optional<PieceCategory>.none)
+                            ForEach(PieceCategory.allCases, id: \.self) { category in
+                                Text(category.rawValue).tag(Optional(category))
+                            }
                         }
+                        .pickerStyle(.menu).frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityIdentifier("capture.category")
                     }
-                    .pickerStyle(.menu).frame(maxWidth: .infinity, alignment: .leading)
-                    .accessibilityIdentifier("capture.category")
+                    // Paper JR5/JR6 is a plain supporting link, not a surfaced row.
+                    Button { showDetails = true } label: {
+                        Text("More details").font(AppTypography.supporting)
+                            .foregroundStyle(AppTheme.actionText)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, AppSpacing.medium)
+                            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .topLeading)
+                            .contentShape(Rectangle())
+                    }.buttonStyle(.plain)
                 }
-                DisclosureRow(title: "More details") { showDetails = true }
                 if let error = model.errorText {
                     // This legacy channel mixes failures/conflicts/unknown writes.
                     // Keep its exact recovery copy; do not infer a severity from prose.
@@ -202,7 +225,9 @@ struct PieceCaptureView: View {
                     SemanticFeedback(role: .danger, message: "Add a photo to save this piece.")
                 }
             }
-            .padding(20)
+            .padding(.horizontal, AppSpacing.screen)
+            .padding(.top, AppSpacing.medium)
+            .padding(.bottom, AppSpacing.screen)
             .disabled(model.isSaving)
         }
         .scrollDismissesKeyboard(.interactively)
@@ -255,12 +280,22 @@ struct PieceCaptureView: View {
             pendingSource = source
             sourceSheet = false
         } label: {
-            HStack(spacing: 12) {
-                Image(systemName: symbol).accessibilityHidden(true)
-                Text(title)
-                Spacer()
-                Image(systemName: "chevron.right").accessibilityHidden(true)
-            }.padding(.horizontal, 20).frame(minHeight: 56).contentShape(Rectangle())
+            // These are system-source commands, not app disclosure destinations.
+            // Paper SQ4/SQE has a leading symbol and no trailing chevron.
+            HStack(spacing: 14) {
+                Image(systemName: symbol)
+                    .font(.system(size: AppControlMetrics.disclosureLane))
+                    .frame(width: 24)
+                    .accessibilityHidden(true)
+                Text(title).font(AppTypography.body)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+            }
+            .foregroundStyle(AppTheme.actionText)
+            .padding(.horizontal, AppSpacing.large)
+            .padding(.vertical, AppSpacing.small)
+            .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
+            .contentShape(Rectangle())
         }.buttonStyle(.plain)
     }
 

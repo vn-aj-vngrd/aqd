@@ -8,6 +8,7 @@ final class FoundationRenderingTests: XCTestCase {
     func testDisabledActionChangesToNeutralWithoutCallerOpacity() async throws {
         let host = UIHostingController(rootView: PrimaryAction(title: "Save piece") {}.disabled(false).ignoresSafeArea())
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 844))
+        window.overrideUserInterfaceStyle = .light
         window.rootViewController = host
         window.makeKeyAndVisible()
         defer { window.isHidden = true }
@@ -22,6 +23,8 @@ final class FoundationRenderingTests: XCTestCase {
         // Independent DESIGN requirement: disabled controls stay neutral, not blue.
         XCTAssertGreaterThan(try bluePixels(enabled), 100, "Enabled action must render accent")
         XCTAssertLessThan(try bluePixels(disabled), 10, "Disabled primary must be neutral without caller-specific opacity")
+        XCTAssertGreaterThan(try matchingPixels(disabled, rgb: 0xE2E5E9), 100,
+                             "Paper169-0 uses opaque color-line, not translucent segment-track")
     }
 
     func testLongActionsGrowAtLargestTextAndKeepFullWidthWhilePending() async throws {
@@ -59,9 +62,18 @@ final class FoundationRenderingTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(secondary.sizeThatFits(in: proposal).height, textHeight + 24 - 0.5)
     }
 
-    func testExpandedGroupedDisclosureKeepsEightPointVerticalInsets() {
-        // components.md: standalone14pt, grouped8pt vertical; both14pt horizontal.
-        // Force both real rows beyond their minimum so the insets are observable.
+    func testContainedFeedbackKeepsPaperFourteenPointVerticalInsets() {
+        let proposal = CGSize(width: 320, height: 2000)
+        let inline = UIHostingController(rootView: SemanticFeedback(role: .success, message: "Saved"))
+        let contained = UIHostingController(rootView: SemanticFeedback(role: .success, message: "Saved", contained: true))
+        XCTAssertEqual(contained.sizeThatFits(in: proposal).height - inline.sizeThatFits(in: proposal).height,
+                       28, accuracy: 0.5, "Paper10SS-0 requires14pt at each vertical edge")
+    }
+
+    func testStandaloneAndGroupedDisclosuresKeepTheSamePaperRowGeometry() {
+        // Paper582/588: disclosure rows54pt min,8pt vertical/14pt horizontal,
+        // with12pt corners. The52pt/16-corner selection field is a different role.
+        // Force both rows beyond their minimum so the insets are observable.
         let title = "Select the pieces for this private wardrobe outfit"
         let value = "A long selected value that must remain fully readable"
         let standalone = UIHostingController(rootView: DisclosureRow(title: title, value: value) {}
@@ -74,8 +86,8 @@ final class FoundationRenderingTests: XCTestCase {
         XCTAssertGreaterThan(groupedSize.height, 54)
         XCTAssertEqual(groupedSize.width, 320, accuracy: 0.5)
         XCTAssertEqual(standaloneSize.width, groupedSize.width, accuracy: 0.5)
-        XCTAssertEqual(standaloneSize.height - groupedSize.height, 12, accuracy: 0.5,
-                       "Expanded grouped rows keep8pt at each vertical edge, not standalone14pt")
+        XCTAssertEqual(standaloneSize.height, groupedSize.height, accuracy: 0.5,
+                       "Standalone and grouped disclosures share8pt vertical insets; only the container changes")
     }
 
     func testFieldsRowsAndFeedbackReflowWithoutShrinkingTargets() async throws {
@@ -210,11 +222,24 @@ final class FoundationRenderingTests: XCTestCase {
     }
 
     private func bluePixels(_ image: UIImage) throws -> Int {
+        let pixels = try pixelBytes(image)
+        return stride(from: 0, to: pixels.count, by: 4).filter { Int(pixels[$0 + 2]) - Int(pixels[$0]) > 80 }.count
+    }
+
+    private func matchingPixels(_ image: UIImage, rgb: UInt32) throws -> Int {
+        let pixels = try pixelBytes(image)
+        let expected = [Int((rgb >> 16) & 255), Int((rgb >> 8) & 255), Int(rgb & 255)]
+        return stride(from: 0, to: pixels.count, by: 4).filter { index in
+            (0..<3).allSatisfy { abs(Int(pixels[index + $0]) - expected[$0]) <= 3 }
+        }.count
+    }
+
+    private func pixelBytes(_ image: UIImage) throws -> [UInt8] {
         let cg = try XCTUnwrap(image.cgImage)
         var pixels = [UInt8](repeating: 0, count: cg.width * cg.height * 4)
         let context = try XCTUnwrap(CGContext(data: &pixels, width: cg.width, height: cg.height, bitsPerComponent: 8,
             bytesPerRow: cg.width * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
         context.draw(cg, in: CGRect(x: 0, y: 0, width: cg.width, height: cg.height))
-        return stride(from: 0, to: pixels.count, by: 4).filter { Int(pixels[$0 + 2]) - Int(pixels[$0]) > 80 }.count
+        return pixels
     }
 }

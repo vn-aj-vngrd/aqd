@@ -16,7 +16,7 @@ struct PrimaryAction: View {
                 if isPending {
                     ProgressView().tint(usesAccent ? AppTheme.onAccent : AppTheme.secondary).accessibilityHidden(true)
                 }
-                Text(title).font(AppTypography.action)
+                Text(title).font(usesAccent ? AppTypography.action : AppTypography.body)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -24,8 +24,7 @@ struct PrimaryAction: View {
             .padding(.vertical, AppSpacing.medium)
             .frame(maxWidth: .infinity, minHeight: AppControlMetrics.actionHeight)
             .foregroundStyle(usesAccent ? AppTheme.onAccent : AppTheme.secondary)
-            .background(usesAccent ? AppTheme.accent : AppTheme.segmentTrack,
-                        in: RoundedRectangle(cornerRadius: AppControlMetrics.actionHeight / 2))
+            .background(usesAccent ? AppTheme.accent : AppTheme.divider, in: Capsule())
             .contentShape(Rectangle())
         }
         .buttonStyle(ContentActionStyle())

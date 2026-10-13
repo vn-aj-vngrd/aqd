@@ -1,0 +1,110 @@
+{
+  "issue": 20,
+  "checkedOn": "2026-10-13",
+  "baselineCommit": "38f32ac",
+  "mode": "Code-only Paper/docs alignment; native verification deferred by owner",
+  "paper": {
+    "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+    "pageId": "p-1-0",
+    "rootCount": 26,
+    "nodeCount": 2101,
+    "tokenHash": "fdeb7346",
+    "trees": ["4LD-0", "10S3-0", "JKP-0", "T8E-0", "JPZ-0", "SOI-0"],
+    "screenshotRequests": ["14I-0", "4LD-0", "10S3-0", "SQ2-0"],
+    "renderedInspectionInCurrentPass": ["SQ2-0"],
+    "svgRead": "T8F-0: selected Closet stroke uses color-accent,22pt,2.35 stroke weight",
+    "mutation": false
+  },
+  "comparison": [
+    {
+      "component": "AppTheme",
+      "source": "apps/ios/AQD/UI/AppTheme.swift",
+      "reference": "Live Paper palette and DESIGN.md Color",
+      "contract": "22 paired color definitions plus3 aliases preserve25 light/dark roles;4 alpha pairs retained",
+      "result": "Static source comparison matches all pairs and aliases; no color or material runtime certification"
+    },
+    {
+      "component": "PrimaryAction / SecondaryAction / ActionStack",
+      "source": "apps/ios/AQD/UI/AppActions.swift",
+      "nodes": ["165-0", "166-0", "167-0", "168-0", "169-0", "16A-0", "O93-0"],
+      "contract": "50pt min,12pt vertical/20pt horizontal padding,12pt stack gap; enabled17pt medium/on-accent; plain secondary17pt regular/action-text; disabled opaque color-line with regular secondary text; pill radius999",
+      "mapping": "Native Button + Capsule; disabled divider token rather than translucent segment track; no glass/shadow or guessed completion"
+    },
+    {
+      "component": "LabeledControl / LabeledField",
+      "source": "apps/ios/AQD/UI/AppFields.swift",
+      "nodes": ["18N-0", "18O-0", "18P-0", "18Q-0", "55P-0", "55Q-0", "55R-0", "55S-0"],
+      "contract": "8pt label gap,15pt medium secondary label,17pt regular ink value,14pt padding,16pt field corners,opaque surface; native field validation/contrast",
+      "mapping": "Semantic subheadline medium fieldLabel/body styles; native TextField/Picker keep name/value;52pt native min follows components.md's50/52 field reference distinction"
+    },
+    {
+      "component": "DisclosureRow / SurfaceGroup",
+      "source": "apps/ios/AQD/UI/AppRows.swift",
+      "nodes": ["582-0", "588-0", "NQL-0", "NR4-0", "NR9-0", "NR8-0", "NR5-0"],
+      "contract": "Disclosure54pt min,8pt vertical/14pt horizontal,12pt corners; body17/supporting15; selected value at trailing edge,22pt symbol lane,12pt accessory gap; group owns separators between rows only",
+      "mapping": "Disclosure geometry is distinct from52pt/16-corner selection fields. Accessibility text stacks labels/values. Explicit separatorInsets serves the real photo-source consumer; default remains14pt each side"
+    },
+    {
+      "component": "SemanticFeedback / OperationProgress",
+      "source": "apps/ios/AQD/UI/AppFeedback.swift",
+      "nodes": ["10SA-0", "10SJ-0", "10SS-0", "10SZ-0", "10T6-0", "10SU-0", "10T1-0"],
+      "contract": "Five explicit roles,18pt symbol lane/8pt gap,15pt regular ink message,12pt corners; contained14pt vertical/16pt horizontal padding; one meaningful accessibility message",
+      "mapping": "App-owned Label grammar and one native ProgressView; no symbols injected into native alerts or dialogs"
+    },
+    {
+      "component": "NativeTabs",
+      "source": "apps/ios/AQD/UI/NativeTabs.swift",
+      "nodes": ["JKP-0", "T8E-0", "T8F-0", "T89-0"],
+      "contract": "Five native nil-title identities,registered SF Symbols,selected accent/unselected secondary,semibold selected weight; source-aware full-screen Agent",
+      "mapping": "Explicit public UIKit tint properties match symbol roles; OS owns target geometry,selection material and accessibility. No private hierarchy or custom glass replica"
+    },
+    {
+      "component": "Capture photo selector / More details",
+      "source": "apps/ios/AQD/UI/PieceCaptureView.swift",
+      "nodes": ["JQI-0", "SO6-0", "SO7-0", "SO8-0", "SOD-0", "SOE-0", "JR5-0", "JR6-0"],
+      "contract": "Capture16pt content gap,8pt photo gap,12pt top/20pt horizontal; Photo13pt secondary; Add photo88pt min,20pt padding,16pt gap,12pt corners,17pt regular action-text; More details is plain15pt action-text with44pt target,not a surfaced disclosure",
+      "mapping": "Native Buttons preserve existing intents; decorative SF symbols hidden from accessibility; no additional route or mutation"
+    },
+    {
+      "component": "Photo-source group",
+      "source": "apps/ios/AQD/UI/PieceCaptureView.swift",
+      "nodes": ["SQ2-0", "SQ4-0", "SQA-0", "SQD-0", "SQE-0", "SQI-0"],
+      "contract": "56pt reference rows,16pt horizontal padding,24pt symbol lane,14pt gap,17pt regular action-text; no trailing chevrons; separator starts at label54pt and has no trailing inset",
+      "mapping": "System-source commands are not app disclosure rows. ScrollView supplies overflow while native sheet/detents/Close remain OS-owned; large text grows instead of fixing56pt height"
+    },
+    {
+      "component": "Photo preview recovery",
+      "source": "apps/ios/AQD/UI/PhotoEditorView.swift",
+      "reference": "docs/design/capture-photo.md Draft, import and recovery states",
+      "contract": "Reset/try-again must be actionable after failure without losing accepted media or parent draft",
+      "mapping": "Reset increments retryGeneration even at zero rotation; task identity contains rotation and retry generation; success and failure both reject superseded retry results. Explicit pending state disables acceptance during real zero-rotation work; finish/failure clear it,including missing-source failure"
+    }
+  ],
+  "nativeAdaptationsAndReferenceVariations": [
+    "Paper phone coordinates,nav/sheet dimensions,material alpha and font line metrics are visual references,not instructions to repaint system chrome or fix native Dynamic Type heights. Native API ownership in native-ios/native-presentations is retained.",
+    "Foundations field masters18O/55Q use15pt medium labels; L04 Name/Category clones use regular. Foundations master governs the reusable field role; no whole-L04 parity or Paper clone synchronization is claimed.",
+    "Foundations disabled169/16A uses regular text; L04 disabled JRB uses medium. Reusable disabled state follows Foundations master; product-root acceptance stays partial.",
+    "Legacy Home names inside navigation masters are provenance; docs require Today identity at runtime. The house symbol is unchanged.",
+    "SO8 SVG preview uses28pt leading photo/20pt chevron; native-ios registers22pt SF symbol/disclosure point sizes. Native SF semantics and optical rendering govern,not copied SVG paths.",
+    "This is a bounded component/consumer comparison,not inspection of every descendant in all26 roots. Structural headers/avatar/calendar/chat and future section consumers are not invented as app destinations."
+  ],
+  "verification": {
+    "nativeBuildRun": false,
+    "simulatorRun": false,
+    "nativeTestsRun": false,
+    "runtimeComplete": false,
+    "standardsReview": "Pass after bounded pending-readiness correction recheck; static only",
+    "specReview": "Pass after bounded pending-readiness correction recheck; static only",
+    "authoredNotExecuted": [
+      "FoundationRenderingTests:opaque disabled fill and14pt feedback vertical padding; disclosure geometry expectations now follow54pt/12-corner row instead of conflating selection fields",
+      "PhotoPreviewStateTests:zero-degree retry changes identity and blocks queued/active acceptance until completion; applying refuses duplicate acceptance"
+    ],
+    "pending": [
+      "Compile and run all new/changed native tests and unsigned Release",
+      "Actual compact contrast and landscape Details/Availability/Notes",
+      "VoiceOver,keyboard,RTL,largest text,reduced-accessibility and native material/source-return checks",
+      "Minimum18/current27 and physical-device/privacy/media/performance qualification",
+      "Latest-head CI/Codex/PR delivery before issue acceptance"
+    ]
+  }
+}
