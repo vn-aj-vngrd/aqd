@@ -76,12 +76,13 @@ struct NativeTabs: UIViewControllerRepresentable {
             }
             let content = [roots[0], roots[1], roots[2], agentRoot, roots[3]]
             let names = ["Today", "Closet", "Planner", "Agent", "Profile"]
-            let symbols = ["house", "tshirt", "calendar", "sparkle", "person.crop.circle"]
-            let selectedSymbols = ["house.fill", "tshirt.fill", "calendar", "sparkle", "person.crop.circle.fill"]
+            let symbols = ["house", "hanger", "calendar", "sparkle", "person.crop.circle"]
+            let selectedSymbols = ["house.fill", "hanger", "calendar", "sparkle", "person.crop.circle.fill"]
             hosts = content.enumerated().map { index, root in
                 let host = UIHostingController(rootView: root)
                 let item = UITabBarItem(title: nil, image: UIImage(systemName: symbols[index]), tag: index)
-                item.selectedImage = UIImage(systemName: selectedSymbols[index])
+                item.selectedImage = UIImage(systemName: selectedSymbols[index],
+                                             withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
                 item.accessibilityLabel = names[index]
                 item.accessibilityIdentifier = "root.tab.\(names[index].lowercased())"
                 // UIKit supplies the tab role and selected trait, not an app-owned

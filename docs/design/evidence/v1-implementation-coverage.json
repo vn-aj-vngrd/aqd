@@ -4,8 +4,8 @@
   "pageName": "01 · V1",
   "checkedOn": "2026-10-09",
   "tokenHash": "fdeb7346",
-  "sourceHead": "91ace1364c275641f819852926113f65996a5e95",
-  "sourceState": "Working-tree recovery and toolbar changes; protected delivery pending",
+  "sourceHead": "2eb74a769aa0eb21fc89bbb43ff2a98a239f7c8d",
+  "sourceState": "Foundation #20 implementation checkpoint on van/issue-20/native-ui-foundations; baseline PR9 merged at c5e11c4. Owner deferred heavyweight verification before per-slice commit; latest source/runtime reconciliation and delivery pending. Earlier foundationEvidence is historical, not final-head certification.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 227,
@@ -50,6 +50,41 @@
       "SDK27, physical Camera/Settings/VoiceOver, largest accessibility text, media-quality/performance and integrated full-domain acceptance unverified.",
       "PR9 remains open; full issue6 remains incomplete."
     ]
+  },
+  "foundationEvidence": {
+    "checkedOn": "2026-10-13",
+    "issue": 20,
+    "nativeReference": "apps/ios/FOUNDATIONS.md",
+    "verification": "docs/delivery/verification.md#foundation-20-native-implementation--october13",
+    "paper": {
+      "pageId": "p-1-0",
+      "rootNodeId": "root_node_p-1-0",
+      "rootCount": 26,
+      "nodeCount": 2101,
+      "tokenHash": "fdeb7346",
+      "method": "Read-only basic info and complete root depth2 inventory; bounded affected descendant trees/computed styles/render/official-kit fill asset. No Paper mutation or whole-control parity claim.",
+      "affectedDescendantReads": ["14I-0", "4LD-0", "4E1-0", "4GB-0", "10S3-0", "10NM-0", "JKP-0", "1JB-0", "83E-0", "11H4-0", "X71-0", "X7B-0"],
+      "assetRead": "11HE-0 official kit27 reference only; not copied into production"
+    },
+    "environment": "Xcode27.0/build27A266a, Swift6.4, SDK27.0, deployment18.0; observed runtime only iOS26.5/build23F77",
+    "checks": [
+      "/tmp/aqd-foundation-evidence/final-runner.log:20 Core/78 native (72 SwiftTesting+6 XCTest rendering)/12 UI, zero failures/skips",
+      "/tmp/aqd-foundation-evidence/final-release.log:unsigned Release simulator build passed",
+      "/tmp/aqd-foundation-evidence/final-dark.log:2 current-source dark/Increase Contrast tab and largest-text UI cases passed",
+      "/tmp/aqd-foundation-evidence/final-compact.log:2 current-source compact tab and largest-text exact-draft-restoration UI cases passed",
+      "/tmp/aqd-foundation-evidence/device-release.log:unsigned iPhoneOS27 Release compile passed; not physical execution",
+      "/tmp/aqd-foundation-evidence/tooling-final.log:pnpm check50/50 passed"
+    ],
+    "scope": "Shared controls reused by actual capture/details/photo-editor/receipt. Native Picker selected-value labels and TextField spoken names preserved; registered hanger tab and public nil-title native chrome. Existing persistence/migration/receipt/media cleanup unchanged.",
+    "pendingAcceptance": [
+      "Compact capture contrast audit flags Photo; explicit semantic ink did not resolve it; cause unproven",
+      "Minimum18/current27 runtime, physical device, VoiceOver order/focus/announcements, live Reduce Motion/Transparency and landscape",
+      "Physical file protection/backup exclusion, representative media/model quality/latency/memory and capability evaluations",
+      "Complete Foundation consumer/control parity, product roots and full LOCAL acceptance",
+      "Independent final standards/spec and GitHub CI/Codex/protected delivery"
+    ],
+    "runtimeComplete": false,
+    "limits": "All227 existing V1 roots/counts/runtimeComplete flags remain unchanged; no whole-screen or product-root acceptance inferred from Foundation fixtures or build. Earlier V1 census/evidence above remain dated October9 provenance, not a new live V1 census."
   },
   "domains": {
     "01": {

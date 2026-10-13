@@ -4,7 +4,7 @@ Private V1 follows the [ten-ticket implementation plan](../../docs/delivery/impl
 
 ## Build and test
 
-Requires macOS, Xcode and an installed iOS Simulator. Current evidence uses Xcode26.5 / Swift6.3.2 / iOS26.5; deployment minimum is iOS18. SDK27 and physical-device certification remain release gates, not proven by this baseline.
+Requires macOS, Xcode and an installed iOS Simulator. Foundation #20 compiles with Xcode27.0/build27A266a, Swift6.4 and SDK27.0; installed runtimes are iOS26.5/build23F77 and27.0/build24A434. Deployment remains iOS18.0. The owner authorized an implementation checkpoint with heavyweight verification deferred; builds/simulators are stopped. Minimum-iOS18/current-iOS27 and physical-device qualification remain incomplete. See [native foundation reuse and capability gates](FOUNDATIONS.md); build success is not complete Foundation or V1 acceptance.
 
 From the repository root:
 

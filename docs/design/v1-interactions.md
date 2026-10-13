@@ -20,6 +20,21 @@ Updated October 6, 2026. This is the implementation route checklist for [Paper V
 
 [Vector repair](evidence/native-dialog-vector-repair.json) changes presentation layers only: all existing V1 confirmation source/target/date/draft/return guards remain unchanged. Original Paper hosts and title/body/action IDs are visible/editable; screenshots and technical contracts are hidden. Seven cross-phase critical decisions keep explicit Cancel;31 routine source-anchored decisions use documented implicit no-write dismissal. No new destination or executable action is added; native behavior remains unverified.
 
+## Foundation #20 native consumer checkpoint · October13
+
+No new destination or product-domain control was introduced. The existing capture journey now consumes shared native foundations; section-specific routes below remain specified/unaccepted until their owning slice lands. [Verification](../delivery/verification.md#foundation-20-native-implementation--october13) owns exact observed inventory and limits.
+
+| Existing control/state | Native shared behavior | Observed return / limit |
+| --- | --- | --- |
+| Five destination items; fourth-slot Agent / Back | Public UIKit nil-title items, native selected traits/targets; registered hanger for Closet, semibold selected symbols; existing full-screen task | iOS26.5 root targets/selection and Agent→Closet pass; no full Planner/Agent/Profile functionality or iOS18/27/physical VoiceOver certification. |
+| Capture Name / details metadata / notes | `LabeledField` with persistent spoken name, opaque native editor, associated validation hint; Increase Contrast boundary | Draft edits remain in the existing model/store. Largest-text insertion/removal retains exact prior Name; Save remains keyboard-safe. Native rapid synthesized-key coalescing is not attributed to an app defect or claimed hardware proof. |
+| Capture Category / details Availability | `LabeledControl` retains native Picker name **and selected value**, instead of overriding the entire shell's accessibility label | Native Category/Shoes selection with active keyboard preserves draft. No record mutation until parent Save; details Apply remains draft-only. |
+| Capture More details / photo-source rows | Whole-row disclosures and native source sheet; `SurfaceGroup` places a separator only between the two choices | Photos selection occurs after source-sheet dismissal; Close retains fields/media. No last-row separator or gallery route. |
+| Save / Use photo / Apply / receipt Open closet | Shared primary/footer: solid enabled, neutral disabled, growing50pt-min action with12pt vertical insets; pending label retained, one spinner, duplicate activation refused | Accepted photo applies only to draft; parent Save alone acknowledges piece. Receipt Open/Back retains existing exact-operation acknowledgment/recovery. Real save/crop/edit/relaunch passes; failed/unknown recovery algorithms are unchanged. |
+| Inline validation / progress / acknowledged receipt | Explicit semantic feedback role and combined message, decorative symbol; native labelled circular progress | Actual receipt uses success only after acknowledgment; mixed failure/conflict/unknown channels keep exact existing recovery copy without guessed severity. Hosted five-role fixtures are not complete future-consumer acceptance. |
+
+Light/dark and Increase Contrast/largest-text keyboard/target checks are scoped passes. Automated capture/source contrast/element/hit-region audit passes on17Pro; compact audit flags Photo contrast and remains unresolved. VoiceOver focus/announcements, live Reduce Motion/Transparency, landscape and physical/device capability checks remain required. Full-screen/source returns beyond the exercised baseline are not inferred from shared components.
+
 ## Rules for every control
 
 - A navigation action must resolve to a listed screen or an explicitly named system presentation. A field edits in place; a toggle/selection changes visible state; neither needs a fictional destination.

@@ -32,20 +32,22 @@ struct PieceDetailsView: View {
                     field("Season", \.season)
                     field("Condition", \.condition)
                     field("Ownership age", \.ownershipAge)
-                    CaptureField(title: "Tags, separated by commas", text: $tagsText)
-                    CaptureField(title: "Prior wear estimate", text: $wearText)
+                    LabeledField(title: "Tags, separated by commas", text: $tagsText,
+                                 accessibilityID: "capture.field.tags, separated by commas")
+                    LabeledField(title: "Prior wear estimate", text: $wearText,
+                                 accessibilityID: "capture.field.prior wear estimate")
                         .keyboardType(.numberPad)
                     Text("An estimate isn’t a dated wear record.").font(.footnote).foregroundStyle(AppTheme.secondary)
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Availability").font(.subheadline)
+                    LabeledControl(title: "Availability") {
                         Picker("Availability", selection: $availability) {
                             Text("Available").tag(PieceAvailability.available)
                             Text("Unavailable").tag(PieceAvailability.unavailable)
                             Text("Laundry").tag(PieceAvailability.laundry)
                         }
-                        .pickerStyle(.menu).frame(minHeight: 52)
+                        .pickerStyle(.menu)
                     }
-                    CaptureField(title: "Notes", text: $details.notes, multiline: true)
+                    LabeledField(title: "Notes", text: $details.notes, multiline: true,
+                                 accessibilityID: "capture.field.notes")
                     Text("Notes stay private and are not included in Agent context.")
                         .font(.footnote).foregroundStyle(AppTheme.secondary)
                     if !isValid {
@@ -65,12 +67,12 @@ struct PieceDetailsView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) {
-                PrimaryAction(title: "Apply") {
-                    model.applyDetails(editedDetails, availability: availability)
-                    dismiss()
+                ActionFooter {
+                    PrimaryAction(title: "Apply") {
+                        model.applyDetails(editedDetails, availability: availability)
+                        dismiss()
+                    }.disabled(!isValid)
                 }
-                .disabled(!isValid).opacity(isValid ? 1 : 0.5)
-                .padding(.horizontal, 20).padding(.vertical, 12).background(AppTheme.canvas)
             }
             .confirmationDialog("Discard these detail changes?", isPresented: $discardDecision, titleVisibility: .visible) {
                 Button("Discard changes", role: .destructive) { dismiss() }
@@ -102,6 +104,7 @@ struct PieceDetailsView: View {
     }
 
     private func field(_ title: String, _ path: WritableKeyPath<PieceDetails, String>) -> some View {
-        CaptureField(title: title, text: Binding(get: { details[keyPath: path] }, set: { details[keyPath: path] = $0 }))
+        LabeledField(title: title, text: Binding(get: { details[keyPath: path] }, set: { details[keyPath: path] = $0 }),
+                     accessibilityID: "capture.field.\(title.lowercased())")
     }
 }

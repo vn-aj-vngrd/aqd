@@ -10,7 +10,7 @@ struct TodayView: View {
                     Text(Date.now, format: .dateTime.weekday(.abbreviated).day())
                         .font(.subheadline).foregroundStyle(AppTheme.secondary)
                     if let error = state.todayError {
-                        Text(error).font(.subheadline).foregroundStyle(AppTheme.error)
+                        SemanticFeedback(role: .danger, message: error)
                         Button("Retry Today") { state.reloadToday() }.frame(minHeight: 44)
                     }
                     if let configuration = state.today {
@@ -40,7 +40,7 @@ struct TodayView: View {
 
     private func stockCard(_ title: String, message: String) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(title).font(.title2.weight(.medium))
+            Text(title).font(AppTypography.section)
             Text(message).font(.subheadline).foregroundStyle(AppTheme.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -67,10 +67,10 @@ struct BaselineAgentView: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 24) {
-                Text("Local Agent conversations aren’t implemented yet.").font(.title2.weight(.medium))
+                Text("Local Agent conversations aren’t implemented yet.").font(AppTypography.section)
                 Text("This baseline doesn’t send chat or wardrobe data anywhere. You can still add and manage pieces manually.")
                     .foregroundStyle(AppTheme.secondary)
-                Button("Open Closet") { state.selection = 1; close() }.frame(minHeight: 44)
+                SecondaryAction(title: "Open Closet") { state.selection = 1; close() }
                 Spacer()
             }.padding(20).background(AppTheme.canvas)
                 .navigationTitle("Agent").navigationBarTitleDisplayMode(.inline)

@@ -32,6 +32,92 @@ final class NativeFlowTests: XCTestCase {
         try await super.tearDown()
     }
 
+    func testSharedCaptureControlsAtLargestTextKeepKeyboardSafeTargetsAndValidation() {
+        app.terminate()
+        app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launchEnvironment["AQD_TEST_DENIED_CAPTURE_CLEANUP"] = "1"
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        tab("Closet").tap()
+        app.buttons["closet.addPiece"].tap()
+        let name = app.textFields["capture.field.name"]
+        let save = app.buttons["capture.save"]
+        XCTAssertTrue(name.waitForExistence(timeout: 5))
+        XCTAssertEqual(name.label, "Name")
+        XCTAssertTrue(save.isEnabled)
+        XCTAssertEqual(save.label, "Save piece")
+        XCTAssertGreaterThanOrEqual(save.frame.height, 50)
+        XCTAssertGreaterThanOrEqual(name.frame.height, 44)
+        // A large photo plus accessibility text can place the field behind
+        // the footer on compact phones even while XCUI calls it hittable.
+        for _ in 0..<3 where !name.isHittable || name.frame.maxY > save.frame.minY {
+            app.swipeUp()
+        }
+        XCTAssertLessThanOrEqual(name.frame.maxY, save.frame.minY)
+        name.tap()
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(save.isHittable, "Safe-area footer must stay above the real keyboard")
+        XCTAssertLessThanOrEqual(save.frame.maxY, app.keyboards.firstMatch.frame.minY + 1)
+        // A center tap in a horizontally scrolled large-text field is not an
+        // end-of-text guarantee. Insert and remove an exact local edit at the
+        // native insertion point; do not assume Select All menu placement.
+        let retainedName = name.value as? String
+        // A single unbroken token avoids system word/autocorrection changes
+        // obscuring which exact provisional characters this test removes.
+        let insertion = String(repeating: "x", count: 90)
+        name.typeText(insertion)
+        XCTAssertEqual((name.value as? String)?.count, (retainedName?.count ?? 0) + insertion.count)
+        XCTAssertFalse(save.isEnabled, "Reusable primary must reflect invalid prerequisites")
+        let validation = app.staticTexts["Use 80 characters or fewer for the piece name."]
+        XCTAssertTrue(validation.exists)
+        attachScreenshot("Largest text validation and keyboard-safe neutral Save")
+        // Let each native key event and durable draft update settle. A burst
+        // of repeated synthetic backspaces can be coalesced by the OS keyboard;
+        // the assertion still requires exact restoration, not just validity.
+        for _ in insertion {
+            name.typeText(XCUIKeyboardKey.delete.rawValue)
+        }
+        XCTAssertTrue(save.isEnabled)
+        XCTAssertEqual(name.value as? String, retainedName, "Removing the provisional edit retains the original draft")
+        attachScreenshot("Largest text enabled Save retains native field label and keyboard")
+    }
+
+    func testLandscapeRootsAndAgentReturnKeepClosetSelection() {
+        XCUIDevice.shared.orientation = .landscapeLeft
+        defer { XCUIDevice.shared.orientation = .portrait }
+        XCTAssertGreaterThan(app.frame.width, app.frame.height, "Exercise actual landscape, not just requested orientation")
+        for root in ["Closet", "Planner", "Profile", "Today", "Closet"] {
+            XCTAssertTrue(tab(root).isHittable)
+            tab(root).tap()
+            XCTAssertTrue(app.navigationBars[root].waitForExistence(timeout: 5))
+            XCTAssertTrue(tab(root).isSelected)
+        }
+        attachScreenshot("Landscape native roots keep Closet selected")
+        tab("Agent").tap()
+        XCTAssertTrue(app.navigationBars["Agent"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.tabBars.firstMatch.isHittable)
+        app.navigationBars["Agent"].buttons["Back"].tap()
+        XCTAssertTrue(app.navigationBars["Closet"].waitForExistence(timeout: 5))
+        XCTAssertTrue(tab("Closet").isSelected)
+        XCTAssertTrue(tab("Closet").isHittable)
+        attachScreenshot("Landscape Agent Back restores native Closet")
+    }
+
+    func testCaptureAccessibilityAuditKeepsNativeLabelsContrastAndTargets() throws {
+        tab("Closet").tap()
+        app.buttons["closet.addPiece"].tap()
+        XCTAssertTrue(app.textFields["capture.field.name"].waitForExistence(timeout: 5))
+        try app.performAccessibilityAudit(for: [.contrast, .elementDetection, .hitRegion])
+        attachScreenshot("Native capture accessibility audit — empty draft")
+        app.buttons["capture.addPhoto"].tap()
+        XCTAssertTrue(app.navigationBars["Add photo"].waitForExistence(timeout: 5))
+        try app.performAccessibilityAudit(for: [.contrast, .elementDetection, .hitRegion])
+        attachScreenshot("Native photo-source accessibility audit")
+        app.buttons["Close"].tap()
+        XCTAssertTrue(app.textFields["capture.field.name"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["capture.save"].isEnabled)
+    }
+
     func testNativeRootTabsExposeDestinationsTargetsAndSelection() {
         let tabBar = app.tabBars.firstMatch
         XCTAssertEqual(tabBar.buttons.count, 5)
@@ -526,7 +612,13 @@ final class NativeFlowTests: XCTestCase {
         name.tap()
         name.typeText(originalName)
         let category = app.buttons["capture.category"]
-        if !category.isHittable { app.swipeUp() }
+        // XCUI can report a scrolled control as hittable even when its frame
+        // sits behind the opaque keyboard-safe footer. Qualify visible bounds
+        // before activation, retaining the real native Picker path.
+        if !category.isHittable || category.frame.maxY > app.buttons["capture.save"].frame.minY {
+            app.swipeUp()
+        }
+        XCTAssertGreaterThanOrEqual(category.frame.height, 44)
         category.tap()
         app.buttons["Shoes"].tap()
         XCTAssertTrue(app.buttons["capture.save"].isEnabled)
