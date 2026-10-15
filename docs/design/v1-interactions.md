@@ -2,6 +2,10 @@
 
 Updated October 6, 2026. This is the implementation route checklist for [Paper V1](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-2-0). Read it with [V1 flow](v1-flow.md), [quality criteria](quality-criteria.md) and the [manifest](paper-manifest.json). The original L01–L85 journey is extended by L86–L163, including photo source selection and the private fit journal. A rendered phone is a static reference, not an implemented or wired prototype.
 
+## Issues #24 + #23 manual outfit slice · October16
+
+Closet → Outfits → Build outfit opens a durable private draft. Choose pieces retains selections and name across query/category changes; Cancel uses the shared blue Keep editing/red Discard draft sheet. Save validates current owned active pieces and persists one immutable operation receipt. Receipt Done restores the source; Open my outfits selects Closet/Outfits. Detail → Edit preserves identity/revision. Failed writes retain the draft; unknown acknowledgments reconcile the same operation before editing. Relaunch resumes its draft/receipt. Themes, assistance and real Plan/Wear arrive in later slices of this group, not claimed complete here. [Unit evidence](../plan/issue-24.md) is separate from UI acceptance, deferred to #30.
+
 ## Issue #21 entry and shared Style slices · October15
 
 The [issue plan](../plan/issue-21.md) owns current execution evidence. S1 implements Profile's single More → Style and More → Settings → Style with the same seven-step editor. Explicit answer/refusal, goal limits, review edit, Back, dirty exit, atomically saved preferences and retained source/draft/step are real routes. Save failure preserves prior preferences; unknown acknowledgment freezes editing and checks the same operation. A committed receipt survives restart until Done acknowledges it. Local proof uses the physical iPhone; native units and selected UI outcomes do not certify complete section01 or #30.

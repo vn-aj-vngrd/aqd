@@ -495,8 +495,8 @@
       "referenceId": null,
       "registeredLabel": "03.01 · L20 · Closet · Outfits",
       "flowSection": "03",
-      "functionalCoverage": "placeholder",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -555,8 +555,8 @@
       "referenceId": null,
       "registeredLabel": "04.00 · L06 · Build outfit",
       "flowSection": "04",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -565,8 +565,8 @@
       "referenceId": null,
       "registeredLabel": "04.07 · L08 · An easy afternoon",
       "flowSection": "04",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -685,8 +685,8 @@
       "referenceId": null,
       "registeredLabel": "03.02 · L144 · Outfits · Empty",
       "flowSection": "03",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1445,8 +1445,8 @@
       "referenceId": null,
       "registeredLabel": "04.01 · L98 · Choose pieces · Shared",
       "flowSection": "04",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1725,8 +1725,8 @@
       "referenceId": null,
       "registeredLabel": "04.09 · L133 · Edit outfit",
       "flowSection": "04",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1795,8 +1795,8 @@
       "referenceId": null,
       "registeredLabel": "04.06 · L27 · Outfit saved · Receipt",
       "flowSection": "04",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {

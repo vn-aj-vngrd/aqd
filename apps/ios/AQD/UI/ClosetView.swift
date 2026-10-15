@@ -21,6 +21,8 @@ struct ClosetView: View {
                 }.pickerStyle(.segmented).padding(.horizontal, 20).padding(.bottom, 12)
                 if state.closetScope == "Pieces" {
                     collection
+                } else if state.closetScope == "Outfits" {
+                    OutfitCollectionView()
                 } else {
                     ContentUnavailableView("\(state.closetScope) aren’t implemented yet", systemImage: "square.stack",
                                            description: Text("This baseline currently supports pieces. Full private \(state.closetScope.lowercased()) remain part of V1 implementation."))
@@ -30,7 +32,9 @@ struct ClosetView: View {
             .navigationTitle("Closet")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { state.addPiece() } label: { Label("Add piece", systemImage: "plus") }
+                    Button {
+                        if state.closetScope == "Outfits" { state.buildOutfit() } else { state.addPiece() }
+                    } label: { Label(state.closetScope == "Outfits" ? "Build outfit" : "Add piece", systemImage: "plus") }
                         .accessibilityIdentifier("closet.addPiece")
                 }
                 ToolbarItem(placement: .topBarTrailing) {

@@ -22,6 +22,9 @@ final class AppState {
     var today: TodayConfiguration?
     var todayError: String?
     var photoCleanupError: String?
+    var outfitEditor: OutfitEditorModel?
+    var outfits: [Outfit] = []
+    var outfitError: String?
     var styleEditor: StyleEditorModel?
     var profileSettings = false
     var entry = PrivateEntryState(alreadyEntered: true)
@@ -39,6 +42,8 @@ final class AppState {
         retryPhotoCleanup()
         reloadEntry()
         resumeStyleDraft()
+        reloadOutfits()
+        resumeOutfitDraft()
     }
 
     func openStore() {
@@ -124,6 +129,8 @@ final class AppState {
             retryPhotoCleanup()
             reloadEntry()
             resumeStyleDraft()
+            reloadOutfits()
+            resumeOutfitDraft()
         } catch {
             store = nil
             openingError = "Your local closet couldn’t open. Existing data has not been replaced. Retry, or keep the app data for recovery."
@@ -325,7 +332,7 @@ final class AppState {
     /// Called only after the DEBUG launch-argument/UUID guard selects an isolated writable store.
     private func seedPendingUITestPhotoCleanup(in directory: URL) throws {
         let photoID = UUID(uuidString: "E71EF667-186E-4E04-A676-115316C1B215")!
-        let schema = Schema(versionedSchema: LocalSchemaV3.self)
+        let schema = Schema(versionedSchema: LocalSchemaV4.self)
         let configuration = ModelConfiguration(schema: schema,
             url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
         let fixtureContainer = try ModelContainer(for: schema, configurations: [configuration])
@@ -339,7 +346,7 @@ final class AppState {
     /// Real malformed native input, isolated to the explicitly identified UI-test store.
     /// This fixture cannot mutate the ordinary closet and is absent from Release.
     private func seedUnreadableUITestDraft(in directory: URL) throws {
-        let schema = Schema(versionedSchema: LocalSchemaV3.self)
+        let schema = Schema(versionedSchema: LocalSchemaV4.self)
         let configuration = ModelConfiguration(schema: schema,
             url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
         let fixtureContainer = try ModelContainer(for: schema, configurations: [configuration])
