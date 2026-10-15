@@ -1,5 +1,11 @@
 # Current verification
 
+## Issue #21 local feature qualification, October 15, 2026
+
+Code slices S0–S4 are committed through `e5de900`; [acceptance receipt](../pan/evidence/issue-21/README.md) records selected tests, source hashes and inspected original physical-iPhone media. Core33/native96 pass, final unsigned Release builds, and repository tooling57 passes. The base18-case physical batch remains Failed17/1 due to a system banner over Done. The five-case affected refresh passes5/5, zero skips/failures, including that failed scenario and every confirmation/driver consumer. Unchanged application/Core/native-unit outcomes are explicitly reused. Three actual-appearance cases also pass, with dark rendering inspected. No local simulator or ordinary-store reset was used.
+
+Paper-first saved receipts now offer source-aware tour/Profile/Settings and actual Closet actions. Splash, Welcome, receipt and app icon share the wordmark. All four inert tour scenes, Ready, actual minimal Profile, X/check headers and native blue/red confirmation are recorded. Broad E2E/accessibility/device/platform-warning investigation remains #30. PR publication, CI, required Codex, protected squash and repository release are separate pending gates on GitHub.
+
 ## Foundation #20 hosted destination correction, October 15, 2026
 
 [Codex on PR #31](https://github.com/vn-aj-vngrd/aqd/pull/31#discussion_r4281401537) found that the hosted selector could accept another iPhone. CI now uses the existing exact iPhone 17 Pro Max selector, preserves the minimum-deployment check and fails before exporting a fallback destination. A real-workflow execution regression first fails on the old fallback, then passes refusal and exact-target export after correction. `pnpm check` passes 54 tests, zero failures/skips; `pnpm check:agents` and whitespace checks pass. Independent bounded Standards/Spec rechecks found no actionable finding. The plan records this as `AQD-Slice: #20/S6`.

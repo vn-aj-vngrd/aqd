@@ -2,6 +2,8 @@
 
 [Documentation router](docs/README.md) selects task branches and authoritative owners. Read the affected contracts, not entire folder catalogs.
 
+- **UI build freshness:** before a device proof run, follow the [installed-build check](docs/agents/acceptance-proof.md#installed-build-and-screen-check). Verify the actual app screens, including real destinations behind tour previews; stale or placeholder UI cannot count as acceptance.
+
 - **Local native checks:** use the owner's physical iPhone 17 Pro Max. Prompt for it to be connected, unlocked and ready before the first on-device run, and again after a lock/disconnection interrupts testing. Keep local simulators shut down; never start or fall back to one. [Device procedure](docs/agents/autonomous-workflow.md#immediate-mvp-target) owns discovery, readiness and hosted-CI boundaries.
 
 - **Ship an issue:** use [aqd-ship](.agents/skills/aqd-ship/SKILL.md) for end-to-end delivery or shipping continuation. It orchestrates implementation, PR, CI/Codex fixes, protected squash merge and release verification without routine phase prompts. Workflow refinement stays documentation-only.

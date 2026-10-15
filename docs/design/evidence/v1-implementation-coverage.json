@@ -2,25 +2,25 @@
   "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
   "pageId": "p-2-0",
   "pageName": "01 · V1",
-  "checkedOn": "2026-10-09",
+  "checkedOn": "2026-10-15",
   "tokenHash": "fdeb7346",
-  "sourceHead": "64010bac50a38a0acfd73a57b7ed751f33f888c9",
-  "sourceState": "Issue21 S1 working tree on the committed physical-device policy. Shared Profile/Settings Style editor and version3 persistence are implemented; focused physical proof and the slice receipt are tracked in docs/pan/issue-21.md. Foundation delivery is PR31/main8b06880/v1.1.1. Historical Foundation evidence retains its own source identity; sections01-09 and broad #30 remain incomplete.",
+  "sourceHead": "e5de900123bbbad428639d48130545df7b2be624",
+  "sourceState": "Issue21 S0-S4 committed and local scoped acceptance qualified with explicit unchanged-input reuse; proof publication/remote gates pending. Other sections and broad #30 remain incomplete.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
-    "rootCount": 227,
-    "nodeCount": 13055,
+    "rootCount": 232,
+    "nodeCount": 13214,
     "canonicalScreenStates": 169,
     "todayReferenceStates": 20,
-    "otherReferenceRoots": 38,
-    "sortedRootIdsSha256": "f96b08fdc6ac804f72e7c438f0ddff34986a9c338ffebf6fc9b996536e93cbc7",
-    "method": "Live Paper get_basic_info explicitly scoped to V1 (first100 only), followed by uncapped root get_tree_summary(depth1). IDs transcribed from that complete227-root response and compared exactly with the registered manifest union. get_children also confirmed count227 but was capped at100; it was not treated as a complete list. Labels below come from the registered manifest, not a fresh per-node text export.",
+    "otherReferenceRoots": 43,
+    "sortedRootIdsSha256": "58dc713cf561fd0abf0c829dccb880d39c3e10570f370ec63d8362ab562fc685",
+    "method": "October15 live V1 get_basic_info counts and uncapped root get_tree_summary(depth1):232 unique root IDs equal prior227 plus five registered issue21 receipt/discard/logo references. Three-page counts recorded in paper-manifest. No full raster census.",
     "allRootIdsMatchRegisteredInventory": true
   },
   "counts": {
-    "missing": 159,
+    "missing": 148,
     "placeholder": 5,
-    "source-partial": 52,
+    "source-partial": 68,
     "structural-reference": 11
   },
   "verifiedCompleteScreenStates": 0,
@@ -135,7 +135,7 @@
     "01": {
       "coverage": "source-partial",
       "required": "Welcome/private onboarding/tour, preferences/review/refusal/body consent/resume",
-      "source": "Issue21 S1: shared Style editor from real Profile More and Settings; version3 preference draft/save/receipt persistence. Welcome/tour and advanced body inputs remain in later slices."
+      "source": "Issue21 S1/S2/S3: shared onboarding/Profile/Settings Style editor, durable preference/entry/tour metadata, native Welcome/launch/tour scenes and optional height/custom-description transactions. Final focused proof and independent review are recorded in the issue plan."
     },
     "02": {
       "coverage": "source-partial",
@@ -275,7 +275,7 @@
       "referenceId": null,
       "registeredLabel": "01.03 · L01 · Your closet, privately",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1355,7 +1355,7 @@
       "referenceId": null,
       "registeredLabel": "01.01 · L60 · Welcome",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1365,7 +1365,7 @@
       "referenceId": null,
       "registeredLabel": "01.19 · L63 · Tour · Closet",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1375,7 +1375,7 @@
       "referenceId": null,
       "registeredLabel": "01.02 · L61 · Start privately",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1385,7 +1385,7 @@
       "referenceId": null,
       "registeredLabel": "01.22 · L66 · Ready to begin",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1395,7 +1395,7 @@
       "referenceId": null,
       "registeredLabel": "01.21 · L65 · Tour · Profile",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1405,7 +1405,7 @@
       "referenceId": null,
       "registeredLabel": "01.18 · L62 · Tour · Home",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1535,7 +1535,7 @@
       "referenceId": null,
       "registeredLabel": "01.20 · L64 · Tour · Agent",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2015,7 +2015,7 @@
       "referenceId": null,
       "registeredLabel": "01.00 · L172 · Splash",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2025,7 +2025,7 @@
       "referenceId": null,
       "registeredLabel": "01.13 · L173 · Body shape · Custom description",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2065,7 +2065,7 @@
       "referenceId": null,
       "registeredLabel": "01.16 · L176 · Custom description · Over limit",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2448,6 +2448,56 @@
       "functionalCoverage": "missing",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
+    },
+    {
+      "nodeId": "13A6-0",
+      "canonicalId": null,
+      "referenceId": "issue-21-refinement",
+      "registeredLabel": "Preferences saved · Onboarding",
+      "flowSection": "01",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "13B8-0",
+      "canonicalId": null,
+      "referenceId": "issue-21-refinement",
+      "registeredLabel": "Preferences saved · Profile return",
+      "flowSection": "01",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "13C6-0",
+      "canonicalId": null,
+      "referenceId": "issue-21-refinement",
+      "registeredLabel": "Preferences saved · Settings return",
+      "flowSection": "01",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "13D4-0",
+      "canonicalId": null,
+      "referenceId": "issue-21-refinement",
+      "registeredLabel": "Preference draft · Discard sheet",
+      "flowSection": "01",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
+    },
+    {
+      "nodeId": "13EP-0",
+      "canonicalId": null,
+      "referenceId": "issue-21-refinement",
+      "registeredLabel": "AQD app icon · Splash wordmark",
+      "flowSection": "01",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "not-verified",
+      "runtimeComplete": false
     }
   ],
   "foundationAcceptance": {
@@ -2463,9 +2513,10 @@
   },
   "issue21Evidence": {
     "plan": "docs/pan/issue-21.md",
-    "state": "S1 source and focused physical proof in progress; not complete section01 acceptance",
-    "native": "Core24/native89 passed on physical iPhone17ProMax iOS27.0.1/24A446. Source before the final UI-only checks is retained in the plan.",
-    "limits": "Root runtimeComplete remains false. Welcome/tour/onboarding callers and advanced body/custom-description behavior remain unaccepted until later slices. Broad integrated E2E remains #30.",
-    "checkedOn": "2026-10-15"
+    "state": "Local scoped feature proof and source review pass; publication/remote gates pending",
+    "native": "Core33/native96 passed, zero failures/skips, physical iPhone17ProMax iOS27.0.1. Compiled launch storyboard inspected light/dark; true dark picker/tour/saved receipt and updated logo inspected.",
+    "limits": "Whole-V1 runtimeComplete remains false; broader integrated accessibility/device matrix stays #30. Base17/1 failed run retained, all five affected replacement cases pass; no private failed media is published.",
+    "checkedOn": "2026-10-15",
+    "receipt": "docs/pan/evidence/issue-21/README.md"
   }
 }

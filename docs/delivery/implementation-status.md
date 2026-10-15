@@ -2,7 +2,7 @@
 
 ## Current handoff, October 15, 2026
 
-Foundation #20 shipped in [PR #31](https://github.com/vn-aj-vngrd/aqd/pull/31), squash `8b06880`, repository release v1.1.1. It extends the PR #9 native capture/store baseline. [Issue #21](../pan/issue-21.md) is in progress in tested vertical slices: local checks now require the physical iPhone, and the shared Profile/Settings preference editor is being qualified. Sections 01–09 remain incomplete; baseline capture is not complete V1.
+Foundation #20 shipped in [PR #31](https://github.com/vn-aj-vngrd/aqd/pull/31), squash `8b06880`, repository release v1.1.1. It extends the PR #9 native capture/store baseline. [Issue #21](../pan/issue-21.md) now has committed physical-device policy, shared preferences, complete entry/tour/logo and optional body-input slices. Its [local scoped acceptance](../pan/evidence/issue-21/README.md) passes with explicit unchanged-input reuse and a successful five-case refresh of the notification-interrupted base case and affected consumers. PR publication, current-head CI/Codex, merge and release remain pending. Sections 01–09 remain incomplete; baseline capture is not complete V1.
 
 The [implementation plan](implementation-plan.md) owns ten implementation issues, #20–29, followed by final E2E/hardening [#30](https://github.com/vn-aj-vngrd/aqd/issues/30). Its clarified verification policy requires unit/build/repository/review plus focused native E2E and published evidence for each feature's UI ACs. Broad full-suite/device qualification remains in #30. Missing/failed/unpublished proof of a current AC blocks its feature; unit/build passes alone do not satisfy the new proof gate.
 
@@ -16,7 +16,7 @@ Current iPhone 17 Pro Max/iOS27 focused Notes proof passes after anchoring the f
 
 [Autonomous workflow](../agents/autonomous-workflow.md) routes full issue delivery through `aqd-ship`, which orchestrates implementation, verification and review plus protected delivery stages. #20's published proof, current-head CI/Codex, protected merge and repository release passed. [Persisted issue plans](../pan/README.md) hold vertical slices, commit SHAs, checks and the next action. Local native checks use the owner's physical iPhone 17 Pro Max, discovered on iOS27.0.1/24A446 for #21; the owner confirmed readiness and its baseline Core/native unit checks passed. Local simulators remain shut down. Hosted simulator CI is separate evidence; broad personal-phone acceptance remains #30. Current deployment settings stay in place.
 
-[Issue #20 execution record](../pan/issue-20.md) retains its delivery receipt; [issue #21](../pan/issue-21.md) owns the active implementation. #21 UI proof, review and delivery remain open until its scoped gates pass. Neither a repository release nor these unit checks establish complete V1 acceptance or native distribution.
+[Issue #20 execution record](../pan/issue-20.md) retains its delivery receipt; [issue #21](../pan/issue-21.md) owns the active implementation. #21 local focused proof and source review are complete; published proof and remote delivery gates remain open. Neither a repository release nor these unit checks establish complete V1 acceptance or native distribution.
 
 ## Earlier handoffs
 
