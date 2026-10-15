@@ -10,15 +10,17 @@ public struct Outfit: Identifiable, Codable, Equatable, Sendable {
     public let ownerID: UUID
     public var name: String
     public var pieceIDs: [UUID]
+    public var mood: String?
+    public var occasion: String?
     public var isFavorite: Bool
     public var revision: Int
     public let createdAt: Date
     public var updatedAt: Date
 
-    public init(id: UUID, ownerID: UUID, name: String, pieceIDs: [UUID], isFavorite: Bool = false,
+    public init(id: UUID, ownerID: UUID, name: String, pieceIDs: [UUID], mood: String? = nil, occasion: String? = nil, isFavorite: Bool = false,
                 revision: Int = 1, createdAt: Date = Date(), updatedAt: Date = Date()) {
         self.id = id; self.ownerID = ownerID; self.name = name; self.pieceIDs = pieceIDs
-        self.isFavorite = isFavorite; self.revision = revision
+        self.mood = mood; self.occasion = occasion; self.isFavorite = isFavorite; self.revision = revision
         self.createdAt = createdAt; self.updatedAt = updatedAt
     }
 
@@ -26,7 +28,8 @@ public struct Outfit: Identifiable, Codable, Equatable, Sendable {
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw OutfitValidationError.nameRequired }
         guard name.count <= 80 else { throw OutfitValidationError.nameTooLong }
         guard !pieceIDs.isEmpty else { throw OutfitValidationError.piecesRequired }
-        guard revision > 0, revision < Int.max, Set(pieceIDs).count == pieceIDs.count else { throw OutfitValidationError.invalidRecord }
+        guard (mood?.count ?? 0) <= 80, (occasion?.count ?? 0) <= 80,
+              revision > 0, revision < Int.max, Set(pieceIDs).count == pieceIDs.count else { throw OutfitValidationError.invalidRecord }
     }
 }
 
@@ -62,6 +65,7 @@ public struct OutfitDraft: Identifiable, Codable, Equatable, Sendable {
     public init(editing outfit: Outfit) {
         id = UUID(); outfitID = outfit.id; ownerID = outfit.ownerID; baseRevision = outfit.revision
         operationID = UUID(); name = outfit.name; pieceIDs = outfit.pieceIDs
+        mood = outfit.mood; occasion = outfit.occasion
     }
 
     public mutating func select(_ id: UUID) {
@@ -94,6 +98,7 @@ public struct OutfitDraft: Identifiable, Codable, Equatable, Sendable {
 
     public func validatedForSave(pieces: [WardrobePiece]) throws {
         try validated()
+        guard (mood?.count ?? 0) <= 80, (occasion?.count ?? 0) <= 80 else { throw OutfitValidationError.invalidRecord }
         guard !trimmedName.isEmpty else { throw OutfitValidationError.nameRequired }
         guard trimmedName.count <= 80 else { throw OutfitValidationError.nameTooLong }
         guard !pieceIDs.isEmpty else { throw OutfitValidationError.piecesRequired }

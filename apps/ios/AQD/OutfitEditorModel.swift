@@ -81,13 +81,13 @@ final class OutfitEditorModel: Identifiable {
         } catch { self.error = "Your draft couldn’t be discarded. Keep it here and retry." }
     }
 
-    func finish(openOutfits: Bool = false) {
+    func finish(openOutfit: Bool = false) {
         guard saved != nil else { return }
         do {
             guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
             try store.acknowledgeOutfitReceipt(draft)
             state.outfitEditor = nil; state.reloadOutfits()
-            if openOutfits { state.selection = 1; state.closetScope = "Outfits"; state.closetPath.removeAll() }
+            if openOutfit { state.selection = 1; state.closetScope = "Outfits"; state.closetPath = [.outfit(draft.outfitID)] }
         } catch { self.error = "The outfit is saved. Retry opening your collection; no additional outfit will be created." }
     }
 }

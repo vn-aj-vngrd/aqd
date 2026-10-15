@@ -19,7 +19,7 @@ struct OutfitEditorView: View {
                         Text(saved.name).font(AppTypography.body)
                         Text("Only you. Saving an outfit doesn’t plan a day or record wear.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        PrimaryAction(title: "Open my outfits") { model.finish(openOutfits: true) }
+                        PrimaryAction(title: "Open outfit") { model.finish(openOutfit: true) }
                         SecondaryAction(title: "Plan this look") { model.planSavedOutfit() }
                     } else if model.draft.stage == .readiness {
                         OutfitReadinessContent(model: model)
@@ -149,7 +149,7 @@ struct OutfitCollectionView: View {
                     PrimaryAction(title: "Build outfit") { state.buildOutfit() }
                 }
                 ForEach(state.outfits) { outfit in
-                    NavigationLink { OutfitDetailView(id: outfit.id) } label: {
+                    NavigationLink(value: ClosetRoute.outfit(outfit.id)) {
                         VStack(alignment: .leading, spacing: 8) {
                             OutfitComposition(pieceIDs: outfit.pieceIDs)
                             Text(outfit.name).font(AppTypography.body).foregroundStyle(AppTheme.ink)
@@ -162,30 +162,111 @@ struct OutfitCollectionView: View {
     }
 }
 
+struct ClosetDestination: View {
+    let route: ClosetRoute
+    var body: some View {
+        switch route {
+        case .piece(let id): PieceDetailView(id: id)
+        case .outfit(let id): OutfitDetailView(id: id)
+        }
+    }
+}
+
 struct OutfitDetailView: View {
     @Environment(AppState.self) private var state
+    @Environment(\.dismiss) private var dismiss
     let id: UUID
+    @State private var deletePresented = false
+    @State private var deleteReview: OutfitMutationRequest?
+    @State private var pendingMutation: OutfitMutationRequest?
+    @State private var error: String?
+
     var body: some View {
         ScrollView {
             if let outfit = state.outfits.first(where: { $0.id == id }) {
                 VStack(alignment: .leading, spacing: 20) {
                     OutfitComposition(pieceIDs: outfit.pieceIDs)
-                    Text(outfit.name).font(AppTypography.section)
-                    Text("Only you · \(outfit.pieceIDs.count) pieces").foregroundStyle(AppTheme.secondary)
-                    PrimaryAction(title: "Plan outfit") { state.openPlan(outfitID: outfit.id) }
-                    SecondaryAction(title: "Record wear") { state.openWear(outfitID: outfit.id) }
-                    SecondaryAction(title: "Edit outfit") { state.buildOutfit(editing: outfit) }
+                    Text("\(outfit.pieceIDs.count) pieces · Private on this iPhone").foregroundStyle(AppTheme.secondary)
+                    if outfit.isFavorite { Label("Favorite", systemImage: "heart.fill").foregroundStyle(AppTheme.actionText) }
+                    PrimaryAction(title: "Plan outfit") { state.openPlan(outfitID: outfit.id) }.disabled(pendingMutation != nil)
+                    SecondaryAction(title: "Record wear") { state.openWear(outfitID: outfit.id) }.disabled(pendingMutation != nil)
                     ForEach(outfit.pieceIDs, id: \.self) { pieceID in
-                        NavigationLink { PieceDetailView(id: pieceID) } label: {
+                        NavigationLink(value: ClosetRoute.piece(pieceID)) {
                             Label(state.pieces.first(where: { $0.id == pieceID })?.name ?? "Unavailable piece", systemImage: "tshirt")
                                 .frame(minHeight: 44)
                         }
                     }
+                    if let error { SemanticFeedback(role: .danger, message: error) }
+                    if let pendingMutation {
+                        PrimaryAction(title: "Check previous change") { apply(pendingMutation) }
+                    }
                 }.padding(20)
             } else {
                 ContentUnavailableView("Outfit unavailable", systemImage: "square.stack", description: Text("The outfit is no longer in your closet."))
+                if let pendingMutation {
+                    PrimaryAction(title: "Check previous change") { apply(pendingMutation) }.padding(20)
+                }
             }
         }.background(AppTheme.canvas)
-            .navigationTitle("Outfit").navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(state.outfits.first { $0.id == id }?.name ?? "Outfit").navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if let outfit = state.outfits.first(where: { $0.id == id }) {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu {
+                            Button("Edit outfit", systemImage: "square.and.pencil") { state.buildOutfit(editing: outfit) }
+                            Button(outfit.isFavorite ? "Remove from Favorites" : "Add to Favorites", systemImage: outfit.isFavorite ? "heart.slash" : "heart") {
+                                apply(OutfitMutationRequest(outfit: outfit, action: .favorite(!outfit.isFavorite)))
+                            }
+                            Button("Delete outfit", systemImage: "trash", role: .destructive) {
+                                do {
+                                    guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
+                                    deleteReview = try store.outfitDeletionReview(id: id)
+                                    deletePresented = true
+                                } catch { self.error = "The current deletion impact couldn’t be reviewed. Your outfit is retained." }
+                            }
+                        } label: { Label("More outfit options", systemImage: "ellipsis") }
+                            .tint(AppTheme.ink).disabled(pendingMutation != nil)
+                    }
+                }
+            }
+            .confirmationDialog("Delete this outfit?", isPresented: $deletePresented, titleVisibility: .visible) {
+                Button("Delete outfit", role: .destructive) { if let deleteReview { apply(deleteReview) } }
+                Button("Cancel", role: .cancel) { deleteReview = nil }
+            } message: { Text(deletionMessage) }
+            .onAppear { state.reloadOutfits() }
+    }
+
+    private var deletionMessage: String {
+        guard let request = deleteReview, case .delete(let dependencies) = request.action else { return "Review the current outfit before deleting it." }
+        return "Delete \(request.outfit.name). Remove its membership in \(dependencies.themeRevisions.count) themes and its links from \(dependencies.planRevisions.count) plan entries, keeping their dates. Your pieces, photos and recorded wear stay unchanged. This cannot be undone."
+    }
+    private func apply(_ request: OutfitMutationRequest) {
+        pendingMutation = request
+        do {
+            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
+            let receipt = try store.applyOutfitMutation(request)
+            complete(receipt)
+        } catch {
+            let failure = error
+            if let store = state.store {
+                do {
+                    if let receipt = try store.outfitMutationReceipt(for: request) { complete(receipt); return }
+                    if case PieceStore.StoreError.staleRevision = failure {
+                        pendingMutation = nil; deleteReview = nil
+                        state.reloadOutfits()
+                        self.error = "The outfit or its impact changed. Review the current record and try again."
+                        return
+                    }
+                } catch { }
+            }
+            state.reloadOutfits()
+            self.error = "The change didn’t finish. Check the same operation before starting another change."
+        }
+    }
+
+    private func complete(_ receipt: OutfitMutationReceipt) {
+        pendingMutation = nil; error = nil
+        state.reloadOutfits(); state.reloadPlanEntries()
+        if case .deleted = receipt { dismiss() }
     }
 }

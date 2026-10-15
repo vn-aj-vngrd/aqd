@@ -225,15 +225,21 @@ enum LocalSchemaV7: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV6.models + [StoredOutfitWear.self, StoredOutfitWearDraft.self, StoredOutfitWearSave.self] }
 }
 
+enum LocalSchemaV8: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(8, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV7.models + [StoredOutfitMutation.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
          .lightweight(fromVersion: LocalSchemaV3.self, toVersion: LocalSchemaV4.self),
          .lightweight(fromVersion: LocalSchemaV4.self, toVersion: LocalSchemaV5.self),
          .lightweight(fromVersion: LocalSchemaV5.self, toVersion: LocalSchemaV6.self),
-         .lightweight(fromVersion: LocalSchemaV6.self, toVersion: LocalSchemaV7.self)]
+         .lightweight(fromVersion: LocalSchemaV6.self, toVersion: LocalSchemaV7.self),
+         .lightweight(fromVersion: LocalSchemaV7.self, toVersion: LocalSchemaV8.self)]
     }
 }
 
@@ -279,13 +285,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:7".utf8)
-        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8), Data("AQD-piece-store:6".utf8)]
+        let version = Data("AQD-piece-store:8".utf8)
+        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8), Data("AQD-piece-store:6".utf8), Data("AQD-piece-store:7".utf8)]
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV7.self)
+        let schema = Schema(versionedSchema: LocalSchemaV8.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -359,11 +365,14 @@ final class PieceStore {
             // First-use stores are tiny. Bound both memory and transient disk use;
             // large unmarked stores are not a supported bootstrap recovery case.
             var remainingBytes = 32 * 1024 * 1024
+            var copiedFiles: [(suffix: String, hash: SHA256.Digest?)] = []
             for suffix in ["", "-wal"] {
                 let source = sourceDirectory.appendingPathComponent(storeURL.lastPathComponent + suffix)
                 let attributes: [FileAttributeKey: Any]
                 do { attributes = try FileManager.default.attributesOfItem(atPath: source.path) }
-                catch let error as CocoaError where error.code == .fileReadNoSuchFile && suffix == "-wal" { continue }
+                catch let error as CocoaError where error.code == .fileReadNoSuchFile && suffix == "-wal" {
+                    copiedFiles.append((suffix, nil)); continue
+                }
                 guard attributes[.type] as? FileAttributeType == .typeRegular,
                       source.resolvingSymlinksInPath().standardizedFileURL == sourceDirectory.resolvingSymlinksInPath()
                         .appendingPathComponent(source.lastPathComponent).standardizedFileURL else {
@@ -391,6 +400,33 @@ final class PieceStore {
                 let destination = inspectionDirectory.appendingPathComponent(source.lastPathComponent)
                 try bytes.write(to: destination, options: [.atomic, .completeFileProtection])
                 try protect(destination)
+                copiedFiles.append((suffix, SHA256.hash(data: bytes)))
+            }
+            // SQLite may checkpoint while separate DB/WAL files are copied.
+            // Refuse a mixed snapshot rather than misclassifying committed
+            // records as an empty bootstrap window. Recheck before inspection.
+            var verificationBudget = 32 * 1024 * 1024
+            for copied in copiedFiles {
+                let source = sourceDirectory.appendingPathComponent(storeURL.lastPathComponent + copied.suffix)
+                guard let expected = copied.hash else {
+                    guard !FileManager.default.fileExists(atPath: source.path) else { throw StoreError.unsupportedStore }
+                    continue
+                }
+                let descriptor = open(source.path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK)
+                guard descriptor >= 0 else { throw StoreError.unsupportedStore }
+                let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+                defer { try? handle.close() }
+                var status = stat()
+                guard fstat(descriptor, &status) == 0, status.st_mode & S_IFMT == S_IFREG,
+                      status.st_size >= 0, status.st_size <= verificationBudget else { throw StoreError.unsupportedStore }
+                var hash = SHA256()
+                var count = 0
+                while let chunk = try handle.read(upToCount: min(64 * 1024, verificationBudget - count + 1)), !chunk.isEmpty {
+                    guard chunk.count <= verificationBudget - count else { throw StoreError.unsupportedStore }
+                    count += chunk.count; hash.update(data: chunk)
+                }
+                guard count == status.st_size, hash.finalize() == expected else { throw StoreError.unsupportedStore }
+                verificationBudget -= count
             }
             // Copy the exact WAL when present (not SHM, media or unknown files),
             // so committed rows not yet checkpointed into the DB remain visible.
@@ -406,7 +442,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
+            let candidates = [(schema, 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -432,7 +468,10 @@ final class PieceStore {
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 7) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 8) throws -> Bool {
+        if storeVersion >= 8 {
+            guard try context.fetchCount(FetchDescriptor<StoredOutfitMutation>()) == 0 else { throw StoreError.unsupportedStore }
+        }
         if storeVersion >= 7 {
             guard try context.fetchCount(FetchDescriptor<StoredOutfitWear>()) == 0,
                   try context.fetchCount(FetchDescriptor<StoredOutfitWearDraft>()) == 0,
@@ -1387,7 +1426,7 @@ extension PieceStore {
         let previous = try existing?.value()
         guard (previous == nil || previous?.ownerID == draft.ownerID), (previous?.revision ?? 0) == draft.baseRevision else { throw StoreError.staleRevision }
         let saved = Outfit(id: draft.outfitID, ownerID: draft.ownerID, name: draft.trimmedName,
-                           pieceIDs: draft.pieceIDs, isFavorite: previous?.isFavorite ?? false,
+                           pieceIDs: draft.pieceIDs, mood: draft.mood, occasion: draft.occasion, isFavorite: previous?.isFavorite ?? false,
                            revision: draft.baseRevision + 1, createdAt: previous?.createdAt ?? Date())
         try saved.validated()
         if let existing { existing.payload = try JSONEncoder().encode(saved) }
@@ -1665,5 +1704,83 @@ extension PieceStore {
         let records = try context.fetch(FetchDescriptor<StoredOutfitWearDraft>())
         guard records.count == 1, let record = records.first, try record.value() == draft else { throw StoreError.staleDraft }
         context.delete(record); try commit(context)
+    }
+}
+
+extension PieceStore {
+    func outfitDeletionReview(id: UUID) throws -> OutfitMutationRequest {
+        guard let outfit = try outfit(id: id) else { throw StoreError.staleRevision }
+        let dependencies = OutfitDeletionDependencies(
+            themeRevisions: Dictionary(uniqueKeysWithValues: try themes().filter { $0.outfitIDs.contains(id) }.map { ($0.id, $0.revision) }),
+            planRevisions: Dictionary(uniqueKeysWithValues: try planEntries().filter { $0.outfitID == id }.map { ($0.id, $0.revision) }))
+        return OutfitMutationRequest(outfit: outfit, action: .delete(dependencies))
+    }
+
+    func outfitMutationReceipt(for request: OutfitMutationRequest) throws -> OutfitMutationReceipt? {
+        try request.outfit.validated()
+        let context = ModelContext(container)
+        let proofs = try context.fetch(FetchDescriptor<StoredOutfitMutation>()).filter { $0.id == request.operationID }
+        guard proofs.count <= 1 else { throw StoreError.invalidRecord }
+        if let proof = proofs.first {
+            guard try JSONDecoder().decode(OutfitMutationRequest.self, from: proof.request) == request else { throw StoreError.operationConflict }
+            let receipt = try JSONDecoder().decode(OutfitMutationReceipt.self, from: proof.result)
+            switch (request.action, receipt) {
+            case (.favorite(let flag), .saved(let saved)):
+                try saved.validated()
+                guard saved.id == request.outfit.id, saved.ownerID == request.outfit.ownerID,
+                      saved.isFavorite == flag, saved.revision == request.outfit.revision + 1 else { throw StoreError.invalidRecord }
+            case (.delete, .deleted(let id)):
+                guard id == request.outfit.id else { throw StoreError.invalidRecord }
+            default: throw StoreError.invalidRecord
+            }
+            return receipt
+        }
+        return nil
+    }
+
+    func applyOutfitMutation(_ request: OutfitMutationRequest) throws -> OutfitMutationReceipt {
+        try request.outfit.validated()
+        let context = ModelContext(container)
+        if let receipt = try outfitMutationReceipt(for: request) { return receipt }
+        guard allowsSave, request.outfit.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        let records = try context.fetch(FetchDescriptor<StoredOutfit>())
+        guard let record = records.first(where: { $0.id == request.outfit.id }), try record.value() == request.outfit else {
+            throw StoreError.staleRevision
+        }
+        let result: OutfitMutationReceipt
+        switch request.action {
+        case .favorite(let flag):
+            var value = request.outfit
+            value.isFavorite = flag; value.revision += 1; value.updatedAt = Date()
+            try value.validated()
+            record.payload = try JSONEncoder().encode(value)
+            result = .saved(value)
+        case .delete(let dependencies):
+            let current = try outfitDeletionReview(id: request.outfit.id)
+            guard current.outfit == request.outfit, current.action == .delete(dependencies) else { throw StoreError.staleRevision }
+            let themes = try context.fetch(FetchDescriptor<StoredOutfitTheme>())
+            for themeRecord in themes {
+                var theme = try themeRecord.value()
+                if theme.outfitIDs.contains(request.outfit.id) {
+                    theme.outfitIDs.removeAll { $0 == request.outfit.id }; theme.revision += 1
+                    try theme.validated(); themeRecord.payload = try JSONEncoder().encode(theme)
+                }
+            }
+            let plans = try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>())
+            for planRecord in plans {
+                var plan = try planRecord.value()
+                if plan.outfitID == request.outfit.id {
+                    plan.outfitID = nil; plan.outfitRevision = nil; plan.requiresReview = true
+                    if plan.state == .planned { plan.state = .unassigned }
+                    plan.revision += 1; try plan.validated()
+                    planRecord.payload = try JSONEncoder().encode(plan)
+                }
+            }
+            context.delete(record)
+            result = .deleted(request.outfit.id)
+        }
+        context.insert(try StoredOutfitMutation(request: request, result: result))
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+        return result
     }
 }

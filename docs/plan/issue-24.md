@@ -20,8 +20,8 @@
 | S2 | Create/select multiple themes during outfit save; preserve names, memberships and identity | O3, O4, O7 | Committed | `AQD-Slice: #24/S2` | `0f4666d` |
 | S3 | Readiness/pinned first outfit and labelled rules/manual fallback; reviewed suggestions and safe replacement | O5, O6, O8, O9; W8–9 | Committed; model activation deferred #30 | `AQD-Slice: #24/S3` | `75c01c1` |
 | S4 | Date-prefilled real Plan review/save/restart, distinct from wear | O9; scoped LOCAL-04/09 | Committed | `AQD-Slice: #24/S4` | `224da9f` |
-| S5 | Explicit Record wear review/save/deduplication and historical snapshots | O9; scoped LOCAL-04/09 | Committed | `AQD-Slice: #24/S5` | Pending |
-| S6 | Outfit More/favorite/edit/delete with exact reference impact | O1; scoped LOCAL-04/11 | Planned | `AQD-Slice: #24/S6` | Pending |
+| S5 | Explicit Record wear review/save/deduplication and historical snapshots | O9; scoped LOCAL-04/09 | Committed | `AQD-Slice: #24/S5` | `a72383e` |
+| S6 | Outfit More/favorite/edit/delete with exact reference impact | O1; scoped LOCAL-04/11 | Committed | `AQD-Slice: #24/S6` | Pending |
 
 ## Acceptance and evidence
 
@@ -86,3 +86,14 @@ Outfit → Record wear has its own durable task, day/timezone, shared owned-piec
 Passed Core50, generic iOS Debug build and physical native110 (97 Swift Testing +13 XCTest), zero failures. Logs `/tmp/aqd-24-s5-core-final.log`, `/tmp/aqd-24-s5-build.log`, `/tmp/aqd-24-s5-unit.log`. Bounded Standards/Spec review covers no implicit wear, exact duplicate consent/operation identity, stable day/timezone, protected existing records and non-photo historical ownership. All E2E/UI acceptance remains #30. Next S6 adds saved-outfit More/favorite/delete and dependency-aware consequences; complete Closet/search/theme management remains #23.
 
 Native result: `/tmp/aqd-24-device-s1/Logs/Test/Run-AQD-2026.10.16_01-32-38-+0800.xcresult`.
+
+
+### S6 outfit lifecycle and current-record navigation
+
+Outfit More owns Edit, Favorite and reviewed Delete. Immutable mutation receipts reconcile lost acknowledgments without another revision/change. Deletion previews exact theme/plan revisions, revalidates impact before writing, removes memberships, unassigns planned entries while preserving dates/occasions, and keeps owned pieces/media and historical wear snapshots. Changed impact rejects the old review without partial deletion. Saved receipt Open outfit and piece/outfit links use shared typed navigation; Done/source returns remain distinct.
+
+Review found and fixed missing saved occasion/mood (draft-only fields were dropped). Public Core regression first failed against missing fields; current save/reopen/edit and rule-source native checks now assert them. Existing payloads decode missing optional fields without changing native model schemas. Review also found an intermittent unmarked-populated bootstrap refusal failure. DB/WAL copies can race checkpointing; the preflight now rehashes bounded source files before inspecting the copy and refuses mixed snapshots. The test asserts its committed outfit precondition; no protection assertion was weakened.
+
+Final Core51 and physical native113 (100 Swift Testing +13 XCTest) pass, zero failures; `/tmp/aqd-24-s6-bootstrap-final.log`. Previous failed unmarked-store run remains `/tmp/aqd-24-s6-context-final.log`, not a pass. Initial lifecycle test compilation required a throwing-assertion correction. All actual product writes, lost-ack retries, deletion impact, legacy migrations and bootstrap refusal are included in final native units. The last error-copy-only edit does not change those tested operations; UI acceptance remains #30. Bounded Standards/Spec review covered atomic cascade, exact acknowledgment, source routes, context persistence and storage preservation. Full grouped independent review and remote CI/Codex remain before merge. Next #23/S1 completes the Closet/search collection journeys on this same branch.
+
+Final native result: `/tmp/aqd-24-device-s1/Logs/Test/Run-AQD-2026.10.16_01-48-11-+0800.xcresult`.

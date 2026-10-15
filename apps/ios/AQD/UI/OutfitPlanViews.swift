@@ -139,6 +139,7 @@ struct LocalPlannerView: View {
                 }.padding(20)
             }.background(AppTheme.canvas)
                 .navigationTitle("Planner")
+                .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
                 .toolbar { ToolbarItem(placement: .topBarTrailing) {
                     Button { state.openPlan() } label: { Label("Add plan", systemImage: "plus") }.tint(AppTheme.ink)
                 } }
@@ -159,7 +160,7 @@ private struct LocalPlanEntryView: View {
                     if !entry.occasion.isEmpty { Text(entry.occasion) }
                     if let outfit = state.outfits.first(where: { $0.id == entry.outfitID }) {
                         OutfitComposition(pieceIDs: outfit.pieceIDs)
-                        NavigationLink("Open outfit") { OutfitDetailView(id: outfit.id) }.frame(minHeight: 44)
+                        NavigationLink(value: ClosetRoute.outfit(outfit.id)) { Text("Open outfit") }.frame(minHeight: 44)
                         if entry.requiresReview || outfit.revision != entry.outfitRevision {
                             SemanticFeedback(role: .warning, message: "This outfit changed after planning. Review its current pieces before wearing it.")
                         }

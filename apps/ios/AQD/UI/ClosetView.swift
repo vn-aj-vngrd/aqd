@@ -59,7 +59,7 @@ struct ClosetView: View {
                 }
             }
             .searchable(text: $query, prompt: "Search pieces")
-            .navigationDestination(for: UUID.self) { id in PieceDetailView(id: id) }
+            .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
             .onAppear(perform: refresh)
             .onChange(of: query) { refresh() }
             .onChange(of: category) { refresh() }
@@ -90,7 +90,7 @@ struct ClosetView: View {
             }
         } else {
             List(results) { piece in
-                NavigationLink(value: piece.id) {
+                NavigationLink(value: ClosetRoute.piece(piece.id)) {
                     HStack(spacing: 14) {
                         PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                             .frame(width: 64, height: 80)

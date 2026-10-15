@@ -22,10 +22,12 @@ struct OutfitPersistenceTests {
         var store: PieceStore? = try PieceStore(directory: directory)
         let piece = try await seedPiece(#require(store))
         var draft = OutfitDraft(ownerID: try #require(store).todayConfiguration().ownerID)
-        draft.name = " Weekend "; draft.select(piece.id)
+        draft.name = " Weekend "; draft.mood = "Relaxed"; draft.occasion = "Weekend"; draft.select(piece.id)
         try #require(store).saveOutfitDraft(draft)
         let saved = try #require(store).saveOutfit(draft)
         #expect(saved.name == "Weekend")
+        #expect(saved.mood == "Relaxed")
+        #expect(saved.occasion == "Weekend")
         #expect(try #require(store).saveOutfit(draft) == saved)
         store = nil
         store = try PieceStore(directory: directory)
@@ -40,6 +42,8 @@ struct OutfitPersistenceTests {
         #expect(updated.id == saved.id)
         #expect(updated.revision == 2)
         #expect(updated.pieceIDs == [piece.id])
+        #expect(updated.mood == "Relaxed")
+        #expect(updated.occasion == "Weekend")
         try #require(store).acknowledgeOutfitReceipt(edit)
         var cancelled = OutfitDraft(editing: updated)
         cancelled.name = "Discard me"
@@ -134,6 +138,7 @@ struct OutfitPersistenceTests {
         #expect(try store.outfitDraft() == editor.draft)
         await editor.save()
         #expect(try store.outfits().count == 1)
+        #expect(editor.saved?.occasion == "Weekend")
         state.outfitEditor = nil; state.store = nil
     }
 
@@ -141,12 +146,13 @@ struct OutfitPersistenceTests {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         do { _ = try PieceStore(directory: directory) }
         do {
-            let schema = Schema(versionedSchema: LocalSchemaV7.self)
+            let schema = Schema(versionedSchema: LocalSchemaV8.self)
             let config = ModelConfiguration(schema: schema, url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
             let container = try ModelContainer(for: schema, configurations: [config])
             let context = ModelContext(container)
             context.insert(try StoredOutfit(Outfit(id: UUID(), ownerID: UUID(), name: "Retain me", pieceIDs: [UUID()])))
             try context.save()
+            try #require(context.fetchCount(FetchDescriptor<StoredOutfit>()) == 1, "The refusal fixture must contain a committed outfit")
         }
         try FileManager.default.removeItem(at: directory.appendingPathComponent("schema-version"))
         #expect(throws: (any Error).self) { _ = try PieceStore(directory: directory) }

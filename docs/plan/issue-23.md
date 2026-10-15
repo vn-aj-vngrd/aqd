@@ -35,5 +35,5 @@ One grouped PR closes #24 and #23. Keep per-slice commits and separate issue acc
 
 ## Resume
 
-- Discovery complete for the first manual outfit seam. The owner confirmed physical iPhone readiness; no native run yet.
-- Next: verify PR33 delivery, create branch from merged main, inspect live Paper descendants/styles for the first slice and implement its complete manual journey.
+- Companion #24 S1–S6 now supplies real outfits/themes/Plan/Wear/lifecycle. Native unit verification uses the confirmed-ready physical iPhone; all E2E remains #30.
+- Next: implement #23/S1 on the existing shared branch, beginning with real Closet collections, contextual Add and scoped native search. PR33 delivery is verified in the baseline above.

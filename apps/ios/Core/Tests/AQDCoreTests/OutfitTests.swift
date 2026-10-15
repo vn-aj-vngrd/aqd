@@ -18,6 +18,15 @@ struct OutfitTests {
         #expect(draft.name == "  Weekend  ")
     }
 
+    @Test func savedOutfitRetainsOccasionAndMoodWhenReopenedForEditing() throws {
+        let item = piece()
+        let saved = Outfit(id: UUID(), ownerID: UUID(), name: "Evening", pieceIDs: [item.id], mood: "Relaxed", occasion: "Weekend")
+        let reopened = try JSONDecoder().decode(Outfit.self, from: JSONEncoder().encode(saved))
+        let edit = OutfitDraft(editing: reopened)
+        #expect(edit.mood == "Relaxed")
+        #expect(edit.occasion == "Weekend")
+    }
+
     @Test func staleOrArchivedSelectionCannotBeSavedAndDraftIsRetained() throws {
         let item = piece()
         var draft = OutfitDraft(ownerID: UUID())
