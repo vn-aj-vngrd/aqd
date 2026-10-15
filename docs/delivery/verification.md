@@ -1,5 +1,9 @@
 # Current verification
 
+## Issue #21 stable numeric remainder, October 15, 2026
+
+Codex4285110496 reproduced negative inches from cancellation at an accepted large height. [S8 proof](../pan/evidence/issue-21/s8/README.md) records RED4 then Core36,905 finite-range samples, physical native96 and combined physical height1/1 passed, zero failures/skips. The case repeats all three numeric regressions/restarts and ordinary saved return; final Release builds and inspected source-bound media is retained. Unaffected feature proof retains its earlier qualified scope. Current-head CI/Codex/protected merge/release remain pending.
+
 ## Issue #21 positive-height precision, October 15, 2026
 
 Codex4284964778 found accepted tiny heights could round to zero and disable units. [S7 proof](../pan/evidence/issue-21/s7/README.md) records20 failing public-seam assertions before the formatter fix, then Core35/native96 and extended physical height1/1 pass, zero failures/skips. Canonical values survive restart; both rounding boundaries and normal saved return are covered. Release builds; prior unrelated source/results remain qualified reuse. Final-head CI/Codex and protected delivery remain pending.

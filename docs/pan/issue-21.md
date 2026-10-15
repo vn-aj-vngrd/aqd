@@ -21,7 +21,8 @@
 | S4 | Guard physical proof from system banners/non-AQD captures and pair confirmation text/fill contrast | E4/E6 | Five affected physical cases, retained base failures, inspected light/dark buttons and source review | Committed | `AQD-Slice: #21/S4` | `e5de900123bbbad428639d48130545df7b2be624` |
 | S5 | Persist final feature proof, source/context/design ledgers and delivery receipt | E1–E6 | Actual source-bound outcomes, inspected media, docs/tooling checks and remote gates | Committed | `AQD-Slice: #21/S5` | `adf0385416f74c1dc9b97ce77179836e2d4bef97` |
 | S6 | Carry displayed12in into next foot while preserving canonical cm | E3, Codex4284764022 | Core34/native96, physical height1/1, Release | Committed | `AQD-Slice: #21/S6` | `e0d1faab8290e9b80838d290ae2e972fdbffaedc` |
-| S7 | Preserve positive display/units for tiny values and conversion underflow | E3, Codex4284964778 | Core35/native96, extended physical height1/1, Release | Verified | `AQD-Slice: #21/S7` | This correction commit |
+| S7 | Preserve positive display/units for tiny values and conversion underflow | E3, Codex4284964778 | Core35/native96, extended physical height1/1, Release | Committed | `AQD-Slice: #21/S7` | `8c35a914017a4f7c8fbdadd60a21476efe168858` |
+| S8 | Keep finite-range height conversions valid with stable inch remainder | E3, Codex4285110496 | Core36/native96, extended physical1/1, Release | Verified | `AQD-Slice: #21/S8` | This correction commit |
 
 ## Acceptance and evidence
 
@@ -145,11 +146,11 @@ Independent Spec review found two actual review defects: omitted comfort and unl
 
 ## Resume
 
-- Current phase: S0–S6 committed; S7 positive-height precision correction is verified and ready to commit.
-- PR: https://github.com/vn-aj-vngrd/aqd/pull/33. Previous head `e0d1faab8290e9b80838d290ae2e972fdbffaedc`; final correction source bound by [exact hashes](evidence/issue-21/s7/receipt.json).
-- Next action: commit/push S7, publish/read back proof, resolve Codex4284964778, request one current-head review, wait for CI/Codex, then protected squash/release. Do not start another issue.
-- Local gate: Core35/native96, extended focused height1/1 and final Release pass. Earlier base/refresh/appearance results retain their own identity and qualified reuse.
-- External blocker: none confirmed. Physical phone stayed available, and local simulators remain shut down.
+- Current phase: S0–S7 committed; S8 stable-remainder correction is locally verified and ready to commit.
+- PR: https://github.com/vn-aj-vngrd/aqd/pull/33. Previous head `8c35a914017a4f7c8fbdadd60a21476efe168858`; current correction bound by [exact hashes](evidence/issue-21/s8/receipt.json).
+- Next action: commit/push S8, publish/read back its evidence, resolve Codex4285110496, obtain one new-head Codex review and all current-head CI, then protected squash/release. Do not start another issue.
+- Local gate: Core36/native96, combined physical height1/1 and final Release pass. All three numeric regressions and ordinary height/save are refreshed together; unaffected feature results retain qualified source-bound reuse.
+- External blocker: none confirmed. Phone remained available; local simulators stay shut down. A prior CI watcher had a transient network error; actual workflow status was refreshed successfully without rerunning tests.
 
 ### Owner correction: actual screens and native confirmations
 
@@ -206,3 +207,9 @@ S6 checks: real RED5 assertions, full Core34 green, physical native96 passed, fo
 Codex4284964778 on head `e0d1faa` identifies accepted tiny positive cm formatting to zero and blocking unit switching. Correct the formatter's nonzero-value invariant, including positive floating-point conversion underflow, while retaining canonical cm and ordinary display. Existing approved HeightInput public seam supplies RED/GREEN and the focused physical height journey gains the exact decimal regression. Marker `AQD-Slice: #21/S7`, in progress; required current-head remote gates refresh after the correction.
 
 S7 final checks pass Core35/native96, focused physical1/1, Release, tooling57 and agent docs. [Proof](evidence/issue-21/s7/README.md) retains RED20, exact input/product hashes and inspected original screenshot. Extended physical case also refreshes S6 and ordinary height/save behavior. Source Standards/Spec reviews are clear. Commit/push S7, resolve the addressed thread and refresh final-head CI/Codex.
+
+### S8 finite-range conversion correction
+
+Codex4285110496 on `8c35a91` reproduces cancellation at137500000000000000cm: subtracting the large foot product yields negative inches and disables unit switching. Test the whole supported finite range at the existing public height seam, including greatestFiniteMagnitude, then replace subtractive remainder with stable modulo. Preserve canonical cm and prior rounding/underflow corrections. Marker `AQD-Slice: #21/S8`; locally verify the expanded same physical journey before refreshing final-head remote gates.
+
+S8 checks passed: genuine RED4, full Core36 with905 finite-range samples, physical native96, extended height1/1, inspected original large-value image and final unsigned Release. Independent Standards/Spec audit found no remaining concrete conversion defect. [S8 receipt](evidence/issue-21/s8/README.md) binds exact code/test/product hashes. Tooling57 passes. Commit/push the isolated S3 correction, refresh final-head proof/CI/Codex and preserve protected delivery.

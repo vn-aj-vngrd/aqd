@@ -57,6 +57,30 @@ struct BodyInputTests {
         }
     }
 
+    @Test func largeFiniteMeasurementsRemainValidAndSwitchable() throws {
+        let rangeSamples = stride(from: -1074, through: 1023, by: 7).flatMap { exponent in
+            [1.0, 1.375, 1.9999999999999998].map {
+                Double(sign: .plus, exponent: exponent, significand: $0)
+            }
+        }
+        for value in [137500000000000000.0, 1e20, 1e100, 1e300, Double.greatestFiniteMagnitude] + rangeSamples {
+            var input = HeightInput(body: BodyPreferences())
+            input.edit(.centimeters, text: String(value))
+            #expect(input.isValid)
+            input.switchUnits(to: .feetInches)
+            #expect(input.units == .feetInches)
+            #expect(input.isValid)
+            let inches = try #require(Double(input.inchesText))
+            #expect(inches >= 0 && inches < 12)
+            #expect(input.centimeters == value)
+            input = try JSONDecoder().decode(HeightInput.self, from: JSONEncoder().encode(input))
+            input.switchUnits(to: .cm)
+            #expect(input.units == .cm)
+            #expect(input.isValid)
+            #expect(input.centimeters == value)
+        }
+    }
+
     @Test func optionalHeightValidatesFinitePositiveUnitsWithoutNormativeBounds() {
         var input = HeightInput(body: BodyPreferences())
         #expect(input.isValid && input.centimeters == nil)

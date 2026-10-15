@@ -55,7 +55,7 @@ public struct HeightInput: Codable, Equatable, Sendable {
         // Preserve a positive display even if conversion underflows Double.
         let total = max(value / 2.54, Double.leastNonzeroMagnitude)
         let feet = (total / 12).rounded(.down)
-        let inches = Self.text(total - feet * 12)
+        let inches = Self.text(total.truncatingRemainder(dividingBy: 12))
         // Display rounding can carry the remainder into the next foot.
         feetText = Self.text(inches == "12" ? feet + 1 : feet)
         inchesText = inches == "12" ? "0" : inches
