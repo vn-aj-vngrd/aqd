@@ -2,7 +2,7 @@
 
 ## Group #24/#23 feature-unit checkpoint, October 16, 2026
 
-All ten feature slices now have actual source implementations. [Issue24](../plan/issue-24.md) and [issue23](../plan/issue-23.md) retain per-slice commands/results and genuine prior failures. Current `/tmp/aqd-23-s4-unit.log` passes Core52 and physical native127, zero failures; `/tmp/aqd-24-23-tooling.log` passes51 repository tooling tests. Independent full-group review, final unsigned Release and latest-head remote gates are still pending at this checkpoint. PR33/#21 is already merged as f89a2de with successful main CI/Release and published v1.2.0.
+All ten feature slices now have actual source implementations. [Issue24](../plan/issue-24.md) and [issue23](../plan/issue-23.md) retain per-slice commands/results and genuine prior failures. [Final unit receipt](../plan/evidence/issue-24-23/README.md) records Core52/native129 plus the final dispatcher correction’s five-case native refresh, zero failures. Repository tooling51 and final unsigned Release pass. Independent Standards/Spec findings are resolved and rechecked. Latest-head remote CI/Codex and protected delivery remain pending at this checkpoint. PR33/#21 is already merged as f89a2de with successful main CI/Release and published v1.2.0.
 
 No simulator or E2E runs are authorized for this group. All UI/E2E/accessibility/device/model qualification stays #30; unit tests and Paper source translation do not certify rendered fidelity or complete V1 acceptance.
 

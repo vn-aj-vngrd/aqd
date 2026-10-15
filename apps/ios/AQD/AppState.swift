@@ -29,6 +29,9 @@ final class AppState {
     var openingError: String?
     var isOpening = false
     var pieces: [WardrobePiece] = []
+    var archivedPieces: [WardrobePiece] = []
+    var ownedPieces: [WardrobePiece] { pieces + archivedPieces }
+    var pendingOutfitEditID: UUID?
     var collectionRefreshID = UUID()
     var capture: CaptureModel?
     var collectionError: String?
@@ -241,7 +244,9 @@ final class AppState {
     func reloadPieces() {
         guard let store else { return }
         do {
-            pieces = try store.pieces()
+            let owned = try store.ownedPiecesForWear()
+            pieces = owned.filter { !$0.isArchived }
+            archivedPieces = owned.filter(\.isArchived)
             collectionError = nil
             // Archived edits can change detail data without changing the active pieces array.
             collectionRefreshID = UUID()

@@ -76,6 +76,14 @@ struct OutfitEditorView: View {
                         .accessibilityLabel(model.saved == nil ? "Cancel outfit" : "Done")
                         .tint(AppTheme.ink).disabled(model.pending || model.unknown || model.generating)
                 }
+                if model.saved != nil {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu {
+                            Button("Edit outfit", systemImage: "square.and.pencil") { model.editSavedOutfit() }
+                        } label: { Label("More outfit options", systemImage: "ellipsis") }
+                            .tint(AppTheme.ink).disabled(model.pending || model.unknown)
+                    }
+                }
             }
             .navigationDestination(isPresented: $choosing) { OutfitPieceChooser(model: model) }
             .navigationDestination(isPresented: $choosingThemes) { OutfitThemeChooser(model: model) }
@@ -125,9 +133,12 @@ struct OutfitComposition: View {
             } else {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 8) {
                     ForEach(shownIDs, id: \.self) { id in
-                        if let piece = state.pieces.first(where: { $0.id == id }) {
-                            PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
-                                .frame(height: pieceHeight).accessibilityLabel(piece.name)
+                        if let piece = state.ownedPieces.first(where: { $0.id == id }) {
+                            VStack(spacing: 4) {
+                                PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                                    .frame(height: pieceHeight).accessibilityLabel(piece.name)
+                                if piece.isArchived { Text("Archived").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+                            }
                         } else {
                             Label("Piece unavailable", systemImage: "tshirt").frame(minHeight: 80)
                         }
@@ -191,6 +202,11 @@ struct OutfitDetailView: View {
     @State private var pendingMutation: OutfitMutationRequest?
     @State private var error: String?
 
+    private func pieceLabel(_ id: UUID) -> String {
+        guard let piece = state.ownedPieces.first(where: { $0.id == id }) else { return "Unavailable piece" }
+        return piece.name + (piece.isArchived ? " · Archived" : "")
+    }
+
     var body: some View {
         ScrollView {
             if let outfit = state.outfits.first(where: { $0.id == id }) {
@@ -202,7 +218,7 @@ struct OutfitDetailView: View {
                     SecondaryAction(title: "Record wear") { state.openWear(outfitID: outfit.id) }.disabled(pendingMutation != nil)
                     ForEach(outfit.pieceIDs, id: \.self) { pieceID in
                         NavigationLink(value: ClosetRoute.piece(pieceID)) {
-                            Label(state.pieces.first(where: { $0.id == pieceID })?.name ?? "Unavailable piece", systemImage: "tshirt")
+                            Label(pieceLabel(pieceID), systemImage: "tshirt")
                                 .frame(minHeight: 44)
                         }
                     }

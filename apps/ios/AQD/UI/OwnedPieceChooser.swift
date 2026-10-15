@@ -16,12 +16,15 @@ struct OwnedPieceChooser: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var typeSize
 
-    private var filteredPieces: [WardrobePiece] {
-        pieces.filter {
-            (category == nil || $0.category == category) &&
-            (query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-             "\($0.name) \($0.details.color) \($0.details.brand)".localizedCaseInsensitiveContains(query))
+    static func visiblePieces(in pieces: [WardrobePiece], selected: [UUID], category: PieceCategory?, query: String) -> [WardrobePiece] {
+        let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        return pieces.filter {
+            selected.contains($0.id) || ((category == nil || $0.category == category) &&
+                (needle.isEmpty || "\($0.name) \($0.details.color) \($0.details.brand)".localizedCaseInsensitiveContains(needle)))
         }
+    }
+    private var filteredPieces: [WardrobePiece] {
+        Self.visiblePieces(in: pieces, selected: selected, category: category, query: query)
     }
 
     var body: some View {

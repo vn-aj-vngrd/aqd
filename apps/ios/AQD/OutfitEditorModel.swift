@@ -202,6 +202,7 @@ extension OutfitEditorModel {
 
 extension AppState {
     func openPendingOutfitCapture() {
+        if pendingOutfitEditID != nil { resumePendingOutfitEdit(); return }
         if let id = pendingPlanOutfitID {
             pendingPlanOutfitID = nil
             openPlan(outfitID: id)
@@ -220,5 +221,29 @@ extension AppState {
             pendingFirstOutfitPieceID = nil
             buildOutfit(pieceID: pieceID, firstOutfit: true)
         } else { reloadPieces(); resumeOutfitDraft() }
+    }
+}
+
+
+extension OutfitEditorModel {
+    func editSavedOutfit() {
+        guard !pending, !unknown, let saved else { return }
+        do {
+            guard let store = state.store, try store.outfit(id: saved.id) != nil else { throw PieceStore.StoreError.staleRevision }
+            try store.acknowledgeOutfitReceipt(draft)
+            state.pendingOutfitEditID = saved.id
+            state.outfitEditor = nil
+        } catch { self.error = "This saved outfit couldn’t open for editing. Its receipt is retained; retry." }
+    }
+}
+
+extension AppState {
+    func resumePendingOutfitEdit() {
+        guard let id = pendingOutfitEditID else { return }
+        pendingOutfitEditID = nil
+        do {
+            guard let store, let outfit = try store.outfit(id: id) else { throw PieceStore.StoreError.staleRevision }
+            buildOutfit(editing: outfit)
+        } catch { outfitError = "The saved outfit couldn’t reopen. Your collection is retained; retry from its detail." }
     }
 }

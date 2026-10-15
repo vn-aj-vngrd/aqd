@@ -19,7 +19,7 @@
 | S1 | Three real Closet collections, source-preserving navigation, Add and scoped search start/results/empty/failure | W4, O2; scoped LOCAL-11 | Committed | `AQD-Slice: #23/S1` | `c49469b` |
 | S2 | Piece metadata, availability/filter/sort and archive/Undo/restore; retained records and references | W3–5, W7; scoped LOCAL-03 | Committed | `AQD-Slice: #23/S2` | `84a5011` |
 | S3 | Reviewed piece deletion with exact outfit/theme/future-plan impact and historical snapshots retained | W6; scoped LOCAL-03/04 | Committed | `AQD-Slice: #23/S3` | `02e6388` |
-| S4 | Theme collection/create/detail/options/edit/multiple membership/favorite/search/delete without deleting outfits | O3, O4, O7; scoped LOCAL-04/11 | Committed | `AQD-Slice: #23/S4` | Pending |
+| S4 | Theme collection/create/detail/options/edit/multiple membership/favorite/search/delete without deleting outfits | O3, O4, O7; scoped LOCAL-04/11 | Committed | `AQD-Slice: #23/S4` | `e457e26` |
 
 ## Acceptance and evidence
 
@@ -61,3 +61,7 @@ Core52 and physical native124 (111 Swift Testing plus13 XCTest) pass, zero failu
 Theme commands now include revision-bound Delete, removing only that theme/memberships while preserving outfits, other memberships, favorites and history. Denied and lost-acknowledgment retries are covered by immutable deletion receipts. V9→V10 migration retains prior piece-deletion proofs. Newly saved themes open their actual detail; edits return to the caller. Nested theme creation selects the new theme provisionally in the outfit chooser, with parent Use themes/Save still owning outfit membership. Deleted theme filters show an explicit unavailable selection. Contextual Add has the registered forward accessories.
 
 Core52, physical native127 (114 Swift Testing plus13 XCTest) and repository tooling51 pass, zero failures. Logs `/tmp/aqd-23-s4-unit.log` and `/tmp/aqd-24-23-tooling.log`. Bounded Standards/Spec review covered theme-only deletion, other memberships/favorites, exact unknown retry, preserving migration and provisional chooser source. Unsigned Release passes (`/tmp/aqd-24-23-release.log`). Independent review found three bounded outfit/chooser presentation gaps, which will be corrected before the PR. No E2E or simulator run; UI acceptance remains #30.
+
+## Final grouped local gate
+
+All feature slices are committed. Independent Standards/Spec review found archived outfit display, chooser selected visibility and saved-receipt Edit gaps, corrected and independently rechecked in [#24/S7](issue-24.md#s7-independent-review-corrections). [Unit receipt](evidence/issue-24-23/README.md) binds Core52/native129 plus the final five-case dispatcher refresh, repository tooling51 and passing unsigned Release to the final Swift source hashes. No E2E or simulator ran. Resume at the one grouped PR's latest-head CI/Codex gate, then protected squash and exact merged-SHA release verification.

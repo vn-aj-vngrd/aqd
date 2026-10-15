@@ -31,6 +31,11 @@ struct PieceCollectionTests {
         try store.savePlanDraft(plan); _ = try store.savePlan(plan); try store.finishPlanDraft(plan)
         let archived = try store.setArchived(id: one.id, archived: true, expectedRevision: one.revision, operationID: UUID())
         #expect(try store.pieces(archived: true) == [archived])
+        let state = AppState(store: store)
+        #expect(!state.pieces.contains { $0.id == archived.id })
+        #expect(state.ownedPieces.first { $0.id == archived.id } == archived)
+        #expect(state.ownedPieces.first { $0.id == archived.id }?.photoID == one.photoID)
+        state.store = nil
         #expect(try store.outfit(id: outfit.id) == outfit)
         let affected = try #require(try store.planEntries().first)
         #expect(affected.requiresReview)
@@ -73,5 +78,39 @@ struct PieceCollectionTests {
         #expect(state.outfitEditor?.draft.stage == .suggest)
         #expect(state.outfitEditor?.draft.pinnedPieceIDs == [one.id])
         state.store = nil
+    }
+    @Test func chooserKeepsSelectedPiecesVisibleAcrossCategoryAndQuery() {
+        let one = WardrobePiece(id: UUID(), name: "Shirt", category: .tops, photoID: UUID())
+        let two = WardrobePiece(id: UUID(), name: "Boots", category: .shoes, photoID: UUID())
+        let pieces = [one, two]
+        #expect(OwnedPieceChooser.visiblePieces(in: pieces, selected: [one.id], category: .shoes, query: "Boots") == pieces)
+        #expect(OwnedPieceChooser.visiblePieces(in: pieces, selected: [one.id], category: .shoes, query: "No match") == [one])
+        #expect(OwnedPieceChooser.visiblePieces(in: pieces, selected: [], category: .shoes, query: "Boots") == [two])
+        #expect(OwnedPieceChooser.visiblePieces(in: pieces, selected: [], category: nil, query: " ") == pieces)
+    }
+
+    @Test func savedReceiptEditAcknowledgesBeforeOpeningSameOutfitIdentity() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let (piece, _, _) = try await seed(store)
+        let state = AppState(store: store)
+        state.buildOutfit(pieceID: piece.id)
+        let editor = try #require(state.outfitEditor)
+        editor.update { $0.name = "Receipt edit" }
+        await editor.save()
+        let saved = try #require(editor.saved)
+        editor.editSavedOutfit()
+        #expect(state.outfitEditor == nil)
+        #expect(try store.outfitDraft() == nil)
+        #expect(state.pendingOutfitEditID == saved.id)
+        state.openPendingOutfitCapture()
+        let edit = try #require(state.outfitEditor)
+        #expect(edit.draft.outfitID == saved.id)
+        #expect(edit.draft.baseRevision == saved.revision)
+        #expect(edit.draft.name == saved.name)
+        #expect(edit.draft.operationID != editor.draft.operationID)
+        edit.update { $0.name = "Edited again" }; await edit.save()
+        #expect(edit.saved?.id == saved.id)
+        #expect(edit.saved?.revision == saved.revision + 1)
+        state.outfitEditor = nil; state.store = nil
     }
 }
