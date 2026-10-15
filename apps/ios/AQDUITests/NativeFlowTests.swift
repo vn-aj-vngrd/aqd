@@ -1,5 +1,6 @@
 import XCTest
 import UIKit
+import Vision
 
 /// Tests the delivered native baseline, not the unfinished full V1 journey.
 /// Real persistence and system flows; one explicitly guarded synthetic deletion
@@ -341,6 +342,7 @@ final class NativeFlowTests: XCTestCase {
         visibleEditor.name = "Full screen — Notes text and caret visibility before Apply"
         visibleEditor.lifetime = .keepAlways
         add(visibleEditor)
+        XCTAssertNoThrow(try assertRenderedEditorText("FoundationLandscapeNotes", editor: notes, footer: apply))
         XCTAssertTrue(apply.isHittable)
         XCTAssertLessThanOrEqual(apply.frame.maxY, keyboard.frame.minY + 1)
         attachScreenshot("Landscape Details Notes and keyboard-safe Apply")
@@ -412,7 +414,7 @@ final class NativeFlowTests: XCTestCase {
         attachScreenshot("Portrait Details relaunch retains applied values and discards provisional child edit")
     }
 
-    func testMultilineNotesKeepEditingAcrossRotation() {
+    func testMultilineNotesKeepEditingAcrossRotation() throws {
         defer { XCUIDevice.shared.orientation = .portrait }
         tab("Closet").tap()
         app.buttons["closet.addPiece"].tap()
@@ -460,6 +462,7 @@ final class NativeFlowTests: XCTestCase {
         let edited = text + "\nLine 7 after rotation"
         XCTAssertEqual(notes.value as? String, edited)
         captureEditor("Full screen — multiline Notes active last line and caret after rotation")
+        try assertRenderedEditorText("Line 7 after rotation", editor: notes, footer: apply)
         XCTAssertTrue(app.keyboards.firstMatch.keys["space"].isHittable,
                       "Continued multiline editing after rotation must retain the software keyboard")
         XCTAssertTrue(notes.isHittable)
@@ -1527,12 +1530,17 @@ final class NativeFlowTests: XCTestCase {
             if target.exists, target.isHittable, target.frame.minY >= top, target.frame.maxY <= bottom {
                 return true
             }
-            let upward = !target.exists || target.frame.midY > (top + bottom) / 2
+            let upward = !target.exists || target.frame.maxY > bottom
+            let gap = target.exists ? (upward ? max(0, target.frame.maxY - bottom) : max(0, top - target.frame.minY)) : bottom - top
+            // Full-body swipes can alternate past a short target in landscape.
+            // Move only the missing distance, holding at the end to stop inertia.
+            let distance = min(bottom - top - 40, max(20, gap + 8))
             let origin = app.coordinate(withNormalizedOffset: .zero)
             let x = app.frame.width / 2
-            let start = origin.withOffset(CGVector(dx: x, dy: (upward ? bottom - 20 : top + 20) - app.frame.minY))
-            let end = origin.withOffset(CGVector(dx: x, dy: (upward ? top + 20 : bottom - 20) - app.frame.minY))
-            start.press(forDuration: 0.05, thenDragTo: end)
+            let startY = upward ? bottom - 20 : top + 20
+            let start = origin.withOffset(CGVector(dx: x, dy: startY - app.frame.minY))
+            let end = origin.withOffset(CGVector(dx: x, dy: startY + (upward ? -distance : distance) - app.frame.minY))
+            start.press(forDuration: 0.05, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
         }
         attachScreenshot("Unqualified form target — \(title)")
         XCTFail("Target never entered the visible foreground body: \(target), \(app.debugDescription)")
@@ -1540,9 +1548,53 @@ final class NativeFlowTests: XCTestCase {
     }
 
     private func attachScreenshot(_ name: String) {
-        let attachment = XCTAttachment(screenshot: app.screenshot())
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
+    }
+
+    /// Check painted text only inside the editor's unobscured viewport. AX values
+    /// also contain lines hidden behind the footer or software keyboard.
+    private func assertRenderedEditorText(_ expected: String, editor: XCUIElement, footer: XCUIElement) throws {
+        // App-only landscape captures can include an incorrectly sized black
+        // canvas. The full display capture preserves the actual editor/keyboard.
+        let screenshot = XCUIScreen.main.screenshot().image
+        let header = app.navigationBars["Details"].frame
+        let bottom = min(footer.frame.minY, app.keyboards.firstMatch.frame.minY)
+        let viewport = editor.frame.intersection(CGRect(x: app.frame.minX, y: header.maxY,
+                                                       width: app.frame.width, height: max(0, bottom - header.maxY)))
+        XCTAssertFalse(viewport.isEmpty, "The editor must have an unobscured viewport")
+        guard !viewport.isEmpty else { return }
+        let pixels = try XCTUnwrap(screenshot.cgImage, "The display capture must contain image pixels")
+        let orientation: CGImagePropertyOrientation = switch screenshot.imageOrientation {
+        case .up: .up
+        case .down: .down
+        case .left: .left
+        case .right: .right
+        case .upMirrored: .upMirrored
+        case .downMirrored: .downMirrored
+        case .leftMirrored: .leftMirrored
+        case .rightMirrored: .rightMirrored
+        @unknown default: .up
+        }
+        let request = VNRecognizeTextRequest()
+        request.recognitionLevel = .accurate
+        request.recognitionLanguages = ["en-US"]
+        request.regionOfInterest = CGRect(x: (viewport.minX - app.frame.minX) / app.frame.width,
+                                          y: 1 - (viewport.maxY - app.frame.minY) / app.frame.height,
+                                          width: viewport.width / app.frame.width,
+                                          height: viewport.height / app.frame.height)
+        try VNImageRequestHandler(cgImage: pixels, orientation: orientation, options: [:]).perform([request])
+        let visibleText = (request.results ?? []).compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
+        let rendered = XCTAttachment(image: screenshot)
+        rendered.name = "Full display used for Notes recognition"
+        rendered.lifetime = .keepAlways
+        add(rendered)
+        let receipt = XCTAttachment(string: "Expected: \(expected)\nVisible editor OCR: \(visibleText)\nViewport: \(viewport)\nApp: \(app.frame), screenshot: \(screenshot.size), orientation: \(screenshot.imageOrientation.rawValue)")
+        receipt.name = "Rendered Notes text recognition"
+        receipt.lifetime = .keepAlways
+        add(receipt)
+        XCTAssertTrue(visibleText.contains(expected), "The active line must be painted above the keyboard. OCR: \(visibleText)")
     }
 }

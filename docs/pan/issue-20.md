@@ -28,15 +28,43 @@ Agent workflow/docs tooling is separate unticketed repository maintenance. It do
 | Generic unsigned Release | S1/S2 | `/tmp/aqd-agent-foundation-release.log`, current dirty native source | Passed |
 | Repository/workflow/agent-doc checks | S3 | `pnpm check`: 49 passed; `pnpm check:agents` checks all current Markdown/skills; final receipt follows | Passed |
 
-## Current UI proof gate, not executed
+## UI proof requirement at workflow authoring
 
-The owner's acceptance-proof clarification supersedes the old unit-only delivery assumption. Before shipping this issue, read its actual ACs, map the affected UI outcomes, generate/extend selected native E2E cases, inspect their real rendered evidence, and publish the proof table/artifacts in its PR. Existing unit/Release receipts and authored UI cases do not establish that new proof gate. Mapping, selected execution and PR publication are Not run in this workflow-refinement task.
+The owner's acceptance-proof clarification supersedes the old unit-only delivery assumption. Before shipping this issue, read its actual ACs, map the affected UI outcomes, generate/extend selected native E2E cases, inspect their real rendered evidence, and publish the proof table/artifacts in its PR. Existing unit/Release receipts and authored UI cases do not establish that new proof gate. These checks were unexecuted during workflow authoring; the authorized shipping run below owns their current results.
 
 The known landscape Notes failure below must be resolved before issue delivery if it invalidates one of its ACs. Its retained #30 regression entry does not waive the issue's own proof requirement.
 
+## Authorized shipping run, October 15
+
+The owner invoked `aqd-ship 20` through protected squash merge and repository release verification. Workflow maintenance was committed first at `866c3db`. Resume the existing branch and create one PR against `main`, fixed base `c5e11c4b89a1b6d408b1d7ccc984047c043c5457`. GitHub ruleset requires Repository tooling, resolved threads, linear history and squash. Codex review and Native iOS CI remain additional delivery gates.
+
+| Slice | Complete outcome | Verification | State |
+| --- | --- | --- | --- |
+| S4 | Visible multiline Notes editing, Apply/cancel and retained draft across rotation/relaunch | Existing `testDetailsLandscapeAvailabilityNotesApplyDiscardAndRelaunch` and `testMultilineNotesKeepEditingAcrossRotation`, inspected full-screen attachments | Verified; commit marker `AQD-Slice: #20/S4` |
+| S5 | Reusable selected-case proof and remotely accessible results for Foundation | Selected native E2E, attachment export/index, PR AC table and artifacts | Planned |
+
+The real issue has prose Build/Prove clauses rather than numbered ACs. The following labels preserve those clauses as traceable subcases, without claiming complete LOCAL-01/10/15 or later product roots.
+
+| AC / expected outcome | Actual check | Required evidence | Status |
+| --- | --- | --- | --- |
+| F1: reusable semantic controls and shared states in light/dark and accessibility variants | AQDTests shared component rendering; `testSharedCaptureControlsAtLargestTextKeepKeyboardSafeTargetsAndValidation`; focused appearance journey | Actual test results and inspected UI states | Not run at this head |
+| F2: five native destination identities and source-preserving Agent presentation | `testNativeRootTabsExposeDestinationsTargetsAndSelection`, `testAgentFullScreenBackRestoresCloset` | Tab/return assertions and screenshots | Not run |
+| F3: capture → accepted photo → acknowledged piece → collection → process relaunch | `testPhotosPickerSaveSearchEditAndRelaunch` | Real synthetic Photos journey, save/read assertions and screenshots | Not run |
+| F4: cancel/failed write/unknown retry/migration preserve data | AQDTests persistence/recovery; `testCaptureSourceClosePreservesDraftAndPhotoIsRequired`; S4 Details tests | Unit/integration receipts and real app cancel/relaunch evidence | Not run |
+| F5: isolated failure/restart/media fixtures and rendered test support | Existing isolated test-store/fixture guards, selected-case runner and exported attachments | Executed selections, source identity and accessible result bundle | Not run |
+| F6: manual support/API gates and capability budgets remain explicit | Native unit/Debug, unsigned Release; existing capability evaluation gate | Builds and source inspection. No assistance enabled. Broad OS/device/performance qualification stays #30 | Not run |
+
+Shipping locator: `vn-aj-vngrd/aqd`, head `van/issue-20/native-ui-foundations`; resolve/reuse its PR on resume. Current local toolchain is Xcode 27.0/27A266a with iPhone 17 Pro Max simulator E3686DA1-1D81-4CD9-A876-9797D94C63DF on iOS 27.0. Synthetic media only. Physical-device and full regression remain #30.
+
+### S4 diagnosis and retained runs
+
+Original tests passed 2/2 while the seven-line landscape screenshot exposed only line 1. Changing only the focused Notes anchor from top to bottom showed line 7 and its caret above Apply/keyboard. Independent Standards and Spec reviews confirmed that narrow difference. A new Vision OCR assertion crops the unobscured editor, excluding keyboard suggestions. Its valid original-anchor RED recognizes `Line 1 wardrobe note`, not the expected `Line 7 after rotation`, in `/tmp/aqd-ship20-ocr-display-red.xcresult`. Earlier empty-OCR probes exposed an app-only landscape screenshot canvas defect; they are failed harness experiments, not valid symptom reproductions. The final helper uses full-display capture with explicit image orientation.
+
+`/tmp/aqd-ship20-final.xcresult` on the bottom-anchor source passed 84 native unit tests and 7/8 selected UI tests, zero skips; Core20 passed separately and unsigned generic Release passed. The multiline OCR test passed. The remaining UI failure occurred before Notes focus: the driver alternated full-body 232-point swipes past Availability. Its final target was y469–531 below the visible body. A measured-distance slow drag with endpoint hold retains the same visibility bounds; its three affected clients, including short-note OCR, passed 3/3 with zero failures/skips in `/tmp/aqd-ship20-focused-correction.xcresult`. Both full-display images were inspected: the short note is visible; line 7 and its caret remain above Apply/keyboard. OCR recognizes the exact expected strings. The combined run remains Failed. Only `NativeFlowTests.swift` changed between the recorded combined and correction source snapshots; production/native-unit/Release inputs stayed identical. Five UI cases whose interactions/expectations did not change retain their earlier passes, with current-head CI still required.
+
 ## Deferred final verification
 
-Final #30 retains the known landscape Notes failure: the software keyboard can be offscreen/unhittable and post-typing text/caret visually indiscernible. Preserve the existing real-keyboard and rendered-text assertions. Cause remains unproven; no source-only fix is claimed. Detailed earlier failed and focused-pass receipts remain in [verification](../delivery/verification.md#foundation-20-authorized-native-verification--october14).
+Final #30 retains older-runtime/full-matrix failures and physical qualification. The current iPhone 17 Pro Max/iOS27 focused Notes acceptance now passes after the bottom-anchor correction, including rendered short text and the active seventh line/caret. This does not certify every OS/device/cursor-editing scenario. Detailed earlier failed receipts remain in [verification](../delivery/verification.md#foundation-20-authorized-native-verification--october14).
 
 Physical iPhone 17 Pro Max execution and its installed OS, camera/media quality, file-protection/backup behavior, VoiceOver and performance/capability qualification remain unverified. Broad minimum/other-device launch compatibility is separate from immediate personal-phone acceptance.
 
@@ -53,6 +81,6 @@ A final actual-runner check found Bash3.2 aborting under `set -u` for the empty 
 
 ## Resume
 
-- Current action: historical local cleanup S1–S3 is committed with native unit/Debug, unsigned Release and repository passes. The newly required focused UI AC proof/publication remains unexecuted; no PR/merge is performed by workflow refinement.
-- Next product action after this cleanup: finish Foundation's remaining required feature gates under the current policy, then obtain authorization for the next dependency-ready issue if not already supplied.
-- Dirty paths after the final receipt commit: none expected; verify `git status` before resuming.
+- Current action: full `aqd-ship 20` authorized. Workflow committed at `866c3db`; S4 measured-scroll and rendered Notes regression validation passed; its commit receipt follows. Earlier S1–S3 receipts remain retained.
+- Next exact action: commit the verified S4, then implement/verify selected-test publication S5, publish one PR with AC evidence, fix current-head CI/Codex, then protected squash merge and verify main/release. No new routine authorization is needed.
+- Dirty paths: owned S4 `PieceDetailsView.swift`, `NativeFlowTests.swift` and this plan. Reconcile actual Git status before resuming. No external blocker currently confirmed.

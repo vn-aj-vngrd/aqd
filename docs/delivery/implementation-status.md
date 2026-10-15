@@ -10,7 +10,7 @@ The [implementation plan](implementation-plan.md) owns ten implementation issues
 
 Shared native actions, fields, feedback, selection and source-aware task navigation serve the existing capture/photo/details/save/reopen journey. The committed checkpoint adds semantic Back/Close behavior, exposed native metadata, task-owned focus/scroll handling, idempotent tab selection and bootstrap revalidation. [Foundation inventory](../../apps/ios/FOUNDATIONS.md) owns reuse; [verification](verification.md) owns exact execution history.
 
-The landscape Notes software-keyboard and visible-value/caret failure remains unresolved. Preserve its real assertions and rendered evidence. If it invalidates an issue #20 AC, focused proof must reproduce/fix it before that issue can ship; the broader #30 queue cannot waive the feature failure. No source-only cause or fix is proven. Existing scoped simulator passes do not establish complete native accessibility, physical media/protection/backup, performance or on-device model quality. Required latest-head CI/Codex and protected delivery remain separate gates.
+Current iPhone 17 Pro Max/iOS27 focused Notes proof passes after anchoring the focused editor bottom. Actual short-text and seventh-line OCR, inspected caret/keyboard screenshots and Apply/cancel/discard/relaunch assertions pass. Older runtime/full-matrix failures remain in #30; this scoped result does not certify every device or editing scenario. Existing scoped simulator passes do not establish complete native accessibility, physical media/protection/backup, performance or on-device model quality. Required latest-head CI/Codex and protected delivery remain separate gates.
 
 ### Agent execution foundation
 

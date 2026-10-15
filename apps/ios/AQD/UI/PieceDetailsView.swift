@@ -61,13 +61,13 @@ struct PieceDetailsView: View {
                     }.padding(20)
                 }
                 .scrollDismissesKeyboard(.immediately)
-                // Keep the focused field visible after keyboard/rotation changes
-                // the viewport, above the task footer.
+                // Keep the editor's end above the footer when the keyboard or
+                // rotation shrinks the viewport. Top alignment hides later lines.
                 .onChange(of: notesFocused) { _, focused in
-                    if focused { scroll.scrollTo(notesAnchor, anchor: .top) }
+                    if focused { scroll.scrollTo(notesAnchor, anchor: .bottom) }
                 }
                 .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { _ in
-                    if notesFocused { scroll.scrollTo(notesAnchor, anchor: .top) }
+                    if notesFocused { scroll.scrollTo(notesAnchor, anchor: .bottom) }
                 }
                 .background(AppTheme.canvas)
                 .navigationTitle("Details").navigationBarTitleDisplayMode(.inline)
