@@ -54,8 +54,10 @@ public struct HeightInput: Codable, Equatable, Sendable {
         cmText = Self.text(value)
         let total = value / 2.54
         let feet = (total / 12).rounded(.down)
-        feetText = Self.text(feet)
-        inchesText = Self.text(total - feet * 12)
+        let inches = Self.text(total - feet * 12)
+        // Display rounding can carry the remainder into the next foot.
+        feetText = Self.text(inches == "12" ? feet + 1 : feet)
+        inchesText = inches == "12" ? "0" : inches
     }
     private static func number(_ text: String) -> Double? {
         let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: ",", with: ".")

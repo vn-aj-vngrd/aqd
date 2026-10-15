@@ -143,10 +143,11 @@ Independent Spec review found two actual review defects: omitted comfort and unl
 
 ## Resume
 
-- Current phase: S0–S4 committed; S5 persists final qualified evidence and context. Application/test code head is `e5de900123bbbad428639d48130545df7b2be624`.
-- Next action: commit this docs/media receipt, push the named branch, resolve/create its single draft PR, publish/read back proof, then complete current-head CI/Codex and protected squash/release.
-- Dirty ownership: issue21 S5 docs and curated AQD-only media. Code inputs match the five-case refresh; no private failed capture is published.
-- External blocker: none confirmed. Phone readiness was confirmed; native tests have finished. Keep local simulators shut down.
+- Current phase: S0–S5 committed; S6 Codex height conversion correction is locally verified and ready to commit.
+- PR: https://github.com/vn-aj-vngrd/aqd/pull/33. Previous head `adf0385416f74c1dc9b97ce77179836e2d4bef97`; source/code artifacts for S6 are bound by [exact hashes](evidence/issue-21/s6/receipt.json).
+- Next action: commit/push S6, publish/read back its evidence, resolve Codex4284764022, obtain current-head CI/Codex, then protected squash/release. Do not start another issue.
+- Local gate: Core34/native96, focused height1/1 and final Release passed. Earlier17/1 base +5/5 affected refresh/3/3 appearance qualification is preserved.
+- External blocker: none confirmed. Local simulators remain shut down; phone readiness reconfirmed for S6.
 
 ### Owner correction: actual screens and native confirmations
 
@@ -191,3 +192,9 @@ S4 affected proof passed5/5, zero failures/skips in `final-affected-proof`, pres
 S4 committed as `e5de900123bbbad428639d48130545df7b2be624`. S5 replaces superseded saved-screen media with inspected current44pt-logo receipts, all four tour previews, Ready, actual Profile and light/dark discard evidence. [Final acceptance receipt](evidence/issue-21/README.md) owns actual17/1 base and5/5 refresh qualification; it does not relabel the failed batch. Final docs/tooling review and remote publication follow.
 
 Final S5 checks pass57 repository tests and agent docs126Markdown/1597links/288fragments. Independent Spec review found no defect; Standards found a stale centered-alert sentence, now replaced with the current native-sheet contract. AQD was launched normally on the phone after tests with no fixture arguments; ordinary data was preserved.
+
+### S6 Codex height-conversion correction
+
+PR [#33](https://github.com/vn-aj-vngrd/aqd/pull/33), published head `adf0385416f74c1dc9b97ce77179836e2d4bef97`. Codex finding [4284764022](https://github.com/vn-aj-vngrd/aqd/pull/33#discussion_r4284764022) identifies a valid cm value just below a whole-foot boundary formatting as12in, disabling unit switching. Preserve canonical cm and normalize displayed12in into the next foot. Test the existing approved public HeightInput seam first, then refresh affected Core/native/height E2E and Release. This correction belongs to S3; final-head CI/Codex must refresh. Marker `AQD-Slice: #21/S6`, state in progress.
+
+S6 checks: real RED5 assertions, full Core34 green, physical native96 passed, focused height journey1/1 passed with original boundary/Review screenshots inspected. Final Release builds, tooling57 and docs checks pass. Standards/Spec bounded reviews found no actionable defect. [Correction evidence](evidence/issue-21/s6/README.md) retains current exact input/product hashes. Unaffected source/results and media remain explicitly reused at their own revisions. Commit this S3 correction with `AQD-Slice: #21/S6`, refresh PR proof, resolve only the addressed finding, then wait for new-head CI/Codex before protected merge.

@@ -22,6 +22,22 @@ struct BodyInputTests {
         #expect(!restored.isValid)
     }
 
+    @Test func roundedWholeFootBoundaryRemainsValidAndSwitchableAfterRestart() throws {
+        var input = HeightInput(body: BodyPreferences())
+        input.edit(.centimeters, text: "182.87999999999")
+        let exact = input.centimeters
+        input.switchUnits(to: .feetInches)
+        #expect(input.feetText == "6")
+        #expect(input.inchesText == "0")
+        #expect(input.isValid)
+        #expect(input.centimeters == exact)
+        input = try JSONDecoder().decode(HeightInput.self, from: JSONEncoder().encode(input))
+        input.switchUnits(to: .cm)
+        #expect(input.units == .cm)
+        #expect(input.isValid)
+        #expect(input.centimeters == exact)
+    }
+
     @Test func optionalHeightValidatesFinitePositiveUnitsWithoutNormativeBounds() {
         var input = HeightInput(body: BodyPreferences())
         #expect(input.isValid && input.centimeters == nil)

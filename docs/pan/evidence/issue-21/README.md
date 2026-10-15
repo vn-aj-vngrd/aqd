@@ -1,6 +1,6 @@
 # Issue 21 acceptance evidence
 
-Code is committed in S0–S4 through `e5de900123bbbad428639d48130545df7b2be624`. Local native checks used the owner's physical iPhone 17 Pro Max, iOS27.0.1/24A446, Xcode27.0/27A266a. No local simulator was started. UI cases use UUID-isolated stores and do not reset the owner's ordinary closet. Hosted CI and repository release are separate gates recorded on the PR.
+S0–S4 source is committed through `e5de900123bbbad428639d48130545df7b2be624`. Local native checks used the owner's physical iPhone 17 Pro Max, iOS27.0.1/24A446, Xcode27.0/27A266a. No local simulator was started. UI cases use UUID-isolated stores and do not reset the owner's ordinary closet. Hosted CI and repository release are separate gates recorded on the PR.
 
 ## Scoped acceptance
 
@@ -27,3 +27,7 @@ Code is committed in S0–S4 through `e5de900123bbbad428639d48130545df7b2be624`.
 XCTest reports an `Invalid frame dimension` runtime warning during invalid-height system-picker interaction. The case's input validation, disabled Save, explicit refusal and restart assertions pass after the banner guard. No negative/dynamic width calculation exists in the affected views; retain this diagnostic for #30's integrated platform investigation rather than claiming a warning-free run.
 
 Only curated AQD images and redacted result metadata are published. Full interrupted physical bundles and any private notification/other-app captures stay excluded. The [plan](../../issue-21.md) retains earlier failures, fixes and slice history. Full fit journal, Settings data management and other app sections remain their own issues; these feature checks do not certify complete V1 or native distribution.
+
+## Codex correction after publication
+
+[S6 correction evidence](s6/README.md) supersedes the height-boundary behavior: genuine5-assertion RED then Core34/native96/focused physical1-of-1/Release pass. Current source inputs and built products are hash-bound there. Other feature results/images retain their original revisions and explicitly scoped reuse.

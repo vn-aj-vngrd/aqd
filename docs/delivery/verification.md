@@ -1,5 +1,9 @@
 # Current verification
 
+## Issue #21 Codex height-boundary correction, October 15, 2026
+
+Codex on PR33 found display rounding could produce12in and invalidate a valid canonical height. [S6 proof](../pan/evidence/issue-21/s6/README.md) records genuine5-assertion RED, normalization without canonical mutation, Core34/native96 passed and focused physical height/restart/custom-picker/saved-return1/1 passed. Actual boundary/Review images were inspected and retained; final unsigned Release builds. Earlier unaffected feature proof retains its own source/reuse qualification. New-head CI/Codex remain pending.
+
 ## Issue #21 local feature qualification, October 15, 2026
 
 Code slices S0–S4 are committed through `e5de900`; [acceptance receipt](../pan/evidence/issue-21/README.md) records selected tests, source hashes and inspected original physical-iPhone media. Core33/native96 pass, final unsigned Release builds, and repository tooling57 passes. The base18-case physical batch remains Failed17/1 due to a system banner over Done. The five-case affected refresh passes5/5, zero skips/failures, including that failed scenario and every confirmation/driver consumer. Unchanged application/Core/native-unit outcomes are explicitly reused. Three actual-appearance cases also pass, with dark rendering inspected. No local simulator or ordinary-store reset was used.
