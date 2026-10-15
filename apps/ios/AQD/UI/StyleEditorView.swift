@@ -19,9 +19,7 @@ struct StyleEditorView: View {
                         }.accessibilityIdentifier("style.error")
                     }
                     if model.saved != nil {
-                        Image(systemName: "checkmark.circle").font(.largeTitle).foregroundStyle(AppTheme.accent).accessibilityHidden(true)
-                        Text("Preferences saved").font(AppTypography.section)
-                        Text("Your private preferences are saved on this iPhone. You can change them from Profile or Settings.")
+                        savedContent
                     } else {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Step \(page + 1) of 7").font(.subheadline).foregroundStyle(AppTheme.secondary)
@@ -42,6 +40,7 @@ struct StyleEditorView: View {
             .background(AppTheme.canvas)
             .navigationTitle(model.saved == nil ? StylePreferences.titles[page] : "Style")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar(model.saved == nil ? .visible : .hidden, for: .navigationBar)
             .toolbar {
                 if model.saved == nil {
                     ToolbarItem(placement: .topBarLeading) {
@@ -51,12 +50,23 @@ struct StyleEditorView: View {
                             } else { confirmsDiscard = true }
                         } label: { Label("Back", systemImage: "chevron.backward") }
                         .disabled(model.pending || model.unknown)
+                        .accessibilityIdentifier("style.back").tint(AppTheme.ink)
                     }
                 }
             }
             .safeAreaInset(edge: .bottom) {
                 ActionFooter {
-                    if model.saved != nil { PrimaryAction(title: "Done") { model.finish() } }
+                    if model.saved != nil {
+                        ActionStack {
+                            PrimaryAction(title: savedContinueTitle) { model.finish() }
+                                .accessibilityIdentifier("style.saved.continue")
+                            SecondaryAction(title: "Open my closet") { model.finish(openCloset: true) }
+                                .accessibilityIdentifier("style.saved.closet")
+                            Text("You can edit your preferences from Profile → Style.")
+                                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                                .frame(maxWidth: .infinity).multilineTextAlignment(.center)
+                        }
+                    }
                     else if page == 6 {
                         PrimaryAction(title: model.unknown ? "Check save" : model.error != nil ? "Retry save" : "Save preferences", isPending: model.pending) { Task { await model.save() } }
                             .disabled(!model.draft.answers.isComplete)
@@ -66,12 +76,39 @@ struct StyleEditorView: View {
                     }
                 }
             }
-            .confirmationDialog("Discard this preference draft?", isPresented: $confirmsDiscard, titleVisibility: .visible) {
-                Button("Discard draft", role: .destructive) { model.discard() }
-                Button("Keep editing", role: .cancel) {}
-            } message: { Text("Only this draft will be removed. Your saved preferences stay unchanged.") }
+            .sheet(isPresented: $confirmsDiscard) {
+                DraftDiscardSheet(title: "Discard this preference draft?",
+                                  message: "Only this draft will be removed. Your saved preferences stay unchanged.") {
+                    confirmsDiscard = false
+                    model.discard()
+                }
+            }
             .interactiveDismissDisabled()
         }.tint(AppTheme.actionText)
+    }
+
+    private var savedContinueTitle: String {
+        switch model.draft.source {
+        case .onboarding: "Take the tour"
+        case .profile: "Back to Profile"
+        case .settings: "Back to Settings"
+        }
+    }
+    private var savedContent: some View {
+        VStack(alignment: .leading, spacing: 32) {
+            AQDWordmark()
+            EntryIllustration(kind: .ready).padding(.top, 16)
+            VStack(alignment: .leading, spacing: 16) {
+                Label("Preferences saved", systemImage: "checkmark.circle")
+                    .font(AppTypography.supporting).foregroundStyle(AppTheme.actionText)
+                Text("A closet that feels\nmore like you.")
+                    .font(.largeTitle).tracking(-0.64).fixedSize(horizontal: false, vertical: true)
+                Text(model.draft.source == .onboarding
+                     ? "Your choices are saved on this iPhone.\nNext, take a quick look around."
+                     : "Your choices are saved on this iPhone.\nKeep exploring your closet, your way.")
+                    .foregroundStyle(AppTheme.secondary).fixedSize(horizontal: false, vertical: true)
+            }
+        }.accessibilityIdentifier("style.saved.receipt")
     }
 
     @ViewBuilder private var question: some View {

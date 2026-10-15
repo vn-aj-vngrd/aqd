@@ -1,0 +1,38 @@
+{
+  "purpose": "Approved read-only Section 01 tour illustrations. Never user wardrobe records.",
+  "fileId": "01M3SM2KBHBZG6MA0Q744Y9NW0",
+  "assets": [
+    {
+      "file": "tour-fit-blue-coat.jpg",
+      "source": "Paper image fill UZN-0",
+      "format": "JPEG returned by Paper connector",
+      "sha256": "c06523fae5b0ed0d93d15a21c69823b4f23ca146e37e7bcd7d364637266afb52"
+    },
+    {
+      "file": "tour-fit-street.jpg",
+      "source": "Paper image fill UZQ-0",
+      "format": "JPEG returned by Paper connector",
+      "sha256": "9289f2fce39618533fefe65cb6a4fd9a1f8393bd77800c1f1762150518020e93"
+    },
+    {
+      "file": "tour-afternoon.png",
+      "source": "docs/design/assets/journal/afternoon.png",
+      "sha256": "1c02e8b52ac612c67a8679257e78537b38a15750b9b5b358c8922edbcc8de4d2"
+    },
+    {
+      "file": "tour-coffee.png",
+      "source": "docs/design/assets/journal/coffee.png",
+      "sha256": "777d4e1dfdf9d4020bf0d9aa5cebefbbeac90a0e3f07d639ae4c5bf9ef5b9f54"
+    },
+    {
+      "file": "tour-evening.png",
+      "source": "docs/design/assets/journal/evening.png",
+      "sha256": "0f0334556825b5d1b350b85303ccec7e6e54609c20aa3a81c7b3faacfbc9051b"
+    },
+    {
+      "file": "tour-work.png",
+      "source": "docs/design/assets/journal/work.png",
+      "sha256": "cb9a599feaa0b0ee06c85049b0c19431513f6eb344838fb4a4c83057cea17e89"
+    }
+  ]
+}

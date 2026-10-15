@@ -35,7 +35,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 const paths = git('ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', 'apps/ios', 'scripts/test-ios.sh', 'scripts/prove-ios.sh', 'scripts/validate-ios-proof.mjs', 'scripts/ios-destination.mjs', 'scripts/seed-ios-test-photo.sh').split('\0').filter(Boolean);
-console.log(JSON.stringify({ issue: process.argv[2], head: git('rev-parse', 'HEAD'), dirty: git('status', '--short'), destination: process.env.IOS_DESTINATION, fixture: 'Synthetic asymmetric Photos image; UUID-isolated test stores', toolchain: execFileSync('xcodebuild', ['-version'], { encoding: 'utf8' }).trim(), sha256: Object.fromEntries(paths.map(path => [path, createHash('sha256').update(readFileSync(path)).digest('hex')])) }, null, 2));
+console.log(JSON.stringify({ issue: process.argv[2], head: git('rev-parse', 'HEAD'), dirty: git('status', '--short'), destination: process.env.IOS_DESTINATION, fixture: 'UUID-isolated test stores; selected cases declare any synthetic media', toolchain: execFileSync('xcodebuild', ['-version'], { encoding: 'utf8' }).trim(), sha256: Object.fromEntries(paths.map(path => [path, createHash('sha256').update(readFileSync(path)).digest('hex')])) }, null, 2));
 JS
 printf 'Acceptance evidence: %s\n' "$IOS_PROOF_OUTPUT"
 STATUS=0

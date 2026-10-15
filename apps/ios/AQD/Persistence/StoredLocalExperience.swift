@@ -19,9 +19,13 @@ struct LocalExperience: Codable, Equatable {
     var style: SavedStylePreferences?
     var styleDraft: StylePreferenceDraft?
     var pendingStyleReceipt: StylePreferenceDraft?
+    var entry: PrivateEntryState?
+    var entryState: PrivateEntryState { entry ?? PrivateEntryState(alreadyEntered: enteredPrivateSpace) }
 
     func validated() throws {
         guard schemaVersion == 1 else { throw PieceStore.StoreError.unsupportedStore }
+        try entryState.validated()
+        if entry != nil, enteredPrivateSpace != (entryState.page == .main) { throw PieceStore.StoreError.invalidRecord }
         if let style {
             guard style.revision > 0 else { throw PieceStore.StoreError.invalidRecord }
             try style.answers.validated()

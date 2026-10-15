@@ -2,13 +2,24 @@ import SwiftUI
 
 @main
 struct AQDApp: App {
-    @State private var state = AppState()
+    @State private var state = AppState(deferOpening: true)
 
     var body: some Scene {
         WindowGroup {
-            AppRootView(state: state)
+            AppRootView(state: state).appAppearance(testAppearance)
         }
     }
+    private var testAppearance: AppAppearance {
+        #if DEBUG
+        let process = ProcessInfo.processInfo
+        if process.arguments.contains("--aqd-ui-testing"),
+           UUID(uuidString: process.environment["AQD_TEST_STORE_ID"] ?? "") != nil {
+            return AppAppearance(rawValue: process.environment["AQD_TEST_APPEARANCE"] ?? "") ?? .system
+        }
+        #endif
+        return .system
+    }
+
 }
 
 private struct AppRootView: View {
@@ -16,12 +27,19 @@ private struct AppRootView: View {
 
     var body: some View {
         Group {
-            if let error = state.openingError {
+            if state.isOpening {
+                AQDWordmark()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .foregroundStyle(AppTheme.ink).background(AppTheme.canvas)
+                    .accessibilityIdentifier("entry.splash")
+            } else if let error = state.openingError {
                 ContentUnavailableView {
                     Label("Your closet couldn’t open", systemImage: "externaldrive.badge.exclamationmark")
                 } description: { Text(error) } actions: {
                     Button("Retry") { state.openStore() }
                 }
+            } else if state.entry.page != .main {
+                PrivateEntryView().environment(state)
             } else {
                 NativeTabs(selection: $state.selection,
                            today: { rootContent(TodayView()) },
@@ -31,6 +49,11 @@ private struct AppRootView: View {
                            agent: { close in rootContent(BaselineAgentView(close: close)) })
                     .ignoresSafeArea()
             }
+        }
+        .task {
+            guard state.isOpening else { return }
+            await Task.yield()
+            state.openStore()
         }
         .tint(AppTheme.actionText)
         .alert("Saved data unavailable", isPresented: Binding(
@@ -44,9 +67,17 @@ private struct AppRootView: View {
         .sheet(item: $state.capture, onDismiss: { state.retryPhotoCleanup() }) { model in
             PieceCaptureView(model: model).environment(state)
         }
-        .fullScreenCover(item: $state.styleEditor) { model in
+        .fullScreenCover(item: $state.styleEditor, onDismiss: {
+            if state.reloadEntryAfterStyle {
+                state.reloadEntryAfterStyle = false
+                state.reloadEntry()
+            }
+        }) { model in
             StyleEditorView(model: model)
         }
+        .fullScreenCover(isPresented: Binding(get: { state.entry.tour != nil }, set: { presented in
+            if !presented && state.entry.tour != nil { state.updateEntry { $0.tour = nil } }
+        })) { PrivateTourView().environment(state) }
     }
 
     /// Keep incomplete cleanup visible and retryable on every native destination,

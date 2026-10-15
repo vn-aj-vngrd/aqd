@@ -496,13 +496,37 @@ final class PieceStore {
         return saved
     }
 
-    func acknowledgeStyleReceipt(operationID: UUID) throws {
+    func acknowledgeStyleReceipt(operationID: UUID, openCloset: Bool = false) throws {
         guard allowsSave else { throw StoreError.corruptStore }
         let context = ModelContext(container)
         var (record, value) = try experienceRecord(in: context)
         guard value.style?.operationID == operationID else { throw StoreError.operationConflict }
         guard value.pendingStyleReceipt != nil else { return }
+        if openCloset {
+            var entry = value.entryState
+            entry.openMain()
+            value.entry = entry
+            value.enteredPrivateSpace = true
+        } else if value.pendingStyleReceipt?.source == .onboarding {
+            var entry = value.entryState
+            entry.page = .introduction
+            entry.tour = nil
+            try entry.startTour(from: .introduction)
+            value.entry = entry
+            value.enteredPrivateSpace = false
+        }
         value.pendingStyleReceipt = nil
+        record.payload = try JSONEncoder().encode(value)
+        try commit(context)
+    }
+
+    func saveEntryState(_ entry: PrivateEntryState) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        try entry.validated()
+        let context = ModelContext(container)
+        var (record, value) = try experienceRecord(in: context)
+        value.entry = entry
+        value.enteredPrivateSpace = entry.page == .main
         record.payload = try JSONEncoder().encode(value)
         try commit(context)
     }

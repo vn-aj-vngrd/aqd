@@ -75,15 +75,27 @@ final class StyleEditorModel: Identifiable {
         } catch { self.error = "The draft couldn’t be discarded. It is still retained; retry without changing your saved preferences." }
     }
 
-    func finish() {
+    func finish(openCloset: Bool = false) {
         if saved != nil {
             do {
                 guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-                try store.acknowledgeStyleReceipt(operationID: draft.operationID)
-            } catch { self.error = "Your preferences are saved. The receipt couldn’t close yet; tap Done again."; return }
+                try store.acknowledgeStyleReceipt(operationID: draft.operationID, openCloset: openCloset)
+            } catch { self.error = "Your preferences are saved. The receipt couldn’t close yet; try the same action again."; return }
         }
-        state.selection = 4
-        state.profileSettings = draft.source == .settings
+        if saved != nil && openCloset {
+            state.selection = 1
+            state.profileSettings = false
+            state.reloadEntryAfterStyle = true
+            state.styleEditor = nil
+            return
+        }
+        if draft.source == .onboarding {
+            if saved != nil { state.reloadEntryAfterStyle = true }
+            else { state.reloadEntry() }
+        } else {
+            state.selection = 4
+            if state.profileSettings != (draft.source == .settings) { state.profileSettings = draft.source == .settings }
+        }
         state.styleEditor = nil
     }
 }

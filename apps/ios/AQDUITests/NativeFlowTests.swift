@@ -20,6 +20,7 @@ final class NativeFlowTests: XCTestCase {
             app.launchArguments = ["--aqd-ui-testing"]
             // Stable for every relaunch within this test; unique across tests/runs.
             app.launchEnvironment["AQD_TEST_STORE_ID"] = UUID().uuidString
+            app.launchEnvironment["AQD_TEST_RETURNING_ENTRY"] = "1"
             app.launch()
             XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
             let frame = app.frame
@@ -540,7 +541,7 @@ final class NativeFlowTests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
 
-        // Real Schema 2 cleanup intent and read-only reopen; no photo bytes or fake error.
+        // Real persisted cleanup intent and read-only reopen; no photo bytes or fake error.
         let warning = app.staticTexts.matching(NSPredicate(
             format: "label BEGINSWITH %@", "AQD photo cleanup couldn’t finish."
         )).firstMatch
@@ -1163,11 +1164,13 @@ final class NativeFlowTests: XCTestCase {
         XCTAssertEqual(name.value as? String, pendingName)
         app.buttons["capture.save"].tap()
         XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'This piece changed after your draft began.'")).firstMatch.waitForExistence(timeout: 5))
+        app.buttons["capture.options"].tap()
         app.buttons["capture.discard"].tap()
         let keepDraft = app.buttons["Keep editing"]
         if keepDraft.exists { keepDraft.tap() }
         else { app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75)).tap() }
         XCTAssertEqual(name.value as? String, pendingName)
+        app.buttons["capture.options"].tap()
         app.buttons["capture.discard"].tap()
         app.buttons.matching(NSPredicate(format: "label == 'Discard draft' AND identifier != 'capture.discard'")).firstMatch.tap()
         XCTAssertTrue(app.buttons["piece.edit"].waitForExistence(timeout: 5))

@@ -11,6 +11,7 @@ final class StyleFlowTests: XCTestCase {
         app = XCUIApplication()
         app.launchArguments = ["--aqd-ui-testing"]
         app.launchEnvironment["AQD_TEST_STORE_ID"] = UUID().uuidString
+        app.launchEnvironment["AQD_TEST_RETURNING_ENTRY"] = "1"
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
     }
@@ -115,7 +116,7 @@ final class StyleFlowTests: XCTestCase {
         capture("E4 unknown acknowledgment freezes editing and offers reconciliation")
         app.buttons["Check save"].tap()
         XCTAssertTrue(app.staticTexts["Preferences saved"].waitForExistence(timeout: 5))
-        app.buttons["Done"].tap()
+        app.buttons["style.saved.continue"].tap()
         openSettingsStyle()
         app.buttons["Wear more of my closet"].tap()
         for _ in 0..<6 { app.buttons["Continue"].tap() }
@@ -124,7 +125,7 @@ final class StyleFlowTests: XCTestCase {
         app.terminate(); app.launch()
         XCTAssertTrue(app.staticTexts["Preferences saved"].waitForExistence(timeout: 10))
         capture("E4 interrupted acknowledgment recovers the durable exact receipt")
-        app.buttons["Done"].tap()
+        app.buttons["style.saved.continue"].tap()
         XCTAssertTrue(app.navigationBars["Settings"].exists)
     }
 
@@ -132,7 +133,11 @@ final class StyleFlowTests: XCTestCase {
         app.buttons["root.tab.profile"].tap()
         app.buttons["More"].tap()
         if settings { app.buttons["Settings"].tap(); openSettingsStyle() }
-        else { app.buttons["Style"].tap() }
+        else {
+            let style = app.buttons["Style"]
+            XCTAssertTrue(style.wait(for: \.isHittable, toEqual: true, timeout: 5))
+            style.tap()
+        }
         XCTAssertTrue(app.navigationBars["Your goals"].waitForExistence(timeout: 5))
     }
     private func completeRefusals() {
@@ -156,23 +161,15 @@ final class StyleFlowTests: XCTestCase {
         app.buttons["Save preferences"].tap()
         XCTAssertTrue(app.staticTexts["Preferences saved"].waitForExistence(timeout: 5))
         capture("E4 acknowledged preference save")
-        app.buttons["Done"].tap()
+        app.buttons["style.saved.continue"].tap()
     }
     private func keepEditing() {
-        let decision = app.sheets["Discard this preference draft?"]
-        XCTAssertTrue(decision.waitForExistence(timeout: 5))
-        let keep = decision.buttons["Keep editing"]
-        if keep.exists { keep.tap() }
-        else {
-            // iOS's source-anchored popover omits its cancel-role row.
-            // A measured outside-header tap is the native no-write dismissal.
-            let header = app.navigationBars["Your goals"].frame
-            let point = CGPoint(x: header.minX + 10, y: header.midY)
-            XCTAssertFalse(decision.frame.contains(point))
-            app.coordinate(withNormalizedOffset: .zero)
-                .withOffset(CGVector(dx: point.x - app.frame.minX, dy: point.y - app.frame.minY)).tap()
-        }
-        XCTAssertTrue(decision.waitForNonExistence(timeout: 5))
+        let keep = app.buttons["Keep editing"]
+        XCTAssertTrue(keep.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Discard this preference draft?"].exists)
+        capture("E4 native discard sheet with blue safe and red destructive actions")
+        keep.tap()
+        XCTAssertTrue(keep.waitForNonExistence(timeout: 5))
         XCTAssertEqual(app.buttons["Wear more of my closet"].value as? String, "Selected")
     }
     private func capture(_ title: String) {
