@@ -15,13 +15,13 @@ Ask only for missing product decisions, unavailable required access, or a step o
 - **Implementation/fix:** stages 1–4; load the relevant plan slice and feature acceptance. Stages 5–8 apply only within authorized delivery scope.
 - **PR/release:** stages 5–8 live in [delivery stages](delivery-stages.md); read them before those operations. Every gate remains mandatory.
 
-Resolve named methods through the installed skill catalog. If a method is unavailable, disclose that and use the documented stage procedure as fallback; never claim an unavailable skill ran.
+Use the repo-local [aqd-implement](../../.agents/skills/aqd-implement/SKILL.md), [aqd-verify](../../.agents/skills/aqd-verify/SKILL.md) and [aqd-review](../../.agents/skills/aqd-review/SKILL.md) entry points for approved implementation. Read their files directly if the host has not refreshed discovery. Global methods supplement these workflows when installed; disclose unavailable methods rather than claiming they ran.
 
 ## 1. Understand and triage
 
 For ticket operations read [tracker configuration](issue-tracker.md); for domain changes read [domain guidance](domain.md). Read the issue and all relevant comments when the task has an issue. Search for existing behavior, duplicates, and conflicting decisions. Reproduce reported bugs before designing a fix.
 
-Use Matt Pocock's `triage` for ticket evaluation; use `grilling` and `domain-modeling` when a product decision is genuinely unsettled. Resolve the installed skill through the agent's skill catalog and read it before applying it. Follow the user's already confirmed decisions; skip an unnecessary interview for a clear task.
+Existing approved issues/specs enter implementation without another planning interview. Use Matt Pocock's `triage` for genuinely new ticket evaluation; use `domain-modeling` when terminology changes. Resolve the installed skill through the agent's skill catalog and read it before applying it. Follow the user's already confirmed decisions; skip an unnecessary interview for a clear task.
 
 Complete when the problem, current behavior, expected outcome, category, dependencies, and triage state are recorded. Use `needs-info` for missing facts and `ready-for-human` for decisions/access an agent cannot supply. The confirmed label mapping lives in [triage labels](triage-labels.md).
 
@@ -33,15 +33,15 @@ Complete when each scoped acceptance criterion is checkable, the verification ap
 
 ## 3. Implement and verify
 
-For authorized branch work, fetch the integration branch and start or resume the ticket branch under the development conventions. For docs-only/local work, preserve the user's current branch and scope. Use `implement` with the spec and `tdd` for meaningful behavioral/domain changes at agreed seams. Inspect existing patterns first; complete one vertical slice and reuse components before extracting abstractions.
+For authorized branch work, fetch the integration branch and start or resume the ticket branch under the development conventions. For docs-only/local work, preserve the user's current branch and scope. Use [aqd-implement](../../.agents/skills/aqd-implement/SKILL.md). Persist `docs/pan/issue-<number>.md` before product edits, map acceptance to vertical slices, then implement, verify and commit each slice before continuing. The [plan convention](../pan/README.md) owns naming, slice markers and SHA receipts. Reuse existing components and focused test seams.
 
-Run focused checks during changes, then the relevant full checks once. UI changes require rendered simulator evidence and navigation/accessibility review. Update implementation and verification docs when scope or evidence changes.
+Run focused checks during slices, then relevant feature unit/build/repository checks once at final source. The [implementation plan verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) owns timing: broad rendered simulator/device/E2E acceptance belongs to final #30 unless requested. Implement accessibility/navigation requirements now and retain their unexecuted checks. Update the issue plan and capability/evidence documents as they change.
 
-Complete implementation only when every required scoped acceptance item passes, failed writes/retries recover correctly, and existing data and unrelated behavior are preserved. A missing required check or behavior is a blocker unless the owner explicitly authorizes a scope reduction; a reason/dependency alone cannot waive acceptance. A successful build alone is not functional verification. A documentation task may complete after its documentation checks while naming unverified native/runtime requirements, without claiming implementation completion.
+Complete feature implementation when scoped behavior is implemented, required feature checks pass, failed writes/retries recover correctly, and existing data and unrelated behavior are preserved. Record deferred final runtime acceptance and known UI failures in #30 without marking them passed. Missing behavior, required feature checks and data-loss/security defects remain blockers. A successful build alone is not functional verification. A documentation task may complete after its documentation checks while naming unverified native/runtime requirements, without claiming implementation completion.
 
 ## 4. Review against standards and spec
 
-Use `code-review` against the fixed merge-base of the integration branch and the originating issue/spec. Review both axes: documented standards and requested behavior. Follow the skill's separate review process; fix actionable findings, re-run affected checks, and record any justified exception. For uncommitted/new files, include those explicitly in review; an empty HEAD diff is not a review of working changes.
+Use [aqd-review](../../.agents/skills/aqd-review/SKILL.md) against the fixed merge-base of the integration branch and the originating issue/spec. Review both axes: documented standards and requested behavior. Follow the skill's separate review process; fix actionable findings, re-run affected checks, and record any justified exception. For uncommitted/new files, include those explicitly in review; an empty HEAD diff is not a review of working changes.
 
 Complete when the review covers the actual final diff and all valid findings are addressed. If a required skill is unavailable, report it; use this documented procedure only as a clearly disclosed fallback, never claim the skill ran.
 

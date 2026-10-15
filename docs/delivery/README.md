@@ -4,6 +4,7 @@ Establish capability/resume work → current status. Validate a claim/update evi
 
 | Document | Owns |
 | --- | --- |
+| [Per-issue execution plans](../pan/README.md) | Persisted vertical slices, commits, checks and resume actions, keyed by real issue number. |
 | [Implementation plan](implementation-plan.md) | Dependency order, milestone exits and the first slice after authorization. |
 | [Implementation status](implementation-status.md) | Current reproducible behavior and gaps. |
 | [Verification](verification.md) | Observed checks, limits and remaining release evidence. |

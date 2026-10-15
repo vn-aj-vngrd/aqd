@@ -1,6 +1,6 @@
 # AQD V1 release definition
 
-Updated October 5, 2026 with the owner's clarification: **V1 is a complete usable private app on one Apple device, not a thin closet demo.** It has Today, Closet, Planner, Agent, a local Profile, complete Settings/onboarding and light/dark appearance. It delivers the private wardrobe/outfit/planning journey end to end without an app backend. V2 extends that same app and data with connected features and future enhancements. This branch remains documentation/design only.
+Updated October 5, 2026 with the owner's clarification: **V1 is a complete usable private app on one Apple device, not a thin closet demo.** It has Today, Closet, Planner, Agent, a local Profile, complete Settings/onboarding and light/dark appearance. It delivers the private wardrobe/outfit/planning journey end to end without an app backend. V2 extends that same app and data with connected features and future enhancements. This document defines target scope; the [lifecycle](../agents/lifecycle.md) and [implementation status](../delivery/implementation-status.md) own current authority and delivered behavior.
 
 The October 1 connected V1 is preserved in [V2 core release](v2-release.md); its private requirements are retained here where device-only operation applies. [V2 backlog](v2-backlog.md) preserves everything else. No feature is discarded by the phase split.
 
@@ -11,6 +11,10 @@ On an iPhone, start privately, add owned pieces, create useful outfits/themes, p
 No account, social participation, network connection or AI-capable hardware blocks manual wardrobe/planning. V1 Agent is a real local destination with history, review, cancel/retry/copy and truthful capability states. Eligible, ready devices use on-device Foundation Models; other devices show reason-specific Agent unavailability, and manual controls remain available. Do not promise every generative question on every device.
 
 iPhone remains the first Apple-device target; additional iPad/Mac/Watch/Android/web clients are future extensions. Commit **iOS 18.0 as minimum deployment for the complete manual core**, building with published stable **Xcode 27 / iOS 27 SDK** (latest stable maintenance checked at implementation). [Primary research](../references/native-ios-materials.md) justifies the selected16–18 APIs and supported deployment range; this is a specification, not a reproduced build. Native components render each OS automatically; custom26 glass and optional27 styles are guarded with baseline/opaque fallback. Foundation Models requires26 plus compatible device/runtime readiness and does not raise the manual minimum. Physical-device capability and optional weather entitlement/network are separate release checks. Free local use is the working default; no subscription/entitlement backend in V1.
+
+## Immediate personal-MVP acceptance
+
+The owner selected iPhone 17 Pro Max on October 15 as the immediate device. [Autonomous workflow](../agents/autonomous-workflow.md#immediate-mvp-target) owns that delivery profile. Keep existing deployment settings and required local behavior; broad supported-OS/device qualification remains later launch work. Feature unit/build checks and final #30 runtime timing follow the [implementation plan](../delivery/implementation-plan.md#verification-policy--owner-approved-october15). This target selection is not physical-phone acceptance evidence.
 
 ## Included complete local scope
 
@@ -49,7 +53,7 @@ Reuse V2's editorial Welcome with Start my closet and Take a quick tour. Onboard
 
 ## Today customization acceptance
 
-Owner-approved October7: Today replaces the first destination label/accessibility name, house unchanged. Customize Today replaces private header Search; Closet/global/public Search stays intact. Complete [TODAY-01–07](../features/today.md) on the separately authorized native build, including all twelve configurations, required Note/Photo content, minimum-one, unlimited stable instances, atomic Done/Undo, failure/unknown/restart, scoped cancellation/media retention, archive/restore/erase and native accessibility. V2 inherits this private feature. No application implementation is authorized.
+Owner-approved October7: Today replaces the first destination label/accessibility name, house unchanged. Customize Today replaces private header Search; Closet/global/public Search stays intact. Complete [TODAY-01–07](../features/today.md) on the separately authorized native build, including all twelve configurations, required Note/Photo content, minimum-one, unlimited stable instances, atomic Done/Undo, failure/unknown/restart, scoped cancellation/media retention, archive/restore/erase and native accessibility. V2 inherits this private feature. That approval originally covered docs/Paper; current issue implementation authority follows the lifecycle and active plan.
 
 ## Local acceptance
 
@@ -75,7 +79,7 @@ Weather acceptance adds **LOCAL-16**: on the implemented signed native build, te
 
 ## Data contract
 
-Persist a versioned local database and protected media in the app sandbox. A local closet/profile identifier is not an online account. SwiftData with CloudKit explicitly disabled is a proposal; preserve a suitable recovered existing store rather than rewrite it merely for an API preference. Use stable item/outfit/theme/plan/history/conversation IDs and safe migrations.
+Persist a versioned local database and protected media in the app sandbox. A local closet/profile identifier is not an online account. The native baseline uses SwiftData with CloudKit explicitly disabled; extend its versioned store and preserving migrations rather than replacing it. Unimplemented domains remain target requirements. Use stable item/outfit/theme/plan/history/conversation IDs and safe migrations.
 
 Prepare required media before committing references; preserve old images until replacement saves. Archive preserves links; deletion previews outfit/theme/future-plan effects and retains minimal non-photo historical facts. Conversation/profile/preferences and journal memories/notes/date-timezones/outfit snapshots/media/drafts are local data, subject to export/restore/erase controls. Journal outfit deletion retains minimal composition facts without unexpectedly erasing memories; available media is reference-scoped and unavailable media labelled honestly. Journal replacement/deletion cleans only unreferenced AQD-owned media after commit, not outfits/wear records, other memories or original Photos assets. Private notes and images do not enter Agent context unless a separately supported explicit local selection allows it.
 

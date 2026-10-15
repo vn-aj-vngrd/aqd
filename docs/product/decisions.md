@@ -6,6 +6,10 @@ Updated October 5, 2026. The current owner request supersedes the earlier full-c
 
 Scope/authorization changes → applicable confirmation below. Unselected persistence or commercial choices → working-default row. Connected provider/policy selection → service-gate row. Implementation → the row's owner contract, not every dated approval body. Confirmations preserve what was approved; releases own phase acceptance, features own behavior, architecture owns mechanics and research owns source facts. Earlier terminology/receipts are historical where an owner supersedes them.
 
+## Agent delivery and target refinement, October 15, 2026
+
+The owner requested repo-local autonomous implementation skills, no repeated interview for established specs, persisted plans at `docs/pan/issue-<number>.md`, tested vertical slices with separate reviewable commits, and required `action(part): Description` commit subjects. The immediate personal-MVP device is iPhone 17 Pro Max. The [autonomous workflow](../agents/autonomous-workflow.md) owns execution and target-device rules; [implementation plan](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) owns feature checks versus final #30. Existing release scope and deployment settings remain; broader launch compatibility is separate from the immediate device task.
+
 ## Confirmed by the user
 
 - V1 is a small private personal digital closet and outfit-planning MVP running locally on the user's Apple device, with local clothing data and privacy by default.
