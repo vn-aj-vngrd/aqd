@@ -26,7 +26,13 @@ The per-issue plan is a working execution record, not another feature specificat
 
 ## Immediate MVP target
 
-The owner's October 15 direction makes the **iPhone 17 Pro Max** the immediate personal-MVP acceptance device. Read its actual installed OS when the phone is available. Use a matching simulator for automated iOS checks. A different phone or simulator can provide supplemental evidence, but cannot establish compatibility with this phone.
+The owner's October 15 direction makes the **physical iPhone 17 Pro Max** the local development and acceptance device. Discover the currently connected phone with `xcrun devicectl list devices` and read its actual OS. Select only its physical iOS destination, never a historical UUID or a simulator with the same model name.
+
+Before the first local install, launch or on-device test in a session, prompt the owner to connect and unlock the iPhone and confirm it is ready. Identify the intended check and wait for that readiness response while continuing independent code/Core/documentation work. Repeat the readiness prompt after a lock or disconnection interrupts execution. A readiness interruption is Blocked/Not run, not a passing or failed feature check.
+
+Keep all local simulators shut down. Do not launch, boot or create one, and do not substitute one when the phone is missing or locked. Preserve the ordinary closet and Photos library; use guarded isolated test stores and declared synthetic fixtures. Local signing configuration stays outside Git. Broad device/OS qualification remains #30.
+
+GitHub-hosted CI runs on GitHub's machines and retains its existing required checks. Its simulator evidence is labelled separately and does not establish physical-phone acceptance. This hosted exception never authorizes a simulator on the owner's Mac. Changes to required CI gates need their own explicit scope.
 
 Keep the current deployment setting and existing availability guards while implementing features. The broader iOS 18 minimum and supported-device launch matrix in the [V1 release](../product/v1-release.md) remain later release work. They do not expand the immediate personal-device task. No new tablet, Mac, Android, backend, account or sync work is needed to satisfy this target.
 

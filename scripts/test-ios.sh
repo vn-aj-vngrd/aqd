@@ -5,6 +5,25 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DESTINATION="${IOS_DESTINATION:-}"
+PHYSICAL=false
+if [[ "$DESTINATION" == platform=iOS,id=* ]]; then
+  PHYSICAL=true
+elif [[ "${GITHUB_ACTIONS:-}" != true ]]; then
+  printf 'Local native checks require the physical iPhone destination. Prompt for the connected, unlocked iPhone, then set IOS_DESTINATION=platform=iOS,id=<current-device-UDID>. Local simulators stay shut down.\n' >&2
+  exit 1
+fi
+SIGNING_ARGUMENTS=(CODE_SIGNING_ALLOWED=NO)
+if [[ "$PHYSICAL" == true ]]; then
+  if [[ "${IOS_DEVICE_READY:-}" != 1 ]]; then
+    printf 'Prompt the owner to connect and unlock the physical iPhone; set IOS_DEVICE_READY=1 only after their readiness response.\n' >&2
+    exit 1
+  fi
+  if [[ ! "${IOS_DEVELOPMENT_TEAM:-}" =~ ^[A-Z0-9]{10}$ ]]; then
+    printf 'Physical tests require the existing local IOS_DEVELOPMENT_TEAM signing identity; keep signing configuration outside Git.\n' >&2
+    exit 1
+  fi
+  SIGNING_ARGUMENTS=(CODE_SIGN_STYLE=Automatic "DEVELOPMENT_TEAM=$IOS_DEVELOPMENT_TEAM" -allowProvisioningUpdates)
+fi
 if [[ -z "$DESTINATION" ]]; then
   DESTINATION="$(node "$ROOT/scripts/ios-destination.mjs")"
 fi
@@ -39,8 +58,13 @@ if [[ -n "${IOS_RESULT_BUNDLE:-}" ]]; then
   RESULT_ARGUMENTS=(-resultBundlePath "$IOS_RESULT_BUNDLE")
 fi
 
-# Only UI runs need synthetic Photos-library fixtures. Unit runs never seed Photos.
-if [[ "$SCOPE" != unit ]]; then
+if [[ "$PHYSICAL" == true && "$SCOPE" != unit && -z "${IOS_TEST_CASES_FILE:-}" ]]; then
+  printf 'Physical UI runs require an explicit focused test selection and declared fixtures. Broad device E2E remains in #30.\n' >&2
+  exit 1
+fi
+
+# Automatic Photos seeding belongs only to hosted simulator UI runs.
+if [[ "$SCOPE" != unit && "$PHYSICAL" != true ]]; then
   PHOTO_DEVICE="${IOS_PHOTO_DEVICE:-${DESTINATION##*,id=}}"
   if [[ "$PHOTO_DEVICE" == "$DESTINATION" ]]; then
     printf 'Set IOS_PHOTO_DEVICE to the destination simulator UUID for Photos seeding.\n' >&2
@@ -53,8 +77,8 @@ if [[ "$SCOPE" != e2e ]]; then
   swift test --package-path "$ROOT/apps/ios/Core"
 fi
 
-# The default destination is the installed target iPhone 17 Pro Max simulator.
-# No credentials, team, provisioning, local xcconfig, or signing hooks are used.
+# Local tests use the explicit physical phone and existing local signing team.
+# Hosted simulator checks remain unsigned and run on GitHub's machine.
 # Conditional array expansion preserves zero arguments under macOS Bash 3.2 nounset.
 xcodebuild \
   -project "$ROOT/apps/ios/AQD.xcodeproj" \
@@ -65,7 +89,7 @@ xcodebuild \
   -disableAutomaticPackageResolution \
   -parallel-testing-enabled NO \
   -collect-test-diagnostics never \
-  CODE_SIGNING_ALLOWED=NO \
+  "${SIGNING_ARGUMENTS[@]}" \
   ${TEST_SELECTION[@]+"${TEST_SELECTION[@]}"} \
   ${RESULT_ARGUMENTS[@]+"${RESULT_ARGUMENTS[@]}"} \
   build test

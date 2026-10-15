@@ -19,7 +19,7 @@ for (const scope of ["unit", "e2e", "all", "selected", "empty", "invalid"]) {
       const casesPath = join(directory, "cases.txt");
       writeFileSync(casesPath, scope === "empty" ? "# No selected cases\n" : scope === "invalid" ? "-skip-testing:AQDUITests\n" : selected.join("\n"));
       const result = spawnSync("/bin/bash", ["scripts/test-ios.sh"], { encoding: "utf8", env: {
-        ...process.env, PATH: `${directory}:/usr/bin:/bin`, AQD_RUNNER_CALLS: callsPath,
+        ...process.env, GITHUB_ACTIONS: "true", PATH: `${directory}:/usr/bin:/bin`, AQD_RUNNER_CALLS: callsPath,
         IOS_TEST_SCOPE: ["selected", "empty", "invalid"].includes(scope) ? "e2e" : scope,
         ...(["selected", "empty", "invalid"].includes(scope) ? { IOS_TEST_CASES_FILE: casesPath, IOS_RESULT_BUNDLE: join(directory, "actual.xcresult") } : {}),
         IOS_DESTINATION: "platform=iOS Simulator,id=11111111-1111-4111-8111-111111111111",
@@ -43,3 +43,69 @@ for (const scope of ["unit", "e2e", "all", "selected", "empty", "invalid"]) {
     } finally { rmSync(directory, { recursive: true, force: true }); }
   });
 }
+
+test("local native runner refuses missing and simulator destinations before native tools", () => {
+  const directory = mkdtempSync(join(tmpdir(), "aqd-local-device-"));
+  const callsPath = join(directory, "calls.jsonl");
+  try {
+    for (const command of ["swift", "xcrun", "xcodebuild", "node"]) {
+      writeFileSync(join(directory, command), `#!${process.execPath}\nrequire('node:fs').appendFileSync(process.env.AQD_RUNNER_CALLS, '${command}\\n'); if ('${command}' === 'node') process.stdout.write('platform=iOS Simulator,id=11111111-1111-4111-8111-111111111111\\n');\n`, { mode: 0o755 });
+    }
+    for (const destination of ["", "platform=iOS Simulator,id=11111111-1111-4111-8111-111111111111"]) {
+      const result = spawnSync("/bin/bash", ["scripts/test-ios.sh"], { encoding: "utf8", env: {
+        ...process.env, GITHUB_ACTIONS: "", PATH: `${directory}:/usr/bin:/bin`,
+        AQD_RUNNER_CALLS: callsPath, IOS_DESTINATION: destination, IOS_TEST_SCOPE: "unit",
+      } });
+      assert.notEqual(result.status, 0, "Local native checks require the explicit physical phone");
+      assert.match(result.stderr, /physical iPhone|physical.*destination/i);
+      assert.equal(spawnSync("/bin/test", ["-e", callsPath]).status, 1, "Refusal must precede native tools and simulator discovery");
+    }
+  } finally { rmSync(directory, { recursive: true, force: true }); }
+});
+
+test("physical unit runner keeps signing enabled and does not touch Photos or simulator tools", () => {
+  const directory = mkdtempSync(join(tmpdir(), "aqd-physical-runner-"));
+  const callsPath = join(directory, "calls.jsonl");
+  try {
+    for (const command of ["swift", "xcrun", "xcodebuild"]) {
+      writeFileSync(join(directory, command), `#!${process.execPath}\nconst fs = require('node:fs'); const path = require('node:path'); fs.appendFileSync(process.env.AQD_RUNNER_CALLS, JSON.stringify({command:path.basename(process.argv[1]),args:process.argv.slice(2)})+'\\n');\n`, { mode: 0o755 });
+    }
+    const result = spawnSync("/bin/bash", ["scripts/test-ios.sh"], { encoding: "utf8", env: {
+      ...process.env, GITHUB_ACTIONS: "", PATH: `${directory}:/usr/bin:/bin`, AQD_RUNNER_CALLS: callsPath,
+      IOS_DESTINATION: "platform=iOS,id=00008150-0000000000000000", IOS_DEVELOPMENT_TEAM: "TEAM123456",
+      IOS_DEVICE_READY: "1", IOS_TEST_SCOPE: "unit", IOS_DERIVED_DATA: join(directory,"derived"),
+    } });
+    assert.equal(result.status, 0, result.stderr);
+    const calls = readFileSync(callsPath,"utf8").trim().split("\n").map(line=>JSON.parse(line));
+    const build = calls.find(call=>call.command==="xcodebuild");
+    assert.ok(build);
+    assert.ok(!build.args.includes("CODE_SIGNING_ALLOWED=NO"), "The physical build must be signable");
+    assert.ok(build.args.includes("DEVELOPMENT_TEAM=TEAM123456"));
+    assert.equal(calls.some(call=>call.command==="xcrun"),false,"Unit verification must not seed a Photos library");
+  } finally { rmSync(directory, { recursive: true, force: true }); }
+});
+
+test("local entry points require readiness and preserve focused physical-test boundaries", () => {
+  const directory = mkdtempSync(join(tmpdir(), "aqd-device-readiness-"));
+  const callsPath = join(directory, "calls");
+  try {
+    for (const command of ["swift", "xcrun", "xcodebuild", "node"]) {
+      writeFileSync(join(directory, command), `#!${process.execPath}\nrequire('node:fs').appendFileSync(process.env.AQD_RUNNER_CALLS, '${command}\\n');\n`, { mode: 0o755 });
+    }
+    const env = { ...process.env, GITHUB_ACTIONS: "", PATH: `${directory}:/usr/bin:/bin`,
+      AQD_RUNNER_CALLS: callsPath, IOS_DESTINATION: "platform=iOS,id=00008150-0000000000000000",
+      IOS_DEVICE_READY: "1", IOS_DEVELOPMENT_TEAM: "TEAM123456", IOS_TEST_CASES_FILE: "", IOS_TEST_SCOPE: "unit" };
+    for (const [script,args,overrides,message] of [
+      ["scripts/test-ios.sh",[],{IOS_DEVICE_READY:""},/readiness response/],
+      ["scripts/test-ios.sh",[],{IOS_DEVELOPMENT_TEAM:""},/signing identity/],
+      ["scripts/test-ios.sh",[],{IOS_TEST_SCOPE:"e2e"},/explicit focused test selection/],
+      ["scripts/prove-ios.sh",["21"],{IOS_DEVICE_READY:""},/readiness/],
+      ["scripts/seed-ios-test-photo.sh",["11111111-1111-4111-8111-111111111111"],{},/hosted-CI-only/],
+    ]) {
+      const result=spawnSync("/bin/bash",[script,...args],{encoding:"utf8",env:{...env,...overrides}});
+      assert.notEqual(result.status,0,script);
+      assert.match(result.stderr,message);
+      assert.equal(spawnSync("/bin/test",["-e",callsPath]).status,1,"Readiness refusal must precede native tools");
+    }
+  } finally { rmSync(directory,{recursive:true,force:true}); }
+});

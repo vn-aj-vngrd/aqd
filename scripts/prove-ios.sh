@@ -6,6 +6,10 @@ ISSUE="${1:-}"
 if [[ ! "$ISSUE" =~ ^[1-9][0-9]*$ ]]; then
   printf 'Usage: scripts/prove-ios.sh <positive-issue-number>\n' >&2; exit 1
 fi
+if [[ "${GITHUB_ACTIONS:-}" != true && ( "${IOS_DESTINATION:-}" != platform=iOS,id=* || "${IOS_DEVICE_READY:-}" != 1 ) ]]; then
+  printf 'Local acceptance proof requires the physical iPhone. Prompt for connected/unlocked readiness, then set its current IOS_DESTINATION and IOS_DEVICE_READY=1. No simulator fallback.\n' >&2
+  exit 1
+fi
 CASES="${IOS_TEST_CASES_FILE:-$ROOT/apps/ios/acceptance/issue-$ISSUE.txt}"
 if [[ ! -f "$CASES" ]]; then
   printf 'Missing acceptance selection: %s\n' "$CASES" >&2; exit 1

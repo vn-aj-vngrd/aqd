@@ -4,18 +4,19 @@ Private V1 follows the [implementation and final-hardening plan](../../docs/deli
 
 ## Build and test
 
-Requires macOS, Xcode and an installed simulator. The immediate personal-MVP target is iPhone 17 Pro Max. Keep existing deployment/availability settings; inspect the actual installed toolchain and runtime instead of copying historical version strings.
+Requires macOS, Xcode, the owner's physical iPhone 17 Pro Max and existing local development signing. [The device procedure](../../docs/agents/autonomous-workflow.md#immediate-mvp-target) requires a connected/unlocked readiness prompt before on-device execution. Keep local simulators shut down. Preserve deployment/availability settings; discover the current phone/OS instead of copying historical identifiers.
 
 From the repository root:
 
 ```sh
-AQD_DESTINATION="$(node scripts/ios-destination.mjs)" || exit
-IOS_DESTINATION="$AQD_DESTINATION" IOS_TEST_SCOPE=unit ./scripts/test-ios.sh
+IOS_DESTINATION="platform=iOS,id=$AQD_DEVICE_UDID" \
+  IOS_DEVELOPMENT_TEAM="$AQD_LOCAL_TEAM" IOS_DEVICE_READY=1 \
+  IOS_TEST_SCOPE=unit ./scripts/test-ios.sh
 ```
 
-The helper selects an available iPhone 17 Pro Max and reports its installed OS with `--json`. It fails without selecting another phone when the target is absent. The runner defaults to Core/native unit tests and a Debug build. `IOS_TEST_SCOPE=all` includes UI tests; `e2e` runs UI tests only. UI features additionally run selected native E2E identifiers and publish [AC proof](../../docs/agents/acceptance-proof.md); `e2e` alone runs the whole UI target. For a feature, persist `apps/ios/acceptance/issue-<number>.txt` and run `./scripts/prove-ios.sh <number>`; it retains exact results and exported visual attachments. Broad full-suite/device qualification remains in #30.
+Resolve `AQD_DEVICE_UDID` with `xcrun devicectl list devices` and `AQD_LOCAL_TEAM` from the existing local signing identity. Confirm readiness before setting its flag. Local missing/simulator destinations and unconfirmed readiness fail before native tools. The runner defaults to Core/native unit tests and a Debug build. Physical UI runs require an explicit selection. Persist `apps/ios/acceptance/issue-<number>.txt` and run `./scripts/prove-ios.sh <number>` with the same physical/signing/readiness environment; it retains exact results and exported attachments for [AC proof](../../docs/agents/acceptance-proof.md). Broad full-suite/device qualification remains in #30.
 
-Use `IOS_DERIVED_DATA` for a task-owned build directory. Only UI scopes add a synthetic photo fixture to the selected test simulator; they preserve existing Photos. Fixtures prove mechanics, not garment quality. The Xcode project uses shared scheme **AQD** and unsigned automated simulator builds. [Verification](../../docs/delivery/verification.md) owns current test/build results, including the scoped Notes correction and retained older failures. Physical-phone acceptance remains separate.
+Use `IOS_DERIVED_DATA` for a task-owned build directory and serialize native work. Physical test stores are isolated; physical Photos scenarios require a declared safe fixture and never reset the ordinary library. GitHub-hosted CI alone uses unsigned simulator checks and automatic synthetic Photos seeding on GitHub's machine. Its evidence stays separate from physical acceptance. The shared scheme is **AQD**. [Verification](../../docs/delivery/verification.md) owns actual test/build results.
 
 ## Data boundary
 

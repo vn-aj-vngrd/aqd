@@ -2,7 +2,11 @@
 # Synthetic asymmetric pixels ONLY: not garment-quality or production demo media.
 # Adds one image to Simulator Photos; never clears or replaces the library.
 set -euo pipefail
-DEVICE="${1:-E5DAD2A0-6375-4737-B33D-3A08A4D9FDAA}"
+if [[ "${GITHUB_ACTIONS:-}" != true ]]; then
+  printf 'Simulator Photos seeding is hosted-CI-only. Keep local simulators shut down and use the physical iPhone procedure.\n' >&2
+  exit 1
+fi
+DEVICE="${1:?Pass the selected hosted simulator UUID}"
 WORK="$(mktemp -d /tmp/aqd-photo-fixture.XXXXXX)"
 trap 'rm -rf "$WORK"' EXIT
 swift - "$WORK/AQD-synthetic-picker-fixture.png" <<'SWIFT'
