@@ -1,25 +1,61 @@
 #!/bin/bash
 # Run from any directory: ./scripts/test-ios.sh
-# Override only the simulator destination with IOS_DESTINATION.
+# Default: Core and native unit tests. Use IOS_TEST_SCOPE=all or e2e explicitly.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DESTINATION="${IOS_DESTINATION:-platform=iOS Simulator,id=E5DAD2A0-6375-4737-B33D-3A08A4D9FDAA}"
-DERIVED_DATA="${IOS_DERIVED_DATA:-/tmp/aqd-uitest-derived}"
-# The real PhotosPicker UI test needs a normal Photos-library source. Seeding
-# adds synthetic pixels only and preserves all existing Simulator photos.
-# A destination expressed by name must supply IOS_PHOTO_DEVICE explicitly.
-PHOTO_DEVICE="${IOS_PHOTO_DEVICE:-${DESTINATION##*,id=}}"
-if [[ "$PHOTO_DEVICE" == "$DESTINATION" ]]; then
-  printf 'Set IOS_PHOTO_DEVICE to the destination simulator UUID for Photos seeding.\n' >&2
-  exit 1
+DESTINATION="${IOS_DESTINATION:-}"
+if [[ -z "$DESTINATION" ]]; then
+  DESTINATION="$(node "$ROOT/scripts/ios-destination.mjs")"
 fi
-"$ROOT/scripts/seed-ios-test-photo.sh" "$PHOTO_DEVICE"
+DERIVED_DATA="${IOS_DERIVED_DATA:-/tmp/aqd-uitest-derived}"
+SCOPE="${IOS_TEST_SCOPE:-unit}"
+TEST_SELECTION=()
+case "$SCOPE" in
+  unit) TEST_SELECTION=(-only-testing:AQDTests) ;;
+  e2e) TEST_SELECTION=(-only-testing:AQDUITests) ;;
+  all) ;;
+  *) printf 'Invalid IOS_TEST_SCOPE: %s (expected unit, e2e or all).\n' "$SCOPE" >&2; exit 1 ;;
+esac
 
-swift test --package-path "$ROOT/apps/ios/Core"
+if [[ -n "${IOS_TEST_CASES_FILE:-}" ]]; then
+  if [[ "$SCOPE" != e2e || ! -f "$IOS_TEST_CASES_FILE" ]]; then
+    printf 'Selected UI cases require e2e scope and an existing IOS_TEST_CASES_FILE.\n' >&2; exit 1
+  fi
+  TEST_SELECTION=()
+  while IFS= read -r TEST_CASE || [[ -n "$TEST_CASE" ]]; do
+    [[ -z "$TEST_CASE" || "$TEST_CASE" == \#* ]] && continue
+    if [[ ! "$TEST_CASE" =~ ^AQDUITests/[A-Za-z_][A-Za-z_0-9]*/test[A-Za-z_0-9]+$ ]]; then
+      printf 'Invalid selected UI test identifier: %s\n' "$TEST_CASE" >&2; exit 1
+    fi
+    TEST_SELECTION+=("-only-testing:$TEST_CASE")
+  done < "$IOS_TEST_CASES_FILE"
+  if [[ ${#TEST_SELECTION[@]} -eq 0 ]]; then
+    printf 'No selected UI test identifiers; refusing a wider or empty run.\n' >&2; exit 1
+  fi
+fi
+RESULT_ARGUMENTS=()
+if [[ -n "${IOS_RESULT_BUNDLE:-}" ]]; then
+  RESULT_ARGUMENTS=(-resultBundlePath "$IOS_RESULT_BUNDLE")
+fi
 
-# The default device is the local iOS 26.5 iPhone 17 Pro simulator.
+# Only UI runs need synthetic Photos-library fixtures. Unit runs never seed Photos.
+if [[ "$SCOPE" != unit ]]; then
+  PHOTO_DEVICE="${IOS_PHOTO_DEVICE:-${DESTINATION##*,id=}}"
+  if [[ "$PHOTO_DEVICE" == "$DESTINATION" ]]; then
+    printf 'Set IOS_PHOTO_DEVICE to the destination simulator UUID for Photos seeding.\n' >&2
+    exit 1
+  fi
+  "$ROOT/scripts/seed-ios-test-photo.sh" "$PHOTO_DEVICE"
+fi
+
+if [[ "$SCOPE" != e2e ]]; then
+  swift test --package-path "$ROOT/apps/ios/Core"
+fi
+
+# The default destination is the installed target iPhone 17 Pro Max simulator.
 # No credentials, team, provisioning, local xcconfig, or signing hooks are used.
+# Conditional array expansion preserves zero arguments under macOS Bash 3.2 nounset.
 xcodebuild \
   -project "$ROOT/apps/ios/AQD.xcodeproj" \
   -scheme AQD \
@@ -30,4 +66,6 @@ xcodebuild \
   -parallel-testing-enabled NO \
   -collect-test-diagnostics never \
   CODE_SIGNING_ALLOWED=NO \
+  ${TEST_SELECTION[@]+"${TEST_SELECTION[@]}"} \
+  ${RESULT_ARGUMENTS[@]+"${RESULT_ARGUMENTS[@]}"} \
   build test

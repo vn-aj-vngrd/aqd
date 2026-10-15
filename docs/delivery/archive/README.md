@@ -21,3 +21,5 @@ Return to [current implementation](../implementation-status.md) and [verificatio
 ## Phase terminology
 
 Historical reports retain their original dated V1 wording. The connected product described there is now preserved as V2; the current complete device-only V1 is defined in [V1 release](../../product/v1-release.md). Historical tests are not current native or service evidence.
+
+Recent archived records: [October 15 status](implementation-status-2026-10-15.md) and [V1 copy prose ledger](v1-copy-review-2026-10-07.md). Their active entry points now link to concise current guidance.

@@ -1,24 +1,21 @@
 # AQD native iOS
 
-Private V1 implementation in progress: epic [#6](https://github.com/vn-aj-vngrd/aqd/issues/6), baseline/capture [#7](https://github.com/vn-aj-vngrd/aqd/issues/7). This baseline is not the complete V1 release. Unimplemented root capabilities are explicitly labelled; no demonstration wardrobe or wear records are seeded.
+Private V1 follows the [implementation and final-hardening plan](../../docs/delivery/implementation-plan.md): [Foundation#20](https://github.com/vn-aj-vngrd/aqd/issues/20), then one vertical-slice issue/PR per Paper V1 section01–09 (#21–29), then final E2E/hardening #30. Native baseline PR#9 is merged at `c5e11c4`; former #6–19 are closed historical work, not full-V1 acceptance. This baseline is not the complete V1 release. Unimplemented root capabilities are explicitly labelled; no demonstration wardrobe or wear records are seeded.
 
 ## Build and test
 
-Requires macOS, Xcode and an installed iOS Simulator. Current evidence uses Xcode26.5 / Swift6.3.2 / iOS26.5; deployment minimum is iOS18. SDK27 and physical-device certification remain release gates, not proven by this baseline.
+Requires macOS, Xcode and an installed simulator. The immediate personal-MVP target is iPhone 17 Pro Max. Keep existing deployment/availability settings; inspect the actual installed toolchain and runtime instead of copying historical version strings.
 
 From the repository root:
 
 ```sh
-./scripts/test-ios.sh
+AQD_DESTINATION="$(node scripts/ios-destination.mjs)" || exit
+IOS_DESTINATION="$AQD_DESTINATION" IOS_TEST_SCOPE=unit ./scripts/test-ios.sh
 ```
 
-The default simulator is the local iPhone17Pro `E5DAD2A0-6375-4737-B33D-3A08A4D9FDAA`. For another installed simulator:
+The helper selects an available iPhone 17 Pro Max and reports its installed OS with `--json`. It fails without selecting another phone when the target is absent. The runner defaults to Core/native unit tests and a Debug build. `IOS_TEST_SCOPE=all` includes UI tests; `e2e` runs UI tests only. UI features additionally run selected native E2E identifiers and publish [AC proof](../../docs/agents/acceptance-proof.md); `e2e` alone runs the whole UI target. For a feature, persist `apps/ios/acceptance/issue-<number>.txt` and run `./scripts/prove-ios.sh <number>`; it retains exact results and exported visual attachments. Broad full-suite/device qualification remains in #30.
 
-```sh
-IOS_DESTINATION='platform=iOS Simulator,id=<simulator-UUID>' ./scripts/test-ios.sh
-```
-
-The runner tests the Foundation core, builds the app and runs native SwiftData/photo and XCTest UI tests unsigned. It adds one **synthetic test image** to Simulator Photos for the real PhotosPicker flow; existing Photos are not deleted. Override derived data with `IOS_DERIVED_DATA`. Fixtures prove mechanics, not garment/media quality. Open `AQD.xcodeproj`, shared scheme **AQD**, for local development.
+Use `IOS_DERIVED_DATA` for a task-owned build directory. Only UI scopes add a synthetic photo fixture to the selected test simulator; they preserve existing Photos. Fixtures prove mechanics, not garment quality. The Xcode project uses shared scheme **AQD** and unsigned automated simulator builds. [Verification](../../docs/delivery/verification.md) owns current test/build results, including the scoped Notes correction and retained older failures. Physical-phone acceptance remains separate.
 
 ## Data boundary
 

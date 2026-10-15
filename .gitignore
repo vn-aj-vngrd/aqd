@@ -35,6 +35,7 @@ docs/design/evidence/*
 !docs/design/evidence/planner-surfaces.json
 !docs/design/evidence/design-sync.json
 !docs/design/evidence/foundations-library.json
+!docs/design/evidence/foundation-code-parity.json
 !docs/design/evidence/v1-copy-review.json
 !docs/design/evidence/native-confirmations.json
 !docs/design/evidence/ui-refinements.json

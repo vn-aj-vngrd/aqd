@@ -45,7 +45,9 @@ Inspected all 226 artboards across ten Paper pages, including 179 canonical scre
 
 Reviewed representative new-piece inputs, Agent dark composer/Back, Closet toolbar/tabs/menu, review actions and Reduce Transparency. Corrected dark Back surfaces after the first review. Geometry and routes remain intact. No app code, native build, device rendering, interaction or accessibility runtime validation is implied. No screenshot files were saved.
 
-## Native acceptance before implementation is complete
+## Final native acceptance
+
+Execute these requirements under the [verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15), primarily in #30. Feature delivery also requires focused rendered/E2E proof for its UI ACs under [acceptance proof](../agents/acceptance-proof.md); only the broader qualification stays deferred.
 
 - Verify actual system material on supported iOS versions; Paper cannot simulate refraction, native interaction or system transparency adaptation.
 - Check compact/large iPhone, light/dark, largest accessibility text, Reduce Transparency, Increase Contrast and VoiceOver.

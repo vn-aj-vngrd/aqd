@@ -2,6 +2,7 @@ import AQDCore
 import AVFoundation
 import PhotosUI
 import SwiftUI
+import UIKit
 
 struct PieceCaptureView: View {
     @Environment(\.openURL) private var openURL
@@ -19,8 +20,9 @@ struct PieceCaptureView: View {
     @State private var cameraRestricted = false
     @State private var cameraUnavailable = false
     @AccessibilityFocusState private var photoFocused: Bool
+    @FocusState private var nameEditing: Bool
 
-    private enum PhotoSource { case photos, camera }
+    private enum PhotoSource: Hashable { case photos, camera }
 
     var body: some View {
         NavigationStack {
@@ -36,7 +38,7 @@ struct PieceCaptureView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button { leave() } label: { Label("Back", systemImage: "chevron.left") }
+                    Button { leave() } label: { Label("Back", systemImage: "chevron.backward") }
                         .accessibilityIdentifier("capture.back")
                         .disabled(model.isSaving)
                 }
@@ -88,25 +90,32 @@ struct PieceCaptureView: View {
         }
         .sheet(isPresented: $sourceSheet, onDismiss: presentPendingSource) {
             NavigationStack {
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(spacing: 0) {
-                        sourceRow("Choose from Photos", symbol: "photo.on.rectangle", source: .photos)
-                        Divider().padding(.leading, 20)
-                        sourceRow("Take photo", symbol: "camera", source: .camera)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: AppSpacing.screen) {
+                        // Paper SQ4/SQE: 16pt inset + 24pt icon + 14pt gap;
+                        // the separator starts at the label, not beneath the icon.
+                        SurfaceGroup([PhotoSource.photos, .camera], id: \.self,
+                                     separatorInsets: EdgeInsets(top: 0, leading: 54, bottom: 0, trailing: 0)) { source in
+                            sourceRow(source == .photos ? "Choose from Photos" : "Take photo",
+                                      symbol: source == .photos ? "photo.on.rectangle" : "camera", source: source)
+                        }
+                        MetadataText("Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.")
                     }
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
-                    Text("Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.")
-                        .font(.footnote).foregroundStyle(AppTheme.secondary)
-                    Spacer(minLength: 0)
+                    .padding(AppSpacing.screen)
                 }
-                .padding(20).background(AppTheme.canvas)
+                .background(AppTheme.canvas)
                 .navigationTitle("Add photo").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Close") { sourceSheet = false }
+                        if #available(iOS 26.0, *) {
+                            Button(role: .close) { sourceSheet = false }
+                        } else {
+                            Button("Close") { sourceSheet = false }
+                        }
                     }
                 }
             }
+            .tint(AppTheme.actionText)
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }
@@ -128,10 +137,10 @@ struct PieceCaptureView: View {
 
     private var form: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: AppSpacing.large) {
+                VStack(alignment: .leading, spacing: model.draft.photoID == nil ? AppSpacing.medium : AppSpacing.small) {
                     HStack {
-                        Text("Photo").font(.subheadline)
+                        MetadataText("Photo")
                         Spacer()
                         if model.draft.photoID != nil {
                             Menu("Change") {
@@ -150,21 +159,28 @@ struct PieceCaptureView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 4))
                             .frame(maxWidth: .infinity)
                             .accessibilityLabel(model.draft.photoRecipe.crop == nil ? "Selected piece photo, entire image fitted" : "Selected piece photo, portrait crop")
-                        Button("Edit photo") { showPhotoEditor = true }
-                            .frame(maxWidth: .infinity, minHeight: 44)
+                        SecondaryAction(title: "Edit photo") { showPhotoEditor = true }
                             .disabled(model.isImporting || model.isSaving)
                             .accessibilityIdentifier("capture.editPhoto")
                     } else {
                         Button { sourceSheet = true } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "photo").accessibilityHidden(true)
+                            HStack(spacing: AppSpacing.large) {
+                                Image(systemName: "photo")
+                                    .font(.system(size: AppControlMetrics.disclosureLane))
+                                    .foregroundStyle(AppTheme.actionText)
+                                    .accessibilityHidden(true)
                                 Text(model.draft.photoID == nil ? "Add photo" : "Replace unavailable photo")
-                                Spacer()
-                                Image(systemName: "chevron.right").accessibilityHidden(true)
+                                    .font(AppTypography.body)
+                                    .foregroundStyle(AppTheme.actionText)
+                                Spacer(minLength: 0)
+                                Image(systemName: "chevron.forward")
+                                    .font(.system(size: AppControlMetrics.disclosureLane))
+                                    .frame(width: AppControlMetrics.disclosureLane)
+                                    .foregroundStyle(AppTheme.secondary)
+                                    .accessibilityHidden(true)
                             }
-                            .padding(20).frame(minHeight: 88)
-                            .foregroundStyle(AppTheme.ink)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                            .padding(AppSpacing.screen).frame(minHeight: 88)
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
                         }
                         .buttonStyle(.plain)
                         .accessibilityIdentifier("capture.addPhoto")
@@ -172,73 +188,82 @@ struct PieceCaptureView: View {
                     }
                     if model.isImporting {
                         HStack(spacing: 12) {
-                            ProgressView()
-                            Text("Preparing photo…").font(.subheadline)
+                            OperationProgress(title: "Preparing photo…")
                             Spacer()
                             Button("Cancel") { model.cancelImport() }.frame(minHeight: 44)
                         }
                     }
                 }
-                CaptureField(title: "Name", text: Binding(get: { model.draft.name },
-                                                         set: { model.update(\.name, value: $0) }))
-                if model.draft.name.count > 80 {
-                    Text("Use 80 characters or fewer for the piece name.").font(.subheadline).foregroundStyle(AppTheme.error)
-                } else if !model.draft.name.isEmpty && model.draft.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    Text("Enter a name, not only spaces.").font(.subheadline).foregroundStyle(AppTheme.error)
-                }
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Category").font(.subheadline)
-                    Picker("Category", selection: Binding(get: { model.draft.category },
-                                                          set: { model.update(\.category, value: $0) })) {
-                        Text("Choose category").tag(Optional<PieceCategory>.none)
-                        ForEach(PieceCategory.allCases, id: \.self) { category in
-                            Text(category.rawValue).tag(Optional(category))
+                LabeledField(title: "Name", text: Binding(get: { model.draft.name },
+                                                         set: { model.update(\.name, value: $0) }),
+                             prompt: "e.g. Cotton shirt", validation: nameValidation, accessibilityID: "capture.field.name",
+                             editingFocus: $nameEditing)
+                VStack(alignment: .leading, spacing: AppSpacing.small) {
+                    LabeledControl(title: "Category") {
+                        Picker("Category", selection: Binding(get: { model.draft.category },
+                                                              set: { model.update(\.category, value: $0) })) {
+                            Text("Choose category").foregroundStyle(AppTheme.secondary).tag(Optional<PieceCategory>.none)
+                            ForEach(PieceCategory.allCases, id: \.self) { category in
+                                Text(category.rawValue).tag(Optional(category))
+                            }
                         }
+                        .pickerStyle(.menu).frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityIdentifier("capture.category")
                     }
-                    .pickerStyle(.menu).frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
-                    .padding(.horizontal, 14)
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                    .accessibilityIdentifier("capture.category")
+                    // Paper JR5/JR6 is a plain supporting link, not a surfaced row.
+                    Button {
+                        nameEditing = false
+                        showDetails = true
+                    } label: {
+                        Text("More details").font(AppTypography.supporting)
+                            .foregroundStyle(AppTheme.actionText)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, AppSpacing.medium)
+                            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .topLeading)
+                            .contentShape(Rectangle())
+                    }.buttonStyle(.plain)
                 }
-                Button { showDetails = true } label: {
-                    HStack {
-                        Text("More details")
-                        Spacer()
-                        Image(systemName: "chevron.right").accessibilityHidden(true)
-                    }
-                    .foregroundStyle(AppTheme.ink).padding(14).frame(minHeight: 52)
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                }.buttonStyle(.plain)
                 if let error = model.errorText {
-                    Text(error).font(.subheadline).foregroundStyle(AppTheme.error)
+                    // This legacy channel mixes failures/conflicts/unknown writes.
+                    // Keep its exact recovery copy; do not infer a severity from prose.
+                    Text(error).font(AppTypography.supporting).foregroundStyle(AppTheme.error)
                     if model.draftSaveFailed {
                         Button("Retry keeping draft") { model.persistDraft() }.frame(minHeight: 44)
                     }
                 }
                 if model.draft.photoID == nil && (!model.draft.name.isEmpty || model.draft.category != nil) {
-                    Text("Add a photo to save this piece.").font(.subheadline).foregroundStyle(AppTheme.error)
+                    SemanticFeedback(role: .danger, message: "Add a photo to save this piece.")
                 }
             }
-            .padding(20)
+            .padding(.horizontal, AppSpacing.screen)
+            .padding(.top, AppSpacing.medium)
+            .padding(.bottom, AppSpacing.screen)
             .disabled(model.isSaving)
         }
         .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom) {
-            PrimaryAction(title: model.draft.baseRevision == nil ? "Save piece" : "Save changes",
-                          isPending: model.isSaving) { model.save() }
-                .disabled(!model.canSave)
-                .opacity(model.canSave ? 1 : 0.5)
-                .accessibilityIdentifier("capture.save")
-                .padding(.horizontal, 20).padding(.vertical, 12)
-                .background(AppTheme.canvas)
+            ActionFooter {
+                PrimaryAction(title: model.draft.baseRevision == nil ? "Save piece" : "Save changes",
+                              isPending: model.isSaving) { model.save() }
+                    .disabled(!model.canSave)
+                    .accessibilityIdentifier("capture.save")
+            }
         }
+    }
+
+    private var nameValidation: String? {
+        if model.draft.name.count > 80 { return "Use 80 characters or fewer for the piece name." }
+        if !model.draft.name.isEmpty && model.draft.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return "Enter a name, not only spaces."
+        }
+        return nil
     }
 
     private func receipt(_ piece: WardrobePiece) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 Text(piece.name).font(.title2.weight(.medium))
-                Text("Saved privately on this device.").foregroundStyle(AppTheme.secondary)
+                SemanticFeedback(role: .success, message: "Saved privately on this device.")
                 if model.receiptIsHistorical {
                     Text("This receipt shows an earlier saved revision. Your closet opens the current piece.")
                         .font(.subheadline).foregroundStyle(AppTheme.secondary)
@@ -253,10 +278,10 @@ struct PieceCaptureView: View {
             }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
         }
         .safeAreaInset(edge: .bottom) {
-            PrimaryAction(title: "Open my closet") { model.openCloset() }
-                .accessibilityIdentifier("capture.openCloset")
-                .padding(.horizontal, 20).padding(.vertical, 12)
-                .background(AppTheme.canvas)
+            ActionFooter {
+                PrimaryAction(title: "Open my closet") { model.openCloset() }
+                    .accessibilityIdentifier("capture.openCloset")
+            }
         }
     }
 
@@ -265,12 +290,22 @@ struct PieceCaptureView: View {
             pendingSource = source
             sourceSheet = false
         } label: {
-            HStack(spacing: 12) {
-                Image(systemName: symbol).accessibilityHidden(true)
-                Text(title)
-                Spacer()
-                Image(systemName: "chevron.right").accessibilityHidden(true)
-            }.padding(.horizontal, 20).frame(minHeight: 56).contentShape(Rectangle())
+            // These are system-source commands, not app disclosure destinations.
+            // Paper SQ4/SQE has a leading symbol and no trailing chevron.
+            HStack(spacing: 14) {
+                Image(systemName: symbol)
+                    .font(.system(size: AppControlMetrics.disclosureLane))
+                    .frame(width: 24)
+                    .accessibilityHidden(true)
+                Text(title).font(AppTypography.body)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+            }
+            .foregroundStyle(AppTheme.actionText)
+            .padding(.horizontal, AppSpacing.large)
+            .padding(.vertical, AppSpacing.small)
+            .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
+            .contentShape(Rectangle())
         }.buttonStyle(.plain)
     }
 

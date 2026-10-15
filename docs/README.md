@@ -9,6 +9,7 @@ Start with the row matching your task, then read the relevant contract. Folder i
 | Design or review UI | [Design](design/README.md) | Components, native controls, motion, routes and Paper traceability. |
 | Plan services or operations | [Architecture](architecture/README.md) | System boundaries, provider proposals, costs and growth. |
 | Deliver or verify work | [Delivery](delivery/README.md) | Plan, current implementation, evidence and repository conventions. |
+| Persist an issue implementation plan | [Issue plans](pan/README.md) | Per-issue slices, commit SHAs, checks and resume state. |
 | Operate engineering skills | [Agent configuration](agents/README.md) | Lifecycle, tracker, triage and domain reading rules. |
 | Understand a lasting decision | [ADRs](adr/README.md) | Approved choices and their reasoning. |
 | Review reference provenance | [References](references/README.md) | Asset sources, licensing and competitor notes. |

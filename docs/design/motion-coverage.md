@@ -196,6 +196,11 @@ Every Paper screen/state inherits [Global motion](motion.md), including interrup
 |10GK-0 · Enabled Today inline weather | Native Today/details push | C-load, C-select | Date/symbol/temperature only, no card/number animation; source/time/Saved announced, day mismatch omits values. Return to same Today; legal system-browser return preserves focus. |
 | U24 · Review conflicting edits | N-push | C-form, C-load, C-save | Preserve drafts/revisions and announce actual terminal status; no invented percentage or premature receipt. |
 
+| U25 · Private Profile menu | Native Menu | None | Anchored Profile More presentation; dismissal preserves source, journal scroll and focus. |
+| U26 · Public profile projection | Inherit underlying public Profile | C-form, C-load | Reference projection, not an extra push route; retain actual public/private source and native return. |
+| UP01–UP07 · Private preferences | N-push | C-form, C-select, C-save | Shared seven-step editor/review; retain draft, numbered progress and actual onboarding/Profile/Settings return. Reduce Motion changes content immediately. |
+| W31 · Photo framing | N-push | C-select, C-form | Shared local photo-editor recipe below; direct transforms, retained original and caller-scoped Cancel/Use photo. |
+
 | W30 · Closet options | Native Menu | None | Anchored toolbar presentation; selection dismisses then pushes S08/S29; dismissal preserves Closet state. |
 
 ## Appearance variants

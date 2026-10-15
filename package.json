@@ -8,6 +8,7 @@
     "prepare": "node scripts/install-git-hooks.mjs",
     "setup:hooks": "lefthook install",
     "check": "node --test scripts/*.test.mjs",
+    "check:agents": "node scripts/check-agent-docs.mjs",
     "release": "semantic-release",
     "release:dry-run": "semantic-release --dry-run"
   },

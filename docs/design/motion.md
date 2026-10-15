@@ -2,14 +2,14 @@
 
 Phase scope: shared native/visual rules apply to both phases. Five-destination base navigation applies to both phases. Full-app E/W/P/S/A/I/U routes, online identity and connected states are V2 references. Complete private themes/planning/Agent are retained in V1. V1 uses only its [dedicated local flow](v1-flow.md) and [complete local release](../product/v1-release.md); [V2 requirements](v2-requirements.md) own connected and extension coverage.
 
-Paper page 00 **Foundations · Global motion** owns the visual reference. This contract owns named behaviors and implementation handoff for every screen. [Coverage](motion-coverage.md) assigns all 201 canonical screen/state contracts and appearance variants. Local L references inherit their source and shared native motion recipes, including optional tour navigation. These are design specifications, not implemented animation or measured performance.
+Paper page 00 **Foundations · Global motion** owns the visual reference. This contract owns named behaviors and implementation handoff for every screen. [Coverage](motion-coverage.md) assigns screen/state recipes and appearance variants; the current manifest owns canonical inventory counts. Local L references inherit their source and shared native motion recipes, including optional tour navigation. These are design specifications, not implemented animation or measured performance.
 
 ## Apply the policy
 
 1. Use the screen's coverage row to select the navigation and content recipe. Native navigation takes precedence over custom page reveals.
 2. Use the shared values below; do not invent per-screen delays, springs or animation libraries. Implement one `AQDMotion` policy in the existing native design system when app work is authorized.
 3. Scope animation to the changed component. Preserve focus, selection, drafts, stable record identity and scroll position.
-4. Apply the Reduce Motion alternative, interruption rules and verification cases before considering the native implementation complete.
+4. Implement the Reduce Motion alternative and interruption rules in each feature; run their rendered/device cases at the stage authorized by the [verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15).
 
 ## Optional native weather inheritance
 

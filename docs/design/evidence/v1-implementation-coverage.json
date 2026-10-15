@@ -4,8 +4,8 @@
   "pageName": "01 · V1",
   "checkedOn": "2026-10-09",
   "tokenHash": "fdeb7346",
-  "sourceHead": "91ace1364c275641f819852926113f65996a5e95",
-  "sourceState": "Working-tree recovery and toolbar changes; protected delivery pending",
+  "sourceHead": "ca761fd3202dcf5704b6ae6e3eec5ecf85e19a46",
+  "sourceState": "Foundation #20 code slice ca761fd on van/issue-20/native-ui-foundations. Current iPhone17ProMax/iOS27 focused short/multiline Notes proof and inspected active-line/caret pass. Core20, native unit84 and unsigned Release pass; the combined UI run remains Failed at a driver overshoot, with three affected clients subsequently passing. A declared dark subcase passes via the reusable proof runner. See docs/pan/evidence/issue-20 and docs/pan/issue-20.md for exact results/inputs. Required latest-head PR CI/Codex/proof publication and protected delivery remain separate live GitHub gates. Earlier continuation receipts and broader #30/physical/OS/full-V1 qualification remain unaccepted.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 227,
@@ -49,7 +49,87 @@
       "No Paper mutations; whole-canvas static quality not re-certified.",
       "SDK27, physical Camera/Settings/VoiceOver, largest accessibility text, media-quality/performance and integrated full-domain acceptance unverified.",
       "PR9 remains open; full issue6 remains incomplete."
-    ]
+    ],
+    "historicalReceipt": true
+  },
+  "foundationContinuation": {
+    "checkedOn": "2026-10-14",
+    "issue": 20,
+    "verification": "docs/delivery/verification.md#foundation-20-authorized-native-verification--october14",
+    "nativeReference": "apps/ios/FOUNDATIONS.md",
+    "checks": [
+      "Compact MetadataText font/exposure/AX5/dark/RTL and both unfiltered audits pass; exactly one Photo and independent12/8 native gaps",
+      "Details Laundry/Notes/keyboard-safe Apply/native cancellation/discard/exact-value relaunch pass; Name focus is feature-owned",
+      "Three semantic Back symbols pass all six actual LTR/RTL glyph checks after genuine pixel RED; physical crop arrows unchanged",
+      "Public0/0,1/0,0/1,1/1 preferences and native retained-return journeys pass with both originals restored",
+      "Real Photos picker/crop/pixel landmarks/acknowledgment/search/edit/relaunch pass after measured native-cancel driver correction",
+      "Earlier corrected-source full current27:20 Core/72 SwiftTesting/12 XCTest/16 UI and unsigned Release pass; newer source/tests require final gates",
+      "Earlier fourteen-Swift-file and seven-document Standards/Spec reviews:zero actionable findings; four native/test revisions and new receipt documentation require bounded recheck",
+      "Pre-rendered-fit/color checkpoint full-acceptance-current27:20 Core separately plus106 logical simulator cases (72 SwiftTesting/12 XCTest/22 UI), zero failures/skips, exit0;45 native/build-input hashes matched before/after/then-current and reviewed14Swift blobs; revised source requires replacement full/Release gates",
+      "release-acceptance:generic unsigned Release CODE_SIGNING_ALLOWED=NO passes, binary d8754d01a567c4953c0a0c7c5d334ee96f923d17065d6c5b12d8bf5264e51218 verified"
+    ],
+    "pending": [
+      "Minimum18.1 executed20 Core and102 simulator passes/4 failures/0 skips; metadata RGB-property and three shared Details keyboard-geometry failures remain unresolved. Exact18.0 unavailable;18.1 is not literal18.0",
+      "Genuine metadata containment RED292>261 corrected only in fixture; complete-caption/required-height/root-containment, retained API/AX/font/RTL, independent ink and light-dark-light focused checks pass18.1/27 after public environment-resolved UIKit color normalization. No production sizing/wrong-paint defect inferred; full source gates remain pending",
+      "Native immediate dismissal passes controlled original18.1 and four later minimum focused cases. Final-source current27 focused UI records2 passes/1 failure: first software keyboard outside viewport and every key unhittable. All three newer post-typing full-screen snapshots show the word only in keyboard suggestions, not discernible editor text/caret; independent DQ11 rendered Major remains open despite AX passes. Earlier contact visibility does not qualify this state",
+      "Temporary native minimum-line1 contrast fails software-keyboard assertion; glyph/caret is visible only with keyboard absent. Hypothesis unproven, original45 sources restored. Public DeviceHub controls remain inaccessible/state unknown with no settings changed. Mandatory unfiltered current27/minimum18.1 and unsigned Release execute serially; no planned count/result or rendered acceptance inferred",
+      "Physical VoiceOver/focus/announcements/privacy/protection/backup/media/transition-performance evidence:zero physical phones available",
+      "Complete consumer/control acceptance, documentation review and SHA-bound PR/latest-head CI/Codex"
+    ],
+    "runtimeComplete": false,
+    "limits": "All227 root identities, census/counts and per-root runtimeComplete flags remain unchanged. No new live V1 census or complete screen/product/V1 acceptance. Native vertical motion is observed in both standard/reduced recordings; no opacity-only, Prefer Cross-Fade or hardware-performance claim.",
+    "historicalReceipt": true,
+    "supersededBy": "foundationAcceptance"
+  },
+  "foundationEvidence": {
+    "historicalReceipt": true,
+    "supersededBy": "foundationContinuation",
+    "checkedOn": "2026-10-13",
+    "issue": 20,
+    "nativeReference": "apps/ios/FOUNDATIONS.md",
+    "verification": "docs/delivery/verification.md#foundation-20-native-implementation--october13",
+    "paper": {
+      "pageId": "p-1-0",
+      "rootNodeId": "root_node_p-1-0",
+      "rootCount": 26,
+      "nodeCount": 2101,
+      "tokenHash": "fdeb7346",
+      "method": "Read-only basic info and complete root depth2 inventory; bounded affected descendant trees/computed styles/render/official-kit fill asset. No Paper mutation or whole-control parity claim.",
+      "affectedDescendantReads": [
+        "14I-0",
+        "4LD-0",
+        "4E1-0",
+        "4GB-0",
+        "10S3-0",
+        "10NM-0",
+        "JKP-0",
+        "1JB-0",
+        "83E-0",
+        "11H4-0",
+        "X71-0",
+        "X7B-0"
+      ],
+      "assetRead": "11HE-0 official kit27 reference only; not copied into production"
+    },
+    "environment": "Xcode27.0/build27A266a, Swift6.4, SDK27.0, deployment18.0; observed runtime only iOS26.5/build23F77",
+    "checks": [
+      "/tmp/aqd-foundation-evidence/final-runner.log:20 Core/78 native (72 SwiftTesting+6 XCTest rendering)/12 UI, zero failures/skips",
+      "/tmp/aqd-foundation-evidence/final-release.log:unsigned Release simulator build passed",
+      "/tmp/aqd-foundation-evidence/final-dark.log:2 current-source dark/Increase Contrast tab and largest-text UI cases passed",
+      "/tmp/aqd-foundation-evidence/final-compact.log:2 current-source compact tab and largest-text exact-draft-restoration UI cases passed",
+      "/tmp/aqd-foundation-evidence/device-release.log:unsigned iPhoneOS27 Release compile passed; not physical execution",
+      "/tmp/aqd-foundation-evidence/tooling-final.log:pnpm check50/50 passed"
+    ],
+    "scope": "Shared controls reused by actual capture/details/photo-editor/receipt. Native Picker selected-value labels and TextField spoken names preserved; registered hanger tab and public nil-title native chrome. Existing persistence/migration/receipt/media cleanup unchanged.",
+    "pendingAcceptance": [
+      "Compact capture contrast audit flags Photo; explicit semantic ink did not resolve it; cause unproven",
+      "Minimum18/current27 runtime, physical device, VoiceOver order/focus/announcements, live Reduce Motion/Transparency and landscape",
+      "Physical file protection/backup exclusion, representative media/model quality/latency/memory and capability evaluations",
+      "Complete Foundation consumer/control parity, product roots and full LOCAL acceptance",
+      "Independent final standards/spec and GitHub CI/Codex/protected delivery"
+    ],
+    "runtimeComplete": false,
+    "limits": "All227 existing V1 roots/counts/runtimeComplete flags remain unchanged; no whole-screen or product-root acceptance inferred from Foundation fixtures or build. Earlier V1 census/evidence above remain dated October9 provenance, not a new live V1 census."
   },
   "domains": {
     "01": {
@@ -2369,5 +2449,16 @@
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     }
-  ]
+  ],
+  "foundationAcceptance": {
+    "checkedOn": "2026-10-15",
+    "issue": 20,
+    "codeCommit": "ca761fd3202dcf5704b6ae6e3eec5ecf85e19a46",
+    "plan": "docs/pan/issue-20.md",
+    "evidence": "docs/pan/evidence/issue-20/README.md",
+    "scope": "Focused Foundation clauses F1-F6; selected app journeys plus unit/build checks. No complete product-root or whole LOCAL-01/10/15 claim.",
+    "runtimeComplete": false,
+    "remoteGate": "Query the issue branch PR for its actual current-head CI, Codex, published evidence and merge/release state.",
+    "deferred": "#30 broad OS/device/accessibility/performance/integrated qualification; all prior failures retained."
+  }
 }

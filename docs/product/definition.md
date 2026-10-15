@@ -1,6 +1,6 @@
 # AQD product definition
 
-Updated October 5, 2026. AQD has two product phases. This split supersedes the earlier connected V1 plan. It authorizes documentation and Paper design only; no application functionality or infrastructure is implemented by this planning branch. Product V1/V2 are scope names, independent of repository release tags such as `v1.0.0`.
+Updated October 5, 2026. AQD has two product phases. This split supersedes the earlier connected V1 plan. The original phase split authorized documentation/Paper only. Current implementation authority and delivered behavior live in the [lifecycle](../agents/lifecycle.md) and [status](../delivery/implementation-status.md); this definition specifies target behavior. Product V1/V2 are scope names, independent of repository release tags such as `v1.0.0`.
 
 ## V1 — Private personal closet
 
@@ -37,4 +37,4 @@ Onboarding and Settings share one optional private preference questionnaire for 
 
 Owned pieces are the source of truth. Drafts are editable; reviewed actions use trusted validation and actual save receipts. Planned clothing is distinct from actual wear. Unknown information stays unknown. Private notes, history and plans never become public implicitly. Manual operations remain available when assistance fails.
 
-Keep the restrained Apple-native design system in [DESIGN.md](../../DESIGN.md). [Paper](../design/README.md) owns UI visuals for both phases; specifications own behavior, and [verification](../delivery/verification.md) owns actual evidence. The current checkout still needs a reproducible iOS source/build baseline before any implementation.
+Keep the restrained Apple-native design system in [DESIGN.md](../../DESIGN.md). [Paper](../design/README.md) owns UI visuals for both phases; specifications own behavior, and [verification](../delivery/verification.md) owns actual evidence. The tracked native baseline and scoped evidence are recorded in [current status](../delivery/implementation-status.md). Complete V1 follows the [Foundation-plus-nine-section plan](../delivery/implementation-plan.md); source availability is not complete native acceptance.

@@ -14,10 +14,10 @@ const pluginOptions = (name) => config.plugins.find(([plugin]) => plugin === nam
 const logger = { log() {}, error() {} };
 
 for (const message of [
-  "feat: Add closet", "fix(planner): Preserve dates", "chore: Update tools",
-  "docs: Refine scope", "refactor(core)!: Change ownership",
-  "feat: Change schema\n\nBREAKING CHANGE: Replace the ownership format",
-  "fix: Resolve duplicate wears\r\n\r\nDetails",
+  "feat(closet): Add closet", "fix(planner): Preserve dates", "chore(tooling): Update tools",
+  "docs(product): Refine scope", "refactor(core)!: Change ownership",
+  "feat(storage): Change schema\n\nBREAKING CHANGE: Replace the ownership format",
+  "fix(history): Resolve duplicate wears\r\n\r\nDetails",
 ]) {
   test(`accept conventional message: ${message.split("\n")[0]}`, () => {
     assert.equal(validMessage(message), true);
@@ -25,7 +25,7 @@ for (const message of [
 }
 
 for (const message of ["", "Add closet", "feat:", "feat:  ", "Feat: Add closet",
-  "feature: Add closet", "feat(Closet): Add closet", "feat: " + "x".repeat(100)]) {
+  "feat: Missing scope", "chore: Missing scope", "fix(): Empty scope", "feature: Add closet", "feat(Closet): Add closet", "feat(closet): " + "x".repeat(100)]) {
   test(`reject invalid subject: ${JSON.stringify(message)}`, () => {
     assert.equal(validMessage(message), false);
   });
@@ -36,14 +36,14 @@ test("maintenance messages are local-only; PR titles must be one line", () => {
     assert.equal(validMessage(subject), true);
     assert.equal(validMessage(subject, { isPullRequest: true }), false);
   }
-  assert.equal(validMessage("feat: Add closet\nExtra", { isPullRequest: true }), false);
+  assert.equal(validMessage("feat(closet): Add closet\nExtra", { isPullRequest: true }), false);
 });
 
 test("CLI reads PR titles as data and rejects missing/invalid metadata", () => {
   const directory = mkdtempSync(join(tmpdir(), "aqd-commits-"));
   try {
     const eventPath = join(directory, "event.json");
-    for (const [title, status] of [["feat: Add `code` $(data)", 0], ["Add closet", 1], [null, 1]]) {
+    for (const [title, status] of [["feat(closet): Add `code` $(data)", 0], ["Add closet", 1], [null, 1]]) {
       writeFileSync(eventPath, JSON.stringify({ pull_request: { title } }));
       const result = spawnSync(process.execPath, ["scripts/validate-commit-message.mjs", "--pr-title"], {
         env: { ...process.env, GITHUB_EVENT_PATH: eventPath }, encoding: "utf8",

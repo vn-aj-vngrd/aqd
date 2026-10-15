@@ -1,0 +1,52 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "E3686DA1-1D81-4CD9-A876-9797D94C63DF",
+        "deviceName" : "iPhone 17 Pro Max",
+        "modelName" : "iPhone 17 Pro Max",
+        "osBuildNumber" : "24A434",
+        "osVersion" : "27.0",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 1,
+      "passedTests" : 0,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "AQD · Built with macOS 27.0.1",
+  "expectedFailures" : 0,
+  "failedTests" : 1,
+  "finishTime" : 1792054060.225,
+  "passedTests" : 0,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1792053931.984,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "XCTAssertTrue failed - The active line must be painted above the keyboard. OCR: Line 1 wardrobe note",
+      "targetName" : "AQDUITests",
+      "testIdentifier" : 1,
+      "testIdentifierString" : "NativeFlowTests/testMultilineNotesKeepEditingAcrossRotation()",
+      "testIdentifierURL" : "test://com.apple.xcode/AQD/AQDUITests/NativeFlowTests/testMultilineNotesKeepEditingAcrossRotation",
+      "testName" : "testMultilineNotesKeepEditingAcrossRotation()"
+    }
+  ],
+  "title" : "Test - AQD",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 1
+}

@@ -20,6 +20,35 @@ Updated October 6, 2026. This is the implementation route checklist for [Paper V
 
 [Vector repair](evidence/native-dialog-vector-repair.json) changes presentation layers only: all existing V1 confirmation source/target/date/draft/return guards remain unchanged. Original Paper hosts and title/body/action IDs are visible/editable; screenshots and technical contracts are hidden. Seven cross-phase critical decisions keep explicit Cancel;31 routine source-anchored decisions use documented implicit no-write dismissal. No new destination or executable action is added; native behavior remains unverified.
 
+## Foundation #20 native return follow-up · October14
+
+This scoped receipt supersedes unresolved compact/Details statements in the historical checkpoint below; it does not certify every V1 control. [Verification](../delivery/verification.md#foundation-20-authorized-native-verification--october14) owns failed receipts and remaining gates.
+
+| Control / state | Native result and return behavior | Evidence limit |
+| --- | --- | --- |
+| Capture Photo / Add photo / source Close | Exactly one exposed13pt secondary Photo caption; no-photo12pt/accepted8pt gaps. Both compact audits pass. Native26+ close-role/18 text fallback retains fields and accepted media; category/no-save/draft relaunch passes. |18 fallback execution and physical VoiceOver remain pending. |
+| Capture Name → More details → Availability / Notes / Apply | Feature-owned Name focus clears before Details. Details uses public native immediate keyboard dismissal on scroll; no global responder/geometry workaround. Controlled18.1 original journey and four focused minimum cases pass Laundry/real Notes/strict keyboard-safe Apply/cancel/discard/exact relaunch. Native popover uses its cancel row or measured blank-header outside dismissal. | Final same-source both-runtime/full gates are pending. Newly authored whole AX-box/navbar/footer occlusion proxies produced retained failures and were corrected against observed text/caret visibility, not relaxed original assertions. Final-source current27 focused UI passes2/3; the first case fails the retained software-keyboard assertion. All three newer post-typing full-screen attachments show the word only in keyboard suggestions, without discernible editor value/caret: independent DQ11 rendered review requests changes. Earlier contact visibility is not later editing acceptance. The native intrinsic-sizing comparison completes0 passes/1 failure; text/caret is visible only with keyboard absent, the hypothesis remains unproven and original source is restored. No app/OS mechanism or full44-point target is established. |
+| Capture / Details / PhotoEditor Back | Registered `chevron.backward` and native toolbar. Real pixels pass three tasks in both LTR and RTL; data/draft return paths stay unchanged. | Root/tab mirroring alone was insufficient; physical crop arrows remain physical left/right. |
+| PhotoEditor dirty Back / Cancel / Discard | Before-dialog Portrait selection is verified. Scoped native Cancel or measured outside-header dismissal preserves provisional framing; Discard retains accepted photo. Real picker/crop/landmark/save/search/edit/relaunch passes. | Earlier arbitrary outside-tap failure remains archived; synthetic media is not garment quality. |
+| Agent / source returns with system accessibility preferences | Actual0/0,1/0,0/1,1/1 settings, fresh foreground scenes and retained-return journeys pass; both original preferences restored. | Native vertical movement is observed in standard/reduced recordings; not opacity-only or hardware performance proof. |
+
+[Verification](../delivery/verification.md#foundation-20-authorized-native-verification--october14) retains all historical focused/full results and failures. Current iPhone17ProMax/iOS27 focused Notes proof passes for short text and the active seventh line/caret after the bottom-anchor correction, including Apply/cancel/discard/relaunch. Retain older failures and the broader matrix in #30; source-only or AX-only success cannot establish rendered acceptance. Source updates and scoped passes here do not certify every control or physical-phone behavior.
+
+## Foundation #20 native consumer checkpoint · October13
+
+No new destination or product-domain control was introduced. The existing capture journey now consumes shared native foundations; section-specific routes below remain specified/unaccepted until their owning slice lands. [Verification](../delivery/verification.md#foundation-20-native-implementation--october13) owns exact observed inventory and limits.
+
+| Existing control/state | Native shared behavior | Observed return / limit |
+| --- | --- | --- |
+| Five destination items; fourth-slot Agent / Back | Public UIKit nil-title items, native selected traits/targets; registered hanger for Closet, semibold selected symbols; existing full-screen task | iOS26.5 root targets/selection and Agent→Closet pass; no full Planner/Agent/Profile functionality or iOS18/27/physical VoiceOver certification. |
+| Capture Name / details metadata / notes | `LabeledField` with persistent spoken name, opaque native editor, associated validation hint; Increase Contrast boundary | Draft edits remain in the existing model/store. Largest-text insertion/removal retains exact prior Name; Save remains keyboard-safe. Native rapid synthesized-key coalescing is not attributed to an app defect or claimed hardware proof. |
+| Capture Category / details Availability | `LabeledControl` retains native Picker name **and selected value**, instead of overriding the entire shell's accessibility label | Native Category/Shoes selection with active keyboard preserves draft. No record mutation until parent Save; details Apply remains draft-only. |
+| Capture More details / photo-source rows | Whole-row disclosures and native source sheet; `SurfaceGroup` places a separator only between the two choices | Photos selection occurs after source-sheet dismissal; Close retains fields/media. No last-row separator or gallery route. |
+| Save / Use photo / Apply / receipt Open closet | Shared primary/footer: solid enabled, neutral disabled, growing50pt-min action with12pt vertical insets; pending label retained, one spinner, duplicate activation refused | Accepted photo applies only to draft; parent Save alone acknowledges piece. Receipt Open/Back retains existing exact-operation acknowledgment/recovery. Real save/crop/edit/relaunch passes; failed/unknown recovery algorithms are unchanged. |
+| Inline validation / progress / acknowledged receipt | Explicit semantic feedback role and combined message, decorative symbol; native labelled circular progress | Actual receipt uses success only after acknowledgment; mixed failure/conflict/unknown channels keep exact existing recovery copy without guessed severity. Hosted five-role fixtures are not complete future-consumer acceptance. |
+
+Light/dark and Increase Contrast/largest-text keyboard/target checks are scoped passes. Automated capture/source contrast/element/hit-region audit passes on17Pro; compact audit flags Photo contrast and remains unresolved. VoiceOver focus/announcements, live Reduce Motion/Transparency, landscape and physical/device capability checks remain required. Full-screen/source returns beyond the exercised baseline are not inferred from shared components.
+
 ## Rules for every control
 
 - A navigation action must resolve to a listed screen or an explicitly named system presentation. A field edits in place; a toggle/selection changes visible state; neither needs a fictional destination.
@@ -141,6 +170,8 @@ Choice rows, checkmarks, disabled actions, input focus/validation and native key
 
 L152–L154/L166–L169 define six preference questions plus Review, with unnumbered titles and separate numbered step/progress. First use starts with no selections and body use off; Continue requires an explicit answer or No preference/refusal. There are no questionnaire skip actions. Multi-selection and deselection use the same checkmark component. Save has pending/error protection. Source metadata, IDs, effects and real counts must come from storage, never fixture labels.
 
-## Acceptance gate for implementation
+## Runtime acceptance at final hardening
+
+The [verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) retains the broad matrix in #30. Each feature must already execute focused E2E and inspect/publish rendered proof of its own UI ACs. Implement control behavior and update this inventory during each feature; retained failures and genuinely deferred qualification remain explicit.
 
 For every row above, open from each listed source, complete once, cancel once, return with Back, then test the applicable empty/error path. Check draft retention, exact record identity, duplicate prevention, keyboard/focus return, largest text, dark appearance and Reduce Motion. Every newly introduced control must update this ledger and the manifest in the same change. Static Paper inspection does not establish native animation, persistence, OS presentation or accessibility correctness.
