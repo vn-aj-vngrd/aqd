@@ -1,5 +1,9 @@
 # Current verification
 
+## Issue #21 positive-height precision, October 15, 2026
+
+Codex4284964778 found accepted tiny heights could round to zero and disable units. [S7 proof](../pan/evidence/issue-21/s7/README.md) records20 failing public-seam assertions before the formatter fix, then Core35/native96 and extended physical height1/1 pass, zero failures/skips. Canonical values survive restart; both rounding boundaries and normal saved return are covered. Release builds; prior unrelated source/results remain qualified reuse. Final-head CI/Codex and protected delivery remain pending.
+
 ## Issue #21 Codex height-boundary correction, October 15, 2026
 
 Codex on PR33 found display rounding could produce12in and invalidate a valid canonical height. [S6 proof](../pan/evidence/issue-21/s6/README.md) records genuine5-assertion RED, normalization without canonical mutation, Core34/native96 passed and focused physical height/restart/custom-picker/saved-return1/1 passed. Actual boundary/Review images were inspected and retained; final unsigned Release builds. Earlier unaffected feature proof retains its own source/reuse qualification. New-head CI/Codex remain pending.

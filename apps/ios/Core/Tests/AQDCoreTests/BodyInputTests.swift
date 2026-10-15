@@ -38,6 +38,25 @@ struct BodyInputTests {
         #expect(input.centimeters == exact)
     }
 
+    @Test func tinyPositiveMeasurementsRemainNonzeroAndSwitchable() throws {
+        for value in [0.00000000001, 1e-200, Double.leastNormalMagnitude, Double.leastNonzeroMagnitude] {
+            var body = BodyPreferences()
+            body.heightCM = value
+            var input = HeightInput(body: body)
+            #expect(input.isValid)
+            input.switchUnits(to: .feetInches)
+            #expect(input.units == .feetInches)
+            #expect(input.isValid)
+            #expect(input.inchesText != "0")
+            #expect(input.centimeters == value)
+            input = try JSONDecoder().decode(HeightInput.self, from: JSONEncoder().encode(input))
+            input.switchUnits(to: .cm)
+            #expect(input.units == .cm)
+            #expect(input.isValid)
+            #expect(input.centimeters == value)
+        }
+    }
+
     @Test func optionalHeightValidatesFinitePositiveUnitsWithoutNormativeBounds() {
         var input = HeightInput(body: BodyPreferences())
         #expect(input.isValid && input.centimeters == nil)

@@ -31,3 +31,5 @@ Only curated AQD images and redacted result metadata are published. Full interru
 ## Codex correction after publication
 
 [S6 correction evidence](s6/README.md) supersedes the height-boundary behavior: genuine5-assertion RED then Core34/native96/focused physical1-of-1/Release pass. Current source inputs and built products are hash-bound there. Other feature results/images retain their original revisions and explicitly scoped reuse.
+
+[S7 precision proof](s7/README.md) adds genuine20-assertion RED then Core35/native96/extended physical height1-of-1/Release pass. It preserves nonzero formatting and refreshes both boundary regressions plus normal height/save behavior. Earlier unrelated feature evidence retains its actual source identity.

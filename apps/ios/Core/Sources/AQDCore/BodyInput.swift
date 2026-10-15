@@ -52,7 +52,8 @@ public struct HeightInput: Codable, Equatable, Sendable {
     private mutating func format() {
         guard let value = centimeters else { cmText = ""; feetText = ""; inchesText = ""; return }
         cmText = Self.text(value)
-        let total = value / 2.54
+        // Preserve a positive display even if conversion underflows Double.
+        let total = max(value / 2.54, Double.leastNonzeroMagnitude)
         let feet = (total / 12).rounded(.down)
         let inches = Self.text(total - feet * 12)
         // Display rounding can carry the remainder into the next foot.
@@ -65,7 +66,9 @@ public struct HeightInput: Codable, Equatable, Sendable {
         return value
     }
     private static func text(_ value: Double) -> String {
-        value.formatted(.number.locale(Locale(identifier: "en_US_POSIX")).grouping(.never).precision(.fractionLength(0...10)))
+        let rounded = value.formatted(.number.locale(Locale(identifier: "en_US_POSIX")).grouping(.never).precision(.fractionLength(0...10)))
+        // Keep tiny nonzero values editable instead of displaying a false zero.
+        return value != 0 && Double(rounded) == 0 ? String(value) : rounded
     }
 }
 
