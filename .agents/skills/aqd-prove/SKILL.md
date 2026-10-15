@@ -1,7 +1,10 @@
 ---
 name: aqd-prove
-description: Prove an AQD issue's acceptance criteria with focused native E2E tests and inspected UI evidence, then publish the proof in its authorized PR. Use for UI feature acceptance or refreshing proof after review fixes. Workflow refinement stays documentation-only.
+description: Run consolidated physical-iPhone E2E and inspected acceptance proof for AQD issue 30. Feature delivery is unit-only; do not invoke for other issues.
 ---
+
+
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
 
 # Prove an AQD feature
 

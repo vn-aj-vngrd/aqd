@@ -1,5 +1,8 @@
 # PR and release stages
 
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
+
+
 Read only when PR delivery or release is authorized. [Lifecycle scope and authority](lifecycle.md#scope-and-authority) applies; explicit docs-only, draft, local-review, leave-open or no-merge instructions narrow scope. [Workflow](../delivery/workflow.md) owns conventions and release mechanics.
 
 For a full issue run, [aqd-ship](../../.agents/skills/aqd-ship/SKILL.md) continues these stages without routine confirmation. Resume at the first unsatisfied gate after checking actual branch/PR state. The [shipping checkpoint convention](../pan/README.md#shipping-checkpoints) separates persisted local evidence from live GitHub results.

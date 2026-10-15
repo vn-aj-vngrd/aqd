@@ -32,7 +32,7 @@ Before the first local install, launch or on-device test in a session, prompt th
 
 Keep all local simulators shut down. Do not launch, boot or create one, and do not substitute one when the phone is missing or locked. Preserve the ordinary closet and Photos library; use guarded isolated test stores and declared synthetic fixtures. Local signing configuration stays outside Git. Broad device/OS qualification remains #30.
 
-GitHub-hosted CI runs on GitHub's machines and retains its existing required checks. Its simulator evidence is labelled separately and does not establish physical-phone acceptance. This hosted exception never authorizes a simulator on the owner's Mac. Changes to required CI gates need their own explicit scope.
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
 
 Keep the current deployment setting and existing availability guards while implementing features. The broader iOS 18 minimum and supported-device launch matrix in the [V1 release](../product/v1-release.md) remain later release work. They do not expand the immediate personal-device task. No new tablet, Mac, Android, backend, account or sync work is needed to satisfy this target.
 

@@ -10,13 +10,9 @@ A vertical slice delivers the section's real UI, domain rules, persistence/media
 
 ## Verification policy · owner-approved October15
 
-Feature delivery uses meaningful Core/native unit tests, including affected persistence, migration and failure recovery, plus app builds, repository checks and required CI/review. The owner's acceptance-proof clarification also requires **focused native E2E tests and inspected UI evidence for the issue's UI ACs**, published in the PR before merge. [Acceptance proof](../agents/acceptance-proof.md) owns mapping, evidence quality and publication. Generate or extend tests for the actual expected outcomes; authored tests and unit passes alone do not prove a UI criterion.
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
 
-`./scripts/test-ios.sh` and routine native CI still default to unit scope. UI issues additionally run their selected E2E identifiers and publish actual result/visual artifacts. If that execution/publication route is missing, establish it during the authorized feature slice; the current unit job is not UI proof. Keep the full-suite and cross-device/OS matrix in #30.
-
-[Final V1 E2E verification and release hardening #30](https://github.com/vn-aj-vngrd/aqd/issues/30) follows sections01–09. It owns broad integrated journeys, supported OS/device coverage, full accessibility, permissions/media, privacy and performance qualification. It blocks V1 release, not the next feature slice solely for missing broad qualification. Preserve existing UI tests and failed receipts. A failure that invalidates the current issue's AC must be resolved in that issue rather than deferred to #30; known data-loss/security defects also remain immediate blockers.
-
-This policy supersedes earlier blanket per-feature full-matrix gates and the earlier unit-only feature-delivery wording. It preserves required feature behavior while adding scoped UI proof, without pulling the complete #30 matrix into each issue. Required review, CI and protected delivery gates remain in force; capability evidence is still required before enabling assistance.
+Keep `./scripts/test-ios.sh` at default unit scope. Do not generate/run E2E or launch simulator/build CI per feature. Issue #30 owns the consolidated physical-device E2E, accessibility, permissions/media, privacy and performance qualification. Existing E2E failures remain historical evidence; fix known feature defects through targeted unit checks.
 
 ## Ticket index and build order
 

@@ -3,6 +3,9 @@ name: aqd-ship
 description: Ship an AQD GitHub issue through slice implementation, PR, CI and Codex fixes, protected squash merge and release verification. Use for end-to-end issue delivery or resuming an interrupted shipping run. Workflow-authoring requests stay documentation-only.
 ---
 
+
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
+
 # Ship one AQD issue
 
 `aqd-ship 20` selects GitHub issue #20. `$aqd-ship 20` is the explicit skill form. Execute only when the user requests actual issue delivery; a request to refine this workflow changes documentation only.

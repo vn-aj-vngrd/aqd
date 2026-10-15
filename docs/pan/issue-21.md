@@ -23,6 +23,7 @@
 | S6 | Carry displayed12in into next foot while preserving canonical cm | E3, Codex4284764022 | Core34/native96, physical height1/1, Release | Committed | `AQD-Slice: #21/S6` | `e0d1faab8290e9b80838d290ae2e972fdbffaedc` |
 | S7 | Preserve positive display/units for tiny values and conversion underflow | E3, Codex4284964778 | Core35/native96, extended physical height1/1, Release | Committed | `AQD-Slice: #21/S7` | `8c35a914017a4f7c8fbdadd60a21476efe168858` |
 | S8 | Keep finite-range height conversions valid with stable inch remainder | E3, Codex4285110496 | Core36/native96, extended physical1/1, Release | Verified | `AQD-Slice: #21/S8` | This correction commit |
+| S9 | Remove expensive hosted native CI; physical-only native unit checks; E2E solely in #30 | Owner October16 direction | Shell-runner unit checks and agent docs; no native/E2E run | Verified | `AQD-Slice: #21/S9` | This policy commit |
 
 ## Acceptance and evidence
 
@@ -146,11 +147,11 @@ Independent Spec review found two actual review defects: omitted comfort and unl
 
 ## Resume
 
-- Current phase: S0–S7 committed; S8 stable-remainder correction is locally verified and ready to commit.
-- PR: https://github.com/vn-aj-vngrd/aqd/pull/33. Previous head `8c35a914017a4f7c8fbdadd60a21476efe168858`; current correction bound by [exact hashes](evidence/issue-21/s8/receipt.json).
-- Next action: commit/push S8, publish/read back its evidence, resolve Codex4285110496, obtain one new-head Codex review and all current-head CI, then protected squash/release. Do not start another issue.
-- Local gate: Core36/native96, combined physical height1/1 and final Release pass. All three numeric regressions and ordinary height/save are refreshed together; unaffected feature results retain qualified source-bound reuse.
-- External blocker: none confirmed. Phone remained available; local simulators stay shut down. A prior CI watcher had a transient network error; actual workflow status was refreshed successfully without rerunning tests.
+- Current phase: application S0–S8 committed through `37f8b6915332ef118eae01f4989a8e0adc4fd0ec`; S9 removes costly native CI and per-feature E2E gates per owner instruction.
+- PR: https://github.com/vn-aj-vngrd/aqd/pull/33. Application source and unit/visual proof remain unchanged. Codex37f8b69 review was clear; policy commit gets its actual new head.
+- Next action: present the requested grouped-issue PR proposal. Keep current PR open while the owner considers the plan. No new feature implementation or E2E execution.
+- Verification: fast repository unit checks and agent docs. Core/native unit results retain their recorded source. All E2E is Deferred to #30; canceled hosted execution is not a pass.
+- Physical policy: iPhone17ProMax only. No local or hosted simulators. Simulator.app was confirmed closed; phone was returned to ordinary AQD launch.
 
 ### Owner correction: actual screens and native confirmations
 
@@ -213,3 +214,9 @@ S7 final checks pass Core35/native96, focused physical1/1, Release, tooling57 an
 Codex4285110496 on `8c35a91` reproduces cancellation at137500000000000000cm: subtracting the large foot product yields negative inches and disables unit switching. Test the whole supported finite range at the existing public height seam, including greatestFiniteMagnitude, then replace subtractive remainder with stable modulo. Preserve canonical cm and prior rounding/underflow corrections. Marker `AQD-Slice: #21/S8`; locally verify the expanded same physical journey before refreshing final-head remote gates.
 
 S8 checks passed: genuine RED4, full Core36 with905 finite-range samples, physical native96, extended height1/1, inspected original large-value image and final unsigned Release. Independent Standards/Spec audit found no remaining concrete conversion defect. [S8 receipt](evidence/issue-21/s8/README.md) binds exact code/test/product hashes. Tooling57 passes. Commit/push the isolated S3 correction, refresh final-head proof/CI/Codex and preserve protected delivery.
+
+### October16 owner verification and planning boundary
+
+Owner explicitly stopped simulator/native CI and deferred ALL E2E to #30, including feature-focused runs. Cancel requested for hosted run38765420584; it is not passed. Removed `.github/workflows/ios.yml`, simulator destination selection and automatic Photos seeding. Runner refuses simulators even with GITHUB_ACTIONS set, defaults to units, and E2E requires issue30. Existing E2E source/evidence is retained dormant for #30. Core36/native96 and inspected feature receipts retain actual earlier source identity; app source has not changed since37f8b69. No additional phone or E2E run is needed for this script/docs change.
+
+Fast repository unit CI and protected delivery remain. New verification policy is recorded in the implementation plan, agent routers, skills and PR template. Current owner request is a grouped-issue delivery proposal first. Keep PR33 open at this planning checkpoint; do not implement another section or change issue groupings until approved.

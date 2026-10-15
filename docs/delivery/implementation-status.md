@@ -6,6 +6,8 @@ Foundation #20 shipped in [PR #31](https://github.com/vn-aj-vngrd/aqd/pull/31), 
 
 The [implementation plan](implementation-plan.md) owns ten implementation issues, #20–29, followed by final E2E/hardening [#30](https://github.com/vn-aj-vngrd/aqd/issues/30). Its clarified verification policy requires unit/build/repository/review plus focused native E2E and published evidence for each feature's UI ACs. Broad full-suite/device qualification remains in #30. Missing/failed/unpublished proof of a current AC blocks its feature; unit/build passes alone do not satisfy the new proof gate.
 
+Owner update October16: expensive hosted native CI has been removed and all E2E is deferred to #30. Feature delivery is unit-only with physical-iPhone native checks. Existing execution results remain historical/source-bound; the canceled hosted run is not a pass. PR33 remains open while the owner considers a dependency-based multi-issue PR proposal. No further section implementation is authorized yet.
+
 ### Foundation capability and known gaps
 
 Shared native actions, fields, feedback, selection and source-aware task navigation serve the existing capture/photo/details/save/reopen journey. The committed checkpoint adds semantic Back/Close behavior, exposed native metadata, task-owned focus/scroll handling, idempotent tab selection and bootstrap revalidation. [Foundation inventory](../../apps/ios/FOUNDATIONS.md) owns reuse; [verification](verification.md) owns exact execution history.

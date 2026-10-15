@@ -16,7 +16,7 @@ IOS_DESTINATION="platform=iOS,id=$AQD_DEVICE_UDID" \
 
 Resolve `AQD_DEVICE_UDID` with `xcrun devicectl list devices` and `AQD_LOCAL_TEAM` from the existing local signing identity. Confirm readiness before setting its flag. Local missing/simulator destinations and unconfirmed readiness fail before native tools. The runner defaults to Core/native unit tests and a Debug build. Physical UI runs require an explicit selection. Persist `apps/ios/acceptance/issue-<number>.txt` and run `./scripts/prove-ios.sh <number>` with the same physical/signing/readiness environment; it retains exact results and exported attachments for [AC proof](../../docs/agents/acceptance-proof.md). Broad full-suite/device qualification remains in #30.
 
-Use `IOS_DERIVED_DATA` for a task-owned build directory and serialize native work. Physical test stores are isolated; physical Photos scenarios require a declared safe fixture and never reset the ordinary library. GitHub-hosted CI alone uses unsigned simulator checks and automatic synthetic Photos seeding on GitHub's machine. Its evidence stays separate from physical acceptance. The shared scheme is **AQD**. [Verification](../../docs/delivery/verification.md) owns actual test/build results.
+Use `IOS_DERIVED_DATA` for a task-owned build directory and serialize native work. Physical test stores are isolated; physical Photos scenarios require a declared safe fixture and never reset the ordinary library. Hosted native CI and simulator seeding are removed. Use unit scope on the physical iPhone; all E2E is deferred to #30. The shared scheme is **AQD**. [Verification](../../docs/delivery/verification.md) owns actual test/build results.
 
 ## Data boundary
 

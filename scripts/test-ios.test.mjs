@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 
-for (const scope of ["unit", "e2e", "all", "selected", "empty", "invalid"]) {
+for (const scope of ["unit", "selected", "empty", "invalid"]) {
   test(`native runner ${scope} scope invokes the intended tools and test targets`, () => {
     const directory = mkdtempSync(join(tmpdir(), "aqd-runner-"));
     const callsPath = join(directory, "calls.jsonl");
@@ -22,7 +22,8 @@ for (const scope of ["unit", "e2e", "all", "selected", "empty", "invalid"]) {
         ...process.env, GITHUB_ACTIONS: "true", PATH: `${directory}:/usr/bin:/bin`, AQD_RUNNER_CALLS: callsPath,
         IOS_TEST_SCOPE: ["selected", "empty", "invalid"].includes(scope) ? "e2e" : scope,
         ...(["selected", "empty", "invalid"].includes(scope) ? { IOS_TEST_CASES_FILE: casesPath, IOS_RESULT_BUNDLE: join(directory, "actual.xcresult") } : {}),
-        IOS_DESTINATION: "platform=iOS Simulator,id=11111111-1111-4111-8111-111111111111",
+        IOS_DESTINATION: "platform=iOS,id=00008150-0000000000000000",
+        IOS_DEVICE_READY: "1", IOS_DEVELOPMENT_TEAM: "TEAM123456", AQD_E2E_ISSUE: "30",
         IOS_PHOTO_DEVICE: "11111111-1111-4111-8111-111111111111", IOS_DERIVED_DATA: join(directory, "derived"),
       } });
       if (["empty", "invalid"].includes(scope)) {
@@ -39,7 +40,7 @@ for (const scope of ["unit", "e2e", "all", "selected", "empty", "invalid"]) {
         scope === "selected" ? selected.map((id) => `-only-testing:${id}`) : scope === "unit" ? ["-only-testing:AQDTests"] : scope === "e2e" ? ["-only-testing:AQDUITests"] : []);
       if (scope === "selected") assert.ok(build.args.includes(join(directory, "actual.xcresult")));
       assert.equal(calls.some((call) => call.command === "swift" && call.args[0] === "test"), !["e2e", "selected"].includes(scope));
-      assert.equal(calls.some((call) => call.command === "xcrun" && call.args.includes("addmedia")), scope !== "unit");
+      assert.equal(calls.some((call) => call.command === "xcrun" && call.args.includes("addmedia")), false);
     } finally { rmSync(directory, { recursive: true, force: true }); }
   });
 }
@@ -51,9 +52,9 @@ test("local native runner refuses missing and simulator destinations before nati
     for (const command of ["swift", "xcrun", "xcodebuild", "node"]) {
       writeFileSync(join(directory, command), `#!${process.execPath}\nrequire('node:fs').appendFileSync(process.env.AQD_RUNNER_CALLS, '${command}\\n'); if ('${command}' === 'node') process.stdout.write('platform=iOS Simulator,id=11111111-1111-4111-8111-111111111111\\n');\n`, { mode: 0o755 });
     }
-    for (const destination of ["", "platform=iOS Simulator,id=11111111-1111-4111-8111-111111111111"]) {
+    for (const hosted of ["", "true"]) for (const destination of ["", "platform=iOS Simulator,id=11111111-1111-4111-8111-111111111111"]) {
       const result = spawnSync("/bin/bash", ["scripts/test-ios.sh"], { encoding: "utf8", env: {
-        ...process.env, GITHUB_ACTIONS: "", PATH: `${directory}:/usr/bin:/bin`,
+        ...process.env, GITHUB_ACTIONS: hosted, PATH: `${directory}:/usr/bin:/bin`,
         AQD_RUNNER_CALLS: callsPath, IOS_DESTINATION: destination, IOS_TEST_SCOPE: "unit",
       } });
       assert.notEqual(result.status, 0, "Local native checks require the explicit physical phone");
@@ -94,13 +95,15 @@ test("local entry points require readiness and preserve focused physical-test bo
     }
     const env = { ...process.env, GITHUB_ACTIONS: "", PATH: `${directory}:/usr/bin:/bin`,
       AQD_RUNNER_CALLS: callsPath, IOS_DESTINATION: "platform=iOS,id=00008150-0000000000000000",
-      IOS_DEVICE_READY: "1", IOS_DEVELOPMENT_TEAM: "TEAM123456", IOS_TEST_CASES_FILE: "", IOS_TEST_SCOPE: "unit" };
+      IOS_DEVICE_READY: "1", IOS_DEVELOPMENT_TEAM: "TEAM123456", AQD_E2E_ISSUE: "30", IOS_TEST_CASES_FILE: "", IOS_TEST_SCOPE: "unit" };
     for (const [script,args,overrides,message] of [
       ["scripts/test-ios.sh",[],{IOS_DEVICE_READY:""},/readiness response/],
       ["scripts/test-ios.sh",[],{IOS_DEVELOPMENT_TEAM:""},/signing identity/],
       ["scripts/test-ios.sh",[],{IOS_TEST_SCOPE:"e2e"},/explicit focused test selection/],
-      ["scripts/prove-ios.sh",["21"],{IOS_DEVICE_READY:""},/readiness/],
-      ["scripts/seed-ios-test-photo.sh",["11111111-1111-4111-8111-111111111111"],{},/hosted-CI-only/],
+      ["scripts/prove-ios.sh",["30"],{IOS_DEVICE_READY:""},/readiness/],
+      ["scripts/prove-ios.sh",["21"],{},/deferred to issue #30/],
+      ["scripts/test-ios.sh",[],{IOS_TEST_SCOPE:"e2e",AQD_E2E_ISSUE:""},/deferred to issue #30/],
+      ["scripts/seed-ios-test-photo.sh",["11111111-1111-4111-8111-111111111111"],{},/seeding is disabled/],
     ]) {
       const result=spawnSync("/bin/bash",[script,...args],{encoding:"utf8",env:{...env,...overrides}});
       assert.notEqual(result.status,0,script);

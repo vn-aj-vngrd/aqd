@@ -3,6 +3,9 @@ name: aqd-verify
 description: Verify AQD slice changes with unit/build and focused native E2E checks, or execute final iPhone 17 Pro Max hardening. Use before recording test, compatibility, or readiness claims.
 ---
 
+
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
+
 # Verify AQD changes
 
 Read the issue's `docs/pan/issue-<number>.md` and the [verification policy](../../../docs/delivery/implementation-plan.md#verification-policy--owner-approved-october15). Select checks for the changed behavior at the authorized stage. [Immediate MVP target](../../../docs/agents/autonomous-workflow.md#immediate-mvp-target) owns target-phone acceptance.
@@ -13,7 +16,7 @@ Record HEAD and relevant dirty inputs, toolchain, test selection, destination an
 
 For local native checks, follow the device procedure above: discover the physical iPhone 17 Pro Max with `xcrun devicectl list devices`, read its actual OS, prompt for connected/unlocked readiness and wait for the response. Keep local simulators shut down. Missing/locked hardware blocks the physical check; independent Core/docs/generic Release work can continue. Signing stays in local configuration. Set `IOS_DEVICE_READY=1` only after readiness is confirmed, and repeat the prompt after an interruption.
 
-GitHub-hosted CI retains its separately labelled simulator checks on GitHub's machine. Only that environment may use `scripts/ios-destination.mjs` and automatic synthetic Photos seeding. It cannot substitute for local physical proof.
+Hosted native CI and simulator selection/seeding are removed. Use the physical iPhone only; routine verification is unit scope. E2E is reserved for #30.
 
 Complete when each selected check has a known input revision, command and evidence destination. Device selection is not a native test.
 

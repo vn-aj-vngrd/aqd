@@ -30,7 +30,7 @@ Like Relay and Roleway, `.releaserc.json` makes `feat` minor, breaking changes m
 
 Release publishes a `vX.Y.Z` Git tag and GitHub release notes using the job's contents-write `GITHUB_TOKEN`. Release notes include maintenance and documentation changes. There is no npm publication, version-bump commit, or hook bypass commit. Tags and releases are the repository version source; root package.json is private tooling, not an app version.
 
-This is repository release automation. It does not yet update Xcode's `MARKETING_VERSION`/build number, archive/sign the app, upload TestFlight, or publish to the App Store. Add native build/version injection and its CI gate when signed build delivery is authorized. The native iOS workflow independently builds/tests unsigned simulator fixtures. Repository tooling, native simulator CI, SDK/device qualification and signed distribution remain separate evidence boundaries; current source and check results live in [implementation status](implementation-status.md).
+This is repository release automation. It does not yet update Xcode's `MARKETING_VERSION`/build number, archive/sign the app, upload TestFlight, or publish to the App Store. Add native build/version injection and its CI gate when signed build delivery is authorized. The expensive hosted native iOS workflow has been removed. Native unit verification uses the physical iPhone; E2E is deferred to #30. Repository tooling, native simulator CI, SDK/device qualification and signed distribution remain separate evidence boundaries; current source and check results live in [implementation status](implementation-status.md).
 
 ## GitHub policy
 
@@ -49,6 +49,9 @@ Commits and PR titles use the same conventional subject validator. Choose the ty
 Use the PR template for features, fixes, refactors, and maintenance. Start with the problem and resulting behavior. Its table records each meaningful change/finding, action/reason, and observed verification result. Use plain English and concrete verbs. Include technical details only when they help assess behavior, compatibility, migration, privacy, or a failure. Remove placeholder instructions and unrelated history; use None for an empty applicable section. A short PR needs only a few precise rows, not padding.
 
 Follow [acceptance proof](../agents/acceptance-proof.md) for the required AC table, focused UI E2E and inspected/published screenshot/video and test-result artifacts. Missing required UI proof or inaccessible evidence blocks merge even when unit CI is green. Write Passed, Failed, or Not run with evidence/reason; never turn a planned test into a result. Update the body after review fixes and verify the squash title/body. For multiline issue/PR bodies, write a temporary file and pass `--body-file`.
+
+
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
 
 ## Verification
 

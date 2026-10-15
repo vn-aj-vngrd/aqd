@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run from any directory: ./scripts/test-ios.sh
-# Default: Core and native unit tests. Use IOS_TEST_SCOPE=all or e2e explicitly.
+# Default: Core and native unit tests. E2E is reserved for issue30.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -8,7 +8,7 @@ DESTINATION="${IOS_DESTINATION:-}"
 PHYSICAL=false
 if [[ "$DESTINATION" == platform=iOS,id=* ]]; then
   PHYSICAL=true
-elif [[ "${GITHUB_ACTIONS:-}" != true ]]; then
+else
   printf 'Local native checks require the physical iPhone destination. Prompt for the connected, unlocked iPhone, then set IOS_DESTINATION=platform=iOS,id=<current-device-UDID>. Local simulators stay shut down.\n' >&2
   exit 1
 fi
@@ -24,12 +24,12 @@ if [[ "$PHYSICAL" == true ]]; then
   fi
   SIGNING_ARGUMENTS=(CODE_SIGN_STYLE=Automatic "DEVELOPMENT_TEAM=$IOS_DEVELOPMENT_TEAM" -allowProvisioningUpdates)
 fi
-if [[ -z "$DESTINATION" ]]; then
-  DESTINATION="$(node "$ROOT/scripts/ios-destination.mjs")"
-fi
 DERIVED_DATA="${IOS_DERIVED_DATA:-/tmp/aqd-uitest-derived}"
 SCOPE="${IOS_TEST_SCOPE:-unit}"
 TEST_SELECTION=()
+if [[ "$SCOPE" != unit && "${AQD_E2E_ISSUE:-}" != 30 ]]; then
+  printf 'E2E execution is deferred to issue #30. Feature delivery uses unit tests only.\n' >&2; exit 1
+fi
 case "$SCOPE" in
   unit) TEST_SELECTION=(-only-testing:AQDTests) ;;
   e2e) TEST_SELECTION=(-only-testing:AQDUITests) ;;
@@ -63,22 +63,12 @@ if [[ "$PHYSICAL" == true && "$SCOPE" != unit && -z "${IOS_TEST_CASES_FILE:-}" ]
   exit 1
 fi
 
-# Automatic Photos seeding belongs only to hosted simulator UI runs.
-if [[ "$SCOPE" != unit && "$PHYSICAL" != true ]]; then
-  PHOTO_DEVICE="${IOS_PHOTO_DEVICE:-${DESTINATION##*,id=}}"
-  if [[ "$PHOTO_DEVICE" == "$DESTINATION" ]]; then
-    printf 'Set IOS_PHOTO_DEVICE to the destination simulator UUID for Photos seeding.\n' >&2
-    exit 1
-  fi
-  "$ROOT/scripts/seed-ios-test-photo.sh" "$PHOTO_DEVICE"
-fi
-
 if [[ "$SCOPE" != e2e ]]; then
   swift test --package-path "$ROOT/apps/ios/Core"
 fi
 
 # Local tests use the explicit physical phone and existing local signing team.
-# Hosted simulator checks remain unsigned and run on GitHub's machine.
+# Hosted native/simulator CI is removed; all native checks use the physical phone.
 # Conditional array expansion preserves zero arguments under macOS Bash 3.2 nounset.
 xcodebuild \
   -project "$ROOT/apps/ios/AQD.xcodeproj" \

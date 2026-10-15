@@ -1,5 +1,8 @@
 # Acceptance proof
 
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
+
+
 The [implementation-plan verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) requires focused UI acceptance proof during feature delivery. This contract owns proof quality and publication. [`aqd-prove`](../../.agents/skills/aqd-prove/SKILL.md) performs it; `aqd-ship` keeps merge blocked until required proof is published and passed.
 
 ## Scope and mapping
