@@ -15,8 +15,8 @@ Agent workflow/docs tooling is separate unticketed repository maintenance. It do
 
 | Slice | Working outcome | Focused proof | State | Commit marker | Actual SHA |
 | --- | --- | --- | --- | --- | --- |
-| S1 | Shared native metadata/fields, tab selection and capture/details/photo source-return behavior, with rendering and UI regression cases | Native unit/Debug + unsigned Release; Standards/Spec source review | Committed | `AQD-Slice: #20/S1` | Pending |
-| S2 | Revalidate the opened bootstrap store before seeding stock Today, preserving existing owner/widget IDs | Native persistence/reopen/bootstrap tests in unit suite; source review | Planned | `AQD-Slice: #20/S2` | Pending |
+| S1 | Shared native metadata/fields, tab selection and capture/details/photo source-return behavior, with rendering and UI regression cases | Native unit/Debug + unsigned Release; Standards/Spec source review | Committed | `AQD-Slice: #20/S1` | `eb21a84` |
+| S2 | Revalidate the opened bootstrap store before seeding stock Today, preserving existing owner/widget IDs | Native persistence/reopen/bootstrap tests in unit suite; source review | Committed | `AQD-Slice: #20/S2` | Pending |
 | S3 | Feature unit scope and explicit final E2E scope; policy and evidence distinguish deferred runtime acceptance | Tooling/workflow tests, actual unit selection, shell validation | Planned | `AQD-Slice: #20/S3` | Pending |
 
 ## Acceptance and evidence

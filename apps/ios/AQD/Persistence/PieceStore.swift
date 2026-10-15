@@ -273,8 +273,13 @@ final class PieceStore {
             // Seed only fresh or validated empty bootstrap storage. A committed
             // stock Today row retains its original owner and widget identities.
             let context = ModelContext(container)
-            context.insert(StoredTodayConfiguration(TodayConfiguration(ownerID: UUID())))
-            try commit(context)
+            // The disposable DB/WAL inspection is an earlier snapshot.
+            // Revalidate the opened store rather than upserting over a row that
+            // was absent from the earlier inspection copy.
+            if try Self.bootstrapNeedsToday(in: context) {
+                context.insert(StoredTodayConfiguration(TodayConfiguration(ownerID: UUID())))
+                try commit(context)
+            }
         }
         // Advance the marker only after the native preservation migration succeeds.
         if allowsSave { try version.write(to: versionURL, options: [.atomic, .completeFileProtection]) }
@@ -361,27 +366,31 @@ final class PieceStore {
                 allowsSave: false, cloudKitDatabase: .none)
             let readOnly = try ModelContainer(for: schema, configurations: [configuration])
             let context = ModelContext(readOnly)
-            guard try context.fetchCount(FetchDescriptor<StoredPiece>()) == 0,
-                  try context.fetchCount(FetchDescriptor<StoredPhoto>()) == 0,
-                  try context.fetchCount(FetchDescriptor<StoredPieceDraft>()) == 0,
-                  try context.fetchCount(FetchDescriptor<StoredPieceSave>()) == 0,
-                  try context.fetchCount(FetchDescriptor<StoredPieceDeletion>()) == 0,
-                  try context.fetchCount(FetchDescriptor<StoredPhotoCleanup>()) == 0 else {
-                throw StoreError.unsupportedStore
-            }
-            let records = try context.fetch(FetchDescriptor<StoredTodayConfiguration>())
-            if records.isEmpty { return true }
-            guard records.count == 1, let record = records.first else { throw StoreError.unsupportedStore }
-            let today = try record.value()
-            guard today.revision == 1,
-                  today.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse] else {
-                throw StoreError.unsupportedStore
-            }
-            return false
+            return try bootstrapNeedsToday(in: context)
         } catch {
             // Refuse unmarked corrupt/foreign/populated layouts without reset.
             throw StoreError.unsupportedStore
         }
+    }
+
+    private static func bootstrapNeedsToday(in context: ModelContext) throws -> Bool {
+        guard try context.fetchCount(FetchDescriptor<StoredPiece>()) == 0,
+              try context.fetchCount(FetchDescriptor<StoredPhoto>()) == 0,
+              try context.fetchCount(FetchDescriptor<StoredPieceDraft>()) == 0,
+              try context.fetchCount(FetchDescriptor<StoredPieceSave>()) == 0,
+              try context.fetchCount(FetchDescriptor<StoredPieceDeletion>()) == 0,
+              try context.fetchCount(FetchDescriptor<StoredPhotoCleanup>()) == 0 else {
+            throw StoreError.unsupportedStore
+        }
+        let records = try context.fetch(FetchDescriptor<StoredTodayConfiguration>())
+        if records.isEmpty { return true }
+        guard records.count == 1, let record = records.first else { throw StoreError.unsupportedStore }
+        let today = try record.value()
+        guard today.revision == 1,
+              today.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse] else {
+            throw StoreError.unsupportedStore
+        }
+        return false
     }
 
     func todayConfiguration() throws -> TodayConfiguration {
