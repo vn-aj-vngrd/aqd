@@ -15,10 +15,10 @@ struct DraftDiscardSheet: View {
                 Text(message).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 VStack(spacing: 12) {
                     Button(role: .cancel) { dismiss() } label: {
-                        Text("Keep editing").frame(maxWidth: .infinity, minHeight: 26)
+                        Text("Keep editing").foregroundStyle(AppTheme.onAccent).frame(maxWidth: .infinity, minHeight: 26)
                     }.tint(AppTheme.accent).keyboardShortcut(.cancelAction)
                     Button(role: .destructive, action: discard) {
-                        Text("Discard draft").frame(maxWidth: .infinity, minHeight: 26)
+                        Text("Discard draft").foregroundStyle(AppTheme.onAccent).frame(maxWidth: .infinity, minHeight: 26)
                     }.tint(AppTheme.dangerFill)
                 }.buttonStyle(.borderedProminent).buttonBorderShape(.capsule).controlSize(.large)
             }.padding(24)

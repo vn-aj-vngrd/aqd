@@ -61,7 +61,7 @@ final class EntryFlowTests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Add piece"].waitForExistence(timeout: 5))
         assertFreshCapture()
         capture("E4 onboarding success opens an empty real capture task")
-        app.buttons["capture.back"].tap()
+        app.buttons["capture.back"].tapAfterSystemBannersClear(in: app)
         app.terminate(); app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
         XCTAssertFalse(app.buttons["Start my closet"].exists)
@@ -104,7 +104,7 @@ final class EntryFlowTests: XCTestCase {
         app.buttons["Start my closet"].tap(); app.buttons["Personalize my closet"].tap()
         XCTAssertFalse(app.navigationBars["Start privately"].buttons["Back"].isHittable, "The background navigation control is inert")
         app.buttons["Wear more of my closet"].tap()
-        app.buttons["style.back"].tap(); app.buttons["Discard draft"].tap()
+        app.buttons["style.back"].tapAfterSystemBannersClear(in: app); app.buttons["Discard draft"].tap()
         XCTAssertTrue(app.navigationBars["Start privately"].waitForExistence(timeout: 5))
         capture("E4 onboarding cancellation returns to private introduction")
         let personalize = app.buttons["Personalize my closet"]
@@ -134,7 +134,7 @@ final class EntryFlowTests: XCTestCase {
         app.buttons["Private on this iPhone, Learn more"].tap()
         XCTAssertTrue(app.navigationBars["Your closet, privately"].waitForExistence(timeout: 5))
         capture("E1 private storage and device-loss explanation")
-        app.buttons["Back"].tap()
+        app.buttons["Back"].tapAfterSystemBannersClear(in: app)
         app.buttons["Take the tour"].tap()
         for _ in 0..<3 { app.buttons["Next"].tap() }
         app.buttons["Finish tour"].tap()
@@ -159,7 +159,7 @@ final class EntryFlowTests: XCTestCase {
     func testWelcomeTourBackResumeFinishAndReadyCreateNoDemoPieces() {
         app.buttons["Take a quick tour"].tap()
         XCTAssertTrue(app.staticTexts["1 of 4 · Preview only"].waitForExistence(timeout: 5))
-        app.buttons["Back"].tap()
+        app.buttons["Back"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.buttons["Start my closet"].waitForExistence(timeout: 5))
         app.buttons["Take a quick tour"].tap()
         capture("E5 Today preview is clearly illustrative and inert")
@@ -168,7 +168,7 @@ final class EntryFlowTests: XCTestCase {
         app.terminate(); app.launch()
         XCTAssertTrue(app.staticTexts["2 of 4 · Preview only"].waitForExistence(timeout: 10))
         capture("E5 interrupted tour resumes Closet preview")
-        app.buttons["Back"].tap()
+        app.buttons["Back"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.staticTexts["1 of 4 · Preview only"].exists)
         app.buttons["Next"].tap(); app.buttons["Next"].tap()
         capture("E5 Agent preview")
@@ -177,7 +177,7 @@ final class EntryFlowTests: XCTestCase {
         app.buttons["Finish tour"].tap()
         XCTAssertTrue(app.staticTexts["Ready when you are"].waitForExistence(timeout: 5))
         capture("E5 Ready explains examples were never saved")
-        app.buttons["Back"].tap()
+        app.buttons["Back"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.staticTexts["4 of 4 · Preview only"].waitForExistence(timeout: 5))
         for _ in 0..<4 { app.buttons["tour.back"].tap() }
         XCTAssertTrue(app.buttons["Start my closet"].waitForExistence(timeout: 5), "Ready Back retains the original Welcome source")
@@ -201,10 +201,10 @@ final class EntryFlowTests: XCTestCase {
         app.buttons["closet.addPiece"].tap()
         XCTAssertTrue(app.textFields["capture.field.name"].waitForExistence(timeout: 5))
         app.textFields["capture.field.name"].tap(); app.textFields["capture.field.name"].typeText("Tour retained capture")
-        app.buttons["capture.back"].tap()
+        app.buttons["capture.back"].tapAfterSystemBannersClear(in: app)
         openSettings()
         replayTour()
-        app.buttons["Back"].tap()
+        app.buttons["Back"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
         replayTour()
         for _ in 0..<3 { app.buttons["Next"].tap() }
@@ -226,7 +226,7 @@ final class EntryFlowTests: XCTestCase {
     }
 
     private func openSettings() {
-        app.buttons["root.tab.profile"].tap(); app.buttons["More"].tap(); app.buttons["Settings"].tap()
+        app.buttons["root.tab.profile"].tap(); app.buttons["More"].tapAfterSystemBannersClear(in: app); app.buttons["Settings"].tap()
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
     }
     private func replayTour() {
@@ -251,6 +251,7 @@ final class EntryFlowTests: XCTestCase {
                 XCTAssertTrue(app.frame.contains(button.frame), "The complete tour footer action must fit the viewport")
             }
         }
+        guard waitForUnobstructedAQD(app) else { return }
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = title; attachment.lifetime = .keepAlways; add(attachment)
     }

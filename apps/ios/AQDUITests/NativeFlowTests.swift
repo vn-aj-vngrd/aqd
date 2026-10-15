@@ -217,7 +217,7 @@ final class NativeFlowTests: XCTestCase {
         tab("Agent").tap()
         XCTAssertTrue(app.navigationBars["Agent"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.tabBars.firstMatch.isHittable)
-        app.navigationBars["Agent"].buttons["Back"].tap()
+        app.navigationBars["Agent"].buttons["Back"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.navigationBars["Closet"].waitForExistence(timeout: 5))
         XCTAssertTrue(tab("Closet").isSelected)
         XCTAssertTrue(tab("Closet").isHittable)
@@ -567,7 +567,7 @@ final class NativeFlowTests: XCTestCase {
             XCTAssertTrue(app.navigationBars[root].waitForExistence(timeout: 5))
             assertCleanupRecoveryVisible()
         }
-        app.navigationBars["Agent"].buttons["Back"].tap()
+        app.navigationBars["Agent"].buttons["Back"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.navigationBars["Profile"].waitForExistence(timeout: 5))
         assertCleanupRecoveryVisible()
         attachScreenshot("Pending photo cleanup remains explained across native roots")
@@ -587,7 +587,7 @@ final class NativeFlowTests: XCTestCase {
                 XCTAssertTrue(app.staticTexts["Your closet starts here"].exists)
             }
         }
-        app.navigationBars["Agent"].buttons["Back"].tap()
+        app.navigationBars["Agent"].buttons["Back"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.navigationBars["Profile"].waitForExistence(timeout: 5))
         XCTAssertTrue(tab("Profile").isSelected)
         attachScreenshot("Writable relaunch recovers cleanup without changing root navigation")
@@ -715,7 +715,7 @@ final class NativeFlowTests: XCTestCase {
             XCTAssertTrue(app.navigationBars[root].waitForExistence(timeout: 5))
             assertRecoveryVisible()
         }
-        app.navigationBars["Agent"].buttons["Back"].tap()
+        app.navigationBars["Agent"].buttons["Back"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.navigationBars["Profile"].waitForExistence(timeout: 5))
         assertRecoveryVisible()
         tab("Closet").tap()
@@ -738,7 +738,7 @@ final class NativeFlowTests: XCTestCase {
                 XCTAssertFalse(seededPiece.exists, "Cleanup recovery must never resurrect the deleted piece")
             }
         }
-        app.navigationBars["Agent"].buttons["Back"].tap()
+        app.navigationBars["Agent"].buttons["Back"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.navigationBars["Profile"].waitForExistence(timeout: 5))
         XCTAssertTrue(tab("Profile").isSelected)
         XCTAssertFalse(warning.exists)
@@ -1551,6 +1551,7 @@ final class NativeFlowTests: XCTestCase {
     }
 
     private func attachScreenshot(_ name: String) {
+        guard waitForUnobstructedAQD(app) else { return }
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         attachment.name = name
         attachment.lifetime = .keepAlways

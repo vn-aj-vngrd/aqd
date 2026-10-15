@@ -31,7 +31,7 @@ final class BodyFlowTests: XCTestCase {
         app.buttons["style.height.units"].tap(); app.buttons["cm"].tap()
         XCTAssertEqual(height.value as? String, "173.125")
         app.buttons["style.body.shape"].tap()
-        app.buttons["Straight"].tap(); app.buttons["style.body.picker.done"].tap()
+        app.buttons["Straight"].tap(); app.buttons["style.body.picker.done"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.buttons["style.body.picker.done"].waitForNonExistence(timeout: 5))
         XCTAssertEqual(app.buttons["style.body.shape"].value as? String, "Straight")
         app.buttons["style.body.shape"].tap(); app.buttons["style.body.custom"].tap()
@@ -40,14 +40,14 @@ final class BodyFlowTests: XCTestCase {
         description.tap(); description.typeText(text)
         assertKeyboardSafeUse()
         capture("E3 custom description is visible while typing above the keyboard")
-        app.buttons["Cancel"].tap()
+        app.buttons["Cancel"].tapAfterSystemBannersClear(in: app)
         XCTAssertEqual(app.buttons["Straight"].value as? String, "Selected")
         app.buttons["style.body.custom"].tap()
         XCTAssertEqual(descriptionField().value as? String, text)
         app.buttons["Use description"].tap()
         XCTAssertTrue(app.staticTexts["Pending custom description, \(text)"].exists)
         capture("E3 Use description returns a pending picker selection")
-        app.buttons["style.body.picker.done"].tap()
+        app.buttons["style.body.picker.done"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.buttons["style.body.picker.done"].waitForNonExistence(timeout: 5))
         XCTAssertEqual(app.buttons["style.body.shape"].value as? String, text)
         XCTAssertEqual(app.switches["Use body details for suggestions"].value as? String, "0")
@@ -94,9 +94,9 @@ final class BodyFlowTests: XCTestCase {
         XCTAssertEqual((descriptionField().value as? String)?.count, 160)
         XCTAssertTrue(app.buttons["Use description"].isEnabled)
         capture("E3 removing one character restores Use without enabling body consent")
-        app.buttons["Cancel"].tap()
+        app.buttons["Cancel"].tapAfterSystemBannersClear(in: app)
         XCTAssertEqual(app.buttons["Not sure"].value as? String, "Selected")
-        app.buttons["Cancel"].tap()
+        app.buttons["Cancel"].tapAfterSystemBannersClear(in: app)
         XCTAssertEqual(app.buttons["style.body.shape"].value as? String, "Not added")
         XCTAssertFalse(app.buttons["Continue"].isEnabled)
         XCTAssertEqual(app.switches["Use body details for suggestions"].value as? String, "0")
@@ -111,7 +111,7 @@ final class BodyFlowTests: XCTestCase {
         openStyle(settings: false); reachBody(selectAnswers: true)
         app.buttons["style.body.shape"].tap()
         capture("E6 dark native body picker with ink X and checkmark actions")
-        app.buttons["Not sure"].tap(); app.buttons["style.body.picker.done"].tap()
+        app.buttons["Not sure"].tap(); app.buttons["style.body.picker.done"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.buttons["style.body.picker.done"].waitForNonExistence(timeout: 5))
         capture("E6 dark body details keep optional use Off")
         app.buttons["Continue"].tap()
@@ -123,6 +123,13 @@ final class BodyFlowTests: XCTestCase {
         app.buttons["style.saved.continue"].tap()
         XCTAssertTrue(app.navigationBars["Profile"].waitForExistence(timeout: 5))
         capture("E6 dark actual Profile caller restored")
+        openStyle(settings: false)
+        app.buttons["style.back"].tapAfterSystemBannersClear(in: app)
+        XCTAssertTrue(app.buttons["Keep editing"].waitForExistence(timeout: 5))
+        capture("E6 dark discard sheet uses paired readable blue and red button colors")
+        app.buttons["Keep editing"].tap()
+        XCTAssertTrue(app.buttons["Keep editing"].waitForNonExistence(timeout: 5))
+        XCTAssertEqual(app.buttons["No preference"].value as? String, "Selected")
     }
 
     func testProfileFailedBodySaveAndDiscardKeepThePriorSavedAnswerAndCaller() {
@@ -132,14 +139,14 @@ final class BodyFlowTests: XCTestCase {
         saveAndFinish()
         app.terminate(); app.launchEnvironment["AQD_TEST_DENIED_STYLE_SAVE"] = "1"; app.launch()
         openStyle(settings: false); reachBody(selectAnswers: false)
-        app.buttons["style.body.shape"].tap(); app.buttons["Rounded"].tap(); app.buttons["style.body.picker.done"].tap()
+        app.buttons["style.body.shape"].tap(); app.buttons["Rounded"].tap(); app.buttons["style.body.picker.done"].tapAfterSystemBannersClear(in: app)
         app.buttons["Continue"].tap(); app.buttons["Continue"].tap()
         app.buttons["Save preferences"].tap()
         XCTAssertTrue(app.buttons["Retry save"].waitForExistence(timeout: 5))
         capture("E4 Profile failed body save preserves the prior saved preferences")
         app.terminate(); app.launch()
         XCTAssertTrue(app.navigationBars["Review preferences"].waitForExistence(timeout: 10))
-        for _ in 0..<7 { app.buttons["style.back"].tap() }
+        for _ in 0..<7 { app.buttons["style.back"].tapAfterSystemBannersClear(in: app) }
         app.buttons["Discard draft"].tap()
         XCTAssertTrue(app.navigationBars["Profile"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.otherElements["profile.identity"].exists || app.staticTexts["Your profile"].exists)
@@ -159,14 +166,15 @@ final class BodyFlowTests: XCTestCase {
         let height = app.textFields["style.height.cm"]
         height.tap(); height.typeText("173")
         app.buttons["Done editing height"].tap()
-        app.buttons["style.body.shape"].tap(); app.buttons["Rounded"].tap(); app.buttons["style.body.picker.done"].tap()
+        app.buttons["style.body.shape"].tap(); app.buttons["Rounded"].tap(); app.buttons["style.body.picker.done"].tapAfterSystemBannersClear(in: app)
+        XCTAssertTrue(app.buttons["style.body.picker.done"].waitForNonExistence(timeout: 5))
         app.switches["Use body details for suggestions"].tap()
         app.buttons["Continue"].tap(); app.buttons["No color or pattern preference"].tap(); app.buttons["Continue"].tap()
         app.buttons["style.review.4"].tap()
         height.tap(); height.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 3) + "173..5")
         app.buttons["Done editing height"].tap()
         XCTAssertFalse(app.buttons["Back to review"].isEnabled)
-        app.buttons["style.back"].tap()
+        app.buttons["style.back"].tapAfterSystemBannersClear(in: app)
         XCTAssertFalse(app.buttons["Save preferences"].isEnabled)
         XCTAssertTrue(app.staticTexts["5 of 6 questions answered"].exists)
         capture("E3 invalid restored Review retains input and disables atomic Save")
@@ -193,7 +201,7 @@ final class BodyFlowTests: XCTestCase {
     private func openStyle(settings: Bool) {
         let profile = app.buttons["root.tab.profile"]
         XCTAssertTrue(profile.wait(for: \.isHittable, toEqual: true, timeout: 10)); profile.tap()
-        app.buttons["More"].tap()
+        app.buttons["More"].tapAfterSystemBannersClear(in: app)
         if settings {
             app.buttons["Settings"].tap()
             let style = app.buttons["Style, Edit preferences"]
@@ -227,6 +235,7 @@ final class BodyFlowTests: XCTestCase {
         XCTAssertTrue(app.frame.contains(use.frame))
     }
     private func capture(_ title: String) {
+        guard waitForUnobstructedAQD(app) else { return }
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = title; attachment.lifetime = .keepAlways; add(attachment)
     }

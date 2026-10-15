@@ -17,8 +17,9 @@
 | S0 | Local test entry points require the physical phone and preserve the device-ready prompt; hosted CI remains separate | Owner device instruction | Runner RED/GREEN, 57 tooling tests, docs checks; actual physical Core20/native84 passed | Committed | `AQD-Slice: #21/S0` | `64010ba` |
 | S1 | Seven-step answers/refusals, review and atomic save work from actual Profile/Settings callers, with durable drafts and correct returns | E3/E4, PREF-01/02/03/07 | Validation/preserving migration/persistence/failure tests and focused physical save/cancel/relaunch | Committed | `AQD-Slice: #21/S1` | `eec38f0` |
 | S2 | Fresh Welcome/private-start, questionnaire entry/bypass and preview-only tour persist route/completion, resume and replay | E1/E2/E5, onboarding PREF-02 | Core/native restart tests and focused physical entry/tour journeys | Committed | `AQD-Slice: #21/S2` | `08dc28969af74042a0f71fea848247b9d15f754d` |
-| S3 | Optional height/units and transactional self-description picker preserve edits, explicit refusal and body-use consent | E3/E4, scoped PREF-04/05/07 | Unit round trips/graphemes, native failure recovery and physical keyboard/custom-description proof | In progress | `AQD-Slice: #21/S3` | Pending |
-| S4 | Final feature proof covers all owned states/controls, publishes real device evidence and qualifies the complete diff | E1–E6 | Selected physical E2E, inspected images, source-bound reports, Standards/Spec and remote gates | Planned | `AQD-Slice: #21/S4` | Pending |
+| S3 | Optional height/units and transactional self-description picker preserve edits, explicit refusal and body-use consent | E3/E4, scoped PREF-04/05/07 | Unit round trips/graphemes, native failure recovery and physical keyboard/custom-description proof | Committed | `AQD-Slice: #21/S3` | `9f6e38a4ce3f72be28b2027e250778a839da4350` |
+| S4 | Guard physical proof from system banners/non-AQD captures and pair confirmation text/fill contrast | E4/E6 | Five affected physical cases, retained base failures, inspected light/dark buttons and source review | In progress | `AQD-Slice: #21/S4` | Pending |
+| S5 | Persist final feature proof, source/context/design ledgers and delivery receipt | E1–E6 | Actual source-bound outcomes, inspected media, docs/tooling checks and remote gates | Planned | `AQD-Slice: #21/S5` | Pending |
 
 ## Acceptance and evidence
 
@@ -131,7 +132,7 @@ Independent Spec review found two actual review defects: omitted comfort and unl
 
 - Standards/Spec: independent full-issue Standards review and bounded recheck found no actionable defect. Spec found omitted comfort/unlabelled preferred-versus-avoided values and an inaccurate All declined claim; genuine RED reproduced6 assertions, corrected summary tests and all33 Core tests pass. Final rendered Spec recheck remains pending.
 - Current check baseline: predecessor results belong to PR #31, not this feature.
-- Current source changes: S0 policy is committed; S1 shared preference/editor/persistence code, tests, docs and qualified physical proof are committed as `eec38f0`; S2 entry/tour changes are in progress.
+- Current source changes: S0 policy is committed; S1 shared preference/editor/persistence code, tests, docs and qualified physical proof are committed as `eec38f0`; S2 entry/tour/logo is committed as `08dc289`; S3 body inputs/picker is committed as `9f6e38a`.
 - Final receipt: persist actual slice SHAs and qualified evidence before the final gate head.
 
 ## Shipping
@@ -142,9 +143,9 @@ Independent Spec review found two actual review defects: omitted comfort and unl
 
 ## Resume
 
-- Current phase: S0/S1 committed; S2/S3 screen implementations prepared together before further tests under the owner’s latest direction. They remain uncommitted until qualified proof and review pass.
-- Next action: `screens-native-final` has passed95 with native splash light/dark inspected; finish `complete-screens-final`, the final15-case physical manifest with the owner-confirmed idle phone. Preserve S2/S3 commit boundaries by staging their owned files/hunks after qualification. Refresh the Release build after final source. Complete proof/docs/review, then authorized PR/CI/Codex/squash/release.
-- Dirty ownership: issue21 S2/S3 implementation/tests/docs and its physical evidence only; no unrelated project serialization is intended.
+- Current phase: S0–S3 are committed. Final source is `9f6e38a4ce3f72be28b2027e250778a839da4350`; S4 is qualifying source-bound evidence and delivery.
+- Next action: finish `final-issue-proof`, the complete18-case physical manifest on code SHA `9f6e38a`; native96, Core33, true dark3-case proof and final unsigned Release have passed. Curate only AQD-only media, finish S4 evidence/docs/review, then authorized PR/CI/Codex/squash/release.
+- Dirty ownership: issue21 S4 documentation and qualified media only. Any Xcode serialization rewrite must compare semantically equal before restoration; the AppIcon settings are intentional and committed.
 - External blocker: none confirmed. Paper is available and the first physical native check passed after confirmed readiness.
 
 ### Owner correction: actual screens and native confirmations
@@ -178,3 +179,11 @@ The new resource documentation initially duplicated Tour’s README.md in the fl
 S2 exact staged snapshot Release build passed in `build/issue-21/s2-release.log` after separating the shared files from S3. This independently compiles entry/tour/receipt/logo/confirmation code with the existing S1 body editor. Integrated physical checks are recorded separately above; they do not claim to have run against an unstated intermediate commit. S2 is ready for its scoped commit.
 
 S2 committed as `08dc28969af74042a0f71fea848247b9d15f754d` (`feat(onboarding): Complete private entry and guided tour`). S3 now stages only body input validation/persistence, transactional picker and their tests plus the full issue manifest. The existing S2 source remains intact. S3 integrated Core33/native96 and physical body/keyboard/cancel/restart cases above passed; true dark picker and saved return also passed in final-appearance-proof. Hook checks passed57 tooling tests.
+
+S3 committed as `9f6e38a4ce3f72be28b2027e250778a839da4350`. Final integrated unsigned Release build passed (`final-release-refresh.log`), including the app icon and guarded test-appearance hook. Xcode project serialization was compared as parsed property lists and restored to the committed byte form, preserving the two intentional AppIcon build settings. The complete 18-case feature selection now refreshes against this code SHA; broader #30 remains excluded. S4 holds final source/evidence/docs qualification and remote publication.
+
+Final contrast correction, tied to S2/S3: the native discard buttons now explicitly use the existing paired on-accent foreground with their blue/red fills, including dark appearance. The running18-case proof still binds to committed `9f6e38a`, whose app binary was built before this two-label color correction. Refresh the affected dark confirmation and light capture/Keep editing cases afterward; do not relabel the running base proof as testing the correction. The dark body case also checks safe cancellation and retained saved answer at the new confirmation. No rules/storage/entry behavior changed.
+
+Concrete device-interruption cause: final-issue-proof’s invalid-height case logged `BannerNotification`/`NotificationShortLookView` over the header, then a Done tap while that interruption was active. The body picker stayed open and subsequent hidden-body actions had hit point{-1,-1}; this is not a successful consent/save check. Earlier non-AQD failure captures can result from the notification tap, not owner navigation. Add a shared test guard that waits for banners to clear without reading their text and requires foreground AQD before header taps/screenshots. Keep the unchanged behavioral assertions, wait for picker dismissal, and refresh affected cases. The currently running base run remains bound to its original source.
+
+S4 affected proof passed5/5, zero failures/skips in `final-affected-proof`, preserving the invalid-height, refusal/consent, Keep editing, capture discard and cleanup assertions. Inspected actual dark/light confirmation colors and disabled invalid Review. Source Standards recheck found no actionable finding. Base `final-issue-proof` remains17 passed/1 failed due to the documented notification interruption; it is never relabelled Passed. Refresh covers the failed case and all consumers affected by the tiny confirmation-color/shared-driver change. All other application/Core/native-unit inputs and expected outcomes are unchanged and their scoped results are reused explicitly. Final correction Release build passed in `final-correction-release.log`.

@@ -60,15 +60,15 @@ final class StyleFlowTests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Your occasions"].waitForExistence(timeout: 10))
         XCTAssertEqual(app.buttons["Travel"].value as? String, "Selected")
         capture("E4 Settings draft resumes same step and answers")
-        app.buttons["Back"].tap()
+        app.buttons["Back"].tapAfterSystemBannersClear(in: app)
         XCTAssertTrue(app.navigationBars["Your goals"].exists)
         XCTAssertEqual(app.buttons["Wear more of my closet"].value as? String, "Selected")
-        app.buttons["Back"].tap()
+        app.buttons["Back"].tapAfterSystemBannersClear(in: app)
         keepEditing()
         XCTAssertTrue(app.navigationBars["Your goals"].exists)
         app.buttons["Continue"].tap()
         XCTAssertEqual(app.buttons["Travel"].value as? String, "Selected")
-        app.buttons["Back"].tap(); app.buttons["Back"].tap(); app.buttons["Discard draft"].tap()
+        app.buttons["Back"].tapAfterSystemBannersClear(in: app); app.buttons["Back"].tapAfterSystemBannersClear(in: app); app.buttons["Discard draft"].tap()
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
         openSettingsStyle()
         XCTAssertFalse(app.buttons["Continue"].isEnabled)
@@ -79,7 +79,7 @@ final class StyleFlowTests: XCTestCase {
         openSettingsStyle()
         XCTAssertEqual(app.buttons["No preference"].value as? String, "Selected")
         app.buttons["Wear more of my closet"].tap()
-        app.buttons["Back"].tap(); app.buttons["Discard draft"].tap()
+        app.buttons["Back"].tapAfterSystemBannersClear(in: app); app.buttons["Discard draft"].tap()
         openSettingsStyle()
         XCTAssertEqual(app.buttons["No preference"].value as? String, "Selected")
         capture("E4 cancel retains prior saved preferences and Settings source")
@@ -131,7 +131,7 @@ final class StyleFlowTests: XCTestCase {
 
     private func openStyle(settings: Bool) {
         app.buttons["root.tab.profile"].tap()
-        app.buttons["More"].tap()
+        app.buttons["More"].tapAfterSystemBannersClear(in: app)
         if settings { app.buttons["Settings"].tap(); openSettingsStyle() }
         else {
             let style = app.buttons["Style"]
@@ -173,6 +173,7 @@ final class StyleFlowTests: XCTestCase {
         XCTAssertEqual(app.buttons["Wear more of my closet"].value as? String, "Selected")
     }
     private func capture(_ title: String) {
+        guard waitForUnobstructedAQD(app) else { return }
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = title; attachment.lifetime = .keepAlways; add(attachment)
     }
