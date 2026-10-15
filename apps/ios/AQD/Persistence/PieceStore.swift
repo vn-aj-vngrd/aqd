@@ -205,11 +205,53 @@ enum LocalSchemaV3: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV2.models + [StoredLocalExperience.self] }
 }
 
+enum LocalSchemaV4: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(4, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV3.models + [StoredOutfit.self, StoredOutfitDraft.self, StoredOutfitSave.self] }
+}
+
+enum LocalSchemaV5: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(5, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV4.models + [StoredOutfitTheme.self, StoredThemeDraft.self, StoredThemeSave.self] }
+}
+
+enum LocalSchemaV6: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(6, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV5.models + [StoredOutfitPlanEntry.self, StoredOutfitPlanDraft.self, StoredOutfitPlanSave.self] }
+}
+
+enum LocalSchemaV7: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(7, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV6.models + [StoredOutfitWear.self, StoredOutfitWearDraft.self, StoredOutfitWearSave.self] }
+}
+
+enum LocalSchemaV8: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(8, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV7.models + [StoredOutfitMutation.self] }
+}
+
+enum LocalSchemaV9: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(9, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV8.models + [StoredPieceDeletionReview.self] }
+}
+
+enum LocalSchemaV10: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(10, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV9.models + [StoredThemeDeletion.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
-         .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self)]
+         .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
+         .lightweight(fromVersion: LocalSchemaV3.self, toVersion: LocalSchemaV4.self),
+         .lightweight(fromVersion: LocalSchemaV4.self, toVersion: LocalSchemaV5.self),
+         .lightweight(fromVersion: LocalSchemaV5.self, toVersion: LocalSchemaV6.self),
+         .lightweight(fromVersion: LocalSchemaV6.self, toVersion: LocalSchemaV7.self),
+         .lightweight(fromVersion: LocalSchemaV7.self, toVersion: LocalSchemaV8.self),
+         .lightweight(fromVersion: LocalSchemaV8.self, toVersion: LocalSchemaV9.self),
+         .lightweight(fromVersion: LocalSchemaV9.self, toVersion: LocalSchemaV10.self)]
     }
 }
 
@@ -230,12 +272,16 @@ final class PieceStore {
     private let beforeStyleSave: () throws -> Void
     private let afterStyleSave: () throws -> Void
     private let beforeExperienceRead: () throws -> Void
+    private let beforeOutfitSave: () throws -> Void
+    private let afterOutfitSave: () throws -> Void
 
     init(directory: URL, allowsSave: Bool = true,
          removeMediaFile: @escaping (URL) throws -> Void = { try FileManager.default.removeItem(at: $0) },
          beforeStyleSave: @escaping () throws -> Void = {},
          afterStyleSave: @escaping () throws -> Void = {},
          beforeExperienceRead: @escaping () throws -> Void = {},
+         beforeOutfitSave: @escaping () throws -> Void = {},
+         afterOutfitSave: @escaping () throws -> Void = {},
          writeMediaFile: @escaping (Data, URL) throws -> Void = { data, url in
              try data.write(to: url, options: [.atomic, .completeFileProtection])
          }) throws {
@@ -246,23 +292,25 @@ final class PieceStore {
         self.beforeStyleSave = beforeStyleSave
         self.afterStyleSave = afterStyleSave
         self.beforeExperienceRead = beforeExperienceRead
+        self.beforeOutfitSave = beforeOutfitSave
+        self.afterOutfitSave = afterOutfitSave
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:3".utf8)
-        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8)]
+        let version = Data("AQD-piece-store:10".utf8)
+        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8), Data("AQD-piece-store:6".utf8), Data("AQD-piece-store:7".utf8), Data("AQD-piece-store:8".utf8), Data("AQD-piece-store:9".utf8)]
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV3.self)
+        let schema = Schema(versionedSchema: LocalSchemaV10.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
         if hasVersion {
             let marker = try Data(contentsOf: versionURL)
             guard marker == version || previousVersions.contains(marker) else { throw StoreError.unsupportedStore }
-            maySeedExperience = marker != version
+            maySeedExperience = marker == Data("AQD-piece-store:1".utf8) || marker == Data("AQD-piece-store:2".utf8)
             guard hasStore else { throw StoreError.corruptStore }
             do {
                 _ = try NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: NSSQLiteStoreType, at: storeURL,
@@ -314,7 +362,17 @@ final class PieceStore {
         try protectStoreFiles()
     }
 
+    private enum BootstrapSnapshotError: Error { case changed }
+
     private static func interruptedBootstrapNeedsToday(storeURL: URL, schema: Schema) throws -> Bool {
+        for _ in 0..<3 {
+            do { return try inspectStableBootstrapSnapshot(storeURL: storeURL, schema: schema) }
+            catch BootstrapSnapshotError.changed { continue }
+        }
+        throw StoreError.unsupportedStore
+    }
+
+    private static func inspectStableBootstrapSnapshot(storeURL: URL, schema: Schema) throws -> Bool {
         // Even read-only Core Data/SwiftData opens may change SQLite sidecars or
         // metadata. Only inspect a disposable copy, never the unmarked source.
         let inspectionDirectory = FileManager.default.temporaryDirectory
@@ -329,11 +387,14 @@ final class PieceStore {
             // First-use stores are tiny. Bound both memory and transient disk use;
             // large unmarked stores are not a supported bootstrap recovery case.
             var remainingBytes = 32 * 1024 * 1024
+            var copiedFiles: [(suffix: String, hash: SHA256.Digest?)] = []
             for suffix in ["", "-wal"] {
                 let source = sourceDirectory.appendingPathComponent(storeURL.lastPathComponent + suffix)
                 let attributes: [FileAttributeKey: Any]
                 do { attributes = try FileManager.default.attributesOfItem(atPath: source.path) }
-                catch let error as CocoaError where error.code == .fileReadNoSuchFile && suffix == "-wal" { continue }
+                catch let error as CocoaError where error.code == .fileReadNoSuchFile && suffix == "-wal" {
+                    copiedFiles.append((suffix, nil)); continue
+                }
                 guard attributes[.type] as? FileAttributeType == .typeRegular,
                       source.resolvingSymlinksInPath().standardizedFileURL == sourceDirectory.resolvingSymlinksInPath()
                         .appendingPathComponent(source.lastPathComponent).standardizedFileURL else {
@@ -356,11 +417,38 @@ final class PieceStore {
                     guard chunk.count <= remainingBytes - bytes.count else { throw StoreError.unsupportedStore }
                     bytes.append(chunk)
                 }
-                guard bytes.count == status.st_size else { throw StoreError.unsupportedStore }
+                guard bytes.count == status.st_size else { throw BootstrapSnapshotError.changed }
                 remainingBytes -= bytes.count
                 let destination = inspectionDirectory.appendingPathComponent(source.lastPathComponent)
                 try bytes.write(to: destination, options: [.atomic, .completeFileProtection])
                 try protect(destination)
+                copiedFiles.append((suffix, SHA256.hash(data: bytes)))
+            }
+            // SQLite may checkpoint while separate DB/WAL files are copied.
+            // Refuse a mixed snapshot rather than misclassifying committed
+            // records as an empty bootstrap window. Recheck before inspection.
+            var verificationBudget = 32 * 1024 * 1024
+            for copied in copiedFiles {
+                let source = sourceDirectory.appendingPathComponent(storeURL.lastPathComponent + copied.suffix)
+                guard let expected = copied.hash else {
+                    guard !FileManager.default.fileExists(atPath: source.path) else { throw BootstrapSnapshotError.changed }
+                    continue
+                }
+                let descriptor = open(source.path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK)
+                guard descriptor >= 0 else { throw StoreError.unsupportedStore }
+                let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+                defer { try? handle.close() }
+                var status = stat()
+                guard fstat(descriptor, &status) == 0, status.st_mode & S_IFMT == S_IFREG,
+                      status.st_size >= 0, status.st_size <= verificationBudget else { throw StoreError.unsupportedStore }
+                var hash = SHA256()
+                var count = 0
+                while let chunk = try handle.read(upToCount: min(64 * 1024, verificationBudget - count + 1)), !chunk.isEmpty {
+                    guard chunk.count <= verificationBudget - count else { throw StoreError.unsupportedStore }
+                    count += chunk.count; hash.update(data: chunk)
+                }
+                guard count == status.st_size, hash.finalize() == expected else { throw BootstrapSnapshotError.changed }
+                verificationBudget -= count
             }
             // Copy the exact WAL when present (not SHM, media or unknown files),
             // so committed rows not yet checkpointed into the DB remain visible.
@@ -369,14 +457,15 @@ final class PieceStore {
             // Fail closed on cleanup failure; defer retries on every error path.
             try FileManager.default.removeItem(at: inspectionDirectory)
             return needsToday
-        } catch { throw StoreError.unsupportedStore }
+        } catch BootstrapSnapshotError.changed { throw BootstrapSnapshotError.changed }
+        catch { throw StoreError.unsupportedStore }
     }
 
     private static func inspectBootstrapCopyNeedsToday(storeURL: URL, schema: Schema) throws -> Bool {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, true), (Schema(versionedSchema: LocalSchemaV2.self), false)]
+            let candidates = [(schema, 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -386,7 +475,7 @@ final class PieceStore {
                         && model.isConfiguration(withName: nil, compatibleWithStoreMetadata: metadata)
                 } ?? false
             }
-            guard let (matchedSchema, includesExperience) = match else {
+            guard let (matchedSchema, storeVersion) = match else {
                 throw StoreError.unsupportedStore
             }
             // No migration plan, no writable connection: exact native schema
@@ -395,15 +484,44 @@ final class PieceStore {
                 allowsSave: false, cloudKitDatabase: .none)
             let readOnly = try ModelContainer(for: matchedSchema, configurations: [configuration])
             let context = ModelContext(readOnly)
-            return try bootstrapNeedsToday(in: context, includesExperience: includesExperience)
+            return try bootstrapNeedsToday(in: context, storeVersion: storeVersion)
         } catch {
             // Refuse unmarked corrupt/foreign/populated layouts without reset.
             throw StoreError.unsupportedStore
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, includesExperience: Bool = true) throws -> Bool {
-        if includesExperience {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 10) throws -> Bool {
+        if storeVersion >= 10 {
+            guard try context.fetchCount(FetchDescriptor<StoredThemeDeletion>()) == 0 else { throw StoreError.unsupportedStore }
+        }
+        if storeVersion >= 9 {
+            guard try context.fetchCount(FetchDescriptor<StoredPieceDeletionReview>()) == 0 else { throw StoreError.unsupportedStore }
+        }
+        if storeVersion >= 8 {
+            guard try context.fetchCount(FetchDescriptor<StoredOutfitMutation>()) == 0 else { throw StoreError.unsupportedStore }
+        }
+        if storeVersion >= 7 {
+            guard try context.fetchCount(FetchDescriptor<StoredOutfitWear>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredOutfitWearDraft>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredOutfitWearSave>()) == 0 else { throw StoreError.unsupportedStore }
+        }
+        if storeVersion >= 6 {
+            guard try context.fetchCount(FetchDescriptor<StoredOutfitPlanEntry>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredOutfitPlanDraft>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredOutfitPlanSave>()) == 0 else { throw StoreError.unsupportedStore }
+        }
+        if storeVersion >= 5 {
+            guard try context.fetchCount(FetchDescriptor<StoredOutfitTheme>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredThemeDraft>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredThemeSave>()) == 0 else { throw StoreError.unsupportedStore }
+        }
+        if storeVersion >= 4 {
+            guard try context.fetchCount(FetchDescriptor<StoredOutfit>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredOutfitDraft>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredOutfitSave>()) == 0 else { throw StoreError.unsupportedStore }
+        }
+        if storeVersion >= 3 {
             let records = try context.fetch(FetchDescriptor<StoredLocalExperience>())
             if !records.isEmpty {
                 guard records.count == 1, let record = records.first, record.id == 1,
@@ -731,6 +849,7 @@ final class PieceStore {
                 try queueCleanup(photoID: existing.photoID,
                                  recipeDigest: try cleanupRecipeDigest(try existing.recipe()), context: context)
             }
+            if result.availability != .available { try flagFuturePlans(using: id, context: context) }
             existing.apply(result)
         } else { context.insert(StoredPiece(result)) }
         context.insert(StoredPieceSave(id: operationID, itemID: id, draftDigest: digest, snapshot: try encode(result)))
@@ -827,6 +946,7 @@ final class PieceStore {
                 availability: PieceAvailability? = nil, sort: PieceSort = .name) throws -> [WardrobePiece] {
         let context = ModelContext(container)
         let needle = Self.searchText(query.trimmingCharacters(in: .whitespacesAndNewlines))
+        let wear = [.mostWorn, .leastWorn, .lastWorn].contains(sort) ? try wearRecords() : []
         return try context.fetch(FetchDescriptor<StoredPiece>()).map { try $0.value() }.filter { piece in
             guard piece.isArchived == archived,
                   category == nil || piece.category == category,
@@ -836,6 +956,16 @@ final class PieceStore {
                         details.material, details.season, details.condition, details.ownershipAge, details.notes] + details.tags
             return needle.isEmpty || text.contains { Self.searchText($0).contains(needle) }
         }.sorted {
+            if sort == .mostWorn || sort == .leastWorn {
+                let left = PieceWearSummary(piece: $0, records: wear).total
+                let right = PieceWearSummary(piece: $1, records: wear).total
+                if left != right { return sort == .mostWorn ? left > right : left < right }
+            }
+            if sort == .lastWorn {
+                let left = PieceWearSummary(piece: $0, records: wear).lastWorn?.key
+                let right = PieceWearSummary(piece: $1, records: wear).lastWorn?.key
+                if left != right { return (left ?? "") > (right ?? "") }
+            }
             if sort == .recentlyAdded, $0.createdAt != $1.createdAt {
                 return $0.createdAt > $1.createdAt
             }
@@ -870,6 +1000,8 @@ final class PieceStore {
         }
         guard let stored = try context.fetch(FetchDescriptor<StoredPiece>(predicate: #Predicate { $0.id == id })).first,
               stored.revision == expectedRevision else { throw StoreError.staleRevision }
+        guard allowsSave else { throw StoreError.corruptStore }
+        if archived { try flagFuturePlans(using: id, context: context) }
         stored.isArchived = archived
         stored.revision += 1
         stored.updatedAt = Date()
@@ -887,7 +1019,7 @@ final class PieceStore {
 
     /// Read-only proof of this exact record removal, not proof of erased media.
     /// Missing operations are unacknowledged; mismatched or contradictory proof is refused.
-    func isPieceDeletionAcknowledged(id: UUID, expectedRevision: Int, operationID: UUID) throws -> Bool {
+    func isPieceDeletionAcknowledged(id: UUID, expectedRevision: Int, operationID: UUID, impact: PieceDeletionImpact? = nil) throws -> Bool {
         guard expectedRevision > 0 else { throw StoreError.invalidRecord }
         let context = ModelContext(container)
         let matches = try context.fetch(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.id == operationID }))
@@ -896,6 +1028,11 @@ final class PieceStore {
               proof.expectedRevision > 0,
               Set(proof.pendingPhotoIDs).count == proof.pendingPhotoIDs.count else { throw StoreError.invalidRecord }
         guard proof.itemID == id, proof.expectedRevision == expectedRevision else { throw StoreError.operationConflict }
+        if let impact {
+            let reviews = try context.fetch(FetchDescriptor<StoredPieceDeletionReview>(predicate: #Predicate { $0.id == operationID }))
+            guard reviews.count == 1, let review = reviews.first,
+                  try JSONDecoder().decode(PieceDeletionImpact.self, from: review.impact) == impact else { throw StoreError.operationConflict }
+        }
         guard try context.fetchCount(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.itemID == id })) == 1,
               try context.fetchCount(FetchDescriptor<StoredPiece>(predicate: #Predicate { $0.id == id })) == 0,
               try context.fetchCount(FetchDescriptor<StoredPieceDraft>(predicate: #Predicate { $0.itemID == id || $0.operationID == operationID })) == 0,
@@ -905,13 +1042,13 @@ final class PieceStore {
         return true
     }
 
-    /// Piece-only deletion, not full LOCAL-03 or erase. Today/journal/outfit/plan/history
-    /// owners must extend the reference graph before those models can retain media.
+    /// Reviewed wardrobe cascade. Future journal/media owners must extend the
+    /// reference graph; wear snapshots deliberately retain no photo ownership.
     /// Record acknowledgment and recoverable filesystem cleanup are separate commits.
-    func deletePiece(id: UUID, expectedRevision: Int, operationID: UUID) throws {
+    func deletePiece(id: UUID, expectedRevision: Int, operationID: UUID, impact: PieceDeletionImpact? = nil) throws {
         let context = ModelContext(container)
         if let prior = try context.fetch(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.id == operationID })).first {
-            guard try isPieceDeletionAcknowledged(id: id, expectedRevision: expectedRevision, operationID: operationID) else {
+            guard try isPieceDeletionAcknowledged(id: id, expectedRevision: expectedRevision, operationID: operationID, impact: impact) else {
                 throw StoreError.invalidRecord
             }
             try finishCleanup(prior, context: context)
@@ -923,12 +1060,17 @@ final class PieceStore {
         }
         guard let stored = try context.fetch(FetchDescriptor<StoredPiece>(predicate: #Predicate { $0.id == id })).first,
               stored.revision == expectedRevision else { throw StoreError.staleRevision }
+        guard allowsSave else { throw StoreError.corruptStore }
+        let currentImpact = try pieceDeletionImpact(id: id)
+        guard impact.map({ $0 == currentImpact }) ?? !currentImpact.hasDependencies else { throw StoreError.staleRevision }
         // Decode every owner before mutation; unreadable/unsupported payloads may hide references.
         let drafts = try decodedDrafts(context)
         let receipts = try decodedReceipts(context)
         let relatedDrafts = drafts.filter { $0.1.itemID == id }
         let relatedReceipts = receipts.filter { $0.1.id == id }
         let candidates = Set([stored.photoID] + relatedDrafts.compactMap { $0.1.photoID } + relatedReceipts.map { $0.1.photoID })
+        try applyPieceDeletionImpact(currentImpact, context: context)
+        context.insert(try StoredPieceDeletionReview(operationID: operationID, impact: currentImpact))
         context.delete(stored)
         for (draft, _) in relatedDrafts { context.delete(draft) }
         for (receipt, _) in relatedReceipts { context.delete(receipt) }
@@ -1258,5 +1400,588 @@ final class PieceStore {
         values.isExcludedFromBackup = true
         try ownedURL.setResourceValues(values)
         try FileManager.default.setAttributes([.protectionKey: FileProtectionType.complete], ofItemAtPath: url.path)
+    }
+}
+
+extension PieceStore {
+    func outfits() throws -> [Outfit] {
+        let owner = try todayConfiguration().ownerID
+        return try ModelContext(container).fetch(FetchDescriptor<StoredOutfit>()).map {
+            let value = try $0.value()
+            guard value.ownerID == owner else { throw StoreError.invalidRecord }
+            return value
+        }.sorted {
+            if $0.updatedAt != $1.updatedAt { return $0.updatedAt > $1.updatedAt }
+            return $0.id.uuidString < $1.id.uuidString
+        }
+    }
+
+    func outfit(id: UUID) throws -> Outfit? { try outfits().first { $0.id == id } }
+
+    func outfitDraft() throws -> OutfitDraft? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitDraft>())
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let value = try records.first?.value() else { return nil }
+        guard value.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        return value
+    }
+
+    func saveOutfitDraft(_ draft: OutfitDraft) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        try draft.validated()
+        guard draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        let context = ModelContext(container)
+        let receipts = try context.fetch(FetchDescriptor<StoredOutfitSave>())
+        // An acknowledged operation is immutable until the receipt is dismissed.
+        guard !receipts.contains(where: { $0.id == draft.operationID }) else { throw StoreError.operationConflict }
+        let records = try context.fetch(FetchDescriptor<StoredOutfitDraft>())
+        guard records.count <= 1, records.first.map({ $0.id == draft.id }) ?? true else { throw StoreError.operationConflict }
+        if let record = records.first { record.payload = try JSONEncoder().encode(draft) }
+        else { context.insert(try StoredOutfitDraft(draft)) }
+        try commit(context)
+    }
+
+    func discardOutfitDraft(id: UUID) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredOutfitDraft>())
+        guard records.count == 1, let record = records.first, record.id == id else { throw StoreError.staleDraft }
+        let draft = try record.value()
+        let operation = draft.operationID
+        guard try !context.fetch(FetchDescriptor<StoredOutfitSave>()).contains(where: { $0.id == operation }) else {
+            throw StoreError.operationConflict
+        }
+        context.delete(record)
+        try commit(context)
+    }
+
+    func savedOutfit(for draft: OutfitDraft) throws -> Outfit? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitSave>()).filter { $0.id == draft.operationID }
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let receipt = records.first else { return nil }
+        guard try JSONDecoder().decode(OutfitDraft.self, from: receipt.draft) == draft else { throw StoreError.operationConflict }
+        let value = try JSONDecoder().decode(Outfit.self, from: receipt.snapshot)
+        try value.validated()
+        guard value.ownerID == draft.ownerID, value.id == draft.outfitID else { throw StoreError.invalidRecord }
+        return value
+    }
+
+    func saveOutfit(_ draft: OutfitDraft) throws -> Outfit {
+        // Read the immutable receipt first. A retry still acknowledges a past
+        // successful save if a selected piece has subsequently been archived.
+        if let saved = try savedOutfit(for: draft) { return saved }
+        guard allowsSave else { throw StoreError.corruptStore }
+        try draft.validatedForSave(pieces: pieces())
+        guard draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        guard try outfitDraft() == draft else { throw StoreError.staleDraft }
+        let context = ModelContext(container)
+        let existing = try context.fetch(FetchDescriptor<StoredOutfit>()).first { $0.id == draft.outfitID }
+        let previous = try existing?.value()
+        guard (previous == nil || previous?.ownerID == draft.ownerID), (previous?.revision ?? 0) == draft.baseRevision else { throw StoreError.staleRevision }
+        let saved = Outfit(id: draft.outfitID, ownerID: draft.ownerID, name: draft.trimmedName,
+                           pieceIDs: draft.pieceIDs, mood: draft.mood, occasion: draft.occasion, isFavorite: previous?.isFavorite ?? false,
+                           revision: draft.baseRevision + 1, createdAt: previous?.createdAt ?? Date())
+        try saved.validated()
+        if let existing { existing.payload = try JSONEncoder().encode(saved) }
+        else { context.insert(try StoredOutfit(saved)) }
+        let themeRecords = try context.fetch(FetchDescriptor<StoredOutfitTheme>())
+        let selectedThemes = Set(draft.themeIDs ?? [])
+        let existingThemes = try themeRecords.map { try $0.value() }
+        guard existingThemes.allSatisfy({ $0.ownerID == draft.ownerID }), selectedThemes.isSubset(of: Set(existingThemes.filter { $0.ownerID == draft.ownerID }.map(\.id))) else {
+            throw StoreError.staleRevision
+        }
+        for record in themeRecords {
+            var theme = try record.value()
+            let hadMembership = theme.outfitIDs.contains(saved.id)
+            let wantsMembership = selectedThemes.contains(theme.id)
+            if hadMembership != wantsMembership {
+                if wantsMembership { theme.outfitIDs.append(saved.id) }
+                else { theme.outfitIDs.removeAll { $0 == saved.id } }
+                theme.revision += 1
+                record.payload = try JSONEncoder().encode(theme)
+            }
+        }
+        context.insert(try StoredOutfitSave(draft: draft, saved: saved))
+        try beforeOutfitSave()
+        try commit(context)
+        try afterOutfitSave()
+        return saved
+    }
+
+    func acknowledgeOutfitReceipt(_ draft: OutfitDraft) throws {
+        guard allowsSave, try savedOutfit(for: draft) != nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredOutfitDraft>())
+        guard records.count == 1, let record = records.first, try record.value() == draft else { throw StoreError.staleDraft }
+        context.delete(record)
+        try commit(context)
+    }
+}
+
+extension PieceStore {
+    func themes() throws -> [OutfitTheme] {
+        let owner = try todayConfiguration().ownerID
+        let values = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitTheme>()).map { try $0.value() }
+        guard values.allSatisfy({ $0.ownerID == owner }), Set(values.map { OutfitTheme.nameKey($0.name) }).count == values.count else {
+            throw StoreError.invalidRecord
+        }
+        return values.sorted {
+            let comparison = $0.name.localizedStandardCompare($1.name)
+            return comparison == .orderedSame ? $0.id.uuidString < $1.id.uuidString : comparison == .orderedAscending
+        }
+    }
+
+    func themeDraft() throws -> ThemeDraft? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredThemeDraft>())
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let draft = try records.first?.value() else { return nil }
+        guard draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        return draft
+    }
+
+    func saveThemeDraft(_ draft: ThemeDraft) throws {
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID), draft.baseRevision >= 0,
+              Set(draft.outfitIDs).count == draft.outfitIDs.count else { throw StoreError.invalidRecord }
+        guard try savedTheme(for: draft) == nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredThemeDraft>())
+        guard records.count <= 1, records.first.map({ $0.id == draft.id }) ?? true else { throw StoreError.operationConflict }
+        if let record = records.first { record.payload = try JSONEncoder().encode(draft) }
+        else { context.insert(try StoredThemeDraft(draft)) }
+        try commit(context)
+    }
+
+    func savedTheme(for draft: ThemeDraft) throws -> OutfitTheme? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredThemeSave>()).filter { $0.id == draft.operationID }
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let receipt = records.first else { return nil }
+        guard try JSONDecoder().decode(ThemeDraft.self, from: receipt.draft) == draft else { throw StoreError.operationConflict }
+        let value = try JSONDecoder().decode(OutfitTheme.self, from: receipt.snapshot)
+        try value.validated()
+        guard value.id == draft.themeID, value.ownerID == draft.ownerID else { throw StoreError.invalidRecord }
+        return value
+    }
+
+    func saveTheme(_ draft: ThemeDraft) throws -> OutfitTheme {
+        if let saved = try savedTheme(for: draft) { return saved }
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.corruptStore }
+        try draft.validatedForSave(themes: themes(), outfits: outfits())
+        guard try themeDraft() == draft else { throw StoreError.staleDraft }
+        let context = ModelContext(container)
+        let record = try context.fetch(FetchDescriptor<StoredOutfitTheme>()).first { $0.id == draft.themeID }
+        let previous = try record?.value()
+        guard (previous == nil || previous?.ownerID == draft.ownerID), (previous?.revision ?? 0) == draft.baseRevision else { throw StoreError.staleRevision }
+        let saved = OutfitTheme(id: draft.themeID, ownerID: draft.ownerID,
+                               name: draft.name.trimmingCharacters(in: .whitespacesAndNewlines), description: draft.description,
+                               outfitIDs: draft.outfitIDs, revision: draft.baseRevision + 1)
+        if let record { record.payload = try JSONEncoder().encode(saved) }
+        else { context.insert(try StoredOutfitTheme(saved)) }
+        context.insert(try StoredThemeSave(draft: draft, saved: saved))
+        try beforeOutfitSave()
+        try commit(context)
+        try afterOutfitSave()
+        return saved
+    }
+
+    func finishThemeDraft(_ draft: ThemeDraft, discarding: Bool = false) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let saved = try savedTheme(for: draft)
+        guard discarding ? saved == nil : saved != nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredThemeDraft>())
+        guard records.count == 1, let record = records.first, try record.value() == draft else { throw StoreError.staleDraft }
+        context.delete(record)
+        try commit(context)
+    }
+}
+
+extension PieceStore {
+    func planEntries() throws -> [OutfitPlanEntry] {
+        let owner = try todayConfiguration().ownerID
+        let values = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitPlanEntry>()).map { try $0.value() }
+        guard values.allSatisfy({ $0.ownerID == owner }) else { throw StoreError.invalidRecord }
+        return values.sorted {
+            if $0.day.key != $1.day.key { return $0.day.key < $1.day.key }
+            return $0.id.uuidString < $1.id.uuidString
+        }
+    }
+
+    func planDraft() throws -> OutfitPlanDraft? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitPlanDraft>())
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let value = try records.first?.value() else { return nil }
+        guard value.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        return value
+    }
+
+    func savePlanDraft(_ draft: OutfitPlanDraft) throws {
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        _ = try draft.day.date()
+        guard try savedPlan(for: draft) == nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredOutfitPlanDraft>())
+        guard records.count <= 1, records.first.map({ $0.id == draft.id }) ?? true else { throw StoreError.operationConflict }
+        if let record = records.first { record.payload = try JSONEncoder().encode(draft) }
+        else { context.insert(try StoredOutfitPlanDraft(draft)) }
+        try commit(context)
+    }
+
+    func savedPlan(for draft: OutfitPlanDraft) throws -> OutfitPlanEntry? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitPlanSave>()).filter { $0.id == draft.operationID }
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let receipt = records.first else { return nil }
+        guard try JSONDecoder().decode(OutfitPlanDraft.self, from: receipt.draft) == draft else { throw StoreError.operationConflict }
+        let saved = try JSONDecoder().decode(OutfitPlanEntry.self, from: receipt.snapshot)
+        try saved.validated()
+        guard saved.id == draft.entryID, saved.ownerID == draft.ownerID else { throw StoreError.invalidRecord }
+        return saved
+    }
+
+    func savePlan(_ draft: OutfitPlanDraft) throws -> OutfitPlanEntry {
+        if let saved = try savedPlan(for: draft) { return saved }
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        try draft.validatedForSave(outfits: outfits())
+        let overlaps = try planEntries().contains {
+            $0.day == draft.day && $0.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == draft.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        }
+        guard !overlaps || draft.allowsOverlap == true else { throw PlanValidationError.overlap }
+        guard try planDraft() == draft else { throw StoreError.staleDraft }
+        if let outfit = draft.outfit {
+            let active = Set(try pieces().filter { $0.availability == .available }.map(\.id))
+            guard Set(outfit.pieceIDs).isSubset(of: active) else { throw StoreError.staleRevision }
+        }
+        let saved = OutfitPlanEntry(id: draft.entryID, planID: draft.planID, ownerID: draft.ownerID, day: draft.day,
+                                    occasion: draft.occasion, outfitID: draft.outfit?.id, outfitRevision: draft.outfit?.revision,
+                                    state: draft.outfit == nil ? .unassigned : .planned)
+        try saved.validated()
+        let context = ModelContext(container)
+        guard try !context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()).contains(where: { $0.id == draft.entryID }) else {
+            throw StoreError.operationConflict
+        }
+        context.insert(try StoredOutfitPlanEntry(saved))
+        context.insert(try StoredOutfitPlanSave(draft: draft, saved: saved))
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+        return saved
+    }
+
+    func finishPlanDraft(_ draft: OutfitPlanDraft, discarding: Bool = false) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let saved = try savedPlan(for: draft)
+        guard discarding ? saved == nil : saved != nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredOutfitPlanDraft>())
+        guard records.count == 1, let record = records.first, try record.value() == draft else { throw StoreError.staleDraft }
+        context.delete(record); try commit(context)
+    }
+}
+
+extension PieceStore {
+    func ownedPiecesForWear() throws -> [WardrobePiece] { try pieces() + pieces(archived: true) }
+
+    func wearRecords() throws -> [OutfitWearRecord] {
+        let owner = try todayConfiguration().ownerID
+        let values = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitWear>()).map { try $0.value() }
+        guard values.allSatisfy({ $0.ownerID == owner }), Set(values.map(\.duplicateKey)).count == values.count else {
+            throw StoreError.invalidRecord
+        }
+        return values.sorted {
+            if $0.day.key != $1.day.key { return $0.day.key > $1.day.key }
+            return $0.id.uuidString < $1.id.uuidString
+        }
+    }
+    func wearDraft() throws -> OutfitWearDraft? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitWearDraft>())
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let draft = try records.first?.value() else { return nil }
+        guard draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        return draft
+    }
+    func saveWearDraft(_ draft: OutfitWearDraft) throws {
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        _ = try draft.day.date()
+        guard Set(draft.pieceIDs).count == draft.pieceIDs.count else { throw StoreError.invalidRecord }
+        guard try savedWear(for: draft) == nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredOutfitWearDraft>())
+        guard records.count <= 1, records.first.map({ $0.id == draft.id }) ?? true else { throw StoreError.operationConflict }
+        if let record = records.first { record.payload = try JSONEncoder().encode(draft) }
+        else { context.insert(try StoredOutfitWearDraft(draft)) }
+        try commit(context)
+    }
+    func matchingWear(for draft: OutfitWearDraft) throws -> OutfitWearRecord? {
+        try wearRecords().first { $0.duplicateKey == draft.duplicateKey }
+    }
+    func savedWear(for draft: OutfitWearDraft) throws -> OutfitWearRecord? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitWearSave>()).filter { $0.id == draft.operationID }
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let receipt = records.first else { return nil }
+        guard try JSONDecoder().decode(OutfitWearDraft.self, from: receipt.draft) == draft else { throw StoreError.operationConflict }
+        let saved = try JSONDecoder().decode(OutfitWearRecord.self, from: receipt.snapshot)
+        try saved.validated()
+        guard saved.ownerID == draft.ownerID, saved.duplicateKey == draft.duplicateKey,
+              saved.id == draft.wearID || saved.id == draft.acceptedDuplicateID else { throw StoreError.invalidRecord }
+        return saved
+    }
+    func saveWear(_ draft: OutfitWearDraft) throws -> OutfitWearRecord {
+        if let saved = try savedWear(for: draft) { return saved }
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        let pieces = try ownedPiecesForWear()
+        try draft.validatedForSave(pieces: pieces)
+        guard try wearDraft() == draft else { throw StoreError.staleDraft }
+        if let id = draft.outfitID, try outfit(id: id) == nil { throw StoreError.staleRevision }
+        let context = ModelContext(container)
+        let saved: OutfitWearRecord
+        if let existing = try matchingWear(for: draft) {
+            guard draft.acceptedDuplicateID == existing.id else { throw WearValidationError.alreadyRecorded }
+            saved = existing
+        } else {
+            guard draft.acceptedDuplicateID == nil else { throw StoreError.staleRevision }
+            let snapshots = try draft.pieceIDs.map { id -> WearPieceSnapshot in
+                guard let piece = pieces.first(where: { $0.id == id }) else { throw StoreError.staleRevision }
+                return WearPieceSnapshot(piece)
+            }
+            saved = OutfitWearRecord(id: draft.wearID, ownerID: draft.ownerID, day: draft.day,
+                                     outfitID: draft.outfitID, pieces: snapshots)
+            try saved.validated()
+            context.insert(try StoredOutfitWear(saved))
+        }
+        context.insert(try StoredOutfitWearSave(draft: draft, saved: saved))
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+        return saved
+    }
+    func finishWearDraft(_ draft: OutfitWearDraft, discarding: Bool = false) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let saved = try savedWear(for: draft)
+        guard discarding ? saved == nil : saved != nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredOutfitWearDraft>())
+        guard records.count == 1, let record = records.first, try record.value() == draft else { throw StoreError.staleDraft }
+        context.delete(record); try commit(context)
+    }
+}
+
+extension PieceStore {
+    func outfitDeletionReview(id: UUID) throws -> OutfitMutationRequest {
+        guard let outfit = try outfit(id: id) else { throw StoreError.staleRevision }
+        let dependencies = OutfitDeletionDependencies(
+            themeRevisions: Dictionary(uniqueKeysWithValues: try themes().filter { $0.outfitIDs.contains(id) }.map { ($0.id, $0.revision) }),
+            planRevisions: Dictionary(uniqueKeysWithValues: try planEntries().filter { $0.outfitID == id }.map { ($0.id, $0.revision) }))
+        return OutfitMutationRequest(outfit: outfit, action: .delete(dependencies))
+    }
+
+    func outfitMutationReceipt(for request: OutfitMutationRequest) throws -> OutfitMutationReceipt? {
+        try request.outfit.validated()
+        let context = ModelContext(container)
+        let proofs = try context.fetch(FetchDescriptor<StoredOutfitMutation>()).filter { $0.id == request.operationID }
+        guard proofs.count <= 1 else { throw StoreError.invalidRecord }
+        if let proof = proofs.first {
+            guard try JSONDecoder().decode(OutfitMutationRequest.self, from: proof.request) == request else { throw StoreError.operationConflict }
+            let receipt = try JSONDecoder().decode(OutfitMutationReceipt.self, from: proof.result)
+            switch (request.action, receipt) {
+            case (.favorite(let flag), .saved(let saved)):
+                try saved.validated()
+                guard saved.id == request.outfit.id, saved.ownerID == request.outfit.ownerID,
+                      saved.isFavorite == flag, saved.revision == request.outfit.revision + 1 else { throw StoreError.invalidRecord }
+            case (.delete, .deleted(let id)):
+                guard id == request.outfit.id else { throw StoreError.invalidRecord }
+            default: throw StoreError.invalidRecord
+            }
+            return receipt
+        }
+        return nil
+    }
+
+    func applyOutfitMutation(_ request: OutfitMutationRequest) throws -> OutfitMutationReceipt {
+        try request.outfit.validated()
+        let context = ModelContext(container)
+        if let receipt = try outfitMutationReceipt(for: request) { return receipt }
+        guard allowsSave, request.outfit.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        let records = try context.fetch(FetchDescriptor<StoredOutfit>())
+        guard let record = records.first(where: { $0.id == request.outfit.id }), try record.value() == request.outfit else {
+            throw StoreError.staleRevision
+        }
+        let result: OutfitMutationReceipt
+        switch request.action {
+        case .favorite(let flag):
+            var value = request.outfit
+            value.isFavorite = flag; value.revision += 1; value.updatedAt = Date()
+            try value.validated()
+            record.payload = try JSONEncoder().encode(value)
+            result = .saved(value)
+        case .delete(let dependencies):
+            let current = try outfitDeletionReview(id: request.outfit.id)
+            guard current.outfit == request.outfit, current.action == .delete(dependencies) else { throw StoreError.staleRevision }
+            let themes = try context.fetch(FetchDescriptor<StoredOutfitTheme>())
+            for themeRecord in themes {
+                var theme = try themeRecord.value()
+                if theme.outfitIDs.contains(request.outfit.id) {
+                    theme.outfitIDs.removeAll { $0 == request.outfit.id }; theme.revision += 1
+                    try theme.validated(); themeRecord.payload = try JSONEncoder().encode(theme)
+                }
+            }
+            let plans = try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>())
+            for planRecord in plans {
+                var plan = try planRecord.value()
+                if plan.outfitID == request.outfit.id {
+                    plan.outfitID = nil; plan.outfitRevision = nil; plan.requiresReview = true
+                    if plan.state == .planned { plan.state = .unassigned }
+                    plan.revision += 1; try plan.validated()
+                    planRecord.payload = try JSONEncoder().encode(plan)
+                }
+            }
+            context.delete(record)
+            result = .deleted(request.outfit.id)
+        }
+        context.insert(try StoredOutfitMutation(request: request, result: result))
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+        return result
+    }
+}
+
+extension PieceStore {
+    func searchCloset(query: String, scope: ClosetSearchScope, favoritesOnly: Bool = false, themeID: UUID? = nil) throws -> ClosetSearchResults {
+        let query = Self.searchText(query.trimmingCharacters(in: .whitespacesAndNewlines))
+        switch scope {
+        case .pieces:
+            // Dedicated Pieces search is independent of browse filters. Archived
+            // matches are explicit records, never hidden active constraints.
+            return .pieces(try (pieces(query: query) + pieces(query: query, archived: true)).sorted {
+                let order = $0.name.localizedStandardCompare($1.name)
+                return order == .orderedSame ? $0.id.uuidString < $1.id.uuidString : order == .orderedAscending
+            })
+        case .outfits:
+            let themes = try themes()
+            let matching = try outfits().filter { outfit in
+                guard !favoritesOnly || outfit.isFavorite else { return false }
+                guard themeID == nil || themes.contains(where: { $0.id == themeID && $0.outfitIDs.contains(outfit.id) }) else { return false }
+                let memberships = themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.name)
+                let terms = [outfit.name, outfit.mood ?? "", outfit.occasion ?? ""] + memberships
+                return query.isEmpty || Self.searchText(terms.joined(separator: " ")).contains(query)
+            }
+            return .outfits(matching)
+        case .themes:
+            return .themes(try themes().filter { query.isEmpty || Self.searchText($0.name + " " + $0.description).contains(query) })
+        }
+    }
+    func closetIsEmpty() throws -> Bool {
+        try pieces().isEmpty && pieces(archived: true).isEmpty && outfits().isEmpty && themes().isEmpty
+    }
+}
+
+
+extension PieceStore {
+    private struct AvailabilityRequest: Encodable {
+        let id: UUID
+        let value: PieceAvailability
+        let expectedRevision: Int
+    }
+
+    @discardableResult
+    func setAvailability(id: UUID, value: PieceAvailability, expectedRevision: Int, operationID: UUID) throws -> WardrobePiece {
+        let context = ModelContext(container)
+        let digest = "availability:" + digest(try encode(AvailabilityRequest(id: id, value: value, expectedRevision: expectedRevision)))
+        if let receipt = try context.fetch(FetchDescriptor<StoredPieceSave>(predicate: #Predicate { $0.id == operationID })).first {
+            guard receipt.draftDigest == digest else { throw StoreError.operationConflict }
+            return try JSONDecoder().decode(WardrobePiece.self, from: receipt.snapshot)
+        }
+        guard allowsSave else { throw StoreError.corruptStore }
+        try ensureUnusedDeletionOperation(operationID, context: context)
+        guard try context.fetch(FetchDescriptor<StoredPieceDraft>(predicate: #Predicate { $0.operationID == operationID })).isEmpty else {
+            throw StoreError.operationConflict
+        }
+        guard let stored = try context.fetch(FetchDescriptor<StoredPiece>(predicate: #Predicate { $0.id == id })).first,
+              stored.revision == expectedRevision else { throw StoreError.staleRevision }
+        if value != .available { try flagFuturePlans(using: id, context: context) }
+        stored.availability = value.rawValue; stored.revision += 1; stored.updatedAt = Date()
+        let result = try stored.value()
+        context.insert(StoredPieceSave(id: operationID, itemID: id, draftDigest: digest, snapshot: try encode(result)))
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+        return result
+    }
+
+    private func flagFuturePlans(using pieceID: UUID, context: ModelContext) throws {
+        let affected = Set(try context.fetch(FetchDescriptor<StoredOutfit>()).map { try $0.value() }
+            .filter { $0.pieceIDs.contains(pieceID) }.map(\.id))
+        for record in try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()) {
+            var plan = try record.value()
+            let zone = TimeZone(identifier: plan.day.timeZoneID) ?? .current
+            guard plan.state == .planned, plan.day.key >= LocalPlanDay(timeZone: zone).key,
+                  let outfitID = plan.outfitID, affected.contains(outfitID), !plan.requiresReview else { continue }
+            plan.requiresReview = true; plan.revision += 1; try plan.validated()
+            record.payload = try encode(plan)
+        }
+    }
+}
+
+
+extension PieceStore {
+    func pieceDeletionImpact(id: UUID) throws -> PieceDeletionImpact {
+        guard let piece = try piece(id: id) else { throw StoreError.staleRevision }
+        let affected = try outfits().filter { $0.pieceIDs.contains(id) }
+        let ids = Set(affected.map(\.id))
+        let themes = try themes().filter { !ids.isDisjoint(with: $0.outfitIDs) }
+        let plans = try planEntries().filter { entry in
+            let zone = TimeZone(identifier: entry.day.timeZoneID) ?? .current
+            return entry.state == .planned && entry.day.key >= LocalPlanDay(timeZone: zone).key
+                && entry.outfitID.map { ids.contains($0) } == true
+        }
+        return PieceDeletionImpact(pieceID: id, pieceRevision: piece.revision,
+            outfitRevisions: Dictionary(uniqueKeysWithValues: affected.map { ($0.id, $0.revision) }),
+            themeRevisions: Dictionary(uniqueKeysWithValues: themes.map { ($0.id, $0.revision) }),
+            futurePlanRevisions: Dictionary(uniqueKeysWithValues: plans.map { ($0.id, $0.revision) }))
+    }
+
+    private func applyPieceDeletionImpact(_ impact: PieceDeletionImpact, context: ModelContext) throws {
+        var emptyOutfits = Set<UUID>()
+        for record in try context.fetch(FetchDescriptor<StoredOutfit>()) {
+            var outfit = try record.value()
+            guard impact.outfitRevisions[outfit.id] != nil else { continue }
+            outfit.pieceIDs.removeAll { $0 == impact.pieceID }
+            if outfit.pieceIDs.isEmpty { emptyOutfits.insert(outfit.id); context.delete(record) }
+            else {
+                outfit.revision += 1; outfit.updatedAt = Date(); try outfit.validated()
+                record.payload = try encode(outfit)
+            }
+        }
+        for record in try context.fetch(FetchDescriptor<StoredOutfitTheme>()) {
+            var theme = try record.value()
+            guard !emptyOutfits.isDisjoint(with: theme.outfitIDs) else { continue }
+            theme.outfitIDs.removeAll { emptyOutfits.contains($0) }; theme.revision += 1
+            try theme.validated(); record.payload = try encode(theme)
+        }
+        for record in try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()) {
+            var plan = try record.value()
+            guard impact.futurePlanRevisions[plan.id] != nil else { continue }
+            plan.outfitID = nil; plan.outfitRevision = nil; plan.requiresReview = true; plan.state = .unassigned
+            plan.revision += 1; try plan.validated(); record.payload = try encode(plan)
+        }
+    }
+}
+
+
+extension PieceStore {
+    func isThemeDeletionAcknowledged(_ request: ThemeDeletionRequest) throws -> Bool {
+        guard request.expectedRevision > 0 else { throw StoreError.invalidRecord }
+        let context = ModelContext(container)
+        let receipts = try context.fetch(FetchDescriptor<StoredThemeDeletion>()).filter { $0.id == request.operationID }
+        guard receipts.count <= 1 else { throw StoreError.invalidRecord }
+        guard let receipt = receipts.first else { return false }
+        guard try JSONDecoder().decode(ThemeDeletionRequest.self, from: receipt.request) == request else { throw StoreError.operationConflict }
+        guard try context.fetch(FetchDescriptor<StoredOutfitTheme>()).allSatisfy({ $0.id != request.themeID }) else { throw StoreError.invalidRecord }
+        return true
+    }
+
+    func deleteTheme(_ request: ThemeDeletionRequest) throws {
+        if try isThemeDeletionAcknowledged(request) { return }
+        guard allowsSave else { throw StoreError.corruptStore }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredOutfitTheme>())
+        guard let record = records.first(where: { $0.id == request.themeID }) else { throw StoreError.staleRevision }
+        let theme = try record.value()
+        guard theme.ownerID == (try todayConfiguration().ownerID), theme.revision == request.expectedRevision else { throw StoreError.staleRevision }
+        // Memberships belong to this theme alone. Outfit identity, other themes,
+        // favorites, plans, pieces and historical wear are independent owners.
+        context.delete(record); context.insert(try StoredThemeDeletion(request))
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
     }
 }

@@ -6,22 +6,50 @@ import SwiftData
 import UIKit
 #endif
 
+enum ClosetRoute: Hashable { case piece(UUID), outfit(UUID), theme(UUID), archivedPieces }
+
 @MainActor
 @Observable
 final class AppState {
     var selection = 0
-    var closetPath: [UUID] = []
+    var closetPath: [ClosetRoute] = []
     var closetScope = "Pieces"
+    var closetSearchActive = false
+    var closetSearchQuery = ""
+    var closetSearchScope = "Pieces"
+    var closetSearchSourceScope = "Pieces"
+    var closetSearchRestoresSource = true
+    var closetPieceAnchor: UUID?
+    var closetOutfitAnchor: UUID?
+    var closetThemeAnchor: UUID?
+    var themes: [OutfitTheme] = []
+    var themeError: String?
+    var themeEditor: ThemeEditorModel?
     var store: PieceStore?
     var openingError: String?
     var isOpening = false
     var pieces: [WardrobePiece] = []
+    var archivedPieces: [WardrobePiece] = []
+    var ownedPieces: [WardrobePiece] { pieces + archivedPieces }
+    var pendingOutfitEditID: UUID?
     var collectionRefreshID = UUID()
     var capture: CaptureModel?
     var collectionError: String?
     var today: TodayConfiguration?
     var todayError: String?
     var photoCleanupError: String?
+    var wearEditor: OutfitWearEditorModel?
+    var wearRecords: [OutfitWearRecord] = []
+    var wearError: String?
+    var planEditor: OutfitPlanEditorModel?
+    var planEntries: [OutfitPlanEntry] = []
+    var planError: String?
+    var pendingPlanOutfitID: UUID?
+    var outfitEditor: OutfitEditorModel?
+    var pendingOutfitCaptureCategory: PieceCategory?
+    var pendingFirstOutfitPieceID: UUID?
+    var outfits: [Outfit] = []
+    var outfitError: String?
     var styleEditor: StyleEditorModel?
     var profileSettings = false
     var entry = PrivateEntryState(alreadyEntered: true)
@@ -39,6 +67,14 @@ final class AppState {
         retryPhotoCleanup()
         reloadEntry()
         resumeStyleDraft()
+        reloadOutfits()
+        resumeOutfitDraft()
+        reloadPlanEntries()
+        resumePlanDraft()
+        reloadWear()
+        resumeWearDraft()
+        reloadThemes()
+        resumeThemeDraft()
     }
 
     func openStore() {
@@ -124,6 +160,14 @@ final class AppState {
             retryPhotoCleanup()
             reloadEntry()
             resumeStyleDraft()
+            reloadOutfits()
+            resumeOutfitDraft()
+            reloadPlanEntries()
+            resumePlanDraft()
+            reloadWear()
+            resumeWearDraft()
+            reloadThemes()
+            resumeThemeDraft()
         } catch {
             store = nil
             openingError = "Your local closet couldn’t open. Existing data has not been replaced. Retry, or keep the app data for recovery."
@@ -200,7 +244,9 @@ final class AppState {
     func reloadPieces() {
         guard let store else { return }
         do {
-            pieces = try store.pieces()
+            let owned = try store.ownedPiecesForWear()
+            pieces = owned.filter { !$0.isArchived }
+            archivedPieces = owned.filter(\.isArchived)
             collectionError = nil
             // Archived edits can change detail data without changing the active pieces array.
             collectionRefreshID = UUID()
@@ -209,17 +255,17 @@ final class AppState {
         }
     }
 
-    func deletePiece(id: UUID, expectedRevision: Int, operationID: UUID) throws {
+    func deletePiece(id: UUID, expectedRevision: Int, operationID: UUID, impact: PieceDeletionImpact? = nil) throws {
         guard let store else { throw PieceStore.StoreError.corruptStore }
         do {
-            try store.deletePiece(id: id, expectedRevision: expectedRevision, operationID: operationID)
+            try store.deletePiece(id: id, expectedRevision: expectedRevision, operationID: operationID, impact: impact)
         } catch {
             // Only exact, durable record-removal proof permits leaving the review.
             // Missing/conflicting/corrupt proof preserves the original local retry error.
             guard (try? store.isPieceDeletionAcknowledged(id: id, expectedRevision: expectedRevision,
-                                                         operationID: operationID)) == true else { throw error }
+                                                         operationID: operationID, impact: impact)) == true else { throw error }
         }
-        reloadPieces()
+        reloadPieces(); reloadOutfits(); reloadThemes(); reloadPlanEntries()
         retryPhotoCleanup()
     }
 
@@ -325,7 +371,7 @@ final class AppState {
     /// Called only after the DEBUG launch-argument/UUID guard selects an isolated writable store.
     private func seedPendingUITestPhotoCleanup(in directory: URL) throws {
         let photoID = UUID(uuidString: "E71EF667-186E-4E04-A676-115316C1B215")!
-        let schema = Schema(versionedSchema: LocalSchemaV3.self)
+        let schema = Schema(versionedSchema: LocalSchemaV8.self)
         let configuration = ModelConfiguration(schema: schema,
             url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
         let fixtureContainer = try ModelContainer(for: schema, configurations: [configuration])
@@ -339,7 +385,7 @@ final class AppState {
     /// Real malformed native input, isolated to the explicitly identified UI-test store.
     /// This fixture cannot mutate the ordinary closet and is absent from Release.
     private func seedUnreadableUITestDraft(in directory: URL) throws {
-        let schema = Schema(versionedSchema: LocalSchemaV3.self)
+        let schema = Schema(versionedSchema: LocalSchemaV8.self)
         let configuration = ModelConfiguration(schema: schema,
             url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
         let fixtureContainer = try ModelContainer(for: schema, configurations: [configuration])
@@ -511,11 +557,18 @@ final class CaptureModel: Identifiable {
         }
     }
 
+    var isFirstOutfit: Bool { state.outfits.isEmpty }
+
+    func buildFirstOutfit() {
+        guard let saved, acknowledgePresentation() else { return }
+        state.pendingFirstOutfitPieceID = saved.id
+        state.capture = nil
+        state.retryPhotoCleanup()
+    }
+
     func openCloset() {
         guard saved != nil, acknowledgePresentation() else { return }
-        state.closetPath = []
-        state.closetScope = "Pieces"
-        state.selection = 1
+        state.openClosetDestination()
         state.capture = nil
         state.retryPhotoCleanup()
     }

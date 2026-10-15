@@ -282,8 +282,11 @@ struct PieceCaptureView: View {
         }
         .safeAreaInset(edge: .bottom) {
             ActionFooter {
-                PrimaryAction(title: "Open my closet") { model.openCloset() }
-                    .accessibilityIdentifier("capture.openCloset")
+                ActionStack {
+                    PrimaryAction(title: model.isFirstOutfit ? "Build my first outfit" : "Build outfit") { model.buildFirstOutfit() }
+                    SecondaryAction(title: "Open my closet") { model.openCloset() }
+                        .accessibilityIdentifier("capture.openCloset")
+                }
             }
         }
     }

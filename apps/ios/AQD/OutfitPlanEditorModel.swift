@@ -1,0 +1,88 @@
+import AQDCore
+import Foundation
+import Observation
+
+@MainActor @Observable
+final class OutfitPlanEditorModel: Identifiable {
+    nonisolated let id: UUID
+    let state: AppState
+    var draft: OutfitPlanDraft
+    var saved: OutfitPlanEntry?
+    var error: String?
+    var pending = false
+    var unknown = false
+
+    init(state: AppState, draft: OutfitPlanDraft) throws {
+        self.state = state; self.draft = draft; id = draft.id
+        saved = try state.store?.savedPlan(for: draft)
+    }
+    var canSave: Bool { !pending && !unknown && saved == nil && (try? draft.validatedForSave(outfits: state.outfits)) != nil }
+    var hasOverlap: Bool {
+        state.planEntries.contains { $0.day == draft.day && $0.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == draft.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+    }
+    func update(_ change: (inout OutfitPlanDraft) -> Void) {
+        guard !pending, !unknown, saved == nil else { return }
+        var changed = draft; change(&changed); draft = changed
+        do {
+            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
+            try store.savePlanDraft(draft); error = nil
+        } catch { self.error = "These plan edits couldn’t be retained. Keep the screen open and retry." }
+    }
+    func save(leaveUnassigned: Bool = false) async {
+        guard !pending, saved == nil else { return }
+        if leaveUnassigned && !unknown { update { $0.outfit = nil; $0.unassignedByChoice = true } }
+        pending = true
+        defer { pending = false }
+        await Task.yield()
+        do {
+            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
+            if !unknown { try store.savePlanDraft(draft) }
+            saved = try store.savePlan(draft)
+            unknown = false; error = nil; state.reloadPlanEntries()
+        } catch {
+            do {
+                guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
+                saved = try store.savedPlan(for: draft)
+                unknown = false
+                self.error = saved == nil ? "The plan wasn’t saved. Check its current outfit and date, and explicitly keep both if that occasion already has a plan. Your draft is retained." : nil
+                state.reloadPlanEntries()
+            } catch { unknown = true; self.error = "The save result is unknown. Check the same operation before editing or starting another plan." }
+        }
+    }
+    func finish(discarding: Bool = false, openPlanner: Bool = false) {
+        guard !pending, !unknown else { return }
+        do {
+            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
+            try store.finishPlanDraft(draft, discarding: discarding)
+            state.planEditor = nil; state.reloadPlanEntries()
+            if openPlanner { state.selection = 2 }
+        } catch { self.error = "This task couldn’t close. Your plan and draft are retained; retry." }
+    }
+}
+
+extension AppState {
+    func reloadPlanEntries() {
+        do { planEntries = try store?.planEntries() ?? []; planError = nil }
+        catch { planError = "Your plans couldn’t be read. Existing data is retained; retry." }
+    }
+    func resumePlanDraft() {
+        guard planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil, entry.page == .main else { return }
+        do {
+            guard let draft = try store?.planDraft() else { return }
+            planEditor = try OutfitPlanEditorModel(state: self, draft: draft)
+        } catch { planError = "Your plan draft couldn’t be read. Keep the app data and retry." }
+    }
+    func openPlan(outfitID: UUID? = nil, day: LocalPlanDay = LocalPlanDay()) {
+        guard planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
+        do {
+            guard let store else { throw PieceStore.StoreError.corruptStore }
+            reloadOutfits(); reloadPlanEntries()
+            if let retained = try store.planDraft() { planEditor = try OutfitPlanEditorModel(state: self, draft: retained); return }
+            let outfit = try outfitID.flatMap { try store.outfit(id: $0) }
+            if outfitID != nil && outfit == nil { throw PieceStore.StoreError.staleRevision }
+            let draft = OutfitPlanDraft(ownerID: try store.todayConfiguration().ownerID, outfit: outfit, day: day)
+            try store.savePlanDraft(draft)
+            planEditor = try OutfitPlanEditorModel(state: self, draft: draft)
+        } catch { collectionError = "A plan draft couldn’t open. Your existing outfit and plans haven’t changed." }
+    }
+}

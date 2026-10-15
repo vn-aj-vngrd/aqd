@@ -44,7 +44,7 @@ private struct AppRootView: View {
                 NativeTabs(selection: $state.selection,
                            today: { rootContent(TodayView()) },
                            closet: { rootContent(ClosetView()) },
-                           planner: { rootContent(PendingLocalView(title: "Planner", symbol: "calendar")) },
+                           planner: { rootContent(LocalPlannerView()) },
                            profile: { rootContent(LocalProfileView()) },
                            agent: { close in rootContent(BaselineAgentView(close: close)) })
                     .ignoresSafeArea()
@@ -64,7 +64,19 @@ private struct AppRootView: View {
         } message: {
             Text(state.collectionError ?? "Keep your existing app data for recovery.")
         }
-        .sheet(item: $state.capture, onDismiss: { state.retryPhotoCleanup() }) { model in
+        .sheet(item: $state.themeEditor, onDismiss: { state.reloadThemes(); state.reloadOutfits() }) { model in
+            ThemeEditorView(model: model).environment(state)
+        }
+        .sheet(item: $state.wearEditor) { model in
+            OutfitWearEditorView(model: model).environment(state)
+        }
+        .sheet(item: $state.planEditor) { model in
+            OutfitPlanEditorView(model: model).environment(state)
+        }
+        .sheet(item: $state.outfitEditor, onDismiss: { state.openPendingOutfitCapture() }) { model in
+            OutfitEditorView(model: model).environment(state)
+        }
+        .sheet(item: $state.capture, onDismiss: { state.retryPhotoCleanup(); state.finishOutfitCaptureReturn() }) { model in
             PieceCaptureView(model: model).environment(state)
         }
         .fullScreenCover(item: $state.styleEditor, onDismiss: {

@@ -1,5 +1,12 @@
 # Current verification
 
+## Group #24/#23 feature-unit checkpoint, October 16, 2026
+
+All ten feature slices now have actual source implementations. [Issue24](../plan/issue-24.md) and [issue23](../plan/issue-23.md) retain per-slice commands/results and genuine prior failures. [Final unit receipt](../plan/evidence/issue-24-23/README.md) records Core52/native129 plus the final dispatcher correction’s five-case native refresh, zero failures. Repository tooling51 and final unsigned Release pass. Independent Standards/Spec findings are resolved and rechecked. Latest-head remote CI/Codex and protected delivery remain pending at this checkpoint. PR33/#21 is already merged as f89a2de with successful main CI/Release and published v1.2.0.
+
+No simulator or E2E runs are authorized for this group. All UI/E2E/accessibility/device/model qualification stays #30; unit tests and Paper source translation do not certify rendered fidelity or complete V1 acceptance.
+
+
 ## Issue #21 stable numeric remainder, October 15, 2026
 
 Codex4285110496 reproduced negative inches from cancellation at an accepted large height. [S8 proof](../plan/evidence/issue-21/s8/README.md) records RED4 then Core36,905 finite-range samples, physical native96 and combined physical height1/1 passed, zero failures/skips. The case repeats all three numeric regressions/restarts and ordinary saved return; final Release builds and inspected source-bound media is retained. Unaffected feature proof retains its earlier qualified scope. Current-head CI/Codex/protected merge/release remain pending.

@@ -83,7 +83,7 @@ final class StyleEditorModel: Identifiable {
             } catch { self.error = "Your preferences are saved. The receipt couldn’t close yet; try the same action again."; return }
         }
         if saved != nil && openCloset {
-            state.selection = 1
+            state.openClosetDestination()
             state.profileSettings = false
             state.reloadEntryAfterStyle = true
             state.styleEditor = nil
