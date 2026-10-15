@@ -50,7 +50,9 @@ struct OutfitThemeChooser: View {
                 refresh()
             }
             .sheet(item: $creating, onDismiss: refresh) { editor in
-                ThemeEditorView(model: editor)
+                ThemeEditorView(model: editor) { saved in
+                    refresh(); selected.insert(saved.id)
+                }
             }
     }
 
@@ -64,6 +66,8 @@ struct OutfitThemeChooser: View {
 
 struct ThemeEditorView: View {
     @Bindable var model: ThemeEditorModel
+    var didSave: ((OutfitTheme) -> Void)? = nil
+    @Environment(AppState.self) private var state
     @State private var discard = false
     @State private var choosingOutfits = false
     @Environment(\.dismiss) private var dismiss
@@ -77,14 +81,14 @@ struct ThemeEditorView: View {
                         Text("Theme saved").font(AppTypography.section)
                         Text(saved.name)
                         Text("Your outfits can belong to more than one theme.").foregroundStyle(AppTheme.secondary)
-                        PrimaryAction(title: "Done") { if model.finish() { dismiss() } }
+                        PrimaryAction(title: "Done", action: finishSaved)
                     } else {
                         LabeledField(title: "Name", text: Binding(get: { model.draft.name }, set: { name in model.update { $0.name = name } })).disabled(model.pending || model.unknown)
                         LabeledField(title: "Description", text: Binding(get: { model.draft.description }, set: { value in model.update { $0.description = value } }), multiline: true).disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Outfits", value: model.draft.outfitIDs.isEmpty ? "None selected" : "\(model.draft.outfitIDs.count) selected") { choosingOutfits = true }.disabled(model.pending || model.unknown)
                         Text("An outfit can belong to more than one theme.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         PrimaryAction(title: model.unknown ? "Check save result" : "Save theme", isPending: model.pending) {
-                            Task { await model.save() }
+                            Task { await model.save(); if model.saved != nil { finishSaved() } }
                         }.disabled(!model.unknown && !model.canSave)
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
@@ -95,7 +99,7 @@ struct ThemeEditorView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
-                            if model.saved != nil { if model.finish() { dismiss() } } else { discard = true }
+                            if model.saved != nil { finishSaved() } else { discard = true }
                         } label: { Image(systemName: model.saved == nil ? "xmark" : "checkmark") }
                             .tint(AppTheme.ink).accessibilityLabel(model.saved == nil ? "Cancel theme" : "Done")
                             .disabled(model.pending || model.unknown)
@@ -103,13 +107,23 @@ struct ThemeEditorView: View {
                 }
                 .navigationDestination(isPresented: $choosingOutfits) { ThemeOutfitChooser(model: model) }
         }.interactiveDismissDisabled()
-            .onAppear { if model.startsWithOutfits && model.saved == nil { choosingOutfits = true; model.startsWithOutfits = false } }
+            .onAppear {
+                if model.saved != nil { finishSaved() }
+                else if model.startsWithOutfits { choosingOutfits = true; model.startsWithOutfits = false }
+            }
             .sheet(isPresented: $discard) {
                 DraftDiscardSheet(title: "Discard theme draft?", message: "Your saved theme and outfits stay unchanged.") {
                     if model.finish(discarding: true) { discard = false; dismiss() }
                 }
             }
     }
+    private func finishSaved() {
+        guard let saved = model.saved, model.finish() else { return }
+        if let didSave { didSave(saved) }
+        else if model.draft.baseRevision == 0 { state.openClosetDestination(scope: "Themes", route: .theme(saved.id)) }
+        dismiss()
+    }
+
 }
 
 private struct ThemeOutfitChooser: View {

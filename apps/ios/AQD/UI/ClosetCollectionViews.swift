@@ -35,6 +35,8 @@ struct ClosetAddSheet: View {
                             Image(systemName: action == .piece ? "tshirt" : action == .outfit ? "square.stack" : "folder")
                                 .frame(width: 24)
                             Text(action.rawValue).frame(maxWidth: .infinity, alignment: .leading)
+                            Image(systemName: "chevron.forward").font(.system(size: 22)).frame(width: 24)
+                                .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
                         }.font(AppTypography.body).foregroundStyle(AppTheme.ink).frame(minHeight: 56).padding(.horizontal, 20)
                     }.buttonStyle(.plain)
                 }
@@ -112,8 +114,17 @@ struct ThemeCollectionCard: View {
 struct ThemeDetailView: View {
     @Environment(AppState.self) private var state
     let id: UUID
+    @Environment(\.dismiss) private var dismiss
+    @State private var deletion: ThemeDeletionRequest?
+    @State private var confirming = false
+    @State private var submitted = false
+    @State private var error: String?
     var body: some View {
         ScrollView {
+            if let error {
+                SemanticFeedback(role: .danger, message: error).padding(.horizontal, 20)
+                if submitted { Button("Retry reviewed deletion", action: remove).frame(minHeight: 44) }
+            }
             if let theme = state.themes.first(where: { $0.id == id }) {
                 VStack(alignment: .leading, spacing: 20) {
                     Text("\(theme.outfitIDs.count) outfits · Private theme").foregroundStyle(AppTheme.secondary)
@@ -138,9 +149,29 @@ struct ThemeDetailView: View {
                             Button("Add outfits", systemImage: "plus") { state.openTheme(editing: theme, chooseOutfits: true) }
                             Button("Build an outfit", systemImage: "square.stack") { state.buildOutfit(themeID: theme.id) }
                             Button("Suggest an outfit", systemImage: "sparkles") { state.buildOutfit(suggest: true, themeID: theme.id) }
-                        } label: { Label("More theme options", systemImage: "ellipsis") }.tint(AppTheme.ink)
+                            Button("Delete theme", systemImage: "trash", role: .destructive) {
+                                deletion = ThemeDeletionRequest(theme: theme); confirming = true
+                            }
+                        } label: { Label("More theme options", systemImage: "ellipsis") }.tint(AppTheme.ink).disabled(submitted)
                     }
                 }
             }.onAppear { state.reloadThemes(); state.reloadOutfits() }
+            .confirmationDialog("Delete this theme?", isPresented: $confirming, titleVisibility: .visible) {
+                Button("Delete theme", role: .destructive, action: remove)
+                Button("Cancel", role: .cancel) { deletion = nil }
+            } message: { Text("Removes this theme and its memberships. Your outfits, pieces, favorites and wear history stay.") }
+    }
+    private func remove() {
+        guard let deletion else { return }
+        submitted = true
+        do {
+            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
+            try store.deleteTheme(deletion)
+            state.reloadThemes(); state.reloadOutfits(); dismiss()
+        } catch PieceStore.StoreError.staleRevision {
+            submitted = false; self.deletion = nil
+            self.error = "This theme changed. Review its latest contents before deleting."
+            state.reloadThemes()
+        } catch { self.error = "Deletion isn’t acknowledged. Retry this same operation to reconcile it." }
     }
 }

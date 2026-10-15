@@ -1,5 +1,8 @@
 # V1 interaction and state coverage
 
+October16 implementation receipt: #24/#23 supplies the real Closet collections/Add/scoped search, piece metadata/availability/archive/Undo/restore/reviewed deletion, outfit builder/pins/choosers/rules/review/save/detail/favorite/delete, theme creation/multiple memberships/edit/delete and shared explicit Plan/Wear tasks. Saved outfit links select the exact identity; new themes open actual detail, edits retain their caller and nested theme selection remains provisional. Recorded wear and prior estimates remain distinct. Native units verify persistence/retry/cascade/source coordination; every UI/runtime acceptance claim remains Deferred to #30 under the owner-approved unit-only feature policy. Existing E2E contextual-Add selectors must be reconciled there.
+
+
 Updated October 6, 2026. This is the implementation route checklist for [Paper V1](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0/p-2-0). Read it with [V1 flow](v1-flow.md), [quality criteria](quality-criteria.md) and the [manifest](paper-manifest.json). The original L01–L85 journey is extended by L86–L163, including photo source selection and the private fit journal. A rendered phone is a static reference, not an implemented or wired prototype.
 
 ## Issues #24 + #23 manual outfit slice · October16

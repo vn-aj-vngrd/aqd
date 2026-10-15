@@ -112,6 +112,10 @@ struct ClosetView: View {
             Picker("Theme", selection: state.closetSearchActive ? $searchThemeID : $themeID) {
                 Text("All themes").tag(Optional<UUID>.none)
                 ForEach(state.themes) { Text($0.name).tag(Optional($0.id)) }
+                if let selectedID = state.closetSearchActive ? searchThemeID : themeID,
+                   !state.themes.contains(where: { $0.id == selectedID }) {
+                    Text("Unavailable theme").tag(Optional(selectedID))
+                }
             }.pickerStyle(.menu).tint(AppTheme.actionText)
             Spacer(minLength: 0)
         }

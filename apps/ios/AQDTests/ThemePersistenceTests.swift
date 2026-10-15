@@ -1,5 +1,6 @@
 import AQDCore
 import Foundation
+import SwiftData
 import Testing
 import UIKit
 @testable import AQD
@@ -83,5 +84,66 @@ struct ThemePersistenceTests {
         #expect(throws: ThemeValidationError.duplicateName) { try store.saveTheme(duplicate) }
         try store.finishThemeDraft(duplicate, discarding: true)
         #expect(try store.themes() == [saved])
+    }
+    @Test func deletingOneThemeRetainsOtherMembershipAndFavoriteThroughUnknownRetry() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        var loseAck = false, deny = false
+        let store = try PieceStore(directory: directory,
+            beforeOutfitSave: { if deny { throw CocoaError(.fileWriteNoPermission) } },
+            afterOutfitSave: { if loseAck { throw CocoaError(.fileReadUnknown) } })
+        let saved = try await outfit(store)
+        _ = try store.applyOutfitMutation(OutfitMutationRequest(outfit: saved, action: .favorite(true)))
+        let favorite = try #require(try store.outfit(id: saved.id))
+        var themes: [OutfitTheme] = []
+        for name in ["Weekend", "Work"] {
+            var draft = ThemeDraft(ownerID: favorite.ownerID)
+            draft.name = name; draft.outfitIDs = [favorite.id]
+            try store.saveThemeDraft(draft); themes.append(try store.saveTheme(draft)); try store.finishThemeDraft(draft)
+        }
+        let request = ThemeDeletionRequest(theme: themes[0])
+        deny = true
+        #expect(throws: (any Error).self) { try store.deleteTheme(request) }
+        #expect(try store.themes().count == 2)
+        deny = false; loseAck = true
+        #expect(throws: (any Error).self) { try store.deleteTheme(request) }
+        try store.deleteTheme(request)
+        let reopened = try PieceStore(directory: directory)
+        #expect(try reopened.themes() == [themes[1]])
+        #expect(try reopened.outfit(id: saved.id) == favorite)
+        #expect(try reopened.isThemeDeletionAcknowledged(request))
+        let conflicting = ThemeDeletionRequest(theme: themes[1], operationID: request.operationID)
+        #expect(throws: PieceStore.StoreError.operationConflict) { try reopened.deleteTheme(conflicting) }
+    }
+
+    @Test func changedThemeRejectsOldDeleteReview() throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        var draft = ThemeDraft(ownerID: try store.todayConfiguration().ownerID)
+        draft.name = "Weekend"; try store.saveThemeDraft(draft)
+        let first = try store.saveTheme(draft); try store.finishThemeDraft(draft)
+        let request = ThemeDeletionRequest(theme: first)
+        var edit = ThemeDraft(editing: first); edit.name = "Days off"
+        try store.saveThemeDraft(edit); let updated = try store.saveTheme(edit); try store.finishThemeDraft(edit)
+        #expect(throws: PieceStore.StoreError.staleRevision) { try store.deleteTheme(request) }
+        #expect(try store.themes() == [updated])
+    }
+
+    @Test func v9MigrationRetainsAcknowledgedPieceDeletionReview() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let today = TodayConfiguration(ownerID: UUID()), operation = UUID(), pieceID = UUID()
+        let impact = PieceDeletionImpact(pieceID: pieceID, pieceRevision: 1, outfitRevisions: [:], themeRevisions: [:], futurePlanRevisions: [:])
+        do {
+            let schema = Schema(versionedSchema: LocalSchemaV9.self)
+            let config = ModelConfiguration(schema: schema, url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
+            let container = try ModelContainer(for: schema, configurations: [config])
+            let context = ModelContext(container)
+            context.insert(StoredTodayConfiguration(today)); context.insert(try StoredLocalExperience(LocalExperience(enteredPrivateSpace: true)))
+            context.insert(StoredPieceDeletion(operationID: operation, itemID: pieceID, expectedRevision: 1, pendingPhotoIDs: []))
+            context.insert(try StoredPieceDeletionReview(operationID: operation, impact: impact)); try context.save()
+        }
+        try Data("AQD-piece-store:9".utf8).write(to: directory.appendingPathComponent("schema-version"))
+        let store = try PieceStore(directory: directory)
+        #expect(try store.isPieceDeletionAcknowledged(id: pieceID, expectedRevision: 1, operationID: operation, impact: impact))
+        #expect(try store.themes().isEmpty)
     }
 }
