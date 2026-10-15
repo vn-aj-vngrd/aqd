@@ -42,7 +42,7 @@ The owner invoked `aqd-ship 20` through protected squash merge and repository re
 | --- | --- | --- | --- |
 | S4 | Visible multiline Notes editing, Apply/cancel and retained draft across rotation/relaunch | Existing `testDetailsLandscapeAvailabilityNotesApplyDiscardAndRelaunch` and `testMultilineNotesKeepEditingAcrossRotation`, inspected full-screen attachments | Committed at `ca761fd` |
 | S5 | Reusable selected-case proof and remotely accessible results for Foundation | Selected native E2E, attachment export/index, PR AC table and artifacts | Committed at `fd3dcd5`; remote artifact gate pending |
-| S6 | Require the exact MVP simulator in hosted acceptance proof | Execute the actual workflow selection against matching and fallback-only inventories, then current-head CI/Codex | Local checks/review passed; commit marker `AQD-Slice: #20/S6` |
+| S6 | Require the exact MVP simulator in hosted acceptance proof | Execute the actual workflow selection against matching and fallback-only inventories, then current-head CI/Codex | Committed at `12912e7`, marker `AQD-Slice: #20/S6` |
 
 The real issue has prose Build/Prove clauses rather than numbered ACs. The following labels preserve those clauses as traceable subcases, without claiming complete LOCAL-01/10/15 or later product roots.
 
@@ -95,12 +95,12 @@ A final actual-runner check found Bash3.2 aborting under `set -u` for the empty 
 ## Shipping
 
 - PR: https://github.com/vn-aj-vngrd/aqd/pull/31, branch `van/issue-20/native-ui-foundations`; reuse it.
-- Local gate: native code `ca761fd`, proof/tooling `fd3dcd5`, final documentation receipt `docs(ios): Record Foundation shipping checkpoint`. Resolve its SHA from Git.
+- Local gate: native code `ca761fd`, proof/tooling `fd3dcd5`, exact hosted destination `12912e7`. The S6 documentation receipt persists the correction SHA before selecting the next remote gate head.
 - Published proof: use the actual evidence commit for the [tracked report/images](evidence/issue-20/README.md), then link/read back the real Native iOS Actions artifact. Local source paths identify provenance only.
 - Remote gates: query current PR head, expected CI, Codex completion and all threads. Snapshot the matching head before protected squash merge; then verify merged-SHA main CI and repository release. GitHub owns these live statuses.
 
 ## Resume
 
-- Current action: full `aqd-ship 20` authorized. Workflow `866c3db`, S4 `ca761fd` and S5 `fd3dcd5` are pushed in PR #31 with accessible AC reports and inline evidence. S6 corrects its first Codex finding; earlier S1–S3 receipts remain retained.
+- Current action: full `aqd-ship 20` authorized. Workflow `866c3db`, S4 `ca761fd` and S5 `fd3dcd5` are pushed in PR #31 with accessible AC reports and inline evidence. S6 `12912e7` corrects its first Codex finding; earlier S1–S3 receipts remain retained.
 - Next exact action: push the reviewed S6 correction, obtain current-head CI/Codex, inspect/publish its real acceptance artifact, then protected squash merge and main/release verification. No new routine authorization is needed.
 - Dirty paths: reconcile actual Git status and resolve S6 through its marker before resuming. No external blocker is currently confirmed.
