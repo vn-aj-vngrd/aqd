@@ -36,14 +36,14 @@ Physical iPhone 17 Pro Max execution and its installed OS, camera/media quality,
 
 ### S3 runner compatibility correction
 
-A final actual-runner check found Bash3.2 aborting under `set -u` for the empty full-scope test-selection array. The regression first failed in all scope; unit/e2e passed. Conditional expansion preserves zero arguments. Three external-tool-recorder scenarios now pass, with no native/Photos work. Correction marker: `AQD-Slice: #20/S3-bash`. Actual SHA: Pending final receipt.
+A final actual-runner check found Bash3.2 aborting under `set -u` for the empty full-scope test-selection array. The regression first failed in all scope; unit/e2e passed. Conditional expansion preserves zero arguments. Three external-tool-recorder scenarios now pass, with no native/Photos work. Correction marker: `AQD-Slice: #20/S3-bash`. Actual SHA: `236d06d`. Independent bounded Standards recheck found no actionable finding.
 
 ## Review and delivery
 
 - Standards: no actionable finding in existing native diff, source review only.
 - Spec: no new source-proven defect/scope creep; known keyboard failure retained for #30.
 - PR/latest-head CI/Codex/merge/release: Not run in this cleanup.
-- Final receipt commit: `docs(aqd): Consolidate stale guidance and record delivery evidence`. Resolve its own SHA from Git. Agent-foundation maintenance is separately committed at `1d3bfc5`.
+- Initial cleanup receipt: `ba67182`. Final runner receipt: `docs(aqd): Record runner correction and final handoff`, with its own SHA resolved from Git. Agent-foundation maintenance is separately committed at `1d3bfc5`.
 
 ## Resume
 
