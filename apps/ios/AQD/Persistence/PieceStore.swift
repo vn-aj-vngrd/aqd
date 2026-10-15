@@ -200,9 +200,17 @@ enum LocalSchemaV2: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV1.models + [StoredPhotoCleanup.self] }
 }
 
+enum LocalSchemaV3: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(3, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV2.models + [StoredLocalExperience.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self] }
-    static var stages: [MigrationStage] { [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self)] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self] }
+    static var stages: [MigrationStage] {
+        [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
+         .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self)]
+    }
 }
 
 /// All record operations are serialized on the UI actor and return immutable values.
@@ -219,9 +227,15 @@ final class PieceStore {
     private let allowsSave: Bool
     private let removeMediaFile: (URL) throws -> Void
     private let writeMediaFile: (Data, URL) throws -> Void
+    private let beforeStyleSave: () throws -> Void
+    private let afterStyleSave: () throws -> Void
+    private let beforeExperienceRead: () throws -> Void
 
     init(directory: URL, allowsSave: Bool = true,
          removeMediaFile: @escaping (URL) throws -> Void = { try FileManager.default.removeItem(at: $0) },
+         beforeStyleSave: @escaping () throws -> Void = {},
+         afterStyleSave: @escaping () throws -> Void = {},
+         beforeExperienceRead: @escaping () throws -> Void = {},
          writeMediaFile: @escaping (Data, URL) throws -> Void = { data, url in
              try data.write(to: url, options: [.atomic, .completeFileProtection])
          }) throws {
@@ -229,21 +243,26 @@ final class PieceStore {
         self.allowsSave = allowsSave
         self.removeMediaFile = removeMediaFile
         self.writeMediaFile = writeMediaFile
+        self.beforeStyleSave = beforeStyleSave
+        self.afterStyleSave = afterStyleSave
+        self.beforeExperienceRead = beforeExperienceRead
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:2".utf8)
-        let previousVersion = Data("AQD-piece-store:1".utf8)
+        let version = Data("AQD-piece-store:3".utf8)
+        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8)]
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV2.self)
+        let schema = Schema(versionedSchema: LocalSchemaV3.self)
         var needsTodaySeed = !hasStore
+        var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
         if hasVersion {
             let marker = try Data(contentsOf: versionURL)
-            guard marker == version || marker == previousVersion else { throw StoreError.unsupportedStore }
+            guard marker == version || previousVersions.contains(marker) else { throw StoreError.unsupportedStore }
+            maySeedExperience = marker != version
             guard hasStore else { throw StoreError.corruptStore }
             do {
                 _ = try NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: NSSQLiteStoreType, at: storeURL,
@@ -281,6 +300,15 @@ final class PieceStore {
                 try commit(context)
             }
         }
+        let experienceContext = ModelContext(container)
+        if try experienceContext.fetchCount(FetchDescriptor<StoredLocalExperience>()) == 0 {
+            guard allowsSave, maySeedExperience else { throw StoreError.corruptStore }
+            // Existing closets bypass first-run entry; their records are never
+            // reconstructed from illustrative onboarding or tour content.
+            experienceContext.insert(try StoredLocalExperience(LocalExperience(enteredPrivateSpace: hasStore && hasVersion)))
+            try commit(experienceContext)
+        }
+        _ = try localExperience()
         // Advance the marker only after the native preservation migration succeeds.
         if allowsSave { try version.write(to: versionURL, options: [.atomic, .completeFileProtection]) }
         try protectStoreFiles()
@@ -348,32 +376,42 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let model: NSManagedObjectModel?
-            if #available(iOS 26, *) {
-                model = NSManagedObjectModel.makeManagedObjectModel(for: schema)
-            } else {
-                model = NSManagedObjectModel().makeManagedObjectModel(for: schema)
+            let candidates = [(schema, true), (Schema(versionedSchema: LocalSchemaV2.self), false)]
+            let match = candidates.first { candidate in
+                let model: NSManagedObjectModel?
+                if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
+                else { model = NSManagedObjectModel().makeManagedObjectModel(for: candidate.0) }
+                return model.map { model in
+                    (metadata[NSStoreModelVersionHashesKey] as? [String: Data]) == model.entityVersionHashesByName
+                        && model.isConfiguration(withName: nil, compatibleWithStoreMetadata: metadata)
+                } ?? false
             }
-            guard let model,
-                  let hashes = metadata[NSStoreModelVersionHashesKey] as? [String: Data],
-                  hashes == model.entityVersionHashesByName,
-                  model.isConfiguration(withName: nil, compatibleWithStoreMetadata: metadata) else {
+            guard let (matchedSchema, includesExperience) = match else {
                 throw StoreError.unsupportedStore
             }
             // No migration plan, no writable connection: exact native schema
             // compatibility must precede inspection of the narrowly allowed rows.
-            let configuration = ModelConfiguration(schema: schema, url: storeURL,
+            let configuration = ModelConfiguration(schema: matchedSchema, url: storeURL,
                 allowsSave: false, cloudKitDatabase: .none)
-            let readOnly = try ModelContainer(for: schema, configurations: [configuration])
+            let readOnly = try ModelContainer(for: matchedSchema, configurations: [configuration])
             let context = ModelContext(readOnly)
-            return try bootstrapNeedsToday(in: context)
+            return try bootstrapNeedsToday(in: context, includesExperience: includesExperience)
         } catch {
             // Refuse unmarked corrupt/foreign/populated layouts without reset.
             throw StoreError.unsupportedStore
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, includesExperience: Bool = true) throws -> Bool {
+        if includesExperience {
+            let records = try context.fetch(FetchDescriptor<StoredLocalExperience>())
+            if !records.isEmpty {
+                guard records.count == 1, let record = records.first, record.id == 1,
+                      try JSONDecoder().decode(LocalExperience.self, from: record.payload) == LocalExperience(enteredPrivateSpace: false) else {
+                    throw StoreError.unsupportedStore
+                }
+            }
+        }
         guard try context.fetchCount(FetchDescriptor<StoredPiece>()) == 0,
               try context.fetchCount(FetchDescriptor<StoredPhoto>()) == 0,
               try context.fetchCount(FetchDescriptor<StoredPieceDraft>()) == 0,
@@ -397,6 +435,76 @@ final class PieceStore {
         let records = try ModelContext(container).fetch(FetchDescriptor<StoredTodayConfiguration>())
         guard records.count == 1, let record = records.first else { throw StoreError.invalidRecord }
         return try record.value()
+    }
+
+    func localExperience() throws -> LocalExperience {
+        try beforeExperienceRead()
+        return try experienceRecord(in: ModelContext(container)).value
+    }
+
+    private func experienceRecord(in context: ModelContext) throws -> (record: StoredLocalExperience, value: LocalExperience) {
+        let records = try context.fetch(FetchDescriptor<StoredLocalExperience>())
+        guard records.count == 1, let record = records.first, record.id == 1 else { throw StoreError.invalidRecord }
+        let value = try JSONDecoder().decode(LocalExperience.self, from: record.payload)
+        try value.validated()
+        return (record, value)
+    }
+
+    func saveStyleDraft(_ draft: StylePreferenceDraft) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        try draft.validated()
+        let context = ModelContext(container)
+        var (record, value) = try experienceRecord(in: context)
+        guard value.pendingStyleReceipt == nil else { throw StoreError.operationConflict }
+        if let existing = value.styleDraft, existing.id != draft.id { throw StoreError.operationConflict }
+        guard (value.style?.revision ?? 0) == draft.baseRevision else { throw StoreError.staleRevision }
+        value.styleDraft = draft
+        record.payload = try JSONEncoder().encode(value)
+        try commit(context)
+    }
+
+    func discardStyleDraft(id: UUID) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let context = ModelContext(container)
+        var (record, value) = try experienceRecord(in: context)
+        guard value.styleDraft?.id == id else { throw StoreError.operationConflict }
+        value.styleDraft = nil
+        record.payload = try JSONEncoder().encode(value)
+        try commit(context)
+    }
+
+    func saveStylePreferences(_ draft: StylePreferenceDraft) throws -> SavedStylePreferences {
+        try draft.validated()
+        try draft.answers.validated()
+        let context = ModelContext(container)
+        var (record, value) = try experienceRecord(in: context)
+        if let receipt = value.style, receipt.operationID == draft.operationID {
+            guard receipt.answers == draft.answers else { throw StoreError.operationConflict }
+            return receipt
+        }
+        guard allowsSave else { throw StoreError.corruptStore }
+        guard value.styleDraft == draft else { throw StoreError.staleDraft }
+        guard (value.style?.revision ?? 0) == draft.baseRevision else { throw StoreError.staleRevision }
+        let saved = SavedStylePreferences(answers: draft.answers, revision: draft.baseRevision + 1, operationID: draft.operationID)
+        value.style = saved
+        value.styleDraft = nil
+        value.pendingStyleReceipt = draft
+        record.payload = try JSONEncoder().encode(value)
+        try beforeStyleSave()
+        try commit(context)
+        try afterStyleSave()
+        return saved
+    }
+
+    func acknowledgeStyleReceipt(operationID: UUID) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let context = ModelContext(container)
+        var (record, value) = try experienceRecord(in: context)
+        guard value.style?.operationID == operationID else { throw StoreError.operationConflict }
+        guard value.pendingStyleReceipt != nil else { return }
+        value.pendingStyleReceipt = nil
+        record.payload = try JSONEncoder().encode(value)
+        try commit(context)
     }
 
     func acceptPhoto(_ photo: PreparedPhoto) throws -> UUID {

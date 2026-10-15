@@ -27,7 +27,7 @@ private struct AppRootView: View {
                            today: { rootContent(TodayView()) },
                            closet: { rootContent(ClosetView()) },
                            planner: { rootContent(PendingLocalView(title: "Planner", symbol: "calendar")) },
-                           profile: { rootContent(PendingLocalView(title: "Profile", symbol: "person.crop.circle")) },
+                           profile: { rootContent(LocalProfileView()) },
                            agent: { close in rootContent(BaselineAgentView(close: close)) })
                     .ignoresSafeArea()
             }
@@ -43,6 +43,9 @@ private struct AppRootView: View {
         }
         .sheet(item: $state.capture, onDismiss: { state.retryPhotoCleanup() }) { model in
             PieceCaptureView(model: model).environment(state)
+        }
+        .fullScreenCover(item: $state.styleEditor) { model in
+            StyleEditorView(model: model)
         }
     }
 

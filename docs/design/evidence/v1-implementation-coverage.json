@@ -4,8 +4,8 @@
   "pageName": "01 · V1",
   "checkedOn": "2026-10-09",
   "tokenHash": "fdeb7346",
-  "sourceHead": "ca761fd3202dcf5704b6ae6e3eec5ecf85e19a46",
-  "sourceState": "Foundation #20 code slice ca761fd on van/issue-20/native-ui-foundations. Current iPhone17ProMax/iOS27 focused short/multiline Notes proof and inspected active-line/caret pass. Core20, native unit84 and unsigned Release pass; the combined UI run remains Failed at a driver overshoot, with three affected clients subsequently passing. A declared dark subcase passes via the reusable proof runner. See docs/pan/evidence/issue-20 and docs/pan/issue-20.md for exact results/inputs. Required latest-head PR CI/Codex/proof publication and protected delivery remain separate live GitHub gates. Earlier continuation receipts and broader #30/physical/OS/full-V1 qualification remain unaccepted.",
+  "sourceHead": "64010bac50a38a0acfd73a57b7ed751f33f888c9",
+  "sourceState": "Issue21 S1 working tree on the committed physical-device policy. Shared Profile/Settings Style editor and version3 persistence are implemented; focused physical proof and the slice receipt are tracked in docs/pan/issue-21.md. Foundation delivery is PR31/main8b06880/v1.1.1. Historical Foundation evidence retains its own source identity; sections01-09 and broad #30 remain incomplete.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 227,
@@ -18,9 +18,9 @@
     "allRootIdsMatchRegisteredInventory": true
   },
   "counts": {
-    "missing": 172,
+    "missing": 159,
     "placeholder": 5,
-    "source-partial": 39,
+    "source-partial": 52,
     "structural-reference": 11
   },
   "verifiedCompleteScreenStates": 0,
@@ -133,9 +133,9 @@
   },
   "domains": {
     "01": {
-      "coverage": "missing",
+      "coverage": "source-partial",
       "required": "Welcome/private onboarding/tour, preferences/review/refusal/body consent/resume",
-      "source": "apps/ios/AQD/AQDApp.swift:AppRootView directly opens roots; no onboarding/preferences entities"
+      "source": "Issue21 S1: shared Style editor from real Profile More and Settings; version3 preference draft/save/receipt persistence. Welcome/tour and advanced body inputs remain in later slices."
     },
     "02": {
       "coverage": "source-partial",
@@ -935,7 +935,7 @@
       "referenceId": null,
       "registeredLabel": "01.04 · L152 · Preferences · Goals",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -945,7 +945,7 @@
       "referenceId": null,
       "registeredLabel": "01.07 · L166 · Preferences · Fit & comfort",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -955,7 +955,7 @@
       "referenceId": null,
       "registeredLabel": "01.08 · L167 · Preferences · Optional body details",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -965,7 +965,7 @@
       "referenceId": null,
       "registeredLabel": "01.11 · L170 · Settings edit · Goals answered",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -975,7 +975,7 @@
       "referenceId": null,
       "registeredLabel": "01.12 · L171 · Body shape picker · Open",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -985,7 +985,7 @@
       "referenceId": null,
       "registeredLabel": "01.09 · L168 · Preferences · Colors & patterns",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -995,7 +995,7 @@
       "referenceId": null,
       "registeredLabel": "01.10 · L169 · Review preferences",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1005,7 +1005,7 @@
       "referenceId": null,
       "registeredLabel": "01.05 · L153 · Preferences · Occasions",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1015,7 +1015,7 @@
       "referenceId": null,
       "registeredLabel": "01.06 · L154 · Preferences · Style",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1585,7 +1585,7 @@
       "referenceId": null,
       "registeredLabel": "09.04 · L45 · Style",
       "flowSection": "09",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2035,7 +2035,7 @@
       "referenceId": null,
       "registeredLabel": "01.17 · L177 · Preferences save failed · Shared",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2045,7 +2045,7 @@
       "referenceId": null,
       "registeredLabel": "01.14 · L174 · Preferences review · Answered",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2055,7 +2055,7 @@
       "referenceId": null,
       "registeredLabel": "01.15 · L175 · Preferences review · Declined",
       "flowSection": "01",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2460,5 +2460,12 @@
     "runtimeComplete": false,
     "remoteGate": "Query the issue branch PR for its actual current-head CI, Codex, published evidence and merge/release state.",
     "deferred": "#30 broad OS/device/accessibility/performance/integrated qualification; all prior failures retained."
+  },
+  "issue21Evidence": {
+    "plan": "docs/pan/issue-21.md",
+    "state": "S1 source and focused physical proof in progress; not complete section01 acceptance",
+    "native": "Core24/native89 passed on physical iPhone17ProMax iOS27.0.1/24A446. Source before the final UI-only checks is retained in the plan.",
+    "limits": "Root runtimeComplete remains false. Welcome/tour/onboarding callers and advanced body/custom-description behavior remain unaccepted until later slices. Broad integrated E2E remains #30.",
+    "checkedOn": "2026-10-15"
   }
 }
