@@ -19,8 +19,8 @@
 | S1 | Build/save/reopen and edit a manual outfit from owned pieces; durable draft, chooser and private receipt with failure/retry recovery | O1, O2, O7 | Committed | `AQD-Slice: #24/S1` | `261be64` |
 | S2 | Create/select multiple themes during outfit save; preserve names, memberships and identity | O3, O4, O7 | Committed | `AQD-Slice: #24/S2` | `0f4666d` |
 | S3 | Readiness/pinned first outfit and labelled rules/manual fallback; reviewed suggestions and safe replacement | O5, O6, O8, O9; W8–9 | Committed; model activation deferred #30 | `AQD-Slice: #24/S3` | `75c01c1` |
-| S4 | Date-prefilled real Plan review/save/restart, distinct from wear | O9; scoped LOCAL-04/09 | Committed | `AQD-Slice: #24/S4` | Pending |
-| S5 | Explicit Record wear review/save/deduplication and historical snapshots | O9; scoped LOCAL-04/09 | Planned | `AQD-Slice: #24/S5` | Pending |
+| S4 | Date-prefilled real Plan review/save/restart, distinct from wear | O9; scoped LOCAL-04/09 | Committed | `AQD-Slice: #24/S4` | `224da9f` |
+| S5 | Explicit Record wear review/save/deduplication and historical snapshots | O9; scoped LOCAL-04/09 | Committed | `AQD-Slice: #24/S5` | Pending |
 | S6 | Outfit More/favorite/edit/delete with exact reference impact | O1; scoped LOCAL-04/11 | Planned | `AQD-Slice: #24/S6` | Pending |
 
 ## Acceptance and evidence
@@ -77,3 +77,12 @@ Outfit detail and saved receipt now open a real date-prefilled Plan task. Explic
 Core48, generic iOS Debug build and physical native107 (94 Swift Testing +13 XCTest) pass with zero failures. Logs: `/tmp/aqd-24-s4-core-final.log`, `/tmp/aqd-24-s4-build.log`, `/tmp/aqd-24-s4-unit.log`. New tests cover V5 outfits/themes preserving migration, exact dates/reopen, explicit unassigned/overlap and denied/unknown save retries. This native run also compiles/tests S3's later pure partial-replacement correction. Bounded Standards/Spec review covers snapshot/revision ownership, exact acknowledgments, explicit no-overwrite choices, stable date identity and no implicit wear. Actual wear is implemented separately in S5; all E2E/UI acceptance stays #30.
 
 Native result: `/tmp/aqd-24-device-s1/Logs/Test/Run-AQD-2026.10.16_01-24-22-+0800.xcresult`.
+
+
+### S5 explicit actual-wear review
+
+Outfit → Record wear has its own durable task, day/timezone, shared owned-piece chooser, commit receipt and minimal actual history. It never writes a plan. Plans/passing dates never create wear. The same owned item set/day deduplicates independently of selection order; a separate attempt requires Use existing record and acknowledges that record without another count. Failed/unknown writes retain the draft and operation. Historical snapshots contain minimal IDs/names/categories, no media/notes; they survive piece deletion. V6→V7 migration preserves existing plans without inventing wear. Section06 extends this same wear model/history for correction/Undo/insights later.
+
+Passed Core50, generic iOS Debug build and physical native110 (97 Swift Testing +13 XCTest), zero failures. Logs `/tmp/aqd-24-s5-core-final.log`, `/tmp/aqd-24-s5-build.log`, `/tmp/aqd-24-s5-unit.log`. Bounded Standards/Spec review covers no implicit wear, exact duplicate consent/operation identity, stable day/timezone, protected existing records and non-photo historical ownership. All E2E/UI acceptance remains #30. Next S6 adds saved-outfit More/favorite/delete and dependency-aware consequences; complete Closet/search/theme management remains #23.
+
+Native result: `/tmp/aqd-24-device-s1/Logs/Test/Run-AQD-2026.10.16_01-32-38-+0800.xcresult`.

@@ -64,6 +64,9 @@ private struct AppRootView: View {
         } message: {
             Text(state.collectionError ?? "Keep your existing app data for recovery.")
         }
+        .sheet(item: $state.wearEditor) { model in
+            OutfitWearEditorView(model: model).environment(state)
+        }
         .sheet(item: $state.planEditor) { model in
             OutfitPlanEditorView(model: model).environment(state)
         }
