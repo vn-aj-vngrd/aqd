@@ -252,18 +252,11 @@ struct PieceDetailView: View {
     @State private var archiveDecision = false
     @State private var archiveOperationID = UUID()
     @State private var undoArchiveRevision: Int?
-    @State private var reviewedDelete: DeleteReview?
     @State private var reviewedArchive: WardrobePiece?
     @State private var availabilityPresented = false
     @State private var wear: PieceWearSummary?
 
-    private struct DeleteReview {
-        let piece: WardrobePiece
-        let operationID: UUID
-        var submitted = false
-    }
-
-    private var deleteInFlight: Bool { reviewedDelete?.submitted == true }
+    private var deleteInFlight: Bool { deleteDecision }
 
     var body: some View {
         ScrollView {
@@ -304,7 +297,6 @@ struct PieceDetailView: View {
                     }
                     if let error {
                         Text(error).foregroundStyle(AppTheme.error)
-                        if reviewedDelete != nil { Button("Retry reviewed delete") { delete() }.frame(minHeight: 44) }
                     }
                 }.padding(20)
             } else {
@@ -328,8 +320,8 @@ struct PieceDetailView: View {
         }
         .onAppear(perform: refresh)
         .onChange(of: state.collectionRefreshID) { refresh() }
-        .onChange(of: deleteDecision) { _, presented in
-            if !presented { cancelDeleteReview() }
+        .sheet(isPresented: $deleteDecision) {
+            if let piece { PieceDeletionView(piece: piece) { deleteDecision = false; dismiss() } }
         }
         .confirmationDialog("Archive \(reviewedArchive?.name ?? "this piece")?", isPresented: $archiveDecision, titleVisibility: .visible) {
             Button("Archive") {
@@ -363,19 +355,8 @@ struct PieceDetailView: View {
             } else {
                 archiveOperationID = UUID(); reviewedArchive = piece; archiveDecision = true
             }
-        } delete: {
-            if reviewedDelete == nil {
-                reviewedDelete = DeleteReview(piece: piece, operationID: UUID())
-            }
-            deleteDecision = true
-        } availability: { availabilityPresented = true }
+        } delete: { deleteDecision = true } availability: { availabilityPresented = true }
         .frame(width: 48, height: 44)
-        .confirmationDialog("Delete this piece?", isPresented: $deleteDecision, titleVisibility: .visible) {
-            Button("Cancel", role: .cancel) { cancelDeleteReview() }
-            Button("Delete", role: .destructive) { delete() }
-        } message: {
-            Text("Delete \(reviewedDelete?.piece.name ?? "this piece"), its recovery drafts, and its unreferenced AQD photos. Original Photos are unchanged. This cannot be undone.")
-        }
     }
 
     private func detail(_ title: String, _ value: String) -> some View {
@@ -407,20 +388,4 @@ struct PieceDetailView: View {
         } catch { self.error = "The piece wasn’t changed. Reopen the latest record and retry." }
     }
 
-    private func cancelDeleteReview() {
-        // Supported outside dismissal equals Cancel only before submission.
-        // A failed/unknown operation retains its exact review for reconciliation.
-        if !deleteInFlight { reviewedDelete = nil }
-    }
-
-    private func delete() {
-        guard var review = reviewedDelete, state.store != nil else { return }
-        review.submitted = true
-        reviewedDelete = review
-        do {
-            try state.deletePiece(id: review.piece.id, expectedRevision: review.piece.revision,
-                                  operationID: review.operationID)
-            dismiss()
-        } catch { self.error = "Delete didn’t finish. Keep this record open and retry the same reviewed operation." }
-    }
 }

@@ -250,17 +250,17 @@ final class AppState {
         }
     }
 
-    func deletePiece(id: UUID, expectedRevision: Int, operationID: UUID) throws {
+    func deletePiece(id: UUID, expectedRevision: Int, operationID: UUID, impact: PieceDeletionImpact? = nil) throws {
         guard let store else { throw PieceStore.StoreError.corruptStore }
         do {
-            try store.deletePiece(id: id, expectedRevision: expectedRevision, operationID: operationID)
+            try store.deletePiece(id: id, expectedRevision: expectedRevision, operationID: operationID, impact: impact)
         } catch {
             // Only exact, durable record-removal proof permits leaving the review.
             // Missing/conflicting/corrupt proof preserves the original local retry error.
             guard (try? store.isPieceDeletionAcknowledged(id: id, expectedRevision: expectedRevision,
-                                                         operationID: operationID)) == true else { throw error }
+                                                         operationID: operationID, impact: impact)) == true else { throw error }
         }
-        reloadPieces()
+        reloadPieces(); reloadOutfits(); reloadThemes(); reloadPlanEntries()
         retryPhotoCleanup()
     }
 

@@ -45,7 +45,8 @@ struct OutfitWearPersistenceTests {
         #expect(try #require(store).saveWear(duplicate) == saved)
         try #require(store).finishWearDraft(duplicate)
         #expect(try #require(store).wearRecords() == [saved])
-        try #require(store).deletePiece(id: piece.id, expectedRevision: piece.revision, operationID: UUID())
+        let impact = try #require(store).pieceDeletionImpact(id: piece.id)
+        try #require(store).deletePiece(id: piece.id, expectedRevision: piece.revision, operationID: UUID(), impact: impact)
         #expect(try #require(store).wearRecords() == [saved])
         #expect(saved.pieces.first?.name == "Shirt as worn")
         store = nil

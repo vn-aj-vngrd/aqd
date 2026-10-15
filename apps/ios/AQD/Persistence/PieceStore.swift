@@ -230,8 +230,13 @@ enum LocalSchemaV8: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV7.models + [StoredOutfitMutation.self] }
 }
 
+enum LocalSchemaV9: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(9, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV8.models + [StoredPieceDeletionReview.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
@@ -239,7 +244,8 @@ enum LocalMigrationPlan: SchemaMigrationPlan {
          .lightweight(fromVersion: LocalSchemaV4.self, toVersion: LocalSchemaV5.self),
          .lightweight(fromVersion: LocalSchemaV5.self, toVersion: LocalSchemaV6.self),
          .lightweight(fromVersion: LocalSchemaV6.self, toVersion: LocalSchemaV7.self),
-         .lightweight(fromVersion: LocalSchemaV7.self, toVersion: LocalSchemaV8.self)]
+         .lightweight(fromVersion: LocalSchemaV7.self, toVersion: LocalSchemaV8.self),
+         .lightweight(fromVersion: LocalSchemaV8.self, toVersion: LocalSchemaV9.self)]
     }
 }
 
@@ -285,13 +291,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:8".utf8)
-        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8), Data("AQD-piece-store:6".utf8), Data("AQD-piece-store:7".utf8)]
+        let version = Data("AQD-piece-store:9".utf8)
+        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8), Data("AQD-piece-store:6".utf8), Data("AQD-piece-store:7".utf8), Data("AQD-piece-store:8".utf8)]
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV8.self)
+        let schema = Schema(versionedSchema: LocalSchemaV9.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -453,7 +459,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
+            let candidates = [(schema, 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -479,7 +485,10 @@ final class PieceStore {
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 8) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 9) throws -> Bool {
+        if storeVersion >= 9 {
+            guard try context.fetchCount(FetchDescriptor<StoredPieceDeletionReview>()) == 0 else { throw StoreError.unsupportedStore }
+        }
         if storeVersion >= 8 {
             guard try context.fetchCount(FetchDescriptor<StoredOutfitMutation>()) == 0 else { throw StoreError.unsupportedStore }
         }
@@ -1001,7 +1010,7 @@ final class PieceStore {
 
     /// Read-only proof of this exact record removal, not proof of erased media.
     /// Missing operations are unacknowledged; mismatched or contradictory proof is refused.
-    func isPieceDeletionAcknowledged(id: UUID, expectedRevision: Int, operationID: UUID) throws -> Bool {
+    func isPieceDeletionAcknowledged(id: UUID, expectedRevision: Int, operationID: UUID, impact: PieceDeletionImpact? = nil) throws -> Bool {
         guard expectedRevision > 0 else { throw StoreError.invalidRecord }
         let context = ModelContext(container)
         let matches = try context.fetch(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.id == operationID }))
@@ -1010,6 +1019,11 @@ final class PieceStore {
               proof.expectedRevision > 0,
               Set(proof.pendingPhotoIDs).count == proof.pendingPhotoIDs.count else { throw StoreError.invalidRecord }
         guard proof.itemID == id, proof.expectedRevision == expectedRevision else { throw StoreError.operationConflict }
+        if let impact {
+            let reviews = try context.fetch(FetchDescriptor<StoredPieceDeletionReview>(predicate: #Predicate { $0.id == operationID }))
+            guard reviews.count == 1, let review = reviews.first,
+                  try JSONDecoder().decode(PieceDeletionImpact.self, from: review.impact) == impact else { throw StoreError.operationConflict }
+        }
         guard try context.fetchCount(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.itemID == id })) == 1,
               try context.fetchCount(FetchDescriptor<StoredPiece>(predicate: #Predicate { $0.id == id })) == 0,
               try context.fetchCount(FetchDescriptor<StoredPieceDraft>(predicate: #Predicate { $0.itemID == id || $0.operationID == operationID })) == 0,
@@ -1019,13 +1033,13 @@ final class PieceStore {
         return true
     }
 
-    /// Piece-only deletion, not full LOCAL-03 or erase. Today/journal/outfit/plan/history
-    /// owners must extend the reference graph before those models can retain media.
+    /// Reviewed wardrobe cascade. Future journal/media owners must extend the
+    /// reference graph; wear snapshots deliberately retain no photo ownership.
     /// Record acknowledgment and recoverable filesystem cleanup are separate commits.
-    func deletePiece(id: UUID, expectedRevision: Int, operationID: UUID) throws {
+    func deletePiece(id: UUID, expectedRevision: Int, operationID: UUID, impact: PieceDeletionImpact? = nil) throws {
         let context = ModelContext(container)
         if let prior = try context.fetch(FetchDescriptor<StoredPieceDeletion>(predicate: #Predicate { $0.id == operationID })).first {
-            guard try isPieceDeletionAcknowledged(id: id, expectedRevision: expectedRevision, operationID: operationID) else {
+            guard try isPieceDeletionAcknowledged(id: id, expectedRevision: expectedRevision, operationID: operationID, impact: impact) else {
                 throw StoreError.invalidRecord
             }
             try finishCleanup(prior, context: context)
@@ -1037,12 +1051,17 @@ final class PieceStore {
         }
         guard let stored = try context.fetch(FetchDescriptor<StoredPiece>(predicate: #Predicate { $0.id == id })).first,
               stored.revision == expectedRevision else { throw StoreError.staleRevision }
+        guard allowsSave else { throw StoreError.corruptStore }
+        let currentImpact = try pieceDeletionImpact(id: id)
+        guard impact.map({ $0 == currentImpact }) ?? !currentImpact.hasDependencies else { throw StoreError.staleRevision }
         // Decode every owner before mutation; unreadable/unsupported payloads may hide references.
         let drafts = try decodedDrafts(context)
         let receipts = try decodedReceipts(context)
         let relatedDrafts = drafts.filter { $0.1.itemID == id }
         let relatedReceipts = receipts.filter { $0.1.id == id }
         let candidates = Set([stored.photoID] + relatedDrafts.compactMap { $0.1.photoID } + relatedReceipts.map { $0.1.photoID })
+        try applyPieceDeletionImpact(currentImpact, context: context)
+        context.insert(try StoredPieceDeletionReview(operationID: operationID, impact: currentImpact))
         context.delete(stored)
         for (draft, _) in relatedDrafts { context.delete(draft) }
         for (receipt, _) in relatedReceipts { context.delete(receipt) }
@@ -1881,6 +1900,51 @@ extension PieceStore {
                   let outfitID = plan.outfitID, affected.contains(outfitID), !plan.requiresReview else { continue }
             plan.requiresReview = true; plan.revision += 1; try plan.validated()
             record.payload = try encode(plan)
+        }
+    }
+}
+
+
+extension PieceStore {
+    func pieceDeletionImpact(id: UUID) throws -> PieceDeletionImpact {
+        guard let piece = try piece(id: id) else { throw StoreError.staleRevision }
+        let affected = try outfits().filter { $0.pieceIDs.contains(id) }
+        let ids = Set(affected.map(\.id))
+        let themes = try themes().filter { !ids.isDisjoint(with: $0.outfitIDs) }
+        let plans = try planEntries().filter { entry in
+            let zone = TimeZone(identifier: entry.day.timeZoneID) ?? .current
+            return entry.state == .planned && entry.day.key >= LocalPlanDay(timeZone: zone).key
+                && entry.outfitID.map { ids.contains($0) } == true
+        }
+        return PieceDeletionImpact(pieceID: id, pieceRevision: piece.revision,
+            outfitRevisions: Dictionary(uniqueKeysWithValues: affected.map { ($0.id, $0.revision) }),
+            themeRevisions: Dictionary(uniqueKeysWithValues: themes.map { ($0.id, $0.revision) }),
+            futurePlanRevisions: Dictionary(uniqueKeysWithValues: plans.map { ($0.id, $0.revision) }))
+    }
+
+    private func applyPieceDeletionImpact(_ impact: PieceDeletionImpact, context: ModelContext) throws {
+        var emptyOutfits = Set<UUID>()
+        for record in try context.fetch(FetchDescriptor<StoredOutfit>()) {
+            var outfit = try record.value()
+            guard impact.outfitRevisions[outfit.id] != nil else { continue }
+            outfit.pieceIDs.removeAll { $0 == impact.pieceID }
+            if outfit.pieceIDs.isEmpty { emptyOutfits.insert(outfit.id); context.delete(record) }
+            else {
+                outfit.revision += 1; outfit.updatedAt = Date(); try outfit.validated()
+                record.payload = try encode(outfit)
+            }
+        }
+        for record in try context.fetch(FetchDescriptor<StoredOutfitTheme>()) {
+            var theme = try record.value()
+            guard !emptyOutfits.isDisjoint(with: theme.outfitIDs) else { continue }
+            theme.outfitIDs.removeAll { emptyOutfits.contains($0) }; theme.revision += 1
+            try theme.validated(); record.payload = try encode(theme)
+        }
+        for record in try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()) {
+            var plan = try record.value()
+            guard impact.futurePlanRevisions[plan.id] != nil else { continue }
+            plan.outfitID = nil; plan.outfitRevision = nil; plan.requiresReview = true; plan.state = .unassigned
+            plan.revision += 1; try plan.validated(); record.payload = try encode(plan)
         }
     }
 }
