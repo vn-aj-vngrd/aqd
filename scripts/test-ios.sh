@@ -1,24 +1,38 @@
 #!/bin/bash
 # Run from any directory: ./scripts/test-ios.sh
-# Override only the simulator destination with IOS_DESTINATION.
+# Default: Core and native unit tests. Use IOS_TEST_SCOPE=all or e2e explicitly.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DESTINATION="${IOS_DESTINATION:-platform=iOS Simulator,id=E5DAD2A0-6375-4737-B33D-3A08A4D9FDAA}"
-DERIVED_DATA="${IOS_DERIVED_DATA:-/tmp/aqd-uitest-derived}"
-# The real PhotosPicker UI test needs a normal Photos-library source. Seeding
-# adds synthetic pixels only and preserves all existing Simulator photos.
-# A destination expressed by name must supply IOS_PHOTO_DEVICE explicitly.
-PHOTO_DEVICE="${IOS_PHOTO_DEVICE:-${DESTINATION##*,id=}}"
-if [[ "$PHOTO_DEVICE" == "$DESTINATION" ]]; then
-  printf 'Set IOS_PHOTO_DEVICE to the destination simulator UUID for Photos seeding.\n' >&2
-  exit 1
+DESTINATION="${IOS_DESTINATION:-}"
+if [[ -z "$DESTINATION" ]]; then
+  DESTINATION="$(node "$ROOT/scripts/ios-destination.mjs")"
 fi
-"$ROOT/scripts/seed-ios-test-photo.sh" "$PHOTO_DEVICE"
+DERIVED_DATA="${IOS_DERIVED_DATA:-/tmp/aqd-uitest-derived}"
+SCOPE="${IOS_TEST_SCOPE:-unit}"
+TEST_SELECTION=()
+case "$SCOPE" in
+  unit) TEST_SELECTION=(-only-testing:AQDTests) ;;
+  e2e) TEST_SELECTION=(-only-testing:AQDUITests) ;;
+  all) ;;
+  *) printf 'Invalid IOS_TEST_SCOPE: %s (expected unit, e2e or all).\n' "$SCOPE" >&2; exit 1 ;;
+esac
 
-swift test --package-path "$ROOT/apps/ios/Core"
+# Only UI runs need synthetic Photos-library fixtures. Unit runs never seed Photos.
+if [[ "$SCOPE" != unit ]]; then
+  PHOTO_DEVICE="${IOS_PHOTO_DEVICE:-${DESTINATION##*,id=}}"
+  if [[ "$PHOTO_DEVICE" == "$DESTINATION" ]]; then
+    printf 'Set IOS_PHOTO_DEVICE to the destination simulator UUID for Photos seeding.\n' >&2
+    exit 1
+  fi
+  "$ROOT/scripts/seed-ios-test-photo.sh" "$PHOTO_DEVICE"
+fi
 
-# The default device is the local iOS 26.5 iPhone 17 Pro simulator.
+if [[ "$SCOPE" != e2e ]]; then
+  swift test --package-path "$ROOT/apps/ios/Core"
+fi
+
+# The default destination is the installed target iPhone 17 Pro Max simulator.
 # No credentials, team, provisioning, local xcconfig, or signing hooks are used.
 xcodebuild \
   -project "$ROOT/apps/ios/AQD.xcodeproj" \
@@ -30,4 +44,5 @@ xcodebuild \
   -parallel-testing-enabled NO \
   -collect-test-diagnostics never \
   CODE_SIGNING_ALLOWED=NO \
+  "${TEST_SELECTION[@]}" \
   build test

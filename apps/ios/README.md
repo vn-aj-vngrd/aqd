@@ -1,24 +1,21 @@
 # AQD native iOS
 
-Private V1 follows the [ten-ticket implementation plan](../../docs/delivery/implementation-plan.md): [Foundation#20](https://github.com/vn-aj-vngrd/aqd/issues/20), then one vertical-slice issue/PR per Paper V1 section01–09 (#21–29). Native baseline PR#9 is merged at `c5e11c4`; former #6–19 are closed historical work, not full-V1 acceptance. This baseline is not the complete V1 release. Unimplemented root capabilities are explicitly labelled; no demonstration wardrobe or wear records are seeded.
+Private V1 follows the [implementation and final-hardening plan](../../docs/delivery/implementation-plan.md): [Foundation#20](https://github.com/vn-aj-vngrd/aqd/issues/20), then one vertical-slice issue/PR per Paper V1 section01–09 (#21–29), then final E2E/hardening #30. Native baseline PR#9 is merged at `c5e11c4`; former #6–19 are closed historical work, not full-V1 acceptance. This baseline is not the complete V1 release. Unimplemented root capabilities are explicitly labelled; no demonstration wardrobe or wear records are seeded.
 
 ## Build and test
 
-Requires macOS, Xcode and an installed iOS Simulator. Foundation #20 compiles with Xcode27.0/build27A266a, Swift6.4 and SDK27.0; installed runtimes are iOS26.5/build23F77 and27.0/build24A434. Deployment remains iOS18.0. The owner authorized an implementation checkpoint with heavyweight verification deferred; builds/simulators are stopped. Minimum-iOS18/current-iOS27 and physical-device qualification remain incomplete. See [native foundation reuse and capability gates](FOUNDATIONS.md); build success is not complete Foundation or V1 acceptance.
+Requires macOS, Xcode and an installed simulator. The immediate personal-MVP target is iPhone 17 Pro Max. Keep existing deployment/availability settings; inspect the actual installed toolchain and runtime instead of copying historical version strings.
 
 From the repository root:
 
 ```sh
-./scripts/test-ios.sh
+AQD_DESTINATION="$(node scripts/ios-destination.mjs)" || exit
+IOS_DESTINATION="$AQD_DESTINATION" IOS_TEST_SCOPE=unit ./scripts/test-ios.sh
 ```
 
-The default simulator is the local iPhone17Pro `E5DAD2A0-6375-4737-B33D-3A08A4D9FDAA`. For another installed simulator:
+The helper selects an available iPhone 17 Pro Max and reports its installed OS with `--json`. It fails without selecting another phone when the target is absent. The runner defaults to Core/native unit tests and a Debug build. `IOS_TEST_SCOPE=all` includes UI tests; `e2e` runs UI tests only. Broad runtime execution follows the [verification policy](../../docs/delivery/implementation-plan.md#verification-policy--owner-approved-october15) in #30 unless requested.
 
-```sh
-IOS_DESTINATION='platform=iOS Simulator,id=<simulator-UUID>' ./scripts/test-ios.sh
-```
-
-The runner tests the Foundation core, builds the app and runs native SwiftData/photo and XCTest UI tests unsigned. It adds one **synthetic test image** to Simulator Photos for the real PhotosPicker flow; existing Photos are not deleted. Override derived data with `IOS_DERIVED_DATA`. Fixtures prove mechanics, not garment/media quality. Open `AQD.xcodeproj`, shared scheme **AQD**, for local development.
+Use `IOS_DERIVED_DATA` for a task-owned build directory. Only UI scopes add a synthetic photo fixture to the selected test simulator; they preserve existing Photos. Fixtures prove mechanics, not garment quality. The Xcode project uses shared scheme **AQD** and unsigned automated simulator builds. [Verification](../../docs/delivery/verification.md) owns current test/build results and the unresolved landscape Notes editing failure. Physical-phone acceptance remains separate.
 
 ## Data boundary
 
