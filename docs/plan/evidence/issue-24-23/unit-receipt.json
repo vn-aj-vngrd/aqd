@@ -153,5 +153,6 @@
     "Local absolute log paths are locators, not remotely published raw results. This sanitized receipt publishes observed outcomes and source hashes.",
     "No UI/E2E acceptance, pixel fidelity, VoiceOver, real garment quality, model quality or complete V1 readiness is claimed.",
     "All E2E/integrated/device/model qualification remains issue30. Foundation Models activation remains off pending measured qualification."
-  ]
+  ],
+  "lastCodeCommit": "27718abe72c925f9469ff57e1bc04b29606ba895"
 }

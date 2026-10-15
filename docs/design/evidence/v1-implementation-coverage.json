@@ -4,7 +4,7 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
-  "sourceHead": "e457e264 (resolved by issue24/S7 commit and source manifest)",
+  "sourceHead": "27718abe72c925f9469ff57e1bc04b29606ba895",
   "sourceState": "Group #24/#23 feature slices and independent review corrections implemented and unit verified; final source hashes in docs/plan/evidence/issue-24-23/unit-receipt.json. Local review and unsigned Release pass. Remote gates pending; runtime acceptance deferred to #30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {

@@ -25,7 +25,7 @@
 
 ## Acceptance and evidence
 
-Each slice adds focused behavior tests at the affected public seam. Record genuine RED/GREEN, source revision, unit/build results and review coverage when executed. UI runtime acceptance is Deferred to #30, never inferred from units or Paper. No test result is claimed yet.
+Each slice adds focused behavior tests at the affected public seam. Record genuine RED/GREEN, source revision, unit/build results and review coverage when executed. UI runtime acceptance is Deferred to #30, never inferred from units or Paper. Final source-bound unit results and their reuse limits are recorded in the [group receipt](evidence/issue-24-23/README.md).
 
 ## Deferred final verification
 
@@ -37,8 +37,8 @@ One grouped PR closes #24 and #23. Keep per-slice commits and separate issue acc
 
 ## Resume
 
-- Discovery complete for the first manual outfit seam. The owner confirmed physical iPhone readiness; no native run yet.
-- Next: verify PR33 delivery, create branch from merged main, inspect live Paper descendants/styles for the first slice and implement its complete manual journey.
+- All seven #24 slices and four #23 slices are committed and locally verified. The owner-confirmed ready physical iPhone supplied native unit checks; all E2E remains #30.
+- Next: resolve/create the single grouped PR on the existing branch, finish latest-head unit CI/Codex and protected squash, then verify merged-main CI and published repository release. PR33 delivery is already verified.
 
 
 ### S1 unit receipt
@@ -100,7 +100,7 @@ Final native result: `/tmp/aqd-24-device-s1/Logs/Test/Run-AQD-2026.10.16_01-48-1
 
 ## S7 independent review corrections
 
-State: Committed. Marker `AQD-Slice: #24/S7`. Standards P2: saved outfit compositions/detail must resolve archived owned pieces while selection/suggestions stay active-only. Spec P2: selected chooser pieces remain visible across filters. Spec P2: saved receipt More → Edit acknowledges its receipt and opens a new edit for the same saved identity. Add focused public-state/chooser regressions, recheck affected findings, refresh native units/Release and commit before remote delivery.
+State: Committed as `27718ab`. Marker `AQD-Slice: #24/S7`. Standards P2: saved outfit compositions/detail must resolve archived owned pieces while selection/suggestions stay active-only. Spec P2: selected chooser pieces remain visible across filters. Spec P2: saved receipt More → Edit acknowledges its receipt and opens a new edit for the same saved identity. Add focused public-state/chooser regressions, recheck affected findings, refresh native units/Release and commit before remote delivery.
 
 S7 resolved all independent findings. Display reads active and archived records atomically, labels Archived and preserves original photo/name while eligibility stays active-only. The chooser keeps selected items visible across filters. Receipt More → Edit acknowledges its old draft before the actual sheet-dismissal dispatcher opens the same outfit with a fresh operation. Review caught missing dispatcher wiring in the first correction; the regression now calls the production dispatcher and passes. Both reviewers rechecked and cleared all findings.
 
