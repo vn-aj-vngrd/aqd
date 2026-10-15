@@ -1,6 +1,6 @@
 # AQD product definition
 
-Updated October 5, 2026. AQD has two product phases. This split supersedes the earlier connected V1 plan. It authorizes documentation and Paper design only; no application functionality or infrastructure is implemented by this planning branch. Product V1/V2 are scope names, independent of repository release tags such as `v1.0.0`.
+Updated October 5, 2026. AQD has two product phases. This split supersedes the earlier connected V1 plan. The original phase split authorized documentation/Paper only. Current implementation authority and delivered behavior live in the [lifecycle](../agents/lifecycle.md) and [status](../delivery/implementation-status.md); this definition specifies target behavior. Product V1/V2 are scope names, independent of repository release tags such as `v1.0.0`.
 
 ## V1 — Private personal closet
 

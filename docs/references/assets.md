@@ -4,7 +4,7 @@ Current redesign: [DESIGN.md](../../DESIGN.md) supersedes earlier visual choices
 
 - [Alta public site](https://www.altadaily.com/): reference for clothing-led compositions and daily-outfit emphasis. No Alta branding, copy, or imagery is bundled in AQD.
 - [Supplied Mobbin reference](https://mobbin.com/apps/alta-ios-a92b35a0-2cf3-4e78-94d4-07926ba73ccf/d204950b-63c4-49d9-b9fa-3d394cab3e92/screens): redirected to the login/marketing surface during this session; the full app-screen library was not inspected.
-- `apps/ios/AQD/Assets.xcassets/SampleWardrobe.imageset/wardrobe.png`: original generated sample garment atlas, six objects in a 3×2 grid. Generated with the built-in image tool on 2026-09-30. The complete generation prompt is embedded in its PNG metadata. The image is split into six cells at runtime for sample pieces; it is not user wardrobe data or a product photograph of a purchasable item.
+- Historical prototype path `apps/ios/AQD/Assets.xcassets/SampleWardrobe.imageset/wardrobe.png` is absent from the current native tree. It referred to a generated September 30 sample atlas, not user wardrobe data. Current retained design imagery and licensing boundaries are documented in the [Welcome assets](../design/assets/welcome/README.md); no sample atlas is seeded by the native baseline.
 - SF Symbols provide interface icons. System typography provides native UI and the restrained serif headings.
 
 ## Historical implementation: Lucide icons and App Store reference

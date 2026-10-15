@@ -17,7 +17,7 @@ Agent workflow/docs tooling is separate unticketed repository maintenance. It do
 | --- | --- | --- | --- | --- | --- |
 | S1 | Shared native metadata/fields, tab selection and capture/details/photo source-return behavior, with rendering and UI regression cases | Native unit/Debug + unsigned Release; Standards/Spec source review | Committed | `AQD-Slice: #20/S1` | `eb21a84` |
 | S2 | Revalidate the opened bootstrap store before seeding stock Today, preserving existing owner/widget IDs | Native persistence/reopen/bootstrap tests in unit suite; source review | Committed | `AQD-Slice: #20/S2` | `95e789d` |
-| S3 | Feature unit scope and explicit final E2E scope; policy and evidence distinguish deferred runtime acceptance | Tooling/workflow tests, actual unit selection, shell validation | Committed | `AQD-Slice: #20/S3` | Pending |
+| S3 | Feature unit scope and explicit final E2E scope; policy and evidence distinguish deferred runtime acceptance | Tooling/workflow tests, actual unit selection, shell validation | Committed | `AQD-Slice: #20/S3` | `6767729` |
 
 ## Acceptance and evidence
 
@@ -26,7 +26,7 @@ Agent workflow/docs tooling is separate unticketed repository maintenance. It do
 | Native source standards and scoped Foundation behavior | S1/S2 | Independent Standards and Spec reviews of all eight changed Swift files against baseline; no new actionable defect | Passed, source only |
 | Core/native unit and Debug app build | S1/S2 | `/tmp/aqd-agent-foundation-unit.log`, matching iPhone 17 Pro Max simulator on iOS 27.0, current dirty native source | Passed, 20 Core /72 Swift Testing /12 XCTest; no UI tests |
 | Generic unsigned Release | S1/S2 | `/tmp/aqd-agent-foundation-release.log`, current dirty native source | Passed |
-| Repository/workflow/agent-doc checks | S3 | `pnpm check`: 46 passed; `pnpm check:agents` checks all current Markdown/skills; final receipt follows | Passed, final docs check pending |
+| Repository/workflow/agent-doc checks | S3 | `pnpm check`: 46 passed; `pnpm check:agents` checks all current Markdown/skills; final receipt follows | Passed |
 
 ## Deferred final verification
 
@@ -39,10 +39,10 @@ Physical iPhone 17 Pro Max execution and its installed OS, camera/media quality,
 - Standards: no actionable finding in existing native diff, source review only.
 - Spec: no new source-proven defect/scope creep; known keyboard failure retained for #30.
 - PR/latest-head CI/Codex/merge/release: Not run in this cleanup.
-- Final receipt commit: Pending.
+- Final receipt commit: `docs(aqd): Consolidate stale guidance and record delivery evidence`. Resolve its own SHA from Git. Agent-foundation maintenance is separately committed at `1d3bfc5`.
 
 ## Resume
 
-- Current action: finish required unit/build/tooling verification and commit the inherited checkpoint in the groups above.
+- Current action: local cleanup complete. S1–S3 are separately committed; native unit/Debug, unsigned Release and repository checks pass. No PR/merge was performed.
 - Next product action after this cleanup: finish Foundation's remaining required feature gates under the current policy, then obtain authorization for the next dependency-ready issue if not already supplied.
-- Dirty paths: native slice files, policy/evidence docs, and separately owned agent-foundation maintenance until their commits land.
+- Dirty paths after the final receipt commit: none expected; verify `git status` before resuming.

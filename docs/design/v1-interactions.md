@@ -20,6 +20,20 @@ Updated October 6, 2026. This is the implementation route checklist for [Paper V
 
 [Vector repair](evidence/native-dialog-vector-repair.json) changes presentation layers only: all existing V1 confirmation source/target/date/draft/return guards remain unchanged. Original Paper hosts and title/body/action IDs are visible/editable; screenshots and technical contracts are hidden. Seven cross-phase critical decisions keep explicit Cancel;31 routine source-anchored decisions use documented implicit no-write dismissal. No new destination or executable action is added; native behavior remains unverified.
 
+## Foundation #20 native return follow-up · October14
+
+This scoped receipt supersedes unresolved compact/Details statements in the historical checkpoint below; it does not certify every V1 control. [Verification](../delivery/verification.md#foundation-20-authorized-native-verification--october14) owns failed receipts and remaining gates.
+
+| Control / state | Native result and return behavior | Evidence limit |
+| --- | --- | --- |
+| Capture Photo / Add photo / source Close | Exactly one exposed13pt secondary Photo caption; no-photo12pt/accepted8pt gaps. Both compact audits pass. Native26+ close-role/18 text fallback retains fields and accepted media; category/no-save/draft relaunch passes. |18 fallback execution and physical VoiceOver remain pending. |
+| Capture Name → More details → Availability / Notes / Apply | Feature-owned Name focus clears before Details. Details uses public native immediate keyboard dismissal on scroll; no global responder/geometry workaround. Controlled18.1 original journey and four focused minimum cases pass Laundry/real Notes/strict keyboard-safe Apply/cancel/discard/exact relaunch. Native popover uses its cancel row or measured blank-header outside dismissal. | Final same-source both-runtime/full gates are pending. Newly authored whole AX-box/navbar/footer occlusion proxies produced retained failures and were corrected against observed text/caret visibility, not relaxed original assertions. Final-source current27 focused UI passes2/3; the first case fails the retained software-keyboard assertion. All three newer post-typing full-screen attachments show the word only in keyboard suggestions, without discernible editor value/caret: independent DQ11 rendered review requests changes. Earlier contact visibility is not later editing acceptance. The native intrinsic-sizing comparison completes0 passes/1 failure; text/caret is visible only with keyboard absent, the hypothesis remains unproven and original source is restored. No app/OS mechanism or full44-point target is established. |
+| Capture / Details / PhotoEditor Back | Registered `chevron.backward` and native toolbar. Real pixels pass three tasks in both LTR and RTL; data/draft return paths stay unchanged. | Root/tab mirroring alone was insufficient; physical crop arrows remain physical left/right. |
+| PhotoEditor dirty Back / Cancel / Discard | Before-dialog Portrait selection is verified. Scoped native Cancel or measured outside-header dismissal preserves provisional framing; Discard retains accepted photo. Real picker/crop/landmark/save/search/edit/relaunch passes. | Earlier arbitrary outside-tap failure remains archived; synthetic media is not garment quality. |
+| Agent / source returns with system accessibility preferences | Actual0/0,1/0,0/1,1/1 settings, fresh foreground scenes and retained-return journeys pass; both original preferences restored. | Native vertical movement is observed in standard/reduced recordings; not opacity-only or hardware performance proof. |
+
+[Verification](../delivery/verification.md#foundation-20-authorized-native-verification--october14) retains all historical focused/full results and failures. The landscape Notes keyboard/visible-value failure is unresolved and stays in final #30. Source updates and scoped passes here do not certify every control or physical-phone behavior.
+
 ## Foundation #20 native consumer checkpoint · October13
 
 No new destination or product-domain control was introduced. The existing capture journey now consumes shared native foundations; section-specific routes below remain specified/unaccepted until their owning slice lands. [Verification](../delivery/verification.md#foundation-20-native-implementation--october13) owns exact observed inventory and limits.
@@ -156,6 +170,8 @@ Choice rows, checkmarks, disabled actions, input focus/validation and native key
 
 L152–L154/L166–L169 define six preference questions plus Review, with unnumbered titles and separate numbered step/progress. First use starts with no selections and body use off; Continue requires an explicit answer or No preference/refusal. There are no questionnaire skip actions. Multi-selection and deselection use the same checkmark component. Save has pending/error protection. Source metadata, IDs, effects and real counts must come from storage, never fixture labels.
 
-## Acceptance gate for implementation
+## Runtime acceptance at final hardening
+
+The [verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) defers broad execution to #30 unless requested. Implement control behavior and update this inventory during each feature; retained failures and deferred runtime checks remain explicit.
 
 For every row above, open from each listed source, complete once, cancel once, return with Back, then test the applicable empty/error path. Check draft retention, exact record identity, duplicate prevention, keyboard/focus return, largest text, dark appearance and Reduce Motion. Every newly introduced control must update this ledger and the manifest in the same change. Static Paper inspection does not establish native animation, persistence, OS presentation or accessibility correctness.

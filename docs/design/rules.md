@@ -2,7 +2,7 @@
 
 Read [DESIGN.md](../../DESIGN.md) before adding a screen, changing a shared control, selecting an icon, or reviewing an interface. It is the authority for the intended app; the old prototype is migration evidence.
 
-Apply [quality criteria](quality-criteria.md) during every review and handoff; record checked inventory and distinguish static findings from native acceptance.
+Apply [quality criteria](quality-criteria.md) during every review and handoff; record checked inventory and distinguish static findings from native acceptance. The [October 15 verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) owns execution timing: feature unit/build checks now, broad rendered/device/E2E acceptance in #30 unless requested. The catalogs below retain release requirements rather than imposing a full matrix on every slice.
 
 ## Design workflow
 
@@ -39,9 +39,9 @@ Native-first applies to every platform-capable control, including Toggle/Picker,
 - Indeterminate loading uses the shared Agent circular spinner everywhere. Destructive commits use native destructive semantics with a neutral safe cancel action; do not style Delete as a blue primary action. [Components](components.md#shared-loading-indicator) defines both contracts.
 - Product permissions and actual service availability control what is enabled. Reference people/counts/messages never become fake production activity.
 - Native chrome and content styling have different ownership: the OS owns material geometry and animation; AQD owns semantic tint, information hierarchy, content, and action labels.
-- An implementation task is complete only after its relevant build checks and rendered navigation checks pass. The design task records static review separately from device, service, security and model evidence.
+- Feature delivery requires its relevant unit/build checks; rendered navigation and accessibility acceptance follow the implementation plan's authorized stage. The design task records static review separately from device, service, security and model evidence.
 
-For navigation, custom transitions, loading/feedback, onboarding or animation review, apply [Global motion](motion.md) and the screen assignment in [Motion coverage](motion-coverage.md). Native transitions take precedence. Define timing once in the global policy, synchronize page 00, and verify standard/Reduce Motion paths before native completion.
+For navigation, custom transitions, loading/feedback, onboarding or animation review, apply [Global motion](motion.md) and the screen assignment in [Motion coverage](motion-coverage.md). Native transitions take precedence. Define timing once in the global policy, synchronize page 00, and retain standard/Reduce Motion paths for the authorized runtime-verification stage.
 
 ## Navigation exits
 

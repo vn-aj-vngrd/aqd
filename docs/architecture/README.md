@@ -1,6 +1,6 @@
 # Architecture by phase
 
-Planning references only. The V1 local boundary is selected; persistence details and all V2 providers/policies remain proposals. No service is provisioned by this branch.
+The V1 local boundary is selected and its native baseline already uses SwiftData and protected file media. Unimplemented V1 domains and all V2 providers/policies remain proposals. [Current status](../delivery/implementation-status.md) owns implementation evidence; these references do not provision services.
 
 Read the affected mechanics only: V1 local persistence/privacy/capability changes → V1; V2 association/sync/publication/Inbox → V2; staff/deployment → web operations. Provider selection → providers plus current official facts; purchasing → costs/current quotes; measured media/capacity migration → scalability; monetization → pricing. Historical/proposed references are not configured services or current price evidence.
 
