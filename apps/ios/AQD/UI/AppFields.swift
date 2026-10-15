@@ -59,16 +59,82 @@ struct LabeledField: View {
     var helper: String? = nil
     var validation: String? = nil
     var accessibilityID: String = ""
+    var editingFocus: FocusState<Bool>.Binding? = nil
 
     var body: some View {
         LabeledControl(title: title, helper: helper, validation: validation) {
-            TextField(title, text: $text,
-                      prompt: Text(prompt ?? title).foregroundStyle(AppTheme.secondary),
-                      axis: multiline ? .vertical : .horizontal)
-                .lineLimit(multiline ? 3...8 : 1...1)
-                .textFieldStyle(.plain)
-                .accessibilityLabel(title)
-                .accessibilityIdentifier(accessibilityID)
+            if let editingFocus {
+                editor.focused(editingFocus)
+            } else {
+                editor
+            }
+        }
+    }
+
+    private var editor: some View {
+        TextField(title, text: $text,
+                  prompt: Text(prompt ?? title).foregroundStyle(AppTheme.secondary),
+                  axis: multiline ? .vertical : .horizontal)
+            .lineLimit(multiline ? 3...8 : 1...1)
+            .textFieldStyle(.plain)
+            .accessibilityLabel(title)
+            .accessibilityIdentifier(accessibilityID)
+    }
+}
+
+/// Metadata with native font/color accessibility attributes. The compact audit
+/// comparator exposed UIKit labels where equivalent SwiftUI footnotes failed.
+struct MetadataText: UIViewRepresentable {
+    let text: String
+
+    init(_ text: String) { self.text = text }
+
+    func makeUIView(context: Context) -> UILabel {
+        let label = UILabel()
+        label.adjustsFontForContentSizeCategory = true
+        label.numberOfLines = 0
+        label.backgroundColor = .clear
+        configure(label, environment: context.environment)
+        return label
+    }
+
+    func updateUIView(_ label: UILabel, context: Context) {
+        configure(label, environment: context.environment)
+    }
+
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UILabel, context: Context) -> CGSize? {
+        uiView.sizeThatFits(CGSize(width: proposal.width ?? .greatestFiniteMagnitude,
+                                  height: proposal.height ?? .greatestFiniteMagnitude))
+    }
+
+    private func configure(_ label: UILabel, environment: EnvironmentValues) {
+        label.text = text
+        label.isAccessibilityElement = true
+        label.accessibilityTraits = .staticText
+        label.overrideUserInterfaceStyle = environment.colorScheme == .dark ? .dark : .light
+        label.textColor = UIColor(cgColor: AppTheme.secondary.resolve(in: environment).cgColor)
+        let rtl = environment.layoutDirection == .rightToLeft
+        label.textAlignment = rtl ? .right : .left
+        label.semanticContentAttribute = rtl ? .forceRightToLeft : .forceLeftToRight
+        let traits = UITraitCollection(preferredContentSizeCategory: contentCategory(environment.dynamicTypeSize))
+        label.font = UIFont.preferredFont(forTextStyle: .footnote, compatibleWith: traits)
+    }
+
+    private func contentCategory(_ size: DynamicTypeSize) -> UIContentSizeCategory {
+        switch size {
+        case .xSmall: .extraSmall
+        case .small: .small
+        case .medium: .medium
+        case .large: .large
+        case .xLarge: .extraLarge
+        case .xxLarge: .extraExtraLarge
+        case .xxxLarge: .extraExtraExtraLarge
+        case .accessibility1: .accessibilityMedium
+        case .accessibility2: .accessibilityLarge
+        case .accessibility3: .accessibilityExtraLarge
+        case .accessibility4: .accessibilityExtraExtraLarge
+        case .accessibility5: .accessibilityExtraExtraExtraLarge
+        default: .large
         }
     }
 }

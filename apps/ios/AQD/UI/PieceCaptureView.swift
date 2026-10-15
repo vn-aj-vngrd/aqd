@@ -2,6 +2,7 @@ import AQDCore
 import AVFoundation
 import PhotosUI
 import SwiftUI
+import UIKit
 
 struct PieceCaptureView: View {
     @Environment(\.openURL) private var openURL
@@ -19,6 +20,7 @@ struct PieceCaptureView: View {
     @State private var cameraRestricted = false
     @State private var cameraUnavailable = false
     @AccessibilityFocusState private var photoFocused: Bool
+    @FocusState private var nameEditing: Bool
 
     private enum PhotoSource: Hashable { case photos, camera }
 
@@ -36,7 +38,7 @@ struct PieceCaptureView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button { leave() } label: { Label("Back", systemImage: "chevron.left") }
+                    Button { leave() } label: { Label("Back", systemImage: "chevron.backward") }
                         .accessibilityIdentifier("capture.back")
                         .disabled(model.isSaving)
                 }
@@ -97,8 +99,7 @@ struct PieceCaptureView: View {
                             sourceRow(source == .photos ? "Choose from Photos" : "Take photo",
                                       symbol: source == .photos ? "photo.on.rectangle" : "camera", source: source)
                         }
-                        Text("Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.")
-                            .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                        MetadataText("Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.")
                     }
                     .padding(AppSpacing.screen)
                 }
@@ -106,10 +107,15 @@ struct PieceCaptureView: View {
                 .navigationTitle("Add photo").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Close") { sourceSheet = false }
+                        if #available(iOS 26.0, *) {
+                            Button(role: .close) { sourceSheet = false }
+                        } else {
+                            Button("Close") { sourceSheet = false }
+                        }
                     }
                 }
             }
+            .tint(AppTheme.actionText)
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }
@@ -132,9 +138,9 @@ struct PieceCaptureView: View {
     private var form: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.large) {
-                VStack(alignment: .leading, spacing: AppSpacing.small) {
+                VStack(alignment: .leading, spacing: model.draft.photoID == nil ? AppSpacing.medium : AppSpacing.small) {
                     HStack {
-                        Text("Photo").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                        MetadataText("Photo")
                         Spacer()
                         if model.draft.photoID != nil {
                             Menu("Change") {
@@ -190,7 +196,8 @@ struct PieceCaptureView: View {
                 }
                 LabeledField(title: "Name", text: Binding(get: { model.draft.name },
                                                          set: { model.update(\.name, value: $0) }),
-                             prompt: "e.g. Cotton shirt", validation: nameValidation, accessibilityID: "capture.field.name")
+                             prompt: "e.g. Cotton shirt", validation: nameValidation, accessibilityID: "capture.field.name",
+                             editingFocus: $nameEditing)
                 VStack(alignment: .leading, spacing: AppSpacing.small) {
                     LabeledControl(title: "Category") {
                         Picker("Category", selection: Binding(get: { model.draft.category },
@@ -204,7 +211,10 @@ struct PieceCaptureView: View {
                         .accessibilityIdentifier("capture.category")
                     }
                     // Paper JR5/JR6 is a plain supporting link, not a surfaced row.
-                    Button { showDetails = true } label: {
+                    Button {
+                        nameEditing = false
+                        showDetails = true
+                    } label: {
                         Text("More details").font(AppTypography.supporting)
                             .foregroundStyle(AppTheme.actionText)
                             .fixedSize(horizontal: false, vertical: true)

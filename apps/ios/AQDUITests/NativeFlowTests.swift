@@ -7,22 +7,39 @@ import UIKit
 @MainActor
 final class NativeFlowTests: XCTestCase {
     private var app: XCUIApplication!
+    private var originalAccessibility: (motion: String, transparency: String)?
+    private let settings = XCUIApplication(bundleIdentifier: "com.apple.Preferences")
 
     override func setUp() async throws {
         try await super.setUp()
         await MainActor.run {
             continueAfterFailure = false
+            XCUIDevice.shared.orientation = .portrait
             app = XCUIApplication()
             app.launchArguments = ["--aqd-ui-testing"]
             // Stable for every relaunch within this test; unique across tests/runs.
             app.launchEnvironment["AQD_TEST_STORE_ID"] = UUID().uuidString
             app.launch()
             XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+            let frame = app.frame
+            let portrait = CGRect(origin: frame.origin,
+                                  size: CGSize(width: min(frame.width, frame.height), height: max(frame.width, frame.height)))
+            XCTAssertTrue(app.wait(for: \.frame, toEqual: portrait, timeout: 10), "Each test starts in a settled portrait scene")
         }
     }
 
     override func tearDown() async throws {
         await MainActor.run {
+            if let originalAccessibility {
+                // XCTest aborts can bypass a test body's defer; restore here.
+                let previous = continueAfterFailure
+                continueAfterFailure = true
+                setSystemAccessibility("Reduce Motion", section: "Motion", value: originalAccessibility.motion)
+                setSystemAccessibility("Reduce Transparency", section: "Display & Text Size", value: originalAccessibility.transparency)
+                continueAfterFailure = previous
+                settings.terminate()
+                self.originalAccessibility = nil
+            }
             if let run = testRun, run.failureCount > 0, app != nil {
                 attachScreenshot("Failure state — \(name)")
             }
@@ -30,6 +47,108 @@ final class NativeFlowTests: XCTestCase {
             app = nil
         }
         try await super.tearDown()
+    }
+
+    func testNativeReturnsWithStandardSystemAccessibilityPreferences() {
+        exerciseSystemAccessibility(motion: "0", transparency: "0", details: false)
+    }
+
+    func testNativeReturnsWithSystemReduceMotion() {
+        exerciseSystemAccessibility(motion: "1", transparency: "0", details: false)
+    }
+
+    func testNativeReturnsWithSystemReduceTransparency() {
+        exerciseSystemAccessibility(motion: "0", transparency: "1", details: false)
+    }
+
+    func testNativeReturnsWithBothSystemAccessibilityPreferences() {
+        exerciseSystemAccessibility(motion: "1", transparency: "1", details: true)
+    }
+
+    func testRTLNativeMirroringAndRetainedDetailJourney() {
+        XCTAssertLessThan(tab("Today").frame.midX, tab("Profile").frame.midX)
+        app.terminate()
+        // Xcode's RTL localization-debug launch arguments (installed
+        // IDEFoundation); unlike Arabic fallback, these test direction even
+        // before translations exist. No system preferences are written.
+        app.launchArguments += ["-AppleTextDirection", "YES", "-NSForceRightToLeftWritingDirection", "YES"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        XCTAssertGreaterThan(tab("Today").frame.midX, tab("Profile").frame.midX,
+                             "Language configuration must actually mirror native destinations")
+        testAgentFullScreenBackRestoresCloset()
+        app.buttons["closet.addPiece"].tap()
+        let caption = app.staticTexts["Photo"].firstMatch
+        XCTAssertTrue(caption.waitForExistence(timeout: 5))
+        XCTAssertEqual(caption.frame.maxX, app.frame.maxX - 20, accuracy: 1,
+                       "The native caption must move to the actual RTL leading margin")
+        attachScreenshot("Actual RTL native capture and leading Photo caption")
+        let name = app.textFields["capture.field.name"]
+        name.tap()
+        name.typeText("RTL retained draft")
+        app.buttons["capture.addPhoto"].tap()
+        let source = app.navigationBars["Add photo"]
+        XCTAssertTrue(source.waitForExistence(timeout: 5))
+        XCTAssertEqual(source.buttons.count, 1, "The native localized Close is the sole source toolbar command")
+        source.buttons.firstMatch.tap()
+        XCTAssertEqual(name.value as? String, "RTL retained draft")
+        app.buttons["capture.back"].tap()
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        XCTAssertGreaterThan(tab("Today").frame.midX, tab("Profile").frame.midX)
+        tab("Closet").tap()
+        app.buttons["closet.addPiece"].tap()
+        XCTAssertEqual(name.value as? String, "RTL retained draft")
+        relaunchIsolatedApp()
+        testDetailsLandscapeAvailabilityNotesApplyDiscardAndRelaunch()
+    }
+
+    func testBackGlyphsMirrorAcrossCaptureDetailsAndPhotoEditor() {
+        let baseArguments = app.launchArguments
+        defer {
+            app.launchArguments = baseArguments
+            app.launchEnvironment.removeValue(forKey: "AQD_TEST_DENIED_CAPTURE_CLEANUP")
+        }
+        for rtl in [false, true] {
+            let mode = rtl ? "RTL" : "LTR"
+            app.launchArguments = baseArguments
+            if rtl {
+                app.launchArguments += ["-AppleTextDirection", "YES", "-NSForceRightToLeftWritingDirection", "YES"]
+            }
+            // Owned UUID fixture persists original, thumbnail and accepted photo;
+            // no Photos picker, deletion, save or fake UI is involved.
+            app.launchEnvironment["AQD_TEST_DENIED_CAPTURE_CLEANUP"] = "1"
+            relaunchIsolatedApp()
+            if rtl {
+                XCTAssertGreaterThan(tab("Today").frame.midX, tab("Profile").frame.midX)
+            } else {
+                XCTAssertLessThan(tab("Today").frame.midX, tab("Profile").frame.midX)
+            }
+            tab("Closet").tap()
+            app.buttons["closet.addPiece"].tap()
+            XCTAssertTrue(app.navigationBars["Add piece"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.images["Selected piece photo, entire image fitted"].waitForExistence(timeout: 5))
+            let edit = app.buttons["capture.editPhoto"]
+            XCTAssertTrue(edit.exists)
+            assertBackGlyph(app.buttons["capture.back"], rtl: rtl, scene: "\(mode) Capture")
+            let save = app.buttons["capture.save"]
+            guard exposeInForm(edit, title: "Add piece", footer: save) else { return }
+            edit.tap()
+            XCTAssertTrue(app.navigationBars["Edit photo"].waitForExistence(timeout: 5))
+            let photoBack = app.buttons["photo.editor.back"]
+            assertBackGlyph(photoBack, rtl: rtl, scene: "\(mode) Photo editor")
+            photoBack.tap()
+            XCTAssertTrue(app.navigationBars["Add piece"].waitForExistence(timeout: 5))
+            let details = app.buttons["More details"]
+            guard exposeInForm(details, title: "Add piece", footer: save) else { return }
+            details.tap()
+            XCTAssertTrue(app.navigationBars["Details"].waitForExistence(timeout: 5))
+            let detailsBack = app.navigationBars["Details"].buttons["Back"]
+            assertBackGlyph(detailsBack, rtl: rtl, scene: "\(mode) Details")
+            detailsBack.tap()
+            XCTAssertTrue(app.navigationBars["Add piece"].waitForExistence(timeout: 5))
+        }
     }
 
     func testSharedCaptureControlsAtLargestTextKeepKeyboardSafeTargetsAndValidation() {
@@ -101,6 +220,257 @@ final class NativeFlowTests: XCTestCase {
         XCTAssertTrue(tab("Closet").isSelected)
         XCTAssertTrue(tab("Closet").isHittable)
         attachScreenshot("Landscape Agent Back restores native Closet")
+    }
+
+    func testCapturePhotoSelectorUsesPaperNoPhotoSpacing() {
+        tab("Closet").tap()
+        app.buttons["closet.addPiece"].tap()
+        let selector = app.buttons["capture.addPhoto"]
+        XCTAssertTrue(selector.waitForExistence(timeout: 5))
+        let labels = app.staticTexts.matching(NSPredicate(format: "label == %@", "Photo"))
+        XCTAssertEqual(labels.count, 1, "Photo must be exposed exactly once")
+        let label = labels.firstMatch
+        XCTAssertTrue(label.exists)
+        // Live Paper SO6/SP0 and capture-photo composition:12pt before
+        // acceptance, not the selected-photo stack's tighter8pt gap.
+        XCTAssertEqual(selector.frame.minY - label.frame.maxY, 12, accuracy: 1)
+        attachScreenshot("Paper no-photo label and selector spacing")
+    }
+
+    func testCaptureSelectedPhotoUsesPaperEightPointSpacing() {
+        app.terminate()
+        app.launchEnvironment["AQD_TEST_DENIED_CAPTURE_CLEANUP"] = "1"
+        app.launch()
+        tab("Closet").tap()
+        app.buttons["closet.addPiece"].tap()
+        let image = app.images["Selected piece photo, entire image fitted"]
+        let edit = app.buttons["capture.editPhoto"]
+        XCTAssertTrue(image.waitForExistence(timeout: 5))
+        XCTAssertTrue(edit.exists)
+        // This guarded fixture persists actual original/thumbnail bytes.
+        // Measure real native controls, not a duplicate VStack definition.
+        XCTAssertEqual(edit.frame.minY - image.frame.maxY, 8, accuracy: 1)
+        attachScreenshot("Paper accepted-photo and edit spacing")
+    }
+
+    func testDetailsLandscapeAvailabilityNotesApplyDiscardAndRelaunch() {
+        defer { XCUIDevice.shared.orientation = .portrait }
+        tab("Closet").tap()
+        app.buttons["closet.addPiece"].tap()
+        let name = app.textFields["capture.field.name"]
+        let save = app.buttons["capture.save"]
+        XCTAssertTrue(name.waitForExistence(timeout: 5))
+        name.tap()
+        name.typeText("Foundation landscape draft")
+        let category = app.buttons["capture.category"]
+        guard exposeInForm(category, title: "Add piece", footer: save) else { return }
+        category.tap()
+        XCTAssertTrue(app.buttons["Shoes"].waitForExistence(timeout: 5))
+        app.buttons["Shoes"].tap()
+        let more = app.buttons["More details"]
+        guard exposeInForm(more, title: "Add piece", footer: save) else { return }
+        more.tap()
+        XCTAssertTrue(app.navigationBars["Details"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.keyboards.firstMatch.exists, "Details must not inherit the parent Name editing keyboard")
+        let portraitFrame = app.frame
+        let landscapeFrame = CGRect(origin: portraitFrame.origin,
+                                    size: CGSize(width: portraitFrame.height, height: portraitFrame.width))
+        XCUIDevice.shared.orientation = .landscapeLeft
+        // The orientation request can return before UIKit has resized the scene.
+        // Wait for the public native frame instead of accepting a transition image.
+        guard app.wait(for: \.frame, toEqual: landscapeFrame, timeout: 10) else {
+            attachScreenshot("Details landscape rotation did not settle")
+            XCTFail("Landscape frame did not settle: app=\(app.frame), window=\(app.windows.firstMatch.frame)")
+            return
+        }
+        XCTAssertGreaterThan(app.frame.width, app.frame.height)
+        attachScreenshot("Details after settled landscape rotation")
+        XCTAssertFalse(app.keyboards.firstMatch.exists, "Details rotation must not reactivate the parent Name keyboard")
+        let apply = app.buttons["Apply"]
+        let availability = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Availability,")).firstMatch
+        guard exposeInForm(availability, title: "Details", footer: apply) else { return }
+        attachScreenshot("Details after qualified Availability scrolling")
+        XCTAssertFalse(app.keyboards.firstMatch.exists, "Qualified form scrolling must not focus a covered text field")
+        availability.tap()
+        XCTAssertTrue(app.buttons["Laundry"].waitForExistence(timeout: 5))
+        app.buttons["Laundry"].tap()
+        XCTAssertTrue(availability.label.contains("Laundry"))
+        attachScreenshot("Details after selecting Laundry")
+        XCTAssertFalse(app.keyboards.firstMatch.exists, "Availability selection must not reactivate the parent Name keyboard")
+        let notes = app.textFields["capture.field.notes"]
+        func captureKeyboardState(_ stage: String) {
+            attachScreenshot("Details keyboard state — \(stage)")
+            let keyboards = app.keyboards.allElementsBoundByIndex.map { keyboard in
+                let keys = keyboard.keys.allElementsBoundByIndex.map {
+                    "\($0.label): frame=\($0.frame), hittable=\($0.isHittable)"
+                }.joined(separator: "\n")
+                return "keyboard: frame=\(keyboard.frame), hittable=\(keyboard.isHittable)\n\(keys)"
+            }.joined(separator: "\n")
+            let attachment = XCTAttachment(string: """
+                stage=\(stage) orientation=\(XCUIDevice.shared.orientation.rawValue)
+                app=\(app.frame) windows=\(app.windows.allElementsBoundByIndex.map(\.frame))
+                notes=\(notes.frame), value=\(String(describing: notes.value)), hittable=\(notes.isHittable)
+                apply=\(apply.frame), hittable=\(apply.isHittable)
+                \(keyboards)
+                \(app.debugDescription)
+                """)
+            attachment.name = "Details keyboard geometry — \(stage)"
+            attachment.lifetime = .keepAlways
+            add(attachment)
+        }
+        guard exposeInForm(notes, title: "Details", footer: apply) else { return }
+        captureKeyboardState("before Notes activation")
+        notes.tap()
+        captureKeyboardState("after Notes activation")
+        notes.typeText("FoundationLandscapeNotes")
+        captureKeyboardState("before keyboard-safe Apply assertion")
+        XCTAssertEqual(notes.value as? String, "FoundationLandscapeNotes")
+        let keyboard = app.keyboards.firstMatch
+        XCTAssertTrue(keyboard.exists)
+        XCTAssertTrue(keyboard.isHittable, "Notes must expose the visible native software keyboard")
+        XCTAssertTrue(keyboard.keys["space"].isHittable, "A real software key must be reachable, not an offscreen keyboard container")
+        XCTAssertTrue(app.frame.intersects(keyboard.frame))
+        XCTAssertTrue(notes.isHittable)
+        XCTAssertGreaterThanOrEqual(notes.frame.minX, app.frame.minX)
+        XCTAssertLessThanOrEqual(notes.frame.maxX, app.frame.maxX)
+        XCTAssertGreaterThanOrEqual(notes.frame.minY, app.frame.minY)
+        XCTAssertLessThanOrEqual(notes.frame.maxY, app.frame.maxY)
+        // Multiline AX bounds include reserved blank lines, not glyph occlusion.
+        // Keep rendered text/caret visibility as an explicit visual evidence gate.
+        let visibleEditor = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        visibleEditor.name = "Full screen — Notes text and caret visibility before Apply"
+        visibleEditor.lifetime = .keepAlways
+        add(visibleEditor)
+        XCTAssertTrue(apply.isHittable)
+        XCTAssertLessThanOrEqual(apply.frame.maxY, keyboard.frame.minY + 1)
+        attachScreenshot("Landscape Details Notes and keyboard-safe Apply")
+        app.navigationBars["Details"].buttons["Back"].tap()
+        let decision = app.sheets["Discard these detail changes?"]
+        XCTAssertTrue(decision.waitForExistence(timeout: 5))
+        let keep = decision.buttons["Keep editing"]
+        if keep.exists {
+            keep.tap()
+        } else {
+            // The native landscape popover omits its cancel-role row.
+            // Cancel through a measured outside tap, not an invented button.
+            let header = app.navigationBars["Details"].frame
+            let point = CGPoint(x: header.maxX - 10, y: header.midY)
+            XCTAssertFalse(decision.frame.contains(point))
+            app.coordinate(withNormalizedOffset: .zero)
+                .withOffset(CGVector(dx: point.x - app.frame.minX, dy: point.y - app.frame.minY)).tap()
+        }
+        XCTAssertTrue(decision.waitForNonExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["Details"].exists)
+        XCTAssertEqual(notes.value as? String, "FoundationLandscapeNotes")
+        XCTAssertTrue(availability.label.contains("Laundry"))
+        apply.tap()
+        XCTAssertTrue(app.navigationBars["Add piece"].waitForExistence(timeout: 5))
+        XCTAssertEqual(name.value as? String, "Foundation landscape draft")
+        XCTAssertTrue(category.label.contains("Shoes"))
+        XCTAssertFalse(save.isEnabled, "Apply changes the draft, never saves a piece without its photo")
+        XCTAssertFalse(app.navigationBars["Piece saved"].exists)
+        XCUIDevice.shared.orientation = .portrait
+        guard app.wait(for: \.frame, toEqual: portraitFrame, timeout: 10) else {
+            attachScreenshot("Capture portrait rotation did not settle")
+            XCTFail("Portrait frame did not settle: \(app.frame)")
+            return
+        }
+        XCTAssertGreaterThan(app.frame.height, app.frame.width)
+        guard exposeInForm(more, title: "Add piece", footer: save) else { return }
+        more.tap()
+        XCTAssertTrue(app.navigationBars["Details"].waitForExistence(timeout: 5))
+        guard exposeInForm(availability, title: "Details", footer: apply) else { return }
+        XCTAssertTrue(availability.label.contains("Laundry"))
+        guard exposeInForm(notes, title: "Details", footer: apply) else { return }
+        XCTAssertEqual(notes.value as? String, "FoundationLandscapeNotes")
+        notes.tap()
+        notes.typeText("x")
+        XCTAssertNotEqual(notes.value as? String, "FoundationLandscapeNotes")
+        app.navigationBars["Details"].buttons["Back"].tap()
+        XCTAssertTrue(app.buttons["Discard changes"].waitForExistence(timeout: 5))
+        app.buttons["Discard changes"].tap()
+        XCTAssertTrue(app.navigationBars["Add piece"].waitForExistence(timeout: 5))
+        app.buttons["capture.back"].tap()
+        XCTAssertTrue(app.navigationBars["Closet"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Your closet starts here"].exists)
+        app.terminate()
+        app.launch() // Same UUID: verify actual persisted parent draft, not local child State.
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        tab("Closet").tap()
+        app.buttons["closet.addPiece"].tap()
+        XCTAssertTrue(name.waitForExistence(timeout: 5))
+        XCTAssertEqual(name.value as? String, "Foundation landscape draft")
+        XCTAssertTrue(category.label.contains("Shoes"))
+        XCTAssertFalse(save.isEnabled)
+        guard exposeInForm(more, title: "Add piece", footer: save) else { return }
+        more.tap()
+        XCTAssertTrue(app.navigationBars["Details"].waitForExistence(timeout: 5))
+        guard exposeInForm(availability, title: "Details", footer: apply) else { return }
+        XCTAssertTrue(availability.label.contains("Laundry"))
+        guard exposeInForm(notes, title: "Details", footer: apply) else { return }
+        XCTAssertEqual(notes.value as? String, "FoundationLandscapeNotes", "Discard must not overwrite the applied parent draft")
+        attachScreenshot("Portrait Details relaunch retains applied values and discards provisional child edit")
+    }
+
+    func testMultilineNotesKeepEditingAcrossRotation() {
+        defer { XCUIDevice.shared.orientation = .portrait }
+        tab("Closet").tap()
+        app.buttons["closet.addPiece"].tap()
+        let more = app.buttons["More details"]
+        guard exposeInForm(more, title: "Add piece", footer: app.buttons["capture.save"]) else { return }
+        more.tap()
+        XCTAssertTrue(app.navigationBars["Details"].waitForExistence(timeout: 5))
+        let notes = app.textFields["capture.field.notes"]
+        let apply = app.buttons["Apply"]
+        guard exposeInForm(notes, title: "Details", footer: apply) else { return }
+        let lines = (1...6).map { "Line \($0) wardrobe note" }
+        let text = lines.joined(separator: "\n")
+        notes.tap()
+        notes.typeText(lines[0])
+        let keyboard = app.keyboards.firstMatch
+        XCTAssertTrue(keyboard.exists, "Notes activation must show the native software keyboard")
+        XCTAssertTrue(keyboard.isHittable, "Notes keyboard \(keyboard.frame) must be reachable in \(app.frame)")
+        XCTAssertTrue(keyboard.keys["space"].isHittable)
+        for line in lines.dropFirst() {
+            let enter = app.keyboards.firstMatch.buttons["Return"]
+            XCTAssertTrue(enter.isHittable)
+            enter.tap()
+            XCTAssertTrue(app.keyboards.firstMatch.keys["space"].isHittable,
+                          "The real Return key must keep multiline Notes editable")
+            notes.typeText(line)
+        }
+        XCTAssertEqual(notes.value as? String, text)
+        func captureEditor(_ title: String) {
+            let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+            attachment.name = title
+            attachment.lifetime = .keepAlways
+            add(attachment)
+        }
+        captureEditor("Full screen — multiline Notes portrait text and caret")
+        XCTAssertTrue(app.keyboards.firstMatch.keys["space"].isHittable,
+                      "Typing multiline Notes must retain the visible software keyboard")
+        let portrait = app.frame
+        let landscape = CGRect(origin: portrait.origin, size: CGSize(width: portrait.height, height: portrait.width))
+        XCUIDevice.shared.orientation = .landscapeLeft
+        XCTAssertTrue(app.wait(for: \.frame, toEqual: landscape, timeout: 10))
+        XCTAssertTrue(app.keyboards.firstMatch.keys["space"].isHittable)
+        app.keyboards.firstMatch.buttons["Return"].tap()
+        XCTAssertTrue(app.keyboards.firstMatch.keys["space"].isHittable)
+        notes.typeText("Line 7 after rotation")
+        let edited = text + "\nLine 7 after rotation"
+        XCTAssertEqual(notes.value as? String, edited)
+        captureEditor("Full screen — multiline Notes active last line and caret after rotation")
+        XCTAssertTrue(app.keyboards.firstMatch.keys["space"].isHittable,
+                      "Continued multiline editing after rotation must retain the software keyboard")
+        XCTAssertTrue(notes.isHittable)
+        XCTAssertTrue(apply.isHittable)
+        XCTAssertLessThanOrEqual(apply.frame.maxY, app.keyboards.firstMatch.frame.minY + 1)
+        apply.tap()
+        XCTAssertTrue(app.navigationBars["Add piece"].waitForExistence(timeout: 5))
+        guard exposeInForm(more, title: "Add piece", footer: app.buttons["capture.save"]) else { return }
+        more.tap()
+        XCTAssertTrue(app.navigationBars["Details"].waitForExistence(timeout: 5))
+        XCTAssertEqual(notes.value as? String, edited)
     }
 
     func testCaptureAccessibilityAuditKeepsNativeLabelsContrastAndTargets() throws {
@@ -526,9 +896,9 @@ final class NativeFlowTests: XCTestCase {
         XCTAssertEqual(name.value as? String, "UI test shoes")
         XCTAssertFalse(app.buttons["capture.save"].isEnabled)
 
+        dismissKeyboardTutorialIfPresent()
         let category = app.buttons["capture.category"]
-        if !category.isHittable { app.swipeUp() }
-        XCTAssertTrue(category.isHittable)
+        guard exposeInForm(category, title: "Add piece", footer: app.buttons["capture.save"]) else { return }
         category.tap()
         let shoes = app.buttons["Shoes"]
         XCTAssertTrue(shoes.waitForExistence(timeout: 5))
@@ -627,11 +997,25 @@ final class NativeFlowTests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Edit photo"].waitForExistence(timeout: 5))
         app.buttons["Rotate"].tap()
         app.buttons["Portrait 3:4"].tap()
+        XCTAssertTrue(app.buttons["Portrait 3:4"].isSelected, "Provisional framing must be selected before the discard decision")
+        attachScreenshot("Provisional Portrait framing before native discard decision")
         app.buttons["photo.editor.back"].tap()
-        XCTAssertTrue(app.staticTexts["Discard photo edits?"].waitForExistence(timeout: 5))
-        let keepEditing = app.buttons["Cancel"]
-        if keepEditing.exists { keepEditing.tap() }
-        else { app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75)).tap() }
+        let photoDecision = app.sheets["Discard photo edits?"]
+        XCTAssertTrue(photoDecision.waitForExistence(timeout: 5))
+        attachScreenshot("Native photo discard decision before cancellation")
+        let keepEditing = photoDecision.buttons["Cancel"]
+        if keepEditing.exists {
+            keepEditing.tap()
+        } else {
+            // Native popovers may omit the cancel-role row. Use blank header
+            // space outside the measured decision, not an arbitrary body tap.
+            let header = app.navigationBars["Edit photo"].frame
+            let point = CGPoint(x: header.maxX - 10, y: header.midY)
+            XCTAssertFalse(photoDecision.frame.contains(point))
+            app.coordinate(withNormalizedOffset: .zero)
+                .withOffset(CGVector(dx: point.x - app.frame.minX, dy: point.y - app.frame.minY)).tap()
+        }
+        XCTAssertTrue(photoDecision.waitForNonExistence(timeout: 5))
         XCTAssertTrue(app.navigationBars["Edit photo"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["Portrait 3:4"].isSelected, "Cancellation must preserve provisional framing")
         app.buttons["photo.editor.back"].tap()
@@ -829,18 +1213,7 @@ final class NativeFlowTests: XCTestCase {
     /// system picker, not arbitrary photos or app controls. Coordinates refer to
     /// the public screenshot; this neither injects media nor bypasses PhotosUI.
     private func syntheticPickerPhotoPoint(_ image: UIImage) -> CGPoint? {
-        guard let source = image.cgImage else { return nil }
-        let width = source.width, height = source.height
-        var pixels = [UInt8](repeating: 0, count: width * height * 4)
-        let drawn = pixels.withUnsafeMutableBytes { buffer -> Bool in
-            guard let context = CGContext(data: buffer.baseAddress, width: width, height: height,
-                                          bitsPerComponent: 8, bytesPerRow: width * 4,
-                                          space: CGColorSpaceCreateDeviceRGB(),
-                                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue) else { return false }
-            context.draw(source, in: CGRect(x: 0, y: 0, width: width, height: height))
-            return true
-        }
-        guard drawn else { return nil }
+        guard let (width, height, pixels) = rgbaPixels(image) else { return nil }
         let unit = Double(width) / (3 * 240)
         func color(_ x: Int, _ y: Int, _ dx: Double, _ dy: Double) -> (UInt8, UInt8, UInt8)? {
             let px = x + Int(dx * unit), py = y + Int(dy * unit)
@@ -867,18 +1240,7 @@ final class NativeFlowTests: XCTestCase {
 
     /// Only the seeder's synthetic blue field/white landmark is meaningful here.
     private func syntheticWhiteLandmark(_ image: UIImage) -> CGPoint? {
-        guard let source = image.cgImage else { return nil }
-        let width = source.width, height = source.height
-        var pixels = [UInt8](repeating: 0, count: width * height * 4)
-        let drawn = pixels.withUnsafeMutableBytes { buffer -> Bool in
-            guard let context = CGContext(data: buffer.baseAddress, width: width, height: height,
-                                          bitsPerComponent: 8, bytesPerRow: width * 4,
-                                          space: CGColorSpaceCreateDeviceRGB(),
-                                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue) else { return false }
-            context.draw(source, in: CGRect(x: 0, y: 0, width: width, height: height))
-            return true
-        }
-        guard drawn else { return nil }
+        guard let (width, height, pixels) = rgbaPixels(image) else { return nil }
         var minX = width, minY = height, maxX = -1, maxY = -1
         var whiteCount = 0, whiteX = 0.0, whiteY = 0.0
         for y in 0..<height {
@@ -900,6 +1262,81 @@ final class NativeFlowTests: XCTestCase {
         // desaturate an obscured edge without changing the actual crop geometry.
         return CGPoint(x: (whiteX / Double(whiteCount)) / Double(width),
                        y: (whiteY / Double(whiteCount)) / Double(height))
+    }
+
+    private func rgbaPixels(_ image: UIImage) -> (width: Int, height: Int, pixels: [UInt8])? {
+        guard let source = image.cgImage else { return nil }
+        let width = source.width, height = source.height
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+        let drawn = pixels.withUnsafeMutableBytes { buffer -> Bool in
+            guard let context = CGContext(data: buffer.baseAddress, width: width, height: height,
+                                          bitsPerComponent: 8, bytesPerRow: width * 4,
+                                          space: CGColorSpaceCreateDeviceRGB(),
+                                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue) else { return false }
+            context.draw(source, in: CGRect(x: 0, y: 0, width: width, height: height))
+            return true
+        }
+        return drawn ? (width, height, pixels) : nil
+    }
+
+    /// Observe the real tinted chevron, excluding neutral native glass.
+    /// Direction comes from tip versus arm-end geometry, never source symbols.
+    private func assertBackGlyph(_ button: XCUIElement, rtl: Bool, scene: String,
+                                 file: StaticString = #filePath, line: UInt = #line) {
+        guard button.waitForExistence(timeout: 5), button.isHittable else {
+            XCTFail("Glyph driver failure: missing native Back — \(scene)", file: file, line: line)
+            return
+        }
+        let image = button.screenshot().image
+        let attachment = XCTAttachment(image: image)
+        attachment.name = "Actual Back glyph — \(scene)"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+        attachScreenshot("Actual scene before Back direction assertion — \(scene)")
+        guard let (width, height, pixels) = rgbaPixels(image) else {
+            XCTFail("Glyph driver failure: RGBA decode — \(scene)", file: file, line: line)
+            return
+        }
+        var points: [(x: Int, y: Int)] = []
+        for y in 0..<height {
+            for x in 0..<width {
+                let offset = (y * width + x) * 4
+                let r = Int(pixels[offset]), g = Int(pixels[offset + 1]), b = Int(pixels[offset + 2])
+                if b > 150, b - r > 70, b - g > 30, g > 55 {
+                    points.append((x, y))
+                }
+            }
+        }
+        guard let minX = points.map(\.x).min(), let maxX = points.map(\.x).max(),
+              let minY = points.map(\.y).min(), let maxY = points.map(\.y).max() else {
+            XCTFail("Glyph driver failure: no blue native chevron — \(scene)", file: file, line: line)
+            return
+        }
+        let glyphWidth = Double(maxX - minX + 1), glyphHeight = Double(maxY - minY + 1)
+        let scale = Double(image.scale)
+        guard points.count >= Int(20 * scale * scale), glyphWidth >= 6 * scale,
+              glyphHeight >= 10 * scale, glyphHeight > glyphWidth * 1.15 else {
+            XCTFail("Glyph driver failure: unexpected geometry — \(scene), count=\(points.count), bbox=\(glyphWidth)x\(glyphHeight), scale=\(scale)", file: file, line: line)
+            return
+        }
+        let middleY = Double(minY + maxY) / 2
+        let tip = points.filter { abs(Double($0.y) - middleY) <= glyphHeight * 0.06 }
+        let ends = points.filter { Double($0.y - minY) <= glyphHeight * 0.15 || Double(maxY - $0.y) <= glyphHeight * 0.15 }
+        guard !tip.isEmpty, !ends.isEmpty else {
+            XCTFail("Glyph driver failure: missing tip/arms — \(scene)", file: file, line: line)
+            return
+        }
+        let delta = tip.reduce(0.0) { $0 + Double($1.x) } / Double(tip.count)
+            - ends.reduce(0.0) { $0 + Double($1.x) } / Double(ends.count)
+        let metrics = XCTAttachment(string: "\(scene): pixels=\(points.count), bbox=\(glyphWidth)x\(glyphHeight), tipMinusArms=\(delta), requiredMagnitude=\(glyphWidth * 0.45)")
+        metrics.name = "Measured native Back geometry — \(scene)"
+        metrics.lifetime = .keepAlways
+        add(metrics)
+        if rtl {
+            XCTAssertGreaterThan(delta, glyphWidth * 0.45, "Actual RTL Back must point right — \(scene)", file: file, line: line)
+        } else {
+            XCTAssertLessThan(delta, -glyphWidth * 0.45, "Actual LTR Back must point left — \(scene)", file: file, line: line)
+        }
     }
 
     private func portraitViewportScreenshot(_ element: XCUIElement, size: CGSize) -> UIImage {
@@ -950,6 +1387,156 @@ final class NativeFlowTests: XCTestCase {
         let buttons = app.tabBars.firstMatch.buttons
         let identified = buttons["root.tab.\(name.lowercased())"]
         return identified.exists ? identified : buttons[name]
+    }
+
+    private func relaunchIsolatedApp() {
+        app.terminate()
+        XCUIDevice.shared.orientation = .portrait
+        app.launchEnvironment["AQD_TEST_STORE_ID"] = UUID().uuidString
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        let frame = app.frame
+        let portrait = CGRect(origin: frame.origin,
+                              size: CGSize(width: min(frame.width, frame.height), height: max(frame.width, frame.height)))
+        XCTAssertTrue(app.wait(for: \.frame, toEqual: portrait, timeout: 10))
+    }
+
+    private func exerciseSystemAccessibility(motion: String, transparency: String, details: Bool) {
+        guard let originalMotion = systemAccessibilityValue("Reduce Motion", section: "Motion"),
+              let originalTransparency = systemAccessibilityValue("Reduce Transparency", section: "Display & Text Size") else { return }
+        // Read and register BOTH original values before mutating either setting.
+        originalAccessibility = (originalMotion, originalTransparency)
+        let receipt = XCTAttachment(string: "Original OS preferences: motion=\(originalMotion), transparency=\(originalTransparency); requested=\(motion)/\(transparency)")
+        receipt.name = "System accessibility preference restoration receipt"
+        receipt.lifetime = .keepAlways
+        add(receipt)
+        guard setSystemAccessibility("Reduce Motion", section: "Motion", value: motion),
+              setSystemAccessibility("Reduce Transparency", section: "Display & Text Size", value: transparency) else { return }
+        // Apply the changed OS traits in a fresh foreground scene; a resumed
+        // background snapshot is not a qualified native interaction target.
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 10))
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        testAgentFullScreenBackRestoresCloset()
+        attachScreenshot("Actual OS preferences \(motion)/\(transparency) — native Agent return")
+        testCaptureSourceClosePreservesDraftAndPhotoIsRequired()
+        attachScreenshot("Actual OS preferences \(motion)/\(transparency) — retained source draft")
+        if details {
+            relaunchIsolatedApp()
+            testDetailsLandscapeAvailabilityNotesApplyDiscardAndRelaunch()
+        }
+    }
+
+    private func systemAccessibilitySwitch(_ title: String, section: String) -> XCUIElement? {
+        settings.launch()
+        for _ in 0..<6 where !settings.navigationBars["Settings"].exists {
+            let back = settings.navigationBars.firstMatch.buttons.firstMatch
+            guard back.exists, back.isHittable else {
+                XCTFail("Cannot return to the public Settings root: \(settings.debugDescription)")
+                return nil
+            }
+            back.tap()
+        }
+        guard settings.navigationBars["Settings"].exists else {
+            XCTFail("Settings root was not reached")
+            return nil
+        }
+        for label in ["Accessibility", section] {
+            let row = settings.staticTexts[label].firstMatch
+            for _ in 0..<8 where !row.exists || !row.isHittable { settings.swipeUp() }
+            guard row.exists, row.isHittable else {
+                XCTFail("Public Settings row unavailable: \(label), \(settings.debugDescription)")
+                return nil
+            }
+            row.tap()
+        }
+        let switches = settings.switches.matching(NSPredicate(format: "label == %@", title))
+        for _ in 0..<8 where switches.count == 0 { settings.swipeUp() }
+        guard switches.count == 1, switches.firstMatch.isHittable else {
+            XCTFail("Expected one readable public Settings switch: \(title), \(settings.debugDescription)")
+            return nil
+        }
+        return switches.firstMatch
+    }
+
+    private func systemAccessibilityValue(_ title: String, section: String) -> String? {
+        guard let control = systemAccessibilitySwitch(title, section: section),
+              let value = control.value as? String, ["0", "1"].contains(value) else {
+            XCTFail("Public Settings switch has no Boolean value: \(title)")
+            return nil
+        }
+        return value
+    }
+
+    @discardableResult
+    private func setSystemAccessibility(_ title: String, section: String, value: String) -> Bool {
+        guard let control = systemAccessibilitySwitch(title, section: section),
+              let current = control.value as? String, ["0", "1"].contains(current) else {
+            XCTFail("Cannot read system accessibility preference: \(title)")
+            return false
+        }
+        if current != value {
+            let image = XCTAttachment(screenshot: control.screenshot())
+            image.name = "Public Settings switch before activation — \(title)"
+            image.lifetime = .keepAlways
+            add(image)
+            // Settings exposes its label and trailing switch as one wide AX
+            // rectangle. Its center is label text, not the native toggle.
+            if control.frame.width > control.frame.height * 3 {
+                control.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
+            } else {
+                control.tap()
+            }
+        }
+        let settled = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", value), object: control)
+        guard XCTWaiter.wait(for: [settled], timeout: 5) == .completed else {
+            XCTFail("System accessibility preference did not settle: \(title)=\(value)")
+            return false
+        }
+        return true
+    }
+
+    private func dismissKeyboardTutorialIfPresent() {
+        let tutorial = app.staticTexts["Speed up your typing by sliding your finger across the letters to compose a word."]
+        guard tutorial.exists else { return }
+        attachScreenshot("System keyboard tutorial before acknowledgment")
+        let proceed = app.buttons["Continue"]
+        XCTAssertTrue(proceed.exists)
+        proceed.tap()
+        XCTAssertTrue(tutorial.waitForNonExistence(timeout: 5))
+    }
+
+    /// Qualify the foreground form's real body, not just XCUI's hittable flag.
+    /// A covered picker can report hittable while a tap hits native chrome.
+    private func exposeInForm(_ target: XCUIElement, title: String, footer: XCUIElement) -> Bool {
+        for _ in 0..<12 {
+            let header = app.navigationBars[title]
+            guard header.exists, footer.exists else {
+                XCTFail("Missing foreground form chrome: \(title)")
+                return false
+            }
+            let top = header.frame.maxY + 4
+            let keyboard = app.keyboards.firstMatch
+            let bottom = min(footer.frame.minY - 4, keyboard.exists ? keyboard.frame.minY - 4 : app.frame.maxY)
+            guard bottom - top > 60 else {
+                attachScreenshot("Insufficient foreground form body — \(title)")
+                XCTFail("Insufficient visible form body: \(title), header=\(header.frame), footer=\(footer.frame), keyboard=\(keyboard.exists ? keyboard.frame : .zero), app=\(app.frame), window=\(app.windows.firstMatch.frame)")
+                return false
+            }
+            if target.exists, target.isHittable, target.frame.minY >= top, target.frame.maxY <= bottom {
+                return true
+            }
+            let upward = !target.exists || target.frame.midY > (top + bottom) / 2
+            let origin = app.coordinate(withNormalizedOffset: .zero)
+            let x = app.frame.width / 2
+            let start = origin.withOffset(CGVector(dx: x, dy: (upward ? bottom - 20 : top + 20) - app.frame.minY))
+            let end = origin.withOffset(CGVector(dx: x, dy: (upward ? top + 20 : bottom - 20) - app.frame.minY))
+            start.press(forDuration: 0.05, thenDragTo: end)
+        }
+        attachScreenshot("Unqualified form target — \(title)")
+        XCTFail("Target never entered the visible foreground body: \(target), \(app.debugDescription)")
+        return false
     }
 
     private func attachScreenshot(_ name: String) {

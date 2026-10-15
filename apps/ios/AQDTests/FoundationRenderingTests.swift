@@ -6,7 +6,8 @@ import XCTest
 @MainActor
 final class FoundationRenderingTests: XCTestCase {
     func testDisabledActionChangesToNeutralWithoutCallerOpacity() async throws {
-        let host = UIHostingController(rootView: PrimaryAction(title: "Save piece") {}.disabled(false).ignoresSafeArea())
+        let host = UIHostingController(rootView: PrimaryAction(title: "Save piece") {}.disabled(false).ignoresSafeArea()
+            .environment(\.colorScheme, .light))
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 844))
         window.overrideUserInterfaceStyle = .light
         window.rootViewController = host
@@ -16,6 +17,7 @@ final class FoundationRenderingTests: XCTestCase {
         let enabled = render(host.view)
         attach(enabled, "Primary enabled")
         host.rootView = PrimaryAction(title: "Save piece") {}.disabled(true).ignoresSafeArea()
+            .environment(\.colorScheme, .light)
         try await Task.sleep(for: .milliseconds(100))
         let disabled = render(host.view)
         attach(disabled, "Primary disabled")
@@ -132,6 +134,135 @@ final class FoundationRenderingTests: XCTestCase {
             .environment(\.dynamicTypeSize, .accessibility5), name: "Shared states dark largest text contrast", dark: true, width: 320, increasedContrast: true)
     }
 
+    func testNativeMetadataPreservesRoleExposureLargestTextAndRTL() async throws {
+        let text = "Selected photos are copied into AQD on this device. Originals stay in Photos."
+        let normal = UIHostingController(rootView: MetadataText(text).background(AppTheme.canvas))
+        let normalSize = normal.sizeThatFits(in: CGSize(width: 320, height: 4000))
+        func content(scheme: ColorScheme) -> some View {
+            MetadataText(text).background(AppTheme.canvas)
+                .environment(\.dynamicTypeSize, .accessibility5)
+                .environment(\.layoutDirection, .rightToLeft)
+                .environment(\.colorScheme, scheme)
+                .ignoresSafeArea()
+        }
+        let host = UIHostingController(rootView: content(scheme: .dark))
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+            .first { $0.activationState == .foregroundActive })
+        let container = UIViewController()
+        let window = UIWindow(windowScene: scene)
+        window.frame = CGRect(x: 0, y: 0, width: 320, height: 844)
+        window.overrideUserInterfaceStyle = .dark
+        window.rootViewController = container
+        window.makeKeyAndVisible()
+        container.addChild(host)
+        container.view.addSubview(host.view)
+        host.view.frame = window.bounds
+        host.didMove(toParent: container)
+        defer { window.isHidden = true; window.rootViewController = nil }
+        host.view.layoutIfNeeded()
+        try await Task.sleep(for: .milliseconds(100))
+        // Fit only after mounting establishes scene traits and safe-area geometry.
+        // The standalone rendering canvas has no navigation/status-bar inset.
+        let largeSize = host.sizeThatFits(in: CGSize(width: 320, height: 4000))
+        XCTAssertGreaterThan(largeSize.height, normalSize.height)
+        XCTAssertLessThanOrEqual(largeSize.width, 320)
+        host.view.frame = CGRect(x: 0, y: 0, width: 320, height: largeSize.height)
+        host.view.setNeedsLayout()
+        host.view.layoutIfNeeded()
+        try await Task.sleep(for: .milliseconds(100))
+        let image = render(host.view)
+        attach(image, "Native metadata dark largest text RTL")
+        XCTAssertGreaterThan(try matchingPixels(image, rgb: 0xB8B8BD), 100,
+                             "The rendered caption must contain the independent dark secondary ink")
+        let label = try XCTUnwrap(nativeLabel(in: host.view, text: text))
+        let requiredSize = label.sizeThatFits(CGSize(width: label.bounds.width, height: .greatestFiniteMagnitude))
+        let labelInHost = label.convert(label.bounds, to: host.view)
+        let diagnostics = XCTAttachment(string: """
+            font=\(String(describing: label.font))
+            labelTraits=\(label.traitCollection)
+            hostTraits=\(host.traitCollection)
+            windowTraits=\(window.traitCollection)
+            labelBounds=\(label.bounds) requiredAtActualWidth=\(requiredSize)
+            labelInHost=\(labelInHost) hostBounds=\(host.view.bounds) hostFrame=\(host.view.frame)
+            """)
+        diagnostics.name = "Native metadata settled fit"
+        diagnostics.lifetime = .keepAlways
+        add(diagnostics)
+        XCTAssertLessThanOrEqual(requiredSize.height, label.bounds.height + 1,
+                                 "The settled label must fit the complete caption at its actual width")
+        XCTAssertGreaterThanOrEqual(labelInHost.minX, host.view.bounds.minX - 1)
+        XCTAssertGreaterThanOrEqual(labelInHost.minY, host.view.bounds.minY - 1)
+        XCTAssertLessThanOrEqual(labelInHost.maxX, host.view.bounds.maxX + 1)
+        XCTAssertLessThanOrEqual(labelInHost.maxY, host.view.bounds.maxY + 1)
+        XCTAssertTrue(label.isAccessibilityElement, "Native metadata must remain exposed, not silence the audit")
+        XCTAssertTrue(label.accessibilityTraits.contains(.staticText))
+        XCTAssertEqual(label.text, text)
+        XCTAssertEqual(label.textAlignment, .right)
+        XCTAssertEqual(label.semanticContentAttribute, .forceRightToLeft)
+        XCTAssertEqual(label.numberOfLines, 0)
+        let expectedFont = UIFont.preferredFont(forTextStyle: .footnote,
+            compatibleWith: UITraitCollection(preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge))
+        XCTAssertEqual(label.font.pointSize, expectedFont.pointSize, accuracy: 0.1)
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        XCTAssertTrue(label.textColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
+            .getRed(&red, green: &green, blue: &blue, alpha: &alpha))
+        XCTAssertEqual(red, 184.0 / 255, accuracy: 0.002)
+        XCTAssertEqual(green, 184.0 / 255, accuracy: 0.002)
+        XCTAssertEqual(blue, 189.0 / 255, accuracy: 0.002)
+        XCTAssertEqual(alpha, 1, accuracy: 0.002)
+
+        // Reconfigure the same hosted view through the public SwiftUI environment.
+        // Reacquire the native label because an update may remount representables.
+        for (index, scheme) in [ColorScheme.light, .dark, .light].enumerated() {
+            host.rootView = content(scheme: scheme)
+            host.view.setNeedsLayout()
+            host.view.layoutIfNeeded()
+            try await Task.sleep(for: .milliseconds(100))
+            let updatedImage = render(host.view)
+            let updatedLabel = try XCTUnwrap(nativeLabel(in: host.view, text: text))
+            let style: UIUserInterfaceStyle = scheme == .dark ? .dark : .light
+            let expected: UInt32 = scheme == .dark ? 0xB8B8BD : 0x686C72
+            let inkPixels = try matchingPixels(updatedImage, rgb: expected)
+            var updatedRed: CGFloat = 0, updatedGreen: CGFloat = 0
+            var updatedBlue: CGFloat = 0, updatedAlpha: CGFloat = 0
+            XCTAssertTrue(updatedLabel.textColor.getRed(&updatedRed, green: &updatedGreen,
+                                                       blue: &updatedBlue, alpha: &updatedAlpha))
+            XCTAssertEqual(updatedLabel.overrideUserInterfaceStyle, style)
+            XCTAssertEqual(updatedLabel.traitCollection.userInterfaceStyle, style)
+            XCTAssertEqual(updatedRed, CGFloat((expected >> 16) & 255) / 255, accuracy: 0.002)
+            XCTAssertEqual(updatedGreen, CGFloat((expected >> 8) & 255) / 255, accuracy: 0.002)
+            XCTAssertEqual(updatedBlue, CGFloat(expected & 255) / 255, accuracy: 0.002)
+            XCTAssertEqual(updatedAlpha, 1, accuracy: 0.002)
+            XCTAssertGreaterThan(inkPixels, 100, "Updated appearance must render its independent secondary ink")
+            XCTAssertEqual(updatedLabel.font.pointSize, expectedFont.pointSize, accuracy: 0.1)
+            XCTAssertEqual(updatedLabel.text, text)
+            XCTAssertTrue(updatedLabel.isAccessibilityElement)
+            XCTAssertTrue(updatedLabel.accessibilityTraits.contains(.staticText))
+            XCTAssertEqual(updatedLabel.textAlignment, .right)
+            XCTAssertEqual(updatedLabel.semanticContentAttribute, .forceRightToLeft)
+            XCTAssertEqual(updatedLabel.numberOfLines, 0)
+            let updatedRequiredSize = updatedLabel.sizeThatFits(
+                CGSize(width: updatedLabel.bounds.width, height: .greatestFiniteMagnitude))
+            let updatedInHost = updatedLabel.convert(updatedLabel.bounds, to: host.view)
+            XCTAssertLessThanOrEqual(updatedRequiredSize.height, updatedLabel.bounds.height + 1)
+            XCTAssertGreaterThanOrEqual(updatedInHost.minX, host.view.bounds.minX - 1)
+            XCTAssertGreaterThanOrEqual(updatedInHost.minY, host.view.bounds.minY - 1)
+            XCTAssertLessThanOrEqual(updatedInHost.maxX, host.view.bounds.maxX + 1)
+            XCTAssertLessThanOrEqual(updatedInHost.maxY, host.view.bounds.maxY + 1)
+            attach(updatedImage, "Native metadata update \(index) \(scheme) largest text RTL")
+            let updateDiagnostics = XCTAttachment(string: """
+                scheme=\(scheme) rgb=\(updatedRed),\(updatedGreen),\(updatedBlue) alpha=\(updatedAlpha)
+                matchingInkPixels=\(inkPixels) expectedRGB=\(String(expected, radix: 16))
+                font=\(String(describing: updatedLabel.font)) traits=\(updatedLabel.traitCollection)
+                labelBounds=\(updatedLabel.bounds) requiredAtActualWidth=\(updatedRequiredSize)
+                labelInHost=\(updatedInHost) hostBounds=\(host.view.bounds) hostFrame=\(host.view.frame)
+                """)
+            updateDiagnostics.name = "Native metadata appearance update \(index) \(scheme)"
+            updateDiagnostics.lifetime = .keepAlways
+            add(updateDiagnostics)
+        }
+    }
+
     func testAllPaletteRolesMatchIndependentLightAndDarkDesignValues() {
         let roles: [(Color, UInt32, UInt32, CGFloat, CGFloat)] = [
             (AppTheme.canvas, 0xF5F5F7, 0x1C1C1E, 1, 1),
@@ -189,6 +320,14 @@ final class FoundationRenderingTests: XCTestCase {
         }
     }
 
+    private func nativeLabel(in view: UIView, text: String) -> UILabel? {
+        if let label = view as? UILabel, label.text == text { return label }
+        for child in view.subviews {
+            if let label = nativeLabel(in: child, text: text) { return label }
+        }
+        return nil
+    }
+
     private func capture(_ content: some View, name: String, dark: Bool = false, width: CGFloat = 390, increasedContrast: Bool = false) async throws {
         let host = UIHostingController(rootView: content.ignoresSafeArea())
         host.overrideUserInterfaceStyle = dark ? .dark : .light
@@ -216,7 +355,10 @@ final class FoundationRenderingTests: XCTestCase {
 
     private func render(_ view: UIView) -> UIImage {
         view.layoutIfNeeded()
-        return UIGraphicsImageRenderer(bounds: view.bounds).image { _ in
+        let format = UIGraphicsImageRendererFormat()
+        // Compare SDR design literals without device-dependent HDR tone mapping.
+        format.preferredRange = .standard
+        return UIGraphicsImageRenderer(bounds: view.bounds, format: format).image { _ in
             view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
         }
     }
@@ -229,17 +371,24 @@ final class FoundationRenderingTests: XCTestCase {
     private func matchingPixels(_ image: UIImage, rgb: UInt32) throws -> Int {
         let pixels = try pixelBytes(image)
         let expected = [Int((rgb >> 16) & 255), Int((rgb >> 8) & 255), Int(rgb & 255)]
-        return stride(from: 0, to: pixels.count, by: 4).filter { index in
+        let matches = stride(from: 0, to: pixels.count, by: 4).filter { index in
             (0..<3).allSatisfy { abs(Int(pixels[index + $0]) - expected[$0]) <= 3 }
         }.count
+        return matches
     }
 
     private func pixelBytes(_ image: UIImage) throws -> [UInt8] {
         let cg = try XCTUnwrap(image.cgImage)
         var pixels = [UInt8](repeating: 0, count: cg.width * cg.height * 4)
-        let context = try XCTUnwrap(CGContext(data: &pixels, width: cg.width, height: cg.height, bitsPerComponent: 8,
-            bytesPerRow: cg.width * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
-        context.draw(cg, in: CGRect(x: 0, y: 0, width: cg.width, height: cg.height))
+        // DESIGN literals are sRGB. Device RGB can use the physical display's
+        // gamut, so normalize before comparing the same literal on every device.
+        let colorSpace = try XCTUnwrap(CGColorSpace(name: CGColorSpace.sRGB))
+        try pixels.withUnsafeMutableBytes { buffer in
+            let context = try XCTUnwrap(CGContext(data: buffer.baseAddress, width: cg.width, height: cg.height,
+                bitsPerComponent: 8, bytesPerRow: cg.width * 4, space: colorSpace,
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue))
+            context.draw(cg, in: CGRect(x: 0, y: 0, width: cg.width, height: cg.height))
+        }
         return pixels
     }
 }

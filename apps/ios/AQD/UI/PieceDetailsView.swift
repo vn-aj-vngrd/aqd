@@ -9,6 +9,8 @@ struct PieceDetailsView: View {
     @State private var tagsText: String
     @State private var wearText: String
     @State private var discardDecision = false
+    @FocusState private var notesFocused: Bool
+    private let notesAnchor = "details.notes"
 
     init(model: CaptureModel) {
         self.model = model
@@ -20,65 +22,76 @@ struct PieceDetailsView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    Text("Leave anything you don’t know blank. These details stay in the piece draft until you save it.")
-                        .font(.subheadline).foregroundStyle(AppTheme.secondary)
-                    field("Color", \.color)
-                    field("Brand", \.brand)
-                    field("Size", \.size)
-                    field("Fit", \.fit)
-                    field("Material", \.material)
-                    field("Season", \.season)
-                    field("Condition", \.condition)
-                    field("Ownership age", \.ownershipAge)
-                    LabeledField(title: "Tags, separated by commas", text: $tagsText,
-                                 accessibilityID: "capture.field.tags, separated by commas")
-                    LabeledField(title: "Prior wear estimate", text: $wearText,
-                                 accessibilityID: "capture.field.prior wear estimate")
-                        .keyboardType(.numberPad)
-                    Text("An estimate isn’t a dated wear record.").font(.footnote).foregroundStyle(AppTheme.secondary)
-                    LabeledControl(title: "Availability") {
-                        Picker("Availability", selection: $availability) {
-                            Text("Available").tag(PieceAvailability.available)
-                            Text("Unavailable").tag(PieceAvailability.unavailable)
-                            Text("Laundry").tag(PieceAvailability.laundry)
+            ScrollViewReader { scroll in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        Text("Leave anything you don’t know blank. These details stay in the piece draft until you save it.")
+                            .font(.subheadline).foregroundStyle(AppTheme.secondary)
+                        field("Color", \.color)
+                        field("Brand", \.brand)
+                        field("Size", \.size)
+                        field("Fit", \.fit)
+                        field("Material", \.material)
+                        field("Season", \.season)
+                        field("Condition", \.condition)
+                        field("Ownership age", \.ownershipAge)
+                        LabeledField(title: "Tags, separated by commas", text: $tagsText,
+                                     accessibilityID: "capture.field.tags, separated by commas")
+                        LabeledField(title: "Prior wear estimate", text: $wearText,
+                                     accessibilityID: "capture.field.prior wear estimate")
+                            .keyboardType(.numberPad)
+                        Text("An estimate isn’t a dated wear record.").font(.footnote).foregroundStyle(AppTheme.secondary)
+                        LabeledControl(title: "Availability") {
+                            Picker("Availability", selection: $availability) {
+                                Text("Available").tag(PieceAvailability.available)
+                                Text("Unavailable").tag(PieceAvailability.unavailable)
+                                Text("Laundry").tag(PieceAvailability.laundry)
+                            }
+                            .pickerStyle(.menu)
                         }
-                        .pickerStyle(.menu)
-                    }
-                    LabeledField(title: "Notes", text: $details.notes, multiline: true,
-                                 accessibilityID: "capture.field.notes")
-                    Text("Notes stay private and are not included in Agent context.")
-                        .font(.footnote).foregroundStyle(AppTheme.secondary)
-                    if !isValid {
-                        Text("Use up to 80 characters per detail, 20 tags of 40 characters, and 2,000 characters in Notes. Prior wear is a whole-number estimate from 0 to 10,000.")
-                            .font(.subheadline).foregroundStyle(AppTheme.error)
-                    }
-                }.padding(20)
-            }
-            .scrollDismissesKeyboard(.interactively)
-            .background(AppTheme.canvas)
-            .navigationTitle("Details").navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { dirty ? (discardDecision = true) : dismiss() } label: {
-                        Label("Back", systemImage: "chevron.left")
+                        LabeledField(title: "Notes", text: $details.notes, multiline: true,
+                                     accessibilityID: "capture.field.notes", editingFocus: $notesFocused)
+                            .id(notesAnchor)
+                        Text("Notes stay private and are not included in Agent context.")
+                            .font(.footnote).foregroundStyle(AppTheme.secondary)
+                        if !isValid {
+                            Text("Use up to 80 characters per detail, 20 tags of 40 characters, and 2,000 characters in Notes. Prior wear is a whole-number estimate from 0 to 10,000.")
+                                .font(.subheadline).foregroundStyle(AppTheme.error)
+                        }
+                    }.padding(20)
+                }
+                .scrollDismissesKeyboard(.immediately)
+                // Keep the focused field visible after keyboard/rotation changes
+                // the viewport, above the task footer.
+                .onChange(of: notesFocused) { _, focused in
+                    if focused { scroll.scrollTo(notesAnchor, anchor: .top) }
+                }
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { _ in
+                    if notesFocused { scroll.scrollTo(notesAnchor, anchor: .top) }
+                }
+                .background(AppTheme.canvas)
+                .navigationTitle("Details").navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button { dirty ? (discardDecision = true) : dismiss() } label: {
+                            Label("Back", systemImage: "chevron.backward")
+                        }
                     }
                 }
-            }
-            .safeAreaInset(edge: .bottom) {
-                ActionFooter {
-                    PrimaryAction(title: "Apply") {
-                        model.applyDetails(editedDetails, availability: availability)
-                        dismiss()
-                    }.disabled(!isValid)
+                .safeAreaInset(edge: .bottom) {
+                    ActionFooter {
+                        PrimaryAction(title: "Apply") {
+                            model.applyDetails(editedDetails, availability: availability)
+                            dismiss()
+                        }.disabled(!isValid)
+                    }
                 }
-            }
-            .confirmationDialog("Discard these detail changes?", isPresented: $discardDecision, titleVisibility: .visible) {
-                Button("Discard changes", role: .destructive) { dismiss() }
-                Button("Keep editing", role: .cancel) {}
-            } message: {
-                Text("Only this details edit will be discarded. The parent piece draft and saved piece are unchanged.")
+                .confirmationDialog("Discard these detail changes?", isPresented: $discardDecision, titleVisibility: .visible) {
+                    Button("Discard changes", role: .destructive) { dismiss() }
+                    Button("Keep editing", role: .cancel) {}
+                } message: {
+                    Text("Only this details edit will be discarded. The parent piece draft and saved piece are unchanged.")
+                }
             }
         }
         .tint(AppTheme.actionText)

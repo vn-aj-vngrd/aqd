@@ -123,7 +123,7 @@ struct PhotoEditorView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { dirty ? (discardDecision = true) : leave() } label: {
-                        Label("Back", systemImage: "chevron.left")
+                        Label("Back", systemImage: "chevron.backward")
                     }.disabled(applying).accessibilityIdentifier("photo.editor.back")
                     .confirmationDialog("Discard photo edits?", isPresented: $discardDecision, titleVisibility: .visible) {
                         Button("Discard edits", role: .destructive) { leave() }

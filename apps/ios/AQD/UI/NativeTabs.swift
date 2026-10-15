@@ -66,8 +66,11 @@ struct NativeTabs: UIViewControllerRepresentable {
         }
 
         func selectRoot(_ index: Int) {
-            guard taskID == nil, (0..<5).contains(index), index != agentIndex else { return }
-            controller?.selectedIndex = index
+            guard taskID == nil, (0..<5).contains(index), index != agentIndex,
+                  let controller else { return }
+            // UIKit27 invalidates hosted content even for a same-index assignment.
+            // A representable update must not schedule another equivalent update.
+            if controller.selectedIndex != index { controller.selectedIndex = index }
             originIndex = index
         }
 
