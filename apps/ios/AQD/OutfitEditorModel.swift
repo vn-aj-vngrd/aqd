@@ -179,6 +179,13 @@ extension OutfitEditorModel {
         }
     }
 
+    func planSavedOutfit() {
+        guard let saved, !pending, !unknown else { return }
+        let outfitID = saved.id
+        finish()
+        if state.outfitEditor == nil { state.pendingPlanOutfitID = outfitID }
+    }
+
     func stopGeneration() { generationTask?.cancel() }
 
     func addMissingPiece(_ category: PieceCategory) {
@@ -192,6 +199,11 @@ extension OutfitEditorModel {
 
 extension AppState {
     func openPendingOutfitCapture() {
+        if let id = pendingPlanOutfitID {
+            pendingPlanOutfitID = nil
+            openPlan(outfitID: id)
+            return
+        }
         guard let category = pendingOutfitCaptureCategory else { return }
         pendingOutfitCaptureCategory = nil
         addPiece()

@@ -435,8 +435,8 @@
       "referenceId": null,
       "registeredLabel": "05.00 · L09 · Planner · Week",
       "flowSection": "05",
-      "functionalCoverage": "placeholder",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -455,8 +455,8 @@
       "referenceId": null,
       "registeredLabel": "05.06 · L10 · Plan a look",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -475,8 +475,8 @@
       "referenceId": null,
       "registeredLabel": "05.08 · L84 · Planner · Saved date",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -485,8 +485,8 @@
       "referenceId": null,
       "registeredLabel": "05.05 · L83 · Add plan · Selected date",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1125,8 +1125,8 @@
       "referenceId": null,
       "registeredLabel": "05.09 · L128 · Plan entry",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {

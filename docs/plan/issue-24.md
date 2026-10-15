@@ -18,8 +18,10 @@
 | --- | --- | --- | --- | --- | --- |
 | S1 | Build/save/reopen and edit a manual outfit from owned pieces; durable draft, chooser and private receipt with failure/retry recovery | O1, O2, O7 | Committed | `AQD-Slice: #24/S1` | `261be64` |
 | S2 | Create/select multiple themes during outfit save; preserve names, memberships and identity | O3, O4, O7 | Committed | `AQD-Slice: #24/S2` | `0f4666d` |
-| S3 | Readiness/pinned first outfit and labelled rules/manual fallback; reviewed suggestions and safe replacement | O5, O6, O8, O9; W8–9 | Committed; model activation deferred #30 | `AQD-Slice: #24/S3` | Pending |
-| S4 | Outfit detail/More/favorite/edit/delete plus real date-prefilled Plan and separate Record wear save paths | O1, O9; scoped LOCAL-04/09/11 | Planned | `AQD-Slice: #24/S4` | Pending |
+| S3 | Readiness/pinned first outfit and labelled rules/manual fallback; reviewed suggestions and safe replacement | O5, O6, O8, O9; W8–9 | Committed; model activation deferred #30 | `AQD-Slice: #24/S3` | `75c01c1` |
+| S4 | Date-prefilled real Plan review/save/restart, distinct from wear | O9; scoped LOCAL-04/09 | Committed | `AQD-Slice: #24/S4` | Pending |
+| S5 | Explicit Record wear review/save/deduplication and historical snapshots | O9; scoped LOCAL-04/09 | Planned | `AQD-Slice: #24/S5` | Pending |
+| S6 | Outfit More/favorite/edit/delete with exact reference impact | O1; scoped LOCAL-04/11 | Planned | `AQD-Slice: #24/S6` | Pending |
 
 ## Acceptance and evidence
 
@@ -66,3 +68,12 @@ First saved piece → Build my first outfit persists its pin and category-based 
 The actual typed Foundation Models on-device request path is compiled, bounds candidates/response/deadline through a qualification record, checks owned IDs/pins/completeness/current revisions and rejects cancellation/stale results. Activation intentionally remains off until #30 supplies measured on-device quality/latency qualification; do not set arbitrary budgets or pretend runtime availability proves quality. Manual/rules paths remain available. This is an explicit final-hardening activation gate, not a passing model/device-quality claim.
 
 New readiness/pin tests first failed compilation against absent APIs (`/tmp/aqd-24-s3-red.log`). Core45 then passed, generic iOS Debug built and physical native104 passed (91 Swift Testing +13 XCTest), zero failures, `/tmp/aqd-24-s3-unit.log`. Source review then corrected the pure replacement validator to permit partial manual looks and added its regression; current Core46 pass in `/tmp/aqd-24-s3-core-final.log`. The preceding native104 result is reused only for unchanged native flows; final grouped native units will compile the later pure change. All E2E/UI runtime acceptance remains #30. Bounded Standards/Spec review covered exact task return, pin/provenance durability, no-write proposals, revision guards and manual fallback. Next S4 completes real Plan/Wear and outfit More/favorite/delete.
+
+
+### S4 real Plan review and save
+
+Outfit detail and saved receipt now open a real date-prefilled Plan task. Explicit selected timezone/calendar day survive restart/travel; changing timezone preserves the chosen year/month/day. Selecting an outfit uses its current owned revision; Leave unassigned is explicit and saves a labelled gap. Same-day/occasion collisions require Keep both; no prior assignment is overwritten. Plan/draft/operation records migrate through V6 without altering delivered schemas. A minimal actual Planner list/detail exposes the saved entries and shared outfit identity; #25 extends this same model/calendar rather than replacing a placeholder route.
+
+Core48, generic iOS Debug build and physical native107 (94 Swift Testing +13 XCTest) pass with zero failures. Logs: `/tmp/aqd-24-s4-core-final.log`, `/tmp/aqd-24-s4-build.log`, `/tmp/aqd-24-s4-unit.log`. New tests cover V5 outfits/themes preserving migration, exact dates/reopen, explicit unassigned/overlap and denied/unknown save retries. This native run also compiles/tests S3's later pure partial-replacement correction. Bounded Standards/Spec review covers snapshot/revision ownership, exact acknowledgments, explicit no-overwrite choices, stable date identity and no implicit wear. Actual wear is implemented separately in S5; all E2E/UI acceptance stays #30.
+
+Native result: `/tmp/aqd-24-device-s1/Logs/Test/Run-AQD-2026.10.16_01-24-22-+0800.xcresult`.

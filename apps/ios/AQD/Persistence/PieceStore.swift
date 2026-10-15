@@ -215,13 +215,19 @@ enum LocalSchemaV5: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV4.models + [StoredOutfitTheme.self, StoredThemeDraft.self, StoredThemeSave.self] }
 }
 
+enum LocalSchemaV6: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(6, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV5.models + [StoredOutfitPlanEntry.self, StoredOutfitPlanDraft.self, StoredOutfitPlanSave.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
          .lightweight(fromVersion: LocalSchemaV3.self, toVersion: LocalSchemaV4.self),
-         .lightweight(fromVersion: LocalSchemaV4.self, toVersion: LocalSchemaV5.self)]
+         .lightweight(fromVersion: LocalSchemaV4.self, toVersion: LocalSchemaV5.self),
+         .lightweight(fromVersion: LocalSchemaV5.self, toVersion: LocalSchemaV6.self)]
     }
 }
 
@@ -267,13 +273,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:5".utf8)
-        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8)]
+        let version = Data("AQD-piece-store:6".utf8)
+        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8)]
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV5.self)
+        let schema = Schema(versionedSchema: LocalSchemaV6.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -394,7 +400,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, true, true, true), (Schema(versionedSchema: LocalSchemaV4.self), true, true, false), (Schema(versionedSchema: LocalSchemaV3.self), true, false, false), (Schema(versionedSchema: LocalSchemaV2.self), false, false, false)]
+            let candidates = [(schema, 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -404,7 +410,7 @@ final class PieceStore {
                         && model.isConfiguration(withName: nil, compatibleWithStoreMetadata: metadata)
                 } ?? false
             }
-            guard let (matchedSchema, includesExperience, includesOutfits, includesThemes) = match else {
+            guard let (matchedSchema, storeVersion) = match else {
                 throw StoreError.unsupportedStore
             }
             // No migration plan, no writable connection: exact native schema
@@ -413,25 +419,30 @@ final class PieceStore {
                 allowsSave: false, cloudKitDatabase: .none)
             let readOnly = try ModelContainer(for: matchedSchema, configurations: [configuration])
             let context = ModelContext(readOnly)
-            return try bootstrapNeedsToday(in: context, includesExperience: includesExperience, includesOutfits: includesOutfits, includesThemes: includesThemes)
+            return try bootstrapNeedsToday(in: context, storeVersion: storeVersion)
         } catch {
             // Refuse unmarked corrupt/foreign/populated layouts without reset.
             throw StoreError.unsupportedStore
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, includesExperience: Bool = true, includesOutfits: Bool = true, includesThemes: Bool = true) throws -> Bool {
-        if includesThemes {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 6) throws -> Bool {
+        if storeVersion >= 6 {
+            guard try context.fetchCount(FetchDescriptor<StoredOutfitPlanEntry>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredOutfitPlanDraft>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredOutfitPlanSave>()) == 0 else { throw StoreError.unsupportedStore }
+        }
+        if storeVersion >= 5 {
             guard try context.fetchCount(FetchDescriptor<StoredOutfitTheme>()) == 0,
                   try context.fetchCount(FetchDescriptor<StoredThemeDraft>()) == 0,
                   try context.fetchCount(FetchDescriptor<StoredThemeSave>()) == 0 else { throw StoreError.unsupportedStore }
         }
-        if includesOutfits {
+        if storeVersion >= 4 {
             guard try context.fetchCount(FetchDescriptor<StoredOutfit>()) == 0,
                   try context.fetchCount(FetchDescriptor<StoredOutfitDraft>()) == 0,
                   try context.fetchCount(FetchDescriptor<StoredOutfitSave>()) == 0 else { throw StoreError.unsupportedStore }
         }
-        if includesExperience {
+        if storeVersion >= 3 {
             let records = try context.fetch(FetchDescriptor<StoredLocalExperience>())
             if !records.isEmpty {
                 guard records.count == 1, let record = records.first, record.id == 1,
@@ -1363,7 +1374,7 @@ extension PieceStore {
         let context = ModelContext(container)
         let existing = try context.fetch(FetchDescriptor<StoredOutfit>()).first { $0.id == draft.outfitID }
         let previous = try existing?.value()
-        guard (previous?.revision ?? 0) == draft.baseRevision else { throw StoreError.staleRevision }
+        guard (previous == nil || previous?.ownerID == draft.ownerID), (previous?.revision ?? 0) == draft.baseRevision else { throw StoreError.staleRevision }
         let saved = Outfit(id: draft.outfitID, ownerID: draft.ownerID, name: draft.trimmedName,
                            pieceIDs: draft.pieceIDs, isFavorite: previous?.isFavorite ?? false,
                            revision: draft.baseRevision + 1, createdAt: previous?.createdAt ?? Date())
@@ -1456,7 +1467,7 @@ extension PieceStore {
         let context = ModelContext(container)
         let record = try context.fetch(FetchDescriptor<StoredOutfitTheme>()).first { $0.id == draft.themeID }
         let previous = try record?.value()
-        guard (previous?.revision ?? 0) == draft.baseRevision else { throw StoreError.staleRevision }
+        guard (previous == nil || previous?.ownerID == draft.ownerID), (previous?.revision ?? 0) == draft.baseRevision else { throw StoreError.staleRevision }
         let saved = OutfitTheme(id: draft.themeID, ownerID: draft.ownerID,
                                name: draft.name.trimmingCharacters(in: .whitespacesAndNewlines), description: draft.description,
                                outfitIDs: draft.outfitIDs, revision: draft.baseRevision + 1)
@@ -1478,5 +1489,85 @@ extension PieceStore {
         guard records.count == 1, let record = records.first, try record.value() == draft else { throw StoreError.staleDraft }
         context.delete(record)
         try commit(context)
+    }
+}
+
+extension PieceStore {
+    func planEntries() throws -> [OutfitPlanEntry] {
+        let owner = try todayConfiguration().ownerID
+        let values = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitPlanEntry>()).map { try $0.value() }
+        guard values.allSatisfy({ $0.ownerID == owner }) else { throw StoreError.invalidRecord }
+        return values.sorted {
+            if $0.day.key != $1.day.key { return $0.day.key < $1.day.key }
+            return $0.id.uuidString < $1.id.uuidString
+        }
+    }
+
+    func planDraft() throws -> OutfitPlanDraft? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitPlanDraft>())
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let value = try records.first?.value() else { return nil }
+        guard value.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        return value
+    }
+
+    func savePlanDraft(_ draft: OutfitPlanDraft) throws {
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        _ = try draft.day.date()
+        guard try savedPlan(for: draft) == nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredOutfitPlanDraft>())
+        guard records.count <= 1, records.first.map({ $0.id == draft.id }) ?? true else { throw StoreError.operationConflict }
+        if let record = records.first { record.payload = try JSONEncoder().encode(draft) }
+        else { context.insert(try StoredOutfitPlanDraft(draft)) }
+        try commit(context)
+    }
+
+    func savedPlan(for draft: OutfitPlanDraft) throws -> OutfitPlanEntry? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitPlanSave>()).filter { $0.id == draft.operationID }
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let receipt = records.first else { return nil }
+        guard try JSONDecoder().decode(OutfitPlanDraft.self, from: receipt.draft) == draft else { throw StoreError.operationConflict }
+        let saved = try JSONDecoder().decode(OutfitPlanEntry.self, from: receipt.snapshot)
+        try saved.validated()
+        guard saved.id == draft.entryID, saved.ownerID == draft.ownerID else { throw StoreError.invalidRecord }
+        return saved
+    }
+
+    func savePlan(_ draft: OutfitPlanDraft) throws -> OutfitPlanEntry {
+        if let saved = try savedPlan(for: draft) { return saved }
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        try draft.validatedForSave(outfits: outfits())
+        let overlaps = try planEntries().contains {
+            $0.day == draft.day && $0.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == draft.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        }
+        guard !overlaps || draft.allowsOverlap == true else { throw PlanValidationError.overlap }
+        guard try planDraft() == draft else { throw StoreError.staleDraft }
+        if let outfit = draft.outfit {
+            let active = Set(try pieces().filter { $0.availability == .available }.map(\.id))
+            guard Set(outfit.pieceIDs).isSubset(of: active) else { throw StoreError.staleRevision }
+        }
+        let saved = OutfitPlanEntry(id: draft.entryID, planID: draft.planID, ownerID: draft.ownerID, day: draft.day,
+                                    occasion: draft.occasion, outfitID: draft.outfit?.id, outfitRevision: draft.outfit?.revision,
+                                    state: draft.outfit == nil ? .unassigned : .planned)
+        try saved.validated()
+        let context = ModelContext(container)
+        guard try !context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()).contains(where: { $0.id == draft.entryID }) else {
+            throw StoreError.operationConflict
+        }
+        context.insert(try StoredOutfitPlanEntry(saved))
+        context.insert(try StoredOutfitPlanSave(draft: draft, saved: saved))
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+        return saved
+    }
+
+    func finishPlanDraft(_ draft: OutfitPlanDraft, discarding: Bool = false) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let saved = try savedPlan(for: draft)
+        guard discarding ? saved == nil : saved != nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredOutfitPlanDraft>())
+        guard records.count == 1, let record = records.first, try record.value() == draft else { throw StoreError.staleDraft }
+        context.delete(record); try commit(context)
     }
 }

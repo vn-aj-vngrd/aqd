@@ -20,6 +20,7 @@ struct OutfitEditorView: View {
                         Text("Only you. Saving an outfit doesn’t plan a day or record wear.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         PrimaryAction(title: "Open my outfits") { model.finish(openOutfits: true) }
+                        SecondaryAction(title: "Plan this look") { model.planSavedOutfit() }
                     } else if model.draft.stage == .readiness {
                         OutfitReadinessContent(model: model)
                     } else if model.draft.stage == .suggest {
@@ -248,7 +249,8 @@ struct OutfitDetailView: View {
                     OutfitComposition(pieceIDs: outfit.pieceIDs)
                     Text(outfit.name).font(AppTypography.section)
                     Text("Only you · \(outfit.pieceIDs.count) pieces").foregroundStyle(AppTheme.secondary)
-                    PrimaryAction(title: "Edit outfit") { state.buildOutfit(editing: outfit) }
+                    PrimaryAction(title: "Plan outfit") { state.openPlan(outfitID: outfit.id) }
+                    SecondaryAction(title: "Edit outfit") { state.buildOutfit(editing: outfit) }
                     ForEach(outfit.pieceIDs, id: \.self) { pieceID in
                         NavigationLink { PieceDetailView(id: pieceID) } label: {
                             Label(state.pieces.first(where: { $0.id == pieceID })?.name ?? "Unavailable piece", systemImage: "tshirt")
