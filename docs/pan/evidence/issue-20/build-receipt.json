@@ -49,7 +49,22 @@
   "release": {
     "result": "Passed",
     "exitCode": 0,
-    "command": "xcodebuild -project apps/ios/AQD.xcodeproj -scheme AQD -configuration Release -destination generic/platform=iOS -disableAutomaticPackageResolution CODE_SIGNING_ALLOWED=NO build",
+    "command": [
+      "xcodebuild",
+      "-project",
+      "apps/ios/AQD.xcodeproj",
+      "-scheme",
+      "AQD",
+      "-configuration",
+      "Release",
+      "-destination",
+      "generic/platform=iOS",
+      "-derivedDataPath",
+      "/tmp/aqd-ship20-release",
+      "-disableAutomaticPackageResolution",
+      "CODE_SIGNING_ALLOWED=NO",
+      "build"
+    ],
     "binarySHA256": "8bccb861b99b510932650838c97b0419713920c0c036feb2ccdfbf8bb2a64336"
   },
   "notes": "Only documentation, selection/publication tooling and evidence change after the code slice. UI/unit/Release runtime inputs remain unchanged. CI must independently verify its actual final head."

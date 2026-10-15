@@ -41,7 +41,7 @@ The owner invoked `aqd-ship 20` through protected squash merge and repository re
 | Slice | Complete outcome | Verification | State |
 | --- | --- | --- | --- |
 | S4 | Visible multiline Notes editing, Apply/cancel and retained draft across rotation/relaunch | Existing `testDetailsLandscapeAvailabilityNotesApplyDiscardAndRelaunch` and `testMultilineNotesKeepEditingAcrossRotation`, inspected full-screen attachments | Committed at `ca761fd` |
-| S5 | Reusable selected-case proof and remotely accessible results for Foundation | Selected native E2E, attachment export/index, PR AC table and artifacts | Verified locally; marker `AQD-Slice: #20/S5`; remote artifact gate pending |
+| S5 | Reusable selected-case proof and remotely accessible results for Foundation | Selected native E2E, attachment export/index, PR AC table and artifacts | Committed at `fd3dcd5`; remote artifact gate pending |
 
 The real issue has prose Build/Prove clauses rather than numbered ACs. The following labels preserve those clauses as traceable subcases, without claiming complete LOCAL-01/10/15 or later product roots.
 
@@ -85,8 +85,15 @@ A final actual-runner check found Bash3.2 aborting under `set -u` for the empty 
 - PR/latest-head CI/Codex/merge/release: Not run in this cleanup.
 - Initial cleanup receipt: `ba67182`. Final runner receipt: `docs(aqd): Record runner correction and final handoff`, with its own SHA resolved from Git. Agent-foundation maintenance is separately committed at `1d3bfc5`.
 
+## Shipping
+
+- PR locator: `vn-aj-vngrd/aqd`, branch `van/issue-20/native-ui-foundations`; resolve and reuse its single PR.
+- Local gate: native code `ca761fd`, proof/tooling `fd3dcd5`, final documentation receipt `docs(ios): Record Foundation shipping checkpoint`. Resolve its SHA from Git.
+- Published proof: use the actual evidence commit for the [tracked report/images](evidence/issue-20/README.md), then link/read back the real Native iOS Actions artifact. Local source paths identify provenance only.
+- Remote gates: query current PR head, expected CI, Codex completion and all threads. Snapshot the matching head before protected squash merge; then verify merged-SHA main CI and repository release. GitHub owns these live statuses.
+
 ## Resume
 
-- Current action: full `aqd-ship 20` authorized. Workflow committed at `866c3db`; S4 was committed at `ca761fd`; S5 selected-test execution and durable evidence are locally verified; commit/push and remote gates follow. Earlier S1–S3 receipts remain retained.
-- Next exact action: commit S5, push and publish one PR with AC evidence, fix current-head CI/Codex, then protected squash merge and verify main/release. No new routine authorization is needed.
-- Dirty paths: owned S5 scripts, selection manifest, CI, evidence/docs and this plan. Reconcile actual Git status before resuming. No external blocker currently confirmed.
+- Current action: full `aqd-ship 20` authorized. Workflow committed at `866c3db`; S4 was committed at `ca761fd`; S5 is committed at `fd3dcd5`; the final documentation receipt prepares push and remote delivery. Earlier S1–S3 receipts remain retained.
+- Next exact action: push and publish one PR with AC evidence, fix current-head CI/Codex, then protected squash merge and verify main/release. No new routine authorization is needed.
+- Dirty paths: none expected after the final receipt. Reconcile actual Git status before resuming. No external blocker currently confirmed.
