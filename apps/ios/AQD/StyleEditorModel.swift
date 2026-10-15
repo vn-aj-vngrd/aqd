@@ -33,12 +33,12 @@ final class StyleEditorModel: Identifiable {
     }
 
     func next() {
-        guard draft.answers.isAnswered(draft.page) else { return }
+        guard draft.isAnswered(draft.page) else { return }
         update { $0.page = $0.editingFromReview ? 6 : min(6, $0.page + 1); $0.editingFromReview = false }
     }
 
     func save() async {
-        guard !pending, saved == nil, draft.answers.isComplete else { return }
+        guard !pending, saved == nil, draft.isComplete else { return }
         pending = true
         defer { pending = false }
         await Task.yield()

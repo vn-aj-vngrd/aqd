@@ -69,10 +69,10 @@ struct StyleEditorView: View {
                     }
                     else if page == 6 {
                         PrimaryAction(title: model.unknown ? "Check save" : model.error != nil ? "Retry save" : "Save preferences", isPending: model.pending) { Task { await model.save() } }
-                            .disabled(!model.draft.answers.isComplete)
+                            .disabled(!model.draft.isComplete)
                     } else {
                         PrimaryAction(title: model.draft.editingFromReview ? "Back to review" : "Continue") { model.next() }
-                            .disabled(!model.draft.answers.isAnswered(page) || model.pending || model.unknown || model.error != nil)
+                            .disabled(!model.draft.isAnswered(page) || model.pending || model.unknown || model.error != nil)
                     }
                 }
             }
@@ -138,31 +138,7 @@ struct StyleEditorView: View {
         else { colorDetails }
     }
 
-    private var bodyDetails: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            LabeledField(title: "Height (cm)", text: Binding(get: {
-                model.draft.answers.body.heightCM.map { $0.formatted(.number.grouping(.never)) } ?? ""
-            }, set: { text in
-                model.update { draft in
-                    draft.answers.body.response = .provided
-                    draft.answers.body.heightCM = Double(text)
-                }
-            }), prompt: "Not added")
-            Picker("Body shape", selection: Binding(get: { model.draft.answers.body.shape ?? "Not added" }, set: { value in
-                model.update { $0.answers.body.shape = value == "Not added" ? nil : value; $0.answers.body.response = .provided }
-            })) {
-                Text("Not added").tag("Not added")
-                ForEach(BodyPreferences.shapes, id: \.self) { Text($0).tag($0) }
-            }.frame(minHeight: 44)
-            Toggle("Use body details for suggestions", isOn: Binding(get: { model.draft.answers.body.useForSuggestions }, set: { value in
-                model.update { $0.answers.body.useForSuggestions = value }
-            }))
-            Text("Off by default. On allows private suggestions to use these details. Apple Intelligence also needs Style context enabled. No automatic cloud sharing.")
-                .font(.footnote).foregroundStyle(AppTheme.secondary)
-            Button("Prefer not to share body details") { model.update { $0.answers.body.decline() } }
-                .frame(minHeight: 44).accessibilityValue(model.draft.answers.body.response == .declined ? "Selected" : "Not selected")
-        }.disabled(model.pending || model.unknown)
-    }
+    private var bodyDetails: some View { BodyDetailsView(model: model) }
 
     private var colorDetails: some View {
         VStack(spacing: 16) {
@@ -178,7 +154,7 @@ struct StyleEditorView: View {
 
     private var review: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("\(model.draft.answers.answeredCount) of 6 questions answered\(model.draft.answers.allDeclined ? " · All declined" : "")").font(.subheadline)
+            Text("\(model.draft.answeredCount) of 6 questions answered\(model.draft.answers.allDeclined ? " · All declined" : "")").font(.subheadline)
             ForEach([Array(0..<3), Array(3..<6)], id: \.self) { group in
                 VStack(spacing: 0) {
                     ForEach(group, id: \.self) { step in

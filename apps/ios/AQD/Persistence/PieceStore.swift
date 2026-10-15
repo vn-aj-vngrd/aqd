@@ -475,7 +475,7 @@ final class PieceStore {
 
     func saveStylePreferences(_ draft: StylePreferenceDraft) throws -> SavedStylePreferences {
         try draft.validated()
-        try draft.answers.validated()
+        try draft.validatedForSave()
         let context = ModelContext(container)
         var (record, value) = try experienceRecord(in: context)
         if let receipt = value.style, receipt.operationID == draft.operationID {

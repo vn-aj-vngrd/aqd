@@ -51,4 +51,21 @@ struct StylePreferencesTests {
         #expect(!restored.answers.isComplete)
         #expect(restored.source == .settings)
     }
+    @Test func reviewIncludesComfortAndDistinguishesPreferredFromAvoidedValues() {
+        var answers = StylePreferences()
+        for step in 0..<4 { answers.choose("No preference", at: step) }
+        answers.body.decline(); answers.colors.declined = true
+        answers.comfort = "Avoid wool"
+        #expect(!answers.allDeclined)
+        #expect(answers.summary(at: 3).contains("Avoid wool"))
+        answers.colors.declined = false
+        answers.colors.preferredColors = "Blue"; answers.colors.avoidedColors = "Red"
+        answers.colors.preferredPatterns = "Stripes"; answers.colors.avoidedPatterns = "Checks"
+        let summary = answers.summary(at: 5)
+        #expect(summary.contains("Preferred colors: Blue"))
+        #expect(summary.contains("Colors to avoid: Red"))
+        #expect(summary.contains("Preferred patterns: Stripes"))
+        #expect(summary.contains("Patterns to avoid: Checks"))
+    }
+
 }

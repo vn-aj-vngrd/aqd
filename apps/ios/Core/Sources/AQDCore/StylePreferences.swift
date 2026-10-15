@@ -55,7 +55,9 @@ public struct StylePreferences: Codable, Equatable, Sendable {
     public var answeredCount: Int { (0..<6).filter(isAnswered).count }
     public var isComplete: Bool { answeredCount == 6 }
     public var allDeclined: Bool {
-        (0..<4).allSatisfy { choices(at: $0) == ["No preference"] } && body.response == .declined && colors.declined
+        (0..<4).allSatisfy { choices(at: $0) == ["No preference"] }
+            && comfort.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && body.response == .declined && colors.declined
     }
 
     public func validated() throws {
@@ -66,11 +68,17 @@ public struct StylePreferences: Codable, Equatable, Sendable {
 
     public func summary(at step: Int) -> String {
         switch step {
-        case 0..<4: return choices(at: step).isEmpty ? "Not answered" : choices(at: step).joined(separator: ", ")
+        case 0..<3: return choices(at: step).isEmpty ? "Not answered" : choices(at: step).joined(separator: ", ")
+        case 3:
+            let fit = fits.isEmpty ? "Not answered" : fits.joined(separator: ", ")
+            return comfort.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? fit : "\(fit); Comfort: \(comfort)"
         case 4: return body.summary
         case 5:
             if colors.declined { return "No preference" }
-            return colors.values.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.joined(separator: ", ").nilIfEmpty ?? "Not answered"
+            let labels = ["Preferred colors", "Colors to avoid", "Preferred patterns", "Patterns to avoid"]
+            return zip(labels, colors.values).compactMap { label, value in
+                value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : "\(label): \(value)"
+            }.joined(separator: "; ").nilIfEmpty ?? "Not answered"
         default: return ""
         }
     }
@@ -98,7 +106,7 @@ public struct BodyPreferences: Codable, Equatable, Sendable {
         case .unanswered: return "Not answered"
         case .declined: return "Prefer not to share"
         case .provided:
-            return [heightCM.map { "\($0.formatted(.number.precision(.fractionLength(0...1)))) cm" }, shape].compactMap { $0 }.joined(separator: ", ")
+            return [HeightInput(body: self).summary, shape].compactMap { $0 }.joined(separator: ", ")
         }
     }
     public mutating func decline() {
@@ -106,7 +114,10 @@ public struct BodyPreferences: Codable, Equatable, Sendable {
     }
     /// No model consumer may use body values without BOTH explicit permissions.
     public func suggestionContext(styleContextEnabled: Bool) -> BodyPreferences? {
-        useForSuggestions && styleContextEnabled && response == .provided && isAnswered ? self : nil
+        guard useForSuggestions, styleContextEnabled, response == .provided, isAnswered else { return nil }
+        var context = self
+        if context.shape == "Not sure" || context.shape == "Prefer not to say" { context.shape = nil }
+        return context.heightCM != nil || context.shape != nil ? context : nil
     }
 }
 
@@ -134,6 +145,8 @@ public struct StylePreferenceDraft: Codable, Equatable, Sendable {
     public var answers: StylePreferences
     public var page = 0
     public var editingFromReview = false
+    public var heightInput: HeightInput?
+    public var bodyShapePicker: BodyShapeDraft?
     public init(source: StylePreferenceSource, baseRevision: Int = 0, answers: StylePreferences = .init()) {
         id = UUID(); operationID = UUID(); self.source = source
         self.baseRevision = baseRevision; self.answers = answers
