@@ -21,7 +21,7 @@
 | S3 | Readiness/pinned first outfit and labelled rules/manual fallback; reviewed suggestions and safe replacement | O5, O6, O8, O9; W8–9 | Committed; model activation deferred #30 | `AQD-Slice: #24/S3` | `75c01c1` |
 | S4 | Date-prefilled real Plan review/save/restart, distinct from wear | O9; scoped LOCAL-04/09 | Committed | `AQD-Slice: #24/S4` | `224da9f` |
 | S5 | Explicit Record wear review/save/deduplication and historical snapshots | O9; scoped LOCAL-04/09 | Committed | `AQD-Slice: #24/S5` | `a72383e` |
-| S6 | Outfit More/favorite/edit/delete with exact reference impact | O1; scoped LOCAL-04/11 | Committed | `AQD-Slice: #24/S6` | Pending |
+| S6 | Outfit More/favorite/edit/delete with exact reference impact | O1; scoped LOCAL-04/11 | Committed | `AQD-Slice: #24/S6` | `a334a2a` |
 
 ## Acceptance and evidence
 

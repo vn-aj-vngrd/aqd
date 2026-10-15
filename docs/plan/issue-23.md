@@ -16,14 +16,14 @@
 
 | Slice | Working outcome | Acceptance | State | Commit marker | SHA |
 | --- | --- | --- | --- | --- | --- |
-| S1 | Three real Closet collections, source-preserving navigation, Add and scoped search start/results/empty/failure | W4, O2; scoped LOCAL-11 | Planned | `AQD-Slice: #23/S1` | Pending |
+| S1 | Three real Closet collections, source-preserving navigation, Add and scoped search start/results/empty/failure | W4, O2; scoped LOCAL-11 | Verified; commit pending | `AQD-Slice: #23/S1` | Pending |
 | S2 | Piece metadata, availability/filter/sort and archive/Undo/restore; retained records and references | W3–5, W7; scoped LOCAL-03 | Planned | `AQD-Slice: #23/S2` | Pending |
 | S3 | Reviewed piece deletion with exact outfit/theme/future-plan impact and historical snapshots retained | W6; scoped LOCAL-03/04 | Planned | `AQD-Slice: #23/S3` | Pending |
 | S4 | Theme collection/create/detail/options/edit/multiple membership/favorite/search/delete without deleting outfits | O3, O4, O7; scoped LOCAL-04/11 | Planned | `AQD-Slice: #23/S4` | Pending |
 
 ## Acceptance and evidence
 
-Each slice adds focused behavior tests at the affected public seam. Record genuine RED/GREEN, source revision, unit/build results and review coverage when executed. UI runtime acceptance is Deferred to #30, never inferred from units or Paper. No test result is claimed yet.
+Each slice adds focused behavior tests at the affected public seam. Record genuine RED/GREEN, source revision, unit/build results and review coverage when executed. UI runtime acceptance is Deferred to #30, never inferred from units or Paper. S1 passes Core51 and physical native117 with zero failures (`/tmp/aqd-23-s1-unit-final.log`), plus a subsequent focused five-case search regression run (`/tmp/aqd-23-s1-search-refresh.log`). Generic iOS Debug builds. The additional regression proves malformed stored records produce an error rather than an empty collection. These unit results do not certify rendered UI acceptance.
 
 ## Deferred final verification
 
@@ -36,4 +36,10 @@ One grouped PR closes #24 and #23. Keep per-slice commits and separate issue acc
 ## Resume
 
 - Companion #24 S1–S6 now supplies real outfits/themes/Plan/Wear/lifecycle. Native unit verification uses the confirmed-ready physical iPhone; all E2E remains #30.
-- Next: implement #23/S1 on the existing shared branch, beginning with real Closet collections, contextual Add and scoped native search. PR33 delivery is verified in the baseline above.
+- Next: #23/S2 piece metadata, availability, wear sorting and archive management. PR33 delivery is verified in the baseline above.
+
+## S1 collection and search receipt
+
+Real Pieces/Outfits/Themes collections use owned records and typed shared destinations. Contextual Add opens actual capture, outfit and theme tasks. Native scoped search preserves the originating collection, supports independent outfit favorite/theme filters, includes archived piece badges and distinguishes blank/loading/empty/no-match/failure states. Query identity prevents superseded results from replacing newer input. Explicit saved-result navigation clears old searches; Cancel restores the source. Paper collection cards and photo grids inform layout; physical UI acceptance stays #30.
+
+Bounded Standards/Spec review covered owned search scope, malformed record errors, source returns, stale async results, photo framing, provisional theme membership and Dynamic Type. No unresolved finding in this increment; final independent grouped review remains. Existing E2E selectors will be reconciled in #30, including contextual Add.

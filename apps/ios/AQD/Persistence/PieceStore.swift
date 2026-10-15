@@ -1784,3 +1784,33 @@ extension PieceStore {
         return result
     }
 }
+
+extension PieceStore {
+    func searchCloset(query: String, scope: ClosetSearchScope, favoritesOnly: Bool = false, themeID: UUID? = nil) throws -> ClosetSearchResults {
+        let query = Self.searchText(query.trimmingCharacters(in: .whitespacesAndNewlines))
+        switch scope {
+        case .pieces:
+            // Dedicated Pieces search is independent of browse filters. Archived
+            // matches are explicit records, never hidden active constraints.
+            return .pieces(try (pieces(query: query) + pieces(query: query, archived: true)).sorted {
+                let order = $0.name.localizedStandardCompare($1.name)
+                return order == .orderedSame ? $0.id.uuidString < $1.id.uuidString : order == .orderedAscending
+            })
+        case .outfits:
+            let themes = try themes()
+            let matching = try outfits().filter { outfit in
+                guard !favoritesOnly || outfit.isFavorite else { return false }
+                guard themeID == nil || themes.contains(where: { $0.id == themeID && $0.outfitIDs.contains(outfit.id) }) else { return false }
+                let memberships = themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.name)
+                let terms = [outfit.name, outfit.mood ?? "", outfit.occasion ?? ""] + memberships
+                return query.isEmpty || Self.searchText(terms.joined(separator: " ")).contains(query)
+            }
+            return .outfits(matching)
+        case .themes:
+            return .themes(try themes().filter { query.isEmpty || Self.searchText($0.name + " " + $0.description).contains(query) })
+        }
+    }
+    func closetIsEmpty() throws -> Bool {
+        try pieces().isEmpty && pieces(archived: true).isEmpty && outfits().isEmpty && themes().isEmpty
+    }
+}

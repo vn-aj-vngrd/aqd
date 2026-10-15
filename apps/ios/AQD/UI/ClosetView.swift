@@ -3,115 +3,169 @@ import SwiftUI
 
 struct ClosetView: View {
     @Environment(AppState.self) private var state
-    @State private var query = ""
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var category: PieceCategory?
     @State private var archived = false
     @State private var availability: PieceAvailability?
     @State private var sort = PieceSort.name
     @State private var results: [WardrobePiece] = []
     @State private var error: String?
+    @State private var addPresented = false
+    @State private var pendingAdd: ClosetAddAction?
+    @State private var favoritesOnly = false
+    @State private var themeID: UUID?
+    @State private var searchFavoritesOnly = false
+    @State private var searchThemeID: UUID?
+    @State private var searchModel: ClosetSearchModel?
+
+    private var scope: String { state.closetSearchActive ? state.closetSearchScope : state.closetScope }
+    private var searchInput: ClosetSearchInput {
+        ClosetSearchInput(query: state.closetSearchQuery, scope: ClosetSearchScope(rawValue: state.closetSearchScope) ?? .pieces,
+                          favoritesOnly: searchFavoritesOnly, themeID: searchThemeID)
+    }
 
     var body: some View {
-        NavigationStack(path: Binding(get: { state.closetPath }, set: { state.closetPath = $0 })) {
+        @Bindable var state = state
+        NavigationStack(path: $state.closetPath) {
             VStack(spacing: 0) {
-                Picker("Closet collection", selection: Binding(get: { state.closetScope }, set: { state.closetScope = $0 })) {
-                    Text("Pieces").tag("Pieces")
-                    Text("Outfits").tag("Outfits")
-                    Text("Themes").tag("Themes")
-                }.pickerStyle(.segmented).padding(.horizontal, 20).padding(.bottom, 12)
-                if state.closetScope == "Pieces" {
-                    collection
-                } else if state.closetScope == "Outfits" {
-                    OutfitCollectionView()
-                } else {
-                    ContentUnavailableView("\(state.closetScope) aren’t implemented yet", systemImage: "square.stack",
-                                           description: Text("This baseline currently supports pieces. Full private \(state.closetScope.lowercased()) remain part of V1 implementation."))
-                }
+                scopePicker.padding(.horizontal, 20).padding(.bottom, 12)
+                if scope == "Outfits" { outfitFilters.padding(.horizontal, 20).padding(.bottom, 8) }
+                if state.closetSearchActive {
+                    ClosetSearchContent(model: searchModel, input: searchInput,
+                                        clear: { state.closetSearchQuery = "" },
+                                        browse: { state.closetSearchActive = false },
+                                        addPiece: { state.addPiece() })
+                } else if scope == "Pieces" {
+                    pieceCollection
+                } else if scope == "Outfits" {
+                    OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID) { favoritesOnly = false; themeID = nil }
+                } else { ThemeCollectionView() }
             }
             .background(AppTheme.canvas)
             .navigationTitle("Closet")
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        if state.closetScope == "Outfits" { state.buildOutfit() } else { state.addPiece() }
-                    } label: { Label(state.closetScope == "Outfits" ? "Build outfit" : "Add piece", systemImage: "plus") }
-                        .accessibilityIdentifier("closet.addPiece")
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Picker("Category", selection: $category) {
-                            Text("All categories").tag(Optional<PieceCategory>.none)
-                            ForEach(PieceCategory.allCases, id: \.self) { Text($0.rawValue).tag(Optional($0)) }
-                        }
-                        Picker("Availability", selection: $availability) {
-                            Text("All availability").tag(Optional<PieceAvailability>.none)
-                            Text("Available").tag(Optional(PieceAvailability.available))
-                            Text("Unavailable").tag(Optional(PieceAvailability.unavailable))
-                            Text("Laundry").tag(Optional(PieceAvailability.laundry))
-                        }
-                        Toggle("Archived pieces", isOn: $archived)
-                        Picker("Sort pieces", selection: $sort) {
-                            Text("Name").tag(PieceSort.name)
-                            Text("Recently added").tag(PieceSort.recentlyAdded)
-                        }
-                    } label: { Label("Filter pieces", systemImage: "line.3.horizontal.decrease") }
-                    .disabled(state.closetScope != "Pieces")
+                if !state.closetSearchActive {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { state.closetSearchActive = true } label: { Label("Search closet", systemImage: "magnifyingglass") }.tint(AppTheme.ink)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { addPresented = true } label: { Label("Add to closet", systemImage: "plus") }
+                            .tint(AppTheme.ink).accessibilityIdentifier("closet.addPiece")
+                    }
+                    if scope == "Pieces" { pieceFilterMenu }
                 }
             }
-            .searchable(text: $query, prompt: "Search pieces")
+            .searchable(text: $state.closetSearchQuery, isPresented: $state.closetSearchActive,
+                        placement: .navigationBarDrawer(displayMode: .always), prompt: "Search your \(scope.lowercased())")
             .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
             .onAppear(perform: refresh)
-            .onChange(of: query) { refresh() }
-            .onChange(of: category) { refresh() }
-            .onChange(of: archived) { refresh() }
-            .onChange(of: availability) { refresh() }
-            .onChange(of: sort) { refresh() }
-            .onChange(of: state.collectionRefreshID) { refresh() }
-        }
-        .tint(AppTheme.actionText)
-    }
-
-    @ViewBuilder private var collection: some View {
-        if let error {
-            ContentUnavailableView {
-                Label("Pieces couldn’t load", systemImage: "externaldrive.badge.exclamationmark")
-            } description: { Text(error) } actions: { Button("Retry", action: refresh) }
-        } else if results.isEmpty {
-            ContentUnavailableView {
-                Label(query.isEmpty && category == nil && availability == nil ? (archived ? "No archived pieces" : "Your closet starts here") : "No matching pieces", systemImage: "tshirt")
-            } description: {
-                Text(query.isEmpty && category == nil && availability == nil ? "Add a photo and a few details. Everything stays on this device." : "Try another search or clear the filters.")
-            } actions: {
-                if query.isEmpty && category == nil && availability == nil && !archived {
-                    Button("Add piece") { state.addPiece() }
+            .onChange(of: state.closetSearchActive) { _, active in
+                if active {
+                    state.closetSearchSourceScope = state.closetScope
+                    state.closetSearchScope = state.closetScope
+                    state.closetSearchRestoresSource = true
                 } else {
-                    Button("Clear search and filters") { query = ""; category = nil; archived = false; availability = nil }
+                    if state.closetSearchRestoresSource { state.closetScope = state.closetSearchSourceScope }
+                    state.closetSearchRestoresSource = true
+                    state.closetSearchQuery = ""; searchModel?.clearCache()
                 }
             }
-        } else {
-            List(results) { piece in
-                NavigationLink(value: ClosetRoute.piece(piece.id)) {
-                    HStack(spacing: 14) {
-                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
-                            .frame(width: 64, height: 80)
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(piece.name).foregroundStyle(AppTheme.ink)
-                            Text(piece.category.rawValue).font(.subheadline).foregroundStyle(AppTheme.secondary)
-                            if piece.availability != .available {
-                                Text(piece.availability == .laundry ? "Laundry" : "Unavailable")
-                                    .font(.footnote).foregroundStyle(AppTheme.secondary)
-                            }
-                        }
-                    }.padding(.vertical, 4)
-                }.listRowBackground(AppTheme.surface)
-            }.listStyle(.plain).scrollContentBackground(.hidden)
-        }
+            .onChange(of: category) { refreshPieces() }
+            .onChange(of: archived) { refreshPieces() }
+            .onChange(of: availability) { refreshPieces() }
+            .onChange(of: sort) { refreshPieces() }
+            .onChange(of: state.collectionRefreshID) { refreshPieces() }
+            .sheet(isPresented: $addPresented, onDismiss: performAdd) {
+                ClosetAddSheet { action in pendingAdd = action; addPresented = false }
+            }
+        }.tint(state.closetSearchActive ? AppTheme.actionText : AppTheme.ink)
     }
 
+    private var scopeSelection: Binding<String> {
+        Binding(get: { scope }, set: { value in
+            if state.closetSearchActive { state.closetSearchScope = value } else { state.closetScope = value }
+        })
+    }
+    @ViewBuilder private var scopePicker: some View {
+        if typeSize.isAccessibilitySize {
+            ScrollView(.horizontal) {
+                HStack(spacing: 8) {
+                    ForEach(ClosetSearchScope.allCases, id: \.self) { value in
+                        Button { scopeSelection.wrappedValue = value.rawValue } label: {
+                            Label(value.rawValue, systemImage: scope == value.rawValue ? "checkmark.circle.fill" : "circle")
+                                .padding(.horizontal, 12).frame(minHeight: 44)
+                        }.buttonStyle(.plain).foregroundStyle(scope == value.rawValue ? AppTheme.actionText : AppTheme.ink)
+                            .accessibilityAddTraits(scope == value.rawValue ? [.isSelected] : [])
+                    }
+                }
+            }.scrollIndicators(.hidden)
+        } else {
+            Picker("Closet collection", selection: scopeSelection) {
+                ForEach(ClosetSearchScope.allCases, id: \.self) { Text($0.rawValue).tag($0.rawValue) }
+            }.pickerStyle(.segmented).frame(minHeight: 44)
+        }
+    }
+    private var outfitFilters: some View {
+        HStack(spacing: 12) {
+            Toggle("Favorites", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly)
+                .toggleStyle(.button).tint(AppTheme.actionText)
+            Picker("Theme", selection: state.closetSearchActive ? $searchThemeID : $themeID) {
+                Text("All themes").tag(Optional<UUID>.none)
+                ForEach(state.themes) { Text($0.name).tag(Optional($0.id)) }
+            }.pickerStyle(.menu).tint(AppTheme.actionText)
+            Spacer(minLength: 0)
+        }
+    }
+    private var pieceFilterMenu: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                Picker("Category", selection: $category) {
+                    Text("All categories").tag(Optional<PieceCategory>.none)
+                    ForEach(PieceCategory.allCases, id: \.self) { Text($0.rawValue).tag(Optional($0)) }
+                }
+                Picker("Availability", selection: $availability) {
+                    Text("All availability").tag(Optional<PieceAvailability>.none)
+                    ForEach([PieceAvailability.available, .unavailable, .laundry], id: \.self) { Text($0.rawValue.capitalized).tag(Optional($0)) }
+                }
+                Toggle("Archived pieces", isOn: $archived)
+                Picker("Sort pieces", selection: $sort) {
+                    Text("Name").tag(PieceSort.name)
+                    Text("Recently added").tag(PieceSort.recentlyAdded)
+                }
+            } label: { Label("Filter and sort pieces", systemImage: "line.3.horizontal.decrease") }.tint(AppTheme.ink)
+        }
+    }
+    private var pieceCollection: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                if let error {
+                    SemanticFeedback(role: .danger, message: error)
+                    Button("Retry", action: refreshPieces).frame(minHeight: 44)
+                } else if results.isEmpty {
+                    ContentUnavailableView(archived ? "No archived pieces" : category == nil && availability == nil ? "Your closet starts here" : "No matching pieces", systemImage: "tshirt",
+                                           description: Text(category == nil && availability == nil ? "Add a photo and a few details. Everything stays on this device." : "Try another category or clear the filters."))
+                    if category == nil && availability == nil && !archived {
+                        PrimaryAction(title: "Add piece") { state.addPiece() }
+                    } else {
+                        PrimaryAction(title: "Clear filters") { category = nil; availability = nil; archived = false }
+                    }
+                } else { PieceCollectionGrid(pieces: results) }
+            }.padding(20)
+        }.scrollPosition(id: Binding(get: { state.closetPieceAnchor }, set: { state.closetPieceAnchor = $0 }))
+    }
     private func refresh() {
-        guard let store = state.store else { return }
-        do { results = try store.pieces(query: query, category: category, archived: archived, availability: availability, sort: sort); error = nil }
-        catch { self.error = "Your saved collection has not been cleared. Keep this data for recovery and retry." }
+        refreshPieces(); state.reloadOutfits(); state.reloadThemes()
+        if searchModel == nil, let store = state.store { searchModel = ClosetSearchModel(store: store) }
+    }
+    private func refreshPieces() {
+        do {
+            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
+            results = try store.pieces(category: category, archived: archived, availability: availability, sort: sort); error = nil
+        } catch { self.error = "Your saved collection couldn’t be read. Its data is retained; retry." }
+    }
+    private func performAdd() {
+        let action = pendingAdd; pendingAdd = nil
+        switch action { case .piece: state.addPiece(); case .outfit: state.buildOutfit(); case .theme: state.openTheme(); case nil: break }
     }
 }
 

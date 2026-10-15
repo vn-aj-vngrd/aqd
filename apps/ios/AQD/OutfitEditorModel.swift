@@ -87,7 +87,8 @@ final class OutfitEditorModel: Identifiable {
             guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
             try store.acknowledgeOutfitReceipt(draft)
             state.outfitEditor = nil; state.reloadOutfits()
-            if openOutfit { state.selection = 1; state.closetScope = "Outfits"; state.closetPath = [.outfit(draft.outfitID)] }
+            state.reloadThemes()
+            if openOutfit { state.openClosetDestination(scope: "Outfits", route: .outfit(draft.outfitID)) }
         } catch { self.error = "The outfit is saved. Retry opening your collection; no additional outfit will be created." }
     }
 }
@@ -108,7 +109,7 @@ extension AppState {
         } catch { outfitError = "Your outfit draft couldn’t be read. Keep your app data and retry." }
     }
 
-    func buildOutfit(editing outfit: Outfit? = nil, pieceID: UUID? = nil, firstOutfit: Bool = false) {
+    func buildOutfit(editing outfit: Outfit? = nil, pieceID: UUID? = nil, firstOutfit: Bool = false, suggest: Bool = false, themeID: UUID? = nil) {
         guard outfitEditor == nil, styleEditor == nil, capture == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
@@ -124,6 +125,8 @@ extension AppState {
                 draft.themeIDs = try store.themes().filter { $0.outfitIDs.contains(outfit.id) }.map(\.id)
             }
             else { draft = OutfitDraft(ownerID: try store.todayConfiguration().ownerID) }
+            if suggest { draft.stage = .suggest }
+            if let themeID { draft.themeIDs = [themeID] }
             if let pieceID {
                 draft.select(pieceID); draft.pin(pieceID); draft.starterPieceID = pieceID
                 draft.stage = firstOutfit && outfits.isEmpty ? .readiness : .builder

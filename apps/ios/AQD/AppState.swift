@@ -6,7 +6,7 @@ import SwiftData
 import UIKit
 #endif
 
-enum ClosetRoute: Hashable { case piece(UUID), outfit(UUID) }
+enum ClosetRoute: Hashable { case piece(UUID), outfit(UUID), theme(UUID) }
 
 @MainActor
 @Observable
@@ -14,6 +14,17 @@ final class AppState {
     var selection = 0
     var closetPath: [ClosetRoute] = []
     var closetScope = "Pieces"
+    var closetSearchActive = false
+    var closetSearchQuery = ""
+    var closetSearchScope = "Pieces"
+    var closetSearchSourceScope = "Pieces"
+    var closetSearchRestoresSource = true
+    var closetPieceAnchor: UUID?
+    var closetOutfitAnchor: UUID?
+    var closetThemeAnchor: UUID?
+    var themes: [OutfitTheme] = []
+    var themeError: String?
+    var themeEditor: ThemeEditorModel?
     var store: PieceStore?
     var openingError: String?
     var isOpening = false
@@ -59,6 +70,8 @@ final class AppState {
         resumePlanDraft()
         reloadWear()
         resumeWearDraft()
+        reloadThemes()
+        resumeThemeDraft()
     }
 
     func openStore() {
@@ -150,6 +163,8 @@ final class AppState {
             resumePlanDraft()
             reloadWear()
             resumeWearDraft()
+            reloadThemes()
+            resumeThemeDraft()
         } catch {
             store = nil
             openingError = "Your local closet couldn’t open. Existing data has not been replaced. Retry, or keep the app data for recovery."
@@ -548,9 +563,7 @@ final class CaptureModel: Identifiable {
 
     func openCloset() {
         guard saved != nil, acknowledgePresentation() else { return }
-        state.closetPath = []
-        state.closetScope = "Pieces"
-        state.selection = 1
+        state.openClosetDestination()
         state.capture = nil
         state.retryPhotoCleanup()
     }

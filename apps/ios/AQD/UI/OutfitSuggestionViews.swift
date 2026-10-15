@@ -109,5 +109,6 @@ struct OutfitReplacementView: View {
             }.padding(20)
         }.background(AppTheme.canvas)
             .navigationTitle("Replace a piece").navigationBarTitleDisplayMode(.inline)
+            .tint(AppTheme.ink)
     }
 }

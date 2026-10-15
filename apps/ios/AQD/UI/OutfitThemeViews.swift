@@ -44,6 +44,7 @@ struct OutfitThemeChooser: View {
             }.padding(20)
         }.background(AppTheme.canvas)
             .navigationTitle("Choose themes").navigationBarTitleDisplayMode(.inline)
+            .tint(AppTheme.ink)
             .onAppear {
                 if !initialized { selected = Set(model.draft.themeIDs ?? []); initialized = true }
                 refresh()
@@ -71,6 +72,7 @@ struct ThemeEditorView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
+                    if let notice = model.notice { Text(notice).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
                     if let saved = model.saved {
                         Text("Theme saved").font(AppTypography.section)
                         Text(saved.name)
@@ -89,6 +91,7 @@ struct ThemeEditorView: View {
                 }.padding(20)
             }.background(AppTheme.canvas)
                 .navigationTitle(model.draft.baseRevision == 0 ? "Create theme" : "Edit theme").navigationBarTitleDisplayMode(.inline)
+            .tint(AppTheme.ink)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
@@ -100,6 +103,7 @@ struct ThemeEditorView: View {
                 }
                 .navigationDestination(isPresented: $choosingOutfits) { ThemeOutfitChooser(model: model) }
         }.interactiveDismissDisabled()
+            .onAppear { if model.startsWithOutfits && model.saved == nil { choosingOutfits = true; model.startsWithOutfits = false } }
             .sheet(isPresented: $discard) {
                 DraftDiscardSheet(title: "Discard theme draft?", message: "Your saved theme and outfits stay unchanged.") {
                     if model.finish(discarding: true) { discard = false; dismiss() }
@@ -138,6 +142,7 @@ private struct ThemeOutfitChooser: View {
             }.padding(20)
         }.background(AppTheme.canvas)
             .navigationTitle("Choose outfits").navigationBarTitleDisplayMode(.inline)
+            .tint(AppTheme.ink)
             .onAppear {
                 selected = Set(model.draft.outfitIDs)
                 do { outfits = try model.store.outfits(); error = nil }

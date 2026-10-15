@@ -79,6 +79,7 @@ struct OwnedPieceChooser: View {
         }
         .background(AppTheme.canvas)
         .navigationTitle("Choose pieces").navigationBarTitleDisplayMode(.inline)
+            .tint(AppTheme.ink)
         .searchable(text: $query, prompt: "Search your pieces")
         .onAppear { if !initialized { selected = initialSelection; initialized = true } }
     }

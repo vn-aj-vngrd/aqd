@@ -11,6 +11,8 @@ final class ThemeEditorModel: Identifiable {
     var error: String?
     var pending = false
     var unknown = false
+    var startsWithOutfits = false
+    var notice: String?
 
     init(store: PieceStore, draft: ThemeDraft) throws {
         self.store = store; self.draft = draft; id = draft.id

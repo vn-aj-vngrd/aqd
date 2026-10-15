@@ -112,6 +112,9 @@ private struct OutfitPieceChooser: View {
 struct OutfitComposition: View {
     @Environment(AppState.self) private var state
     let pieceIDs: [UUID]
+    var pieceHeight: CGFloat = 130
+    var limit: Int? = nil
+    private var shownIDs: [UUID] { limit.map { Array(pieceIDs.prefix($0)) } ?? pieceIDs }
     @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
@@ -121,10 +124,10 @@ struct OutfitComposition: View {
                                        description: Text("Build a look from your own closet."))
             } else {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 8) {
-                    ForEach(pieceIDs, id: \.self) { id in
+                    ForEach(shownIDs, id: \.self) { id in
                         if let piece = state.pieces.first(where: { $0.id == id }) {
                             PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
-                                .frame(height: 130).accessibilityLabel(piece.name)
+                                .frame(height: pieceHeight).accessibilityLabel(piece.name)
                         } else {
                             Label("Piece unavailable", systemImage: "tshirt").frame(minHeight: 80)
                         }
@@ -137,38 +140,44 @@ struct OutfitComposition: View {
 
 struct OutfitCollectionView: View {
     @Environment(AppState.self) private var state
+    var favoritesOnly = false
+    var themeID: UUID?
+    let clearFilters: () -> Void
+    private var outfits: [Outfit] {
+        state.outfits.filter { outfit in
+            (!favoritesOnly || outfit.isFavorite) && (themeID == nil || state.themes.contains { $0.id == themeID && $0.outfitIDs.contains(outfit.id) })
+        }
+    }
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+            LazyVStack(alignment: .leading, spacing: 24) {
                 if let error = state.outfitError {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry outfits") { state.reloadOutfits() }.frame(minHeight: 44)
                 } else if state.outfits.isEmpty {
-                    ContentUnavailableView("Your first outfit starts here", systemImage: "square.stack",
-                                           description: Text("Combine pieces from your closet. Every outfit stays private."))
+                    ContentUnavailableView("Your first outfit starts here", systemImage: "square.stack", description: Text("Combine pieces from your closet. Every outfit stays private."))
                     PrimaryAction(title: "Build outfit") { state.buildOutfit() }
+                } else if outfits.isEmpty {
+                    ContentUnavailableView("No matching outfits", systemImage: "square.stack", description: Text("Clear the theme or Favorites filter to see your other looks."))
+                    PrimaryAction(title: "Clear filters", action: clearFilters)
+                } else {
+                    ForEach(outfits) { OutfitCollectionCard(outfit: $0) }
+                    PrimaryAction(title: "Suggest an outfit") { state.buildOutfit(suggest: true) }
                 }
-                ForEach(state.outfits) { outfit in
-                    NavigationLink(value: ClosetRoute.outfit(outfit.id)) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            OutfitComposition(pieceIDs: outfit.pieceIDs)
-                            Text(outfit.name).font(AppTypography.body).foregroundStyle(AppTheme.ink)
-                            Text("\(outfit.pieceIDs.count) pieces").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        }
-                    }.buttonStyle(.plain)
-                }
-            }.padding(20)
-        }.onAppear { state.reloadOutfits() }
+            }.padding(20).scrollTargetLayout()
+        }.scrollPosition(id: Binding(get: { state.closetOutfitAnchor }, set: { state.closetOutfitAnchor = $0 }))
+            .onAppear { state.reloadOutfits(); state.reloadThemes() }
     }
 }
 
 struct ClosetDestination: View {
     let route: ClosetRoute
     var body: some View {
-        switch route {
+        Group { switch route {
         case .piece(let id): PieceDetailView(id: id)
         case .outfit(let id): OutfitDetailView(id: id)
-        }
+        case .theme(let id): ThemeDetailView(id: id)
+        } }.tint(AppTheme.ink)
     }
 }
 
@@ -266,7 +275,7 @@ struct OutfitDetailView: View {
 
     private func complete(_ receipt: OutfitMutationReceipt) {
         pendingMutation = nil; error = nil
-        state.reloadOutfits(); state.reloadPlanEntries()
+        state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries()
         if case .deleted = receipt { dismiss() }
     }
 }

@@ -56,6 +56,7 @@ struct OutfitPlanEditorView: View {
                 }.padding(20)
             }.background(AppTheme.canvas)
                 .navigationTitle(model.saved == nil ? "Plan a look" : "Plan saved").navigationBarTitleDisplayMode(.inline)
+            .tint(AppTheme.ink)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
@@ -105,6 +106,7 @@ private struct PlanOutfitChooser: View {
             }.padding(20)
         }.background(AppTheme.canvas)
             .navigationTitle("Choose one outfit").navigationBarTitleDisplayMode(.inline)
+            .tint(AppTheme.ink)
             .searchable(text: $query, prompt: "Search outfits")
             .onAppear { model.state.reloadOutfits() }
     }
@@ -169,5 +171,6 @@ private struct LocalPlanEntryView: View {
                 }.padding(20)
             } else { ContentUnavailableView("Plan unavailable", systemImage: "calendar") }
         }.background(AppTheme.canvas).navigationTitle("Plan entry").navigationBarTitleDisplayMode(.inline)
+            .tint(AppTheme.ink)
     }
 }
