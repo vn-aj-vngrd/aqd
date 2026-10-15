@@ -52,29 +52,19 @@ jobs:
           xcodebuild -version
           swift --version
           xcrun simctl list --json > /tmp/aqd-ci-simulators.json
-      - name: Select installed iPhone simulator (iOS18 or newer)
+      - name: Select installed iPhone 17 Pro Max simulator
         run: |
+          node scripts/ios-destination.mjs --json > "$RUNNER_TEMP/aqd-destination.json"
           python3 - <<'PY'
           import json, os
-          with open('/tmp/aqd-ci-simulators.json') as source:
-              inventory = json.load(source)
-          runtimes = sorted(
-              (r for r in inventory['runtimes'] if r.get('isAvailable') and r['identifier'].startswith('com.apple.CoreSimulator.SimRuntime.iOS-')),
-              key=lambda r: tuple(int(p) for p in r['version'].split('.')), reverse=True)
-          for runtime in runtimes:
-              if int(runtime['version'].split('.')[0]) < 18:
-                  continue
-              phones = [d for d in inventory['devices'].get(runtime['identifier'], []) if d.get('isAvailable') and d['name'].startswith('iPhone')]
-              if not phones:
-                  continue
-              device = next((d for d in phones if d['name'] == 'iPhone 17 Pro Max'), phones[0])
-              print(f"Hosted simulator: {device['name']} / iOS{runtime['version']} ({device['udid']}); record actual environment, separate from physical-phone proof")
-              with open(os.environ['GITHUB_ENV'], 'a') as env:
-                  env.write(f"IOS_DESTINATION=platform=iOS Simulator,id={device['udid']}\n")
-                  env.write(f"IOS_DERIVED_DATA={os.environ['RUNNER_TEMP']}/aqd-derived\n")
-              break
-          else:
-              raise SystemExit('No installed iPhone simulator with iOS18 or newer; refusing to skip native tests')
+          with open(os.path.join(os.environ['RUNNER_TEMP'], 'aqd-destination.json')) as source:
+              selected = json.load(source)
+          if int(selected['os'].split('.')[0]) < 18:
+              raise SystemExit('Selected MVP simulator is below the iOS18 deployment minimum')
+          print(f"Hosted simulator: {selected['name']} / iOS{selected['os']} ({selected['udid']}); separate from physical-phone proof")
+          with open(os.environ['GITHUB_ENV'], 'a') as env:
+              env.write(f"IOS_DESTINATION={selected['destination']}\n")
+              env.write(f"IOS_DERIVED_DATA={os.environ['RUNNER_TEMP']}/aqd-derived\n")
           PY
       - name: Run selected native test scope
         env:

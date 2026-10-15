@@ -1,5 +1,11 @@
 # Current verification
 
+## Foundation #20 hosted destination correction, October 15, 2026
+
+[Codex on PR #31](https://github.com/vn-aj-vngrd/aqd/pull/31#discussion_r4281401537) found that the hosted selector could accept another iPhone. CI now uses the existing exact iPhone 17 Pro Max selector, preserves the minimum-deployment check and fails before exporting a fallback destination. A real-workflow execution regression first fails on the old fallback, then passes refusal and exact-target export after correction. `pnpm check` passes 54 tests, zero failures/skips; `pnpm check:agents` and whitespace checks pass. Independent bounded Standards/Spec rechecks found no actionable finding. The plan records this as `AQD-Slice: #20/S6`.
+
+No native app, UI test, fixture or build input changed. Earlier local evidence keeps its actual source identity. The corrected current head still requires hosted unit/selected UI execution, accessible artifacts and new Codex review before protected merge. Live CI/review/release results belong to PR #31 and the final handoff; this receipt is the local correction gate.
+
 ## Foundation #20 acceptance publication support, October 15, 2026
 
 The code slice is `ca761fd`. [Durable AC evidence](../pan/evidence/issue-20/README.md) retains the actual original-anchor OCR RED, combined failed run, three passing replacements, source-input hashes and inspected key screenshots. A declared dark source-close subcase ran through `scripts/prove-ios.sh 20` using `IOS_TEST_CASES_FILE=/tmp/aqd-ship20-dark-cases.txt`, with exact one-case pass/zero failures/skips, exported attachments and inspected dark form. The original light preference was restored and read back. All tested native build inputs match the committed code slice; later publication/metadata/docs changes do not relabel the earlier runs.
