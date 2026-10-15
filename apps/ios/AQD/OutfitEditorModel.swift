@@ -105,7 +105,10 @@ extension AppState {
                 return
             }
             var draft: OutfitDraft
-            if let outfit { draft = OutfitDraft(editing: outfit) }
+            if let outfit {
+                draft = OutfitDraft(editing: outfit)
+                draft.themeIDs = try store.themes().filter { $0.outfitIDs.contains(outfit.id) }.map(\.id)
+            }
             else { draft = OutfitDraft(ownerID: try store.todayConfiguration().ownerID) }
             if let pieceID { draft.select(pieceID) }
             try store.saveOutfitDraft(draft)

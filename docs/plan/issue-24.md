@@ -16,8 +16,8 @@
 
 | Slice | Working outcome | Acceptance | State | Commit marker | SHA |
 | --- | --- | --- | --- | --- | --- |
-| S1 | Build/save/reopen and edit a manual outfit from owned pieces; durable draft, chooser and private receipt with failure/retry recovery | O1, O2, O7 | Committed | `AQD-Slice: #24/S1` | Pending |
-| S2 | Create/select multiple themes during outfit save; preserve names, memberships and identity | O3, O4, O7 | Planned | `AQD-Slice: #24/S2` | Pending |
+| S1 | Build/save/reopen and edit a manual outfit from owned pieces; durable draft, chooser and private receipt with failure/retry recovery | O1, O2, O7 | Committed | `AQD-Slice: #24/S1` | `261be64` |
+| S2 | Create/select multiple themes during outfit save; preserve names, memberships and identity | O3, O4, O7 | Committed | `AQD-Slice: #24/S2` | Pending |
 | S3 | Readiness/pinned first outfit and labelled rules/manual fallback; reviewed suggestions and safe replacement | O5, O6, O8, O9; W8–9 | Planned | `AQD-Slice: #24/S3` | Pending |
 | S4 | Outfit detail/More/favorite/edit/delete plus real date-prefilled Plan and separate Record wear save paths | O1, O9; scoped LOCAL-04/09/11 | Planned | `AQD-Slice: #24/S4` | Pending |
 
@@ -48,3 +48,12 @@ Core40 pass, including four new public outfit-rule tests. Focused output: `/tmp/
 Bounded self-review covers Standards (preserving migration, operation identity, accessible controls and failed-write/draft preservation) and Spec (manual O1/O2/O7 subset). It found/fixed the unmarked-populated-store bootstrap gap and disabled edits during unknown-save reconciliation. Full independent group review remains before PR completion. Live Paper builder/chooser/outfit collection/detail JSX was read from the approved file, tokenfdeb7346. No runtime visual fidelity claim. Next S2 adds themes; S3/S4 complete assistance and real Plan/Wear before group delivery. Resolve S1's SHA using its unique marker; persist it in S2.
 
 Native result bundle: `/tmp/aqd-24-device-s1/Logs/Test/Run-AQD-2026.10.16_00-59-28-+0800.xcresult`.
+
+
+### S2 theme membership receipt
+
+Create/select themes from the outfit editor, with native nested forms and independent recoverable theme drafts/receipts. Empty collections and case-insensitively unique names are supported. Outfit save updates all selected memberships in the same transaction as the outfit and receipt; editing preloads current memberships. Rename preserves membership and identity; theme deletion/collection management remains #23/S4. No earlier native schema stored prototype outfits or theme strings, so no legacy names are fabricated. V5 adds dedicated theme records through preserving V4→V5 migration.
+
+The piece chooser now follows the live Paper two-column134pt photo tiles, compact category chips, retained selected count and Add selected pieces. It edits a local selection until Apply, so native Back cancels without changing the parent draft. No rendered-device claim is inferred from these source changes.
+
+Passed Core42 and physical native102 (89 Swift Testing +13 XCTest), zero failures; `/tmp/aqd-24-s2-core-final.log`, `/tmp/aqd-24-s2-unit-final.log`. Native result: `/tmp/aqd-24-device-s1/Logs/Test/Run-AQD-2026.10.16_01-05-56-+0800.xcresult`. The first test build failed on a nested require macro; corrected it before the passing final run. Bounded Standards/Spec self-review covered owner/name/membership validation, atomic writes, immutable receipts, draft cancellation and source-compatible schema fixtures. All E2E and integrated UI acceptance remain #30. Next S3 completes readiness/pins/replacement and supported assistance/manual fallback.

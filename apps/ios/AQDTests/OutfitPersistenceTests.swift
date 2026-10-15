@@ -81,7 +81,7 @@ struct OutfitPersistenceTests {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         do { _ = try PieceStore(directory: directory) }
         do {
-            let schema = Schema(versionedSchema: LocalSchemaV4.self)
+            let schema = Schema(versionedSchema: LocalSchemaV5.self)
             let config = ModelConfiguration(schema: schema, url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
             let container = try ModelContainer(for: schema, configurations: [config])
             let context = ModelContext(container)

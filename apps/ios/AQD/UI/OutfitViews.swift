@@ -5,6 +5,7 @@ struct OutfitEditorView: View {
     @Bindable var model: OutfitEditorModel
     @State private var choosing = false
     @State private var discard = false
+    @State private var choosingThemes = false
 
     var body: some View {
         NavigationStack {
@@ -23,6 +24,8 @@ struct OutfitEditorView: View {
                             model.update { $0.name = value }
                         }), accessibilityID: "outfit.name").disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Selected pieces", value: "\(model.draft.pieceIDs.count) pieces") { choosing = true }
+                            .disabled(model.pending || model.unknown)
+                        DisclosureRow(title: "Themes", value: model.draft.themeIDs?.isEmpty == false ? "\(model.draft.themeIDs?.count ?? 0) selected" : "None selected") { choosingThemes = true }
                             .disabled(model.pending || model.unknown)
                         Text("A partial combination is fine. You can add more pieces whenever you like.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
@@ -47,6 +50,7 @@ struct OutfitEditorView: View {
                 }
             }
             .navigationDestination(isPresented: $choosing) { OutfitPieceChooser(model: model) }
+            .navigationDestination(isPresented: $choosingThemes) { OutfitThemeChooser(model: model) }
         }
         .interactiveDismissDisabled()
         .sheet(isPresented: $discard) {
@@ -62,7 +66,10 @@ private struct OutfitPieceChooser: View {
     @Bindable var model: OutfitEditorModel
     @State private var query = ""
     @State private var category: PieceCategory?
+    @State private var selected: [UUID] = []
+    @State private var initialized = false
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     private var pieces: [WardrobePiece] {
         model.state.pieces.filter {
@@ -75,57 +82,73 @@ private struct OutfitPieceChooser: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                if !model.draft.pieceIDs.isEmpty {
-                    Text("Selected pieces").font(AppTypography.fieldLabel)
-                    ForEach(model.draft.pieceIDs, id: \.self) { id in
-                        let item = model.state.pieces.first { $0.id == id }
-                        Button {
-                            model.update { $0.remove(id) }
-                        } label: {
-                            Label(item?.name ?? "Unavailable piece · Remove", systemImage: "checkmark.circle.fill")
-                                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-                        }.tint(AppTheme.actionText)
+                ScrollView(.horizontal) {
+                    HStack(spacing: 8) {
+                        categoryButton(nil)
+                        ForEach(PieceCategory.allCases, id: \.self) { categoryButton($0) }
                     }
-                }
-                Picker("Category", selection: $category) {
-                    Text("All categories").tag(Optional<PieceCategory>.none)
-                    ForEach(PieceCategory.allCases, id: \.self) { Text($0.rawValue).tag(Optional($0)) }
-                }.pickerStyle(.menu)
+                }.scrollIndicators(.hidden)
                 if pieces.isEmpty {
                     ContentUnavailableView("No matching pieces", systemImage: "tshirt",
                                            description: Text("Clear the search or choose another category. Your selection stays here."))
                 }
-                ForEach(pieces) { piece in
-                    let selected = model.draft.pieceIDs.contains(piece.id)
-                    Button {
-                        model.update { draft in
-                            if selected { draft.remove(piece.id) } else { draft.select(piece.id) }
-                        }
-                    } label: {
-                        HStack(spacing: 12) {
-                            PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(width: 60, height: 72)
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(piece.name).foregroundStyle(AppTheme.ink)
-                                Text(piece.category.rawValue).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 16) {
+                    ForEach(pieces) { piece in
+                        let isSelected = selected.contains(piece.id)
+                        Button {
+                            if isSelected { selected.removeAll { $0 == piece.id } } else { selected.append(piece.id) }
+                        } label: {
+                            VStack(alignment: .leading, spacing: 8) {
+                                PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                                    .frame(height: 134)
+                                    .overlay(alignment: .topTrailing) {
+                                        if isSelected {
+                                            Image(systemName: "checkmark.circle.fill").font(.title3)
+                                                .symbolRenderingMode(.palette).foregroundStyle(AppTheme.onAccent, AppTheme.accent)
+                                                .padding(8)
+                                        }
+                                    }
+                                Text(piece.name).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
+                                Text([piece.category.rawValue, piece.details.color].filter { !$0.isEmpty }.joined(separator: " · "))
+                                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                             }.frame(maxWidth: .infinity, alignment: .leading)
-                            Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                        }.padding(14).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
-                    }.buttonStyle(.plain)
-                        .accessibilityLabel(piece.name)
-                        .accessibilityValue(selected ? "Selected" : "Not selected")
-                        .accessibilityAddTraits(selected ? [.isSelected] : [])
+                        }.buttonStyle(.plain)
+                            .accessibilityLabel(piece.name)
+                            .accessibilityValue(isSelected ? "Selected" : "Not selected")
+                            .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+                    }
                 }
+                ForEach(selected.filter { id in !model.state.pieces.contains(where: { $0.id == id }) }, id: \.self) { id in
+                    Button("Remove unavailable piece") { selected.removeAll { $0 == id } }.frame(minHeight: 44)
+                }
+                Text("\(selected.count) selected · Kept when filters change")
+                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 if let error = model.error { SemanticFeedback(role: .danger, message: error) }
+                PrimaryAction(title: "Add selected pieces") {
+                    model.update { draft in
+                        for id in draft.pieceIDs { draft.remove(id) }
+                        for id in selected { draft.select(id) }
+                    }
+                    if model.error == nil { dismiss() }
+                }.disabled(model.pending || model.unknown)
             }.padding(20)
         }
         .background(AppTheme.canvas)
         .navigationTitle("Choose pieces").navigationBarTitleDisplayMode(.inline)
         .searchable(text: $query, prompt: "Search your pieces")
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button { dismiss() } label: { Image(systemName: "checkmark") }.tint(AppTheme.ink).accessibilityLabel("Done choosing pieces")
-            }
-        }
+        .onAppear { if !initialized { selected = model.draft.pieceIDs; initialized = true } }
+    }
+
+    private func categoryButton(_ value: PieceCategory?) -> some View {
+        Button { category = value } label: {
+            HStack(spacing: 6) {
+                if category == value { Image(systemName: "checkmark") }
+                Text(value?.rawValue ?? "All pieces")
+            }.font(.subheadline).padding(.horizontal, 12).padding(.vertical, 6)
+                .frame(minHeight: 44)
+                .foregroundStyle(category == value ? AppTheme.onAccent : AppTheme.ink)
+                .background(category == value ? AppTheme.accent : AppTheme.surface, in: Capsule())
+        }.buttonStyle(.plain).accessibilityAddTraits(category == value ? [.isSelected] : [])
     }
 }
 

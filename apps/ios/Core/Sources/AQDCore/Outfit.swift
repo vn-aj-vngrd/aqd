@@ -26,7 +26,7 @@ public struct Outfit: Identifiable, Codable, Equatable, Sendable {
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw OutfitValidationError.nameRequired }
         guard name.count <= 80 else { throw OutfitValidationError.nameTooLong }
         guard !pieceIDs.isEmpty else { throw OutfitValidationError.piecesRequired }
-        guard revision > 0, Set(pieceIDs).count == pieceIDs.count else { throw OutfitValidationError.invalidRecord }
+        guard revision > 0, revision < Int.max, Set(pieceIDs).count == pieceIDs.count else { throw OutfitValidationError.invalidRecord }
     }
 }
 
@@ -39,6 +39,7 @@ public struct OutfitDraft: Identifiable, Codable, Equatable, Sendable {
     public var operationID: UUID
     public var name: String
     public private(set) var pieceIDs: [UUID]
+    public var themeIDs: [UUID]?
 
     public var trimmedName: String { name.trimmingCharacters(in: .whitespacesAndNewlines) }
 
@@ -59,7 +60,8 @@ public struct OutfitDraft: Identifiable, Codable, Equatable, Sendable {
     public mutating func remove(_ id: UUID) { pieceIDs.removeAll { $0 == id } }
 
     public func validated() throws {
-        guard baseRevision >= 0, Set(pieceIDs).count == pieceIDs.count else { throw OutfitValidationError.invalidRecord }
+        guard baseRevision >= 0, baseRevision < Int.max, Set(pieceIDs).count == pieceIDs.count,
+              Set(themeIDs ?? []).count == (themeIDs ?? []).count else { throw OutfitValidationError.invalidRecord }
     }
 
     public func validatedForSave(pieces: [WardrobePiece]) throws {

@@ -210,12 +210,18 @@ enum LocalSchemaV4: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV3.models + [StoredOutfit.self, StoredOutfitDraft.self, StoredOutfitSave.self] }
 }
 
+enum LocalSchemaV5: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(5, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV4.models + [StoredOutfitTheme.self, StoredThemeDraft.self, StoredThemeSave.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
-         .lightweight(fromVersion: LocalSchemaV3.self, toVersion: LocalSchemaV4.self)]
+         .lightweight(fromVersion: LocalSchemaV3.self, toVersion: LocalSchemaV4.self),
+         .lightweight(fromVersion: LocalSchemaV4.self, toVersion: LocalSchemaV5.self)]
     }
 }
 
@@ -261,13 +267,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:4".utf8)
-        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8)]
+        let version = Data("AQD-piece-store:5".utf8)
+        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8)]
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV4.self)
+        let schema = Schema(versionedSchema: LocalSchemaV5.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -388,7 +394,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, true, true), (Schema(versionedSchema: LocalSchemaV3.self), true, false), (Schema(versionedSchema: LocalSchemaV2.self), false, false)]
+            let candidates = [(schema, true, true, true), (Schema(versionedSchema: LocalSchemaV4.self), true, true, false), (Schema(versionedSchema: LocalSchemaV3.self), true, false, false), (Schema(versionedSchema: LocalSchemaV2.self), false, false, false)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -398,7 +404,7 @@ final class PieceStore {
                         && model.isConfiguration(withName: nil, compatibleWithStoreMetadata: metadata)
                 } ?? false
             }
-            guard let (matchedSchema, includesExperience, includesOutfits) = match else {
+            guard let (matchedSchema, includesExperience, includesOutfits, includesThemes) = match else {
                 throw StoreError.unsupportedStore
             }
             // No migration plan, no writable connection: exact native schema
@@ -407,14 +413,19 @@ final class PieceStore {
                 allowsSave: false, cloudKitDatabase: .none)
             let readOnly = try ModelContainer(for: matchedSchema, configurations: [configuration])
             let context = ModelContext(readOnly)
-            return try bootstrapNeedsToday(in: context, includesExperience: includesExperience, includesOutfits: includesOutfits)
+            return try bootstrapNeedsToday(in: context, includesExperience: includesExperience, includesOutfits: includesOutfits, includesThemes: includesThemes)
         } catch {
             // Refuse unmarked corrupt/foreign/populated layouts without reset.
             throw StoreError.unsupportedStore
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, includesExperience: Bool = true, includesOutfits: Bool = true) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, includesExperience: Bool = true, includesOutfits: Bool = true, includesThemes: Bool = true) throws -> Bool {
+        if includesThemes {
+            guard try context.fetchCount(FetchDescriptor<StoredOutfitTheme>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredThemeDraft>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredThemeSave>()) == 0 else { throw StoreError.unsupportedStore }
+        }
         if includesOutfits {
             guard try context.fetchCount(FetchDescriptor<StoredOutfit>()) == 0,
                   try context.fetchCount(FetchDescriptor<StoredOutfitDraft>()) == 0,
@@ -1359,6 +1370,23 @@ extension PieceStore {
         try saved.validated()
         if let existing { existing.payload = try JSONEncoder().encode(saved) }
         else { context.insert(try StoredOutfit(saved)) }
+        let themeRecords = try context.fetch(FetchDescriptor<StoredOutfitTheme>())
+        let selectedThemes = Set(draft.themeIDs ?? [])
+        let existingThemes = try themeRecords.map { try $0.value() }
+        guard existingThemes.allSatisfy({ $0.ownerID == draft.ownerID }), selectedThemes.isSubset(of: Set(existingThemes.filter { $0.ownerID == draft.ownerID }.map(\.id))) else {
+            throw StoreError.staleRevision
+        }
+        for record in themeRecords {
+            var theme = try record.value()
+            let hadMembership = theme.outfitIDs.contains(saved.id)
+            let wantsMembership = selectedThemes.contains(theme.id)
+            if hadMembership != wantsMembership {
+                if wantsMembership { theme.outfitIDs.append(saved.id) }
+                else { theme.outfitIDs.removeAll { $0 == saved.id } }
+                theme.revision += 1
+                record.payload = try JSONEncoder().encode(theme)
+            }
+        }
         context.insert(try StoredOutfitSave(draft: draft, saved: saved))
         try beforeOutfitSave()
         try commit(context)
@@ -1370,6 +1398,83 @@ extension PieceStore {
         guard allowsSave, try savedOutfit(for: draft) != nil else { throw StoreError.operationConflict }
         let context = ModelContext(container)
         let records = try context.fetch(FetchDescriptor<StoredOutfitDraft>())
+        guard records.count == 1, let record = records.first, try record.value() == draft else { throw StoreError.staleDraft }
+        context.delete(record)
+        try commit(context)
+    }
+}
+
+extension PieceStore {
+    func themes() throws -> [OutfitTheme] {
+        let owner = try todayConfiguration().ownerID
+        let values = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitTheme>()).map { try $0.value() }
+        guard values.allSatisfy({ $0.ownerID == owner }), Set(values.map { OutfitTheme.nameKey($0.name) }).count == values.count else {
+            throw StoreError.invalidRecord
+        }
+        return values.sorted {
+            let comparison = $0.name.localizedStandardCompare($1.name)
+            return comparison == .orderedSame ? $0.id.uuidString < $1.id.uuidString : comparison == .orderedAscending
+        }
+    }
+
+    func themeDraft() throws -> ThemeDraft? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredThemeDraft>())
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let draft = try records.first?.value() else { return nil }
+        guard draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        return draft
+    }
+
+    func saveThemeDraft(_ draft: ThemeDraft) throws {
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID), draft.baseRevision >= 0,
+              Set(draft.outfitIDs).count == draft.outfitIDs.count else { throw StoreError.invalidRecord }
+        guard try savedTheme(for: draft) == nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredThemeDraft>())
+        guard records.count <= 1, records.first.map({ $0.id == draft.id }) ?? true else { throw StoreError.operationConflict }
+        if let record = records.first { record.payload = try JSONEncoder().encode(draft) }
+        else { context.insert(try StoredThemeDraft(draft)) }
+        try commit(context)
+    }
+
+    func savedTheme(for draft: ThemeDraft) throws -> OutfitTheme? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredThemeSave>()).filter { $0.id == draft.operationID }
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let receipt = records.first else { return nil }
+        guard try JSONDecoder().decode(ThemeDraft.self, from: receipt.draft) == draft else { throw StoreError.operationConflict }
+        let value = try JSONDecoder().decode(OutfitTheme.self, from: receipt.snapshot)
+        try value.validated()
+        guard value.id == draft.themeID, value.ownerID == draft.ownerID else { throw StoreError.invalidRecord }
+        return value
+    }
+
+    func saveTheme(_ draft: ThemeDraft) throws -> OutfitTheme {
+        if let saved = try savedTheme(for: draft) { return saved }
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.corruptStore }
+        try draft.validatedForSave(themes: themes(), outfits: outfits())
+        guard try themeDraft() == draft else { throw StoreError.staleDraft }
+        let context = ModelContext(container)
+        let record = try context.fetch(FetchDescriptor<StoredOutfitTheme>()).first { $0.id == draft.themeID }
+        let previous = try record?.value()
+        guard (previous?.revision ?? 0) == draft.baseRevision else { throw StoreError.staleRevision }
+        let saved = OutfitTheme(id: draft.themeID, ownerID: draft.ownerID,
+                               name: draft.name.trimmingCharacters(in: .whitespacesAndNewlines), description: draft.description,
+                               outfitIDs: draft.outfitIDs, revision: draft.baseRevision + 1)
+        if let record { record.payload = try JSONEncoder().encode(saved) }
+        else { context.insert(try StoredOutfitTheme(saved)) }
+        context.insert(try StoredThemeSave(draft: draft, saved: saved))
+        try beforeOutfitSave()
+        try commit(context)
+        try afterOutfitSave()
+        return saved
+    }
+
+    func finishThemeDraft(_ draft: ThemeDraft, discarding: Bool = false) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let saved = try savedTheme(for: draft)
+        guard discarding ? saved == nil : saved != nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredThemeDraft>())
         guard records.count == 1, let record = records.first, try record.value() == draft else { throw StoreError.staleDraft }
         context.delete(record)
         try commit(context)
