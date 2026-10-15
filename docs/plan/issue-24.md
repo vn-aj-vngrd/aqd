@@ -17,8 +17,8 @@
 | Slice | Working outcome | Acceptance | State | Commit marker | SHA |
 | --- | --- | --- | --- | --- | --- |
 | S1 | Build/save/reopen and edit a manual outfit from owned pieces; durable draft, chooser and private receipt with failure/retry recovery | O1, O2, O7 | Committed | `AQD-Slice: #24/S1` | `261be64` |
-| S2 | Create/select multiple themes during outfit save; preserve names, memberships and identity | O3, O4, O7 | Committed | `AQD-Slice: #24/S2` | Pending |
-| S3 | Readiness/pinned first outfit and labelled rules/manual fallback; reviewed suggestions and safe replacement | O5, O6, O8, O9; W8–9 | Planned | `AQD-Slice: #24/S3` | Pending |
+| S2 | Create/select multiple themes during outfit save; preserve names, memberships and identity | O3, O4, O7 | Committed | `AQD-Slice: #24/S2` | `0f4666d` |
+| S3 | Readiness/pinned first outfit and labelled rules/manual fallback; reviewed suggestions and safe replacement | O5, O6, O8, O9; W8–9 | Committed; model activation deferred #30 | `AQD-Slice: #24/S3` | Pending |
 | S4 | Outfit detail/More/favorite/edit/delete plus real date-prefilled Plan and separate Record wear save paths | O1, O9; scoped LOCAL-04/09/11 | Planned | `AQD-Slice: #24/S4` | Pending |
 
 ## Acceptance and evidence
@@ -57,3 +57,12 @@ Create/select themes from the outfit editor, with native nested forms and indepe
 The piece chooser now follows the live Paper two-column134pt photo tiles, compact category chips, retained selected count and Add selected pieces. It edits a local selection until Apply, so native Back cancels without changing the parent draft. No rendered-device claim is inferred from these source changes.
 
 Passed Core42 and physical native102 (89 Swift Testing +13 XCTest), zero failures; `/tmp/aqd-24-s2-core-final.log`, `/tmp/aqd-24-s2-unit-final.log`. Native result: `/tmp/aqd-24-device-s1/Logs/Test/Run-AQD-2026.10.16_01-05-56-+0800.xcresult`. The first test build failed on a nested require macro; corrected it before the passing final run. Bounded Standards/Spec self-review covered owner/name/membership validation, atomic writes, immutable receipts, draft cancellation and source-compatible schema fixtures. All E2E and integrated UI acceptance remain #30. Next S3 completes readiness/pins/replacement and supported assistance/manual fallback.
+
+
+### S3 first outfit, pins and reviewed suggestions
+
+First saved piece → Build my first outfit persists its pin and category-based readiness. Missing-category capture preselects only a genuinely empty draft, retains the parent outfit and resumes after native dismissal/cancel/relaunch. Manual partial looks remain valid. Selection/replacement preserves name/context/themes and pins; changed piece revisions require review. Rule-based suggestions are explicitly labelled, form a reviewed draft and never save automatically. Provenance survives restart. Model availability distinguishes hardware, Apple Intelligence off, preparation and unsupported locale; cloud/photo/notes/body uploads are absent.
+
+The actual typed Foundation Models on-device request path is compiled, bounds candidates/response/deadline through a qualification record, checks owned IDs/pins/completeness/current revisions and rejects cancellation/stale results. Activation intentionally remains off until #30 supplies measured on-device quality/latency qualification; do not set arbitrary budgets or pretend runtime availability proves quality. Manual/rules paths remain available. This is an explicit final-hardening activation gate, not a passing model/device-quality claim.
+
+New readiness/pin tests first failed compilation against absent APIs (`/tmp/aqd-24-s3-red.log`). Core45 then passed, generic iOS Debug built and physical native104 passed (91 Swift Testing +13 XCTest), zero failures, `/tmp/aqd-24-s3-unit.log`. Source review then corrected the pure replacement validator to permit partial manual looks and added its regression; current Core46 pass in `/tmp/aqd-24-s3-core-final.log`. The preceding native104 result is reused only for unchanged native flows; final grouped native units will compile the later pure change. All E2E/UI runtime acceptance remains #30. Bounded Standards/Spec review covered exact task return, pin/provenance durability, no-write proposals, revision guards and manual fallback. Next S4 completes real Plan/Wear and outfit More/favorite/delete.

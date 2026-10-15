@@ -11,15 +11,29 @@ final class OutfitEditorModel: Identifiable {
     var error: String?
     var pending = false
     var unknown = false
+    var generating = false
+    var generationTask: Task<Void, Never>?
+    var suggestionAvailability = OutfitSuggestions.availability()
+    var proposalSource: String? {
+        switch draft.proposalSource {
+        case .rules: "Rule-based combination · Review before saving"
+        case .appleIntelligence: "Apple Intelligence · On-device draft · Review before saving"
+        case nil: nil
+        }
+    }
+    var needsPieceReview: Bool {
+        guard let revisions = draft.reviewedPieceRevisions else { return false }
+        return draft.pieceIDs.contains { id in state.pieces.first(where: { $0.id == id })?.revision != revisions[id] }
+    }
 
     init(state: AppState, draft: OutfitDraft) { self.state = state; self.draft = draft; id = draft.id }
 
     var canSave: Bool {
-        !pending && !unknown && saved == nil && (try? draft.validatedForSave(pieces: state.pieces)) != nil
+        !pending && !unknown && !generating && saved == nil && (try? draft.validatedForSave(pieces: state.pieces)) != nil
     }
 
     func update(_ change: (inout OutfitDraft) -> Void) {
-        guard !pending, !unknown, saved == nil else { return }
+        guard !pending, !unknown, !generating, saved == nil else { return }
         var changed = draft
         change(&changed)
         draft = changed
@@ -31,7 +45,7 @@ final class OutfitEditorModel: Identifiable {
     }
 
     func save() async {
-        guard !pending, saved == nil else { return }
+        guard !pending, !generating, saved == nil else { return }
         pending = true
         defer { pending = false }
         await Task.yield()
@@ -59,7 +73,7 @@ final class OutfitEditorModel: Identifiable {
     }
 
     func discard() {
-        guard !pending, !unknown, saved == nil else { return }
+        guard !pending, !unknown, !generating, saved == nil else { return }
         do {
             guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
             try store.discardOutfitDraft(id: draft.id)
@@ -94,7 +108,7 @@ extension AppState {
         } catch { outfitError = "Your outfit draft couldn’t be read. Keep your app data and retry." }
     }
 
-    func buildOutfit(editing outfit: Outfit? = nil, pieceID: UUID? = nil) {
+    func buildOutfit(editing outfit: Outfit? = nil, pieceID: UUID? = nil, firstOutfit: Bool = false) {
         guard outfitEditor == nil, styleEditor == nil, capture == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
@@ -110,9 +124,86 @@ extension AppState {
                 draft.themeIDs = try store.themes().filter { $0.outfitIDs.contains(outfit.id) }.map(\.id)
             }
             else { draft = OutfitDraft(ownerID: try store.todayConfiguration().ownerID) }
-            if let pieceID { draft.select(pieceID) }
+            if let pieceID {
+                draft.select(pieceID); draft.pin(pieceID); draft.starterPieceID = pieceID
+                draft.stage = firstOutfit && outfits.isEmpty ? .readiness : .builder
+            }
             try store.saveOutfitDraft(draft)
             outfitEditor = OutfitEditorModel(state: self, draft: draft)
         } catch { outfitError = "An outfit draft couldn’t be opened. Your saved collection hasn’t changed." }
+    }
+}
+
+extension OutfitEditorModel {
+    var readiness: OutfitReadiness { OutfitReadiness(pieces: state.pieces, pinnedIDs: draft.pinnedPieceIDs ?? []) }
+
+    func useRules() {
+        guard !pending, !unknown, !generating, readiness.isReady else { return }
+        do {
+            var updated = draft
+            try updated.applyProposal(readiness.candidateIDs, pieces: state.pieces)
+            if updated.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { updated.name = "A look from your closet" }
+            updated.stage = .review
+            updated.proposalSource = .rules
+            update { $0 = updated }
+        } catch { self.error = "These pieces can’t make that combination. Keep your pin, add a missing category, unpin it or build manually." }
+    }
+
+    func suggestOnDevice() {
+        guard !pending, !unknown, !generating else { return }
+        suggestionAvailability = OutfitSuggestions.availability()
+        guard suggestionAvailability == .available else { return }
+        generating = true
+        let requestedDraft = draft
+        let requestedPieces = state.pieces
+        generationTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            defer { self.generating = false; self.generationTask = nil }
+            do {
+                let ids = try await OutfitSuggestions.generate(draft: requestedDraft, pieces: requestedPieces)
+                try Task.checkCancellation()
+                guard self.draft == requestedDraft else { return }
+                self.state.reloadPieces()
+                guard ids.allSatisfy({ id in
+                    self.state.pieces.first(where: { $0.id == id })?.revision == requestedPieces.first(where: { $0.id == id })?.revision
+                }) else { throw OutfitValidationError.stalePieces }
+                var updated = requestedDraft
+                try updated.applyProposal(ids, pieces: self.state.pieces)
+                if updated.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { updated.name = "A look from your closet" }
+                updated.stage = .review
+                updated.proposalSource = .appleIntelligence
+                self.generating = false
+                self.update { $0 = updated }
+            } catch is CancellationError { }
+            catch { self.error = "Suggestions didn’t finish. Your draft and pins are retained. Use a rule-based combination or build manually." }
+        }
+    }
+
+    func stopGeneration() { generationTask?.cancel() }
+
+    func addMissingPiece(_ category: PieceCategory) {
+        guard !pending, !unknown, !generating else { return }
+        update { $0.stage = .readiness }
+        guard error == nil else { return }
+        state.pendingOutfitCaptureCategory = category
+        state.outfitEditor = nil
+    }
+}
+
+extension AppState {
+    func openPendingOutfitCapture() {
+        guard let category = pendingOutfitCaptureCategory else { return }
+        pendingOutfitCaptureCategory = nil
+        addPiece()
+        if let capture, capture.draft.name.isEmpty, capture.draft.category == nil, capture.draft.photoID == nil {
+            capture.update(\.category, value: category)
+        }
+    }
+
+    func finishOutfitCaptureReturn() {
+        if let pieceID = pendingFirstOutfitPieceID {
+            pendingFirstOutfitPieceID = nil
+            buildOutfit(pieceID: pieceID, firstOutfit: true)
+        } else { reloadPieces(); resumeOutfitDraft() }
     }
 }

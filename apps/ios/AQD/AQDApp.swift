@@ -64,10 +64,10 @@ private struct AppRootView: View {
         } message: {
             Text(state.collectionError ?? "Keep your existing app data for recovery.")
         }
-        .sheet(item: $state.outfitEditor) { model in
+        .sheet(item: $state.outfitEditor, onDismiss: { state.openPendingOutfitCapture() }) { model in
             OutfitEditorView(model: model).environment(state)
         }
-        .sheet(item: $state.capture, onDismiss: { state.retryPhotoCleanup() }) { model in
+        .sheet(item: $state.capture, onDismiss: { state.retryPhotoCleanup(); state.finishOutfitCaptureReturn() }) { model in
             PieceCaptureView(model: model).environment(state)
         }
         .fullScreenCover(item: $state.styleEditor, onDismiss: {

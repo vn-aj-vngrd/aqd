@@ -6,6 +6,7 @@ struct OutfitEditorView: View {
     @State private var choosing = false
     @State private var discard = false
     @State private var choosingThemes = false
+    @State private var replacing: UUID?
 
     var body: some View {
         NavigationStack {
@@ -19,7 +20,14 @@ struct OutfitEditorView: View {
                         Text("Only you. Saving an outfit doesn’t plan a day or record wear.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         PrimaryAction(title: "Open my outfits") { model.finish(openOutfits: true) }
+                    } else if model.draft.stage == .readiness {
+                        OutfitReadinessContent(model: model)
+                    } else if model.draft.stage == .suggest {
+                        OutfitSuggestionContent(model: model)
                     } else {
+                        if let provenance = model.proposalSource {
+                            Text(provenance).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }
                         LabeledField(title: "Outfit name", text: Binding(get: { model.draft.name }, set: { value in
                             model.update { $0.name = value }
                         }), accessibilityID: "outfit.name").disabled(model.pending || model.unknown)
@@ -27,6 +35,25 @@ struct OutfitEditorView: View {
                             .disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Themes", value: model.draft.themeIDs?.isEmpty == false ? "\(model.draft.themeIDs?.count ?? 0) selected" : "None selected") { choosingThemes = true }
                             .disabled(model.pending || model.unknown)
+                        if model.needsPieceReview {
+                            SemanticFeedback(role: .warning, message: "Pieces changed after this draft was prepared. Open Selected pieces to review current records before saving.")
+                        }
+                        ForEach(model.draft.pieceIDs, id: \.self) { id in
+                            let piece = model.state.pieces.first { $0.id == id }
+                            let pinned = (model.draft.pinnedPieceIDs ?? []).contains(id)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Button {
+                                    model.update { draft in if pinned { draft.unpin(id) } else { draft.pin(id) } }
+                                } label: { Label("\(piece?.name ?? "Unavailable piece") · \(pinned ? "Unpin" : "Pin")", systemImage: pinned ? "pin.fill" : "pin") }
+                                    .frame(minHeight: 44).disabled(model.pending || model.unknown || model.generating)
+                                if !pinned, piece != nil {
+                                    Button("Replace piece") { replacing = id }.frame(minHeight: 44)
+                                        .disabled(model.pending || model.unknown || model.generating)
+                                }
+                            }
+                        }
+                        SecondaryAction(title: "Suggest a variation") { model.update { $0.stage = .suggest } }
+                            .disabled(model.pending || model.unknown || model.generating)
                         Text("A partial combination is fine. You can add more pieces whenever you like.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         if let error = model.error { SemanticFeedback(role: .danger, message: error) }
@@ -38,7 +65,7 @@ struct OutfitEditorView: View {
                 }.padding(20)
             }
             .background(AppTheme.canvas)
-            .navigationTitle(model.saved == nil ? (model.draft.baseRevision == 0 ? "Build outfit" : "Edit outfit") : "Outfit saved")
+            .navigationTitle(model.saved != nil ? "Outfit saved" : model.draft.stage == .readiness ? "First outfit" : model.draft.stage == .suggest ? "Suggest an outfit" : model.draft.stage == .review ? "Review outfit" : model.draft.baseRevision == 0 ? "Build outfit" : "Edit outfit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -46,11 +73,14 @@ struct OutfitEditorView: View {
                         if model.saved != nil { model.finish() } else { discard = true }
                     } label: { Image(systemName: model.saved == nil ? "xmark" : "checkmark") }
                         .accessibilityLabel(model.saved == nil ? "Cancel outfit" : "Done")
-                        .tint(AppTheme.ink).disabled(model.pending || model.unknown)
+                        .tint(AppTheme.ink).disabled(model.pending || model.unknown || model.generating)
                 }
             }
             .navigationDestination(isPresented: $choosing) { OutfitPieceChooser(model: model) }
             .navigationDestination(isPresented: $choosingThemes) { OutfitThemeChooser(model: model) }
+            .navigationDestination(isPresented: Binding(get: { replacing != nil }, set: { if !$0 { replacing = nil } })) {
+                if let replacing { OutfitReplacementView(model: model, pieceID: replacing) }
+            }
         }
         .interactiveDismissDisabled()
         .sheet(isPresented: $discard) {
@@ -96,7 +126,9 @@ private struct OutfitPieceChooser: View {
                     ForEach(pieces) { piece in
                         let isSelected = selected.contains(piece.id)
                         Button {
-                            if isSelected { selected.removeAll { $0 == piece.id } } else { selected.append(piece.id) }
+                            if isSelected {
+                                if !(model.draft.pinnedPieceIDs ?? []).contains(piece.id) { selected.removeAll { $0 == piece.id } }
+                            } else { selected.append(piece.id) }
                         } label: {
                             VStack(alignment: .leading, spacing: 8) {
                                 PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
@@ -128,6 +160,7 @@ private struct OutfitPieceChooser: View {
                     model.update { draft in
                         for id in draft.pieceIDs { draft.remove(id) }
                         for id in selected { draft.select(id) }
+                        do { try draft.reviewCurrentPieces(model.state.pieces) } catch { draft.reviewedPieceRevisions = [:] }
                     }
                     if model.error == nil { dismiss() }
                 }.disabled(model.pending || model.unknown)

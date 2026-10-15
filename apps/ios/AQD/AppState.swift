@@ -23,6 +23,8 @@ final class AppState {
     var todayError: String?
     var photoCleanupError: String?
     var outfitEditor: OutfitEditorModel?
+    var pendingOutfitCaptureCategory: PieceCategory?
+    var pendingFirstOutfitPieceID: UUID?
     var outfits: [Outfit] = []
     var outfitError: String?
     var styleEditor: StyleEditorModel?
@@ -516,6 +518,15 @@ final class CaptureModel: Identifiable {
             errorText = "The saved receipt couldn’t be acknowledged. It is still here. Retry Back or Open my closet."
             return false
         }
+    }
+
+    var isFirstOutfit: Bool { state.outfits.isEmpty }
+
+    func buildFirstOutfit() {
+        guard let saved, acknowledgePresentation() else { return }
+        state.pendingFirstOutfitPieceID = saved.id
+        state.capture = nil
+        state.retryPhotoCleanup()
     }
 
     func openCloset() {

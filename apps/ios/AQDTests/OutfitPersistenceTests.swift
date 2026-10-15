@@ -77,6 +77,66 @@ struct OutfitPersistenceTests {
         store = nil
     }
 
+    @Test func starterPinAndMissingCategoryCaptureReturnSurviveRelaunch() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let state = AppState(store: try PieceStore(directory: directory))
+        let top = try await seedPiece(try #require(state.store))
+        state.reloadPieces()
+        state.buildOutfit(pieceID: top.id, firstOutfit: true)
+        let starter = try #require(state.outfitEditor)
+        let id = starter.draft.id
+        #expect(starter.draft.stage == .readiness)
+        #expect(starter.draft.pinnedPieceIDs == [top.id])
+        #expect(starter.readiness.missingCategories == [.bottoms, .shoes])
+        starter.addMissingPiece(.bottoms)
+        #expect(state.outfitEditor == nil)
+        state.openPendingOutfitCapture()
+        let capture = try #require(state.capture)
+        #expect(capture.draft.category == .bottoms)
+        capture.discard()
+        // Ordinary app UI dismissal resumes the same parent outfit draft.
+        // The fresh test store has not entered main yet; model the real caller.
+        var entry = try #require(state.store).localExperience().entryState
+        entry.openMain()
+        try #require(state.store).saveEntryState(entry)
+        state.reloadEntry()
+        state.finishOutfitCaptureReturn()
+        let resumed = try #require(state.outfitEditor)
+        #expect(resumed.draft.id == id)
+        #expect(resumed.draft.pinnedPieceIDs == [top.id])
+        #expect(resumed.draft.stage == .readiness)
+        state.outfitEditor = nil; state.store = nil
+        let reopened = AppState(store: try PieceStore(directory: directory))
+        #expect(reopened.outfitEditor?.draft.id == id)
+        #expect(reopened.outfitEditor?.draft.pinnedPieceIDs == [top.id])
+        reopened.outfitEditor = nil; reopened.store = nil
+    }
+
+    @Test func rulesProduceAnExplicitReviewedDraftWithoutSavingOrLosingPins() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let state = AppState(store: try PieceStore(directory: directory))
+        let store = try #require(state.store)
+        let top = try await seedPiece(store)
+        _ = try store.savePiece(PieceDraft(name: "Jeans", category: .bottoms, photoID: top.photoID), operationID: UUID())
+        _ = try store.savePiece(PieceDraft(name: "Shoes", category: .shoes, photoID: top.photoID), operationID: UUID())
+        state.reloadPieces()
+        state.buildOutfit(pieceID: top.id, firstOutfit: true)
+        let editor = try #require(state.outfitEditor)
+        editor.update { $0.name = "My chosen name"; $0.occasion = "Weekend" }
+        editor.useRules()
+        #expect(editor.draft.name == "My chosen name")
+        #expect(editor.draft.occasion == "Weekend")
+        #expect(editor.draft.pinnedPieceIDs == [top.id])
+        #expect(editor.draft.stage == .review)
+        #expect(editor.draft.proposalSource == .rules)
+        #expect(editor.draft.pieceIDs.count == 3)
+        #expect(try store.outfits().isEmpty)
+        #expect(try store.outfitDraft() == editor.draft)
+        await editor.save()
+        #expect(try store.outfits().count == 1)
+        state.outfitEditor = nil; state.store = nil
+    }
+
     @Test func unmarkedOutfitStoreCannotBeReseededAsAnEmptyCloset() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         do { _ = try PieceStore(directory: directory) }
