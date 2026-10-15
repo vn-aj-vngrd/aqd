@@ -34,6 +34,7 @@ fi
 
 # The default destination is the installed target iPhone 17 Pro Max simulator.
 # No credentials, team, provisioning, local xcconfig, or signing hooks are used.
+# Conditional array expansion preserves zero arguments under macOS Bash 3.2 nounset.
 xcodebuild \
   -project "$ROOT/apps/ios/AQD.xcodeproj" \
   -scheme AQD \
@@ -44,5 +45,5 @@ xcodebuild \
   -parallel-testing-enabled NO \
   -collect-test-diagnostics never \
   CODE_SIGNING_ALLOWED=NO \
-  "${TEST_SELECTION[@]}" \
+  ${TEST_SELECTION[@]+"${TEST_SELECTION[@]}"} \
   build test

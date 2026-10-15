@@ -26,13 +26,17 @@ Agent workflow/docs tooling is separate unticketed repository maintenance. It do
 | Native source standards and scoped Foundation behavior | S1/S2 | Independent Standards and Spec reviews of all eight changed Swift files against baseline; no new actionable defect | Passed, source only |
 | Core/native unit and Debug app build | S1/S2 | `/tmp/aqd-agent-foundation-unit.log`, matching iPhone 17 Pro Max simulator on iOS 27.0, current dirty native source | Passed, 20 Core /72 Swift Testing /12 XCTest; no UI tests |
 | Generic unsigned Release | S1/S2 | `/tmp/aqd-agent-foundation-release.log`, current dirty native source | Passed |
-| Repository/workflow/agent-doc checks | S3 | `pnpm check`: 46 passed; `pnpm check:agents` checks all current Markdown/skills; final receipt follows | Passed |
+| Repository/workflow/agent-doc checks | S3 | `pnpm check`: 49 passed; `pnpm check:agents` checks all current Markdown/skills; final receipt follows | Passed |
 
 ## Deferred final verification
 
 Final #30 retains the known landscape Notes failure: the software keyboard can be offscreen/unhittable and post-typing text/caret visually indiscernible. Preserve the existing real-keyboard and rendered-text assertions. Cause remains unproven; no source-only fix is claimed. Detailed earlier failed and focused-pass receipts remain in [verification](../delivery/verification.md#foundation-20-authorized-native-verification--october14).
 
 Physical iPhone 17 Pro Max execution and its installed OS, camera/media quality, file-protection/backup behavior, VoiceOver and performance/capability qualification remain unverified. Broad minimum/other-device launch compatibility is separate from immediate personal-phone acceptance.
+
+### S3 runner compatibility correction
+
+A final actual-runner check found Bash3.2 aborting under `set -u` for the empty full-scope test-selection array. The regression first failed in all scope; unit/e2e passed. Conditional expansion preserves zero arguments. Three external-tool-recorder scenarios now pass, with no native/Photos work. Correction marker: `AQD-Slice: #20/S3-bash`. Actual SHA: Pending final receipt.
 
 ## Review and delivery
 
