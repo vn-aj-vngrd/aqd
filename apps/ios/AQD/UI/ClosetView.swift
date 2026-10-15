@@ -127,10 +127,9 @@ struct ClosetView: View {
                     Text("All availability").tag(Optional<PieceAvailability>.none)
                     ForEach([PieceAvailability.available, .unavailable, .laundry], id: \.self) { Text($0.rawValue.capitalized).tag(Optional($0)) }
                 }
-                Toggle("Archived pieces", isOn: $archived)
+                Button("Archived pieces") { state.closetPath.append(.archivedPieces) }
                 Picker("Sort pieces", selection: $sort) {
-                    Text("Name").tag(PieceSort.name)
-                    Text("Recently added").tag(PieceSort.recentlyAdded)
+                    ForEach(PieceSort.allCases, id: \.self) { Text($0.title).tag($0) }
                 }
             } label: { Label("Filter and sort pieces", systemImage: "line.3.horizontal.decrease") }.tint(AppTheme.ink)
         }
@@ -149,7 +148,13 @@ struct ClosetView: View {
                     } else {
                         PrimaryAction(title: "Clear filters") { category = nil; availability = nil; archived = false }
                     }
-                } else { PieceCollectionGrid(pieces: results) }
+                } else {
+                    if [.mostWorn, .leastWorn, .lastWorn].contains(sort) {
+                        Text("Wear totals include prior estimates. Last worn uses recorded dates; pieces without dated history appear last.")
+                            .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    }
+                    PieceCollectionGrid(pieces: results)
+                }
             }.padding(20)
         }.scrollPosition(id: Binding(get: { state.closetPieceAnchor }, set: { state.closetPieceAnchor = $0 }))
     }
@@ -202,6 +207,7 @@ private struct PieceOptionsButton: UIViewRepresentable {
     let archiveDisabled: Bool
     let archive: () -> Void
     let delete: () -> Void
+    let availability: () -> Void
 
     final class TargetButton: UIButton {
         override var intrinsicContentSize: CGSize { CGSize(width: 48, height: 44) }
@@ -219,14 +225,16 @@ private struct PieceOptionsButton: UIViewRepresentable {
     }
 
     func updateUIView(_ button: TargetButton, context: Context) {
-        button.tintColor = UIColor(AppTheme.actionText)
+        button.tintColor = UIColor(AppTheme.ink)
         let archiveAction = UIAction(title: isArchived ? "Restore" : "Archive",
                                      image: UIImage(systemName: isArchived ? "arrow.uturn.backward" : "archivebox"),
                                      attributes: archiveDisabled ? .disabled : []) { _ in archive() }
         let deleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"),
                                     attributes: .destructive) { _ in delete() }
         let destructiveGroup = UIMenu(options: .displayInline, children: [deleteAction])
-        button.menu = UIMenu(children: [archiveAction, destructiveGroup])
+        let availabilityAction = UIAction(title: "Availability", image: UIImage(systemName: "checkmark.circle"),
+                                          attributes: archiveDisabled ? .disabled : []) { _ in availability() }
+        button.menu = UIMenu(children: [availabilityAction, archiveAction, destructiveGroup])
     }
 
     func sizeThatFits(_ proposal: ProposedViewSize, uiView: TargetButton, context: Context) -> CGSize? {
@@ -246,6 +254,8 @@ struct PieceDetailView: View {
     @State private var undoArchiveRevision: Int?
     @State private var reviewedDelete: DeleteReview?
     @State private var reviewedArchive: WardrobePiece?
+    @State private var availabilityPresented = false
+    @State private var wear: PieceWearSummary?
 
     private struct DeleteReview {
         let piece: WardrobePiece
@@ -267,6 +277,21 @@ struct PieceDetailView: View {
                     if !piece.details.size.isEmpty { detail("Size", piece.details.size) }
                     if !piece.details.fit.isEmpty { detail("Fit", piece.details.fit) }
                     if !piece.details.material.isEmpty { detail("Material", piece.details.material) }
+                    if !piece.details.season.isEmpty { detail("Season", piece.details.season) }
+                    if !piece.details.condition.isEmpty { detail("Condition", piece.details.condition) }
+                    if !piece.details.ownershipAge.isEmpty { detail("Ownership", piece.details.ownershipAge) }
+                    if !piece.details.tags.isEmpty { detail("Tags", piece.details.tags.joined(separator: ", ")) }
+                    detail("Availability", piece.availability == .laundry ? "In the laundry" : piece.availability.rawValue.capitalized)
+                    if let wear {
+                        detail("Recorded wears", String(wear.recorded))
+                        detail("Last worn", wear.lastWorn?.key ?? "No recorded history")
+                        NavigationLink("Wear history") { LocalWearHistoryView(pieceID: piece.id) }.frame(minHeight: 44)
+                    }
+                    if !piece.isArchived && piece.availability == .available {
+                        PrimaryAction(title: "Style this") { state.buildOutfit(pieceID: piece.id, suggest: true) }
+                            .disabled(deleteInFlight)
+                    }
+                    SecondaryAction(title: "Edit piece") { state.editPiece(piece) }.disabled(deleteInFlight)
                     if !piece.details.notes.isEmpty { detail("Notes", piece.details.notes) }
                     if let estimate = piece.details.priorWearCount {
                         detail("Prior wear estimate", String(estimate))
@@ -297,6 +322,9 @@ struct PieceDetailView: View {
                 }
                 optionsToolbar(for: piece)
             }
+        }
+        .sheet(isPresented: $availabilityPresented) {
+            if let piece { PieceAvailabilityView(piece: piece) }
         }
         .onAppear(perform: refresh)
         .onChange(of: state.collectionRefreshID) { refresh() }
@@ -340,7 +368,7 @@ struct PieceDetailView: View {
                 reviewedDelete = DeleteReview(piece: piece, operationID: UUID())
             }
             deleteDecision = true
-        }
+        } availability: { availabilityPresented = true }
         .frame(width: 48, height: 44)
         .confirmationDialog("Delete this piece?", isPresented: $deleteDecision, titleVisibility: .visible) {
             Button("Cancel", role: .cancel) { cancelDeleteReview() }
@@ -358,7 +386,10 @@ struct PieceDetailView: View {
     }
 
     private func refresh() {
-        do { piece = try state.store?.piece(id: id) }
+        do {
+            piece = try state.store?.piece(id: id)
+            if let piece, let store = state.store { wear = PieceWearSummary(piece: piece, records: try store.wearRecords()) }
+        }
         catch { self.error = "The saved piece couldn’t be read. Its data has not been replaced." }
     }
 

@@ -6,7 +6,7 @@ import SwiftData
 import UIKit
 #endif
 
-enum ClosetRoute: Hashable { case piece(UUID), outfit(UUID), theme(UUID) }
+enum ClosetRoute: Hashable { case piece(UUID), outfit(UUID), theme(UUID), archivedPieces }
 
 @MainActor
 @Observable

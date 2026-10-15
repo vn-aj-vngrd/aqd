@@ -129,7 +129,7 @@ extension AppState {
             if let themeID { draft.themeIDs = [themeID] }
             if let pieceID {
                 draft.select(pieceID); draft.pin(pieceID); draft.starterPieceID = pieceID
-                draft.stage = firstOutfit && outfits.isEmpty ? .readiness : .builder
+                draft.stage = firstOutfit && outfits.isEmpty ? .readiness : suggest ? .suggest : .builder
             }
             try store.saveOutfitDraft(draft)
             outfitEditor = OutfitEditorModel(state: self, draft: draft)

@@ -29,4 +29,17 @@ struct OutfitWearTests {
         #expect(throws: WearValidationError.stalePieces) { try draft.validatedForSave(pieces: [], now: now) }
         try draft.validatedForSave(pieces: [item], now: now)
     }
+    @Test func recordedHistoryAndPriorEstimatesStaySeparate() {
+        let item = WardrobePiece(id: UUID(), name: "Shirt", category: .tops, photoID: UUID(), details: PieceDetails(priorWearCount: 4))
+        let unknown = PieceWearSummary(piece: item, records: [])
+        #expect(unknown.recorded == 0)
+        #expect(unknown.priorEstimate == 4)
+        #expect(unknown.lastWorn == nil)
+        let day = LocalPlanDay(year: 2026, month: 1, day: 1, timeZoneID: "Asia/Manila")
+        let record = OutfitWearRecord(id: UUID(), ownerID: UUID(), day: day, outfitID: nil, pieces: [WearPieceSnapshot(item)])
+        let summary = PieceWearSummary(piece: item, records: [record])
+        #expect(summary.recorded == 1)
+        #expect(summary.total == 5)
+        #expect(summary.lastWorn == day)
+    }
 }

@@ -350,7 +350,17 @@ final class PieceStore {
         try protectStoreFiles()
     }
 
+    private enum BootstrapSnapshotError: Error { case changed }
+
     private static func interruptedBootstrapNeedsToday(storeURL: URL, schema: Schema) throws -> Bool {
+        for _ in 0..<3 {
+            do { return try inspectStableBootstrapSnapshot(storeURL: storeURL, schema: schema) }
+            catch BootstrapSnapshotError.changed { continue }
+        }
+        throw StoreError.unsupportedStore
+    }
+
+    private static func inspectStableBootstrapSnapshot(storeURL: URL, schema: Schema) throws -> Bool {
         // Even read-only Core Data/SwiftData opens may change SQLite sidecars or
         // metadata. Only inspect a disposable copy, never the unmarked source.
         let inspectionDirectory = FileManager.default.temporaryDirectory
@@ -395,7 +405,7 @@ final class PieceStore {
                     guard chunk.count <= remainingBytes - bytes.count else { throw StoreError.unsupportedStore }
                     bytes.append(chunk)
                 }
-                guard bytes.count == status.st_size else { throw StoreError.unsupportedStore }
+                guard bytes.count == status.st_size else { throw BootstrapSnapshotError.changed }
                 remainingBytes -= bytes.count
                 let destination = inspectionDirectory.appendingPathComponent(source.lastPathComponent)
                 try bytes.write(to: destination, options: [.atomic, .completeFileProtection])
@@ -409,7 +419,7 @@ final class PieceStore {
             for copied in copiedFiles {
                 let source = sourceDirectory.appendingPathComponent(storeURL.lastPathComponent + copied.suffix)
                 guard let expected = copied.hash else {
-                    guard !FileManager.default.fileExists(atPath: source.path) else { throw StoreError.unsupportedStore }
+                    guard !FileManager.default.fileExists(atPath: source.path) else { throw BootstrapSnapshotError.changed }
                     continue
                 }
                 let descriptor = open(source.path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK)
@@ -425,7 +435,7 @@ final class PieceStore {
                     guard chunk.count <= verificationBudget - count else { throw StoreError.unsupportedStore }
                     count += chunk.count; hash.update(data: chunk)
                 }
-                guard count == status.st_size, hash.finalize() == expected else { throw StoreError.unsupportedStore }
+                guard count == status.st_size, hash.finalize() == expected else { throw BootstrapSnapshotError.changed }
                 verificationBudget -= count
             }
             // Copy the exact WAL when present (not SHM, media or unknown files),
@@ -435,7 +445,8 @@ final class PieceStore {
             // Fail closed on cleanup failure; defer retries on every error path.
             try FileManager.default.removeItem(at: inspectionDirectory)
             return needsToday
-        } catch { throw StoreError.unsupportedStore }
+        } catch BootstrapSnapshotError.changed { throw BootstrapSnapshotError.changed }
+        catch { throw StoreError.unsupportedStore }
     }
 
     private static func inspectBootstrapCopyNeedsToday(storeURL: URL, schema: Schema) throws -> Bool {
@@ -820,6 +831,7 @@ final class PieceStore {
                 try queueCleanup(photoID: existing.photoID,
                                  recipeDigest: try cleanupRecipeDigest(try existing.recipe()), context: context)
             }
+            if result.availability != .available { try flagFuturePlans(using: id, context: context) }
             existing.apply(result)
         } else { context.insert(StoredPiece(result)) }
         context.insert(StoredPieceSave(id: operationID, itemID: id, draftDigest: digest, snapshot: try encode(result)))
@@ -916,6 +928,7 @@ final class PieceStore {
                 availability: PieceAvailability? = nil, sort: PieceSort = .name) throws -> [WardrobePiece] {
         let context = ModelContext(container)
         let needle = Self.searchText(query.trimmingCharacters(in: .whitespacesAndNewlines))
+        let wear = [.mostWorn, .leastWorn, .lastWorn].contains(sort) ? try wearRecords() : []
         return try context.fetch(FetchDescriptor<StoredPiece>()).map { try $0.value() }.filter { piece in
             guard piece.isArchived == archived,
                   category == nil || piece.category == category,
@@ -925,6 +938,16 @@ final class PieceStore {
                         details.material, details.season, details.condition, details.ownershipAge, details.notes] + details.tags
             return needle.isEmpty || text.contains { Self.searchText($0).contains(needle) }
         }.sorted {
+            if sort == .mostWorn || sort == .leastWorn {
+                let left = PieceWearSummary(piece: $0, records: wear).total
+                let right = PieceWearSummary(piece: $1, records: wear).total
+                if left != right { return sort == .mostWorn ? left > right : left < right }
+            }
+            if sort == .lastWorn {
+                let left = PieceWearSummary(piece: $0, records: wear).lastWorn?.key
+                let right = PieceWearSummary(piece: $1, records: wear).lastWorn?.key
+                if left != right { return (left ?? "") > (right ?? "") }
+            }
             if sort == .recentlyAdded, $0.createdAt != $1.createdAt {
                 return $0.createdAt > $1.createdAt
             }
@@ -959,6 +982,8 @@ final class PieceStore {
         }
         guard let stored = try context.fetch(FetchDescriptor<StoredPiece>(predicate: #Predicate { $0.id == id })).first,
               stored.revision == expectedRevision else { throw StoreError.staleRevision }
+        guard allowsSave else { throw StoreError.corruptStore }
+        if archived { try flagFuturePlans(using: id, context: context) }
         stored.isArchived = archived
         stored.revision += 1
         stored.updatedAt = Date()
@@ -1812,5 +1837,50 @@ extension PieceStore {
     }
     func closetIsEmpty() throws -> Bool {
         try pieces().isEmpty && pieces(archived: true).isEmpty && outfits().isEmpty && themes().isEmpty
+    }
+}
+
+
+extension PieceStore {
+    private struct AvailabilityRequest: Encodable {
+        let id: UUID
+        let value: PieceAvailability
+        let expectedRevision: Int
+    }
+
+    @discardableResult
+    func setAvailability(id: UUID, value: PieceAvailability, expectedRevision: Int, operationID: UUID) throws -> WardrobePiece {
+        let context = ModelContext(container)
+        let digest = "availability:" + digest(try encode(AvailabilityRequest(id: id, value: value, expectedRevision: expectedRevision)))
+        if let receipt = try context.fetch(FetchDescriptor<StoredPieceSave>(predicate: #Predicate { $0.id == operationID })).first {
+            guard receipt.draftDigest == digest else { throw StoreError.operationConflict }
+            return try JSONDecoder().decode(WardrobePiece.self, from: receipt.snapshot)
+        }
+        guard allowsSave else { throw StoreError.corruptStore }
+        try ensureUnusedDeletionOperation(operationID, context: context)
+        guard try context.fetch(FetchDescriptor<StoredPieceDraft>(predicate: #Predicate { $0.operationID == operationID })).isEmpty else {
+            throw StoreError.operationConflict
+        }
+        guard let stored = try context.fetch(FetchDescriptor<StoredPiece>(predicate: #Predicate { $0.id == id })).first,
+              stored.revision == expectedRevision else { throw StoreError.staleRevision }
+        if value != .available { try flagFuturePlans(using: id, context: context) }
+        stored.availability = value.rawValue; stored.revision += 1; stored.updatedAt = Date()
+        let result = try stored.value()
+        context.insert(StoredPieceSave(id: operationID, itemID: id, draftDigest: digest, snapshot: try encode(result)))
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+        return result
+    }
+
+    private func flagFuturePlans(using pieceID: UUID, context: ModelContext) throws {
+        let affected = Set(try context.fetch(FetchDescriptor<StoredOutfit>()).map { try $0.value() }
+            .filter { $0.pieceIDs.contains(pieceID) }.map(\.id))
+        for record in try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()) {
+            var plan = try record.value()
+            let zone = TimeZone(identifier: plan.day.timeZoneID) ?? .current
+            guard plan.state == .planned, plan.day.key >= LocalPlanDay(timeZone: zone).key,
+                  let outfitID = plan.outfitID, affected.contains(outfitID), !plan.requiresReview else { continue }
+            plan.requiresReview = true; plan.revision += 1; try plan.validated()
+            record.payload = try encode(plan)
+        }
     }
 }

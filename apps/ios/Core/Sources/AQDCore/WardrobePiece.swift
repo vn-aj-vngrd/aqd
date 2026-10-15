@@ -3,6 +3,31 @@ import Foundation
 public enum PieceSort: String, CaseIterable, Sendable {
     case name
     case recentlyAdded
+    case mostWorn, leastWorn, lastWorn
+
+    public var title: String {
+        switch self {
+        case .name: "Name A–Z"
+        case .recentlyAdded: "Recently added"
+        case .mostWorn: "Most worn"
+        case .leastWorn: "Least worn"
+        case .lastWorn: "Last worn"
+        }
+    }
+}
+
+public struct PieceWearSummary: Equatable, Sendable {
+    public let recorded: Int
+    public let priorEstimate: Int?
+    public let lastWorn: LocalPlanDay?
+    public var total: Int { recorded + (priorEstimate ?? 0) }
+
+    public init(piece: WardrobePiece, records: [OutfitWearRecord]) {
+        let matches = records.filter { $0.pieces.contains { $0.id == piece.id } }
+        recorded = matches.count
+        priorEstimate = piece.details.priorWearCount.flatMap { (0...10000).contains($0) ? $0 : nil }
+        lastWorn = matches.map(\.day).max { $0.key < $1.key }
+    }
 }
 
 public struct WardrobePiece: Identifiable, Equatable, Codable, Sendable {

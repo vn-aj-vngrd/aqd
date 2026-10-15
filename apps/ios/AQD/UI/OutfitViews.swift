@@ -177,6 +177,7 @@ struct ClosetDestination: View {
         case .piece(let id): PieceDetailView(id: id)
         case .outfit(let id): OutfitDetailView(id: id)
         case .theme(let id): ThemeDetailView(id: id)
+        case .archivedPieces: ArchivedPiecesView()
         } }.tint(AppTheme.ink)
     }
 }

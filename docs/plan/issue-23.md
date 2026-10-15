@@ -16,8 +16,8 @@
 
 | Slice | Working outcome | Acceptance | State | Commit marker | SHA |
 | --- | --- | --- | --- | --- | --- |
-| S1 | Three real Closet collections, source-preserving navigation, Add and scoped search start/results/empty/failure | W4, O2; scoped LOCAL-11 | Verified; commit pending | `AQD-Slice: #23/S1` | Pending |
-| S2 | Piece metadata, availability/filter/sort and archive/Undo/restore; retained records and references | W3–5, W7; scoped LOCAL-03 | Planned | `AQD-Slice: #23/S2` | Pending |
+| S1 | Three real Closet collections, source-preserving navigation, Add and scoped search start/results/empty/failure | W4, O2; scoped LOCAL-11 | Committed | `AQD-Slice: #23/S1` | `c49469b` |
+| S2 | Piece metadata, availability/filter/sort and archive/Undo/restore; retained records and references | W3–5, W7; scoped LOCAL-03 | Committed | `AQD-Slice: #23/S2` | Pending |
 | S3 | Reviewed piece deletion with exact outfit/theme/future-plan impact and historical snapshots retained | W6; scoped LOCAL-03/04 | Planned | `AQD-Slice: #23/S3` | Pending |
 | S4 | Theme collection/create/detail/options/edit/multiple membership/favorite/search/delete without deleting outfits | O3, O4, O7; scoped LOCAL-04/11 | Planned | `AQD-Slice: #23/S4` | Pending |
 
@@ -36,10 +36,16 @@ One grouped PR closes #24 and #23. Keep per-slice commits and separate issue acc
 ## Resume
 
 - Companion #24 S1–S6 now supplies real outfits/themes/Plan/Wear/lifecycle. Native unit verification uses the confirmed-ready physical iPhone; all E2E remains #30.
-- Next: #23/S2 piece metadata, availability, wear sorting and archive management. PR33 delivery is verified in the baseline above.
+- Next: #23/S3 reviewed piece deletion and exact dependency-safe cascade. PR33 delivery is verified in the baseline above.
 
 ## S1 collection and search receipt
 
 Real Pieces/Outfits/Themes collections use owned records and typed shared destinations. Contextual Add opens actual capture, outfit and theme tasks. Native scoped search preserves the originating collection, supports independent outfit favorite/theme filters, includes archived piece badges and distinguishes blank/loading/empty/no-match/failure states. Query identity prevents superseded results from replacing newer input. Explicit saved-result navigation clears old searches; Cancel restores the source. Paper collection cards and photo grids inform layout; physical UI acceptance stays #30.
 
 Bounded Standards/Spec review covered owned search scope, malformed record errors, source returns, stale async results, photo framing, provisional theme membership and Dynamic Type. No unresolved finding in this increment; final independent grouped review remains. Existing E2E selectors will be reconciled in #30, including contextual Add.
+
+## S2 piece management receipt
+
+Piece detail exposes optional metadata, actual recorded wear, separately labelled prior estimate and unknown dated history, a pinned Style this task, edit and real availability choices. Wear sorts use total counts or recorded last-worn dates with deterministic ties and explicit estimate/unknown copy. Archived pieces has its own searchable destination. Archive/availability preserve outfits/history and flag affected future plans; restore/Undo preserves review flags. Availability retries reconcile the exact committed result.
+
+Core52 and physical native121 (108 Swift Testing plus13 XCTest) pass, zero failures, `/tmp/aqd-23-s2-recovery-final.log`. The earlier run failed a first-use recovery case when DB/WAL checkpointing changed its inspected snapshot. Recovery now retries only a detected changing snapshot, at most three times, retaining the protected disposable-copy/refusal rules. The final run includes both first-use windows and populated/corrupt/newer-store refusal tests. An earlier availability feedback compile error was corrected before execution. Bounded Standards/Spec review covered owner state, atomic plan flags, stable identities, actual/estimated counts and unknown-save retry. UI/E2E acceptance remains #30.
