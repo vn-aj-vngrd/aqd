@@ -14,7 +14,7 @@ iPhone remains the first Apple-device target; additional iPad/Mac/Watch/Android/
 
 ## Immediate personal-MVP acceptance
 
-The owner selected iPhone 17 Pro Max on October 15 as the immediate device. [Autonomous workflow](../agents/autonomous-workflow.md#immediate-mvp-target) owns that delivery profile. Keep existing deployment settings and required local behavior; broad supported-OS/device qualification remains later launch work. Feature unit/build checks and final #30 runtime timing follow the [implementation plan](../delivery/implementation-plan.md#verification-policy--owner-approved-october15). This target selection is not physical-phone acceptance evidence.
+The owner selected iPhone 17 Pro Max on October 15 as the immediate device. [Autonomous workflow](../agents/autonomous-workflow.md#immediate-mvp-target) owns that delivery profile. Keep existing deployment settings and required local behavior; broad supported-OS/device qualification remains later launch work. Feature unit/build plus focused UI AC proof and final #30 qualification timing follow the [implementation plan](../delivery/implementation-plan.md#verification-policy--owner-approved-october15). This target selection is not physical-phone acceptance evidence.
 
 ## Included complete local scope
 

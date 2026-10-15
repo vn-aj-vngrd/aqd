@@ -19,25 +19,33 @@ Replace the example with the smallest complete journeys required by this issue.
 
 ## Acceptance and evidence
 
-| Acceptance item | Slice | Implemented behavior | Check, revision and artifact | Result |
-| --- | --- | --- | --- | --- |
-| <scoped ID or exact subcase> | S1 | <actual behavior> | <exact command/environment and receipt> | Not run |
+| AC / subcase and expected outcome | Slice | Scenario / actual test ID | Tested revision, environment and observed result | Local artifacts / published PR evidence | Status |
+| --- | --- | --- | --- | --- | --- |
+| <issue AC wording and scoped acceptance ID> | S1 | <focused E2E for UI, appropriate check otherwise> | <exact command/run and actual outcome> | <real screenshots/video and report links; publication initially Pending> | Not run |
 
 ## Deferred final verification
 
-List the issue's exact integrated/device/rendered checks retained for #30. Include existing failures and reproduction/artifacts. Keep required feature checks in the acceptance table above.
+List genuinely broader integrated/device/OS qualification retained for #30. Include relevant existing failures and reproduction/artifacts. Keep the issue's own UI AC tests and rendered proof in the acceptance table above; a failure invalidating its AC stays blocking here.
 
 ## Review and delivery
 
 - Standards: <reviewed revision/diff and findings/fixes>
 - Spec: <acceptance coverage and findings/fixes>
 - Repository/native checks: <actual results or exact blockers>
-- PR, latest-head CI/Codex, merge and release: <actual links/SHAs or Not run>
 - Final receipt commit: <commit subject/marker; resolve its SHA from Git>
+
+## Shipping
+
+- PR locator: <known canonical URL, otherwise repository/head branch; resolve and reuse on resume>
+- Stable local gate: <reviewed revision and acceptance-table pointer>
+- Published acceptance proof: <PR proof-section locator and artifact access/identity check, or Pending>
+- Remote gate evidence: <GitHub workflow/review/thread/release locators; query their current state>
+
+Follow the plan convention's shipping checkpoints. Passing remote status is read from GitHub; polling results alone do not produce commits.
 
 ## Resume
 
-- Current slice and last completed action:
+- Current slice or ship phase and last completed action:
 - Next exact action:
 - Remaining dirty paths and ownership:
-- Blocker, evidence, and missing human/access action, if any:
+- Blocker, evidence, repeated no-progress attempts and missing human/access action, if any:

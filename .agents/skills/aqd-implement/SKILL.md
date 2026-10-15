@@ -11,7 +11,7 @@ Read repository `AGENTS.md` and [lifecycle](../../../docs/agents/lifecycle.md) t
 
 Read the real issue/comments, [implementation plan](../../../docs/delivery/implementation-plan.md) dependency row, current status summary and affected contracts. Inspect the current implementation and `git status`; identify dirty-file ownership. For native work, load `apps/ios/AGENTS.md`. Read only affected feature/design branches.
 
-Create or resume `docs/pan/issue-<number>.md` under the [plan convention](../../../docs/pan/README.md). Record the issue, authorized endpoint, predecessor, baseline, scoped acceptance IDs and smallest complete vertical slices. Keep settled requirements; resolve routine implementation choices without another interview. Resolve a missing real issue number before creating a numbered plan or starting product code.
+Create or resume `docs/pan/issue-<number>.md` under the [plan convention](../../../docs/pan/README.md). Record the issue, authorized endpoint, predecessor, baseline, scoped acceptance IDs and smallest complete vertical slices. Map each UI outcome to a focused E2E scenario and rendered evidence under [acceptance proof](../../../docs/agents/acceptance-proof.md). Keep settled requirements; resolve routine implementation choices without another interview. Resolve a missing real issue number before creating a numbered plan or starting product code.
 
 Complete when every scoped acceptance item has an owning slice and a verification method, dependencies permit work, and the plan is persisted before product edits.
 
@@ -25,7 +25,7 @@ Complete when the slice implements its entire stated outcome, including affected
 
 ## 3. Verify and commit
 
-Use [aqd-verify](../aqd-verify/SKILL.md) for required checks and [aqd-review](../aqd-review/SKILL.md) on the actual increment, including new files. Fix valid findings before committing.
+Use [aqd-verify](../aqd-verify/SKILL.md) for required checks, [aqd-prove](../aqd-prove/SKILL.md) for completed UI slices' focused acceptance evidence, and [aqd-review](../aqd-review/SKILL.md) on the actual increment, including test expectations and new files. Generate/extend and execute the needed UI cases; fix valid findings before committing.
 
 Update the plan with actual checks and state. Commit only owned slice code/tests/docs, following the plan convention's scoped subject, issue reference and `AQD-Slice` trailer. Immediately record the resulting SHA. Preserve reviewable slice history.
 
@@ -35,8 +35,8 @@ Complete when the slice has a passing required-check record and an actual commit
 
 Repeat steps 2–3 for every remaining authorized slice without waiting for another prompt. Retain failure reproductions and test one hypothesis at a time while diagnosing. Installed `diagnosing-bugs` is useful for an unresolved mechanism. Continue independent work when a slice needs external access.
 
-After the slices, use [aqd-review](../aqd-review/SKILL.md) on the full issue diff and [aqd-verify](../aqd-verify/SKILL.md) for relevant final checks. Commit focused corrections tied to their slice. Persist the last code SHA and evidence in the plan's documentation receipt commit; update status/verification and affected control/root ledgers as needed.
+After the slices, use [aqd-review](../aqd-review/SKILL.md) on the full issue diff and [aqd-verify](../aqd-verify/SKILL.md) for relevant final checks. Qualify the full selected issue proof through `aqd-prove`, reusing results only when their inputs remain unchanged. Commit focused corrections tied to their slice. Persist the last code SHA and evidence in the plan's documentation receipt commit; update status/verification and affected control/root ledgers as needed.
 
-For authorized PR/merge/release, follow [delivery stages](../../../docs/agents/delivery-stages.md). Local-review/leave-open instructions determine the stopping point. Finishing this issue alone does not authorize the next issue.
+When dispatched by [aqd-ship](../aqd-ship/SKILL.md), return at the verified/committed local gate so the orchestrator continues remote phases. For a standalone implementation request with authorized PR/merge/release, hand delivery to `aqd-ship`, which resumes at the first unsatisfied phase. Local-review/leave-open instructions determine the stopping point. Finishing this issue alone does not authorize the next issue.
 
-Complete when every required feature acceptance item is accounted for, required checks/review pass and the authorized endpoint is reached. Deferred #30 runtime checks stay unverified. Handoff includes the plan, slice SHAs, actual results, runnable/review location and exact remaining access/device actions. If blocked, persist the next exact action and describe the observed blocker without claiming completion.
+Complete the local implementation phase when every required feature acceptance item is accounted for and its required local checks, focused UI proof, review and slice commits pass. Under `aqd-ship`, return locally qualified proof for publication; overall delivery remains incomplete until the PR proof and requested endpoint pass. Broader #30 qualification stays unverified. Handoff includes the plan, slice SHAs, actual results, runnable/review location and exact remaining access/device actions. If blocked, persist the next exact action and describe the observed blocker without claiming completion.

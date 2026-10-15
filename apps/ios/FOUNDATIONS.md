@@ -42,7 +42,7 @@ Affected live descendant trees: `14I-0`, `4LD-0`, `4E1-0`, `4GB-0`, `10S3-0`, `1
 
 ## Current native qualification
 
-[Verification](../../docs/delivery/verification.md) owns current and historical native receipts. Shared metadata, semantic Back/Close, tab selection and capture/details recovery have scoped evidence; the landscape Notes keyboard/visible-value failure remains unresolved. Preserve that failure and its assertions for final #30. No physical-phone capability/performance acceptance is inferred.
+[Verification](../../docs/delivery/verification.md) owns current and historical native receipts. Shared metadata, semantic Back/Close, tab selection and capture/details recovery have scoped evidence; the landscape Notes keyboard/visible-value failure remains unresolved. Preserve it and its assertions; if it invalidates the current feature AC, resolve its focused proof before shipping, with the broader regression matrix retained for #30. No physical-phone capability/performance acceptance is inferred.
 
 The [implementation plan verification policy](../../docs/delivery/implementation-plan.md#verification-policy--owner-approved-october15) governs feature checks versus final runtime hardening. [Current status](../../docs/delivery/implementation-status.md) summarizes delivered behavior without duplicating execution counts here.
 

@@ -1,6 +1,6 @@
 ---
 name: aqd-verify
-description: Verify AQD slice changes, choose native unit/build checks, or execute authorized final iPhone 17 Pro Max hardening. Use before recording test, compatibility, or readiness claims.
+description: Verify AQD slice changes with unit/build and focused native E2E checks, or execute final iPhone 17 Pro Max hardening. Use before recording test, compatibility, or readiness claims.
 ---
 
 # Verify AQD changes
@@ -22,6 +22,7 @@ Complete when each selected check has a known input revision, command and eviden
 | Agent docs/skills/tooling | `pnpm check:agents`, `pnpm check`, `git diff --check` |
 | Pure Core rule during a slice | `swift test --package-path apps/ios/Core --filter <actual-test-name>` |
 | Final feature native check | The existing runner with `IOS_TEST_SCOPE=unit` runs Core, AQDTests and a Debug build. |
+| UI feature AC | Run the exact focused XCUITest identifiers selected by [aqd-prove](../aqd-prove/SKILL.md), retain result bundles/attachments, and inspect/publish proof through that skill. |
 | Release configuration affected or final feature build | Generic unsigned Release build below, once after final source changes. |
 | Authorized focused UI request or final #30 | Relevant existing UI tests; use `IOS_TEST_SCOPE=all` for the complete runner, then physical-phone checks. |
 
@@ -42,13 +43,13 @@ xcodebuild -project apps/ios/AQD.xcodeproj -scheme AQD \
   -disableAutomaticPackageResolution CODE_SIGNING_ALLOWED=NO build
 ```
 
-For focused native tests, discover real identifiers in source and use `xcodebuild test -only-testing:<target>/<suite>/<test>` with the resolved destination and isolated derived data. UI tests requiring Photos fixtures use `scripts/seed-ios-test-photo.sh` on the selected test simulator. Preserve existing assertions and failures. Routine features use unit/build checks; broad simulator/device/E2E work waits for #30 unless requested. Inspect the runner's actual scope and result bundle/log, including skips and failed setup.
+For focused native tests, discover real identifiers in source and use `xcodebuild test -only-testing:<target>/<suite>/<test>` with the resolved destination, isolated derived data and a retained result bundle. Select all required issue cases without silently omitting a failed case. UI tests requiring Photos fixtures use `scripts/seed-ios-test-photo.sh` on the selected test simulator. Preserve assertions and failures. UI features require selected AC E2E proof in addition to unit/build checks; the broad full-suite/device matrix waits for #30. The current unit CI job alone is not that proof. Inspect actual scope, results, skips, failed setup and exported evidence.
 
 Complete when selected checks finish and their actual exit status, results and artifacts are captured. Fix task-caused failures and rerun affected checks. Missing access/tooling stays Not run/Blocked; failed tests stay Failed.
 
 ## 3. Qualify and persist
 
-Update plan acceptance rows with command, source revision, environment, result and artifact. Retain exact deferred runtime/keyboard/accessibility/media cases for #30. Add a concise receipt to [verification](../../../docs/delivery/verification.md) when evidence changes; update [status](../../../docs/delivery/implementation-status.md) for changed capability.
+Update plan acceptance rows with command, source revision, environment, result and artifact. Use [acceptance proof](../../../docs/agents/acceptance-proof.md) to distinguish local execution from inspected and published UI proof. Only genuinely broader runtime/device cases remain deferred to #30; a failed feature AC stays blocking. Add a concise receipt to [verification](../../../docs/delivery/verification.md) when evidence changes; update [status](../../../docs/delivery/implementation-status.md) for changed capability.
 
 At final personal-MVP hardening, prove integrated journeys on the physical iPhone 17 Pro Max and its installed OS. Cover persistence/relaunch, offline/manual paths, permissions/media, visible editing, light/dark, accessibility and applicable capability/privacy/performance checks. Device-only protection, camera and model quality need physical-phone evidence. Obtain signing/device access through the lifecycle. Broader launch-matrix work remains a separate release requirement.
 

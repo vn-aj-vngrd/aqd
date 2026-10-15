@@ -32,7 +32,7 @@ This scoped receipt supersedes unresolved compact/Details statements in the hist
 | PhotoEditor dirty Back / Cancel / Discard | Before-dialog Portrait selection is verified. Scoped native Cancel or measured outside-header dismissal preserves provisional framing; Discard retains accepted photo. Real picker/crop/landmark/save/search/edit/relaunch passes. | Earlier arbitrary outside-tap failure remains archived; synthetic media is not garment quality. |
 | Agent / source returns with system accessibility preferences | Actual0/0,1/0,0/1,1/1 settings, fresh foreground scenes and retained-return journeys pass; both original preferences restored. | Native vertical movement is observed in standard/reduced recordings; not opacity-only or hardware performance proof. |
 
-[Verification](../delivery/verification.md#foundation-20-authorized-native-verification--october14) retains all historical focused/full results and failures. The landscape Notes keyboard/visible-value failure is unresolved and stays in final #30. Source updates and scoped passes here do not certify every control or physical-phone behavior.
+[Verification](../delivery/verification.md#foundation-20-authorized-native-verification--october14) retains all historical focused/full results and failures. The landscape Notes keyboard/visible-value failure remains unresolved. Keep its broad regression entry in #30, while any current-feature AC it invalidates must pass focused proof before that issue ships. Source updates and scoped passes here do not certify every control or physical-phone behavior.
 
 ## Foundation #20 native consumer checkpoint · October13
 
@@ -172,6 +172,6 @@ L152–L154/L166–L169 define six preference questions plus Review, with unnumb
 
 ## Runtime acceptance at final hardening
 
-The [verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) defers broad execution to #30 unless requested. Implement control behavior and update this inventory during each feature; retained failures and deferred runtime checks remain explicit.
+The [verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) retains the broad matrix in #30. Each feature must already execute focused E2E and inspect/publish rendered proof of its own UI ACs. Implement control behavior and update this inventory during each feature; retained failures and genuinely deferred qualification remain explicit.
 
 For every row above, open from each listed source, complete once, cancel once, return with Back, then test the applicable empty/error path. Check draft retention, exact record identity, duplicate prevention, keyboard/focus return, largest text, dark appearance and Reduce Motion. Every newly introduced control must update this ledger and the manifest in the same change. Static Paper inspection does not establish native animation, persistence, OS presentation or accessibility correctness.

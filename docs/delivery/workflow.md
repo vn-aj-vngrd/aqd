@@ -48,7 +48,7 @@ Commits and PR titles use the same conventional subject validator. Choose the ty
 
 Use the PR template for features, fixes, refactors, and maintenance. Start with the problem and resulting behavior. Its table records each meaningful change/finding, action/reason, and observed verification result. Use plain English and concrete verbs. Include technical details only when they help assess behavior, compatibility, migration, privacy, or a failure. Remove placeholder instructions and unrelated history; use None for an empty applicable section. A short PR needs only a few precise rows, not padding.
 
-Write Passed, Failed, or Not run with evidence/reason; never turn a planned test into a result. Update the body after review fixes and verify the squash title/body. For multiline issue/PR bodies, write a temporary file and pass `--body-file`.
+Follow [acceptance proof](../agents/acceptance-proof.md) for the required AC table, focused UI E2E and inspected/published screenshot/video and test-result artifacts. Missing required UI proof or inaccessible evidence blocks merge even when unit CI is green. Write Passed, Failed, or Not run with evidence/reason; never turn a planned test into a result. Update the body after review fixes and verify the squash title/body. For multiline issue/PR bodies, write a temporary file and pass `--body-file`.
 
 ## Verification
 

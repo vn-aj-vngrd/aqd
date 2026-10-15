@@ -1,5 +1,20 @@
 # Current verification
 
+## Acceptance-proof workflow refinement, October 15, 2026
+
+The owner clarified that UI work needs AC-linked E2E and reviewable proof posted in the PR. Added [aqd-prove](../../.agents/skills/aqd-prove/SKILL.md) and the [acceptance-proof contract](../agents/acceptance-proof.md), connected the implementation/review/shipping gates, expanded the issue/PR templates, and replaced blanket unit-only feature guidance. Focused feature proof is now required; genuinely broader full-suite/device qualification stays in #30. A failed current UI AC or unavailable publication cannot be deferred merely to permit merge. Earlier receipts below describe their earlier policy and evidence, not a pass of this new gate.
+
+This remains workflow/documentation refinement. No application/E2E test source, executable runner, package configuration or CI workflow changed. No feature E2E, screenshot capture/upload, issue delivery, commit, push, PR creation or merge ran. The existing unit-default native CI is explicitly documented as insufficient for UI proof; selected-case execution/artifact publication must be established during authorized feature implementation.
+
+Validation: `pnpm check` passed 49 repository tests, zero failures/skips, in `/tmp/aqd-acceptance-proof-workflow-check.log`. `pnpm check:agents` validates all 120 current Markdown documents, links/fragments and repo-local skill metadata; `git diff --check` passes. Manual contract review traced UI/non-UI criteria, compound-AC coverage, an unexecuted generated test, failing rendered proof despite an AX pass, stale-head evidence, inaccessible artifacts, draft/local-review scope and a current AC incorrectly deferred to #30. These are static/scenario checks, not a real issue's acceptance proof. The new requirements leave issue #20's focused proof unexecuted and its known Notes failure unresolved.
+
+
+## Shipping workflow refinement, October 15, 2026
+
+The owner's current instruction is workflow refinement only. Added [aqd-ship](../../.agents/skills/aqd-ship/SKILL.md) as the single issue-delivery orchestrator, connected its local-gate handoff and routers, and defined resume/endpoint, CI/Codex recovery and stable shipping-checkpoint behavior. Application source, scripts, package configuration and CI workflows are unchanged. No issue delivery, native run, commit, push, PR creation, Codex request, merge or release ran in this refinement.
+
+`pnpm check` passed 49 repository tests with zero failures/skips, recorded in `/tmp/aqd-ship-workflow-check.log`. `pnpm check:agents` validates all 118 current Markdown documents and repo-local skill metadata; local-link/heading checks and `git diff --check` pass. Manual workflow tracing covered documentation-only scope, a partially completed issue, an existing PR, leave-open delivery, a new head invalidating review, a required unavailable review, and an already merged PR resuming at release. These are documentation/scenario checks, not live shipping proof. Broad feature E2E remains assigned to #30; shipping #30 itself requires its integrated hardening acceptance.
+
 ## Agent foundation and native checkpoint, October 15, 2026
 
 The owner requested autonomous repo-local delivery skills, persisted numbered plans, tested vertical-slice commits, documentation cleanup and commits of existing native work. This receipt supersedes older pending-run wording and per-feature broad runtime timing below. Earlier failures remain failed. The [implementation plan](implementation-plan.md#verification-policy--owner-approved-october15) now assigns broad UI/device/E2E execution to final #30; this cleanup ran unit/build checks only.

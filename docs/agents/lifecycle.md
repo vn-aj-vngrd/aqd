@@ -8,6 +8,8 @@ A request to implement a feature/fix authorizes its scoped ticket/spec, branch, 
 
 Ask only for missing product decisions, unavailable required access, or a step outside that scope. Read the issue, prior discussion, product decisions, and current code before asking. Continue independent work while blocked, and report the exact remaining gate.
 
+An actual `aqd-ship <issue-number>` request selects the [shipping orchestrator](../../.agents/skills/aqd-ship/SKILL.md) and full issue lifecycle without routine phase confirmations. A request to design/refine that workflow remains documentation-only. A newer delivery instruction can supersede an earlier local-only checkpoint; explicit current scope limits still govern.
+
 ## Task branches
 
 - **Read-only review:** scope/authority above, affected contracts and current source; then stage 4. No ticket mutation or delivery operations implied.
@@ -35,9 +37,9 @@ Complete when each scoped acceptance criterion is checkable, the verification ap
 
 For authorized branch work, fetch the integration branch and start or resume the ticket branch under the development conventions. For docs-only/local work, preserve the user's current branch and scope. Use [aqd-implement](../../.agents/skills/aqd-implement/SKILL.md). Persist `docs/pan/issue-<number>.md` before product edits, map acceptance to vertical slices, then implement, verify and commit each slice before continuing. The [plan convention](../pan/README.md) owns naming, slice markers and SHA receipts. Reuse existing components and focused test seams.
 
-Run focused checks during slices, then relevant feature unit/build/repository checks once at final source. The [implementation plan verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) owns timing: broad rendered simulator/device/E2E acceptance belongs to final #30 unless requested. Implement accessibility/navigation requirements now and retain their unexecuted checks. Update the issue plan and capability/evidence documents as they change.
+Run focused checks during slices, then relevant feature unit/build/repository checks at final source. UI ACs also require focused app-driven E2E, inspected rendered evidence and publication through [aqd-prove](../../.agents/skills/aqd-prove/SKILL.md). The [implementation plan verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) retains the broad full-suite/device matrix in #30; it does not defer proof of the current feature. Update the issue plan and capability/evidence documents as they change.
 
-Complete feature implementation when scoped behavior is implemented, required feature checks pass, failed writes/retries recover correctly, and existing data and unrelated behavior are preserved. Record deferred final runtime acceptance and known UI failures in #30 without marking them passed. Missing behavior, required feature checks and data-loss/security defects remain blockers. A successful build alone is not functional verification. A documentation task may complete after its documentation checks while naming unverified native/runtime requirements, without claiming implementation completion.
+Complete feature implementation when scoped behavior is implemented, required feature checks pass, failed writes/retries recover correctly, and existing data and unrelated behavior are preserved. Record genuinely broader final qualification in #30 without marking it passed. Missing/failed/unpublished proof of a current UI AC, missing behavior, required checks and data-loss/security defects remain blockers. A successful build alone is not functional verification. A documentation task may complete after its documentation checks while naming unverified native/runtime requirements, without claiming implementation completion.
 
 ## 4. Review against standards and spec
 

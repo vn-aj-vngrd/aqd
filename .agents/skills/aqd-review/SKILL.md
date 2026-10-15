@@ -20,7 +20,7 @@ Complete when every in-scope file, requirement and evidence revision is identifi
 For a slice increment, inspect both axes below at that bounded scope. At issue closeout, use installed Matt Pocock `code-review` when available and follow its independent Standards/Spec process. If unavailable, perform the two passes below and disclose the fallback. When independent agents are supported and authorized, give each the same fixed inputs without suggested findings; keep them read-only. A single-agent fallback states that limitation.
 
 - **Standards:** trace affected consumers for correctness, state ownership, schema/media preservation, concurrency/cancellation, accessibility, privacy and existing conventions. Flag complexity when it causes a concrete problem.
-- **Spec:** map every scoped acceptance item to implementation and actual evidence. Check success, recovery/cancel/empty states and supporting routes. Respect deferred #30 runtime gates. Missing behavior and known data-loss/security defects remain actionable.
+- **Spec:** map every scoped acceptance item to implementation and actual evidence. Inspect generated E2E expectations against the AC and actual rendered proof under [acceptance proof](../../../docs/agents/acceptance-proof.md). Check success, recovery/cancel/empty states and supporting routes. Broad #30 qualification stays separate; missing/failed proof of the current feature cannot be deferred. Missing behavior and data-loss/security defects remain actionable.
 
 Each finding states severity, exact file/line, trigger, consequence and smallest useful fix. Separate unverified checks from proven defects. A findings-free review names its coverage limits.
 

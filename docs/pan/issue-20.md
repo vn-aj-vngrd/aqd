@@ -28,6 +28,12 @@ Agent workflow/docs tooling is separate unticketed repository maintenance. It do
 | Generic unsigned Release | S1/S2 | `/tmp/aqd-agent-foundation-release.log`, current dirty native source | Passed |
 | Repository/workflow/agent-doc checks | S3 | `pnpm check`: 49 passed; `pnpm check:agents` checks all current Markdown/skills; final receipt follows | Passed |
 
+## Current UI proof gate, not executed
+
+The owner's acceptance-proof clarification supersedes the old unit-only delivery assumption. Before shipping this issue, read its actual ACs, map the affected UI outcomes, generate/extend selected native E2E cases, inspect their real rendered evidence, and publish the proof table/artifacts in its PR. Existing unit/Release receipts and authored UI cases do not establish that new proof gate. Mapping, selected execution and PR publication are Not run in this workflow-refinement task.
+
+The known landscape Notes failure below must be resolved before issue delivery if it invalidates one of its ACs. Its retained #30 regression entry does not waive the issue's own proof requirement.
+
 ## Deferred final verification
 
 Final #30 retains the known landscape Notes failure: the software keyboard can be offscreen/unhittable and post-typing text/caret visually indiscernible. Preserve the existing real-keyboard and rendered-text assertions. Cause remains unproven; no source-only fix is claimed. Detailed earlier failed and focused-pass receipts remain in [verification](../delivery/verification.md#foundation-20-authorized-native-verification--october14).
@@ -47,6 +53,6 @@ A final actual-runner check found Bash3.2 aborting under `set -u` for the empty 
 
 ## Resume
 
-- Current action: local cleanup complete. S1–S3 are separately committed; native unit/Debug, unsigned Release and repository checks pass. No PR/merge was performed.
+- Current action: historical local cleanup S1–S3 is committed with native unit/Debug, unsigned Release and repository passes. The newly required focused UI AC proof/publication remains unexecuted; no PR/merge is performed by workflow refinement.
 - Next product action after this cleanup: finish Foundation's remaining required feature gates under the current policy, then obtain authorization for the next dependency-ready issue if not already supplied.
 - Dirty paths after the final receipt commit: none expected; verify `git status` before resuming.
