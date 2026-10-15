@@ -40,19 +40,19 @@ The owner invoked `aqd-ship 20` through protected squash merge and repository re
 
 | Slice | Complete outcome | Verification | State |
 | --- | --- | --- | --- |
-| S4 | Visible multiline Notes editing, Apply/cancel and retained draft across rotation/relaunch | Existing `testDetailsLandscapeAvailabilityNotesApplyDiscardAndRelaunch` and `testMultilineNotesKeepEditingAcrossRotation`, inspected full-screen attachments | Verified; commit marker `AQD-Slice: #20/S4` |
-| S5 | Reusable selected-case proof and remotely accessible results for Foundation | Selected native E2E, attachment export/index, PR AC table and artifacts | Planned |
+| S4 | Visible multiline Notes editing, Apply/cancel and retained draft across rotation/relaunch | Existing `testDetailsLandscapeAvailabilityNotesApplyDiscardAndRelaunch` and `testMultilineNotesKeepEditingAcrossRotation`, inspected full-screen attachments | Committed at `ca761fd` |
+| S5 | Reusable selected-case proof and remotely accessible results for Foundation | Selected native E2E, attachment export/index, PR AC table and artifacts | Verified locally; marker `AQD-Slice: #20/S5`; remote artifact gate pending |
 
 The real issue has prose Build/Prove clauses rather than numbered ACs. The following labels preserve those clauses as traceable subcases, without claiming complete LOCAL-01/10/15 or later product roots.
 
 | AC / expected outcome | Actual check | Required evidence | Status |
 | --- | --- | --- | --- |
-| F1: reusable semantic controls and shared states in light/dark and accessibility variants | AQDTests shared component rendering; `testSharedCaptureControlsAtLargestTextKeepKeyboardSafeTargetsAndValidation`; focused appearance journey | Actual test results and inspected UI states | Not run at this head |
-| F2: five native destination identities and source-preserving Agent presentation | `testNativeRootTabsExposeDestinationsTargetsAndSelection`, `testAgentFullScreenBackRestoresCloset` | Tab/return assertions and screenshots | Not run |
-| F3: capture → accepted photo → acknowledged piece → collection → process relaunch | `testPhotosPickerSaveSearchEditAndRelaunch` | Real synthetic Photos journey, save/read assertions and screenshots | Not run |
-| F4: cancel/failed write/unknown retry/migration preserve data | AQDTests persistence/recovery; `testCaptureSourceClosePreservesDraftAndPhotoIsRequired`; S4 Details tests | Unit/integration receipts and real app cancel/relaunch evidence | Not run |
-| F5: isolated failure/restart/media fixtures and rendered test support | Existing isolated test-store/fixture guards, selected-case runner and exported attachments | Executed selections, source identity and accessible result bundle | Not run |
-| F6: manual support/API gates and capability budgets remain explicit | Native unit/Debug, unsigned Release; existing capability evaluation gate | Builds and source inspection. No assistance enabled. Broad OS/device/performance qualification stays #30 | Not run |
+| F1: reusable semantic controls and shared states in light/dark and accessibility variants | AQDTests shared component rendering; `testSharedCaptureControlsAtLargestTextKeepKeyboardSafeTargetsAndValidation`; focused appearance journey | Native rendering units; largest-text UI case; dark source-close via real proof runner, inspected [screens/reports](evidence/issue-20/README.md) | Passed locally; publication pending |
+| F2: five native destination identities and source-preserving Agent presentation | `testNativeRootTabsExposeDestinationsTargetsAndSelection`, `testAgentFullScreenBackRestoresCloset` | Tab/return assertions and inspected [screens/reports](evidence/issue-20/README.md) | Passed locally; publication pending |
+| F3: capture → accepted photo → acknowledged piece → collection → process relaunch | `testPhotosPickerSaveSearchEditAndRelaunch` | Real synthetic Photos/crop/save/read/relaunch assertions and inspected [screens/reports](evidence/issue-20/README.md) | Passed locally; publication pending |
+| F4: cancel/failed write/unknown retry/migration preserve data | AQDTests persistence/recovery; `testCaptureSourceClosePreservesDraftAndPhotoIsRequired`; S4 Details tests | Native failure/unknown-retry/migration units plus corrected Details/source-close/recovery cases; [receipts](evidence/issue-20/README.md) | Passed scoped local behavior; publication pending |
+| F5: isolated failure/restart/media fixtures and rendered test support | Existing isolated test-store/fixture guards, selected-case runner and exported attachments | CLI filter RED/GREEN; strict proof validator; actual dark subset run/exports. Default eight-case CI artifact still needs its actual run/readback | Local support passed; remote publication pending |
+| F6: manual support/API gates and capability budgets remain explicit | Native unit/Debug, unsigned Release; existing capability evaluation gate | Core20/native84/Debug and unsigned Release passed; [input comparison/build receipt](evidence/issue-20/build-receipt.json). No assistance enabled; broad qualification stays #30 | Passed scoped local gate |
 
 Shipping locator: `vn-aj-vngrd/aqd`, head `van/issue-20/native-ui-foundations`; resolve/reuse its PR on resume. Current local toolchain is Xcode 27.0/27A266a with iPhone 17 Pro Max simulator E3686DA1-1D81-4CD9-A876-9797D94C63DF on iOS 27.0. Synthetic media only. Physical-device and full regression remain #30.
 
@@ -61,6 +61,12 @@ Shipping locator: `vn-aj-vngrd/aqd`, head `van/issue-20/native-ui-foundations`; 
 Original tests passed 2/2 while the seven-line landscape screenshot exposed only line 1. Changing only the focused Notes anchor from top to bottom showed line 7 and its caret above Apply/keyboard. Independent Standards and Spec reviews confirmed that narrow difference. A new Vision OCR assertion crops the unobscured editor, excluding keyboard suggestions. Its valid original-anchor RED recognizes `Line 1 wardrobe note`, not the expected `Line 7 after rotation`, in `/tmp/aqd-ship20-ocr-display-red.xcresult`. Earlier empty-OCR probes exposed an app-only landscape screenshot canvas defect; they are failed harness experiments, not valid symptom reproductions. The final helper uses full-display capture with explicit image orientation.
 
 `/tmp/aqd-ship20-final.xcresult` on the bottom-anchor source passed 84 native unit tests and 7/8 selected UI tests, zero skips; Core20 passed separately and unsigned generic Release passed. The multiline OCR test passed. The remaining UI failure occurred before Notes focus: the driver alternated full-body 232-point swipes past Availability. Its final target was y469–531 below the visible body. A measured-distance slow drag with endpoint hold retains the same visibility bounds; its three affected clients, including short-note OCR, passed 3/3 with zero failures/skips in `/tmp/aqd-ship20-focused-correction.xcresult`. Both full-display images were inspected: the short note is visible; line 7 and its caret remain above Apply/keyboard. OCR recognizes the exact expected strings. The combined run remains Failed. Only `NativeFlowTests.swift` changed between the recorded combined and correction source snapshots; production/native-unit/Release inputs stayed identical. Five UI cases whose interactions/expectations did not change retain their earlier passes, with current-head CI still required.
+
+### S5 selected execution and publication support
+
+The issue manifest contains eight UI identifiers. `scripts/prove-ios.sh 20` retains real input identity, logs, result bundle, summary and exported attachments. Empty/malformed selections fail before native work. Strict validation refuses missing/failed/skipped/expected-failure cases, unexpected counts and missing case-associated PNGs; rendered correctness still requires inspection. `pnpm check` passed 53 tests after genuine filter RED/GREEN. A declared one-case dark subset ran through the new wrapper: one pass, zero failures/skips; the actual dark form was inspected and original light appearance restored. This subset does not pass the unselected cases.
+
+[Durable evidence](evidence/issue-20/README.md) retains real failed/passing reports, unmodified screenshots, OCR, native input hashes and build receipts. Native source at `ca761fd` matches the tested production inputs. Subsequent changes are selection/publication tooling and documentation. Native PR CI is configured to run the complete eight-case issue selection and publish `native-ios-acceptance` for 30 days. Its actual run/readback, current-head CI/Codex and protected merge/release remain remote gates, never inferred from configuration. Standards found no actionable issue; the Spec review publication-overclaim wording was corrected before commit.
 
 ## Deferred final verification
 
@@ -72,7 +78,7 @@ Physical iPhone 17 Pro Max execution and its installed OS, camera/media quality,
 
 A final actual-runner check found Bash3.2 aborting under `set -u` for the empty full-scope test-selection array. The regression first failed in all scope; unit/e2e passed. Conditional expansion preserves zero arguments. Three external-tool-recorder scenarios now pass, with no native/Photos work. Correction marker: `AQD-Slice: #20/S3-bash`. Actual SHA: `236d06d`. Independent bounded Standards recheck found no actionable finding.
 
-## Review and delivery
+## Historical cleanup review and delivery
 
 - Standards: no actionable finding in existing native diff, source review only.
 - Spec: no new source-proven defect/scope creep; known keyboard failure retained for #30.
@@ -81,6 +87,6 @@ A final actual-runner check found Bash3.2 aborting under `set -u` for the empty 
 
 ## Resume
 
-- Current action: full `aqd-ship 20` authorized. Workflow committed at `866c3db`; S4 measured-scroll and rendered Notes regression validation passed; its commit receipt follows. Earlier S1–S3 receipts remain retained.
-- Next exact action: commit the verified S4, then implement/verify selected-test publication S5, publish one PR with AC evidence, fix current-head CI/Codex, then protected squash merge and verify main/release. No new routine authorization is needed.
-- Dirty paths: owned S4 `PieceDetailsView.swift`, `NativeFlowTests.swift` and this plan. Reconcile actual Git status before resuming. No external blocker currently confirmed.
+- Current action: full `aqd-ship 20` authorized. Workflow committed at `866c3db`; S4 was committed at `ca761fd`; S5 selected-test execution and durable evidence are locally verified; commit/push and remote gates follow. Earlier S1–S3 receipts remain retained.
+- Next exact action: commit S5, push and publish one PR with AC evidence, fix current-head CI/Codex, then protected squash merge and verify main/release. No new routine authorization is needed.
+- Dirty paths: owned S5 scripts, selection manifest, CI, evidence/docs and this plan. Reconcile actual Git status before resuming. No external blocker currently confirmed.

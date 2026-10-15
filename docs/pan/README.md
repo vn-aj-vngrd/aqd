@@ -30,6 +30,8 @@ At every slice boundary, update status, actual checks, commit marker/SHA and the
 
 On resume, compare the plan with the current branch, `git status`, commit log and source changes. Previous results apply only to their recorded revision. Repeat checks only when changed inputs or unresolved failures justify it. Every scoped acceptance item must be implemented and accounted for before feature completion; unexecuted final runtime acceptance remains in #30.
 
+Store selected native UI identifiers in `apps/ios/acceptance/issue-<number>.txt`. `./scripts/prove-ios.sh <number>` retains actual execution inputs, reports and attachments. Curated durable images/reports may live at `docs/pan/evidence/issue-<number>/`, with provenance and the AC mapping linked from the plan.
+
 ## Shipping checkpoints
 
 [`aqd-ship`](../../.agents/skills/aqd-ship/SKILL.md) uses this same issue plan. Persist the authorized endpoint, repository/branch locator, slice receipts, local evidence and any already-known PR URL; a separate run/spec/state-file hierarchy is unnecessary. Update local progress at slice boundaries and before handoffs. On an access failure or interruption, persist the exact unsatisfied phase and next action without changing failed/pending gates into passes.

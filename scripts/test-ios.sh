@@ -18,6 +18,27 @@ case "$SCOPE" in
   *) printf 'Invalid IOS_TEST_SCOPE: %s (expected unit, e2e or all).\n' "$SCOPE" >&2; exit 1 ;;
 esac
 
+if [[ -n "${IOS_TEST_CASES_FILE:-}" ]]; then
+  if [[ "$SCOPE" != e2e || ! -f "$IOS_TEST_CASES_FILE" ]]; then
+    printf 'Selected UI cases require e2e scope and an existing IOS_TEST_CASES_FILE.\n' >&2; exit 1
+  fi
+  TEST_SELECTION=()
+  while IFS= read -r TEST_CASE || [[ -n "$TEST_CASE" ]]; do
+    [[ -z "$TEST_CASE" || "$TEST_CASE" == \#* ]] && continue
+    if [[ ! "$TEST_CASE" =~ ^AQDUITests/[A-Za-z_][A-Za-z_0-9]*/test[A-Za-z_0-9]+$ ]]; then
+      printf 'Invalid selected UI test identifier: %s\n' "$TEST_CASE" >&2; exit 1
+    fi
+    TEST_SELECTION+=("-only-testing:$TEST_CASE")
+  done < "$IOS_TEST_CASES_FILE"
+  if [[ ${#TEST_SELECTION[@]} -eq 0 ]]; then
+    printf 'No selected UI test identifiers; refusing a wider or empty run.\n' >&2; exit 1
+  fi
+fi
+RESULT_ARGUMENTS=()
+if [[ -n "${IOS_RESULT_BUNDLE:-}" ]]; then
+  RESULT_ARGUMENTS=(-resultBundlePath "$IOS_RESULT_BUNDLE")
+fi
+
 # Only UI runs need synthetic Photos-library fixtures. Unit runs never seed Photos.
 if [[ "$SCOPE" != unit ]]; then
   PHOTO_DEVICE="${IOS_PHOTO_DEVICE:-${DESTINATION##*,id=}}"
@@ -46,4 +67,5 @@ xcodebuild \
   -collect-test-diagnostics never \
   CODE_SIGNING_ALLOWED=NO \
   ${TEST_SELECTION[@]+"${TEST_SELECTION[@]}"} \
+  ${RESULT_ARGUMENTS[@]+"${RESULT_ARGUMENTS[@]}"} \
   build test

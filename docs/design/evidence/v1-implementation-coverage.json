@@ -4,8 +4,8 @@
   "pageName": "01 · V1",
   "checkedOn": "2026-10-09",
   "tokenHash": "fdeb7346",
-  "sourceHead": "c666a23ac6134982820c0ef0c95ef484e2678261",
-  "sourceState": "Foundation #20 preserved checkpoint plus uncommitted native/test follow-up on van/issue-20/native-ui-foundations; owner reauthorized unattended verification. Scoped compact/Details/metadata/RTL/preference journeys pass. Pre-rendered-fit/color checkpoint current27 full106-case/Core and unsigned Release pass; minimum18.1 executed102 simulator passes/4 failures/0 skips plus20 Core; revised metadata complete-fit/appearance focused checks pass18.1/27, native immediate dismissal passes controlled minimum journeys, but final-source current27 focused UI fails one real-software-keyboard assertion and all newer post-typing rendered editor snapshots fail discernible in-field text/caret. Mechanism unresolved; final-source both-runtime/full/Release gates executing serially with no result inferred; device/delivery acceptance remains open. Baseline PR9 merged at c5e11c4; earlier foundationEvidence is historical, not final-head certification.",
+  "sourceHead": "ca761fd3202dcf5704b6ae6e3eec5ecf85e19a46",
+  "sourceState": "Foundation #20 code slice ca761fd on van/issue-20/native-ui-foundations. Current iPhone17ProMax/iOS27 focused short/multiline Notes proof and inspected active-line/caret pass. Core20, native unit84 and unsigned Release pass; the combined UI run remains Failed at a driver overshoot, with three affected clients subsequently passing. A declared dark subcase passes via the reusable proof runner. See docs/pan/evidence/issue-20 and docs/pan/issue-20.md for exact results/inputs. Required latest-head PR CI/Codex/proof publication and protected delivery remain separate live GitHub gates. Earlier continuation receipts and broader #30/physical/OS/full-V1 qualification remain unaccepted.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 227,
@@ -49,7 +49,8 @@
       "No Paper mutations; whole-canvas static quality not re-certified.",
       "SDK27, physical Camera/Settings/VoiceOver, largest accessibility text, media-quality/performance and integrated full-domain acceptance unverified.",
       "PR9 remains open; full issue6 remains incomplete."
-    ]
+    ],
+    "historicalReceipt": true
   },
   "foundationContinuation": {
     "checkedOn": "2026-10-14",
@@ -76,7 +77,9 @@
       "Complete consumer/control acceptance, documentation review and SHA-bound PR/latest-head CI/Codex"
     ],
     "runtimeComplete": false,
-    "limits": "All227 root identities, census/counts and per-root runtimeComplete flags remain unchanged. No new live V1 census or complete screen/product/V1 acceptance. Native vertical motion is observed in both standard/reduced recordings; no opacity-only, Prefer Cross-Fade or hardware-performance claim."
+    "limits": "All227 root identities, census/counts and per-root runtimeComplete flags remain unchanged. No new live V1 census or complete screen/product/V1 acceptance. Native vertical motion is observed in both standard/reduced recordings; no opacity-only, Prefer Cross-Fade or hardware-performance claim.",
+    "historicalReceipt": true,
+    "supersededBy": "foundationAcceptance"
   },
   "foundationEvidence": {
     "historicalReceipt": true,
@@ -92,7 +95,20 @@
       "nodeCount": 2101,
       "tokenHash": "fdeb7346",
       "method": "Read-only basic info and complete root depth2 inventory; bounded affected descendant trees/computed styles/render/official-kit fill asset. No Paper mutation or whole-control parity claim.",
-      "affectedDescendantReads": ["14I-0", "4LD-0", "4E1-0", "4GB-0", "10S3-0", "10NM-0", "JKP-0", "1JB-0", "83E-0", "11H4-0", "X71-0", "X7B-0"],
+      "affectedDescendantReads": [
+        "14I-0",
+        "4LD-0",
+        "4E1-0",
+        "4GB-0",
+        "10S3-0",
+        "10NM-0",
+        "JKP-0",
+        "1JB-0",
+        "83E-0",
+        "11H4-0",
+        "X71-0",
+        "X7B-0"
+      ],
       "assetRead": "11HE-0 official kit27 reference only; not copied into production"
     },
     "environment": "Xcode27.0/build27A266a, Swift6.4, SDK27.0, deployment18.0; observed runtime only iOS26.5/build23F77",
@@ -2433,5 +2449,16 @@
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     }
-  ]
+  ],
+  "foundationAcceptance": {
+    "checkedOn": "2026-10-15",
+    "issue": 20,
+    "codeCommit": "ca761fd3202dcf5704b6ae6e3eec5ecf85e19a46",
+    "plan": "docs/pan/issue-20.md",
+    "evidence": "docs/pan/evidence/issue-20/README.md",
+    "scope": "Focused Foundation clauses F1-F6; selected app journeys plus unit/build checks. No complete product-root or whole LOCAL-01/10/15 claim.",
+    "runtimeComplete": false,
+    "remoteGate": "Query the issue branch PR for its actual current-head CI, Codex, published evidence and merge/release state.",
+    "deferred": "#30 broad OS/device/accessibility/performance/integrated qualification; all prior failures retained."
+  }
 }

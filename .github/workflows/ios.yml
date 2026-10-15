@@ -5,6 +5,8 @@ on:
     paths:
       - 'apps/ios/**'
       - 'scripts/test-ios.sh'
+      - 'scripts/prove-ios.sh'
+      - 'scripts/validate-ios-proof.mjs'
       - 'scripts/ios-destination.mjs'
       - 'scripts/seed-ios-test-photo.sh'
       - '.github/workflows/ios.yml'
@@ -13,6 +15,8 @@ on:
     paths:
       - 'apps/ios/**'
       - 'scripts/test-ios.sh'
+      - 'scripts/prove-ios.sh'
+      - 'scripts/validate-ios-proof.mjs'
       - 'scripts/ios-destination.mjs'
       - 'scripts/seed-ios-test-photo.sh'
       - '.github/workflows/ios.yml'
@@ -23,6 +27,10 @@ on:
         type: choice
         default: unit
         options: [unit, all, e2e]
+      acceptance_issue:
+        description: 'Optional issue number with a persisted focused UI selection'
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -35,7 +43,7 @@ jobs:
   native-tests:
     name: Native iOS tests
     runs-on: macos-latest
-    # Routine feature checks use unit tests; explicit full runs retain time for UI tests.
+    # Unit checks plus the PR issue's selected ACs; full regression remains #30.
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
@@ -59,8 +67,8 @@ jobs:
               phones = [d for d in inventory['devices'].get(runtime['identifier'], []) if d.get('isAvailable') and d['name'].startswith('iPhone')]
               if not phones:
                   continue
-              device = next((d for d in phones if d['name'] == 'iPhone 17 Pro'), phones[0])
-              print(f"Selected {device['name']} / iOS{runtime['version']} ({device['udid']}); not SDK27 certification")
+              device = next((d for d in phones if d['name'] == 'iPhone 17 Pro Max'), phones[0])
+              print(f"Hosted simulator: {device['name']} / iOS{runtime['version']} ({device['udid']}); record actual environment, separate from physical-phone proof")
               with open(os.environ['GITHUB_ENV'], 'a') as env:
                   env.write(f"IOS_DESTINATION=platform=iOS Simulator,id={device['udid']}\n")
                   env.write(f"IOS_DERIVED_DATA={os.environ['RUNNER_TEMP']}/aqd-derived\n")
@@ -72,6 +80,30 @@ jobs:
         env:
           IOS_TEST_SCOPE: ${{ inputs.test_scope || 'unit' }}
         run: ./scripts/test-ios.sh
+      - name: Run issue acceptance proof
+        if: github.event_name == 'pull_request' || inputs.acceptance_issue != ''
+        env:
+          AQD_HEAD_BRANCH: ${{ github.head_ref }}
+          AQD_ACCEPTANCE_ISSUE: ${{ inputs.acceptance_issue }}
+          IOS_PROOF_OUTPUT: ${{ runner.temp }}/aqd-acceptance
+        run: |
+          issue="$AQD_ACCEPTANCE_ISSUE"
+          if [[ -z "$issue" && "$AQD_HEAD_BRANCH" =~ ^van/issue-([1-9][0-9]*)/ ]]; then
+            issue="${BASH_REMATCH[1]}"
+          fi
+          if [[ -n "$AQD_ACCEPTANCE_ISSUE" || ( -n "$issue" && -f "apps/ios/acceptance/issue-$issue.txt" ) ]]; then
+            ./scripts/prove-ios.sh "$issue"
+          else
+            echo 'No issue selection scheduled; this is not UI acceptance proof.'
+          fi
+      - name: Retain issue acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-ios-acceptance
+          path: ${{ runner.temp }}/aqd-acceptance
+          retention-days: 30
+          if-no-files-found: ignore
       - name: Retain actual native results
         if: always()
         uses: actions/upload-artifact@v4

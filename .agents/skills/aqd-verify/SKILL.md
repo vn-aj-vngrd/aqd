@@ -22,7 +22,7 @@ Complete when each selected check has a known input revision, command and eviden
 | Agent docs/skills/tooling | `pnpm check:agents`, `pnpm check`, `git diff --check` |
 | Pure Core rule during a slice | `swift test --package-path apps/ios/Core --filter <actual-test-name>` |
 | Final feature native check | The existing runner with `IOS_TEST_SCOPE=unit` runs Core, AQDTests and a Debug build. |
-| UI feature AC | Run the exact focused XCUITest identifiers selected by [aqd-prove](../aqd-prove/SKILL.md), retain result bundles/attachments, and inspect/publish proof through that skill. |
+| UI feature AC | Run `./scripts/prove-ios.sh <issue-number>` using its AC-mapped manifest, then inspect/publish actual results through [aqd-prove](../aqd-prove/SKILL.md). |
 | Release configuration affected or final feature build | Generic unsigned Release build below, once after final source changes. |
 | Authorized focused UI request or final #30 | Relevant existing UI tests; use `IOS_TEST_SCOPE=all` for the complete runner, then physical-phone checks. |
 

@@ -1,5 +1,11 @@
 # Current verification
 
+## Foundation #20 acceptance publication support, October 15, 2026
+
+The code slice is `ca761fd`. [Durable AC evidence](../pan/evidence/issue-20/README.md) retains the actual original-anchor OCR RED, combined failed run, three passing replacements, source-input hashes and inspected key screenshots. A declared dark source-close subcase ran through `scripts/prove-ios.sh 20` using `IOS_TEST_CASES_FILE=/tmp/aqd-ship20-dark-cases.txt`, with exact one-case pass/zero failures/skips, exported attachments and inspected dark form. The original light preference was restored and read back. All tested native build inputs match the committed code slice; later publication/metadata/docs changes do not relabel the earlier runs.
+
+The new issue manifest selects eight UI cases. The runner rejects invalid/empty filters before native tools; the proof validator requires actual exact-count passes with case-associated PNGs and no failed/skipped/expected-failure cases. Genuine CLI filter RED/GREEN and `pnpm check` 53 passes verify the tooling. Native PR CI now has selected execution and 30-day result/attachment retention. That configuration is not an executed CI/artifact pass. Query the actual issue branch PR for accessible published proof, current-head CI/Codex, merge and release status. Full integrated/device/OS hardening remains #30.
+
 ## Foundation #20 focused Notes proof, October 15, 2026
 
 The authorized shipping run reproduced a real rendering gap despite two passing original tests: seven-line landscape Notes exposed line 1 while the active last line/caret was behind the keyboard. A two-line production correction anchors the focused editor bottom after keyboard/viewport changes. The unchanged multiline experiment showed line 7 and its caret above Apply/keyboard; independent Spec inspection confirmed the difference. The new full-display Vision OCR regression failed against the original anchor, recognizing only `Line 1 wardrobe note`, in `/tmp/aqd-ship20-ocr-display-red.xcresult`. Earlier empty-OCR probes diagnosed an app-only screenshot canvas problem and do not count as symptom proof.
