@@ -3,6 +3,11 @@ name: aqd-implement
 description: Implement or resume an approved AQD feature, issue, or fix in tested and committed vertical slices. Use when selecting the next authorized issue from the existing implementation plan.
 ---
 
+
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
+
+Approved grouped delivery: accept the issue pairs in the [implementation plan](../../../docs/delivery/implementation-plan.md#approved-pr-groups--october16), for example `aqd-ship 24 23`. One branch/PR covers the group; keep one persisted plan per issue, cross-link companions, commit working vertical slices in internal dependency order and close both issues in the PR. The approved group overrides older one-issue/PR wording below. Across groups, predecessors must be merged. Unit-only feature verification and the #30 E2E boundary above govern all grouped work.
+
 # Implement an AQD issue
 
 Read repository `AGENTS.md` and [lifecycle](../../../docs/agents/lifecycle.md) to establish authority. [Autonomous workflow](../../../docs/agents/autonomous-workflow.md) supplies the target-device and escalation rules.
@@ -11,7 +16,7 @@ Read repository `AGENTS.md` and [lifecycle](../../../docs/agents/lifecycle.md) t
 
 Read the real issue/comments, [implementation plan](../../../docs/delivery/implementation-plan.md) dependency row, current status summary and affected contracts. Inspect the current implementation and `git status`; identify dirty-file ownership. For native work, load `apps/ios/AGENTS.md`. Read only affected feature/design branches.
 
-Create or resume `docs/pan/issue-<number>.md` under the [plan convention](../../../docs/pan/README.md). Record the issue, authorized endpoint, predecessor, baseline, scoped acceptance IDs and smallest complete vertical slices. Map each UI outcome to a focused E2E scenario and rendered evidence under [acceptance proof](../../../docs/agents/acceptance-proof.md). Keep settled requirements; resolve routine implementation choices without another interview. Resolve a missing real issue number before creating a numbered plan or starting product code.
+Create or resume `docs/plan/issue-<number>.md` under the [plan convention](../../../docs/plan/README.md). Record the issue, authorized endpoint, predecessor, baseline, scoped acceptance IDs and smallest complete vertical slices. Map each UI outcome to a focused E2E scenario and rendered evidence under [acceptance proof](../../../docs/agents/acceptance-proof.md). Keep settled requirements; resolve routine implementation choices without another interview. Resolve a missing real issue number before creating a numbered plan or starting product code.
 
 Complete when every scoped acceptance item has an owning slice and a verification method, dependencies permit work, and the plan is persisted before product edits.
 

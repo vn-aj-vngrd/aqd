@@ -40,25 +40,28 @@ struct PieceCaptureView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { leave() } label: { Label("Back", systemImage: "chevron.backward") }
                         .accessibilityIdentifier("capture.back")
+                        .tint(AppTheme.ink)
                         .disabled(model.isSaving)
                 }
-                if model.saved == nil {
+                if model.saved == nil && hasDraftContent {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button { discardDecision = true } label: {
-                            Label("Discard draft", systemImage: "trash")
-                        }
+                        Menu {
+                            Button("Discard draft", role: .destructive) { discardDecision = true }
+                                .accessibilityIdentifier("capture.discard")
+                        } label: { Label("More capture options", systemImage: "ellipsis") }
+                        .tint(AppTheme.ink)
                         .disabled(model.isSaving || model.isImporting)
-                        .accessibilityIdentifier("capture.discard")
+                        .accessibilityIdentifier("capture.options")
                     }
                 }
             }
-            .confirmationDialog("Discard this draft?", isPresented: $discardDecision, titleVisibility: .visible) {
-                Button("Discard draft", role: .destructive) { model.discard() }
-                Button("Keep editing", role: .cancel) {}
-            } message: {
-                Text(model.draftSaveFailed
-                     ? "The latest changes couldn’t be kept. Discard removes only this piece draft, not saved pieces or original Photos."
-                     : "Discard removes only this recoverable edit and its unused AQD photo edits. Saved pieces and original Photos stay unchanged.")
+            .sheet(isPresented: $discardDecision) {
+                DraftDiscardSheet(title: "Discard this draft?", message: model.draftSaveFailed
+                                  ? "The latest changes couldn’t be kept. Discard removes only this piece draft, not saved pieces or original Photos."
+                                  : "Discard removes only this recoverable edit and its unused AQD photo edits. Saved pieces and original Photos stay unchanged.") {
+                    discardDecision = false
+                    model.discard()
+                }
             }
             .alert("Camera access is off", isPresented: $cameraDenied) {
                 Button("Open Settings") {
@@ -337,6 +340,12 @@ struct PieceCaptureView: View {
             @unknown default: cameraUnavailable = true
             }
         }
+    }
+
+    private var hasDraftContent: Bool {
+        model.draft.baseRevision != nil || model.draft.photoID != nil || !model.draft.name.isEmpty
+            || model.draft.category != nil || model.draft.details != PieceDetails()
+            || model.draft.availability != .available || model.draftSaveFailed
     }
 
     private func leave() {

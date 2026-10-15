@@ -214,7 +214,7 @@ struct PiecePersistenceTests {
             }
         }
         do {
-            let schema = Schema(versionedSchema: LocalSchemaV2.self)
+            let schema = Schema(versionedSchema: LocalSchemaV3.self)
             let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema,
                 url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)])
             let context = ModelContext(container)
@@ -377,7 +377,7 @@ struct PiecePersistenceTests {
             // Real persisted cleanup intents, not fake error text or a mock
             // store. These unowned IDs intentionally have no media bytes.
             do {
-                let schema = Schema(versionedSchema: LocalSchemaV2.self)
+                let schema = Schema(versionedSchema: LocalSchemaV3.self)
                 let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema,
                     url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)])
                 let context = ModelContext(container)
@@ -571,6 +571,7 @@ struct PiecePersistenceTests {
         #expect(!FileManager.default.fileExists(atPath: marker.path))
         var recovered: PieceStore? = try PieceStore(directory: directory)
         let first = try #require(recovered).todayConfiguration()
+        #expect(try !#require(recovered).localExperience().enteredPrivateSpace)
         if todayWasCommitted { #expect(first == today) }
         #expect(first.revision == 1)
         #expect(first.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse])
@@ -578,7 +579,7 @@ struct PiecePersistenceTests {
         #expect(try #require(recovered).pieces().isEmpty)
         #expect(try #require(recovered).latestDraft() == nil)
         #expect(try !#require(recovered).hasPendingPhotoCleanup())
-        #expect(try Data(contentsOf: marker) == Data("AQD-piece-store:2".utf8))
+        #expect(try Data(contentsOf: marker) == Data("AQD-piece-store:3".utf8))
         recovered = nil
         let reopened = try PieceStore(directory: directory, allowsSave: false)
         #expect(try reopened.todayConfiguration() == first)
@@ -1337,7 +1338,7 @@ struct PiecePersistenceTests {
         // Assertions stay at the public recovery/media boundary.
         let corrupt = PieceDraft(name: "Unreadable", photoID: source.id)
         do {
-            let schema = Schema(versionedSchema: LocalSchemaV2.self)
+            let schema = Schema(versionedSchema: LocalSchemaV3.self)
             let configuration = ModelConfiguration(schema: schema,
                 url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
             let container = try ModelContainer(for: schema, migrationPlan: LocalMigrationPlan.self, configurations: [configuration])
@@ -1376,7 +1377,7 @@ struct PiecePersistenceTests {
         initial = nil
         let stale = PieceDraft(name: "Wrong recovered identity", photoID: source.id)
         do {
-            let schema = Schema(versionedSchema: LocalSchemaV2.self)
+            let schema = Schema(versionedSchema: LocalSchemaV3.self)
             let configuration = ModelConfiguration(schema: schema,
                 url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
             let container = try ModelContainer(for: schema, migrationPlan: LocalMigrationPlan.self, configurations: [configuration])
@@ -1399,7 +1400,7 @@ struct PiecePersistenceTests {
         _ = try #require(initial).acceptPhoto(source)
         initial = nil
         do {
-            let schema = Schema(versionedSchema: LocalSchemaV2.self)
+            let schema = Schema(versionedSchema: LocalSchemaV3.self)
             let configuration = ModelConfiguration(schema: schema,
                 url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
             let container = try ModelContainer(for: schema, migrationPlan: LocalMigrationPlan.self, configurations: [configuration])
@@ -2285,7 +2286,7 @@ struct PiecePersistenceTests {
         }
         // Corrupt real native rows, not a mock adapter or synthetic filesystem.
         do {
-            let schema = Schema(versionedSchema: LocalSchemaV2.self)
+            let schema = Schema(versionedSchema: LocalSchemaV3.self)
             let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema,
                 url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)])
             let context = ModelContext(container)
@@ -2344,7 +2345,7 @@ struct PiecePersistenceTests {
         // Model a newer current revision in the native database; the original
         // pending draft must remain untouched as historical presentation proof.
         do {
-            let schema = Schema(versionedSchema: LocalSchemaV2.self)
+            let schema = Schema(versionedSchema: LocalSchemaV3.self)
             let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema,
                 url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)])
             let context = ModelContext(container)

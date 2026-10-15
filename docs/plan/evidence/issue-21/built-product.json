@@ -1,0 +1,9 @@
+{
+  "codeCommit": "e5de900123bbbad428639d48130545df7b2be624",
+  "derivedData": "build/issue-21/derived-ui-correction-fresh",
+  "configuration": "Debug-iphoneos",
+  "sha256": {
+    "AQD": "2531c702046a24591369a1e7901c77fcc4b3610a07b94358dc3a3cc2ada4c69f",
+    "AQD.debug.dylib": "5fabb1d07e5f8d134ce02e08b0b18f409032114df736c1d950ea4d236f20dfd0"
+  }
+}

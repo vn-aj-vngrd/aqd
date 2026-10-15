@@ -13,20 +13,26 @@ The [lifecycle](lifecycle.md) owns authority and delivery gates. The [implementa
 | Stage | Agent output | Completion criterion |
 | --- | --- | --- |
 | Select | Existing issue, authorized delivery endpoint, predecessor, affected acceptance IDs | Scope and dependencies permit work; dirty files have identified ownership. |
-| Persist | `docs/pan/issue-<number>.md` using the [plan convention](../pan/README.md) | Every scoped acceptance item maps to a slice and a verification method. |
+| Persist | `docs/plan/issue-<number>.md` using the [plan convention](../plan/README.md) | Every scoped acceptance item maps to a slice and a verification method. |
 | Implement | One working journey through UI, rules and local storage as needed | That slice's tests pass; existing data and required recovery paths remain intact. |
 | Commit | One reviewed code increment with the updated plan | The commit contains only that slice and its tests/docs; its marker and actual SHA are recorded. |
 | Repeat | Remaining slices from the same plan | Every implementation slice is committed or an exact external blocker is recorded. |
 | Prove UI acceptance | Selected E2E results, inspected screenshots/video and an AC proof table | Every scoped UI AC passes; proof is accessible in the PR before merge. |
 | Review and deliver | Final diff review, applicable checks, published proof and reviewable PR | The authorized endpoint is reached; broader #30 qualification stays unverified. |
 
-For full delivery, `aqd-ship` publishes the AC proof, then continues through the CI/review loop, protected merge and release using the [delivery stages](delivery-stages.md). The [shipping checkpoints](../pan/README.md#shipping-checkpoints) keep stable plans in Git and live gate status in GitHub. A phase whose completion criterion already holds is verified and skipped; a normal phase transition never waits for a new prompt.
+For full delivery, `aqd-ship` publishes the AC proof, then continues through the CI/review loop, protected merge and release using the [delivery stages](delivery-stages.md). The [shipping checkpoints](../plan/README.md#shipping-checkpoints) keep stable plans in Git and live gate status in GitHub. A phase whose completion criterion already holds is verified and skipped; a normal phase transition never waits for a new prompt.
 
 The per-issue plan is a working execution record, not another feature specification. Update it in place. [Current status](../delivery/implementation-status.md) summarizes capability; [verification](../delivery/verification.md) records observed evidence. Preserve their historical receipts and add a short current entry only when scope or evidence changes.
 
 ## Immediate MVP target
 
-The owner's October 15 direction makes the **iPhone 17 Pro Max** the immediate personal-MVP acceptance device. Read its actual installed OS when the phone is available. Use a matching simulator for automated iOS checks. A different phone or simulator can provide supplemental evidence, but cannot establish compatibility with this phone.
+The owner's October 15 direction makes the **physical iPhone 17 Pro Max** the local development and acceptance device. Discover the currently connected phone with `xcrun devicectl list devices` and read its actual OS. Select only its physical iOS destination, never a historical UUID or a simulator with the same model name.
+
+Before the first local install, launch or on-device test in a session, prompt the owner to connect and unlock the iPhone and confirm it is ready. Identify the intended check and wait for that readiness response while continuing independent code/Core/documentation work. Repeat the readiness prompt after a lock or disconnection interrupts execution. A readiness interruption is Blocked/Not run, not a passing or failed feature check.
+
+Keep all local simulators shut down. Do not launch, boot or create one, and do not substitute one when the phone is missing or locked. Preserve the ordinary closet and Photos library; use guarded isolated test stores and declared synthetic fixtures. Local signing configuration stays outside Git. Broad device/OS qualification remains #30.
+
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
 
 Keep the current deployment setting and existing availability guards while implementing features. The broader iOS 18 minimum and supported-device launch matrix in the [V1 release](../product/v1-release.md) remain later release work. They do not expand the immediate personal-device task. No new tablet, Mac, Android, backend, account or sync work is needed to satisfy this target.
 
@@ -56,7 +62,7 @@ Implement issue #21 using the approved docs. Deliver tested vertical slices.
 ```
 
 ```text
-Continue docs/pan/issue-21.md. Leave the final result open for my review.
+Continue docs/plan/issue-21.md. Leave the final result open for my review.
 ```
 
 ```text

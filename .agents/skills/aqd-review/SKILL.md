@@ -3,6 +3,9 @@ name: aqd-review
 description: Review an AQD slice or completed issue against repository standards and its approved feature spec. Use before committing a slice or handing off the full issue diff.
 ---
 
+
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
+
 # Review an AQD change
 
 Establish review scope before changing code. A review request authorizes read-only findings; an implementation task includes fixing its valid findings. [Lifecycle](../../../docs/agents/lifecycle.md) owns authority and delivery gates.

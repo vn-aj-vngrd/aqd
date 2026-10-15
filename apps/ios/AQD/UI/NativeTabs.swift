@@ -15,6 +15,7 @@ struct NativeTabs: UIViewControllerRepresentable {
     let planner: RootBuilder
     let profile: RootBuilder
     let agent: AgentBuilder
+    var isReadOnlyPreview = false
 
     func makeCoordinator() -> Coordinator {
         Coordinator(agent: agent, selection: $selection)
@@ -29,6 +30,8 @@ struct NativeTabs: UIViewControllerRepresentable {
         controller.tabBar.tintColor = UIColor(AppTheme.accent)
         controller.tabBar.unselectedItemTintColor = UIColor(AppTheme.secondary)
         controller.delegate = context.coordinator
+        controller.tabBar.isUserInteractionEnabled = !isReadOnlyPreview
+        controller.tabBar.accessibilityElementsHidden = isReadOnlyPreview
         context.coordinator.install(
             on: controller,
             roots: [today(), closet(), planner(), profile()]

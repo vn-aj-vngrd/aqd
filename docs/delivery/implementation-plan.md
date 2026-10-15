@@ -2,21 +2,31 @@
 
 ## Delivery contract
 
-The active plan is **ten implementation issues/PRs plus one final E2E and hardening issue**: Foundation first, then one vertical slice for each Paper V1 section **01–09**. This replaces the former seven-slice plan and the old #6–19 ticket routing. Historical receipts remain in the [archive](archive/README.md); they are not a second active backlog. The planning refinement created documentation and tickets only. The owner subsequently authorized Foundation implementation on `van/issue-20/native-ui-foundations`, including committing this plan there. Sections01–09 remain specified follow-up work; native distribution is not authorized.
+The active plan retains **ten implementation issues plus one final E2E and hardening issue**, delivered through the grouped PRs below: Foundation first, then one vertical slice for each Paper V1 section **01–09**. This replaces the former seven-slice plan and the old #6–19 ticket routing. Historical receipts remain in the [archive](archive/README.md); they are not a second active backlog. The planning refinement created documentation and tickets only. The owner subsequently authorized Foundation implementation on `van/issue-20/native-ui-foundations`, including committing this plan there. Sections01–09 remain specified follow-up work; native distribution is not authorized.
 
-A vertical slice delivers the section's real UI, domain rules, persistence/media, navigation, failure recovery and tests together. One section may need supporting code in another domain; it is not a screen-only PR followed by separate storage/testing PRs. Use one branch and one PR per issue, with review fixes on that PR. Keep feature behavior in its owning section. The owner-approved October15 verification policy below moves broad E2E, device qualification and final hardening to issue #30.
+A vertical slice delivers the section's real UI, domain rules, persistence/media, navigation, failure recovery and tests together. One section may need supporting code in another domain; it is not a screen-only PR followed by separate storage/testing PRs. Use one branch and one PR per approved group, with review fixes on that PR and a separate persisted plan per issue. Keep feature behavior in its owning section. The owner-approved October15 verification policy below moves broad E2E, device qualification and final hardening to issue #30.
 
 [Current status](implementation-status.md) owns delivered behavior. Native baseline PR #9 is merged at `c5e11c4`; reuse its app, store, media pipeline and tests. Closed historical tickets do not prove complete V1 acceptance. [V1 release](../product/v1-release.md) still owns every launch requirement; V2 remains in [its release](../product/v2-release.md) and [backlog](../product/v2-backlog.md), outside these ten issues.
 
+## Approved PR groups — October16
+
+The owner approved grouped delivery after #21 in PR33. Execute these groups in order:
+
+| Group | Issues | Internal order |
+| --- | --- | --- |
+| Wardrobe and outfits | #24, #23 | Outfit creation/review, then Closet/search/themes |
+| Planning and wear | #25, #26 | Planner/routines/trips, then actual wear/history/insights |
+| Profile and daily capture | #28, #22 | Profile/private fit journal, then Today/capture/photo editing |
+| Agent and local controls | #27, #29 | Agent/conversations/recovery, then Settings/preferences/local data |
+| Consolidated hardening | #30 | All E2E and final physical-device qualification |
+
+Keep one plan per issue in `docs/plan/issue-<number>.md`, one commit per working vertical slice and one PR closing both issues in each pair. Use the first issue as the branch locator, list both issues in the PR and link the companion plan in each plan. Shared implementation has one writer. Complete unit CI/Codex and protected squash delivery once per group; a paired issue's dependency may be completed earlier on that same branch. All E2E authoring/execution stays in #30. Current CI runs repository/tooling units; native unit checks use the owner's physical iPhone, never a simulator.
+
 ## Verification policy · owner-approved October15
 
-Feature delivery uses meaningful Core/native unit tests, including affected persistence, migration and failure recovery, plus app builds, repository checks and required CI/review. The owner's acceptance-proof clarification also requires **focused native E2E tests and inspected UI evidence for the issue's UI ACs**, published in the PR before merge. [Acceptance proof](../agents/acceptance-proof.md) owns mapping, evidence quality and publication. Generate or extend tests for the actual expected outcomes; authored tests and unit passes alone do not prove a UI criterion.
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
 
-`./scripts/test-ios.sh` and routine native CI still default to unit scope. UI issues additionally run their selected E2E identifiers and publish actual result/visual artifacts. If that execution/publication route is missing, establish it during the authorized feature slice; the current unit job is not UI proof. Keep the full-suite and cross-device/OS matrix in #30.
-
-[Final V1 E2E verification and release hardening #30](https://github.com/vn-aj-vngrd/aqd/issues/30) follows sections01–09. It owns broad integrated journeys, supported OS/device coverage, full accessibility, permissions/media, privacy and performance qualification. It blocks V1 release, not the next feature slice solely for missing broad qualification. Preserve existing UI tests and failed receipts. A failure that invalidates the current issue's AC must be resolved in that issue rather than deferred to #30; known data-loss/security defects also remain immediate blockers.
-
-This policy supersedes earlier blanket per-feature full-matrix gates and the earlier unit-only feature-delivery wording. It preserves required feature behavior while adding scoped UI proof, without pulling the complete #30 matrix into each issue. Required review, CI and protected delivery gates remain in force; capability evidence is still required before enabling assistance.
+Keep `./scripts/test-ios.sh` at default unit scope. Do not generate/run E2E or launch simulator/build CI per feature. Issue #30 owns the consolidated physical-device E2E, accessibility, permissions/media, privacy and performance qualification. Existing E2E failures remain historical evidence; fix known feature defects through targeted unit checks.
 
 ## Ticket index and build order
 
@@ -39,7 +49,7 @@ Section02's complete Today stack consumes the later data domains, so it finishes
 | [#28](https://github.com/vn-aj-vngrd/aqd/issues/28) · 08 | [Profile and private fit journal](#08--profile-and-private-fit-journal) | 7;08.00–08.06 | 06 |
 | [#29](https://github.com/vn-aj-vngrd/aqd/issues/29) · 09 | [Settings, preferences and local data](#09--settings-preferences-and-local-data) | 17;09.00–09.16 | 07 |
 
-The ten linked issues are open, specified `enhancement`/`ready-for-agent` tickets; dependencies still govern when work starts. A predecessor must be delivered before its dependent starts shared implementation. Keep one writer per shared file; discovery/review may run independently. A section issue is specified in advance, not permission to skip its predecessor.
+The ten linked issues are open, specified `enhancement`/`ready-for-agent` tickets; dependencies still govern when work starts. Across PR groups a predecessor must be merged first. Within an approved group, implement and commit prerequisite vertical slices before their dependent slices. Keep one writer per shared file; discovery/review may run independently. A section issue is specified in advance, not permission to skip its predecessor.
 
 ## Agent procedure and PR exit
 

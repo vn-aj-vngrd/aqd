@@ -6,6 +6,14 @@ ISSUE="${1:-}"
 if [[ ! "$ISSUE" =~ ^[1-9][0-9]*$ ]]; then
   printf 'Usage: scripts/prove-ios.sh <positive-issue-number>\n' >&2; exit 1
 fi
+if [[ "${IOS_DESTINATION:-}" != platform=iOS,id=* || "${IOS_DEVICE_READY:-}" != 1 ]]; then
+  printf 'Local acceptance proof requires the physical iPhone. Prompt for connected/unlocked readiness, then set its current IOS_DESTINATION and IOS_DEVICE_READY=1. No simulator fallback.\n' >&2
+  exit 1
+fi
+if [[ "$ISSUE" != 30 ]]; then
+  printf 'E2E execution is deferred to issue #30. Feature delivery uses unit tests only.\n' >&2; exit 1
+fi
+export AQD_E2E_ISSUE=30
 CASES="${IOS_TEST_CASES_FILE:-$ROOT/apps/ios/acceptance/issue-$ISSUE.txt}"
 if [[ ! -f "$CASES" ]]; then
   printf 'Missing acceptance selection: %s\n' "$CASES" >&2; exit 1
@@ -17,9 +25,6 @@ else
 fi
 export IOS_PROOF_OUTPUT
 cp "$CASES" "$IOS_PROOF_OUTPUT/test-cases.txt"
-if [[ -z "${IOS_DESTINATION:-}" ]]; then
-  IOS_DESTINATION="$(node "$ROOT/scripts/ios-destination.mjs")"
-fi
 export IOS_DESTINATION
 export IOS_DERIVED_DATA="${IOS_DERIVED_DATA:-/tmp/aqd-issue-$ISSUE-derived}"
 export IOS_RESULT_BUNDLE="$IOS_PROOF_OUTPUT/results.xcresult"
@@ -30,8 +35,8 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
-const paths = git('ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', 'apps/ios', 'scripts/test-ios.sh', 'scripts/prove-ios.sh', 'scripts/validate-ios-proof.mjs', 'scripts/ios-destination.mjs', 'scripts/seed-ios-test-photo.sh').split('\0').filter(Boolean);
-console.log(JSON.stringify({ issue: process.argv[2], head: git('rev-parse', 'HEAD'), dirty: git('status', '--short'), destination: process.env.IOS_DESTINATION, fixture: 'Synthetic asymmetric Photos image; UUID-isolated test stores', toolchain: execFileSync('xcodebuild', ['-version'], { encoding: 'utf8' }).trim(), sha256: Object.fromEntries(paths.map(path => [path, createHash('sha256').update(readFileSync(path)).digest('hex')])) }, null, 2));
+const paths = git('ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', 'apps/ios', 'scripts/test-ios.sh', 'scripts/prove-ios.sh', 'scripts/validate-ios-proof.mjs', 'scripts/seed-ios-test-photo.sh').split('\0').filter(Boolean);
+console.log(JSON.stringify({ issue: process.argv[2], head: git('rev-parse', 'HEAD'), dirty: git('status', '--short'), destination: process.env.IOS_DESTINATION, fixture: 'UUID-isolated test stores; selected cases declare any synthetic media', toolchain: execFileSync('xcodebuild', ['-version'], { encoding: 'utf8' }).trim(), sha256: Object.fromEntries(paths.map(path => [path, createHash('sha256').update(readFileSync(path)).digest('hex')])) }, null, 2));
 JS
 printf 'Acceptance evidence: %s\n' "$IOS_PROOF_OUTPUT"
 STATUS=0

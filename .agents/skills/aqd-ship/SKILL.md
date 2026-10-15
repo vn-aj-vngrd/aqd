@@ -3,6 +3,11 @@ name: aqd-ship
 description: Ship an AQD GitHub issue through slice implementation, PR, CI and Codex fixes, protected squash merge and release verification. Use for end-to-end issue delivery or resuming an interrupted shipping run. Workflow-authoring requests stay documentation-only.
 ---
 
+
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
+
+Approved grouped delivery: accept the issue pairs in the [implementation plan](../../../docs/delivery/implementation-plan.md#approved-pr-groups--october16), for example `aqd-ship 24 23`. One branch/PR covers the group; keep one persisted plan per issue, cross-link companions, commit working vertical slices in internal dependency order and close both issues in the PR. The approved group overrides older one-issue/PR wording below. Across groups, predecessors must be merged. Unit-only feature verification and the #30 E2E boundary above govern all grouped work.
+
 # Ship one AQD issue
 
 `aqd-ship 20` selects GitHub issue #20. `$aqd-ship 20` is the explicit skill form. Execute only when the user requests actual issue delivery; a request to refine this workflow changes documentation only.
@@ -18,7 +23,7 @@ Read [lifecycle authority](../../../docs/agents/lifecycle.md) and [delivery stag
 
 ## 1. Resolve and resume
 
-Resolve a positive issue number or canonical AQD issue URL through the [tracker](../../../docs/agents/issue-tracker.md). Read the issue/comments, `docs/pan/issue-<number>.md`, current status and the relevant implementation-plan dependency row. Confirm repository, GitHub identity/access, branch ownership, dirty files and existing PRs before mutations. Derive branch conventions from the [workflow](../../../docs/delivery/workflow.md).
+Resolve a positive issue number or canonical AQD issue URL through the [tracker](../../../docs/agents/issue-tracker.md). Read the issue/comments, `docs/plan/issue-<number>.md`, current status and the relevant implementation-plan dependency row. Confirm repository, GitHub identity/access, branch ownership, dirty files and existing PRs before mutations. Derive branch conventions from the [workflow](../../../docs/delivery/workflow.md).
 
 Reconcile the persisted plan with actual source, commits and live GitHub state. Reuse the issue branch and PR; an already merged PR resumes at release verification. A closed unmerged PR or conflicting issue/branch identity requires resolution, not an automatic duplicate. Preserve approved existing slice commits and unrelated work. An unfinished predecessor blocks dependent implementation.
 
@@ -38,7 +43,7 @@ Complete when every scoped feature behavior is implemented, required local check
 
 Run [delivery stage 5](../../../docs/agents/delivery-stages.md#5-open-the-pr). Push normally, reuse or create the single issue PR against `main`, and keep its body current using the repository template. Attach the PR to the active task when supported. Preserve slice commits for review before the final squash.
 
-Persist the repository/branch locator and stable local evidence in the issue plan before the final gate head is selected. Record the resolved PR URL in the task/handoff and include it in the next necessary plan update. Follow the [shipping checkpoint convention](../../../docs/pan/README.md#shipping-checkpoints) to avoid extra CI cycles solely for a new URL or polling results.
+Persist the repository/branch locator and stable local evidence in the issue plan before the final gate head is selected. Record the resolved PR URL in the task/handoff and include it in the next necessary plan update. Follow the [shipping checkpoint convention](../../../docs/plan/README.md#shipping-checkpoints) to avoid extra CI cycles solely for a new URL or polling results.
 
 Have `aqd-prove` publish and read back the PR's AC table, inline visual evidence and linked results under the [acceptance-proof contract](../../../docs/agents/acceptance-proof.md). A UI PR awaiting publication remains draft/not ready. A requested draft may show truthful pending proof; full or leave-open delivery requires all feature proof before readiness.
 
@@ -62,6 +67,6 @@ Complete when merge is confirmed, main CI and repository release publication are
 
 ## 6. Finish or checkpoint
 
-Continue inside the active run through every authorized phase. Keep useful progress updates while waiting. On interruption or a genuine blocker, persist the exact next action, last confirmed revision/remote locator and missing access/decision under the [checkpoint convention](../../../docs/pan/README.md#shipping-checkpoints). The same invocation resumes by inspecting actual state.
+Continue inside the active run through every authorized phase. Keep useful progress updates while waiting. On interruption or a genuine blocker, persist the exact next action, last confirmed revision/remote locator and missing access/decision under the [checkpoint convention](../../../docs/plan/README.md#shipping-checkpoints). The same invocation resumes by inspecting actual state.
 
 The final handoff gives the issue/PR, reviewable slice SHAs, observed tests/review, merged SHA and release tag/link, plus any remaining #30/device limits. Keep completed shipping facts in GitHub and the handoff; a new post-merge PR solely to record its own merge SHA is unnecessary. This is an active-session workflow; resuming after the session ends uses the same issue invocation.

@@ -14,6 +14,7 @@ final class AppState {
     var closetScope = "Pieces"
     var store: PieceStore?
     var openingError: String?
+    var isOpening = false
     var pieces: [WardrobePiece] = []
     var collectionRefreshID = UUID()
     var capture: CaptureModel?
@@ -21,8 +22,14 @@ final class AppState {
     var today: TodayConfiguration?
     var todayError: String?
     var photoCleanupError: String?
+    var styleEditor: StyleEditorModel?
+    var profileSettings = false
+    var entry = PrivateEntryState(alreadyEntered: true)
+    var reloadEntryAfterStyle = false
 
-    init() { openStore() }
+    init(deferOpening: Bool = false) {
+        if deferOpening { isOpening = true } else { openStore() }
+    }
 
     /// Use an explicitly isolated store without opening the ordinary local closet.
     init(store: PieceStore) {
@@ -30,9 +37,13 @@ final class AppState {
         reloadPieces()
         reloadToday()
         retryPhotoCleanup()
+        reloadEntry()
+        resumeStyleDraft()
     }
 
     func openStore() {
+        isOpening = true
+        defer { isOpening = false }
         do {
             let support = try FileManager.default.url(for: .applicationSupportDirectory,
                                                      in: .userDomainMask, appropriateFor: nil, create: true)
@@ -50,6 +61,11 @@ final class AppState {
             #endif
             store = try PieceStore(directory: directory)
             #if DEBUG
+            if isolatedUITestStore, process.environment["AQD_TEST_RETURNING_ENTRY"] == "1", let store {
+                var entry = try store.localExperience().entryState
+                entry.openMain()
+                try store.saveEntryState(entry)
+            }
             if isolatedUITestStore, process.environment["AQD_TEST_DENIED_DELETE_CLEANUP"] == "1" {
                 store = nil
                 let photoID = Self.deletionFixturePhotoID
@@ -84,15 +100,101 @@ final class AppState {
                 try seedPendingUITestPhotoCleanup(in: directory)
                 store = try PieceStore(directory: directory, allowsSave: false)
             }
+            if isolatedUITestStore, process.environment["AQD_TEST_DENIED_STYLE_SAVE"] == "1" {
+                store = nil
+                store = try PieceStore(directory: directory, beforeStyleSave: { throw CocoaError(.fileWriteNoPermission) })
+            }
+            if isolatedUITestStore, process.environment["AQD_TEST_UNKNOWN_STYLE_SAVE"] == "1" {
+                store = nil
+                var unreadableAcknowledgments = 0
+                store = try PieceStore(directory: directory, afterStyleSave: {
+                    unreadableAcknowledgments = 1
+                    throw CocoaError(.fileReadUnknown)
+                }, beforeExperienceRead: {
+                    if unreadableAcknowledgments > 0 {
+                        unreadableAcknowledgments -= 1
+                        throw CocoaError(.fileReadUnknown)
+                    }
+                })
+            }
             #endif
             openingError = nil
             reloadPieces()
             reloadToday()
             retryPhotoCleanup()
+            reloadEntry()
+            resumeStyleDraft()
         } catch {
             store = nil
             openingError = "Your local closet couldn’t open. Existing data has not been replaced. Retry, or keep the app data for recovery."
         }
+    }
+
+    func reloadEntry() {
+        do {
+            guard let store else { throw PieceStore.StoreError.corruptStore }
+            entry = try store.localExperience().entryState
+            if entry.tour?.source == .settings { selection = 4; profileSettings = true }
+        } catch { openingError = "Your private entry state couldn’t open. Existing data hasn’t been replaced. Retry while keeping the app data." }
+    }
+
+    func updateEntry(_ change: (inout PrivateEntryState) throws -> Void) {
+        do {
+            guard let store else { throw PieceStore.StoreError.corruptStore }
+            var changed = entry
+            try change(&changed)
+            try store.saveEntryState(changed)
+            entry = changed
+        } catch { collectionError = "This step couldn’t be saved. Your previous entry state and closet are unchanged. Retry this action." }
+    }
+
+    @discardableResult func markWelcomeArrival() -> Bool {
+        let first = !entry.welcomeSeen
+        if first { updateEntry { $0.welcomeSeen = true } }
+        return first && entry.welcomeSeen
+    }
+
+    func beginTour(from source: PrivateEntryState.TourSource) {
+        guard styleEditor == nil, capture == nil else { return }
+        updateEntry { try $0.startTour(from: source) }
+    }
+
+    func enterMain(selection: Int = 0, capture: Bool = false) {
+        updateEntry { $0.openMain() }
+        guard entry.page == .main else { return }
+        self.selection = selection
+        if capture { addPiece() }
+    }
+
+    func openStyle(source: StylePreferenceSource) {
+        do {
+            guard let store else { throw PieceStore.StoreError.corruptStore }
+            let experience = try store.localExperience()
+            if let receipt = experience.pendingStyleReceipt {
+                let model = StyleEditorModel(state: self, draft: receipt)
+                model.saved = experience.style
+                styleEditor = model
+                return
+            }
+            let draft = experience.styleDraft ?? StylePreferenceDraft(
+                source: source, baseRevision: experience.style?.revision ?? 0,
+                answers: experience.style?.answers ?? .init())
+            try store.saveStyleDraft(draft)
+            styleEditor = StyleEditorModel(state: self, draft: draft)
+        } catch { collectionError = "Your preference draft couldn’t open. Existing preferences and drafts haven’t been replaced." }
+    }
+
+    private func resumeStyleDraft() {
+        do {
+            if let experience = try store?.localExperience(), let draft = experience.styleDraft ?? experience.pendingStyleReceipt {
+                if draft.source != .onboarding {
+                    selection = 4
+                    profileSettings = draft.source == .settings
+                }
+                styleEditor = StyleEditorModel(state: self, draft: draft)
+                if experience.pendingStyleReceipt != nil { styleEditor?.saved = experience.style }
+            }
+        } catch { openingError = "Your local preferences couldn’t open. Keep the app data for recovery and retry." }
     }
 
     func reloadPieces() {
@@ -223,7 +325,7 @@ final class AppState {
     /// Called only after the DEBUG launch-argument/UUID guard selects an isolated writable store.
     private func seedPendingUITestPhotoCleanup(in directory: URL) throws {
         let photoID = UUID(uuidString: "E71EF667-186E-4E04-A676-115316C1B215")!
-        let schema = Schema(versionedSchema: LocalSchemaV2.self)
+        let schema = Schema(versionedSchema: LocalSchemaV3.self)
         let configuration = ModelConfiguration(schema: schema,
             url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
         let fixtureContainer = try ModelContainer(for: schema, configurations: [configuration])
@@ -237,7 +339,7 @@ final class AppState {
     /// Real malformed native input, isolated to the explicitly identified UI-test store.
     /// This fixture cannot mutate the ordinary closet and is absent from Release.
     private func seedUnreadableUITestDraft(in directory: URL) throws {
-        let schema = Schema(versionedSchema: LocalSchemaV2.self)
+        let schema = Schema(versionedSchema: LocalSchemaV3.self)
         let configuration = ModelConfiguration(schema: schema,
             url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
         let fixtureContainer = try ModelContainer(for: schema, configurations: [configuration])

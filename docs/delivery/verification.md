@@ -1,5 +1,23 @@
 # Current verification
 
+## Issue #21 stable numeric remainder, October 15, 2026
+
+Codex4285110496 reproduced negative inches from cancellation at an accepted large height. [S8 proof](../plan/evidence/issue-21/s8/README.md) records RED4 then Core36,905 finite-range samples, physical native96 and combined physical height1/1 passed, zero failures/skips. The case repeats all three numeric regressions/restarts and ordinary saved return; final Release builds and inspected source-bound media is retained. Unaffected feature proof retains its earlier qualified scope. Current-head CI/Codex/protected merge/release remain pending.
+
+## Issue #21 positive-height precision, October 15, 2026
+
+Codex4284964778 found accepted tiny heights could round to zero and disable units. [S7 proof](../plan/evidence/issue-21/s7/README.md) records20 failing public-seam assertions before the formatter fix, then Core35/native96 and extended physical height1/1 pass, zero failures/skips. Canonical values survive restart; both rounding boundaries and normal saved return are covered. Release builds; prior unrelated source/results remain qualified reuse. Final-head CI/Codex and protected delivery remain pending.
+
+## Issue #21 Codex height-boundary correction, October 15, 2026
+
+Codex on PR33 found display rounding could produce12in and invalidate a valid canonical height. [S6 proof](../plan/evidence/issue-21/s6/README.md) records genuine5-assertion RED, normalization without canonical mutation, Core34/native96 passed and focused physical height/restart/custom-picker/saved-return1/1 passed. Actual boundary/Review images were inspected and retained; final unsigned Release builds. Earlier unaffected feature proof retains its own source/reuse qualification. New-head CI/Codex remain pending.
+
+## Issue #21 local feature qualification, October 15, 2026
+
+Code slices S0–S4 are committed through `e5de900`; [acceptance receipt](../plan/evidence/issue-21/README.md) records selected tests, source hashes and inspected original physical-iPhone media. Core33/native96 pass, final unsigned Release builds, and repository tooling57 passes. The base18-case physical batch remains Failed17/1 due to a system banner over Done. The five-case affected refresh passes5/5, zero skips/failures, including that failed scenario and every confirmation/driver consumer. Unchanged application/Core/native-unit outcomes are explicitly reused. Three actual-appearance cases also pass, with dark rendering inspected. No local simulator or ordinary-store reset was used.
+
+Paper-first saved receipts now offer source-aware tour/Profile/Settings and actual Closet actions. Splash, Welcome, receipt and app icon share the wordmark. All four inert tour scenes, Ready, actual minimal Profile, X/check headers and native blue/red confirmation are recorded. Broad E2E/accessibility/device/platform-warning investigation remains #30. PR publication, CI, required Codex, protected squash and repository release are separate pending gates on GitHub.
+
 ## Foundation #20 hosted destination correction, October 15, 2026
 
 [Codex on PR #31](https://github.com/vn-aj-vngrd/aqd/pull/31#discussion_r4281401537) found that the hosted selector could accept another iPhone. CI now uses the existing exact iPhone 17 Pro Max selector, preserves the minimum-deployment check and fails before exporting a fallback destination. A real-workflow execution regression first fails on the old fallback, then passes refusal and exact-target export after correction. `pnpm check` passes 54 tests, zero failures/skips; `pnpm check:agents` and whitespace checks pass. Independent bounded Standards/Spec rechecks found no actionable finding. The plan records this as `AQD-Slice: #20/S6`.
@@ -8,7 +26,7 @@ No native app, UI test, fixture or build input changed. Earlier local evidence k
 
 ## Foundation #20 acceptance publication support, October 15, 2026
 
-The code slice is `ca761fd`. [Durable AC evidence](../pan/evidence/issue-20/README.md) retains the actual original-anchor OCR RED, combined failed run, three passing replacements, source-input hashes and inspected key screenshots. A declared dark source-close subcase ran through `scripts/prove-ios.sh 20` using `IOS_TEST_CASES_FILE=/tmp/aqd-ship20-dark-cases.txt`, with exact one-case pass/zero failures/skips, exported attachments and inspected dark form. The original light preference was restored and read back. All tested native build inputs match the committed code slice; later publication/metadata/docs changes do not relabel the earlier runs.
+The code slice is `ca761fd`. [Durable AC evidence](../plan/evidence/issue-20/README.md) retains the actual original-anchor OCR RED, combined failed run, three passing replacements, source-input hashes and inspected key screenshots. A declared dark source-close subcase ran through `scripts/prove-ios.sh 20` using `IOS_TEST_CASES_FILE=/tmp/aqd-ship20-dark-cases.txt`, with exact one-case pass/zero failures/skips, exported attachments and inspected dark form. The original light preference was restored and read back. All tested native build inputs match the committed code slice; later publication/metadata/docs changes do not relabel the earlier runs.
 
 The new issue manifest selects eight UI cases. The runner rejects invalid/empty filters before native tools; the proof validator requires actual exact-count passes with case-associated PNGs and no failed/skipped/expected-failure cases. Genuine CLI filter RED/GREEN and `pnpm check` 53 passes verify the tooling. Native PR CI now has selected execution and 30-day result/attachment retention. That configuration is not an executed CI/artifact pass. Query the actual issue branch PR for accessible published proof, current-head CI/Codex, merge and release status. Full integrated/device/OS hardening remains #30.
 
@@ -52,7 +70,7 @@ Final shell qualification found an actual macOS Bash3.2 `set -u` failure when th
 
 The existing landscape Notes keyboard/visible-value/caret failure stays unresolved in #30. The physical iPhone 17 Pro Max and its actual OS, camera/media/model quality, file protection/backup, VoiceOver and performance remain unverified. Broader launch compatibility and latest-head PR/CI/Codex/protected delivery remain separate requirements. Simulator selection and its supplemental tests do not establish physical-phone acceptance.
 
-Cleanup retains historical status and the duplicate copy ledger in the delivery archive, and unrelated personal-companion research in the reference archive. Active status, native setup and current copy provenance now point to their evidence owners. Lifecycle/design gates follow the current plan; source-presence, backlog, API-proposal and motion-inventory caches were corrected. No product scope or historical failed result was removed. [Issue20 plan](../pan/issue-20.md) owns the inherited native slice commits; unticketed agent setup remains separate repository maintenance.
+Cleanup retains historical status and the duplicate copy ledger in the delivery archive, and unrelated personal-companion research in the reference archive. Active status, native setup and current copy provenance now point to their evidence owners. Lifecycle/design gates follow the current plan; source-presence, backlog, API-proposal and motion-inventory caches were corrected. No product scope or historical failed result was removed. [Issue20 plan](../plan/issue-20.md) owns the inherited native slice commits; unticketed agent setup remains separate repository maintenance.
 
 
 ## Foundation #20 authorized native verification · October14

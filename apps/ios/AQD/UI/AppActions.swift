@@ -79,3 +79,11 @@ struct ActionFooter<Content: View>: View {
             .background(AppTheme.canvas)
     }
 }
+
+/// The splash wordmark is the shared MVP logo; no separate brand symbol.
+struct AQDWordmark: View {
+    var body: some View {
+        Text("AQD").font(.system(size: 44)).tracking(-1.1)
+            .foregroundStyle(AppTheme.ink).accessibilityLabel("AQD")
+    }
+}

@@ -3,15 +3,20 @@ name: aqd-verify
 description: Verify AQD slice changes with unit/build and focused native E2E checks, or execute final iPhone 17 Pro Max hardening. Use before recording test, compatibility, or readiness claims.
 ---
 
+
+Owner update, October16: feature delivery uses Core/native unit tests only. All E2E authoring/execution and integrated UI acceptance are deferred to #30, including feature-focused runs. Preserve existing tests and evidence for that ticket. No simulator is allowed locally or in hosted CI. The expensive native iOS CI workflow is removed; fast repository unit checks and existing protected delivery remain. Native unit checks use the connected, unlocked physical iPhone17ProMax. E2E/proof procedures below apply only to #30. Known product, data-loss and security defects still require fixes; deferred E2E is not a claim of full V1 acceptance.
+
 # Verify AQD changes
 
-Read the issue's `docs/pan/issue-<number>.md` and the [verification policy](../../../docs/delivery/implementation-plan.md#verification-policy--owner-approved-october15). Select checks for the changed behavior at the authorized stage. [Immediate MVP target](../../../docs/agents/autonomous-workflow.md#immediate-mvp-target) owns target-phone acceptance.
+Read the issue's `docs/plan/issue-<number>.md` and the [verification policy](../../../docs/delivery/implementation-plan.md#verification-policy--owner-approved-october15). Select checks for the changed behavior at the authorized stage. [Immediate MVP target](../../../docs/agents/autonomous-workflow.md#immediate-mvp-target) owns target-phone acceptance.
 
 ## 1. Bind the evidence
 
 Record HEAD and relevant dirty inputs, toolchain, test selection, destination and artifact path. Prior results apply to their recorded source. Discover current scripts/config rather than borrowing historical UUIDs or test counts.
 
-For simulator tests, run `node scripts/ios-destination.mjs --json` to select an available **iPhone 17 Pro Max** on the newest installed available iOS runtime. Inspect the reported OS against the task's target. Missing matching devices or unavailable simulator services block only simulator checks; Core/docs/generic Release checks can continue. A different phone cannot silently substitute. The helper never boots or creates a simulator.
+For local native checks, follow the device procedure above: discover the physical iPhone 17 Pro Max with `xcrun devicectl list devices`, read its actual OS, prompt for connected/unlocked readiness and wait for the response. Keep local simulators shut down. Missing/locked hardware blocks the physical check; independent Core/docs/generic Release work can continue. Signing stays in local configuration. Set `IOS_DEVICE_READY=1` only after readiness is confirmed, and repeat the prompt after an interruption.
+
+Hosted native CI and simulator selection/seeding are removed. Use the physical iPhone only; routine verification is unit scope. E2E is reserved for #30.
 
 Complete when each selected check has a known input revision, command and evidence destination. Device selection is not a native test.
 
@@ -24,17 +29,18 @@ Complete when each selected check has a known input revision, command and eviden
 | Final feature native check | The existing runner with `IOS_TEST_SCOPE=unit` runs Core, AQDTests and a Debug build. |
 | UI feature AC | Run `./scripts/prove-ios.sh <issue-number>` using its AC-mapped manifest, then inspect/publish actual results through [aqd-prove](../aqd-prove/SKILL.md). |
 | Release configuration affected or final feature build | Generic unsigned Release build below, once after final source changes. |
-| Authorized focused UI request or final #30 | Relevant existing UI tests; use `IOS_TEST_SCOPE=all` for the complete runner, then physical-phone checks. |
+| Authorized focused UI request or final #30 | Physical tests use an explicit case selection and declared fixtures; #30 owns the broad integrated/device matrix. |
 
 From the repository root:
 
 ```sh
-AQD_DESTINATION="$(node scripts/ios-destination.mjs)" || exit
-IOS_DESTINATION="$AQD_DESTINATION" IOS_DERIVED_DATA=/tmp/aqd-feature-derived \
+IOS_DESTINATION="platform=iOS,id=$AQD_DEVICE_UDID" \
+  IOS_DEVELOPMENT_TEAM="$AQD_LOCAL_TEAM" IOS_DEVICE_READY=1 \
+  IOS_DERIVED_DATA=/tmp/aqd-feature-derived \
   IOS_TEST_SCOPE=unit ./scripts/test-ios.sh
 ```
 
-The explicit failure guard stops this command when no target destination exists. The runner also resolves that target when `IOS_DESTINATION` is absent. Use a dedicated derived-data directory per task; serialize tests/builds sharing native resources.
+Resolve `AQD_DEVICE_UDID` from current physical-device discovery and `AQD_LOCAL_TEAM` from the existing local signing identity. The runner refuses absent/local simulator destinations and unconfirmed readiness before native tools. Use a dedicated derived-data directory per task; serialize native tests/builds.
 
 ```sh
 xcodebuild -project apps/ios/AQD.xcodeproj -scheme AQD \
@@ -43,7 +49,7 @@ xcodebuild -project apps/ios/AQD.xcodeproj -scheme AQD \
   -disableAutomaticPackageResolution CODE_SIGNING_ALLOWED=NO build
 ```
 
-For focused native tests, discover real identifiers in source and use `xcodebuild test -only-testing:<target>/<suite>/<test>` with the resolved destination, isolated derived data and a retained result bundle. Select all required issue cases without silently omitting a failed case. UI tests requiring Photos fixtures use `scripts/seed-ios-test-photo.sh` on the selected test simulator. Preserve assertions and failures. UI features require selected AC E2E proof in addition to unit/build checks; the broad full-suite/device matrix waits for #30. The current unit CI job alone is not that proof. Inspect actual scope, results, skips, failed setup and exported evidence.
+For focused native tests, discover real identifiers in source and use the resolved physical destination, local signing, isolated derived data and a retained result bundle. Select every required issue case without silently omitting a failure. Physical UI tests require an explicit manifest and declared synthetic fixtures; automatic Photos seeding is hosted-CI-only. Preserve the ordinary closet/Photos library. Preserve assertions and failures. UI features require selected AC E2E proof in addition to unit/build checks; broad qualification waits for #30. Inspect actual scope, results, skips, failed setup and exported evidence.
 
 Complete when selected checks finish and their actual exit status, results and artifacts are captured. Fix task-caused failures and rerun affected checks. Missing access/tooling stays Not run/Blocked; failed tests stay Failed.
 

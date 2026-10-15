@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24000" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="AQD-launch">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24000"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <scene sceneID="AQD-launch-scene">
+            <objects>
+                <viewController id="AQD-launch" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="AQD-launch-view">
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="956"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="AQD" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="AQD-launch-wordmark">
+                                <rect key="frame" x="180" y="462" width="124" height="60"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="44"/>
+                                <color key="textColor" name="LaunchInk"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="AQD-launch-safe-area"/>
+                        <color key="backgroundColor" name="LaunchCanvas"/>
+                        <constraints>
+                            <constraint firstItem="AQD-launch-wordmark" firstAttribute="centerX" secondItem="AQD-launch-view" secondAttribute="centerX" id="AQD-launch-center-x"/>
+                            <constraint firstItem="AQD-launch-wordmark" firstAttribute="centerY" secondItem="AQD-launch-view" secondAttribute="centerY" id="AQD-launch-center-y"/>
+                            <constraint firstItem="AQD-launch-wordmark" firstAttribute="width" constant="124" id="AQD-launch-width"/>
+                            <constraint firstItem="AQD-launch-wordmark" firstAttribute="height" constant="60" id="AQD-launch-height"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="AQD-launch-responder" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+    <resources>
+        <namedColor name="LaunchCanvas"><color red="0.9608" green="0.9608" blue="0.9686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/></namedColor>
+        <namedColor name="LaunchInk"><color red="0.1608" green="0.1725" blue="0.1882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/></namedColor>
+    </resources>
+</document>

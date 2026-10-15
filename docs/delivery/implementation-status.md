@@ -1,10 +1,12 @@
 # Implementation status
 
-## Current handoff, October 15, 2026
+## Current handoff, October 16, 2026
 
-The tracked native baseline from PR #9 at `c5e11c4` contains the SwiftUI app/Xcode project, AQDCore, local SwiftData/media persistence and native tests. Foundation #20 has committed implementation checkpoints on `van/issue-20/native-ui-foundations`. Sections 01–09 remain incomplete; baseline capture is not complete V1.
+Foundation #20 shipped in [PR #31](https://github.com/vn-aj-vngrd/aqd/pull/31), squash `8b06880`, repository release v1.1.1. It extends the PR #9 native capture/store baseline. [Issue #21](../plan/issue-21.md) now has committed physical-device policy, shared preferences, complete entry/tour/logo and optional body-input slices. Its [local scoped acceptance](../plan/evidence/issue-21/README.md) passes with explicit unchanged-input reuse and a successful five-case refresh of the notification-interrupted base case and affected consumers. PR #33 and scoped evidence are published. Final current-head CI/Codex, protected merge and repository release remain delivery gates. Section01 implementation is complete locally; sections02–09 and final #30 acceptance remain incomplete.
 
-The [implementation plan](implementation-plan.md) owns ten implementation issues, #20–29, followed by final E2E/hardening [#30](https://github.com/vn-aj-vngrd/aqd/issues/30). Its clarified verification policy requires unit/build/repository/review plus focused native E2E and published evidence for each feature's UI ACs. Broad full-suite/device qualification remains in #30. Missing/failed/unpublished proof of a current AC blocks its feature; unit/build passes alone do not satisfy the new proof gate.
+The [implementation plan](implementation-plan.md#approved-pr-groups--october16) retains issues #20–29 and final E2E/hardening [#30](https://github.com/vn-aj-vngrd/aqd/issues/30). The owner approved grouped delivery: #24 + #23, then #25 + #26, #28 + #22, #27 + #29, then #30. Each group uses one PR, separate issue plans in `docs/plan` and commits per working vertical slice. After PR33's protected merge and repository-release verification, the next authorized implementation is #24 + #23, in that internal order. No additional planning approval is needed.
+
+Feature delivery uses affected Core/native unit checks and fast repository/tooling unit CI. Expensive hosted native CI is removed; all E2E authoring/execution and integrated UI acceptance are deferred to #30. Native checks use the owner's connected, unlocked physical iPhone17ProMax only; no simulator locally or in CI. Existing execution results remain historical/source-bound; canceled hosted runs are not passes. Known product/data-loss/security defects remain blocking, and unit passes do not certify integrated UI acceptance.
 
 ### Foundation capability and known gaps
 
@@ -14,9 +16,9 @@ Current iPhone 17 Pro Max/iOS27 focused Notes proof passes after anchoring the f
 
 ### Agent execution foundation
 
-[Autonomous workflow](../agents/autonomous-workflow.md) routes full issue delivery through `aqd-ship`, which orchestrates the repo-local implementation, verification and review methods plus protected delivery stages. The first authorized #20 shipping run has exercised focused native acceptance, inspected screenshots/OCR, committed the Notes correction and run the reusable proof path on a declared dark subcase. The current PR CI/Codex/merge/release state must be read from GitHub, separately from local proof. [Persisted issue plans](../pan/README.md) hold vertical slices, commit SHAs, checks and the next action. The immediate personal-MVP target is iPhone 17 Pro Max; the phone's actual installed OS and physical acceptance remain to be verified. Current deployment settings stay in place; broader launch compatibility is later release work.
+[Autonomous workflow](../agents/autonomous-workflow.md) routes full issue delivery through `aqd-ship`, which orchestrates implementation, verification and review plus protected delivery stages. #20's published proof, current-head CI/Codex, protected merge and repository release passed. [Persisted issue plans](../plan/README.md) hold vertical slices, commit SHAs, checks and the next action. Local native checks use the owner's physical iPhone 17 Pro Max, discovered on iOS27.0.1/24A446 for #21; the owner confirmed readiness and its baseline Core/native unit checks passed. Local simulators remain shut down. Hosted native CI is removed; all E2E and broad personal-phone acceptance remain #30. Current deployment settings stay in place.
 
-[Issue #20 execution record](../pan/issue-20.md) tracks the current native checkpoint. Setup of agent docs/tooling is separate unticketed repository maintenance, not completion of another product section. This status does not claim PR delivery, V1 acceptance or native distribution.
+[Issue #20 execution record](../plan/issue-20.md) retains its delivery receipt; [issue #21](../plan/issue-21.md) owns the active implementation. #21 local scoped proof is published; current-head CI/Codex, merge and release must be confirmed from PR33 before beginning its successor group. Neither a repository release nor these unit checks establish complete V1 acceptance or native distribution.
 
 ## Earlier handoffs
 

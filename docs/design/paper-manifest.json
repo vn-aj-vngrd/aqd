@@ -4,8 +4,45 @@
   "verifiedOn": "2026-10-07",
   "scope": "Static design only; Paper is sole visual source. V1 complete private local app plus optional native WeatherKit; V2 inherits it and retains connected core/extensions. Bounded worker static evidence only.",
   "screenCount": 380,
-  "artboardCount": 540,
-  "currentInventory": {"roots":540,"nodes":37451,"canonical":380,"rootReferences":160,"pages":[{"id":"p-1-0","roots":26,"nodes":2101},{"id":"p-2-0","roots":227,"nodes":13055},{"id":"p-B-0","roots":287,"nodes":22295}],"tokenHash":"fdeb7346","roles":45,"aliases":12,"evidence":"evidence/native-dialog-vector-repair.json","method":"Explicit final three-page aggregate after vector repair; original380 repository ID/node/page triples equal baseline; no full live380 raster census","runtimeComplete":false},
+  "artboardCount": 545,
+  "currentInventory": {"roots":545,"nodes":37610,"canonical":380,"rootReferences":165,"pages":[{"id":"p-1-0","roots":26,"nodes":2101},{"id":"p-2-0","roots":232,"nodes":13214},{"id":"p-B-0","roots":287,"nodes":22295}],"tokenHash":"fdeb7346","roles":45,"aliases":12,"evidence":"evidence/native-dialog-vector-repair.json","method":"Live three-page get_basic_info counts October15 after five owner-requested Section01 receipt/discard/logo references; original canonical380 mapping retained. Counts and targeted screenshots are not a full live raster census.","runtimeComplete":false},
+  "currentPreferenceReceiptRefinement": {
+    "verifiedOn": "2026-10-15",
+    "scope": "Owner-requested saved preference receipt and semantic draft confirmation; static composition only, native proof tracked in issue 21.",
+    "pageId": "p-2-0",
+    "roots": [
+      {
+        "rootId": "13A6-0",
+        "name": "Preferences saved · Onboarding",
+        "primary": "Take the tour",
+        "secondary": "Open my closet"
+      },
+      {
+        "rootId": "13B8-0",
+        "name": "Preferences saved · Profile return",
+        "primary": "Back to Profile",
+        "secondary": "Open my closet"
+      },
+      {
+        "rootId": "13C6-0",
+        "name": "Preferences saved · Settings return",
+        "primary": "Back to Settings",
+        "secondary": "Open my closet"
+      },
+      {
+        "rootId": "13D4-0",
+        "name": "Preference draft · Discard sheet",
+        "safe": "Keep editing",
+        "destructive": "Discard draft"
+      },
+      {
+        "rootId": "13EP-0",
+        "name": "AQD app icon · Splash wordmark"
+      }
+    ],
+    "review": "Live 1x screenshots inspected for each root; existing Welcome/Ready artwork and semantic tokens reused. Confirmation wrapping/background corrected and re-inspected. Runtime acceptance pending. Shared44pt wordmark and app icon added and inspected; iOS owns runtime system font and icon mask.",
+    "runtimeComplete": false
+  },
   "currentTourCopyReview": {
     "scope": "Live Paper tour and Restore completion visible-copy repair; V2 inherits L62–L66, with no separate V2 Preview only or completion counterpart found by scoped text search.",
     "changes": [
