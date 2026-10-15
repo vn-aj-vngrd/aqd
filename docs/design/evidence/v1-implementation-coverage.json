@@ -2504,19 +2504,19 @@
     "checkedOn": "2026-10-15",
     "issue": 20,
     "codeCommit": "ca761fd3202dcf5704b6ae6e3eec5ecf85e19a46",
-    "plan": "docs/pan/issue-20.md",
-    "evidence": "docs/pan/evidence/issue-20/README.md",
+    "plan": "docs/plan/issue-20.md",
+    "evidence": "docs/plan/evidence/issue-20/README.md",
     "scope": "Focused Foundation clauses F1-F6; selected app journeys plus unit/build checks. No complete product-root or whole LOCAL-01/10/15 claim.",
     "runtimeComplete": false,
     "remoteGate": "Query the issue branch PR for its actual current-head CI, Codex, published evidence and merge/release state.",
     "deferred": "#30 broad OS/device/accessibility/performance/integrated qualification; all prior failures retained."
   },
   "issue21Evidence": {
-    "plan": "docs/pan/issue-21.md",
+    "plan": "docs/plan/issue-21.md",
     "state": "Local scoped feature proof and source review pass; publication/remote gates pending",
     "native": "Core33/native96 passed, zero failures/skips, physical iPhone17ProMax iOS27.0.1. Compiled launch storyboard inspected light/dark; true dark picker/tour/saved receipt and updated logo inspected.",
     "limits": "Whole-V1 runtimeComplete remains false; broader integrated accessibility/device matrix stays #30. Base17/1 failed run retained, all five affected replacement cases pass; no private failed media is published.",
     "checkedOn": "2026-10-15",
-    "receipt": "docs/pan/evidence/issue-21/README.md"
+    "receipt": "docs/plan/evidence/issue-21/README.md"
   }
 }

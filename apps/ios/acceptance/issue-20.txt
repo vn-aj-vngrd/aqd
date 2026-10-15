@@ -1,4 +1,4 @@
-# Foundation ACs F1-F6 in docs/pan/issue-20.md. Broad regression stays #30.
+# Foundation ACs F1-F6 in docs/plan/issue-20.md. Broad regression stays #30.
 AQDUITests/NativeFlowTests/testAgentFullScreenBackRestoresCloset
 AQDUITests/NativeFlowTests/testCaptureSourceClosePreservesDraftAndPhotoIsRequired
 AQDUITests/NativeFlowTests/testDetailsLandscapeAvailabilityNotesApplyDiscardAndRelaunch

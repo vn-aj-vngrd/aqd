@@ -73,6 +73,6 @@ Owner-requested Paper refinement, October 15: new saved receipts use the Welcome
 
 The onboarding primary is Take the tour, continuing the existing tour → Ready route. Profile and Settings use Back to Profile / Back to Settings and restore their actual caller. Every variant also offers Open my closet. Acknowledging that choice atomically clears the receipt and persists main entry without claiming the tour was finished; the app selects the real Closet. Failure retains the receipt and its saved answers for the same action to retry. Restart follows the persisted entry outcome. Native success remains an acknowledged save, never optimistic Review progress.
 
-Paper roots are recorded in [the manifest](paper-manifest.json) under currentPreferenceReceiptRefinement. Existing canonical IDs retain their earlier meanings: VO9-0 is Settings edit Goals, not the saved receipt. The four added references are static design; [issue 21](../pan/issue-21.md) owns actual native proof.
+Paper roots are recorded in [the manifest](paper-manifest.json) under currentPreferenceReceiptRefinement. Existing canonical IDs retain their earlier meanings: VO9-0 is Settings edit Goals, not the saved receipt. The four added references are static design; [issue 21](../plan/issue-21.md) owns actual native proof.
 
 The final MVP logo follows Splash’s 44-point system-font AQD wordmark on Welcome and saved receipts, including the packaged app icon. Paper’s icon reference is `13EP-0`; runtime code reuses `AQDWordmark` rather than three independent text treatments.

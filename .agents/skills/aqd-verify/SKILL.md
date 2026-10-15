@@ -8,7 +8,7 @@ Owner update, October16: feature delivery uses Core/native unit tests only. All 
 
 # Verify AQD changes
 
-Read the issue's `docs/pan/issue-<number>.md` and the [verification policy](../../../docs/delivery/implementation-plan.md#verification-policy--owner-approved-october15). Select checks for the changed behavior at the authorized stage. [Immediate MVP target](../../../docs/agents/autonomous-workflow.md#immediate-mvp-target) owns target-phone acceptance.
+Read the issue's `docs/plan/issue-<number>.md` and the [verification policy](../../../docs/delivery/implementation-plan.md#verification-policy--owner-approved-october15). Select checks for the changed behavior at the authorized stage. [Immediate MVP target](../../../docs/agents/autonomous-workflow.md#immediate-mvp-target) owns target-phone acceptance.
 
 ## 1. Bind the evidence
 

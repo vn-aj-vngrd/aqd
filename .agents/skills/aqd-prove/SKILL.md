@@ -12,7 +12,7 @@ Read [lifecycle authority](../../../docs/agents/lifecycle.md), the issue/comment
 
 ## 1. Map the acceptance
 
-Keep the originating AC IDs and wording. Split compound criteria into traceable subcases without reducing their meaning. For every scoped criterion, record the expected observable outcome, real scenario/test identifier, proof method, source/environment and evidence needed in `docs/pan/issue-<number>.md`.
+Keep the originating AC IDs and wording. Split compound criteria into traceable subcases without reducing their meaning. For every scoped criterion, record the expected observable outcome, real scenario/test identifier, proof method, source/environment and evidence needed in `docs/plan/issue-<number>.md`.
 
 Complete when every issue AC and required branch has an appropriate check. Each UI outcome needs a focused app-driven E2E scenario and rendered evidence; units/builds alone cannot cover it. Requirements genuinely outside the issue remain in #30 rather than replacing an issue's acceptance.
 
@@ -36,6 +36,6 @@ Complete when each Passed AC has qualifying observed evidence, and failures/limi
 
 When PR delivery is authorized, publish the contract's AC proof table, inline visual evidence and linked result artifacts in the existing PR. Use its supported attachment/CI-artifact route; if no route exists, implement the smallest selected-test/artifact step within the authorized feature slice. A local artifact path cannot satisfy publication.
 
-Read the PR back and verify every evidence link resolves to the intended run/artifact and can be accessed by the owner. Update the same table after fixes and retain failed/superseded receipts with their source identity. The [shipping checkpoint convention](../../../docs/pan/README.md#shipping-checkpoints) avoids extra commits for polling or URLs.
+Read the PR back and verify every evidence link resolves to the intended run/artifact and can be accessed by the owner. Update the same table after fixes and retain failed/superseded receipts with their source identity. The [shipping checkpoint convention](../../../docs/plan/README.md#shipping-checkpoints) avoids extra commits for polling or URLs.
 
 Complete when every scoped AC has truthful status and reviewable evidence in the PR, the source/environment identity is clear, and all required UI proof passes. Publication or execution failure keeps the proof gate blocked. This method returns the proof result to `aqd-ship`; it does not merge the PR itself.

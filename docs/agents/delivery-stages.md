@@ -5,7 +5,7 @@ Owner update, October16: feature delivery uses Core/native unit tests only. All 
 
 Read only when PR delivery or release is authorized. [Lifecycle scope and authority](lifecycle.md#scope-and-authority) applies; explicit docs-only, draft, local-review, leave-open or no-merge instructions narrow scope. [Workflow](../delivery/workflow.md) owns conventions and release mechanics.
 
-For a full issue run, [aqd-ship](../../.agents/skills/aqd-ship/SKILL.md) continues these stages without routine confirmation. Resume at the first unsatisfied gate after checking actual branch/PR state. The [shipping checkpoint convention](../pan/README.md#shipping-checkpoints) separates persisted local evidence from live GitHub results.
+For a full issue run, [aqd-ship](../../.agents/skills/aqd-ship/SKILL.md) continues these stages without routine confirmation. Resume at the first unsatisfied gate after checking actual branch/PR state. The [shipping checkpoint convention](../plan/README.md#shipping-checkpoints) separates persisted local evidence from live GitHub results.
 
 ## 5. Open the PR
 

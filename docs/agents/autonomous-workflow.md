@@ -13,14 +13,14 @@ The [lifecycle](lifecycle.md) owns authority and delivery gates. The [implementa
 | Stage | Agent output | Completion criterion |
 | --- | --- | --- |
 | Select | Existing issue, authorized delivery endpoint, predecessor, affected acceptance IDs | Scope and dependencies permit work; dirty files have identified ownership. |
-| Persist | `docs/pan/issue-<number>.md` using the [plan convention](../pan/README.md) | Every scoped acceptance item maps to a slice and a verification method. |
+| Persist | `docs/plan/issue-<number>.md` using the [plan convention](../plan/README.md) | Every scoped acceptance item maps to a slice and a verification method. |
 | Implement | One working journey through UI, rules and local storage as needed | That slice's tests pass; existing data and required recovery paths remain intact. |
 | Commit | One reviewed code increment with the updated plan | The commit contains only that slice and its tests/docs; its marker and actual SHA are recorded. |
 | Repeat | Remaining slices from the same plan | Every implementation slice is committed or an exact external blocker is recorded. |
 | Prove UI acceptance | Selected E2E results, inspected screenshots/video and an AC proof table | Every scoped UI AC passes; proof is accessible in the PR before merge. |
 | Review and deliver | Final diff review, applicable checks, published proof and reviewable PR | The authorized endpoint is reached; broader #30 qualification stays unverified. |
 
-For full delivery, `aqd-ship` publishes the AC proof, then continues through the CI/review loop, protected merge and release using the [delivery stages](delivery-stages.md). The [shipping checkpoints](../pan/README.md#shipping-checkpoints) keep stable plans in Git and live gate status in GitHub. A phase whose completion criterion already holds is verified and skipped; a normal phase transition never waits for a new prompt.
+For full delivery, `aqd-ship` publishes the AC proof, then continues through the CI/review loop, protected merge and release using the [delivery stages](delivery-stages.md). The [shipping checkpoints](../plan/README.md#shipping-checkpoints) keep stable plans in Git and live gate status in GitHub. A phase whose completion criterion already holds is verified and skipped; a normal phase transition never waits for a new prompt.
 
 The per-issue plan is a working execution record, not another feature specification. Update it in place. [Current status](../delivery/implementation-status.md) summarizes capability; [verification](../delivery/verification.md) records observed evidence. Preserve their historical receipts and add a short current entry only when scope or evidence changes.
 
@@ -62,7 +62,7 @@ Implement issue #21 using the approved docs. Deliver tested vertical slices.
 ```
 
 ```text
-Continue docs/pan/issue-21.md. Leave the final result open for my review.
+Continue docs/plan/issue-21.md. Leave the final result open for my review.
 ```
 
 ```text

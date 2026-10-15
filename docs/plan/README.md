@@ -1,10 +1,10 @@
 # Persisted issue plans
 
-Store implementation plans here. The `pan` directory name is the owner's chosen convention.
+Store implementation plans in `docs/plan`, with one persisted file per GitHub issue. Approved grouped PRs cross-link their issue plans; each issue retains its ACs, slice markers and progress. Historical captured command output may retain the former `docs/pan` path as evidence of its original execution.
 
 ## Naming and ownership
 
-Use exactly **`docs/pan/issue-<GitHub-number>.md`**, for example `docs/pan/issue-21.md`. The filename, heading, issue link and branch must identify the same real issue. Keep one plan per issue across sessions and review fixes. The issue and feature contracts own requirements; this file owns execution progress and evidence pointers.
+Use exactly **`docs/plan/issue-<GitHub-number>.md`**, for example `docs/plan/issue-21.md`. The filename, heading, issue link and branch must identify the same real issue. Keep one plan per issue across sessions and review fixes. The issue and feature contracts own requirements; this file owns execution progress and evidence pointers.
 
 Before the first product-code edit, read the issue/comments and copy [TEMPLATE.md](TEMPLATE.md) into that path. If the plan exists, resume it. Resolve the issue number before creating a numbered plan; never infer it from the current branch or reuse another issue's plan. Unticketed setup work can remain local until assigned a real issue, then adopts this convention before product implementation.
 
@@ -30,7 +30,7 @@ At every slice boundary, update status, actual checks, commit marker/SHA and the
 
 On resume, compare the plan with the current branch, `git status`, commit log and source changes. Previous results apply only to their recorded revision. Repeat checks only when changed inputs or unresolved failures justify it. Every scoped acceptance item must be implemented and accounted for before feature completion; unexecuted final runtime acceptance remains in #30.
 
-Store selected native UI identifiers in `apps/ios/acceptance/issue-<number>.txt`. `./scripts/prove-ios.sh <number>` retains actual execution inputs, reports and attachments. Curated durable images/reports may live at `docs/pan/evidence/issue-<number>/`, with provenance and the AC mapping linked from the plan.
+Store selected native UI identifiers in `apps/ios/acceptance/issue-<number>.txt`. `./scripts/prove-ios.sh <number>` retains actual execution inputs, reports and attachments. Curated durable images/reports may live at `docs/plan/evidence/issue-<number>/`, with provenance and the AC mapping linked from the plan.
 
 ## Shipping checkpoints
 

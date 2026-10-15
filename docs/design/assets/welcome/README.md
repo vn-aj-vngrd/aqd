@@ -10,4 +10,4 @@ Provenance records original generation; it is not a warranty of exclusivity or t
 
 SHA-256: `a2d7ac08a9c60b95a1757c47fb0640d0722b5b1fee90fde34145f1ff1054bf28`
 
-[Welcome motion contract](../../entry-motion.md) defines normal/reduced motion, interruption, image failure and native acceptance. The original planning branch implemented no animation. Issue #21 adds cached native crops and first-arrival motion; its [execution plan](../../../pan/issue-21.md) records physical proof and outstanding performance/accessibility qualification.
+[Welcome motion contract](../../entry-motion.md) defines normal/reduced motion, interruption, image failure and native acceptance. The original planning branch implemented no animation. Issue #21 adds cached native crops and first-arrival motion; its [execution plan](../../../plan/issue-21.md) records physical proof and outstanding performance/accessibility qualification.

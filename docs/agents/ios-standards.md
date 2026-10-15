@@ -40,4 +40,4 @@ Paths are relative to `apps/ios`. These are current extension points, not a requ
 
 Test pure rules in Core and persistence/media/recovery through the existing native test seams. Swift Testing and XCTest both exist; follow the neighboring suite. Prefer temporary populated stores and actual file operations to tests of private implementation details. Add regression tests for changed behavior. UI ACs require focused app-driven E2E and inspected/rendered PR evidence under [acceptance proof](acceptance-proof.md); cosmetic acceptance needs actual visual evidence rather than mirrored unit tests. Documentation-only work uses its appropriate checks.
 
-Use [`aqd-verify`](../../.agents/skills/aqd-verify/SKILL.md) to select checks and [`aqd-review`](../../.agents/skills/aqd-review/SKILL.md) before delivery. The [issue-plan convention](../pan/README.md) owns slice commits and resumable evidence.
+Use [`aqd-verify`](../../.agents/skills/aqd-verify/SKILL.md) to select checks and [`aqd-review`](../../.agents/skills/aqd-review/SKILL.md) before delivery. The [issue-plan convention](../plan/README.md) owns slice commits and resumable evidence.

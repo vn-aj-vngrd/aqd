@@ -61,7 +61,7 @@ The proof directory retains `inputs.json`, exact cases, the real run log, `.xcre
 
 Native PR CI runs unit scope, then the issue selection when the branch has a matching manifest. An explicit dispatch can supply `acceptance_issue`; a missing requested selection fails. CI publishes `native-ios-acceptance` for 30 days, including source/device identity, results and attachments. Read back the actual run/artifact and link it in the PR. Main's routine unit scope and explicit all/E2E hardening remain separate. A skipped optional selection is not proof.
 
-Track a small set of inspected screenshots, the real summary/OCR receipts and their source index under `docs/pan/evidence/issue-<number>/` when durable inline PR media is needed. Link those files at the evidence commit. Keep large bundles in the authenticated CI artifact route, with its retention limit explicit. No generated report or configured CI step counts as execution before its actual run passes.
+Track a small set of inspected screenshots, the real summary/OCR receipts and their source index under `docs/plan/evidence/issue-<number>/` when durable inline PR media is needed. Link those files at the evidence commit. Keep large bundles in the authenticated CI artifact route, with its retention limit explicit. No generated report or configured CI step counts as execution before its actual run passes.
 
 ## Installed build and screen check
 
