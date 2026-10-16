@@ -19,10 +19,9 @@ struct OutfitReadinessContent: View {
                     .frame(minHeight: 44)
             }
             ForEach(model.readiness.missingCategories, id: \.self) { category in
-                PrimaryAction(title: "Add \(category.rawValue.lowercased())") { model.addMissingPiece(category) }
-            }
-            if model.readiness.isReady {
-                PrimaryAction(title: "Suggest an outfit") { model.update { $0.stage = .suggest } }
+                Button { model.addMissingPiece(category) } label: {
+                    Label("Add \(category.rawValue.lowercased())", systemImage: "plus").frame(minHeight: 44)
+                }
             }
             SecondaryAction(title: "Build manually") { model.update { $0.stage = .builder } }
             if let error = model.error { SemanticFeedback(role: .danger, message: error) }
@@ -44,16 +43,12 @@ struct OutfitSuggestionContent: View {
             Text(model.suggestionAvailability.message).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             if model.generating {
                 ProgressView("Preparing an on-device draft…")
-                SecondaryAction(title: "Stop") { model.stopGeneration() }
             } else {
                 if model.suggestionAvailability == .available {
-                    PrimaryAction(title: "Suggest outfit") { model.suggestOnDevice() }
-                        .disabled(!model.readiness.isReady)
+                    SecondaryAction(title: "Use rules instead") { model.useRules() }.disabled(!model.readiness.isReady)
                 } else {
                     SecondaryAction(title: "Check again") { model.suggestionAvailability = OutfitSuggestions.availability() }
                 }
-                PrimaryAction(title: "Use a rule-based combination") { model.useRules() }
-                    .disabled(!model.readiness.isReady)
                 Text("Rules use available categories and your pins; they don’t use AI.")
                     .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                 SecondaryAction(title: "Build manually") { model.update { $0.stage = .builder } }

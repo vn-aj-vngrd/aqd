@@ -73,7 +73,22 @@ struct OutfitEditorView: View {
             .navigationTitle(model.saved != nil ? "Outfit saved" : model.draft.stage == .readiness ? "First outfit" : model.draft.stage == .suggest ? "Suggest an outfit" : model.draft.stage == .review ? "Review outfit" : model.draft.baseRevision == 0 ? "Build outfit" : "Edit outfit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
-                if model.saved == nil && model.draft.stage != .readiness && model.draft.stage != .suggest { confirmation }
+                if model.saved == nil {
+                    if model.draft.stage == .readiness {
+                        ToolbarSaveAction(title: model.readiness.isReady ? "Next" : "Build") {
+                            model.update { $0.stage = model.readiness.isReady ? .suggest : .builder }
+                        }.disabled(model.pending || model.unknown || model.generating)
+                    } else if model.draft.stage == .suggest {
+                        if model.generating {
+                            ToolbarSaveAction(title: "Stop") { model.stopGeneration() }
+                        } else {
+                            ToolbarSaveAction(title: model.suggestionAvailability == .available ? "Suggest" : "Use rules") {
+                                if model.suggestionAvailability == .available { model.suggestOnDevice() }
+                                else { model.useRules() }
+                            }.disabled(!model.readiness.isReady || model.pending || model.unknown)
+                        }
+                    } else { confirmation }
+                }
             } }
             .toolbar {
                 ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {

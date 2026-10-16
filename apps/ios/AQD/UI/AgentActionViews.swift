@@ -37,8 +37,8 @@ struct AgentActionComposerView: View {
                 if kind == "Plan" || kind == "Wear" { DatePicker(kind == "Plan" ? "First date" : "Recorded date", selection: $first, displayedComponents: .date) }
                 if kind == "Plan" { DatePicker("Last date", selection: $last, displayedComponents: .date); Toggle("Leave dates without an outfit intentionally unassigned", isOn: $unassigned) }
                 if let error { Text(error).foregroundStyle(AppTheme.error) }
-                PrimaryAction(title: "Prepare review") { prepare() }
             }.navigationTitle("Local tools").navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarSaveAction(title: "Review") { prepare() } } }
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button { dismiss() } label: { Image(systemName: "xmark") }.accessibilityLabel("Cancel") } }
         }.tint(AppTheme.ink)
     }
@@ -90,16 +90,21 @@ struct AgentActionReviewView: View {
                         else if receipt.kind == "piece" { NavigationLink("Open piece", value: ClosetRoute.piece(receipt.recordID)) }
                         else { Text("Open Planner or wear history to review the acknowledged records.") }
                     } else if proposal.status == .proposed || proposal.status == .executing {
-                        PrimaryAction(title: proposal.status == .executing ? "Check reviewed operation" : "Apply reviewed change") {
-                            model.approveProposal(id, version: proposal.version)
-                            state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); state.reloadWear()
-                        }.disabled(model.hasPendingOperation)
                         if proposal.status == .proposed { SecondaryAction(title: "Keep current records") { model.cancelProposal(id) } }
                         Text("Approval applies only to this exact version. Changed records require a new review. Check an unconfirmed operation before making another draft.").font(.footnote).foregroundStyle(AppTheme.secondary)
                     }
                 } else { Text("This proposal is unavailable. Your saved records are retained.") }
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle("Review changes").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if let proposal, proposal.status == .proposed || proposal.status == .executing {
+                    ToolbarSaveAction(title: proposal.status == .executing ? "Check result" : "Apply") {
+                        model.approveProposal(id, version: proposal.version)
+                        state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); state.reloadWear()
+                    }.disabled(model.hasPendingOperation)
+                        .accessibilityLabel(proposal.status == .executing ? "Check reviewed operation" : "Apply reviewed change")
+                }
+            } }
             .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
     }
     @ViewBuilder private func preview(_ action: AgentReviewedAction) -> some View {

@@ -42,7 +42,7 @@ struct OutfitPlanEditorView: View {
                                 let zone = TimeZone(identifier: model.draft.day.timeZoneID) ?? .current
                                 model.update { $0.day = LocalPlanDay(date: date, timeZone: zone); $0.allowsOverlap = nil }
                             }), in: dateBounds, displayedComponents: .date)
-                            .environment(\.timeZone, TimeZone(identifier: model.draft.day.timeZoneID) ?? .current)
+                            .environment(\.timeZone, TimeZone(identifier: model.draft.day.timeZoneID) ?? .current).labelsHidden()
                         }.disabled(model.pending || model.unknown)
                         if let plan = namedPlan {
                             Text("Part of \(plan.name). Edit the whole plan to change its date range or timezone.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)

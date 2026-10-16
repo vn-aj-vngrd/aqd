@@ -43,19 +43,20 @@ struct TodayEditorView: View {
             }.listStyle(.insetGrouped).scrollContentBackground(.hidden)
                 .environment(\.editMode, .constant(.active))
                 .background(AppTheme.canvas).navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)
-                .safeAreaInset(edge: .bottom, spacing: 0) {
-                    ActionFooter {
-                        ActionStack {
-                            PrimaryAction(title: "Add widget", systemImage: "plus") { library = true }.disabled(model.locked)
+                .toolbar {
+                    if model.saved == nil {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            ToolbarSaveAction(title: "Add") { library = true }.disabled(model.locked)
+                                .accessibilityLabel("Add widget")
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
                             Menu {
                                 Button("Restore defaults", systemImage: "arrow.counterclockwise") { restore = true }
                                 if model.draft.defaultsUndo != nil {
                                     Button("Undo restore defaults", systemImage: "arrow.uturn.backward") { model.update { $0.undoDefaults() } }
                                 }
-                            } label: {
-                                Label("Layout options", systemImage: "ellipsis").font(AppTypography.body)
-                                    .frame(maxWidth: .infinity, minHeight: 44)
-                            }.foregroundStyle(AppTheme.actionText).disabled(model.locked)
+                            } label: { Label("Layout options", systemImage: "ellipsis") }
+                                .disabled(model.locked)
                         }
                     }
                 }

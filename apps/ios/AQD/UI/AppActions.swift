@@ -114,7 +114,7 @@ struct ToolbarSaveAction: View {
         } label: {
             Text(title).font(AppTypography.action).frame(minWidth: 44, minHeight: 44)
         }
-        .tint(AppTheme.accent)
+        .tint(AppTheme.actionText)
         .disabled(isPending || !isEnabled)
         .accessibilityValue(isPending ? "In progress" : "")
     }

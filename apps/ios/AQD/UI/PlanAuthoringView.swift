@@ -57,7 +57,15 @@ struct PlanAuthoringView: View {
             }.background(AppTheme.canvas).navigationTitle(model.saved != nil ? "Plan saved" : model.draft.reviewing ? "Review plan" : model.draft.basePlan != nil ? "Edit plan" : model.draft.plan.routine != nil ? "New routine" : model.draft.plan.trip != nil ? "New trip" : "New plan")
                 .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
-                if model.saved == nil && model.draft.reviewing { confirmation }
+                if model.saved == nil {
+                    if model.draft.reviewing { confirmation }
+                    else {
+                        ToolbarSaveAction(title: "Review") {
+                            model.state.reloadPlanEntries(); model.state.reloadOutfits(); model.state.reloadPieces()
+                            model.update { $0.reviewing = true }
+                        }.disabled(!model.canReview || locked)
+                    }
+                }
             } }.tint(AppTheme.ink)
                 .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
@@ -90,29 +98,28 @@ struct PlanAuthoringView: View {
     private var fields: some View {
         VStack(alignment: .leading, spacing: 16) {
             LabeledField(title: "Name", text: Binding(get: { model.draft.plan.name }, set: { value in model.update { $0.plan.name = value } })).disabled(definitionLocked)
-            dateField("Start date", start: true).disabled(definitionLocked)
-            dateField("End date", start: false).disabled(definitionLocked)
-            DisclosureRow(title: "Timezone", value: model.draft.plan.start.timeZoneID) { choosingZone = true }.disabled(definitionLocked)
+            VStack(spacing: 0) {
+                dateField("Starts", start: true)
+                Divider().padding(.leading, 14)
+                dateField("Ends", start: false)
+                Divider().padding(.leading, 14)
+                DisclosureRow(title: "Timezone", value: model.draft.plan.start.timeZoneID) { choosingZone = true }
+            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).disabled(definitionLocked)
             if model.draft.plan.trip != nil { TripFields(model: model).disabled(definitionLocked) }
             if model.draft.plan.routine != nil {
                 RoutineFields(model: model) { choosingPreferred = true }.disabled(definitionLocked)
             }
-            Text(model.draft.plan.routine == nil ? "Plan up to two weeks. Every date can have a saved outfit or an intentional gap. Weather context is off." : "Resolve up to three calendar months of selected weekdays. Every date is reviewed before saving; nothing repeats in the background. Weather context is off.")
+            Text(model.draft.plan.routine == nil ? "Plan up to two weeks. Choose an outfit or leave a gap for each date during review." : "Choose weekdays for up to three months. Review every date before saving; nothing repeats in the background.")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             if (try? model.draft.plan.days()) == nil { SemanticFeedback(role: .warning, message: model.draft.plan.routine == nil ? "Choose an inclusive range of one to fourteen days in the same timezone." : "Choose weekdays and a range of up to three calendar months in the same timezone.") }
-            PrimaryAction(title: "Review plan") {
-                model.state.reloadPlanEntries(); model.state.reloadOutfits(); model.state.reloadPieces()
-                model.update { $0.reviewing = true }
-            }.disabled(!model.canReview)
         }.disabled(locked)
     }
     private func dateField(_ title: String, start: Bool) -> some View {
-        LabeledControl(title: title) {
-            DatePicker(title, selection: Binding(get: { (try? (start ? model.draft.plan.start : model.draft.plan.end).date()) ?? Date() }, set: { value in
+        DatePicker(title, selection: Binding(get: { (try? (start ? model.draft.plan.start : model.draft.plan.end).date()) ?? Date() }, set: { value in
                 let zone = TimeZone(identifier: model.draft.plan.start.timeZoneID) ?? .current
                 model.dates { if start { $0.start = LocalPlanDay(date: value, timeZone: zone) } else { $0.end = LocalPlanDay(date: value, timeZone: zone) } }
             }), displayedComponents: .date).environment(\.timeZone, TimeZone(identifier: model.draft.plan.start.timeZoneID) ?? .current)
-        }
+            .padding(.horizontal, 14).frame(minHeight: 54)
     }
     private func needsCompositionReview(_ slot: PlanSlotDraft) -> Bool {
         guard let base = model.draft.baseEntries?.first(where: { $0.id == slot.id }),

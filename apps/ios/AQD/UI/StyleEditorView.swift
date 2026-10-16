@@ -40,7 +40,7 @@ struct StyleEditorView: View {
             .background(AppTheme.canvas)
             .navigationTitle(model.saved == nil ? StylePreferences.titles[page] : "Style")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar(model.saved == nil ? .visible : .hidden, for: .navigationBar)
+            .toolbar(.visible, for: .navigationBar)
             .toolbar {
                 if model.saved == nil {
                     ToolbarItem(placement: .topBarLeading) {
@@ -54,25 +54,28 @@ struct StyleEditorView: View {
                     }
                 }
             }
-            .safeAreaInset(edge: .bottom) {
-                ActionFooter {
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
                     if model.saved != nil {
-                        ActionStack {
-                            PrimaryAction(title: savedContinueTitle) { model.finish() }
-                                .accessibilityIdentifier("style.saved.continue")
-                            SecondaryAction(title: "Open my closet") { model.finish(openCloset: true) }
-                                .accessibilityIdentifier("style.saved.closet")
-                            Text("You can edit your preferences from Profile → Style.")
-                                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                                .frame(maxWidth: .infinity).multilineTextAlignment(.center)
-                        }
-                    }
-                    else if page == 6 {
-                        PrimaryAction(title: model.unknown ? "Check save" : model.error != nil ? "Retry save" : "Save preferences", isPending: model.pending) { Task { await model.save() } }
-                            .disabled(!model.draft.isComplete)
+                        ToolbarSaveAction(title: model.draft.source == .onboarding ? "Take tour" : "Done") { model.finish() }
+                            .accessibilityLabel(savedContinueTitle).accessibilityIdentifier("style.saved.continue")
+                    } else if page == 6 {
+                        ToolbarSaveAction(title: model.unknown ? "Check save" : "Save", isPending: model.pending) { Task { await model.save() } }
+                            .disabled(!model.draft.isComplete).accessibilityLabel(model.unknown ? "Check save" : "Save preferences")
                     } else {
-                        PrimaryAction(title: model.draft.editingFromReview ? "Back to review" : "Continue") { model.next() }
+                        ToolbarSaveAction(title: model.draft.editingFromReview ? "Review" : "Continue") { model.next() }
                             .disabled(!model.draft.isAnswered(page) || model.pending || model.unknown || model.error != nil)
+                    }
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                if model.saved != nil {
+                    ActionFooter {
+                        SecondaryAction(title: "Open my closet") { model.finish(openCloset: true) }
+                            .accessibilityIdentifier("style.saved.closet")
+                        Text("You can edit your preferences from Profile → Style.")
+                            .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            .frame(maxWidth: .infinity).multilineTextAlignment(.center)
                     }
                 }
             }

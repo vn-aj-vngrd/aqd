@@ -122,28 +122,16 @@ struct FitEditorView: View {
                         Text("Fit saved").font(AppTypography.section)
 
                     } else {
-                        LabeledControl(title: "Date") {
-                            DatePicker("Fit date", selection: Binding(get: { (try? model.draft.value.day.date()) ?? Date() }, set: { date in
-                                let zone = TimeZone(identifier: model.draft.value.day.timeZoneID) ?? .current
-                                model.update { $0.day = LocalPlanDay(date: date, timeZone: zone) }
-                            }), displayedComponents: .date).environment(\.timeZone, TimeZone(identifier: model.draft.value.day.timeZoneID) ?? .current)
-                        }.disabled(model.locked)
-                        DisclosureRow(title: "Timezone", value: model.draft.value.day.timeZoneID) { timezone = true }.disabled(model.locked)
-                        if model.draft.value.photoID != nil || model.draft.value.outfit != nil {
-                            FitMemoryArtwork(memory: model.draft.value).frame(minHeight: 144, maxHeight: 240)
-                        }
-                        SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add photo" : "Change photo", selectionToken: model.importID, locked: model.locked, onData: model.importPhoto)
-                        if model.importing { ProgressView("Preparing photo"); Button("Cancel import") { model.cancelImport() }.frame(minHeight: 44) }
-                        if model.draft.value.photoID != nil { SecondaryAction(title: "Edit photo") { editingPhoto = true }.disabled(model.locked || model.importing); Button("Remove photo", role: .destructive) { removePhoto = true }.frame(minHeight: 44).disabled(model.locked) }
-                        DisclosureRow(title: "Link outfit", value: model.draft.value.outfit?.name ?? "Not linked") { choosingOutfit = true }.disabled(model.locked)
-                        if model.draft.value.outfit != nil { SecondaryAction(title: "Unlink outfit") { _ = model.link(nil) }.disabled(model.locked) }
+                        mediaContent
                         LabeledControl(title: "Private note") {
                             TextField("What would you like to remember?", text: Binding(get: { model.draft.value.note }, set: { value in model.update { $0.note = value } }), axis: .vertical)
                                 .lineLimit(4...12).font(AppTypography.body).disabled(model.locked)
                         }
                         Text("\(model.draft.value.note.count) / 500").font(AppTypography.metadata).foregroundStyle(model.draft.value.note.count > 500 ? AppTheme.error : AppTheme.secondary).frame(maxWidth: .infinity, alignment: .trailing)
                         if model.draft.value.note.count > 500 { SemanticFeedback(role: .danger, message: "Keep the note within 500 characters. Your full text is retained.") }
-                        Text("Add a photo or link an outfit to save. Saving a fit never records wear.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        dateDetails
+                        Label("Private memory · Wear is recorded separately", systemImage: "lock")
+                            .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
 
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
@@ -172,6 +160,59 @@ struct FitEditorView: View {
                 model.finish(discarding: true); if model.state.fitEditor == nil { discard = false }
             }
     }
+    private var mediaContent: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Group {
+                if model.draft.value.photoID != nil || model.draft.value.outfit != nil {
+                    FitMemoryArtwork(memory: model.draft.value).frame(minHeight: 160, maxHeight: 280)
+                } else {
+                    VStack(spacing: 12) {
+                        Image(systemName: "photo.on.rectangle.angled").font(.system(size: 40, weight: .light))
+                            .foregroundStyle(AppTheme.actionText).accessibilityHidden(true)
+                        Text("Start with a photo or outfit").font(AppTypography.detailTitle)
+                        Text("Keep a look you want to remember.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    }.frame(maxWidth: .infinity, minHeight: 180).padding(16)
+                }
+            }.frame(maxWidth: .infinity).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 12))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add photo" : "Change photo", selectionToken: model.importID, locked: model.locked, onData: model.importPhoto)
+            if model.importing {
+                HStack {
+                    ProgressView("Preparing photo")
+                    Spacer()
+                    Button("Cancel import") { model.cancelImport() }.frame(minHeight: 44)
+                }
+            }
+            if model.draft.value.photoID != nil {
+                HStack {
+                    Text("Photo options").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    Spacer()
+                    Menu {
+                        Button("Edit photo", systemImage: "crop") { editingPhoto = true }.disabled(model.importing)
+                        Button("Remove photo", systemImage: "trash", role: .destructive) { removePhoto = true }
+                    } label: { Label("Photo options", systemImage: "ellipsis").labelStyle(.iconOnly).frame(width: 44, height: 44) }
+                        .disabled(model.locked)
+                }
+            }
+            DisclosureRow(title: "Outfit", value: model.draft.value.outfit?.name ?? "Link an outfit") { choosingOutfit = true }.disabled(model.locked)
+            if model.draft.value.outfit != nil {
+                Button("Unlink outfit") { _ = model.link(nil) }.frame(minHeight: 44).disabled(model.locked)
+            }
+        }.padding(12).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+    }
+    private var dateDetails: some View {
+        VStack(spacing: 0) {
+            DatePicker("Date", selection: Binding(get: { (try? model.draft.value.day.date()) ?? Date() }, set: { date in
+                let zone = TimeZone(identifier: model.draft.value.day.timeZoneID) ?? .current
+                model.update { $0.day = LocalPlanDay(date: date, timeZone: zone) }
+            }), displayedComponents: .date)
+                .environment(\.timeZone, TimeZone(identifier: model.draft.value.day.timeZoneID) ?? .current)
+                .padding(.horizontal, 14).frame(minHeight: 54)
+            Divider().padding(.leading, 14)
+            DisclosureRow(title: "Timezone", value: model.draft.value.day.timeZoneID) { timezone = true }
+        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).disabled(model.locked)
+    }
+
 }
 
 private struct FitOutfitChooser: View {

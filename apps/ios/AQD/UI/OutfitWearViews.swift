@@ -38,7 +38,7 @@ struct OutfitWearEditorView: View {
                                 let zone = TimeZone(identifier: model.draft.day.timeZoneID) ?? .current
                                 model.update { $0.day = LocalPlanDay(date: value, timeZone: zone); if $0.day != $0.planEntry?.day { $0.planEntry = nil } }
                             }), displayedComponents: .date)
-                            .environment(\.timeZone, TimeZone(identifier: model.draft.day.timeZoneID) ?? .current)
+                            .environment(\.timeZone, TimeZone(identifier: model.draft.day.timeZoneID) ?? .current).labelsHidden()
                         }.disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Pieces", value: "\(model.draft.pieceIDs.count) selected") { choosing = true }
                             .disabled(model.pending || model.unknown)
