@@ -44,7 +44,7 @@ struct ClosetView: View {
                 } else { ThemeCollectionView(query: themeQuery, clearFilters: { themeQuery = ThemeCollectionQuery() }, summary: collectionSummary) }
             }
             .background(AppTheme.canvas)
-            .navigationTitle("Closet")
+            .navigationTitle("").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if !state.closetSearchActive {
                     ToolbarItem(placement: .topBarTrailing) {

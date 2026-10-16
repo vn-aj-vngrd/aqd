@@ -43,7 +43,9 @@ struct TodayEditorView: View {
                             }
                         } label: { Label("Layout options", systemImage: "ellipsis").labelStyle(.iconOnly).frame(width: 44, height: 44) }
                             .disabled(model.locked)
-                        Button("Add") { library = true }.frame(minWidth: 44, minHeight: 44)
+                        Button { library = true } label: {
+                            Text("Add").frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+                        }
                             .disabled(model.locked).accessibilityLabel("Add widget")
                     }.textCase(nil).tint(AppTheme.actionText)
                 } footer: {

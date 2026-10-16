@@ -124,8 +124,16 @@ struct PlannerCalendarView: View {
                 Circle().fill(count > 0 ? (selected ? AppTheme.onAccent : AppTheme.accent) : .clear).frame(width: 4, height: 4)
             }.frame(minWidth: 44, maxWidth: .infinity, minHeight: showWeekday ? 64 : 44)
                 .foregroundStyle(selected ? AppTheme.onAccent : AppTheme.ink)
-                .background(selected ? AppTheme.accent : .clear, in: RoundedRectangle(cornerRadius: 12))
-                .overlay { if today && !selected { RoundedRectangle(cornerRadius: 12).stroke(AppTheme.actionText, lineWidth: 1) } }
+                .background {
+                    RoundedRectangle(cornerRadius: 12).fill(selected ? AppTheme.accent : .clear)
+                        .padding(.horizontal, 2)
+                }
+                .overlay {
+                    if today && !selected {
+                        RoundedRectangle(cornerRadius: 12).stroke(AppTheme.actionText, lineWidth: 1)
+                            .padding(.horizontal, 2)
+                    }
+                }
         }.buttonStyle(.plain).accessibilityLabel(fullDate)
             .accessibilityValue("\(today ? "Today. " : "")\(count) \(countLabel)\(selected ? ". Selected" : "")")
             .accessibilityAddTraits(selected ? [.isSelected] : [])
