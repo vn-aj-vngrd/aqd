@@ -123,3 +123,12 @@ The physical regression additionally exposed URL representation equality rejecti
 After renewed owner readiness, final Core72/native204, comprising191 Swift Testing and13 XCTest, PASSED `/tmp/aqd-pr37-codex6-final-unit.log`. The parameterized regression covers missing/corrupt pointer × legacy/generated original, retained conversation content, correct active path, failed-review cancellation and a second restore from an installed generation. Both independent reviewers rechecked the final correction without findings. All checks use the physical iPhone17ProMax; no simulator or E2E. All real capability activation and rendered acceptance remain issue30. Current-head CI/Codex/protected merge and exact merged-SHA release remain separate gates.
 
 Final unsigned iOS Release PASSED `/tmp/aqd-pr37-codex6-final-release.log`; agent-doc links and whitespace pass.
+
+
+## PR37 seventh review correction
+
+Codex at `5063ea7` found omitted Colors & patterns in Style context and arbitrary UUID-prefix closet truncation. Correction `5a8d8ff8623ad86528fc8ae5c61855bebebfacfb` includes preference summaries0/1/2/3/5 under Style consent, keeping body details behind their separate permission. Over-budget eligible/selected context now refuses before consuming the draft or invoking the provider and offers explicit Selected pieces/reduce or Without closet. No arbitrary subset is sent; explicit selection supplies the relevant bounded records.
+
+Actual regressions failed in `/tmp/aqd-pr37-codex7-core-red.log` and `/tmp/aqd-pr37-codex7-native-red.log`. Final Core73/native206, comprising193 Swift Testing and13 XCTest, PASSED `/tmp/aqd-pr37-codex7-unit.log` on the physical iPhone. Coverage includes all four Style/body-consent combinations, preferred/avoided colors/patterns, over-budget draft preservation, no provider invocation and successful explicit bounded reselection. Both independent reviewers rechecked without findings. All E2E, rendered acceptance and real capability activation remain issue30. New-head CI/Codex/protected merge and exact merged-SHA release remain separate gates.
+
+Unsigned iOS Release PASSED `/tmp/aqd-pr37-codex7-release.log`; agent-doc links and whitespace pass.
