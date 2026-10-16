@@ -4,6 +4,31 @@ import Testing
 @testable import AQD
 
 @Suite(.serialized) @MainActor struct LocalSettingsPersistenceTests {
+    @Test(arguments: [false, true], [false, true]) func newAppearanceChoiceSurvivesPendingSaveReconciliation(lostAcknowledgment: Bool, recoverBeforeSecondChoice: Bool) throws {
+        var before = false, after = false
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),
+            beforeOutfitSave: { if before { throw CocoaError(.fileWriteNoPermission) } },
+            afterOutfitSave: { if after { throw CocoaError(.fileReadUnknown) } })
+        let state = AppState(store: store)
+        before = !lostAcknowledgment; after = lostAcknowledgment
+        state.saveAppearance(.dark)
+        #expect(state.settingsError != nil)
+        if recoverBeforeSecondChoice { before = false; after = false }
+        state.saveAppearance(.light)
+        if !recoverBeforeSecondChoice {
+            #expect(state.settingsError != nil)
+            before = false; after = false
+            state.retryAppearanceSave()
+        }
+        #expect(state.appearance == .light && state.settingsError == nil)
+        #expect(try store.localSettings().appearance == .light)
+        #expect(try store.localSettings().revision == 2)
+        after = true; state.saveAppearance(.dark); after = false
+        state.retryAppearanceSave()
+        #expect(state.appearance == .dark && state.settingsError == nil)
+        #expect(try store.localSettings().revision == 3)
+        state.store = nil
+    }
     @Test func failedAndUnknownAppearanceWritesPreserveOtherDataAndReconcileWithoutRewindingNewerSettings() throws {
         var fail = false, unknown = false
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)

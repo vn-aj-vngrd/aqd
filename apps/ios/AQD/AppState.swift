@@ -82,6 +82,7 @@ final class AppState {
     var settings: LocalSettings?
     var settingsError: String?
     private var pendingSettings: LocalSettingsRequest?
+    private var desiredAppearance: LocalAppearance?
     var agentLaunchID: UUID?
     var appearance: AppAppearance { AppAppearance(rawValue: settings?.appearance.rawValue ?? "system") ?? .system }
     var profileSettings = false
@@ -732,16 +733,28 @@ extension CaptureModel {
 
 extension AppState {
     func reloadSettings() {
-        do { guard let store else { throw PieceStore.StoreError.corruptStore }; settings = try store.localSettings(); settingsError = nil }
+        do {
+            guard let store else { throw PieceStore.StoreError.corruptStore }
+            settings = try store.localSettings()
+            if pendingSettings == nil && desiredAppearance == nil { settingsError = nil }
+        }
         catch { settingsError = "Settings couldn’t be read. Saved preferences are retained. Try again." }
     }
     func saveAppearance(_ appearance: LocalAppearance) {
+        desiredAppearance = appearance
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
-            let request = try pendingSettings ?? LocalSettingsRequest(base: store.localSettings(), appearance: appearance)
+            if let pendingSettings { _ = try store.saveLocalSettings(pendingSettings); self.pendingSettings = nil }
+            let current = try store.localSettings()
+            guard current.appearance != appearance else { desiredAppearance = nil; reloadSettings(); return }
+            let request = LocalSettingsRequest(base: current, appearance: appearance)
             pendingSettings = request
-            _ = try store.saveLocalSettings(request); pendingSettings = nil; reloadSettings()
+            _ = try store.saveLocalSettings(request); pendingSettings = nil; desiredAppearance = nil; reloadSettings()
         } catch { settingsError = "The appearance save wasn’t confirmed. Retry checks the same operation; your other data is retained." }
+    }
+    func retryAppearanceSave() {
+        guard let appearance = desiredAppearance ?? pendingSettings?.appearance else { reloadSettings(); return }
+        saveAppearance(appearance)
     }
 }
 

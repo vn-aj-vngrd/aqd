@@ -34,7 +34,7 @@ struct LocalAppearanceSettingsView: View {
     var body: some View {
         List {
             Text("System follows your device; Light or Dark stays fixed.").foregroundStyle(AppTheme.secondary)
-            if let error = state.settingsError { Text(error).foregroundStyle(AppTheme.error); Button("Retry appearance save") { state.saveAppearance(state.settings?.appearance ?? .system) } }
+            if let error = state.settingsError { Text(error).foregroundStyle(AppTheme.error); Button("Retry appearance save") { state.retryAppearanceSave() } }
             ForEach(LocalAppearance.allCases, id: \.self) { value in
                 Button { state.saveAppearance(value) } label: { HStack { Text(value.rawValue.capitalized).foregroundStyle(AppTheme.ink); Spacer(); if state.settings?.appearance == value || (state.settings == nil && value == .system) { Image(systemName: "checkmark").foregroundStyle(AppTheme.actionText) } }.frame(minHeight: 44) }
                     .accessibilityValue(state.settings?.appearance == value ? "Selected" : "Not selected")
