@@ -21,6 +21,20 @@ struct TodaySourcesTests {
         #expect(Set(result.map(\.id)) == Set(entries.prefix(2).map(\.id)))
         #expect(try TodaySources.upcoming(entries, now: instant, days: 14).count == 3)
     }
+    @Test func pinnedPlansKeepTheSelectedUpcomingWindow() throws {
+        let planID = UUID()
+        let dates = [15, 16, 22, 23, 29, 30]
+        let entries = dates.map { day in
+            entry(day: LocalPlanDay(year: 2026, month: 10, day: day, timeZoneID: "Asia/Manila"), planID: planID)
+        }
+        let otherPlan = entry(day: today)
+        let instant = try today.date()
+        let week = try TodaySources.upcoming(entries + [otherPlan], now: instant, days: 7, planID: planID)
+        #expect(Set(week.map(\.id)) == Set(entries[1...2].map(\.id)))
+        let fortnight = try TodaySources.upcoming(entries + [otherPlan], now: instant, days: 14, planID: planID)
+        #expect(Set(fortnight.map(\.id)) == Set(entries[1...4].map(\.id)))
+        #expect(try TodaySources.upcoming(entries, now: instant, days: 7, planID: UUID()).isEmpty)
+    }
     @Test func leastRecentUsesActualRecordsAndExcludesUnavailablePieces() {
         let first = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
         let second = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
@@ -28,8 +42,8 @@ struct TodaySourcesTests {
         #expect(TodaySources.wearAgain(pieces: pieces, records: [], through: today)?.id == first)
         #expect(TodaySources.wearAgain(pieces: [], records: [], through: today) == nil)
     }
-    private func entry(day: LocalPlanDay) -> OutfitPlanEntry {
-        OutfitPlanEntry(id: UUID(), planID: UUID(), ownerID: owner, day: day, occasion: "", outfitID: nil, outfitRevision: nil, state: .unassigned)
+    private func entry(day: LocalPlanDay, planID: UUID = UUID()) -> OutfitPlanEntry {
+        OutfitPlanEntry(id: UUID(), planID: planID, ownerID: owner, day: day, occasion: "", outfitID: nil, outfitRevision: nil, state: .unassigned)
     }
     private func piece(_ id: UUID, availability: PieceAvailability = .available) -> WardrobePiece {
         WardrobePiece(id: id, name: "Owned", category: .tops, photoID: UUID(), availability: availability)

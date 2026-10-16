@@ -21,9 +21,10 @@ public enum TodaySources {
         let endDay = LocalPlanDay(date: end, timeZone: calendar.timeZone)
         return (startDay, endDay.key > today.key ? today : endDay)
     }
-    public static func upcoming(_ entries: [OutfitPlanEntry], now: Date = Date(), days: Int = 7) throws -> [OutfitPlanEntry] {
+    public static func upcoming(_ entries: [OutfitPlanEntry], now: Date = Date(), days: Int = 7, planID: UUID? = nil) throws -> [OutfitPlanEntry] {
         guard days == 7 || days == 14 else { throw PlanValidationError.invalidDay }
         return try entries.filter { entry in
+            if let planID, entry.planID != planID { return false }
             _ = try entry.day.date()
             guard let zone = TimeZone(identifier: entry.day.timeZoneID) else { throw PlanValidationError.invalidTimezone }
             var calendar = Calendar(identifier: .gregorian); calendar.timeZone = zone

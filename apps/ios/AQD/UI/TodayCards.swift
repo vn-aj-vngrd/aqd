@@ -123,8 +123,8 @@ struct TodayCard: View {
     }
     @ViewBuilder private var upcoming: some View {
         if let error = state.planError { failure(error) { state.reloadPlanEntries() } }
-        else if let entries = try? TodaySources.upcoming(state.planEntries, days: instance.options?.upcomingDays ?? 7) {
-            let visible = instance.options?.pinnedID.map { pin in state.planEntries.filter { $0.planID == pin }.sorted { $0.day.key < $1.day.key } } ?? entries
+        else if let entries = try? TodaySources.upcoming(state.planEntries, days: instance.options?.upcomingDays ?? 7, planID: instance.options?.pinnedID) {
+            let visible = entries
             if let pin = instance.options?.pinnedID, !state.planDefinitions.contains(where: { $0.id == pin }) { configure("The selected plan is unavailable.") }
             else if visible.isEmpty {
                 Text("No upcoming plan entries in this selection.").foregroundStyle(AppTheme.secondary)
