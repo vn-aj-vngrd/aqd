@@ -14,7 +14,7 @@ Use existing public Core validators and actual PieceStore/model save/read/reopen
 | --- | --- | --- | --- | --- | --- | --- |
 | S1 | Durable conversations, drafts/history/new/delete and reason-specific availability/manual routes | LOCAL12/15, A2/A11 | Actual store failure/unknown/reopen + populated migration | Committed | `AQD-Slice: #27/S1` | `5a149ff` |
 | S2 | Explicit bounded context, generation/cancel/retry/interruption, Markdown/copy/details and real-provider gated path | A2/A7/A8/A12/A14/A15, LOCAL12 | Core context/stream/copy policy + native model/state tests | Committed | `AQD-Slice: #27/S2` | `d347a75` |
-| S3 | Version-bound domain reviews/receipts, weather context and honest voice/image recovery | A1/A3–6/A13, LOCAL09/16 | Owned/stale/exactly-once approval and parent draft tests | Committed | `AQD-Slice: #27/S3` | Pending |
+| S3 | Version-bound domain reviews/receipts, weather context and honest voice/image recovery | A1/A3–6/A13, LOCAL09/16 | Owned/stale/exactly-once approval and parent draft tests | Committed | `AQD-Slice: #27/S3` | `18fb6e2` |
 
 ## Acceptance and evidence
 

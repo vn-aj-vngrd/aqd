@@ -295,8 +295,13 @@ enum LocalSchemaV21: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV20.models + [StoredAgentConversation.self, StoredAgentOperation.self] }
 }
 
+enum LocalSchemaV22: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(22, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV21.models + [StoredLocalSettings.self, StoredSettingsSave.self, StoredLocalMutation.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self, LocalSchemaV15.self, LocalSchemaV16.self, LocalSchemaV17.self, LocalSchemaV18.self, LocalSchemaV19.self, LocalSchemaV20.self, LocalSchemaV21.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self, LocalSchemaV15.self, LocalSchemaV16.self, LocalSchemaV17.self, LocalSchemaV18.self, LocalSchemaV19.self, LocalSchemaV20.self, LocalSchemaV21.self, LocalSchemaV22.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
@@ -317,7 +322,8 @@ enum LocalMigrationPlan: SchemaMigrationPlan {
          .lightweight(fromVersion: LocalSchemaV17.self, toVersion: LocalSchemaV18.self),
          .lightweight(fromVersion: LocalSchemaV18.self, toVersion: LocalSchemaV19.self),
          .lightweight(fromVersion: LocalSchemaV19.self, toVersion: LocalSchemaV20.self),
-         .lightweight(fromVersion: LocalSchemaV20.self, toVersion: LocalSchemaV21.self)]
+         .lightweight(fromVersion: LocalSchemaV20.self, toVersion: LocalSchemaV21.self),
+         .lightweight(fromVersion: LocalSchemaV21.self, toVersion: LocalSchemaV22.self)]
     }
 }
 
@@ -363,13 +369,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:21".utf8)
-        let previousVersions = (1..<21).map { Data("AQD-piece-store:\($0)".utf8) }
+        let version = Data("AQD-piece-store:22".utf8)
+        let previousVersions = (1..<22).map { Data("AQD-piece-store:\($0)".utf8) }
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV21.self)
+        let schema = Schema(versionedSchema: LocalSchemaV22.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -543,7 +549,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, 21), (Schema(versionedSchema: LocalSchemaV20.self), 20), (Schema(versionedSchema: LocalSchemaV19.self), 19), (Schema(versionedSchema: LocalSchemaV18.self), 18), (Schema(versionedSchema: LocalSchemaV17.self), 17), (Schema(versionedSchema: LocalSchemaV16.self), 16), (Schema(versionedSchema: LocalSchemaV15.self), 15), (Schema(versionedSchema: LocalSchemaV14.self), 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
+            let candidates = [(schema, 22), (Schema(versionedSchema: LocalSchemaV21.self), 21), (Schema(versionedSchema: LocalSchemaV20.self), 20), (Schema(versionedSchema: LocalSchemaV19.self), 19), (Schema(versionedSchema: LocalSchemaV18.self), 18), (Schema(versionedSchema: LocalSchemaV17.self), 17), (Schema(versionedSchema: LocalSchemaV16.self), 16), (Schema(versionedSchema: LocalSchemaV15.self), 15), (Schema(versionedSchema: LocalSchemaV14.self), 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -569,7 +575,12 @@ final class PieceStore {
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 21) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 22) throws -> Bool {
+        if storeVersion >= 22 {
+            guard try context.fetchCount(FetchDescriptor<StoredLocalSettings>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredSettingsSave>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredLocalMutation>()) <= 1 else { throw StoreError.unsupportedStore }
+        }
         if storeVersion >= 21 {
             guard try context.fetchCount(FetchDescriptor<StoredAgentConversation>()) == 0,
                   try context.fetchCount(FetchDescriptor<StoredAgentOperation>()) == 0 else { throw StoreError.unsupportedStore }
@@ -1435,6 +1446,9 @@ final class PieceStore {
         do {
             // Protection errors precede database commit; never report a failed write after acknowledgment.
             try protectStoreFiles()
+            let mutations = try context.fetch(FetchDescriptor<StoredLocalMutation>())
+            guard mutations.count <= 1 else { throw StoreError.invalidRecord }
+            if let mutation = mutations.first { mutation.stamp = UUID() } else { context.insert(StoredLocalMutation()) }
             try context.save()
         } catch { context.rollback(); throw error }
     }
@@ -2860,4 +2874,32 @@ extension PieceStore {
 private struct AgentSaveAcknowledgment: Codable {
     let revision: Int
     let updatedAt: Date
+}
+
+
+extension PieceStore {
+    func localSettings() throws -> LocalSettings {
+        let owner = try todayConfiguration().ownerID
+        let rows = try ModelContext(container).fetch(FetchDescriptor<StoredLocalSettings>())
+        guard rows.count <= 1 else { throw StoreError.invalidRecord }
+        let value = try rows.first?.value() ?? LocalSettings(ownerID: owner)
+        guard value.ownerID == owner else { throw StoreError.invalidRecord }; return value
+    }
+    func mutationStamp() throws -> UUID? {
+        let rows = try ModelContext(container).fetch(FetchDescriptor<StoredLocalMutation>())
+        guard rows.count <= 1, rows.allSatisfy({ $0.id == 1 }) else { throw StoreError.invalidRecord }; return rows.first?.stamp
+    }
+    @discardableResult func saveLocalSettings(_ request: LocalSettingsRequest) throws -> LocalSettings {
+        let context = ModelContext(container)
+        if let receipt = try context.fetch(FetchDescriptor<StoredSettingsSave>()).first(where: { $0.id == request.operationID }) {
+            guard try JSONDecoder().decode(LocalSettingsRequest.self, from: receipt.request) == request else { throw StoreError.operationConflict }
+            return try JSONDecoder().decode(LocalSettings.self, from: receipt.result)
+        }
+        guard request.base == (try localSettings()) else { throw StoreError.staleRevision }
+        let value = try request.result()
+        try beforeOutfitSave()
+        if let record = try context.fetch(FetchDescriptor<StoredLocalSettings>()).first { record.payload = try encode(value) }
+        else { context.insert(try StoredLocalSettings(value)) }
+        context.insert(try StoredSettingsSave(request, result: value)); try commit(context); try afterOutfitSave(); return value
+    }
 }

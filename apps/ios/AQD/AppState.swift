@@ -75,6 +75,11 @@ final class AppState {
     var localIdentity: LocalProfileIdentity?
     var identityError: String?
     var identityEditor: LocalIdentityEditorModel?
+    var settings: LocalSettings?
+    var settingsError: String?
+    private var pendingSettings: LocalSettingsRequest?
+    var agentLaunchID: UUID?
+    var appearance: AppAppearance { AppAppearance(rawValue: settings?.appearance.rawValue ?? "system") ?? .system }
     var profileSettings = false
     var profileHistory = false
     var profileInsights = false
@@ -217,6 +222,7 @@ final class AppState {
     func reloadEntry() {
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
+            settings = try store.localSettings()
             entry = try store.localExperience().entryState
             if entry.tour?.source == .settings { selection = 4; profileSettings = true }
         } catch { openingError = "Your private entry state couldn’t open. Existing data hasn’t been replaced. Retry while keeping the app data." }
@@ -712,5 +718,20 @@ extension CaptureModel {
             guard importGate.canAccept(request, for: draft) else { return false }
             importGate.cancel(); errorText = "The original could not be restored. Your accepted photo and framing are retained."; return false
         }
+    }
+}
+
+extension AppState {
+    func reloadSettings() {
+        do { guard let store else { throw PieceStore.StoreError.corruptStore }; settings = try store.localSettings(); settingsError = nil }
+        catch { settingsError = "Settings couldn’t be read. Saved preferences are retained. Try again." }
+    }
+    func saveAppearance(_ appearance: LocalAppearance) {
+        do {
+            guard let store else { throw PieceStore.StoreError.corruptStore }
+            let request = try pendingSettings ?? LocalSettingsRequest(base: store.localSettings(), appearance: appearance)
+            pendingSettings = request
+            _ = try store.saveLocalSettings(request); pendingSettings = nil; reloadSettings()
+        } catch { settingsError = "The appearance save wasn’t confirmed. Retry checks the same operation; your other data is retained." }
     }
 }

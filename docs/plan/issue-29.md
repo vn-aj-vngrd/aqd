@@ -12,7 +12,7 @@ Use existing public Core validators and actual PieceStore/model save/read/reopen
 
 | Slice | Working outcome | Acceptance | Unit verification | State | Commit marker | SHA |
 | --- | --- | --- | --- | --- | --- | --- |
-| S1 | Persistent appearance, capability/help/privacy, Style/tour/weather settings | PREF, LOCAL10/15/16 | Actual settings save/reopen/recovery | Planned | `AQD-Slice: #29/S1` | Pending |
+| S1 | Persistent appearance, capability/help/privacy, Style/tour/weather settings | PREF, LOCAL10/15/16 | Actual settings save/reopen/recovery | Committed | `AQD-Slice: #29/S1` | Pending |
 | S2 | Complete sensitive local archive export and native Files states | LOCAL06, J6/TODAY07/PREF | All-domain archive integrity/count/size/media round-trip | Planned | `AQD-Slice: #29/S2` | Pending |
 | S3 | Staged validated reviewed replacement and recovery entry | LOCAL07, J6/TODAY07/PREF | Invalid/newer/cancel/failure/unknown/restart preservation | Planned | `AQD-Slice: #29/S3` | Pending |
 | S4 | Exact typed global erase and acknowledged records versus pending AQD cleanup | LOCAL08, J6/TODAY07 | All-domain erase/restart/failure and outside-file preservation | Planned | `AQD-Slice: #29/S4` | Pending |
@@ -30,3 +30,9 @@ Pending implementation, bounded slice review, independent full Standards/Spec re
 ## Shipping and resume
 
 Repository vn-aj-vngrd/aqd, head branch above. Resolve/reuse its single PR. Persist slice SHAs immediately in the next slice/receipt. GitHub owns live remote gates; no extra commits for polling or the new PR URL. Current next action: implement issue27 S1 before subsequent slices. No dirty unrelated files or known baseline failures.
+
+## S1 receipt
+
+Settings owns persistent System/Light/Dark appearance, actual capability/help/privacy copy and shared Style/tour/weather tasks. Appearance changes use revision-bound immutable receipts; failed writes retain prior settings, unknown results retry the same request, and old acknowledgments never rewind a newer setting. Open Agent uses an explicit native full-screen request rather than selecting the inert fourth-slot root. Shared questionnaire/tour/weather retain source and separate consent.
+
+Schema22 freezes earlier versions and adds Settings/receipts plus a transaction-bound local mutation stamp for reviewed data replacement. The stamp changes only inside a successful store transaction; failure rolls back both records and stamp. Missing Core API failed `/tmp/aqd-29-s1-red.log`. Core70/native185, comprising172 Swift Testing plus13 XCTest, pass `/tmp/aqd-29-s1-unit.log` on the physical iPhone17ProMax/iOS27.0.1. Tests cover failure/unknown/reopen, old receipt after newer settings, actual AppState appearance and shared consent/tour return. Existing populated migration and bootstrap protections pass. Bounded Standards/Spec review covered state ownership, revision/receipt integrity, current schema fixtures, native request identity and privacy routes. Export/restore/erase follow S2–S4; all E2E remains issue30.

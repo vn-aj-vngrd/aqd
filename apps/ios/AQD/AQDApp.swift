@@ -17,7 +17,7 @@ struct AQDApp: App {
             return AppAppearance(rawValue: process.environment["AQD_TEST_APPEARANCE"] ?? "") ?? .system
         }
         #endif
-        return .system
+        return state.appearance
     }
 
 }
@@ -47,7 +47,7 @@ private struct AppRootView: View {
                            closet: { rootContent(ClosetView()) },
                            planner: { rootContent(LocalPlannerView()) },
                            profile: { rootContent(LocalProfileView()) },
-                           agent: { close in rootContent(LocalAgentView(close: close)) })
+                           agent: { close in rootContent(LocalAgentView(close: close)) }, agentLaunchID: state.agentLaunchID)
                     .ignoresSafeArea()
             }
         }

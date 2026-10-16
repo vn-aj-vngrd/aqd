@@ -15,6 +15,7 @@ struct NativeTabs: UIViewControllerRepresentable {
     let planner: RootBuilder
     let profile: RootBuilder
     let agent: AgentBuilder
+    var agentLaunchID: UUID?
     var isReadOnlyPreview = false
 
     func makeCoordinator() -> Coordinator {
@@ -44,6 +45,7 @@ struct NativeTabs: UIViewControllerRepresentable {
         context.coordinator.agent = agent
         context.coordinator.selection = $selection
         context.coordinator.selectRoot(selection)
+        context.coordinator.requestAgent(agentLaunchID)
     }
 
     static func dismantleUIViewController(_ controller: UITabBarController, coordinator: Coordinator) {
@@ -60,12 +62,18 @@ struct NativeTabs: UIViewControllerRepresentable {
         private var taskHost: AgentHostingController?
         private var taskID: UUID?
         private var originIndex = 0
+        private var requestedAgentID: UUID?
         private weak var originAccessibilityElement: AnyObject?
         private let agentIndex = 3
 
         init(agent: @escaping AgentBuilder, selection: Binding<Int>) {
             self.agent = agent
             self.selection = selection
+        }
+
+        func requestAgent(_ id: UUID?) {
+            guard let id, id != requestedAgentID else { return }; requestedAgentID = id
+            DispatchQueue.main.async { [weak self] in self?.presentAgent() }
         }
 
         func selectRoot(_ index: Int) {

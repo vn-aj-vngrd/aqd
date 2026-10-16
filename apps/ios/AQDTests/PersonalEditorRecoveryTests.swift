@@ -37,7 +37,7 @@ struct PersonalEditorRecoveryTests {
     @Test func wardrobeReadFailureSurvivesAlertDismissalUntilARealSuccessfulRead() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString), store = try PieceStore(directory: directory)
         let piece = WardrobePiece(id: UUID(), name: "Existing owned piece", category: .tops, photoID: UUID())
-        let schema = Schema(versionedSchema: LocalSchemaV21.self)
+        let schema = Schema(versionedSchema: LocalSchemaV22.self)
         let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema, url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)])
         let context = ModelContext(container), record = StoredPiece(piece)
         record.category = "Unreadable category"; context.insert(record); try context.save()

@@ -41,17 +41,3 @@ struct LocalProfileView: View {
         }.tint(AppTheme.ink)
     }
 }
-
-struct LocalSettingsView: View {
-    @Environment(AppState.self) private var state
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                DisclosureRow(title: "Style", value: "Edit preferences") { state.openStyle(source: .settings) }
-                DisclosureRow(title: "Take the tour", value: "Preview only") { state.beginTour(from: .settings) }
-                Text("Your preferences stay private on this iPhone. No account is needed.")
-                    .font(.footnote).foregroundStyle(AppTheme.secondary)
-            }.padding(20)
-        }.background(AppTheme.canvas).navigationTitle("Settings").navigationBarTitleDisplayMode(.inline)
-    }
-}
