@@ -6,7 +6,11 @@ struct AQDApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppRootView(state: state).appAppearance(testAppearance)
+            AppRootView(state: state) { store, coordinator, destination in
+                state.detachForDataReplacement()
+                state = AppState(store: store, dataRoot: coordinator.legacyRoot, coordinator: coordinator)
+                state.selection = destination
+            }.appAppearance(testAppearance)
         }
     }
     private var testAppearance: AppAppearance {
@@ -25,6 +29,8 @@ struct AQDApp: App {
 private struct AppRootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Bindable var state: AppState
+    let onInstall: (PieceStore, LocalDataCoordinator, Int) -> Void
+    @State private var pendingInstallation: (PieceStore, LocalDataCoordinator, Int)?
 
     var body: some View {
         Group {
@@ -38,6 +44,7 @@ private struct AppRootView: View {
                     Label("Your closet couldn’t open", systemImage: "externaldrive.badge.exclamationmark")
                 } description: { Text(error) } actions: {
                     Button("Retry") { state.openStore() }
+                    Button("Choose an archive") { state.openRestore() }
                 }
             } else if state.entry.page != .main {
                 PrivateEntryView().environment(state)
@@ -48,13 +55,16 @@ private struct AppRootView: View {
                            planner: { rootContent(LocalPlannerView()) },
                            profile: { rootContent(LocalProfileView()) },
                            agent: { close in rootContent(LocalAgentView(close: close)) }, agentLaunchID: state.agentLaunchID)
-                    .ignoresSafeArea()
+                    .id(ObjectIdentifier(state)).ignoresSafeArea()
             }
         }
-        .task {
-            guard state.isOpening else { return }
-            await Task.yield()
-            state.openStore()
+        .task(id: ObjectIdentifier(state)) {
+            if state.isOpening { await Task.yield(); state.openStore() }
+            for _ in 0..<10 {
+                state.retryLocalDataCleanup()
+                if state.localDataCleanupError == nil { break }
+                try? await Task.sleep(for: .milliseconds(30))
+            }
         }
         .tint(AppTheme.actionText)
         .onChange(of: scenePhase) { _, phase in if phase != .active { state.weatherClient?.suspend() } }
@@ -65,6 +75,13 @@ private struct AppRootView: View {
             Button("OK", role: .cancel) { state.collectionError = nil }
         } message: {
             Text(state.collectionError ?? "Keep your existing app data for recovery.")
+        }
+        .sheet(item: $state.restoreModel, onDismiss: {
+            if let pending = pendingInstallation { pendingInstallation = nil; onInstall(pending.0, pending.1, pending.2) }
+        }) { model in
+            LocalRestoreView(model: model, onCancel: { state.restoreModel = nil }, onInstall: { store, coordinator, destination in
+                pendingInstallation = (store, coordinator, destination); state.restoreModel = nil
+            })
         }
         .sheet(item: $state.todayEditor) { model in TodayEditorView(model: model).environment(state) }
         .sheet(item: $state.fitEditor) { model in FitEditorView(model: model).environment(state) }
@@ -106,6 +123,7 @@ private struct AppRootView: View {
         AnyView(VStack(spacing: 0) {
             content
             PhotoCleanupRecoveryView()
+            LocalDataCleanupView()
         }.environment(state))
     }
 }

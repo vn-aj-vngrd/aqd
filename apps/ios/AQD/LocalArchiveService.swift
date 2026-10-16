@@ -49,8 +49,8 @@ struct ValidatedLocalArchive {
         guard try store.mutationStamp() == seed.stamp else { throw LocalArchiveError.sourceChanged }
         try Task.checkCancellation(); return data
     }
-    static func stage(_ package: LocalArchivePackage) async throws -> ValidatedLocalArchive {
-        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("AQD-restore-\(UUID().uuidString)", isDirectory: true)
+    static func stage(_ package: LocalArchivePackage, directory proposedDirectory: URL? = nil) async throws -> ValidatedLocalArchive {
+        let directory = proposedDirectory ?? FileManager.default.temporaryDirectory.appendingPathComponent("AQD-restore-\(UUID().uuidString)", isDirectory: true)
         do {
             try LocalArchiveIO.protectedDirectory(directory); try LocalArchiveIO.protectedDirectory(directory.appendingPathComponent("media"))
             let writing = Task.detached(priority: .utility) {

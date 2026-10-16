@@ -26,6 +26,10 @@ final class AppState {
     var themeError: String?
     var themeEditor: ThemeEditorModel?
     var store: PieceStore?
+    var localDataRoot: URL?
+    var dataCoordinator: LocalDataCoordinator?
+    var restoreModel: LocalRestoreModel?
+    var localDataCleanupError: String?
     var openingError: String?
     var isOpening = false
     var pieces: [WardrobePiece] = []
@@ -91,8 +95,10 @@ final class AppState {
     }
 
     /// Use an explicitly isolated store without opening the ordinary local closet.
-    init(store: PieceStore) {
+    init(store: PieceStore, dataRoot: URL? = nil, coordinator: LocalDataCoordinator? = nil) {
         self.store = store
+        localDataRoot = dataRoot ?? store.localDirectory
+        dataCoordinator = coordinator ?? LocalDataCoordinator(legacyRoot: dataRoot ?? store.localDirectory)
         weatherClient = WeatherClient(store: store)
         reloadPieces()
         reloadToday()
@@ -133,7 +139,10 @@ final class AppState {
                 isolatedUITestStore = true
             }
             #endif
-            store = try PieceStore(directory: directory)
+            localDataRoot = directory
+            let coordinator = LocalDataCoordinator(legacyRoot: directory); dataCoordinator = coordinator
+            try coordinator.recover()
+            store = try PieceStore(directory: coordinator.currentDirectory())
             #if DEBUG
             if isolatedUITestStore, process.environment["AQD_TEST_RETURNING_ENTRY"] == "1", let store {
                 var entry = try store.localExperience().entryState
@@ -733,5 +742,30 @@ extension AppState {
             pendingSettings = request
             _ = try store.saveLocalSettings(request); pendingSettings = nil; reloadSettings()
         } catch { settingsError = "The appearance save wasn’t confirmed. Retry checks the same operation; your other data is retained." }
+    }
+}
+
+extension AppState {
+    func openRestore() {
+        guard restoreModel == nil, let dataCoordinator else { return }
+        restoreModel = LocalRestoreModel(coordinator: dataCoordinator, source: store)
+    }
+    func retryLocalDataCleanup() {
+        do {
+            guard let coordinator = dataCoordinator, let pending = try coordinator.pendingReview() else { localDataCleanupError = nil; return }
+            if try coordinator.isInstalled(pending.operationID) {
+                guard let store else { localDataCleanupError = "Current data needs recovery. Previous AQD files are retained; choose a validated archive before cleanup."; return }
+                _ = try store.validateArchiveContents()
+                if pending.phase != .acknowledged { try coordinator.acknowledge(pending.operationID) }
+                localDataCleanupError = try coordinator.cleanupRetired() ? nil : "Local records are active. Previous AQD files are still awaiting safe cleanup."
+            } else { localDataCleanupError = "A validated local-data review is retained. Continue it from Settings → Restore, or cancel it there." }
+        } catch { localDataCleanupError = "Local records are retained. Previous AQD files could not be removed; retry local data cleanup." }
+    }
+    func detachForDataReplacement() {
+        agentModel?.suspend(); agentModel = nil
+        weatherClient?.suspend(); weatherClient = nil
+        capture = nil; outfitEditor = nil; themeEditor = nil; wearEditor = nil; planEditor = nil; planAuthoringEditor = nil
+        styleEditor = nil; fitEditor = nil; identityEditor = nil; todayEditor = nil; restoreModel = nil
+        store = nil
     }
 }
