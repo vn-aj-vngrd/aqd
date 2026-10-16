@@ -5,17 +5,24 @@ struct PieceCollectionGrid: View {
     let pieces: [WardrobePiece]
     @Environment(\.dynamicTypeSize) private var typeSize
     var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: typeSize.isAccessibilitySize ? 1 : 2), alignment: .leading, spacing: 24) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 2), alignment: .leading, spacing: 16) {
             ForEach(pieces) { piece in
                 NavigationLink(value: ClosetRoute.piece(piece.id)) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(height: 134)
-                        Text(piece.name).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
-                        Text([piece.category.rawValue, piece.details.color].filter { !$0.isEmpty }.joined(separator: " · "))
-                            .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                        if piece.isArchived { Text("Archived").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
-                        if piece.availability != .available { Text(piece.availability.rawValue.capitalized).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+                    VStack(alignment: .leading, spacing: 0) {
+                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                            .frame(maxWidth: .infinity).frame(height: 134)
+                            .padding(8).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10))
+                            .padding(8)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(piece.name).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
+                            Text([piece.category.rawValue, piece.details.color].filter { !$0.isEmpty }.joined(separator: " · "))
+                                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            if piece.isArchived { Text("Archived").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+                            if piece.availability != .available { Text(piece.availability.rawValue.capitalized).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+                        }.padding(.horizontal, 12).padding(.top, 4).padding(.bottom, 12)
                     }.frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                        .contentShape(RoundedRectangle(cornerRadius: 16))
                 }.buttonStyle(.plain).id(piece.id)
             }
         }.scrollTargetLayout()
@@ -44,6 +51,8 @@ struct OutfitCollectionCard: View {
         NavigationLink(value: ClosetRoute.outfit(outfit.id)) {
             VStack(alignment: .leading, spacing: 12) {
                 OutfitComposition(pieceIDs: outfit.pieceIDs)
+                    .padding(12).frame(maxWidth: .infinity)
+                    .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10))
                 HStack {
                     Text(outfit.name).font(AppTypography.section)
                     if outfit.isFavorite { Image(systemName: "heart.fill").foregroundStyle(AppTheme.actionText).accessibilityLabel("Favorite") }
@@ -51,7 +60,9 @@ struct OutfitCollectionCard: View {
                 let memberships = state.themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.name)
                 Text((["\(outfit.pieceIDs.count) pieces"] + memberships).joined(separator: " · "))
                     .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-            }
+            }.padding(12).frame(maxWidth: .infinity, alignment: .leading)
+                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                .contentShape(RoundedRectangle(cornerRadius: 16))
         }.buttonStyle(.plain).id(outfit.id)
     }
 }
@@ -101,7 +112,8 @@ struct ThemeCollectionCard: View {
                 if !members.isEmpty {
                     HStack(spacing: 8) {
                         ForEach(Array(members.prefix(3))) { OutfitComposition(pieceIDs: $0.pieceIDs, pieceHeight: 30, limit: 4) }
-                    }
+                    }.padding(8).frame(maxWidth: .infinity)
+                        .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10))
                     if members.count > 3 { Text("\(members.count - 3) more outfits").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
                 }
             }.padding(14).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))

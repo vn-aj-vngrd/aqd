@@ -299,3 +299,5 @@ Populated Profile refinement October16: every journal thumbnail owns the same3:4
 Closet metadata scroll refinement: count/current sort belongs to each collection’s existing vertical scroll content. The segment rail and navigation header/toolbars remain outside that content. Existing collection anchors and centered empty-state actions are retained; no nested scroll container is introduced.
 
 Profile header ordering refinement: name and caption sit above the counters beside the avatar. At accessibility sizes, avatar, name/caption and counters stack vertically in that order; avatar editing and error-aware real counts are unchanged.
+
+Closet card surfaces: Pieces, Outfits and Themes use semantic-white outer surfaces with warm-gray imageGround inside artwork areas. Card labels remain within the outer surface and the full card navigates to its existing record. Semantic dark equivalents follow AppTheme.
