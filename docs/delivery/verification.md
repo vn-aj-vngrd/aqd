@@ -475,3 +475,6 @@ Seven vertical slices on `van/issue-25/planner-and-history` extend merged PR34. 
 
 
 PR35 first Codex review completed on `4d0d126` with three P2 findings. Code fix `0de6077` compares complete recorded days for link reset and restores Profile More routing; the coverage ledger now points to that actual tested implementation SHA. The timezone-only regression failed before fixing; refreshed Core59/native149 pass `/tmp/aqd-25-26-codex-unit.log`. Refreshed unsigned Release passed `/tmp/aqd-25-26-codex-release.log`, Tooling51 and agent docs passed. Same final-head CI/Codex follow; prior source-bound results retain their historical scope.
+
+
+PR35 second review on `db0f7c4`: three plan-authoring regressions reproduced, then fixed. Core59/native152 and refreshed unsigned Release pass (`/tmp/aqd-25-26-codex2-unit.log`, `/tmp/aqd-25-26-codex2-release.log`); details and current source hashes are in issue25 and the grouped receipt. Unit-only CI, physical iPhone only, all E2E #30.

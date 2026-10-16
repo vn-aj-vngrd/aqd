@@ -221,3 +221,6 @@ For every row above, open from each listed source, complete once, cancel once, r
 
 
 October16 PR35 Codex correction: timezone-only wear correction detaches links while preserving the intended day/zone on existing plans. Profile More → Wear insights → same-period source history is the canonical root entry; saved-wear receipt still finishes before explicitly opening history. No duplicate Profile body controls. Core59/native149 pass; rendered/E2E acceptance stays #30.
+
+
+October16 PR35 scoped-authoring correction: This entry keeps shared definition fields fixed; retained earlier/completed entries constrain parent range/zone. Refresh reviewed entries explicitly replaces original slots from latest saved values and retains added-date identity, including current outfit snapshots. Single/bulk assignment review identifies date/outfit/unavailable pieces and requires another outfit or an explicit gap before Save. Actual Core59/native152 unit results do not establish rendered/E2E acceptance; #30 remains the owner.
