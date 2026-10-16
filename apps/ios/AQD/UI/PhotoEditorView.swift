@@ -2,8 +2,8 @@ import AQDCore
 import ImageIO
 import SwiftUI
 
-struct PhotoEditorView: View {
-    @Bindable var model: CaptureModel
+struct PhotoEditorView<Model: PhotoEditingOwner>: View {
+    @Bindable var model: Model
     @Environment(\.dismiss) private var dismiss
     private let sourceID: UUID?
     private let previousRecipe: PhotoEditRecipe
@@ -26,10 +26,10 @@ struct PhotoEditorView: View {
     @State private var previewPreparer = PhotoPreparer()
     @GestureState private var dragging = false
 
-    init(model: CaptureModel) {
+    init(model: Model) {
         self.model = model
-        sourceID = model.draft.photoID
-        let recipe = model.draft.photoRecipe
+        sourceID = model.editingPhotoID
+        let recipe = model.editingPhotoRecipe
         previousRecipe = recipe
         previewData = model.originalThumbnailData()
         previewImage = previewData.flatMap { UIImage(data: $0) }

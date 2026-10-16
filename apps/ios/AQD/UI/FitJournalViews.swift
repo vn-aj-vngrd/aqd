@@ -62,6 +62,7 @@ struct FitEditorView: View {
     @State private var removePhoto = false
     @State private var choosingOutfit = false
     @State private var timezone = false
+    @State private var editingPhoto = false
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -82,7 +83,7 @@ struct FitEditorView: View {
                         }
                         SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add photo" : "Change photo", selectionToken: model.importID, locked: model.locked, onData: model.importPhoto)
                         if model.importing { ProgressView("Preparing photo"); Button("Cancel import") { model.cancelImport() }.frame(minHeight: 44) }
-                        if model.draft.value.photoID != nil { Button("Remove photo", role: .destructive) { removePhoto = true }.frame(minHeight: 44).disabled(model.locked) }
+                        if model.draft.value.photoID != nil { SecondaryAction(title: "Edit photo") { editingPhoto = true }.disabled(model.locked || model.importing); Button("Remove photo", role: .destructive) { removePhoto = true }.frame(minHeight: 44).disabled(model.locked) }
                         DisclosureRow(title: "Link outfit", value: model.draft.value.outfit?.name ?? "Not linked") { choosingOutfit = true }.disabled(model.locked)
                         if model.draft.value.outfit != nil { SecondaryAction(title: "Unlink outfit") { _ = model.link(nil) }.disabled(model.locked) }
                         LabeledControl(title: "Private note") {
@@ -104,6 +105,7 @@ struct FitEditorView: View {
                         else { discard = true }
                     } label: { Image(systemName: model.saved == nil ? "xmark" : "checkmark") }.accessibilityLabel(model.saved == nil ? "Cancel fit" : "Done").disabled(model.pending || model.unknown)
                 } }
+                .navigationDestination(isPresented: $editingPhoto) { PhotoEditorView(model: model) }
                 .navigationDestination(isPresented: $choosingOutfit) { FitOutfitChooser(model: model) }
                 .navigationDestination(isPresented: $timezone) {
                     TimezoneChooser(current: model.draft.value.day.timeZoneID) { zone in model.update { $0.day.timeZoneID = zone }; return model.error == nil }

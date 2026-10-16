@@ -72,4 +72,26 @@ struct FitJournalPersistenceTests {
         state.store = nil
     }
 
+    @Test func editedFitPhotoRequiresPreparedBytesAndRetainsOnlyLiveRecipes() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let (outfit, piece) = try await seed(store)
+        var draft = FitDraft(ownerID: outfit.ownerID); draft.value.photoID = piece.photoID
+        try store.saveFitDraft(draft); let saved = try store.saveFit(draft); try store.finishFitDraft(draft)
+        var edit = FitDraft(ownerID: outfit.ownerID, base: saved); edit.value.photoRecipe = PhotoEditRecipe(quarterTurns: 1)
+        try store.saveFitDraft(edit)
+        #expect(throws: (any Error).self) { try store.saveFit(edit) }
+        let original = try store.originalPhoto(id: piece.photoID)
+        let prepared = try await PhotoPreparer().render(data: original, sourcePhotoID: piece.photoID, recipe: edit.value.photoRecipe)
+        try store.acceptPhotoEdit(prepared)
+        try store.reconcilePendingPhotoCleanup()
+        #expect(try store.photoRendition(id: piece.photoID, recipe: edit.value.photoRecipe) == prepared.renditionData)
+        let updated = try store.saveFit(edit); try store.finishFitDraft(edit)
+        try store.reconcilePendingPhotoCleanup()
+        #expect(try store.photoRendition(id: piece.photoID, recipe: updated.photoRecipe) == prepared.renditionData)
+        try store.deleteFit(FitDeletionRequest(memory: updated)); try store.reconcilePendingPhotoCleanup()
+        #expect(try store.originalPhoto(id: piece.photoID) == original)
+        #expect(throws: (any Error).self) { try store.photoRendition(id: piece.photoID, recipe: updated.photoRecipe) }
+        #expect(try store.wearRecords().isEmpty)
+    }
+
 }

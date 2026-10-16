@@ -14,12 +14,12 @@ Read Profile/journal feature, fit UI, capture/media and local identity contracts
 | Slice | Working outcome | Acceptance | State | Marker | SHA |
 | --- | --- | --- | --- | --- | --- |
 | S1 | Optional local identity and retained edit task with safe photo selection/removal and committed Profile header | Local identity, J1/J3/J5 | Implemented, unit verified | `AQD-Slice: #28/S1` | `6a1700f` |
-| S2 | Private dated fit journal CRUD, snapshot link/unlink, note validation, real detail/grid and independent wear route | J1–J5/P10 | Implemented, unit verified | `AQD-Slice: #28/S2` | Pending |
-| S3 | Shared optional-photo lifecycle, editing/removal/cleanup and preserving migration/restart recovery across Profile/fit tasks | J3/J5, scoped J6/LOCAL-13–15 | Planned | `AQD-Slice: #28/S3` | Pending |
+| S2 | Private dated fit journal CRUD, snapshot link/unlink, note validation, real detail/grid and independent wear route | J1–J5/P10 | Implemented, unit verified | `AQD-Slice: #28/S2` | `3e7f12c` |
+| S3 | Shared optional-photo lifecycle, editing/removal/cleanup and preserving migration/restart recovery across Profile/fit tasks | J3/J5, scoped J6/LOCAL-13–15 | Implemented, unit verified | `AQD-Slice: #28/S3` | Pending |
 
 ## Verification and resume
 
-Unit-only feature gate; integrated J7 and all E2E #30. Actual store fault/retry/reopen/migration and Core validation tests per slice, then final unsigned Release and independent Standards/Spec review. S1/S2 implemented; continue S3 shared optional-photo editing and complete media/restart protection, then companion #22. Publish source-bound unit evidence and AC limits in the single PR.
+Unit-only feature gate; integrated J7 and all E2E #30. Actual store fault/retry/reopen/migration and Core validation tests per slice, then final unsigned Release and independent Standards/Spec review. S1–S3 implemented; continue companion #22. Final grouped review and Release remain. Publish source-bound unit evidence and AC limits in the single PR.
 
 ## S1 identity receipt
 
@@ -36,3 +36,9 @@ Profile’s one More menu now opens Add fit and Edit profile alongside Style/Wea
 Record wear is a separate source-bound action using the saved fit date and existing duplicate-consent task. Photo-only/deleted-outfit memories open explicit piece review, without inferring garments. Repeated explicit wear uses one actual record; deleting the memory leaves actual wear unchanged.
 
 Schema V16 adds fit/draft/save/delete records and keeps identity, journal/current/base drafts in photo-reference cleanup. The missing-API tracer failed `/tmp/aqd-28-s2-red.log`; Core59/native157 (144 Swift Testing +13 XCTest) passed `/tmp/aqd-28-s2-unit.log`. Final2 affected journal cases pass `/tmp/aqd-28-s2-final.log`, adding the actual AppState fit-date → wear → existing-record consent route and a source-aware scroll owner. Actual temporary stores cover invalid/over-limit retention, unknown retry, deleted-source snapshots/reopen, same-ID correction and idempotent deletion without implicit wear. Bounded Standards/Spec increment review checked those contracts and single-task ownership. Shared photo editing/recipe/reference/migration checks continue in S3; all E2E/rendered quality remains #30.
+
+## S3 shared photo receipt
+
+Avatar and journal photos use the same framing editor as capture, including full-source Fit, crop, quarter-turn rotation, reset and draft-only cancellation. The editor accepts an explicit photo owner and rejects late results after the source, recipe or task changes. Identity recipes decode optionally for older payloads. Saved identities, memories and both current/base drafts protect their actual recipe renditions. New/replaced recipes require prepared full-size and thumbnail bytes; unchanged missing photos permit unrelated metadata edits. Obsolete recipe bytes are cleaned only after all actual owners release them.
+
+An actual temporary-store regression failed before the fix in `/tmp/aqd-28-s3-red.log`: unprepared edits were accepted and a pending journal rendition was removed. The fix passes Core59 and physical native159, comprising146 Swift Testing and13 XCTest, in `/tmp/aqd-28-s3-unit.log`. The regression covers pending/current crop ownership, save acknowledgment, deletion and preservation of an original still used by a wardrobe piece. Bounded increment review traced source/recipe cancellation, parent-draft mutation, old optional decoding and shared media cleanup. All rendered/E2E/media quality checks remain #30.

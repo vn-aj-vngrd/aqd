@@ -10,7 +10,7 @@ struct LocalProfileView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     HStack(alignment: .center, spacing: 16) {
-                        LocalIdentityAvatar(photoID: state.localIdentity?.photoID).frame(width: 64, height: 64)
+                        LocalIdentityAvatar(photoID: state.localIdentity?.photoID, recipe: state.localIdentity?.photoRecipe ?? .fitOriginal).frame(width: 64, height: 64)
                         VStack(alignment: .leading, spacing: 4) {
                             Text(state.localIdentity?.name ?? "Your profile").font(.title.weight(.medium))
                             Text("Your private style and fit memories")

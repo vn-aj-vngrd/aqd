@@ -1188,11 +1188,14 @@ final class PieceStore {
                 retainedRecipeDigests[photoID, default: []].insert(try PhotoPreparer.recipeDigest(draft.photoRecipe))
             }
         }
+        for owner in try personalPhotoOwners(in: context) where owner.recipe != .fitOriginal {
+            retainedRecipeDigests[owner.id, default: []].insert(try PhotoPreparer.recipeDigest(owner.recipe))
+        }
         // Older Fit acceptance wrote unused derivatives, and its staging intent
         // may already have been acknowledged while the original remained live.
         // Probe only the two exact Fit paths for validated live source identities.
         let fitDigest = try PhotoPreparer.recipeDigest(.fitOriginal)
-        let identityPhotos = try identityPhotoReferences(in: context)
+        let identityPhotos = try personalPhotoReferences(in: context)
         let livePhotoIDs = Set(pieces.map(\.photoID) + drafts.compactMap(\.photoID) + identityPhotos)
         for photoID in livePhotoIDs.sorted(by: { $0.uuidString < $1.uuidString }) {
             let fitFiles = try ["rendition", "thumbnail"].map {
@@ -1291,7 +1294,8 @@ final class PieceStore {
         // Corrupt acknowledgment proof still blocks cleanup, even though completed
         // snapshots are not owners. Only current pieces and recoverable drafts own bytes.
         _ = try decodedReceipts(context)
-        let identityPhotos = try identityPhotoReferences(in: context)
+        let personalOwners = try personalPhotoOwners(in: context)
+        let identityPhotos = personalOwners.map { $0.id }
         let references = Set(pieces.map(\.photoID) + drafts.compactMap(\.photoID) + identityPhotos)
         // A failed editor can leave an unused rendition even when its source is saved.
         // Only exact durably staged recipes may be pruned from a shared source.
@@ -1301,6 +1305,7 @@ final class PieceStore {
         for photoID in photoIDs where references.contains(photoID) {
             let recipes = pieces.filter { $0.photoID == photoID }.map(\.photoRecipe)
                 + drafts.filter { $0.photoID == photoID }.map(\.photoRecipe)
+                + personalOwners.filter { $0.id == photoID }.map { $0.recipe }
             // Fit reads the source files, never its historical edit artifacts.
             let retained = Set(try recipes.filter { $0 != .fitOriginal }.map { try PhotoPreparer.recipeDigest($0) })
             for digest in stagedRecipeDigests where !retained.contains(digest) {
@@ -2330,13 +2335,27 @@ extension PieceStore {
 
 
 extension PieceStore {
-    private func identityPhotoReferences(in context: ModelContext) throws -> [UUID] {
-        let identities = try context.fetch(FetchDescriptor<StoredLocalIdentity>()).map { try $0.value() }
-        let drafts = try context.fetch(FetchDescriptor<StoredIdentityDraft>()).map { try $0.value() }
-        let memories = try context.fetch(FetchDescriptor<StoredFitMemory>()).map { try $0.value() }
-        let fitDrafts = try context.fetch(FetchDescriptor<StoredFitDraft>()).map { try $0.value() }
-        return identities.compactMap(\.photoID) + drafts.compactMap(\.photoID) + drafts.compactMap { $0.base?.photoID }
-            + memories.compactMap(\.photoID) + fitDrafts.compactMap { $0.value.photoID } + fitDrafts.compactMap { $0.base?.photoID }
+    private func personalPhotoOwners(in context: ModelContext) throws -> [(id: UUID, recipe: PhotoEditRecipe)] {
+        var owners: [(id: UUID, recipe: PhotoEditRecipe)] = []
+        func append(_ id: UUID?, _ recipe: PhotoEditRecipe) { if let id { owners.append((id, recipe)) } }
+        for record in try context.fetch(FetchDescriptor<StoredLocalIdentity>()) {
+            let value = try record.value(); append(value.photoID, value.photoRecipe ?? .fitOriginal)
+        }
+        for record in try context.fetch(FetchDescriptor<StoredIdentityDraft>()) {
+            let value = try record.value(); append(value.photoID, value.photoRecipe ?? .fitOriginal)
+            if let base = value.base { append(base.photoID, base.photoRecipe ?? .fitOriginal) }
+        }
+        for record in try context.fetch(FetchDescriptor<StoredFitMemory>()) {
+            let value = try record.value(); append(value.photoID, value.photoRecipe)
+        }
+        for record in try context.fetch(FetchDescriptor<StoredFitDraft>()) {
+            let value = try record.value(); append(value.value.photoID, value.value.photoRecipe)
+            if let base = value.base { append(base.photoID, base.photoRecipe) }
+        }
+        return owners
+    }
+    private func personalPhotoReferences(in context: ModelContext) throws -> [UUID] {
+        try personalPhotoOwners(in: context).map { $0.id }
     }
     func localIdentity() throws -> LocalProfileIdentity? {
         let records = try ModelContext(container).fetch(FetchDescriptor<StoredLocalIdentity>())
@@ -2360,7 +2379,7 @@ extension PieceStore {
         let records = try context.fetch(FetchDescriptor<StoredIdentityDraft>())
         guard records.count <= 1, records.first.map({ $0.id == draft.id }) ?? true else { throw StoreError.operationConflict }
         if let record = records.first {
-            if let previous = try record.value().photoID { try queueCleanup(photoID: previous, context: context) }
+            if let previous = try record.value().photoID { try queueCleanup(photoID: previous, recipeDigest: try cleanupRecipeDigest(record.value().photoRecipe ?? .fitOriginal), context: context) }
             record.payload = try encode(draft)
         } else { context.insert(try StoredIdentityDraft(draft)) }
         try commit(context)
@@ -2379,11 +2398,14 @@ extension PieceStore {
         guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID), try identityDraft() == draft else { throw StoreError.staleDraft }
         guard try localIdentity() == draft.base else { throw StoreError.staleRevision }
         let result = try draft.result()
-        if let photo = result.photoID, photo != draft.base?.photoID { _ = try originalPhoto(id: photo) }
+        if let photo = result.photoID, photo != draft.base?.photoID || result.photoRecipe != draft.base?.photoRecipe {
+            _ = try photoRendition(id: photo, recipe: result.photoRecipe ?? .fitOriginal)
+            _ = try photoThumbnail(id: photo, recipe: result.photoRecipe ?? .fitOriginal)
+        }
         let context = ModelContext(container)
         if let record = try context.fetch(FetchDescriptor<StoredLocalIdentity>()).first { record.payload = try encode(result) }
         else { context.insert(try StoredLocalIdentity(result)) }
-        if let previous = draft.base?.photoID { try queueCleanup(photoID: previous, context: context) }
+        if let previous = draft.base?.photoID { try queueCleanup(photoID: previous, recipeDigest: try cleanupRecipeDigest(draft.base?.photoRecipe ?? .fitOriginal), context: context) }
         context.insert(try StoredIdentitySave(draft, result: result))
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()
         return result
@@ -2394,8 +2416,8 @@ extension PieceStore {
         guard discarding ? saved == nil : saved != nil else { throw StoreError.operationConflict }
         let context = ModelContext(container)
         guard let record = try context.fetch(FetchDescriptor<StoredIdentityDraft>()).first, try record.value() == draft else { throw StoreError.staleDraft }
-        if let id = draft.photoID { try queueCleanup(photoID: id, context: context) }
-        if let id = draft.base?.photoID { try queueCleanup(photoID: id, context: context) }
+        if let id = draft.photoID { try queueCleanup(photoID: id, recipeDigest: try cleanupRecipeDigest(draft.photoRecipe ?? .fitOriginal), context: context) }
+        if let id = draft.base?.photoID { try queueCleanup(photoID: id, recipeDigest: try cleanupRecipeDigest(draft.base?.photoRecipe ?? .fitOriginal), context: context) }
         context.delete(record); try commit(context)
     }
 }
@@ -2422,7 +2444,7 @@ extension PieceStore {
         let records = try context.fetch(FetchDescriptor<StoredFitDraft>())
         guard records.count <= 1, records.first.map({ $0.id == draft.id }) ?? true else { throw StoreError.operationConflict }
         if let record = records.first {
-            if let previous = try record.value().value.photoID { try queueCleanup(photoID: previous, context: context) }
+            if let previous = try record.value().value.photoID { try queueCleanup(photoID: previous, recipeDigest: try cleanupRecipeDigest(record.value().value.photoRecipe), context: context) }
             record.payload = try encode(draft)
         } else { context.insert(try StoredFitDraft(draft)) }
         try commit(context)
@@ -2444,11 +2466,14 @@ extension PieceStore {
             guard let outfit = try outfit(id: snapshot.id),
                   try FitOutfitSnapshot(outfit: outfit, pieces: ownedPiecesForWear()) == snapshot else { throw FitValidationError.outfitUnavailable }
         }
-        if let id = result.photoID, id != draft.base?.photoID { _ = try originalPhoto(id: id) }
+        if let id = result.photoID, id != draft.base?.photoID || result.photoRecipe != draft.base?.photoRecipe {
+            _ = try photoRendition(id: id, recipe: result.photoRecipe)
+            _ = try photoThumbnail(id: id, recipe: result.photoRecipe)
+        }
         let context = ModelContext(container)
         if let record = try context.fetch(FetchDescriptor<StoredFitMemory>()).first(where: { $0.id == result.id }) { record.payload = try encode(result) }
         else { context.insert(try StoredFitMemory(result)) }
-        if let old = draft.base?.photoID { try queueCleanup(photoID: old, context: context) }
+        if let old = draft.base?.photoID { try queueCleanup(photoID: old, recipeDigest: try cleanupRecipeDigest(draft.base?.photoRecipe ?? .fitOriginal), context: context) }
         context.insert(try StoredFitSave(draft, result: result))
         try beforeOutfitSave(); try commit(context); try afterOutfitSave(); return result
     }
@@ -2458,8 +2483,8 @@ extension PieceStore {
         guard discarding ? saved == nil : saved != nil else { throw StoreError.operationConflict }
         let context = ModelContext(container)
         guard let record = try context.fetch(FetchDescriptor<StoredFitDraft>()).first, try record.value() == draft else { throw StoreError.staleDraft }
-        if let id = draft.value.photoID { try queueCleanup(photoID: id, context: context) }
-        if let id = draft.base?.photoID { try queueCleanup(photoID: id, context: context) }
+        if let id = draft.value.photoID { try queueCleanup(photoID: id, recipeDigest: try cleanupRecipeDigest(draft.value.photoRecipe), context: context) }
+        if let id = draft.base?.photoID { try queueCleanup(photoID: id, recipeDigest: try cleanupRecipeDigest(draft.base?.photoRecipe ?? .fitOriginal), context: context) }
         context.delete(record); try commit(context)
     }
     func deleteFit(_ request: FitDeletionRequest) throws {
@@ -2470,7 +2495,7 @@ extension PieceStore {
         guard allowsSave, request.memory.ownerID == (try todayConfiguration().ownerID),
               let record = try context.fetch(FetchDescriptor<StoredFitMemory>()).first(where: { $0.id == request.memory.id }),
               try record.value() == request.memory else { throw StoreError.staleRevision }
-        if let id = request.memory.photoID { try queueCleanup(photoID: id, context: context) }
+        if let id = request.memory.photoID { try queueCleanup(photoID: id, recipeDigest: try cleanupRecipeDigest(request.memory.photoRecipe), context: context) }
         context.delete(record); context.insert(try StoredFitDeletion(request))
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()
     }

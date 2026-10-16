@@ -26,7 +26,7 @@ final class LocalIdentityEditorModel: Identifiable {
         catch { self.error = "These profile edits could not be retained. Keep the editor open and retry." }
     }
     func cancelImport() { importID = UUID(); importTask?.cancel(); importTask = nil; importing = false }
-    func removePhoto() { guard !locked else { return }; cancelImport(); update { $0.photoID = nil } }
+    func removePhoto() { guard !locked else { return }; cancelImport(); update { $0.photoID = nil; $0.photoRecipe = nil } }
     func importPhoto(_ data: Data) {
         guard !locked else { return }
         cancelImport(); let token = importID; importing = true
@@ -36,7 +36,7 @@ final class LocalIdentityEditorModel: Identifiable {
                 guard let self, self.importID == token, !Task.isCancelled, !self.locked else { return }
                 guard let store = self.state.store else { throw PieceStore.StoreError.corruptStore }
                 _ = try store.acceptPhoto(photo)
-                self.update { $0.photoID = photo.id }; self.importing = false
+                self.update { $0.photoID = photo.id; $0.photoRecipe = nil }; self.importing = false
             } catch {
                 guard let self, self.importID == token else { return }
                 self.importing = false; self.error = "The photo could not be prepared. Your previous photo and name are retained; choose another or retry."
