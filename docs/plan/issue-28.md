@@ -15,7 +15,7 @@ Read Profile/journal feature, fit UI, capture/media and local identity contracts
 | --- | --- | --- | --- | --- | --- |
 | S1 | Optional local identity and retained edit task with safe photo selection/removal and committed Profile header | Local identity, J1/J3/J5 | Implemented, unit verified | `AQD-Slice: #28/S1` | `6a1700f` |
 | S2 | Private dated fit journal CRUD, snapshot link/unlink, note validation, real detail/grid and independent wear route | J1–J5/P10 | Implemented, unit verified | `AQD-Slice: #28/S2` | `3e7f12c` |
-| S3 | Shared optional-photo lifecycle, editing/removal/cleanup and preserving migration/restart recovery across Profile/fit tasks | J3/J5, scoped J6/LOCAL-13–15 | Implemented, unit verified | `AQD-Slice: #28/S3` | Pending |
+| S3 | Shared optional-photo lifecycle, editing/removal/cleanup and preserving migration/restart recovery across Profile/fit tasks | J3/J5, scoped J6/LOCAL-13–15 | Implemented, unit verified | `AQD-Slice: #28/S3` | `4f92293` |
 
 ## Verification and resume
 

@@ -13,7 +13,7 @@ Read Today’s twelve-kind feature/configuration/media contract, TW01–TW20/cat
 
 | Slice | Working outcome | Acceptance | State | Marker | SHA |
 | --- | --- | --- | --- | --- | --- |
-| S1 | Real Today cards and contextual destinations for plans/wear/insights/favorites/theme/journal/actions | TODAY-01/02/06 | Planned | `AQD-Slice: #22/S1` | Pending |
+| S1 | Real Today cards and contextual destinations for plans/wear/insights/favorites/theme/journal/actions | TODAY-01/02/06 | Implemented, unit verified | `AQD-Slice: #22/S1` | Pending |
 | S2 | Twelve kind-specific configurations, independent note/photo snapshots, atomic layout task/reorder/minimum-one/defaults/Undo/restart | TODAY-02–05 | Planned | `AQD-Slice: #22/S2` | Pending |
 | S3 | Reachable retained-personal-content management, reviewed delete/reference refusals/Undo/media recovery | TODAY-03/04/07 | Planned | `AQD-Slice: #22/S3` | Pending |
 | S4 | Capture/photo controls, cancellable local background-removal proposal/review/fallback and pinned first-outfit completion | Affected W, LOCAL-02/04 | Planned | `AQD-Slice: #22/S4` | Pending |
@@ -22,3 +22,9 @@ Read Today’s twelve-kind feature/configuration/media contract, TW01–TW20/cat
 ## Verification and resume
 
 Reuse verified unchanged unit inputs only; source-bind final evidence. Independent source failures never become empty/zero. All E2E/rendered/media/model qualification remains #30; numerical weather’s qualification is not claimed by unit tests. Continue after companion #28, then current-head CI/Codex/protected delivery.
+
+## S1 source cards
+
+Today reads acknowledged plan occasions, actual dated wear, active-Closet utilization, deterministic eligible least-recent pieces, favorites and private journal records. Routes open the existing outfit/plan/history/insight/journal tasks without creating records. Empty history differs from a read failure and from an existing-history empty week. Utilization defaults to the latest completed month; its link opens that same month. Week summaries count distinct local dates and piece IDs through today. Upcoming windows compare each entry in its own recorded timezone and preserve multiple occasions. Configuration controls, personal cards and weather follow in the later slices.
+
+Missing Today query APIs failed `/tmp/aqd-22-s1-red.log`. Core62 pass `/tmp/aqd-22-s1-core.log`, including completed-month rollover, locale-week boundaries, stable piece-ID ties, unavailable-piece exclusion and distinct upcoming entry identities. Core62 and physical native159 passed `/tmp/aqd-22-s1-unit.log`. Bounded increment review checked actual-record reads, distinct occasion identity, failure-versus-empty rendering, explicit wear actions and same-period destinations. All E2E remains #30.

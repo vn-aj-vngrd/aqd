@@ -15,37 +15,19 @@ struct TodayView: View {
                     }
                     if let configuration = state.today {
                         ForEach(configuration.instances) { instance in
-                            stockCard(instance.kind.title, message: message(for: instance.kind))
-                                .accessibilityIdentifier("today.widget.\(instance.id.uuidString)")
+                            TodayCard(instance: instance)
                         }
                     }
-                    PrimaryAction(title: "Add piece") { state.addPiece() }
-                    Text("Native baseline: piece capture is available. Today customization, outfits and wear are still being implemented.")
-                        .font(.footnote).foregroundStyle(AppTheme.secondary)
+
                 }.padding(20)
             }
             .background(AppTheme.canvas)
             .navigationTitle("Today")
+            .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
+            .onAppear { state.reloadToday(); state.reloadPlanEntries(); state.reloadWear(); state.reloadOutfits(); state.reloadPieces(); state.reloadFits() }
         }.tint(AppTheme.actionText)
     }
 
-    private func message(for kind: TodayWidgetKind) -> String {
-        switch kind {
-        case .todayLook: "Outfit planning is being implemented. Your saved Today widget stays here."
-        case .weekInWear: "Wear recording is being implemented. Plans never count as wear."
-        case .closetInUse: "Wear insights need recorded history; this baseline doesn’t calculate them yet."
-        default: "This saved widget’s capability is being implemented. Its placement has not been removed."
-        }
-    }
-
-    private func stockCard(_ title: String, message: String) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title).font(AppTypography.section)
-            Text(message).font(.subheadline).foregroundStyle(AppTheme.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
-    }
 }
 
 struct PendingLocalView: View {
