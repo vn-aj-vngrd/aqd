@@ -2923,11 +2923,10 @@ extension PieceStore {
             try LocalArchiveIO.protectedDirectory(temporary); try LocalArchiveIO.protectedDirectory(temporary.appendingPathComponent("media"))
             guard try FileManager.default.attributesOfItem(atPath: directory.path)[.type] as? FileAttributeType == .typeDirectory,
                   try FileManager.default.attributesOfItem(atPath: mediaDirectory.path)[.type] as? FileAttributeType == .typeDirectory else { throw StoreError.unsafeMediaPath }
-            try LocalArchiveIO.snapshot(database: directory.appendingPathComponent("wardrobe.store"), to: temporary.appendingPathComponent("wardrobe.store"))
             try LocalArchiveIO.write(LocalArchiveIO.read(directory.appendingPathComponent("schema-version"), maximum: 100), to: temporary.appendingPathComponent("schema-version"))
             let photos = Set(try ModelContext(container).fetch(FetchDescriptor<StoredPhoto>()).map { $0.id.uuidString })
             let files = try FileManager.default.contentsOfDirectory(at: mediaDirectory, includingPropertiesForKeys: nil).filter { photos.contains(String($0.lastPathComponent.prefix(36))) }
-            return LocalArchiveSeed(directory: temporary, media: files, stamp: stamp)
+            return LocalArchiveSeed(directory: temporary, database: directory.appendingPathComponent("wardrobe.store"), media: files, stamp: stamp)
         } catch { try? FileManager.default.removeItem(at: temporary); throw error }
     }
     func validateArchiveContents() throws -> LocalArchiveSummary {

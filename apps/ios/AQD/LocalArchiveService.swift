@@ -2,6 +2,7 @@ import Foundation
 
 struct LocalArchiveSeed: Sendable {
     let directory: URL
+    let database: URL
     let media: [URL]
     let stamp: UUID?
 }
@@ -31,6 +32,7 @@ struct ValidatedLocalArchive {
         let seed = try store.archiveSeed(); inFlight.insert(seed.directory)
         defer { inFlight.remove(seed.directory); try? FileManager.default.removeItem(at: seed.directory) }
         let copying = Task.detached(priority: .utility) {
+            try LocalArchiveIO.snapshot(database: seed.database, to: seed.directory.appendingPathComponent("wardrobe.store"))
             var remaining = LocalArchivePackage.maximumBytes
             for source in seed.media {
                 try Task.checkCancellation()
@@ -46,9 +48,9 @@ struct ValidatedLocalArchive {
         try copy.compactArchiveAcknowledgments()
         let summary = try copy.validateArchiveContents()
         let finalDatabase = seed.directory.appendingPathComponent("export.store")
-        try LocalArchiveIO.snapshot(database: seed.directory.appendingPathComponent("wardrobe.store"), to: finalDatabase)
-        try LocalArchiveIO.validateDatabase(finalDatabase)
         let encoding = Task.detached(priority: .utility) {
+            try LocalArchiveIO.snapshot(database: seed.directory.appendingPathComponent("wardrobe.store"), to: finalDatabase)
+            try LocalArchiveIO.validateDatabase(finalDatabase)
             var files = [LocalArchiveFile(path: "wardrobe.store", data: try LocalArchiveIO.read(finalDatabase)),
                          LocalArchiveFile(path: "schema-version", data: Data("AQD-piece-store:\(LocalArchivePackage.schema)".utf8))]
             var remaining = LocalArchivePackage.maximumBytes - files.reduce(0) { $0 + $1.data.count }

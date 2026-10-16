@@ -66,6 +66,7 @@ struct LocalDataInstallation {
             let directory = generationDirectory(pointer.generation)
             if exists(directory) { try checkDirectory(directory) } else if !allowIncomplete { throw LocalDataError.invalidPointer }
             if !allowIncomplete {
+                guard try !retainedReceipts().contains(where: { $0.1.phase == .failed && $0.1.operationID == pointer.generation }) else { throw LocalDataError.invalidPointer }
                 for name in ["wardrobe.store", "schema-version"] {
                     guard try FileManager.default.attributesOfItem(atPath: directory.appendingPathComponent(name).path)[.type] as? FileAttributeType == .typeRegular else { throw LocalDataError.invalidPointer }
                 }
@@ -95,8 +96,7 @@ struct LocalDataInstallation {
             if exists(url) {
                 let value = try FileManager.default.attributesOfItem(atPath: url.path)
                 guard value[.type] as? FileAttributeType == .typeRegular else { throw LocalDataError.invalidPointer }
-                let bytes = try LocalArchiveIO.read(url)
-                facts.append(name + ":" + LocalArchivePackage.hash(bytes))
+                facts.append(name + ":" + (try LocalArchiveIO.fingerprint(url)))
             }
         }
         return LocalDataSourceToken(generation: pointer?.generation, ownerID: nil, stamp: nil,
@@ -136,7 +136,7 @@ struct LocalDataInstallation {
         guard expected == requested else { throw LocalDataError.staleReview }
         // Read the publication receipt first: retry cannot replace a newer edited store.
         if try pointer()?.operationID == review.operationID {
-            let store = try PieceStore(directory: generationDirectory(review.operationID))
+            let store = try PieceStore(directory: currentDirectory())
             if review.phase != .acknowledged { review.phase = .installed; try write(review) }
             return LocalDataInstallation(review: review, store: store)
         }
@@ -164,11 +164,32 @@ struct LocalDataInstallation {
             $0.lastPathComponent.hasPrefix("retired-") && $0.pathExtension == "json" && UUID(uuidString: String($0.deletingPathExtension().lastPathComponent.dropFirst(8))) != nil
         }.map { ($0, try JSONDecoder().decode(LocalDataReview.self, from: LocalArchiveIO.read($0, maximum: 65536))) }
     }
+    func hasRetainedOperations() throws -> Bool { try !retainedReceipts().isEmpty }
+    private func retainForRecovery(_ review: LocalDataReview) throws {
+        try LocalArchiveIO.write(JSONEncoder().encode(review), to: controlDirectory.appendingPathComponent("retired-\(review.operationID.uuidString).json"))
+        try FileManager.default.removeItem(at: reviewURL)
+    }
+    private func repairPointer(_ review: LocalDataReview) throws {
+        let directory = generationDirectory(review.operationID)
+        var valid = false
+        do {
+            try checkDirectory(directory)
+            for name in ["wardrobe.store", "schema-version"] {
+                guard try FileManager.default.attributesOfItem(atPath: directory.appendingPathComponent(name).path)[.type] as? FileAttributeType == .typeRegular else { throw LocalDataError.invalidPointer }
+            }
+            let store = try PieceStore(directory: directory)
+            valid = try store.validateArchiveContents().ownerID == review.incomingSummary.ownerID
+        } catch { valid = false }
+        try LocalArchiveIO.write(JSONEncoder().encode(Pointer(generation: review.operationID, operationID: review.operationID)), to: pointerURL)
+        if !valid {
+            var retained = review; retained.phase = .failed
+            try retainForRecovery(retained)
+        }
+    }
     /// A corrupt installed copy can be replaced from another archive without deleting either retained generation.
     func retainInstalledOperationForRecovery(_ id: UUID) throws {
         guard let review = try pendingReview(), review.operationID == id, try isInstalled(id) else { throw LocalDataError.missingReview }
-        try LocalArchiveIO.write(JSONEncoder().encode(review), to: controlDirectory.appendingPathComponent("retired-\(id.uuidString).json"))
-        try FileManager.default.removeItem(at: reviewURL)
+        try retainForRecovery(review)
     }
     /// Returns false while a previous UI/store or an archive worker still owns private files.
     @discardableResult func cleanupRetired() throws -> Bool {
@@ -179,14 +200,19 @@ struct LocalDataInstallation {
             receipts.append((reviewURL, pending))
         }
         guard !receipts.isEmpty else { return true }
+        // A quarantined receipt needs a newly acknowledged replacement before any cleanup.
+        guard pending != nil else { return false }
         guard !isWaitingForPreviousStore, !LocalArchiveService.hasInFlightWork else { return false }
         let current = try currentDirectory()
         _ = try PieceStore(directory: current).validateArchiveContents()
         for (receiptURL, review) in receipts {
-            let previous = review.source.generation.map(generationDirectory) ?? legacyRoot
-            guard previous != current, previous != controlDirectory else { throw LocalDataError.invalidPointer }
-            if exists(previous) { try checkDirectory(previous); try removeDirectory(previous); guard !exists(previous) else { throw LocalDataError.cleanupPending } }
-            retiredStores.removeValue(forKey: previous.standardizedFileURL)
+            var previousDirectories = [review.source.generation.map(generationDirectory) ?? legacyRoot]
+            if receiptURL != reviewURL { previousDirectories.append(generationDirectory(review.operationID)) }
+            for previous in Set(previousDirectories) where previous != current {
+                guard previous != controlDirectory else { throw LocalDataError.invalidPointer }
+                if exists(previous) { try checkDirectory(previous); try removeDirectory(previous); guard !exists(previous) else { throw LocalDataError.cleanupPending } }
+                retiredStores.removeValue(forKey: previous.standardizedFileURL)
+            }
             if review.kind == .erase, try !LocalArchiveService.cleanupTemporaryArchives() { return false }
             try FileManager.default.removeItem(at: receiptURL)
         }
@@ -207,7 +233,13 @@ struct LocalDataInstallation {
     /// Interrupted staging never changes the active pointer; an installed pointer is authoritative.
     func recover() throws {
         guard var review = try pendingReview() else { return }
-        if try pointer()?.operationID == review.operationID {
+        let active: Pointer?
+        do { active = try pointer() }
+        catch {
+            guard review.phase == .installed || review.phase == .acknowledged else { throw error }
+            try repairPointer(review); return
+        }
+        if active?.operationID == review.operationID {
             guard review.phase != .acknowledged else { return }
             do {
                 let installed = try PieceStore(directory: currentDirectory()); _ = try installed.validateArchiveContents()
@@ -224,7 +256,10 @@ struct LocalDataInstallation {
                 review.phase = .failed; try write(review)
             }
         } else if review.phase == .preparing { try cancel(review.operationID) }
-        else if review.phase == .installed || review.phase == .acknowledged { throw LocalDataError.invalidPointer }
+        else if review.phase == .installed || review.phase == .acknowledged {
+            if active == nil { try repairPointer(review) }
+            else { try retainForRecovery(review) }
+        }
     }
 }
 

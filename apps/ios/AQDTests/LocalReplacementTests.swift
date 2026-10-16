@@ -4,6 +4,77 @@ import Testing
 @testable import AQD
 
 @Suite(.serialized) @MainActor struct LocalReplacementTests {
+    @Test(arguments: [false, true], [false, true]) func installedReceiptRepairsMissingOrCorruptPointerWithoutRewindingEdits(acknowledged: Bool, corrupt: Bool) async throws {
+        let source = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source).data)
+        let coordinator = LocalDataCoordinator(legacyRoot: source.localDirectory)
+        let request = try await coordinator.prepareRestore(package, source: source)
+        let result = try coordinator.commit(request, source: source)
+        if acknowledged { try coordinator.acknowledge(request.operationID) }
+        _ = try result.store.saveLocalSettings(LocalSettingsRequest(base: result.store.localSettings(), appearance: .dark))
+        let pointer = coordinator.controlDirectory.appendingPathComponent("active.json")
+        if corrupt { try Data("damaged pointer".utf8).write(to: pointer) } else { try FileManager.default.removeItem(at: pointer) }
+        let restarted = LocalDataCoordinator(legacyRoot: source.localDirectory)
+        try restarted.recover()
+        #expect(try restarted.isInstalled(request.operationID))
+        #expect(try PieceStore(directory: restarted.currentDirectory()).localSettings().appearance == .dark)
+    }
+    @Test func staleInstalledReceiptDoesNotRewindAnotherGenerationOrBlockAnotherArchive() async throws {
+        let source = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source).data)
+        let coordinator = LocalDataCoordinator(legacyRoot: source.localDirectory)
+        let request = try await coordinator.prepareRestore(package, source: source)
+        _ = try coordinator.commit(request, source: source); try coordinator.acknowledge(request.operationID)
+        let nextID = UUID(), next = try PieceStore(directory: coordinator.generationDirectory(nextID))
+        _ = try next.saveLocalSettings(LocalSettingsRequest(base: next.localSettings(), appearance: .light))
+        let pointer = try JSONSerialization.data(withJSONObject: ["schemaVersion": 1, "generation": nextID.uuidString, "operationID": nextID.uuidString])
+        try pointer.write(to: coordinator.controlDirectory.appendingPathComponent("active.json"))
+        let restarted = LocalDataCoordinator(legacyRoot: source.localDirectory)
+        try restarted.recover()
+        #expect(try restarted.currentDirectory().standardizedFileURL.path == next.localDirectory.standardizedFileURL.path)
+        #expect(try !restarted.cleanupRetired())
+        #expect(try next.localSettings().appearance == .light)
+        #expect(try restarted.pendingReview() == nil)
+        let replacement = try await restarted.prepareRestore(package, source: next)
+        try restarted.cancel(replacement.operationID)
+        #expect(FileManager.default.fileExists(atPath: coordinator.generationDirectory(request.operationID).path))
+    }
+    @Test func corruptPointerAndMissingAcknowledgedStoreStillAllowReviewedArchiveRecovery() async throws {
+        let source = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source).data)
+        let coordinator = LocalDataCoordinator(legacyRoot: source.localDirectory)
+        let request = try await coordinator.prepareRestore(package, source: source)
+        var result: LocalDataInstallation? = try coordinator.commit(request, source: source)
+        #expect(result?.review.operationID == request.operationID)
+        try coordinator.acknowledge(request.operationID); result = nil
+        try FileManager.default.removeItem(at: coordinator.generationDirectory(request.operationID))
+        try Data("damaged pointer".utf8).write(to: coordinator.controlDirectory.appendingPathComponent("active.json"))
+        let restarted = LocalDataCoordinator(legacyRoot: source.localDirectory)
+        try restarted.recover()
+        #expect(throws: (any Error).self) { try restarted.currentDirectory() }
+        #expect(!FileManager.default.fileExists(atPath: coordinator.generationDirectory(request.operationID).path))
+        let replacement = try await restarted.prepareRestore(package, source: nil)
+        let restored = try restarted.commit(replacement, source: nil)
+        #expect(try restored.store.validateArchiveContents() == package.header.summary)
+    }
+    @Test func damagedStoreLargerThanArchiveBudgetCanBeReplacedWithoutLosingStaleDetection() async throws {
+        let source = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source).data)
+        let damaged = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try LocalArchiveIO.protectedDirectory(damaged)
+        let database = damaged.appendingPathComponent("wardrobe.store")
+        try Data("damaged".utf8).write(to: database)
+        let handle = try FileHandle(forWritingTo: database)
+        defer { try? handle.close() }
+        try handle.truncate(atOffset: UInt64(LocalArchivePackage.maximumBytes + 1))
+        let coordinator = LocalDataCoordinator(legacyRoot: damaged)
+        let request = try await coordinator.prepareRestore(package, source: nil)
+        try handle.seek(toOffset: 0); try handle.write(contentsOf: Data("changed".utf8))
+        #expect(throws: (any Error).self) { try coordinator.commit(request, source: nil) }
+        let refreshed = try coordinator.refreshReview(request.operationID, source: nil)
+        let restored = try coordinator.commit(refreshed, source: nil)
+        #expect(try restored.store.validateArchiveContents() == package.header.summary)
+    }
     @Test func cancellingAValidatedReplacementKeepsTheCurrentCloset() async throws {
         let source = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         var chat = AgentConversation(ownerID: try source.todayConfiguration().ownerID); chat.draft = "Keep this"

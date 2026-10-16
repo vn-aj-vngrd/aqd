@@ -97,6 +97,22 @@ enum LocalArchiveIO {
         }
         guard result.count == status.st_size else { throw LocalArchiveError.sourceChanged }; return result
     }
+    /// Existing recovery files are not archive payloads. Hash them with bounded memory.
+    static func fingerprint(_ url: URL) throws -> String {
+        let descriptor = open(url.path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK)
+        guard descriptor >= 0 else { throw LocalArchiveError.invalid }
+        let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true); defer { try? handle.close() }
+        var status = stat()
+        guard fstat(descriptor, &status) == 0, status.st_mode & S_IFMT == S_IFREG, status.st_size >= 0 else { throw LocalArchiveError.invalid }
+        var digest = SHA256(), count: Int64 = 0
+        while let chunk = try handle.read(upToCount: 65536), !chunk.isEmpty {
+            try Task.checkCancellation()
+            guard chunk.count <= status.st_size - count else { throw LocalArchiveError.sourceChanged }
+            digest.update(data: chunk); count += Int64(chunk.count)
+        }
+        guard count == status.st_size else { throw LocalArchiveError.sourceChanged }
+        return digest.finalize().map { String(format: "%02x", $0) }.joined()
+    }
     static func protectedDirectory(_ url: URL) throws {
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [.protectionKey: FileProtectionType.complete])
         try protect(url)
@@ -107,6 +123,7 @@ enum LocalArchiveIO {
     }
     static func write(_ data: Data, to url: URL) throws { try data.write(to: url, options: [.atomic, .completeFileProtection]); try protect(url) }
     static func snapshot(database source: URL, to destination: URL) throws {
+        try Task.checkCancellation()
         guard try FileManager.default.attributesOfItem(atPath: source.path)[.type] as? FileAttributeType == .typeRegular,
               !FileManager.default.fileExists(atPath: destination.path) else { throw LocalArchiveError.unsafePath }
         try write(Data(), to: destination)
@@ -115,12 +132,22 @@ enum LocalArchiveIO {
         defer { sqlite3_close(input) }
         guard sqlite3_open_v2(destination.path, &output, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nil) == SQLITE_OK else { if output != nil { sqlite3_close(output) }; throw LocalArchiveError.invalid }
         defer { sqlite3_close(output) }
+        sqlite3_progress_handler(output, 1000, { _ in Task<Never, Never>.isCancelled ? 1 : 0 }, nil)
         guard let backup = sqlite3_backup_init(output, "main", input, "main") else { throw LocalArchiveError.invalid }
-        let step = sqlite3_backup_step(backup, -1), finish = sqlite3_backup_finish(backup)
-        guard step == SQLITE_DONE, finish == SQLITE_OK,
-              sqlite3_exec(output, "PRAGMA wal_checkpoint(TRUNCATE)", nil, nil, nil) == SQLITE_OK,
-              sqlite3_exec(output, "PRAGMA journal_mode=DELETE", nil, nil, nil) == SQLITE_OK,
-              sqlite3_exec(output, "VACUUM", nil, nil, nil) == SQLITE_OK else { throw LocalArchiveError.invalid }
+        var open = true
+        defer { if open { sqlite3_backup_finish(backup) } }
+        while true {
+            try Task.checkCancellation()
+            let step = sqlite3_backup_step(backup, 256)
+            if step == SQLITE_DONE { break }
+            guard step == SQLITE_OK else { throw LocalArchiveError.sourceChanged }
+        }
+        let finish = sqlite3_backup_finish(backup); open = false
+        guard finish == SQLITE_OK else { throw LocalArchiveError.invalid }
+        for query in ["PRAGMA wal_checkpoint(TRUNCATE)", "PRAGMA journal_mode=DELETE", "VACUUM"] {
+            try Task.checkCancellation()
+            guard sqlite3_exec(output, query, nil, nil, nil) == SQLITE_OK else { try Task.checkCancellation(); throw LocalArchiveError.invalid }
+        }
         try protect(destination)
     }
     static func validatePhoto(_ data: Data) throws {
@@ -135,12 +162,16 @@ enum LocalArchiveIO {
               CGImageSourceCreateImageAtIndex(source, 0, [kCGImageSourceShouldCache: false] as CFDictionary) != nil else { throw LocalArchiveError.missingMedia }
     }
     static func validateDatabase(_ url: URL) throws {
+        try Task.checkCancellation()
         var database: OpaquePointer?
         guard sqlite3_open_v2(url.path, &database, SQLITE_OPEN_READONLY, nil) == SQLITE_OK else { if database != nil { sqlite3_close(database) }; throw LocalArchiveError.invalid }; defer { sqlite3_close(database) }
+        sqlite3_progress_handler(database, 1000, { _ in Task<Never, Never>.isCancelled ? 1 : 0 }, nil)
         for query in ["PRAGMA integrity_check", "SELECT count(*) FROM sqlite_master WHERE type IN ('trigger','view')"] {
+            try Task.checkCancellation()
             var statement: OpaquePointer?
             guard sqlite3_prepare_v2(database, query, -1, &statement, nil) == SQLITE_OK else { throw LocalArchiveError.invalid }; defer { sqlite3_finalize(statement) }
             let code = sqlite3_step(statement)
+            try Task.checkCancellation()
             guard code == SQLITE_ROW, let value = sqlite3_column_text(statement, 0) else { throw LocalArchiveError.invalid }
             let actual = String(cString: value)
             guard actual == (query.hasPrefix("PRAGMA") ? "ok" : "0") else { throw LocalArchiveError.invalid }

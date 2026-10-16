@@ -4,6 +4,18 @@ import Testing
 @testable import AQD
 
 @Suite(.serialized) @MainActor struct LocalArchiveTests {
+    @Test func cancelledSQLiteSnapshotRefusesWorkAndLeavesSourceIntact() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let source = store.localDirectory.appendingPathComponent("wardrobe.store")
+        let destination = store.localDirectory.appendingPathComponent("cancelled-snapshot.store")
+        let owner = try store.todayConfiguration().ownerID
+        let task = Task.detached {
+            withUnsafeCurrentTask { $0?.cancel() }
+            try LocalArchiveIO.snapshot(database: source, to: destination)
+        }
+        await #expect(throws: CancellationError.self) { try await task.value }
+        #expect(try store.todayConfiguration().ownerID == owner)
+    }
     @Test func oversizedArchiveIsRefusedBeforeLoadingItsPayload() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         FileManager.default.createFile(atPath: url.path, contents: nil)

@@ -769,7 +769,11 @@ extension AppState {
     }
     func retryLocalDataCleanup() {
         do {
-            guard let coordinator = dataCoordinator, let pending = try coordinator.pendingReview() else { localDataCleanupError = nil; return }
+            guard let coordinator = dataCoordinator else { localDataCleanupError = nil; return }
+            guard let pending = try coordinator.pendingReview() else {
+                localDataCleanupError = try coordinator.hasRetainedOperations() ? "Recovery files are retained. Use Settings → Restore to review a validated replacement before cleanup." : nil
+                return
+            }
             if try coordinator.isInstalled(pending.operationID) {
                 guard let store else { localDataCleanupError = "Current data needs recovery. Previous AQD files are retained; choose a validated archive before cleanup."; return }
                 guard !coordinator.isWaitingForPreviousStore else { localDataCleanupError = "Local records are active. Previous AQD files are awaiting the old store to close."; return }
