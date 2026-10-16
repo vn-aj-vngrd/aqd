@@ -7,8 +7,11 @@ struct TodayView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    Text(Date.now, format: .dateTime.weekday(.wide).month(.wide).day())
-                        .font(.subheadline).foregroundStyle(AppTheme.secondary)
+                    VStack(alignment: .leading, spacing: AppSpacing.small) {
+                        Text("Today").font(AppTypography.rootTitle).accessibilityAddTraits(.isHeader)
+                        Text(Date.now, format: .dateTime.weekday(.wide).month(.wide).day())
+                            .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    }
                     if let error = state.todayError {
                         SemanticFeedback(role: .danger, message: error)
                         Button("Retry Today") { state.reloadToday() }.frame(minHeight: 44)
@@ -30,10 +33,11 @@ struct TodayView: View {
                         }
                     }
 
-                }.padding(20)
+                }.padding(.horizontal, AppSpacing.screen)
+                    .padding(.top, AppSpacing.small).padding(.bottom, AppSpacing.screen)
             }
             .background(AppTheme.canvas)
-            .navigationTitle("Today")
+            .navigationTitle("").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .topBarTrailing) {
                 Button { state.openWear() } label: { Label("Record wear", systemImage: "tshirt").labelStyle(.iconOnly) }
                     .buttonBorderShape(.circle).accessibilityIdentifier("today.recordWear").tint(AppTheme.ink)

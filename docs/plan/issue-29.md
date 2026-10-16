@@ -393,3 +393,7 @@ Owner follow-up: cancelled the Instagram/multiple-photo expansion before impleme
 Move Closet and Planner add menus to native topBarLeading placement. Closet Search and Filter remain topBarTrailing. Retain the same menus, identifiers, routes and neutral ink. This changes placement only; preserve the previous unit evidence at9641bfd and qualify the final source with a Debug build and ordinary physical preview install.
 
 Profile Add fit follows the same topBarLeading alignment; Options remains trailing. Unsigned Release `/tmp/aqd-final-toolbar-grid-release.log` passed9641bfd before this placement-only follow-up. No multiple-photo or Instagram redesign was implemented.
+
+### Owner Today heading rhythm — October17
+
+Place Today and its date in one scrolling header: semantic root title,8pt title/date gap,24pt section gap before the first widget. Use an inline empty navigation title to remove the system large-title gap, while retaining the toolbar and20pt side inset. Dynamic Type and header accessibility traits remain native. Presentation-only; final Debug/source review and ordinary install qualify this refinement, previous unit/Release inputs remain explicit.
