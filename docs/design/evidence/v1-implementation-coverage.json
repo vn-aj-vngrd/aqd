@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
-  "sourceHead": "681e1b8a2e496bd1f0041d60cba2b893635e2dd7",
-  "sourceState": "Owner preview through 681e1b8: Core77/native222, final Debug and unsigned Release pass; Ready string-only cleanup occurred after units and before final builds. Installed and normally launched with preserved content. All E2E/rendered acceptance remains issue30.",
+  "sourceHead": "b9a504c532a442a7e2362f5b06ca3be82af246f3",
+  "sourceState": "Owner preview b9a504c: transparent media sourcec85254f passed Core77/native227 and Release; actual12-sample PNG refresh confirmed. Subsequent neutral-gold/glass cosmetic preview passed Debug/Release/source checks and16 opaque token contrast checks, then installed/normally launched. E2E/rendered proof remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -2628,5 +2628,12 @@
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false,
     "scope": "Current actual-screen read-only tour; icons-only native tabs; Profile/Fit hierarchy and More recovery; Weather/assistance/Wear insights hierarchy."
+  },
+  "transparentMediaAndGoldEvidence": {
+    "codeCommit": "b9a504c532a442a7e2362f5b06ca3be82af246f3",
+    "unitSource": "c85254f840dcd1bd9ddf34c87e75e64c703f33ff",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false,
+    "scope": "Transparent sample media and alpha-preserving archive/edit pipeline; Profile bio placement; neutral-gold/charcoal palette and glass Closet navigation."
   }
 }

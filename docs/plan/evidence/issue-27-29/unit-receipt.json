@@ -5,7 +5,7 @@
   ],
   "branch": "van/issue-27/agent-and-local-controls",
   "baseline": "1a5b44ecf06536d6bb1dae0551348f44a9747d5b",
-  "sourceHead": "681e1b8a2e496bd1f0041d60cba2b893635e2dd7",
+  "sourceHead": "c85254f840dcd1bd9ddf34c87e75e64c703f33ff",
   "checkedOn": "2026-10-16",
   "environment": {
     "destination": "Physical iPhone17ProMax",
@@ -21,8 +21,8 @@
       "failures": 0
     },
     "native": {
-      "passed": 222,
-      "swiftTesting": 209,
+      "passed": 227,
+      "swiftTesting": 214,
       "swiftTestingSuites": 32,
       "xctest": 13,
       "failures": 0
@@ -31,7 +31,8 @@
       "configuration": "Release",
       "destination": "generic/platform=iOS",
       "codeSigningAllowed": false,
-      "result": "BUILD SUCCEEDED"
+      "result": "BUILD SUCCEEDED",
+      "sourceHead": "b9a504c532a442a7e2362f5b06ca3be82af246f3"
     },
     "repositoryTooling": {
       "passed": 51,
@@ -104,6 +105,18 @@
         "standards": "Pre-action Weather disclosure and vanished-memory deletion reconciliation corrected and independently rechecked.",
         "spec": "Tour data preservation, native labels, current screen controls and Fit recovery independently rechecked; no remaining findings.",
         "limits": "Source only; rendered/native gesture/VoiceOver acceptance remains issue30."
+      },
+      "transparentMedia": {
+        "sourceHead": "c85254f840dcd1bd9ddf34c87e75e64c703f33ff",
+        "standards": "No actionable findings; inspected archive, reference-safe cleanup, sample skips and acknowledgment reconciliation.",
+        "spec": "No actionable findings; actual device refresh subsequently confirmed12 updated/12 PNG.",
+        "limits": "Source and temporary-store/unit proof; ordinary device operation recorded separately."
+      },
+      "neutralGoldGlass": {
+        "sourceHead": "b9a504c532a442a7e2362f5b06ca3be82af246f3",
+        "standards": "No correctness findings; Increase Contrast opaque fallback clarified before final builds.",
+        "spec": "No actionable findings in roles, scope/search state and fallback paths.",
+        "limits": "Source only; native material optics, gestures and E2E selector adaptation remain issue30."
       }
     },
     "interruptedNativeRun": {
@@ -552,21 +565,66 @@
       "name": "aqd-live-tour-profile-launch.json",
       "sha256": "4ed4a11950d4484b492abe54aaf6cb187557c05b3412d618567fd22b05061ca0",
       "published": false
+    },
+    {
+      "name": "aqd-transparent-photos-red.log",
+      "sha256": "0110553ccdbc2613f14fe25935c52ca220885575e6800316583b25aba7cdc9a0",
+      "published": false
+    },
+    {
+      "name": "aqd-transparent-seed-final-unit.log",
+      "sha256": "55b1029a6081fa328c6c48773b36750ca94eeccf36a2dd5260672e65054b52bc",
+      "published": false
+    },
+    {
+      "name": "aqd-transparent-seed-release.log",
+      "sha256": "0912a6ec9eece90fc7f692a05d530eead7bfbd594a8ef5347335b141c16cd4cc",
+      "published": false
+    },
+    {
+      "name": "aqd-transparent-seed-receipt.json",
+      "sha256": "3dc04640bae86fb054b10a86910a58d39f03d6af8972c158bfc829ad278eff71",
+      "published": false
+    },
+    {
+      "name": "aqd-neutral-gold-glass-final-build.log",
+      "sha256": "3b5e160842fe0ef9c9d818e488c60dae6b3f615f5b45fd91b3c2d2d1d1c6cb52",
+      "published": false
+    },
+    {
+      "name": "aqd-neutral-gold-glass-release.log",
+      "sha256": "79d4f0447e1f09a0a9024716b39403d3dd9fd871951d5729ad64c2109506805b",
+      "published": false
+    },
+    {
+      "name": "aqd-neutral-gold-contrast.json",
+      "sha256": "b67f14850054cdfb95b67ecd811474bc19a34f82b6fbceec8d8bb1f9af155ecf",
+      "published": false
+    },
+    {
+      "name": "aqd-neutral-gold-glass-install.json",
+      "sha256": "a503352e4edd7eb8bc946607629deb057a2810cbcc3ee564c9e0c17f637379b0",
+      "published": false
+    },
+    {
+      "name": "aqd-neutral-gold-glass-launch.json",
+      "sha256": "0dec955bd71a84826fab1f29c23a2efe4c6bba1cdbbe7cb3632487c017321ddd",
+      "published": false
     }
   ],
   "sourceFiles": {
-    "apps/ios/AQD/AQDApp.swift": "1a362c97e8521c2af2366d194cfdf8994547b9e88d91ae8e6d6e0410d7fb5bf6",
+    "apps/ios/AQD/AQDApp.swift": "36a3e214b5bd583355564381227c4b3abc0ba4b2d4856377c7d20d17e29856d6",
     "apps/ios/AQD/AgentModel.swift": "c0332ebe3bf5f62431f166a41509423fad4a98ffbef042435ce67d6b1e3c34a1",
     "apps/ios/AQD/AgentVoiceModel.swift": "ccf6781ac3f4a421921474bd5d0fdb09a51b239700b0d38826bcc6cf5db581d8",
     "apps/ios/AQD/AppState.swift": "e4c505fdec40d6eefa8aeb01c6a3f3a1c6d3cbdd1913c07dd9561e6f535226ce",
     "apps/ios/AQD/ClosetSearchModel.swift": "50fccb4acf7e0df728bb4394c263d45b06f1c528a7954a7e3a183f7b78cdfb46",
-    "apps/ios/AQD/LocalArchive.swift": "332dc47cce947c93a915e2b754cef676b581ff666d1d3043cb5fbe1e864784f9",
+    "apps/ios/AQD/LocalArchive.swift": "834fc80120b51d4001da3addc53bb211eaa30bf1fd8cc86348b5207018eceb4a",
     "apps/ios/AQD/LocalArchiveService.swift": "6dc0ad28f7c485f766a5def30282ef544118b0d874d471063fb213cc4713e80e",
     "apps/ios/AQD/LocalDataCoordinator.swift": "94293100c3f18ea1eb88fcb4a0f0692ac73589c3f2bf215d8d024a751c2c59cb",
     "apps/ios/AQD/LocalExportModel.swift": "0bf83ae03fece8bd0f1f5f7b6b2398358377ac7345aa383458e2d148dbdc9842",
     "apps/ios/AQD/LocalRestoreModel.swift": "ed9b59974814d0ce06a94fb7c147f581c35199bc88954532b386dd1d16db9fcf",
     "apps/ios/AQD/NativeAgentProvider.swift": "3cdb669b3bb16a3ed3b335201c3e3f11aa0b88a7e638a07d152a25c0d2cf6641",
-    "apps/ios/AQD/Persistence/PieceStore.swift": "ead8a9a200e718781a4b640abedf52aa1ae08de68b931278eed27a486f45b0cf",
+    "apps/ios/AQD/Persistence/PieceStore.swift": "9b5db2cdb6e41877e784bc1321f89e908e1d1d4beb84723df76c9a9f223864fd",
     "apps/ios/AQD/Persistence/StoredAgentConversation.swift": "d3995a166c58767f470fc1ba8b41e817f22b58f0ea4ec008f8045f5b4e712655",
     "apps/ios/AQD/Persistence/StoredLocalIdentity.swift": "26ac00c06fa3d3c2209b70108b47a0c9129f0b4d0358c2999820eecd0a47a33d",
     "apps/ios/AQD/Persistence/StoredLocalSettings.swift": "5ea696e062966c742bf4f69116bd42d607934b48b5f5273875435e1be4d9e182",
@@ -591,7 +649,7 @@
     "apps/ios/AQD/UI/LocalEraseView.swift": "aa5b72da236cd5cd2b52e40da5535bdeb2aa62ce33fbc64376a4dcaf3f6ef2ae",
     "apps/ios/AQD/UI/LocalExportView.swift": "11e11599809f0b496a1db40d4ea9c46d77cb7c9b2c76904bed4d1087d17d4061",
     "apps/ios/AQD/UI/LocalIdentityEditorView.swift": "5534a2fe206273ad167ff9952b9ba0fcca195260026f00b481da7bdaca2cb6f9",
-    "apps/ios/AQD/UI/LocalProfileView.swift": "615246869bb81d7268eaefb790fdce005cbd73c2cb6a40fc1984a93b3c80059c",
+    "apps/ios/AQD/UI/LocalProfileView.swift": "1d93439018b37d48de4230533aa264e0e4ede0cb68dc5bee69e29536ee3dc7e6",
     "apps/ios/AQD/UI/LocalRestoreView.swift": "e4a380830a841a7064cf136788a94ba117052bb16864eab4e981e6d752b894e3",
     "apps/ios/AQD/UI/LocalSettingsView.swift": "116987502c5acfad681fb14e415f0d3bd94c0eb232fb215f06be3251b07b127d",
     "apps/ios/AQD/UI/NativeChoiceSheet.swift": "93145b3e763f158db9101b01736cf0a11c06017929996c6238804c179daa9d1b",
@@ -627,7 +685,7 @@
     "apps/ios/AQDTests/AgentConversationPersistenceTests.swift": "deb976563783ac6642bbc3489b9245ac07bc5ca62c0bb0c1a15a1fa215debf85",
     "apps/ios/AQDTests/AgentGenerationTests.swift": "b421a039a452453b28bf165a39da842cff910d203d2296518be8ca5220ca8931",
     "apps/ios/AQDTests/ClosetSearchTests.swift": "8b78e1079829008034e117689ba1b2eb290fe98ff2ef8888c5f009ae33b3da26",
-    "apps/ios/AQDTests/LocalArchiveTests.swift": "9ea99a361e24664ba3eb5e73f26f2455f47bb6883f784c5f9eb435cf29ac0e81",
+    "apps/ios/AQDTests/LocalArchiveTests.swift": "f034313c1b217328a659f0b9500f4646d32875c8b3f3d90fbc8310fc60a27831",
     "apps/ios/AQDTests/LocalDataFixture.swift": "ebb5568e1d84c662b65daec12394446cd5c7ac1de8f8711dd78d5121a680d625",
     "apps/ios/AQDTests/LocalEraseTests.swift": "9e3447fda46b2293932079ac585c9978dee94013970cae17552dd89379d5c756",
     "apps/ios/AQDTests/LocalIdentityPersistenceTests.swift": "fd3027978a8cfeca22be551d13b238367e1ffa280e365a22d41b9865a3b8bb04",
@@ -650,8 +708,12 @@
     "apps/ios/Core/Tests/AQDCoreTests/LocalSettingsTests.swift": "98ce1e8b90ab842c9cac2ca26587a9b1e9df056bad2b94b570b93e952cbe68eb",
     "apps/ios/Core/Tests/AQDCoreTests/ProfileCaptionTests.swift": "11b31a63ce21cb18ee91dabd04e97d1b0ad7d48c3c9ca83c2c0f728e73703e1d",
     "apps/ios/Core/Tests/AQDCoreTests/ThemeCollectionQueryTests.swift": "5194d720eb5050ef6a80d453b4d1049c50cd33730efa766702a3c35b498a2924",
-    "apps/ios/FOUNDATIONS.md": "f2fb62a938050b8dca336c71ebf2e84d61eb1b5ad618df23ab373bbd73e1fffd",
-    "apps/ios/AQD/UI/PrivateTourView.swift": "376f271a0b82972f738530b08fec5442dd1bc2a6bb87fe9e6f148db39e8f1277"
+    "apps/ios/FOUNDATIONS.md": "bd4abe26f621986b07534936dd91d5c701f1f5c09eda7f0d57b2a920f5d6664a",
+    "apps/ios/AQD/UI/PrivateTourView.swift": "376f271a0b82972f738530b08fec5442dd1bc2a6bb87fe9e6f148db39e8f1277",
+    "apps/ios/AQD/Media/PhotoPreparer.swift": "becaf08f0dd981e3c4c3c3c3f9ff89f7fad5c126fde5bb9618490103edcf6155",
+    "apps/ios/AQD/PreviewSampleContent.swift": "2ed7a6d6727da77b0b74ea5ea22c2324d9168330e36fc6f85ee9d6d155972731",
+    "apps/ios/AQDTests/PhotoPreparationTests.swift": "96c6e8dcaa31104e9e0986bfd762cde8004242c7a33abc8b9fe452290a898c9b",
+    "apps/ios/AQDTests/PreviewSampleContentTests.swift": "bdc554c2fb57ee455f42810021d60a8a3ce058d28b1055ba1ebfb17bc2ac7aae"
   },
   "limits": [
     "All E2E and rendered acceptance deferred to issue30 by owner direction.",
@@ -659,8 +721,8 @@
     "No native distribution. Current-head CI/Codex and merged-SHA release remain separate gates."
   ],
   "localOwnerPreview": {
-    "sourceHead": "681e1b8a2e496bd1f0041d60cba2b893635e2dd7",
-    "executableSHA256": "efb46fec991739e1ecdfd5784a87e4a263158ae3ff5acd7ab0ac47605008484f",
+    "sourceHead": "b9a504c532a442a7e2362f5b06ca3be82af246f3",
+    "executableSHA256": "8fc9bb7de2c12dc0eaa375a0058c199b9937e11b97bb605f6b06f6c5a8cfc0b9",
     "destination": "Physical iPhone17ProMax",
     "build": "Debug BUILD SUCCEEDED",
     "install": "success",
@@ -682,7 +744,23 @@
       "receipt": "/tmp/aqd-sample-content-receipt.json",
       "backup": "Protected pre-operation archive retained in app Documents",
       "preservedExistingData": true
+    },
+    "sourceFiles": {
+      "apps/ios/AQD/UI/AppTheme.swift": "ca67adbf0f967c78af675bf4027e844d1da7dad9eddc1d15b3e72c0176e97045",
+      "apps/ios/AQD/UI/AppActions.swift": "61cb5d2abe7c45002a8b4dddf308c57d001fdc691faab63ca45033d9d8ae4f20",
+      "apps/ios/AQD/UI/ClosetView.swift": "983265369e1c4fc3c80727f6a37e4001f22b6a1543d0b2196ba8cdb521785000",
+      "apps/ios/AQD/UI/LocalProfileView.swift": "1d93439018b37d48de4230533aa264e0e4ede0cb68dc5bee69e29536ee3dc7e6"
     }
   },
-  "verificationScope": "Core77/native222 pass on final behavior source. The subsequent Ready-screen string-only cleanup is covered by final Debug/Release builds, not a repeated unit run. All E2E/rendered acceptance remains issue30."
+  "verificationScope": "Core77/native227 and transparent media/refresh safety bind to source c85254f840dcd1bd9ddf34c87e75e64c703f33ff. Subsequent neutral-gold/glass changes are cosmetic and have final Debug/Release, source review and16 opaque token contrast checks; no repeated native-unit or rendered/E2E claim.",
+  "sampleMediaRefresh": {
+    "sourceHead": "c85254f840dcd1bd9ddf34c87e75e64c703f33ff",
+    "updated": 12,
+    "skipped": 0,
+    "pngSamples": 12,
+    "backup": "AQD-before-transparent-samples-240CF203-DEDC-4185-AF29-570977DE0686.aqdarchive",
+    "receipt": "/tmp/aqd-transparent-seed-receipt.json",
+    "explicitOwnerRequest": true,
+    "published": false
+  }
 }
