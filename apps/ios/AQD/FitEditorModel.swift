@@ -73,7 +73,10 @@ final class FitEditorModel: Identifiable {
         guard !pending, !unknown else { return }; cancelImport()
         do {
             guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-            try store.finishFitDraft(draft, discarding: discarding)
+            let retained = try store.fitDraft()
+            guard let retained, retained.id == draft.id, retained.operationID == draft.operationID,
+                  retained.base == draft.base else { throw PieceStore.StoreError.staleDraft }
+            try store.finishFitDraft(discarding ? retained : draft, discarding: discarding)
             if let saved { state.fitAnchor = saved.id }
             state.fitEditor = nil; state.reloadFits(); state.retryPhotoCleanup()
         } catch { self.error = "This task could not close. The fit and draft are retained; retry." }

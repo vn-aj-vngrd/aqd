@@ -60,6 +60,7 @@ struct TodayCard: View {
     @ViewBuilder private var look: some View {
         if let error = state.planError { failure(error) { state.reloadPlanEntries() } }
         else if let error = state.outfitError { failure(error) { state.reloadOutfits() } }
+        else if let error = state.pieceReadError { failure(error) { state.reloadPieces() } }
         else {
             let entries = state.planEntries.filter { entry in
                 if let pin = instance.options?.pinnedID { return entry.id == pin }
@@ -108,7 +109,7 @@ struct TodayCard: View {
         }
     }
     @ViewBuilder private var utilization: some View {
-        if let error = state.wearError ?? state.collectionError { failure(error) { state.reloadWear(); state.reloadPieces() } }
+        if let error = state.wearError ?? state.pieceReadError { failure(error) { state.reloadWear(); state.reloadPieces() } }
         else if let month = try? (instance.options?.period.map { $0 } ?? (try? TodaySources.completedMonth(before: today))),
                 let summary = try? WearPeriodSummary(month: month, pieces: state.pieces, records: state.wearRecords) {
             if let value = summary.utilization {
@@ -135,7 +136,7 @@ struct TodayCard: View {
         }
     }
     @ViewBuilder private var wearAgain: some View {
-        if let error = state.wearError ?? state.collectionError { failure(error) { state.reloadWear(); state.reloadPieces() } }
+        if let error = state.wearError ?? state.pieceReadError { failure(error) { state.reloadWear(); state.reloadPieces() } }
         else if let piece = instance.options?.pinnedID.map({ pin in state.pieces.first { $0.id == pin && $0.availability == .available } }) ?? TodaySources.wearAgain(pieces: state.pieces, records: state.wearRecords, through: today) {
             Text(piece.name).font(AppTypography.body)
             if let date = PieceWearSummary(piece: piece, records: state.wearRecords).lastWorn {

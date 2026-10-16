@@ -35,6 +35,7 @@ final class AppState {
     var collectionRefreshID = UUID()
     var capture: CaptureModel?
     var collectionError: String?
+    var pieceReadError: String?
     var weatherClient: WeatherClient?
     var today: TodayConfiguration?
     var todayUndoAvailable = false
@@ -287,11 +288,12 @@ final class AppState {
             let owned = try store.ownedPiecesForWear()
             pieces = owned.filter { !$0.isArchived }
             archivedPieces = owned.filter(\.isArchived)
-            collectionError = nil
+            collectionError = nil; pieceReadError = nil
             // Archived edits can change detail data without changing the active pieces array.
             collectionRefreshID = UUID()
         } catch {
             collectionError = "Your pieces couldn’t be read. The saved collection has not been cleared."
+            pieceReadError = collectionError
         }
     }
 

@@ -49,7 +49,9 @@ struct OutfitPlanEditorView: View {
                             .disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Timezone", value: model.draft.day.timeZoneID) { choosingZone = true }
                             .disabled(model.pending || model.unknown || namedPlan != nil)
-                        Text("Weather context · Off").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        if let context = model.draft.weather {
+                            Text("\(context.day.key) · \(context.place.timeZoneID)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }
                         if model.hasOverlap {
                             Text("Another plan uses this date and occasion. Existing assignments stay unchanged.")
                                 .foregroundStyle(AppTheme.secondary)

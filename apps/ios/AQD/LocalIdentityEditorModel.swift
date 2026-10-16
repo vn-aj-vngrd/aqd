@@ -63,7 +63,10 @@ final class LocalIdentityEditorModel: Identifiable {
         cancelImport()
         do {
             guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-            try store.finishIdentityDraft(draft, discarding: discarding)
+            let retained = try store.identityDraft()
+            guard let retained, retained.id == draft.id, retained.operationID == draft.operationID,
+                  retained.base == draft.base else { throw PieceStore.StoreError.staleDraft }
+            try store.finishIdentityDraft(discarding ? retained : draft, discarding: discarding)
             state.identityEditor = nil; state.reloadIdentity(); state.retryPhotoCleanup()
         } catch { self.error = "This profile task could not close. Keep the draft and retry." }
     }
