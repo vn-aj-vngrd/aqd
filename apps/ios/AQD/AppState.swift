@@ -65,6 +65,7 @@ final class AppState {
     var styleEditor: StyleEditorModel?
     var profileSettings = false
     var profileHistory = false
+    var profileInsights = false
     var entry = PrivateEntryState(alreadyEntered: true)
     var reloadEntryAfterStyle = false
 

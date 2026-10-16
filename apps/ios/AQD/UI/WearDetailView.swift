@@ -24,7 +24,7 @@ struct LocalWearDetailView: View {
                     if state.wearEditor != nil {
                         Text("Finish or discard your open wear draft before correcting or undoing this record.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     }
-                    Text("Correction changes this record without adding a wear. A changed day or item set returns linked intentions to Planned; it never moves your plan.")
+                    Text("Correction changes this record without adding a wear. A changed day, timezone or item set returns linked intentions to Planned; it never moves your plan.")
                         .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 } else { ContentUnavailableView("Wear record unavailable", systemImage: "clock") }
                 if let error {

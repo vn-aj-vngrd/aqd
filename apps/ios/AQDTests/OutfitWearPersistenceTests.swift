@@ -218,6 +218,23 @@ struct OutfitWearPersistenceTests {
         #expect(try store.wearRecords().isEmpty)
     }
 
+    @Test func timezoneOnlyCorrectionDetachesExistingPlanLinksWithoutAddingWear() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let (outfit, piece) = try await seed(store)
+        let day = LocalPlanDay(year: 2026, month: 1, day: 1, timeZoneID: "Asia/Manila")
+        let plan = OutfitPlanDraft(ownerID: outfit.ownerID, outfit: outfit, day: day)
+        try store.savePlanDraft(plan); let entry = try store.savePlan(plan); try store.finishPlanDraft(plan)
+        var draft = OutfitWearDraft(ownerID: outfit.ownerID, outfitID: outfit.id, pieces: [piece], day: day); draft.planEntry = entry
+        try store.saveWearDraft(draft); let saved = try store.saveWear(draft); try store.finishWearDraft(draft)
+        var correction = OutfitWearDraft(editing: saved, currentPieces: [piece]); correction.day.timeZoneID = "America/New_York"
+        try store.saveWearDraft(correction); let corrected = try store.saveWear(correction)
+        #expect(corrected.id == saved.id && corrected.day.key == saved.day.key && corrected.pieces == saved.pieces)
+        #expect(try store.wearRecords().count == 1)
+        #expect(try store.planEntries().first?.state == .planned)
+        #expect(try store.planEntries().first?.wearRecordID == nil)
+        #expect(try store.planEntries().first?.day == day)
+    }
+
     @Test func v6MigrationKeepsTheExistingPlanWithoutInventingWear() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

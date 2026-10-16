@@ -1812,7 +1812,7 @@ extension PieceStore {
             try saved.validated()
             if let editedRecord {
                 editedRecord.payload = try encode(saved)
-                if draft.baseRecord?.duplicateKey != saved.duplicateKey {
+                if draft.baseRecord?.day != saved.day || draft.baseRecord?.duplicateKey != saved.duplicateKey {
                     try resetWearLinks(saved.id, in: context)
                 }
             } else { context.insert(try StoredOutfitWear(saved)) }

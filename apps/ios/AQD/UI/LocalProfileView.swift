@@ -29,18 +29,18 @@ struct LocalProfileView: View {
                         }.frame(maxWidth: .infinity, alignment: .leading)
                             .padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
                     }.accessibilityIdentifier("profile.fits.empty")
-                    NavigationLink("Wear history") { LocalWearHistoryView() }.frame(minHeight: 44)
-                    NavigationLink("Wear insights") { LocalWearInsightsView() }.frame(minHeight: 44)
                 }.padding(20)
             }.background(AppTheme.canvas).navigationTitle("Profile")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
                             Button("Style") { state.openStyle(source: .profile) }
+                            Button("Wear insights") { state.profileInsights = true }
                             Button("Settings") { state.profileSettings = true }
                         } label: { Label("More", systemImage: "ellipsis") }
                     }
                 }
+                .navigationDestination(isPresented: $state.profileInsights) { LocalWearInsightsView() }
                 .navigationDestination(isPresented: $state.profileHistory) { LocalWearHistoryView() }
                 .navigationDestination(isPresented: $state.profileSettings) { LocalSettingsView() }
         }.tint(AppTheme.ink)
