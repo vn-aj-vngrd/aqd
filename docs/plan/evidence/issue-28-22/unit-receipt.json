@@ -5,7 +5,7 @@
   ],
   "branch": "van/issue-28/profile-and-today",
   "baseline": "51c87f3ec2e84a58d6a7efbcb66383def82684eb",
-  "sourceHead": "1d037b6a2dfadcc875f7ad6521919b26a20ab4ea",
+  "sourceHead": "07777a27e3ed9fd4f05a373334988feae668dbe7",
   "checkedOn": "2026-10-16",
   "environment": {
     "destination": "Physical iPhone17ProMax",
@@ -16,7 +16,7 @@
   },
   "results": {
     "core": {
-      "passed": 64,
+      "passed": 65,
       "suites": 18,
       "failures": 0
     },
@@ -49,15 +49,13 @@
       },
       "additionalStaleCard": {
         "status": "Physically reproduced, fixed and rechecked by both reviewers"
+      },
+      "codexPinnedPlan": {
+        "status": "Pinned-plan window fixed and independently rechecked; current-head remote review remains required"
       }
     }
   },
   "localLogs": [
-    {
-      "name": "aqd-28-22-final-unit.log",
-      "sha256": "0efb61ededa33a0e93930e7052a99a7a9a0eee7c051e9d9e58d963fa214b2811",
-      "published": false
-    },
     {
       "name": "aqd-28-22-review-red.log",
       "sha256": "006f42c5f4d3f270a26cfbc4b78aa7d578be53f6d4573a00d25feda546f392fd",
@@ -69,13 +67,18 @@
       "published": false
     },
     {
-      "name": "aqd-28-22-release.log",
-      "sha256": "e9c6cd7fe8e31b9d55a13e5c68d15db97446bb76cc176a9d49ffeefb413ea123",
+      "name": "aqd-28-22-tooling.log",
+      "sha256": "eb53c02f1d86914c1143315e260d0a6d4930406af73808a0acb55907419b5ef0",
       "published": false
     },
     {
-      "name": "aqd-28-22-tooling.log",
-      "sha256": "eb53c02f1d86914c1143315e260d0a6d4930406af73808a0acb55907419b5ef0",
+      "name": "aqd-28-22-codex-unit.log",
+      "sha256": "f63c095b2820f66f4f30505a3d26dd89fc32d73795ce1ed06fad6d591349b740",
+      "published": false
+    },
+    {
+      "name": "aqd-28-22-codex-release.log",
+      "sha256": "176db83a96b8d6b8e77de93bec1005cffd85c26302262e435bec90f583a3bb24",
       "published": false
     }
   ],
@@ -111,7 +114,7 @@
     "apps/ios/AQD/UI/RootViews.swift": "01e7a739df0effd14433ca0ac39c8433d922d6d3297023a09d6a884190e3e19b",
     "apps/ios/AQD/UI/SavedTodayCardsView.swift": "27c6f56a97150bbc51d39de30a269fd2d0f7e3f8984ce8929251dfdc93faf8d5",
     "apps/ios/AQD/UI/SharedPhotoSourceButton.swift": "af5457188740a13f318f3ab5ecc6e1d6e39d78da5de586b0208d3e8519dc7c5b",
-    "apps/ios/AQD/UI/TodayCards.swift": "cef8cc2c842d12de190584a9e0cff635b3e791a71cc2c82f4283f4c1bc7552f4",
+    "apps/ios/AQD/UI/TodayCards.swift": "98a01dc9a50fd7868d47030de06880ba374409a7546ca84faf05c66633787118",
     "apps/ios/AQD/UI/TodayEditorView.swift": "9c1f8417a6fe78a899a1e8f7a680abe3c09f42fe7d811b1f923ee416509ade05",
     "apps/ios/AQD/UI/TodayWidgetConfigurationView.swift": "52590402d5e55eb4bdb06b461a804459e379b4bcf46672b80f01677e37649587",
     "apps/ios/AQD/UI/WearInsightsView.swift": "de351eec3d74c6733a518f123637e9c6dd8327c591c8cf0af16b2cdbae7a19dc",
@@ -136,9 +139,9 @@
     "apps/ios/Core/Sources/AQDCore/TodayCardDeletion.swift": "5e2e32ae29f035cfdc9755f8c15c41e0c9c6856ce307f1e05ce8c73e8100426f",
     "apps/ios/Core/Sources/AQDCore/TodayConfiguration.swift": "16c93c890c9a3ae004c795af50ca890b03a53f0916304ad9a34fcfad437ef888",
     "apps/ios/Core/Sources/AQDCore/TodayLayout.swift": "4be4e8909d29361d4f69db3cfeaff5236f48317ff28adb6b62df5a1ed4a99fa4",
-    "apps/ios/Core/Sources/AQDCore/TodaySources.swift": "64777c1095fb0925496f852ce58d094e9d6dc453ff430d86aad787ee7e2deb67",
+    "apps/ios/Core/Sources/AQDCore/TodaySources.swift": "dfa8ed038c406082617e029d48663b74485e11aba7ae17ff4083220225f869db",
     "apps/ios/Core/Sources/AQDCore/WeatherContext.swift": "18cd144769010cb58cc99f288045c9269963adfc249fb74278a8a9b928f0eaf6",
-    "apps/ios/Core/Tests/AQDCoreTests/TodaySourcesTests.swift": "b0fb9c83f5e49fe0bbc4eb44afc9a05781c301ba8ac22acf85358d72a8be1730",
+    "apps/ios/Core/Tests/AQDCoreTests/TodaySourcesTests.swift": "6e20f541db3595714bb707b56b058fa71799559d444780bf4642a4c2ae6dad1b",
     "apps/ios/Core/Tests/AQDCoreTests/WeatherContextTests.swift": "27112c1fc96e6c45010fee3dc04725759a02e19392a954e9f932f71e11fe2f26"
   },
   "limits": [

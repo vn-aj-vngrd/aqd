@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
-  "sourceHead": "1d037b6a2dfadcc875f7ad6521919b26a20ab4ea",
-  "sourceState": "Group #28/#22 implements eight source slices and independent review corrections at sourceHead. Core64/native175 and unsigned Release pass. Source-bound AC receipt in docs/plan/evidence/issue-28-22. All rendered/E2E acceptance remains issue30.",
+  "sourceHead": "07777a27e3ed9fd4f05a373334988feae668dbe7",
+  "sourceState": "Group #28/#22 implements eight source slices and independent review corrections at sourceHead. Core65/native175 and unsigned Release pass. Source-bound AC receipt in docs/plan/evidence/issue-28-22. All rendered/E2E acceptance remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -2536,9 +2536,9 @@
       "docs/plan/issue-22.md"
     ],
     "checkedOn": "2026-10-16",
-    "codeCommit": "1d037b6a2dfadcc875f7ad6521919b26a20ab4ea",
+    "codeCommit": "07777a27e3ed9fd4f05a373334988feae668dbe7",
     "state": "Eight slices and reviewed corrections committed/pushed; independent Standards/Spec rechecks complete, unsigned Release passes. Current-head remote CI/Codex/protected shipping remain separate gates.",
-    "native": "Core64/native175, zero failures, and unsigned Release pass. Physical iPhone17ProMax iOS27.0.1; no simulators or E2E.",
+    "native": "Core65/native175, zero failures, and unsigned Release pass. Physical iPhone17ProMax iOS27.0.1; no simulators or E2E.",
     "limits": "All E2E/rendered/accessibility/garment/device-performance acceptance remains issue30. Numerical Weather requires entitlement, supplied attribution/legal placement and complete LOCAL16 before activation. No runtimeComplete claim.",
     "receipt": "docs/plan/evidence/issue-28-22/README.md"
   }

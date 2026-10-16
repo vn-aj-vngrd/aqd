@@ -50,3 +50,7 @@ Fixed range `51c87f3...7d4ba1f` received independent Matt Standards/Spec review.
 ## Local gate and remote resume
 
 Profile slices `6a1700f`, `3e7f12c`, `4f92293` are complete alongside companion Today’s five slices. Grouped reviewed corrections `942ca66` and `1d037b6` protect failed-retention discard and current Today detail identity. Latest code `1d037b6a2dfadcc875f7ad6521919b26a20ab4ea`; final Core64/native175 pass on the physical iPhone. [Grouped source-bound AC evidence](evidence/issue-28-22/README.md) retains actual checks and explicit issue30 limits. Unsigned Release passes; the documentation receipt and the single grouped PR’s CI/Codex/protected squash/release verification continue. GitHub owns live remote delivery facts; no post-merge documentation-only PR is required.
+
+## PR36 Codex correction
+
+Codex reviewed `62c9301` and found pinned Upcoming plans bypassed the configured calendar window. Correction `07777a2` applies plan identity and the existing per-entry-zone window in the same query. Regression covers past dates, seven/fourteen-day boundaries, unrelated plans and a missing plan. Both independent Standards/Spec reviewers rechecked without findings. Core65/native175 pass on the physical iPhone (`/tmp/aqd-28-22-codex-unit.log`); generic unsigned Release passes. [PR36](https://github.com/vn-aj-vngrd/aqd/pull/36) retains the refreshed receipt and AC table. Current-head CI/Codex, thread resolution, SHA-bound squash and merged-SHA release verification continue; all E2E remains issue30.
