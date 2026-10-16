@@ -32,9 +32,11 @@ struct PlannerCalendarView: View {
                     .accessibilityLabel(mode == .week ? "Next week" : "Next month")
             }
             if mode == .week {
-                ScrollView(.horizontal) {
-                    HStack(spacing: 0) { ForEach(days, id: \.key) { dateCell($0, showWeekday: true) } }
-                }.scrollIndicators(.hidden).padding(8).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                ViewThatFits(in: .horizontal) {
+                    weekDays
+                    ScrollView(.horizontal) { weekDays }
+                        .scrollIndicators(.hidden)
+                }.padding(8).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
             } else {
                 if !typeSize.isAccessibilitySize {
                     HStack(spacing: 0) {
@@ -63,6 +65,12 @@ struct PlannerCalendarView: View {
                         } }
                 }
             }
+    }
+
+    private var weekDays: some View {
+        HStack(spacing: 0) {
+            ForEach(days, id: \.key) { dateCell($0, showWeekday: true).frame(maxWidth: .infinity) }
+        }.frame(maxWidth: .infinity)
     }
 
     private func dateCell(_ value: LocalPlanDay, showWeekday: Bool) -> some View {
