@@ -47,7 +47,7 @@ struct LocalEraseView: View {
                     Button("Cancel", role: .cancel) {}
                     Button("Erase closet", role: .destructive) { model.commit(confirmation: phrase) }
                 } message: { Text("Permanently replaces all local AQD records and schedules AQD-only file cleanup. Original Photos and exported archives stay. No automatic recovery.") }
-                .sheet(isPresented: $export) { NavigationStack { LocalExportView().navigationTitle("Export before erase").toolbar { ToolbarItem(placement: .confirmationAction) { Button { export = false } label: { Image(systemName: "checkmark") }.accessibilityLabel("Done") } } } }
+                .sheet(isPresented: $export) { NavigationStack { LocalExportView().navigationTitle("Export before erase").toolbar { ToolbarItem(placement: .confirmationAction) { Button { export = false } label: { Text("Done") }.accessibilityLabel("Done") } } } }
         }.tint(AppTheme.ink).onAppear { model.prepareErase() }
             .onChange(of: model.review?.version) { _, _ in phrase = "" }
             .interactiveDismissDisabled(model.review != nil || model.phase == .committing || model.phase == .validating)

@@ -87,7 +87,7 @@ struct PlanDatesView: View {
     private func gapLabel(_ gap: PackingGap) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) { Text(gap.day.displayDate).font(AppTypography.body); Text(gap.reason).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
-            Spacer(); Image(systemName: "chevron.forward").accessibilityHidden(true)
+            Spacer(); Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
         }.foregroundStyle(AppTheme.ink).padding(14).frame(minHeight: 54).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
     }
     private func refresh() { state.reloadPlanEntries(); state.reloadOutfits(); refreshSummary() }

@@ -269,3 +269,13 @@ These are source changes. Unit/build evidence belongs to the grouped issue27/29 
 - Today card actions use semantic primary ink, 15-point supporting labels,44-point minimum targets and a chevron at the far trailing edge. Native Button/NavigationLink ownership and all callbacks are unchanged.
 
 Source/unit/build verification is separate from rendered native qualification in issue30.
+
+## Owner sheet and action cleanup · October16
+
+- Simple Closet/Planner/photo-source sheets share native grouped rows with paired white/dark surfaces, neutral Close and compact disclosure icons. More details remains a blue optional link; Category and Availability are neutral full-width menus with trailing indicators and selected-value semantics.
+- Native Back is neutral. Editor confirmation checkmark glyphs become text Done; receipt Done is trailing. Selection checkmarks remain selection indicators. Weather removes duplicate body Save/Continue without weather; top-right Save or Done performs the same preference/parent operation, while unknown results retain Check result and disabled exit.
+- Plan entry retains one bottom primary, prioritizing pending skip/removal reconciliation, then Record wear or the state-appropriate return. Edit/Skip/Open outfit/Remove move to More and retain immutable-operation/state guards. Unassigned wear still opens the existing manual piece-selection draft.
+- Disabled Agent centers its message with Open Closet/About at the bottom, retaining pending errors, retry and selectable long drafts. Existing conversation history remains readable with its manual footer. About Agent uses semantic light/dark canvas and an icon-bearing blue availability check.
+- Planner removes its duplicate Upcoming section while retaining selected-day entries and plan definitions; Today’s optional widget remains available. Calendar arrows are grouped with zero extra gap and separate44-point targets. Custom disclosure chevrons use scalable footnote weight; row touch areas stay unchanged.
+
+All E2E remains issue30.

@@ -43,7 +43,22 @@ struct AgentConversationView: View {
     @State private var followsLatest = true
     @State private var didFocus = false
     @FocusState private var focused: Bool
+    private var emptyUnavailable: Bool {
+        !model.supportsGeneration && model.conversation.messages.isEmpty && (model.conversation.proposals ?? []).isEmpty
+    }
+    private func openCloset() { if model.persist() { state.selection = 1; close() } }
     var body: some View {
+        Group {
+            if emptyUnavailable {
+                VStack(spacing: 0) {
+                    if let error = model.error { SemanticFeedback(role: .danger, message: error).padding(20) }
+                    if model.hasPendingOperation || model.error != nil {
+                        Button("Retry operation") { model.retryPending() }.frame(minHeight: 44)
+                    }
+                    AgentAvailabilityContent(availability: model.availability, recheck: model.recheckAvailability,
+                                             openCloset: openCloset, fillsPage: true, retainedDraft: model.conversation.draft)
+                }
+            } else {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 24) {
@@ -93,15 +108,24 @@ struct AgentConversationView: View {
                         }
                     }
                     if !model.supportsGeneration {
-                        AgentAvailabilityContent(availability: model.availability, recheck: model.recheckAvailability) { if model.persist() { state.selection = 1; close() } }
+                        AgentAvailabilityContent(availability: model.availability, recheck: model.recheckAvailability,
+                                                 openCloset: openCloset, showsActions: false)
                         if !model.conversation.draft.isEmpty { Text("Your retained draft").font(AppTypography.section); Text(model.conversation.draft).textSelection(.enabled) }
                     }
                     Color.clear.frame(height: 1).id("latest").onAppear { followsLatest = true }.onDisappear { followsLatest = false }
                 }.padding(20)
             }.onChange(of: model.conversation.messages.last?.source) { _, _ in if followsLatest { proxy.scrollTo("latest", anchor: .bottom) } }
                 .overlay(alignment: .bottomTrailing) { if !followsLatest { Button("Jump to latest") { followsLatest = true; proxy.scrollTo("latest", anchor: .bottom) }.frame(minHeight: 44).padding(12).background(AppTheme.surface, in: Capsule()).padding() } }
+        }
+            }
         }.background(AppTheme.canvas).navigationTitle("Agent").navigationBarTitleDisplayMode(.inline)
-            .safeAreaInset(edge: .bottom) { if model.supportsGeneration { composer } }
+            .safeAreaInset(edge: .bottom) {
+                if model.supportsGeneration { composer }
+                else if !emptyUnavailable {
+                    ActionFooter { AgentAvailabilityActions(availability: model.availability,
+                        recheck: model.recheckAvailability, openCloset: openCloset) }
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left").frame(width: 44, height: 44) }.accessibilityLabel("Back").disabled(model.active) }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -122,7 +146,7 @@ struct AgentConversationView: View {
                 Text("You can describe your photo in a message, select existing closet pieces, or add a piece manually. Your text and selected context stay. Photos are never sent to a cloud model.")
                 SecondaryAction(title: "Select closet context") { imageHelp = false; context = true }
                 SecondaryAction(title: "Open Closet") { if model.persist() { imageHelp = false; state.selection = 1; close() } }
-            }.padding(20).navigationTitle("Photo assistance").toolbar { ToolbarItem(placement: .confirmationAction) { Button { imageHelp = false } label: { Image(systemName: "checkmark") }.accessibilityLabel("Done") } } } }
+            }.padding(20).navigationTitle("Photo assistance").toolbar { ToolbarItem(placement: .confirmationAction) { Button { imageHelp = false } label: { Text("Done") }.accessibilityLabel("Done") } } } }
             .sheet(isPresented: $context) { AgentContextView(model: model).environment(state) }
             .sheet(item: $details) { message in NavigationStack { Form {
                 LabeledContent("Runtime", value: "On-device")
@@ -131,7 +155,7 @@ struct AgentConversationView: View {
                 LabeledContent("First text", value: message.firstTextSeconds.map { String(format: "%.1f s", $0) } ?? "Unavailable")
                 Text(message.contextSummary ?? "Context measurements unavailable")
                 Text("Generated text cannot change your records. Only an explicit review and saved receipt can do that.")
-            }.navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { Button { details = nil } label: { Image(systemName: "checkmark") }.accessibilityLabel("Done") } } } }
+            }.navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { Button { details = nil } label: { Text("Done") }.accessibilityLabel("Done") } } } }
             .onAppear { if model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
     }
     private var composer: some View {
@@ -164,7 +188,9 @@ struct AgentAvailabilityContent: View {
     let availability: OutfitSuggestionAvailability
     let recheck: () -> Void
     let openCloset: () -> Void
-    @State private var about = false
+    var fillsPage = false
+    var showsActions = true
+    var retainedDraft = ""
     private var title: String {
         switch availability {
         case .unsupported: "Agent isn’t supported on this iPhone"
@@ -175,22 +201,55 @@ struct AgentAvailabilityContent: View {
         }
     }
     var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "sparkle").font(.largeTitle).accessibilityHidden(true)
-            Text(title).font(.title2).multilineTextAlignment(.center)
-            Text(availability.message).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
-            PrimaryAction(title: availability == .preparing ? "Check again" : "Open Closet", action: availability == .preparing ? recheck : openCloset)
-            if availability == .preparing { SecondaryAction(title: "Open Closet", action: openCloset) }
-            else { SecondaryAction(title: availability == .intelligenceOff ? "How to enable it" : "About Agent") { about = true } }
-        }.frame(maxWidth: .infinity).padding(.vertical, 40)
-            .navigationDestination(isPresented: $about) {
-                ScrollView { VStack(alignment: .leading, spacing: 20) {
-                    Text("Private on-device assistance").font(AppTypography.section)
-                    Text("AQD uses Apple Intelligence on supported iPhones. In iPhone Settings, open Apple Intelligence & Siri to check whether Apple Intelligence is enabled and ready.")
-                    Text("This build keeps generation disabled until on-device quality and performance checks are complete. Your conversations remain readable. Closet, manual outfits and planning work without it.")
-                    Button("Check availability again", action: recheck).frame(minHeight: 44)
-                }.padding(20) }.navigationTitle("About Agent")
+        if fillsPage {
+            EmptyStatePage(title: LocalizedStringKey(title), systemImage: "sparkle",
+                           description: Text(availability.message), detail: retainedDraft.isEmpty ? nil : retainedDraft) {
+                AgentAvailabilityActions(availability: availability, recheck: recheck, openCloset: openCloset)
             }
+        } else {
+            VStack(spacing: 20) {
+                AppEmptyState(LocalizedStringKey(title), systemImage: "sparkle", description: Text(availability.message), fillsAvailableSpace: false)
+                if showsActions { AgentAvailabilityActions(availability: availability, recheck: recheck, openCloset: openCloset) }
+            }
+        }
+    }
+}
+
+private struct AgentAvailabilityActions: View {
+    let availability: OutfitSuggestionAvailability
+    let recheck: () -> Void
+    let openCloset: () -> Void
+    var body: some View {
+        ActionStack {
+            PrimaryAction(title: availability == .preparing ? "Check again" : "Open Closet",
+                          action: availability == .preparing ? recheck : openCloset)
+            if availability == .preparing { SecondaryAction(title: "Open Closet", action: openCloset) }
+            NavigationLink {
+                AgentAboutView(recheck: recheck)
+            } label: {
+                Text(availability == .intelligenceOff ? "How to enable it" : "About Agent")
+                    .font(AppTypography.body).foregroundStyle(AppTheme.actionText)
+                    .frame(maxWidth: .infinity, minHeight: 50)
+            }.buttonStyle(.plain)
+        }
+    }
+}
+
+private struct AgentAboutView: View {
+    let recheck: () -> Void
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Private on-device assistance").font(AppTypography.section)
+                Text("AQD uses Apple Intelligence on supported iPhones. In iPhone Settings, open Apple Intelligence & Siri to check whether Apple Intelligence is enabled and ready.")
+                Text("This build keeps generation disabled until on-device quality and performance checks are complete. Your conversations remain readable. Closet, manual outfits and planning work without it.")
+            }.font(AppTypography.body).foregroundStyle(AppTheme.ink).padding(20)
+        }
+        .background(AppTheme.canvas).navigationTitle("About Agent").navigationBarTitleDisplayMode(.inline)
+        .tint(AppTheme.ink)
+        .safeAreaInset(edge: .bottom) {
+            ActionFooter { PrimaryAction(title: "Check availability again", systemImage: "arrow.clockwise", action: recheck) }
+        }
     }
 }
 struct AgentHistoryView: View {

@@ -42,12 +42,16 @@ struct PieceDetailsView: View {
                             .keyboardType(.numberPad)
                         Text("An estimate isn’t a dated wear record.").font(.footnote).foregroundStyle(AppTheme.secondary)
                         LabeledControl(title: "Availability") {
-                            Picker("Availability", selection: $availability) {
-                                Text("Available").tag(PieceAvailability.available)
-                                Text("Unavailable").tag(PieceAvailability.unavailable)
-                                Text("Laundry").tag(PieceAvailability.laundry)
-                            }
-                            .pickerStyle(.menu)
+                            Menu {
+                                Picker("Availability", selection: $availability) {
+                                    Text("Available").tag(PieceAvailability.available)
+                                    Text("Unavailable").tag(PieceAvailability.unavailable)
+                                    Text("Laundry").tag(PieceAvailability.laundry)
+                                }
+                            } label: { MenuSelectionLabel(title: availability.rawValue.capitalized) }
+                            .menuIndicator(.hidden).buttonStyle(.plain)
+                            .accessibilityLabel("Availability")
+                            .accessibilityValue(availability.rawValue.capitalized)
                         }
                         LabeledField(title: "Notes", text: $details.notes, multiline: true,
                                      accessibilityID: "capture.field.notes", editingFocus: $notesFocused)
@@ -94,7 +98,7 @@ struct PieceDetailsView: View {
                 }
             }
         }
-        .tint(AppTheme.actionText)
+        .tint(AppTheme.ink)
         .interactiveDismissDisabled(dirty)
     }
 

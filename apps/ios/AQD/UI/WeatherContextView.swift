@@ -69,15 +69,21 @@ struct WeatherContextView: View {
                         SecondaryAction(title: "Refresh weather") { fetch(manual: true) }.disabled(selection == nil || pending || saving || unknown || !client.qualified)
                     }
                     if let error { SemanticFeedback(role: .warning, message: error) }
-                    PrimaryAction(title: unknown ? "Check preference result" : persistsPreference ? "Save weather preference" : "Use weather", isPending: saving) { apply() }
-                        .disabled(!unknown && (enabled && (selection == nil || (try? selection?.validated()) == nil)))
-                    SecondaryAction(title: "Continue without weather") {
-                        cancelFetch(); lookup.cancel()
-                        if persistsPreference || onApply(nil) { dismiss() }
-                    }.disabled(saving || unknown)
+
                 }.padding(20)
             }.background(AppTheme.canvas).navigationTitle("Weather context").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .topBarLeading) { Button { cancelFetch(); lookup.cancel(); dismiss() } label: { Image(systemName: "xmark") }.accessibilityLabel("Cancel weather context").disabled(saving || unknown) } }
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button { cancelFetch(); lookup.cancel(); dismiss() } label: { Image(systemName: "xmark") }
+                            .accessibilityLabel("Cancel weather context").disabled(saving || unknown)
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(unknown ? "Check result" : persistsPreference ? "Save" : "Done") { apply() }
+                            .tint(AppTheme.accent)
+                            .disabled(saving || (!unknown && enabled && (selection == nil || (try? selection?.validated()) == nil)))
+                            .accessibilityValue(saving ? "Saving" : "")
+                    }
+                }
         }.tint(AppTheme.ink).interactiveDismissDisabled(saving || unknown)
             .onChange(of: lookup.selected) { _, selected in
                 guard let selected else { return }; cancelFetch(); place = selected; day.timeZoneID = selected.timeZoneID

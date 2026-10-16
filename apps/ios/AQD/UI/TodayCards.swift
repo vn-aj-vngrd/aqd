@@ -291,7 +291,7 @@ private struct TodayCardActionLabel: View {
         HStack(spacing: 12) {
             Text(title).fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 12)
-            Image(systemName: "chevron.forward").accessibilityHidden(true)
+            Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
         }
         .font(AppTypography.supporting)
         .foregroundStyle(AppTheme.ink)

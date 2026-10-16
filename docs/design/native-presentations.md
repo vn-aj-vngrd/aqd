@@ -233,4 +233,8 @@ Centered navigation titles share one base type style: 20 pt size, 26 pt line hei
 
 ## Editor confirmation icons
 
-Native editor headers use an ink X for Cancel or Close and a checkmark for Done or Apply, with their spoken labels and at least 44-point targets. Backward navigation retains the ink chevron. Keep descriptive primary actions such as Save preferences and Use description as text. Destructive confirmation alerts retain explicit text actions.
+Latest owner update October16: native editor headers use an ink X for Cancel/Close and trailing text Save or Done for confirmation, with spoken labels and at least44-point targets. Receipt Done moves to the trailing side. Backward navigation retains the neutral ink chevron; confirmation checkmark glyphs are superseded. Selection and success checkmarks retain their distinct meaning. Weather has only X and trailing Save/Done, with no duplicate bottom save or Continue without weather command. Existing Off and unknown-write reconciliation semantics remain. Keep descriptive primary actions for tasks that require their existing footer. Destructive confirmation alerts retain explicit text actions.
+
+## Consistent native choice sheets · October16
+
+Closet Add, Planner Add and capture/shared photo-source choices use one native inset-grouped List sheet, a neutral X, semantic white row surfaces in light mode and paired dark surfaces, consistent native grouping/separators and system icons. Task navigation rows have compact trailing chevrons; Photos/Camera system-source commands keep their command semantics. The selection only queues the existing callback; dismiss the sheet before presenting its destination/picker. Retain cancellation, import identity and locking guards. Editing/review forms and destructive confirmations keep their own native presentation contracts. Native cells own touch bounds, scrolling and accessibility; no custom glass replica.

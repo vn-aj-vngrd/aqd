@@ -27,7 +27,7 @@ struct PrivateEntryView: View {
                         }
                     }
                 }
-        }.tint(AppTheme.actionText)
+        }.tint(AppTheme.ink)
     }
 
     private var introduction: some View {

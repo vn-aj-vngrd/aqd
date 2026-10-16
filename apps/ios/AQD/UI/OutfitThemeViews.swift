@@ -97,10 +97,10 @@ struct ThemeEditorView: View {
                 .navigationTitle(model.draft.baseRevision == 0 ? "Create theme" : "Edit theme").navigationBarTitleDisplayMode(.inline)
             .tint(AppTheme.ink)
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
+                    ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                         Button {
                             if model.saved != nil { finishSaved() } else { discard = true }
-                        } label: { Image(systemName: model.saved == nil ? "xmark" : "checkmark") }
+                        } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
                             .tint(AppTheme.ink).accessibilityLabel(model.saved == nil ? "Cancel theme" : "Done")
                             .disabled(model.pending || model.unknown)
                     }

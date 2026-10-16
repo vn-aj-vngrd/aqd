@@ -43,6 +43,7 @@ enum AppTypography {
     static let supporting: Font = .subheadline
     static let fieldLabel: Font = .subheadline.weight(.medium)
     static let metadata: Font = .footnote
+    static let disclosure = Font.footnote.weight(.medium)
 }
 
 /// Presentation preference only. Section09 owns persistence and Settings UI.

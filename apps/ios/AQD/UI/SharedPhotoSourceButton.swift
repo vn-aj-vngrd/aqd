@@ -23,12 +23,14 @@ struct SharedPhotoSourceButton: View {
             if let error { SemanticFeedback(role: .danger, message: error) }
         }
         .sheet(isPresented: $sources, onDismiss: presentSource) {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Add photo").font(AppTypography.section)
-                Button { pendingSource = false; sources = false } label: { Label("Choose from Photos", systemImage: "photo") }.frame(minHeight: 50)
-                Button { pendingSource = true; sources = false } label: { Label("Take photo", systemImage: "camera") }.frame(minHeight: 50)
-                SecondaryAction(title: "Cancel") { pendingSource = nil; sources = false }
-            }.padding(20).presentationDetents([.medium])
+            NativeChoiceSheet(title: "Add photo", footer: "Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.") {
+                NativeChoiceRow(title: "Choose from Photos", symbol: "photo.on.rectangle", disclosure: false) {
+                    pendingSource = false; sources = false
+                }
+                NativeChoiceRow(title: "Take photo", symbol: "camera", disclosure: false) {
+                    pendingSource = true; sources = false
+                }
+            }
         }
         .photosPicker(isPresented: $photos, selection: $item, matching: .images)
         .fullScreenCover(isPresented: $camera) {

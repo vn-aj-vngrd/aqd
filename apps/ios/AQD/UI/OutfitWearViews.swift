@@ -56,10 +56,10 @@ struct OutfitWearEditorView: View {
                 }.padding(20)
             }.background(AppTheme.canvas)
                 .navigationTitle(model.saved == nil ? (model.draft.baseRecord == nil ? "Record wear" : "Correct wear") : "Wear saved").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .topBarLeading) {
+                .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() } else { discard = true }
-                    } label: { Image(systemName: model.saved == nil ? "xmark" : "checkmark") }
+                    } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
                         .tint(AppTheme.ink).accessibilityLabel(model.saved == nil ? "Cancel wear" : "Done")
                         .disabled(model.pending || model.unknown)
                 } }

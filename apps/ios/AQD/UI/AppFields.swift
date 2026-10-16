@@ -138,3 +138,19 @@ struct MetadataText: UIViewRepresentable {
         }
     }
 }
+
+/// Full-width neutral menu selection; the Picker retains selected-option semantics.
+struct MenuSelectionLabel: View {
+    let title: String
+    var body: some View {
+        HStack(spacing: AppSpacing.small) {
+            Text(title).fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: AppSpacing.small)
+            Image(systemName: "chevron.up.chevron.down").font(.footnote.weight(.medium))
+                .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+        }
+        .font(AppTypography.body).foregroundStyle(AppTheme.ink)
+        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+        .contentShape(Rectangle())
+    }
+}

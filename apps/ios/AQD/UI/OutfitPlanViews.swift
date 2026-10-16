@@ -74,10 +74,10 @@ struct OutfitPlanEditorView: View {
                 .navigationTitle(model.saved == nil ? model.draft.baseEntry == nil ? "Plan a look" : "Edit plan entry" : "Plan saved").navigationBarTitleDisplayMode(.inline)
             .tint(AppTheme.ink)
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
+                    ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                         Button {
                             if model.saved != nil { model.finish() } else { discard = true }
-                        } label: { Image(systemName: model.saved == nil ? "xmark" : "checkmark") }
+                        } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
                             .tint(AppTheme.ink).accessibilityLabel(model.saved == nil ? "Cancel plan" : "Done")
                             .disabled(model.pending || model.unknown)
                     }

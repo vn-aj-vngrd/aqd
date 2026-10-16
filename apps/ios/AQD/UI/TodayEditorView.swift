@@ -37,11 +37,11 @@ struct TodayEditorView: View {
                     Text("Changes stay on this iPhone. Removing a widget keeps its saved note or photo.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }.padding(20)
             }.background(AppTheme.canvas).navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .topBarLeading) {
+                .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() }
                         else if !model.draft.hasChanges { model.finish(discarding: true) } else { discard = true }
-                    } label: { Image(systemName: model.saved == nil ? "xmark" : "checkmark") }.accessibilityLabel(model.saved == nil ? "Cancel Today changes" : "Done").disabled(model.pending || model.unknown)
+                    } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }.accessibilityLabel(model.saved == nil ? "Cancel Today changes" : "Done").disabled(model.pending || model.unknown)
                 } }
                 .navigationDestination(isPresented: $library) {
                     List(TodayWidgetKind.allCases, id: \.self) { kind in
@@ -84,6 +84,6 @@ private struct TodayReorderView: View {
                 }.accessibilityValue("Position \(index + 1) of \(model.draft.value.instances.count)").buttonStyle(.borderless)
             }.onMove { offsets, destination in model.update { $0.value.instances.move(fromOffsets: offsets, toOffset: destination) } }
         }.environment(\.editMode, .constant(.active)).navigationTitle("Reorder widgets")
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { dismiss() } label: { Image(systemName: "checkmark") }.accessibilityLabel("Done reordering") } }
+            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { dismiss() } label: { Text("Done") }.accessibilityLabel("Done reordering") } }
     }
 }

@@ -23,7 +23,7 @@ struct DisclosureRow: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: "chevron.forward")
-                    .font(.system(size: AppControlMetrics.disclosureLane))
+                    .font(AppTypography.disclosure)
                     .frame(width: AppControlMetrics.disclosureLane)
                     .foregroundStyle(AppTheme.secondary)
                     .accessibilityHidden(true)

@@ -98,12 +98,12 @@ struct FitEditorView: View {
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(20)
             }.background(AppTheme.canvas).navigationTitle(model.draft.base == nil ? "Add fit" : "Edit fit").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
-                .toolbar { ToolbarItem(placement: .topBarLeading) {
+                .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() }
                         else if !model.draft.hasChanges { model.finish(discarding: true) }
                         else { discard = true }
-                    } label: { Image(systemName: model.saved == nil ? "xmark" : "checkmark") }.accessibilityLabel(model.saved == nil ? "Cancel fit" : "Done").disabled(model.pending || model.unknown)
+                    } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }.accessibilityLabel(model.saved == nil ? "Cancel fit" : "Done").disabled(model.pending || model.unknown)
                 } }
                 .navigationDestination(isPresented: $editingPhoto) { PhotoEditorView(model: model) }
                 .navigationDestination(isPresented: $choosingOutfit) { FitOutfitChooser(model: model) }

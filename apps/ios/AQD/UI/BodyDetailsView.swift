@@ -24,7 +24,7 @@ struct BodyDetailsView: View {
                     })) {
                         Text("cm").tag(BodyPreferences.Units.cm)
                         Text("ft/in").tag(BodyPreferences.Units.feetInches)
-                    }.pickerStyle(.menu).tint(AppTheme.actionText).frame(minWidth: 64, minHeight: 44)
+                    }.pickerStyle(.menu).tint(AppTheme.ink).frame(minWidth: 64, minHeight: 44)
                         .disabled(!input.isValid).accessibilityIdentifier("style.height.units")
                 }.padding(.horizontal, 14).padding(.vertical, 5).frame(minHeight: 54)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
@@ -72,7 +72,7 @@ struct BodyDetailsView: View {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
                     Button { heightEditing = false } label: {
-                        Label("Done editing height", systemImage: "checkmark").labelStyle(.iconOnly)
+                        Text("Done")
                     }.frame(minWidth: 44, minHeight: 44)
                 }
             }
@@ -115,13 +115,13 @@ private struct BodyShapePickerView: View {
                     if !picker.isEditingCustom {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button { model.update { $0.finishBodyShapePicker() } } label: {
-                                Label("Done", systemImage: "checkmark").labelStyle(.iconOnly)
+                                Text("Done")
                             }.frame(minWidth: 44, minHeight: 44)
                                 .accessibilityIdentifier("style.body.picker.done")
                         }
                     }
                 }
-        }.tint(AppTheme.actionText).interactiveDismissDisabled()
+        }.tint(AppTheme.ink).interactiveDismissDisabled()
             .presentationDetents([.large])
     }
     private var choices: some View {

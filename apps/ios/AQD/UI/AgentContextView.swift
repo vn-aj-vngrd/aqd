@@ -51,7 +51,7 @@ struct AgentContextView: View {
                     ToolbarItem(placement: .confirmationAction) { Button {
                         model.conversation.context = draft
                         if model.persist() { dismiss() }
-                    } label: { Image(systemName: "checkmark").frame(width: 44, height: 44) }.accessibilityLabel("Done") }
+                    } label: { Text("Done").frame(minWidth: 44, minHeight: 44) }.accessibilityLabel("Done") }
                 }
         }.sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, initial: draft.weather) { value in draft.weather = value; return true } } }
         .tint(AppTheme.ink).interactiveDismissDisabled(model.hasPendingOperation)

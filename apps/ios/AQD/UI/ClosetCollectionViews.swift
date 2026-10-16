@@ -25,28 +25,15 @@ struct PieceCollectionGrid: View {
 enum ClosetAddAction: String, CaseIterable { case piece = "Add a piece", outfit = "Build an outfit", theme = "Create a theme" }
 struct ClosetAddSheet: View {
     let select: (ClosetAddAction) -> Void
-    @Environment(\.dismiss) private var dismiss
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                ForEach(ClosetAddAction.allCases, id: \.self) { action in
-                    Button { select(action) } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: action == .piece ? "tshirt" : action == .outfit ? "square.stack" : "folder")
-                                .frame(width: 24)
-                            Text(action.rawValue).frame(maxWidth: .infinity, alignment: .leading)
-                            Image(systemName: "chevron.forward").font(.system(size: 22)).frame(width: 24)
-                                .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
-                        }.font(AppTypography.body).foregroundStyle(AppTheme.ink).frame(minHeight: 56).padding(.horizontal, 20)
-                    }.buttonStyle(.plain)
+        NativeChoiceSheet(title: "Add to closet") {
+            ForEach(ClosetAddAction.allCases, id: \.self) { action in
+                NativeChoiceRow(title: action.rawValue,
+                                symbol: action == .piece ? "tshirt" : action == .outfit ? "square.stack" : "folder") {
+                    select(action)
                 }
-                Spacer(minLength: 0)
-            }.padding(.top, 8).background(AppTheme.canvas)
-                .navigationTitle("Add to closet").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .topBarLeading) {
-                    Button { dismiss() } label: { Image(systemName: "xmark") }.tint(AppTheme.ink).accessibilityLabel("Cancel")
-                } }
-        }.presentationDetents([.medium, .large]).presentationDragIndicator(.visible)
+            }
+        }
     }
 }
 

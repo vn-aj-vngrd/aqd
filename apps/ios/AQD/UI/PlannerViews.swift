@@ -13,7 +13,7 @@ struct LocalPlannerView: View {
             VStack(alignment: .leading, spacing: 16) {
                 PlannerCalendarHeader(day: $state.plannerDay, mode: $state.plannerMode, counts: counts).padding(.horizontal, 20)
                 Text(state.plannerDay.displayDate).font(AppTypography.section).padding(.horizontal, 20)
-                if state.planError == nil && state.planEntries.isEmpty && state.planDefinitions.isEmpty {
+                if state.planError == nil && entries.isEmpty && state.planDefinitions.isEmpty {
                     EmptyStatePage(title: "No plans for this day", systemImage: "calendar",
                                    description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear.")) {
                         PrimaryAction(title: "Plan an outfit") { state.openPlan(day: state.plannerDay) }
@@ -50,19 +50,13 @@ struct LocalPlannerView: View {
                                 HStack {
                                     Text(plan.name).frame(maxWidth: .infinity, alignment: .leading)
                                     Text(plan.start.displayDate).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                                    Image(systemName: "chevron.forward").accessibilityHidden(true)
+                                    Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
                                 }.foregroundStyle(AppTheme.ink).padding(14).frame(minHeight: 54)
                                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                             }.buttonStyle(.plain)
                         }
                     }
-                    let upcoming = state.planEntries.filter { $0.day.key > state.plannerDay.key }
-                    if !upcoming.isEmpty {
-                        Text("Upcoming plans").font(AppTypography.section)
-                        ForEach(Array(upcoming.prefix(8))) { entry in
-                            NavigationLink(value: PlannerRoute.entry(entry.id)) { PlanAgendaRow(entry: entry, showDate: true) }.buttonStyle(.plain)
-                        }
-                    }
+
                 }.padding(20)
             }
             .safeAreaInset(edge: .bottom) {
@@ -115,7 +109,7 @@ struct PlanAgendaRow: View {
                     Text("Needs review").font(AppTypography.metadata).foregroundStyle(AppTheme.warning)
                 }
             }.frame(maxWidth: .infinity, alignment: .leading).foregroundStyle(AppTheme.secondary)
-            Image(systemName: "chevron.forward").font(.system(size: 22)).foregroundStyle(AppTheme.secondary).frame(width: 22).accessibilityHidden(true)
+            Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).frame(width: 22).accessibilityHidden(true)
         }.padding(14).frame(minHeight: 108).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
     }
 }
@@ -125,6 +119,7 @@ struct LocalPlanEntryView: View {
     @Environment(\.dismiss) private var dismiss
     let id: UUID
     @State private var confirming = false
+    @State private var viewingWear = false
     @State private var removal: PlanEntryDeletionRequest?
     @State private var error: String?
     @State private var skipRequest: HistoryMutation?
@@ -137,32 +132,56 @@ struct LocalPlanEntryView: View {
                     Text(entry.day.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     if let outfit = state.outfits.first(where: { $0.id == entry.outfitID }) {
                         OutfitComposition(pieceIDs: outfit.pieceIDs)
-                        NavigationLink(value: ClosetRoute.outfit(outfit.id)) { Text("Open outfit") }.frame(minHeight: 44)
                     }
                     if entry.requiresReview { SemanticFeedback(role: .warning, message: "Review the current outfit before using this plan.") }
-                    if entry.state == .planned || entry.state == .unassigned {
-                        PrimaryAction(title: "Record wear") { state.openWear(outfitID: entry.outfitID, entry: entry) }
-                            .disabled(removal != nil || skipRequest != nil)
-                        SecondaryAction(title: skipRequest == nil ? "Skip entry" : "Check skip result") {
-                            skip(entry)
-                        }
-                    }
-                    if let wearID = entry.wearRecordID {
-                        NavigationLink("View recorded wear") { LocalWearDetailView(id: wearID) }.frame(minHeight: 44)
-                    }
-                    PrimaryAction(title: "Edit entry") { state.openPlan(editing: entry) }
-                        .disabled(removal != nil || entry.state == .worn || entry.state == .skipped)
                     Text("Planning this date hasn’t recorded wear. Actual wear remains a separate action.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    if entry.state == .planned || entry.state == .unassigned {
-                        Button("Remove entry", role: .destructive) { removal = PlanEntryDeletionRequest(entry: entry); confirming = true }.frame(minHeight: 44)
-                    }
                 } else { AppEmptyState("Plan unavailable", systemImage: "calendar") }
                 if let error {
                     SemanticFeedback(role: .danger, message: error)
-                    if removal != nil { Button("Retry reviewed removal", action: remove).frame(minHeight: 44) }
                 }
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle("Plan entry").navigationBarTitleDisplayMode(.inline)
+            .tint(AppTheme.ink)
+            .toolbar { ToolbarItem(placement: .topBarTrailing) {
+                if let entry {
+                    Menu {
+                        if let outfit = state.outfits.first(where: { $0.id == entry.outfitID }) {
+                            NavigationLink(value: ClosetRoute.outfit(outfit.id)) { Label("Open outfit", systemImage: "square.stack") }
+                        }
+                        Button("Edit entry", systemImage: "square.and.pencil") { state.openPlan(editing: entry) }
+                            .disabled(removal != nil || skipRequest != nil || entry.state == .worn || entry.state == .skipped)
+                        if entry.state == .planned || entry.state == .unassigned {
+                            Button(skipRequest == nil ? "Skip entry" : "Check skip result", systemImage: "forward.end") { skip(entry) }
+                                .disabled(removal != nil)
+                            Section {
+                                Button("Remove entry", systemImage: "trash", role: .destructive) {
+                                    removal = PlanEntryDeletionRequest(entry: entry); confirming = true
+                                }.disabled(removal != nil || skipRequest != nil)
+                            }
+                        }
+                    } label: { Label("More plan options", systemImage: "ellipsis") }
+                }
+            } }
+            .safeAreaInset(edge: .bottom) {
+                if removal != nil {
+                    ActionFooter { PrimaryAction(title: "Check removal result", action: remove) }
+                } else if let entry {
+                    ActionFooter {
+                        if skipRequest != nil {
+                            PrimaryAction(title: "Check skip result") { skip(entry) }
+                        } else if entry.state == .planned || entry.state == .unassigned {
+                            PrimaryAction(title: "Record wear") { state.openWear(outfitID: entry.outfitID, entry: entry) }
+                        } else if entry.wearRecordID != nil {
+                            PrimaryAction(title: "View recorded wear") { viewingWear = true }
+                        } else {
+                            PrimaryAction(title: "Open Planner") { state.selection = 2; dismiss() }
+                        }
+                    }
+                }
+            }
+            .navigationDestination(isPresented: $viewingWear) {
+                if let wearID = entry?.wearRecordID { LocalWearDetailView(id: wearID) }
+            }
             .confirmationDialog("Remove this plan entry?", isPresented: $confirming, titleVisibility: .visible) {
                 Button("Remove entry", role: .destructive, action: remove)
                 Button("Cancel", role: .cancel) { removal = nil }

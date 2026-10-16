@@ -39,7 +39,7 @@ struct TodayView: View {
             }
             .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
             .onAppear { state.reloadToday(); state.reloadPlanEntries(); state.reloadWear(); state.reloadOutfits(); state.reloadPieces(); state.reloadFits(); state.reloadThemes() }
-        }.tint(AppTheme.actionText)
+        }.tint(AppTheme.ink)
     }
 
 }

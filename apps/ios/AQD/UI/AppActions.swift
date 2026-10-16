@@ -3,6 +3,7 @@ import SwiftUI
 struct PrimaryAction: View {
     let title: String
     var isPending = false
+    var systemImage: String? = nil
     let action: () -> Void
     @Environment(\.isEnabled) private var isEnabled
     private var usesAccent: Bool { isEnabled || isPending }
@@ -15,6 +16,9 @@ struct PrimaryAction: View {
             HStack(spacing: AppSpacing.small) {
                 if isPending {
                     ProgressView().tint(usesAccent ? AppTheme.onAccent : AppTheme.secondary).accessibilityHidden(true)
+                }
+                if let systemImage {
+                    Image(systemName: systemImage).accessibilityHidden(true)
                 }
                 Text(title).font(usesAccent ? AppTypography.action : AppTypography.body)
                     .multilineTextAlignment(.center)

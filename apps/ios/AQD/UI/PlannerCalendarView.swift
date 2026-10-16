@@ -26,10 +26,13 @@ struct PlannerCalendarView: View {
                 Spacer(minLength: 0)
                 Button(mode == .week ? "Month" : "Week") { mode = mode == .week ? .month : .week }
                     .frame(minWidth: 44, minHeight: 44).tint(AppTheme.actionText)
-                Button { move(-1) } label: { Image(systemName: "chevron.backward") }.frame(width: 44, height: 44)
-                    .accessibilityLabel(mode == .week ? "Previous week" : "Previous month")
-                Button { move(1) } label: { Image(systemName: "chevron.forward") }.frame(width: 44, height: 44)
-                    .accessibilityLabel(mode == .week ? "Next week" : "Next month")
+                HStack(spacing: 0) {
+                    Button { move(-1) } label: { Image(systemName: "chevron.backward") }.frame(width: 44, height: 44)
+                        .accessibilityLabel(mode == .week ? "Previous week" : "Previous month")
+                    Button { move(1) } label: { Image(systemName: "chevron.forward") }.frame(width: 44, height: 44)
+                        .accessibilityLabel(mode == .week ? "Next week" : "Next month")
+                }
+
             }
             if mode == .week {
                 ViewThatFits(in: .horizontal) {
@@ -61,7 +64,7 @@ struct PlannerCalendarView: View {
                         Button("Today") { day = LocalPlanDay(timeZone: zone); chooseDate = false }.frame(minHeight: 44)
                     }.padding(20).navigationTitle("Select date").navigationBarTitleDisplayMode(.inline)
                         .toolbar { ToolbarItem(placement: .confirmationAction) {
-                            Button { chooseDate = false } label: { Image(systemName: "checkmark") }.accessibilityLabel("Done").tint(AppTheme.ink)
+                            Button { chooseDate = false } label: { Text("Done") }.accessibilityLabel("Done").tint(AppTheme.ink)
                         } }
                 }
             }

@@ -92,35 +92,14 @@ struct PieceCaptureView: View {
             selectedPhoto = nil
         }
         .sheet(isPresented: $sourceSheet, onDismiss: presentPendingSource) {
-            NavigationStack {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: AppSpacing.screen) {
-                        // Paper SQ4/SQE: 16pt inset + 24pt icon + 14pt gap;
-                        // the separator starts at the label, not beneath the icon.
-                        SurfaceGroup([PhotoSource.photos, .camera], id: \.self,
-                                     separatorInsets: EdgeInsets(top: 0, leading: 54, bottom: 0, trailing: 0)) { source in
-                            sourceRow(source == .photos ? "Choose from Photos" : "Take photo",
-                                      symbol: source == .photos ? "photo.on.rectangle" : "camera", source: source)
-                        }
-                        MetadataText("Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.")
-                    }
-                    .padding(AppSpacing.screen)
+            NativeChoiceSheet(title: "Add photo", footer: "Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.") {
+                NativeChoiceRow(title: "Choose from Photos", symbol: "photo.on.rectangle", disclosure: false) {
+                    pendingSource = .photos; sourceSheet = false
                 }
-                .background(AppTheme.canvas)
-                .navigationTitle("Add photo").navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        if #available(iOS 26.0, *) {
-                            Button(role: .close) { sourceSheet = false }
-                        } else {
-                            Button("Close") { sourceSheet = false }
-                        }
-                    }
+                NativeChoiceRow(title: "Take photo", symbol: "camera", disclosure: false) {
+                    pendingSource = .camera; sourceSheet = false
                 }
             }
-            .tint(AppTheme.ink)
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $cameraPresented, onDismiss: {
             if let cameraData {
@@ -181,7 +160,7 @@ struct PieceCaptureView: View {
                                     .foregroundStyle(AppTheme.ink)
                                 Spacer(minLength: 0)
                                 Image(systemName: "chevron.forward")
-                                    .font(.system(size: AppControlMetrics.disclosureLane))
+                                    .font(AppTypography.disclosure)
                                     .frame(width: AppControlMetrics.disclosureLane)
                                     .foregroundStyle(AppTheme.secondary)
                                     .accessibilityHidden(true)
@@ -216,17 +195,7 @@ struct PieceCaptureView: View {
                                 }
                             }
                         } label: {
-                            HStack {
-                                Text(model.draft.category?.rawValue ?? "Choose category")
-                                    .fixedSize(horizontal: false, vertical: true)
-                                Spacer(minLength: AppSpacing.small)
-                                Image(systemName: "chevron.up.chevron.down")
-                                    .font(.footnote.weight(.medium))
-                                    .foregroundStyle(AppTheme.secondary)
-                                    .accessibilityHidden(true)
-                            }
-                            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading)
-                            .contentShape(Rectangle())
+                            MenuSelectionLabel(title: model.draft.category?.rawValue ?? "Choose category")
                         }
                         .menuIndicator(.hidden)
                         .buttonStyle(.plain)
@@ -241,7 +210,7 @@ struct PieceCaptureView: View {
                         showDetails = true
                     } label: {
                         Text("More details").font(AppTypography.supporting)
-                            .foregroundStyle(AppTheme.ink)
+                            .foregroundStyle(AppTheme.actionText)
                             .fixedSize(horizontal: false, vertical: true)
                             .padding(.top, AppSpacing.medium)
                             .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .topLeading)
@@ -311,30 +280,6 @@ struct PieceCaptureView: View {
                 }
             }
         }
-    }
-
-    private func sourceRow(_ title: String, symbol: String, source: PhotoSource) -> some View {
-        Button {
-            pendingSource = source
-            sourceSheet = false
-        } label: {
-            // These are system-source commands, not app disclosure destinations.
-            // Paper SQ4/SQE has a leading symbol and no trailing chevron.
-            HStack(spacing: 14) {
-                Image(systemName: symbol)
-                    .font(.system(size: AppControlMetrics.disclosureLane))
-                    .frame(width: 24)
-                    .accessibilityHidden(true)
-                Text(title).font(AppTypography.body)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
-            }
-            .foregroundStyle(AppTheme.ink)
-            .padding(.horizontal, AppSpacing.large)
-            .padding(.vertical, AppSpacing.small)
-            .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
-            .contentShape(Rectangle())
-        }.buttonStyle(.plain)
     }
 
     private func presentPendingSource() {

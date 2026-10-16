@@ -69,10 +69,10 @@ struct OutfitEditorView: View {
             .navigationTitle(model.saved != nil ? "Outfit saved" : model.draft.stage == .readiness ? "First outfit" : model.draft.stage == .suggest ? "Suggest an outfit" : model.draft.stage == .review ? "Review outfit" : model.draft.baseRevision == 0 ? "Build outfit" : "Edit outfit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() } else { discard = true }
-                    } label: { Image(systemName: model.saved == nil ? "xmark" : "checkmark") }
+                    } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
                         .accessibilityLabel(model.saved == nil ? "Cancel outfit" : "Done")
                         .tint(AppTheme.ink).disabled(model.pending || model.unknown || model.generating)
                 }

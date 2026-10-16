@@ -145,7 +145,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
                                   || recipe == nil || previewImage == nil || originalWidth <= 0 || originalHeight <= 0)
                 }
             }
-        }.tint(AppTheme.actionText)
+        }.tint(AppTheme.ink)
             .interactiveDismissDisabled(dirty || applying)
             // Reset must restart preparation even when the requested rotation is already zero.
             .task(id: [quarterTurns, previewState.retryGeneration]) { await prepareRotatedPreview() }

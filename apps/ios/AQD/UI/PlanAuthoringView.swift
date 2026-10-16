@@ -4,19 +4,20 @@ import SwiftUI
 enum PlannerAddChoice: String, CaseIterable { case day = "Plan one day", dates = "Plan several days", routine = "Create a routine", trip = "Plan an event or trip" }
 struct PlannerAddSheet: View {
     let select: (PlannerAddChoice) -> Void
-    @Environment(\.dismiss) private var dismiss
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                ForEach(PlannerAddChoice.allCases, id: \.self) { choice in
-                    DisclosureRow(title: choice.rawValue) { select(choice) }
-                }
-                Spacer(minLength: 0)
-            }.padding(20).background(AppTheme.canvas).navigationTitle("Add to Planner").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: { Image(systemName: "xmark") }.tint(AppTheme.ink).accessibilityLabel("Cancel")
-                } }
-        }.presentationDetents([.medium, .large]).presentationDragIndicator(.visible)
+        NativeChoiceSheet(title: "Add to Planner") {
+            ForEach(PlannerAddChoice.allCases, id: \.self) { choice in
+                NativeChoiceRow(title: choice.rawValue, symbol: symbol(choice)) { select(choice) }
+            }
+        }
+    }
+    private func symbol(_ choice: PlannerAddChoice) -> String {
+        switch choice {
+        case .day: "calendar"
+        case .dates: "calendar.badge.plus"
+        case .routine: "repeat"
+        case .trip: "suitcase"
+        }
     }
 }
 

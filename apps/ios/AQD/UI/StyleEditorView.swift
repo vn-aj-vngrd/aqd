@@ -82,7 +82,7 @@ struct StyleEditorView: View {
                     model.discard()
                 }
             .interactiveDismissDisabled()
-        }.tint(AppTheme.actionText)
+        }.tint(AppTheme.ink)
     }
 
     private var savedContinueTitle: String {
@@ -166,7 +166,7 @@ struct StyleEditorView: View {
                                     if step == 4 { Text("Use for suggestions: \(model.draft.answers.body.useForSuggestions ? "On" : "Off")").font(.footnote).foregroundStyle(AppTheme.secondary) }
                                 }
                                 Spacer(minLength: 0)
-                                Image(systemName: "chevron.forward").font(.system(size: 22)).frame(width: 22).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                                Image(systemName: "chevron.forward").font(AppTypography.disclosure).frame(width: 22).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
                             }.padding(14).frame(maxWidth: .infinity, minHeight: 80, alignment: .leading).contentShape(Rectangle())
                         }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityIdentifier("style.review.\(step)")
                             .disabled(model.pending || model.unknown)

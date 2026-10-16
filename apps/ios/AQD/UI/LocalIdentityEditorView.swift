@@ -43,12 +43,12 @@ struct LocalIdentityEditorView: View {
                 }.padding(20)
             }.background(AppTheme.canvas).navigationTitle("Edit profile").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
                 .navigationDestination(isPresented: $editingPhoto) { PhotoEditorView(model: model) }
-                .toolbar { ToolbarItem(placement: .topBarLeading) {
+                .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() }
                         else if !model.draft.hasChanges { model.finish(discarding: true) }
                         else { discard = true }
-                    } label: { Image(systemName: model.saved == nil ? "xmark" : "checkmark") }
+                    } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
                         .accessibilityLabel(model.saved == nil ? "Cancel profile edits" : "Done").disabled(model.pending || model.unknown)
                 } }
         }.interactiveDismissDisabled().draftDiscardConfirmation(isPresented: $discard, title: "Discard profile changes?", message: "Your saved name and photo stay unchanged. Other local data is unaffected.") {

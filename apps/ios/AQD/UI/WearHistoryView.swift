@@ -73,7 +73,7 @@ struct WearAgendaRow: View {
                 Text(record.pieces.map(\.name).joined(separator: ", ")).font(AppTypography.body).foregroundStyle(AppTheme.ink)
                 Text("\(record.day.key) · \(record.pieces.count) pieces · Recorded").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             }.frame(maxWidth: .infinity, alignment: .leading)
-            Image(systemName: "chevron.forward").font(.system(size: 22)).foregroundStyle(AppTheme.secondary).frame(width: 22).accessibilityHidden(true)
+            Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).frame(width: 22).accessibilityHidden(true)
         }.padding(14).frame(minHeight: 108).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
     }
 }
