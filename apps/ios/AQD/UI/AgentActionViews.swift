@@ -17,6 +17,7 @@ struct AgentActionComposerView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Group {
                 Text("Manual draft · Not saved. Choose exact records, then review before applying. Conversation text never approves a change.").font(.subheadline)
                 Picker("Task", selection: $kind) { ForEach(["Theme", "Plan", "Wear", "Availability"], id: \.self) { Text($0) } }
                 if ["Theme", "Outfit", "Plan"].contains(kind) { TextField("Name", text: $name) }
@@ -37,6 +38,7 @@ struct AgentActionComposerView: View {
                 if kind == "Plan" || kind == "Wear" { ThemedDatePicker(kind == "Plan" ? "First date" : "Recorded date", selection: $first, displayedComponents: .date) }
                 if kind == "Plan" { ThemedDatePicker("Last date", selection: $last, displayedComponents: .date); Toggle("Leave dates without an outfit intentionally unassigned", isOn: $unassigned) }
                 if let error { Text(error).foregroundStyle(AppTheme.error) }
+                }.listRowBackground(AppTheme.surface)
             }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Local tools").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarForwardAction(title: "Review") { prepare() } } }
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button { dismiss() } label: { Image(systemName: "xmark") }.accessibilityLabel("Cancel") } }

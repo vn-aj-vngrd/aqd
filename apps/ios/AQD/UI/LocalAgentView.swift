@@ -147,13 +147,15 @@ struct AgentConversationView: View {
             .sheet(isPresented: $voice) { AgentVoiceView(model: model) }
             .sheet(isPresented: $context) { AgentContextView(model: model).environment(state) }
             .sheet(item: $details) { message in NavigationStack { Form {
+                Group {
                 LabeledContent("Runtime", value: "On-device")
                 LabeledContent("Received", value: message.createdAt.formatted())
                 LabeledContent("Response time", value: message.elapsedSeconds.map { String(format: "%.1f s", $0) } ?? "Unavailable")
                 LabeledContent("First text", value: message.firstTextSeconds.map { String(format: "%.1f s", $0) } ?? "Unavailable")
                 Text(message.contextSummary ?? "Context measurements unavailable")
                 Text("Generated text cannot change your records. Only an explicit review and saved receipt can do that.")
-            }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { Button { details = nil } label: { Text("Done") }.accessibilityLabel("Done") } } } }
+                }.listRowBackground(AppTheme.surface)
+            }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarSaveAction(title: "Done") { details = nil } } } } }
             .onAppear { if automaticallyFocusComposer && model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
     }
     private var composer: some View {

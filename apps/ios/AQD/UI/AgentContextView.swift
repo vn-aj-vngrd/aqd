@@ -13,6 +13,7 @@ struct AgentContextView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Group {
                 if let error = model.error { Text(error).foregroundStyle(AppTheme.error) }
                 Section("Choose your context") {
                     Picker("Included scope", selection: $draft.scope) {
@@ -45,13 +46,16 @@ struct AgentContextView: View {
                         if state.pieces.isEmpty && state.outfits.isEmpty && state.themes.isEmpty { Text("Your closet is empty. Add a piece or choose Without closet.") }
                     }
                 }
+                }.listRowBackground(AppTheme.surface)
             }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Agent context").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button { if !model.hasPendingOperation { dismiss() } } label: { Image(systemName: "xmark") }.accessibilityLabel("Cancel") }
-                    ToolbarItem(placement: .confirmationAction) { Button {
-                        model.conversation.context = draft
-                        if model.persist() { dismiss() }
-                    } label: { Text("Done").frame(minWidth: 44, minHeight: 44) }.accessibilityLabel("Done") }
+                    ToolbarItem(placement: .confirmationAction) {
+                        ToolbarSaveAction(title: "Done") {
+                            model.conversation.context = draft
+                            if model.persist() { dismiss() }
+                        }
+                    }
                 }
         }.sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, initial: draft.weather) { value in draft.weather = value; return true } } }
         .tint(AppTheme.ink).interactiveDismissDisabled(model.hasPendingOperation)
