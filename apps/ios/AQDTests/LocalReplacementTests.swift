@@ -8,7 +8,7 @@ import Testing
         let source = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         var chat = AgentConversation(ownerID: try source.todayConfiguration().ownerID); chat.draft = "Keep this"
         _ = try source.saveAgentConversation(chat, operationID: UUID())
-        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source))
+        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source).data)
         let coordinator = LocalDataCoordinator(legacyRoot: source.localDirectory)
         let request = try await coordinator.prepareRestore(package, source: source)
         try coordinator.cancel(request.operationID)
@@ -17,7 +17,7 @@ import Testing
     }
     @Test func staleReviewRefusesReplacementAndFreshReviewRequiresTheNewVersion() async throws {
         let source = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
-        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source))
+        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source).data)
         let coordinator = LocalDataCoordinator(legacyRoot: source.localDirectory)
         let first = try await coordinator.prepareRestore(package, source: source)
         _ = try source.saveLocalSettings(LocalSettingsRequest(base: source.localSettings(), appearance: .dark))
@@ -34,7 +34,7 @@ import Testing
     }
     @Test func failedSwitchPreservesOriginalAndLostAcknowledgmentReconcilesOnePublishedGeneration() async throws {
         let fixture = try await LocalDataFixture(), source = fixture.store
-        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source))
+        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source).data)
         var before = true, after = true
         let coordinator = LocalDataCoordinator(legacyRoot: source.localDirectory,
             beforeSwitch: { if before { throw CocoaError(.fileWriteNoPermission) } },
@@ -66,7 +66,7 @@ import Testing
         var chat = AgentConversation(ownerID: try source.todayConfiguration().ownerID); chat.draft = "Original remains"
         _ = try source.saveAgentConversation(chat, operationID: UUID())
         let coordinator = LocalDataCoordinator(legacyRoot: source.localDirectory, afterSwitch: { throw CocoaError(.fileReadUnknown) })
-        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source))
+        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source).data)
         let request = try await coordinator.prepareRestore(package, source: source)
         #expect(throws: (any Error).self) { try coordinator.commit(request, source: source) }
         try FileManager.default.removeItem(at: coordinator.generationDirectory(request.operationID).appendingPathComponent("wardrobe.store"))

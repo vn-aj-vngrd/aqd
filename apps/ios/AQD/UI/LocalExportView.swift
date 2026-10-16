@@ -29,6 +29,7 @@ private struct LocalExportContent: View {
         ScrollView { VStack(alignment: .leading, spacing: 20) {
             Text("Keep a private copy").font(AppTypography.section)
             Text("Includes pieces and photos, outfits/themes, plans/routines/trips, recorded wear, identity/preferences, fit memories, Today layouts and retained content, conversations, recoverable drafts and operation receipts.")
+            Text("Archives up to \(LocalArchivePackage.maximumSizeDescription). Larger closets cannot be exported in this version; your current data stays in place.").font(.subheadline).foregroundStyle(AppTheme.secondary)
             Text("Choose where to save in Files. A destination may use cloud storage. This archive contains sensitive private data and is not encrypted by AQD at its chosen destination.").font(.subheadline).foregroundStyle(AppTheme.secondary)
             switch model.phase {
             case .idle: PrimaryAction(title: "Create archive", action: model.start)

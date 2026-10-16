@@ -4,6 +4,14 @@ import Testing
 @testable import AQD
 
 @Suite(.serialized) @MainActor struct LocalArchiveTests {
+    @Test func oversizedArchiveIsRefusedBeforeLoadingItsPayload() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        FileManager.default.createFile(atPath: url.path, contents: nil)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let handle = try FileHandle(forWritingTo: url)
+        try handle.truncate(atOffset: 64 * 1024 * 1024 + 1); try handle.close()
+        #expect(throws: LocalArchiveError.tooLarge) { try LocalArchiveIO.read(url) }
+    }
     @Test func exportContainsActualSettingsAndConversationWithoutChangingTheSource() async throws {
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         let request = LocalSettingsRequest(base: try store.localSettings(), appearance: .dark)
@@ -11,7 +19,7 @@ import Testing
         var chat = AgentConversation(ownerID: try store.todayConfiguration().ownerID); chat.draft = "Private draft"
         _ = try store.saveAgentConversation(chat, operationID: UUID())
         let stamp = try store.mutationStamp()
-        let data = try await LocalArchiveService.create(store: store)
+        let data = try await LocalArchiveService.create(store: store).data
         let package = try LocalArchivePackage.decode(data)
         #expect(package.header.summary.conversations == 1)
         #expect(package.header.summary.ownerID == chat.ownerID)
@@ -25,7 +33,7 @@ import Testing
     }
     @Test func allDomainExportRestagesMediaDraftsUndoAndDeletionReceiptsWithoutDeletedContent() async throws {
         let fixture = try await LocalDataFixture(), source = fixture.store
-        let data = try await LocalArchiveService.create(store: source)
+        let data = try await LocalArchiveService.create(store: source).data
         #expect(data.range(of: Data(fixture.deletedSecret.utf8)) == nil)
         let package = try LocalArchivePackage.decode(data)
         let staged = try await LocalArchiveService.stage(package)

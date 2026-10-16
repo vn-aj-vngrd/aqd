@@ -52,6 +52,7 @@ import Observation
             } catch {
                 guard !Task.isCancelled, self.token == token else { return }
                 if case LocalArchiveError.newer = error { phase = .newer; self.error = "This archive needs a newer AQD. Your current closet has not changed." }
+                else if case LocalArchiveError.tooLarge = error { phase = .failed; self.error = "This archive exceeds the \(LocalArchivePackage.maximumSizeDescription) limit. Your current closet has not changed." }
                 else { phase = .failed; self.error = "This archive could not be validated. Check the file, storage and media. Your current closet has not been replaced." }
             }
         }

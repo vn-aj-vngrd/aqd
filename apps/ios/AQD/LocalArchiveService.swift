@@ -27,7 +27,7 @@ struct ValidatedLocalArchive {
         stagedStores = stagedStores.filter { $0.value.value != nil }
         return complete
     }
-    static func create(store: PieceStore) async throws -> Data {
+    static func create(store: PieceStore) async throws -> (data: Data, summary: LocalArchiveSummary) {
         let seed = try store.archiveSeed(); inFlight.insert(seed.directory)
         defer { inFlight.remove(seed.directory); try? FileManager.default.removeItem(at: seed.directory) }
         let copying = Task.detached(priority: .utility) {
@@ -62,7 +62,7 @@ struct ValidatedLocalArchive {
         }
         let data = try await withTaskCancellationHandler { try await encoding.value } onCancel: { encoding.cancel() }
         guard try store.mutationStamp() == seed.stamp else { throw LocalArchiveError.sourceChanged }
-        try Task.checkCancellation(); return data
+        try Task.checkCancellation(); return (data, summary)
     }
     static func stage(_ package: LocalArchivePackage, directory proposedDirectory: URL? = nil) async throws -> ValidatedLocalArchive {
         let directory = proposedDirectory ?? FileManager.default.temporaryDirectory.appendingPathComponent("AQD-restore-\(UUID().uuidString)", isDirectory: true)

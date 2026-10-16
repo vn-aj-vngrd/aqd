@@ -18,13 +18,12 @@ import Observation
         task = Task {
             do {
                 await Task.yield()
-                let bytes = try await LocalArchiveService.create(store: store)
+                let archive = try await LocalArchiveService.create(store: store)
                 guard !Task.isCancelled, self.token == token else { return }
-                let archive = try LocalArchivePackage.decode(bytes)
-                summary = archive.header.summary; data = bytes; phase = .ready
+                summary = archive.summary; data = archive.data; phase = .ready
             } catch {
                 guard !Task.isCancelled, self.token == token else { return }
-                self.error = "The archive couldn’t be prepared. Your closet is retained. Check available storage and media, then try again. Archives are limited to 512 MB."; phase = .failed
+                self.error = "The archive couldn’t be prepared. Your closet is retained. Check available storage and media, then try again. Archives are limited to \(LocalArchivePackage.maximumSizeDescription)."; phase = .failed
             }
         }
     }

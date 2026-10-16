@@ -29,7 +29,8 @@ struct LocalArchiveHeader: Codable, Sendable {
     let files: [File]
 }
 struct LocalArchivePackage: Sendable {
-    static let maximumBytes = 512 * 1024 * 1024
+    static let maximumBytes = 64 * 1024 * 1024
+    static var maximumSizeDescription: String { ByteCountFormatter.string(fromByteCount: Int64(maximumBytes), countStyle: .memory) }
     static let maximumHeader = 1024 * 1024
     static let schema = 22
     let header: LocalArchiveHeader

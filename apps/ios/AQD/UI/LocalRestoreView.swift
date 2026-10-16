@@ -14,6 +14,7 @@ struct LocalRestoreView: View {
                 case .choose:
                     Text("Choose a closet archive").font(AppTypography.section)
                     Text("Restore replaces this iPhone’s local closet after validation and review. Export your current data first if you want to keep a copy.")
+                    Text("Archives up to \(LocalArchivePackage.maximumSizeDescription) are supported.").foregroundStyle(AppTheme.secondary)
                     PrimaryAction(title: "Choose archive") { files = true }
                 case .validating:
                     ProgressView("Validating archive…")
