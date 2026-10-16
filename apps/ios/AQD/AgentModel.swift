@@ -198,7 +198,9 @@ import Observation
                     try Task.checkCancellation(); try conversation.complete(attemptID: attempt)
                 } catch {
                     if let i = conversation.messages.firstIndex(where: { $0.attemptID == attempt }) {
-                        conversation.messages[i].status = conversation.messages[i].status == .stopping ? .stopped : (conversation.messages[i].source.isEmpty ? .failed : .interrupted)
+                        if conversation.messages[i].status != .interrupted {
+                            conversation.messages[i].status = conversation.messages[i].status == .stopping ? .stopped : (conversation.messages[i].source.isEmpty ? .failed : .interrupted)
+                        }
                         conversation.messages[i].failureReason = self.error ?? (conversation.messages[i].status == .stopped ? "Stopped by you. The partial response is retained." : "The response could not finish. Your message and any partial response are retained; try again.")
                     }
                 }
@@ -215,7 +217,10 @@ import Observation
         guard let i = conversation.messages.firstIndex(where: \.isActive), conversation.messages[i].status != .stopping else { return }
         conversation.messages[i].status = .stopping; _ = persist(); generation?.cancel()
     }
-    func suspend() { stop(); _ = persist() }
+    func suspend() {
+        conversation.interruptActiveAttempt()
+        generation?.cancel(); _ = persist()
+    }
     func retryPending() {
         if let deletion, let value = history.first(where: { $0.id == deletion.0 }) { delete(value) }
         else { _ = persist() }

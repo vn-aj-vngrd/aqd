@@ -62,7 +62,8 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
         messages[i].source += text; messages[i].status = .streaming
     }
     public mutating func complete(attemptID: UUID) throws {
-        guard let i = messages.firstIndex(where: { $0.attemptID == attemptID && $0.isActive && $0.status != .stopping }) else { throw PlanValidationError.invalidRecord }
+        guard let i = messages.firstIndex(where: { $0.attemptID == attemptID && $0.isActive && $0.status != .stopping }),
+              !messages[i].source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw PlanValidationError.invalidRecord }
         messages[i].status = .complete
     }
     public mutating func interruptActiveAttempt() {
@@ -74,9 +75,11 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
         messages[i].versions.append(AgentResponseVersion(source: messages[i].source, status: messages[i].status))
         messages[i].source = ""; messages[i].status = .waiting; messages[i].attemptID = attempt
         messages[i].firstTextSeconds = nil; messages[i].elapsedSeconds = nil
+        messages[i].failureReason = nil
         return attempt
     }
     public func validated() throws {
+        try context.weather?.validated()
         guard revision >= 0, revision < Int.max, Set(messages.map(\.id)).count == messages.count,
               messages.filter(\.isActive).count <= 1,
               Set(context.selected.map { "\($0.kind):\($0.id)" }).count == context.selected.count,

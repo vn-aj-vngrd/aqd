@@ -48,4 +48,21 @@ import AQDCore
         #expect(calls == 0 && model.conversation.messages.isEmpty && model.conversation.draft == "Retained")
         #expect(model.persist())
     }
+    @Test func emptyProviderResponseIsFailedAndBackgroundInterruptionIsNotUserStop() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let empty = try AgentModel(store: store, qualification: qualification) { _, _ in AsyncThrowingStream { $0.finish() } }
+        empty.availability = .awaitingQualification; empty.updateDraft("A look"); empty.send()
+        try await waitUntilStopped(empty)
+        #expect(empty.conversation.messages.last?.status == .failed)
+        let pair = AsyncThrowingStream<String, any Error>.makeStream()
+        let model = try AgentModel(store: store, qualification: qualification) { _, _ in pair.stream }
+        model.newConversation(); model.availability = .awaitingQualification
+        model.updateDraft("Another look"); model.send(); model.suspend()
+        // Interruption immediately makes the message inactive; allow the cancellation handler to finish too.
+        try await Task.sleep(for: .milliseconds(30))
+        pair.continuation.yield("Late text"); pair.continuation.finish()
+        #expect(model.conversation.messages.last?.status == .interrupted)
+        #expect(model.conversation.messages.last?.source.isEmpty == true)
+        #expect(try AgentModel(store: store).conversation.messages.last?.status == .interrupted)
+    }
 }
