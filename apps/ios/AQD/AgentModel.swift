@@ -32,7 +32,7 @@ import Observation
         }
     }
     func reloadHistory() {
-        do { history = try store.agentConversations(); error = nil }
+        do { history = try store.agentConversations(); if !hasPendingOperation { error = nil } }
         catch { self.error = "Conversations couldn’t load. Your saved history and draft are retained. Try again." }
     }
     func updateDraft(_ text: String) {
@@ -54,7 +54,9 @@ import Observation
                 conversation.revision = acknowledged.revision
             }
             if let saved = history.first(where: { $0.id == conversation.id }),
-               saved.draft == conversation.draft, saved.context == conversation.context, saved.messages == conversation.messages, saved.proposals == conversation.proposals { error = nil; return true }
+               saved.draft == conversation.draft, saved.context == conversation.context, saved.messages == conversation.messages, saved.proposals == conversation.proposals {
+                if !hasPendingOperation { error = nil }; return true
+            }
             if conversation.revision == 0 && conversation.draft.isEmpty && conversation.messages.isEmpty && (conversation.proposals ?? []).isEmpty && conversation.context == AgentContext() { return true }
             pending = (conversation, UUID())
             let result = try store.saveAgentConversation(conversation, operationID: pending!.1)
@@ -72,11 +74,14 @@ import Observation
         guard !active else { return }
         guard deletion == nil || deletion?.0 == value.id else { return }
         deletion = deletion ?? (value.id, value.revision, UUID())
+        reconcileDeletion()
+    }
+    private func reconcileDeletion() {
+        guard !active, let request = deletion else { return }
         do {
-            guard let deletion else { return }
-            try store.deleteAgentConversation(id: deletion.0, expectedRevision: deletion.1, operationID: deletion.2)
+            try store.deleteAgentConversation(id: request.0, expectedRevision: request.1, operationID: request.2)
             self.deletion = nil
-            if conversation.id == value.id { pending = nil; retention?.cancel(); conversation = AgentConversation(ownerID: value.ownerID) }
+            if conversation.id == request.0 { pending = nil; retention?.cancel(); conversation = AgentConversation(ownerID: conversation.ownerID) }
             reloadHistory()
         } catch PieceStore.StoreError.operationConflict {
             deletion = nil
@@ -235,7 +240,7 @@ import Observation
         generation?.cancel(); _ = persist()
     }
     func retryPending() {
-        if let deletion, let value = history.first(where: { $0.id == deletion.0 }) { delete(value) }
+        if deletion != nil { reconcileDeletion() }
         else { _ = persist() }
     }
     func recheckAvailability() { availability = OutfitSuggestions.availability(); if active && !supportsGeneration { suspend() } }

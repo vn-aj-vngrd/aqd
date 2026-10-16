@@ -51,6 +51,8 @@ struct AgentConversationView: View {
                 LazyVStack(alignment: .leading, spacing: 24) {
                     if let error = model.error {
                         SemanticFeedback(role: .danger, message: error)
+                    }
+                    if model.hasPendingOperation || model.error != nil {
                         Button("Retry operation") { model.retryPending() }.frame(minHeight: 44)
                     }
                     if model.conversation.messages.isEmpty && model.supportsGeneration {
@@ -199,15 +201,21 @@ struct AgentHistoryView: View {
     @State private var selected: AgentConversation?
     var body: some View {
         List {
-            if let error = model.error { Text(error).foregroundStyle(AppTheme.error); Button("Try again") { model.reloadHistory() } }
+            if let error = model.error { Text(error).foregroundStyle(AppTheme.error) }
+            if model.hasPendingOperation || model.error != nil {
+                Button(model.hasPendingOperation ? "Retry operation" : "Try again") {
+                    if model.hasPendingOperation { model.retryPending() } else { model.reloadHistory() }
+                }
+            }
             if model.history.isEmpty { ContentUnavailableView("No conversations yet", systemImage: "bubble.left", description: Text("Conversations stay on this iPhone.")) }
             ForEach(model.history) { value in
                 Button { open(value) } label: { VStack(alignment: .leading, spacing: 4) { Text(value.title).foregroundStyle(AppTheme.ink); Text(value.updatedAt, style: .date).font(.footnote).foregroundStyle(AppTheme.secondary) } }
+                    .disabled(model.hasPendingOperation)
                     .contextMenu { Button("Delete conversation", role: .destructive) { selected = value } }
                     .swipeActions { Button("Delete", role: .destructive) { selected = value } }
             }
         }.navigationTitle("Conversations")
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { model.newConversation(); open(model.conversation) } label: { Image(systemName: "square.and.pencil").frame(width: 44, height: 44) }.accessibilityLabel("New conversation") } }
+            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { model.newConversation(); open(model.conversation) } label: { Image(systemName: "square.and.pencil").frame(width: 44, height: 44) }.accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation) } }
             .alert("Delete this conversation?", isPresented: Binding(get: { selected != nil }, set: { if !$0 { selected = nil } })) {
                 Button("Cancel", role: .cancel) { selected = nil }
                 Button("Delete conversation", role: .destructive) { if let selected { model.delete(selected) }; selected = nil }

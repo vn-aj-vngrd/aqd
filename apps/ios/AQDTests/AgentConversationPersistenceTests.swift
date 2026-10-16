@@ -5,6 +5,26 @@ import SwiftData
 import AQDCore
 
 @Suite(.serialized) @MainActor struct AgentConversationPersistenceTests {
+    @Test(arguments: [false, true]) func unknownDeletionReconcilesAfterHistoryReloadRemovesItsRow(deletingCurrent: Bool) throws {
+        var unknown = false
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),
+            afterOutfitSave: { if unknown { throw CocoaError(.fileReadUnknown) } })
+        let model = try AgentModel(store: store)
+        model.updateDraft("Private draft"); #expect(model.persist())
+        let saved = try #require(model.history.first)
+        if !deletingCurrent { model.newConversation(); model.updateDraft("Current draft"); #expect(model.persist()) }
+        let currentID = model.conversation.id
+        unknown = true; model.delete(saved)
+        #expect(model.hasPendingOperation)
+        model.reloadHistory()
+        #expect(!model.history.contains { $0.id == saved.id })
+        model.suspend()
+        #expect(model.error != nil)
+        unknown = false; model.retryPending()
+        #expect(!model.hasPendingOperation)
+        #expect(deletingCurrent ? model.conversation.id != saved.id && model.conversation.draft.isEmpty : model.conversation.id == currentID && model.conversation.draft == "Current draft")
+        #expect(try store.agentConversations().count == (deletingCurrent ? 0 : 1))
+    }
     @Test(arguments: [false, true]) func unchangedSaveRetryAcknowledgesExactlyOneRevision(lostAcknowledgment: Bool) throws {
         var before = false, after = false, submissions = 0
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),
