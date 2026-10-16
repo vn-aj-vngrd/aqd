@@ -15,7 +15,7 @@ struct TodayView: View {
                     }
                     if let configuration = state.today {
                         ForEach(configuration.instances) { instance in
-                            TodayCard(instance: instance)
+                            TimelineView(.periodic(from: .now, by: 60)) { _ in TodayCard(instance: instance) }
                         }
                     }
 
@@ -23,8 +23,14 @@ struct TodayView: View {
             }
             .background(AppTheme.canvas)
             .navigationTitle("Today")
+            .toolbar { ToolbarItem(placement: .topBarTrailing) {
+                Button { state.openTodayEditor() } label: { Image(systemName: "slider.horizontal.3").font(.system(size: 22)).frame(width: 44, height: 44) }.accessibilityLabel("Customize Today").tint(AppTheme.secondary)
+            } }
+            .safeAreaInset(edge: .bottom) {
+                if (try? state.store?.todayUndo()) != nil { Button("Undo layout change") { state.undoTodayLayout() }.frame(minHeight: 44).padding(.horizontal, 20).background(AppTheme.canvas) }
+            }
             .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
-            .onAppear { state.reloadToday(); state.reloadPlanEntries(); state.reloadWear(); state.reloadOutfits(); state.reloadPieces(); state.reloadFits() }
+            .onAppear { state.reloadToday(); state.reloadPlanEntries(); state.reloadWear(); state.reloadOutfits(); state.reloadPieces(); state.reloadFits(); state.reloadThemes() }
         }.tint(AppTheme.actionText)
     }
 

@@ -25,10 +25,12 @@ public enum TodayWidgetKind: String, CaseIterable, Codable, Sendable {
 public struct TodayWidgetInstance: Identifiable, Codable, Equatable, Sendable {
     public let id: UUID
     public var kind: TodayWidgetKind
+    public var options: TodayWidgetOptions?
 
-    public init(id: UUID = UUID(), kind: TodayWidgetKind) {
+    public init(id: UUID = UUID(), kind: TodayWidgetKind, options: TodayWidgetOptions? = nil) {
         self.id = id
         self.kind = kind
+        self.options = options
     }
 }
 

@@ -230,3 +230,7 @@ October16 issue28 S1: Profile More → Edit profile → optional local name/avat
 
 
 October16 issue28 S2: Profile More → Add fit → date/photo/outfit/private note → acknowledged source return. Snapshot-only memories remain editable after outfit deletion. Memory detail → Edit / confirmed Delete / explicit Record wear; the latter carries the saved date into duplicate-safe actual wear review and never runs implicitly. Profile scroll anchor belongs to its enclosing scroll view. Note-only/over-limit drafts remain visible but cannot save. Unit verified; all E2E #30.
+
+### Today implementation checkpoint, October16
+
+Issue22 slices S1/S2 replace the baseline cards with actual local records and same-period/source destinations. Customize opens the twelve-kind retained draft, nested Apply/cancel, native reorder and minimum-one refusal, independent Note/Photo content, provisional defaults/Undo and acknowledged atomic layout save/Undo. Missing pinned records remain unavailable; no date passage or card read creates wear. Unit receipts and exact scope are in [issue22](../plan/issue-22.md). Retained-card management/deletion continues in S3. These are source/unit results; all rendered, focus, accessibility and E2E acceptance remains issue30.

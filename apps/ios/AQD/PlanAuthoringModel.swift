@@ -125,7 +125,7 @@ final class PlanAuthoringModel: Identifiable {
 
 extension AppState {
     func resumePlanAuthoring() {
-        guard fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil,
+        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil,
               styleEditor == nil, capture == nil, entry.page == .main else { return }
         do {
             guard let draft = try store?.planAuthoringDraft() else { return }
@@ -133,7 +133,7 @@ extension AppState {
         } catch { planError = "Your multi-day plan draft couldn’t open. Keep the app data and retry." }
     }
     func openPlanAuthoring(day: LocalPlanDay, routine: Bool = false, trip: Bool = false) {
-        guard fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil,
+        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil,
               styleEditor == nil, capture == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
@@ -160,7 +160,7 @@ extension AppState {
 
 extension AppState {
     func editPlanDefinition(_ plan: PlanDefinition, scope: RoutineEditScope, anchorEntryID: UUID?) {
-        guard fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil, styleEditor == nil, capture == nil else { return }
+        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil, styleEditor == nil, capture == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             if let retained = try store.planAuthoringDraft() {
