@@ -25,7 +25,7 @@ struct LocalEraseView: View {
                             Text("Export a copy first")
                             Spacer(minLength: 12)
                             Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
-                        }.font(AppTypography.supporting).foregroundStyle(AppTheme.actionText).frame(minHeight: 44)
+                        }.font(AppTypography.supporting).foregroundStyle(AppTheme.ink).frame(minHeight: 44)
                     }
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Type ERASE to continue").font(AppTypography.fieldLabel)

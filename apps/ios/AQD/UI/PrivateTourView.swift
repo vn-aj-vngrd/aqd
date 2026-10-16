@@ -95,7 +95,7 @@ private struct TourCard: View {
                     .accessibilityFocused($focusedStep, equals: step)
                 Spacer(minLength: 0)
                 Button("Skip tour") { state.updateEntry { $0.skipTour() } }.frame(minHeight: 44)
-                    .foregroundStyle(AppTheme.actionText)
+                    .foregroundStyle(AppTheme.ink)
             }
             VStack(alignment: .leading, spacing: 8) {
                 Text(titles[step]).font(AppTypography.section)
@@ -105,7 +105,7 @@ private struct TourCard: View {
     }
     private var back: some View {
         SecondaryAction(title: "Back") { state.updateEntry { $0.backInTour() } }
-            .background(AppTheme.accentSoft, in: Capsule()).accessibilityIdentifier("tour.back")
+            .background(AppTheme.imageGround, in: Capsule()).accessibilityIdentifier("tour.back")
     }
     private func next(_ step: Int) -> some View {
         PrimaryAction(title: step == 3 ? "Finish tour" : "Next") { state.updateEntry { $0.nextInTour() } }.id(step)

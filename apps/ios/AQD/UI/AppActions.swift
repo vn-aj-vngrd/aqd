@@ -53,7 +53,7 @@ struct SecondaryAction: View {
                 .padding(.horizontal, AppSpacing.screen)
                 .padding(.vertical, AppSpacing.medium)
                 .frame(maxWidth: .infinity, minHeight: AppControlMetrics.actionHeight)
-                .foregroundStyle(isEnabled ? AppTheme.actionText : AppTheme.secondary)
+                .foregroundStyle(isEnabled ? AppTheme.ink : AppTheme.secondary)
                 .contentShape(Rectangle())
         }.buttonStyle(ContentActionStyle())
     }
@@ -117,5 +117,16 @@ struct ToolbarSaveAction: View {
         .tint(AppTheme.actionText)
         .disabled(isPending || !isEnabled)
         .accessibilityValue(isPending ? "In progress" : "")
+    }
+}
+
+/// Neutral navigation between review steps; persistence stays with ToolbarSaveAction.
+struct ToolbarForwardAction: View {
+    let title: String
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "chevron.forward").frame(minWidth: 44, minHeight: 44)
+        }.tint(AppTheme.ink).accessibilityLabel(title)
     }
 }

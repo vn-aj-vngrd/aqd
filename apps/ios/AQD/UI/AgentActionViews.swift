@@ -38,7 +38,7 @@ struct AgentActionComposerView: View {
                 if kind == "Plan" { DatePicker("Last date", selection: $last, displayedComponents: .date); Toggle("Leave dates without an outfit intentionally unassigned", isOn: $unassigned) }
                 if let error { Text(error).foregroundStyle(AppTheme.error) }
             }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Local tools").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarSaveAction(title: "Review") { prepare() } } }
+                .toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarForwardAction(title: "Review") { prepare() } } }
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button { dismiss() } label: { Image(systemName: "xmark") }.accessibilityLabel("Cancel") } }
         }.tint(AppTheme.ink)
     }

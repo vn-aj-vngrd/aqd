@@ -30,7 +30,7 @@ struct OutfitThemeChooser: View {
                         HStack(spacing: 16) {
                             Text(theme.displayName).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
                             Image(systemName: selected.contains(theme.id) ? "checkmark" : "circle")
-                                .frame(width: 22).foregroundStyle(selected.contains(theme.id) ? AppTheme.actionText : AppTheme.secondary)
+                                .frame(width: 22).foregroundStyle(selected.contains(theme.id) ? AppTheme.ink : AppTheme.secondary)
                         }.frame(minHeight: 54).padding(.horizontal, 14)
                             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                     }.buttonStyle(.plain).accessibilityValue(selected.contains(theme.id) ? "Selected" : "Not selected")

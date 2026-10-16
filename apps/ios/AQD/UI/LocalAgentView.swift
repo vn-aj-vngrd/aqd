@@ -229,7 +229,7 @@ private struct AgentAvailabilityActions: View {
                 AgentAboutView(recheck: recheck)
             } label: {
                 Text(availability == .intelligenceOff ? "How to enable it" : "About Agent")
-                    .font(AppTypography.body).foregroundStyle(AppTheme.actionText)
+                    .font(AppTypography.body).foregroundStyle(AppTheme.ink)
                     .frame(maxWidth: .infinity, minHeight: 50)
             }.buttonStyle(.plain)
         }

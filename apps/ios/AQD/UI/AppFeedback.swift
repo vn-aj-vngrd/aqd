@@ -75,7 +75,7 @@ struct OperationProgress: View {
     let title: String
     var body: some View {
         HStack(spacing: AppSpacing.small) {
-            ProgressView().tint(AppTheme.accent).accessibilityHidden(true)
+            ProgressView().tint(AppTheme.ink).accessibilityHidden(true)
             Text(title).font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
                 .fixedSize(horizontal: false, vertical: true)
         }

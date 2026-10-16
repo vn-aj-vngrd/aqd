@@ -16,7 +16,7 @@ struct RoutineFields: View {
                         if selected { if plan.routine?.weekdays.contains(weekday) == false { plan.routine?.weekdays.append(weekday) } }
                         else { plan.routine?.weekdays.removeAll { $0 == weekday } }
                     }
-                })).frame(minHeight: 44).tint(AppTheme.accent)
+                })).frame(minHeight: 44).tint(AppTheme.ink)
             }
             LabeledField(title: "Occasion", text: Binding(get: { routine.occasion }, set: { value in
                 model.update { draft in

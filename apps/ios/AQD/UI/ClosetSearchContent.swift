@@ -41,10 +41,10 @@ struct ClosetSearchContent: View {
                                 PrimaryAction(title: "Retry search") { Task { await model.search(input, debounce: false) } }
                             }
                             if model.loading && model.results == nil {
-                                ProgressView("Searching your closet…").tint(AppTheme.actionText)
+                                ProgressView("Searching your closet…").tint(AppTheme.ink)
                                 searchSkeleton
                             } else if let results = model.results {
-                                if model.loading { ProgressView("Updating results…").tint(AppTheme.actionText) }
+                                if model.loading { ProgressView("Updating results…").tint(AppTheme.ink) }
                                 Text("\(results.count) results").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                                 switch results {
                                 case .pieces(let pieces): PieceCollectionGrid(pieces: pieces)

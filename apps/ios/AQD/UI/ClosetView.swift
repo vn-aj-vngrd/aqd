@@ -88,7 +88,7 @@ struct ClosetView: View {
             .onChange(of: availability) { refreshPieces() }
             .onChange(of: sort) { refreshPieces() }
             .onChange(of: state.collectionRefreshID) { refreshPieces() }
-        }.tint(state.closetSearchActive ? AppTheme.actionText : AppTheme.ink)
+        }.tint(state.closetSearchActive ? AppTheme.ink : AppTheme.ink)
     }
 
     private var scopeSelection: Binding<String> {
@@ -104,7 +104,7 @@ struct ClosetView: View {
                         Button { scopeSelection.wrappedValue = value.rawValue } label: {
                             Label(value.rawValue, systemImage: scope == value.rawValue ? "checkmark.circle.fill" : "circle")
                                 .padding(.horizontal, 12).frame(minHeight: 44)
-                        }.buttonStyle(.plain).foregroundStyle(scope == value.rawValue ? AppTheme.actionText : AppTheme.ink)
+                        }.buttonStyle(.plain).foregroundStyle(scope == value.rawValue ? AppTheme.ink : AppTheme.ink)
                             .accessibilityAddTraits(scope == value.rawValue ? [.isSelected] : [])
                     }
                 }

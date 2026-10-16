@@ -43,6 +43,31 @@ struct TodayLayoutPersistenceTests {
         model.setVisibility(missing.id, visible: false)
         #expect(!model.draft.hasChanges)
         #expect(model.draft.value == base)
+        let first = try #require(base.instances.first)
+        model.moveInCatalog(first.id, to: 1)
+        #expect(model.draft.hasChanges)
+        model.moveInCatalog(first.id, to: 0)
+        #expect(model.draft.value == base)
+        #expect(!model.draft.hasChanges)
+    }
+
+    @Test func catalogReorderPreservesVisibilityAndRejectsInvalidDestinations() throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let state = AppState(store: store)
+        state.openTodayEditor()
+        let model = try #require(state.todayEditor)
+        let first = try #require(model.catalog.first)
+        model.setVisibility(first.id, visible: false)
+        model.moveInCatalog(first.id, to: 2)
+        #expect(model.catalog[2].id == first.id)
+        #expect(!model.catalog[2].isVisible)
+        let changed = model.draft
+        model.moveInCatalog(first.id, to: -1)
+        model.moveInCatalog(first.id, to: model.catalog.count)
+        #expect(model.draft == changed)
+        model.moveInCatalog(first.id, to: 0)
+        model.setVisibility(first.id, visible: true)
+        #expect(!model.draft.hasChanges)
     }
 
     @Test func addOffersOnlyMissingKindsAndRemovingMakesThemAvailableAgain() throws {

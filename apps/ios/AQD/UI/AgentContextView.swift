@@ -67,6 +67,6 @@ struct AgentContextView: View {
                     draft.selected.append(reviewed)
                 } catch { model.error = "This context changed or includes unavailable records. Refresh your closet and select it again." }
             }
-        } label: { HStack { Text(name).foregroundStyle(AppTheme.ink); Spacer(); Image(systemName: selected ? "checkmark.circle.fill" : "circle").foregroundStyle(selected ? AppTheme.actionText : AppTheme.secondary) }.frame(minHeight: 44) }.accessibilityValue(selected ? "Selected" : "Not selected")
+        } label: { HStack { Text(name).foregroundStyle(AppTheme.ink); Spacer(); Image(systemName: selected ? "checkmark.circle.fill" : "circle").foregroundStyle(selected ? AppTheme.ink : AppTheme.secondary) }.frame(minHeight: 44) }.accessibilityValue(selected ? "Selected" : "Not selected")
     }
 }

@@ -52,7 +52,7 @@ struct BodyDetailsView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Toggle("Use body details for suggestions", isOn: Binding(get: { model.draft.answers.body.useForSuggestions }, set: { value in
                     model.update { $0.answers.body.useForSuggestions = value }
-                })).tint(AppTheme.accent).padding(14).frame(minHeight: 60)
+                })).tint(AppTheme.ink).padding(14).frame(minHeight: 60)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                 Text("Off by default. On allows private suggestions to use these details. Apple Intelligence also needs Style context enabled. No automatic cloud sharing.")
                     .font(.subheadline).foregroundStyle(AppTheme.secondary)
@@ -64,7 +64,7 @@ struct BodyDetailsView: View {
                     Text("Prefer not to share body details")
                     Spacer(minLength: 0)
                     Image(systemName: model.draft.answers.body.response == .declined ? "checkmark.square.fill" : "square")
-                        .foregroundStyle(model.draft.answers.body.response == .declined ? AppTheme.accent : AppTheme.secondary)
+                        .foregroundStyle(model.draft.answers.body.response == .declined ? AppTheme.ink : AppTheme.secondary)
                 }.padding(.horizontal, 14).frame(maxWidth: .infinity, minHeight: 54).contentShape(Rectangle())
             }.buttonStyle(.plain).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                 .accessibilityValue(model.draft.answers.body.response == .declined ? "Selected" : "Not selected")

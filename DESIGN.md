@@ -8,7 +8,7 @@ Visual foundations for the intended app, not proof of implementation. [Status](d
 
 ## Direction
 
-Premium through restraint: clothing photography, precise alignment, quiet opaque semantic surfaces and native interaction. Owner refinement October16 uses white and warm neutral surfaces, charcoal/light primary actions and restrained muted gold for selection and action text. Dark appearance keeps neutral charcoal surfaces with readable warm gold accents. Brand character comes from content and proportion, not boxes or separators around every explanation. Use photographic pieces/looks, not childish flat garment illustrations. Landing may be expressive; roots prioritize their tasks.
+Premium through restraint: clothing photography, precise alignment, quiet opaque semantic surfaces and native interaction. Owner refinement October16 uses white and warm neutral surfaces, charcoal/light primary actions and restrained muted gold for commit/completion action text. Dark appearance keeps neutral charcoal surfaces with readable warm gold commit text. Brand character comes from content and proportion, not boxes or separators around every explanation. Use photographic pieces/looks, not childish flat garment illustrations. Landing may be expressive; roots prioritize their tasks.
 
 Today · Closet · Planner · Agent · Profile are the shared destination identities. Detailed navigation and source returns belong to [V1 flow](docs/design/v1-flow.md) and [V2 flow](docs/design/v2-flow.md), not this foundation. The Today house glyph remains unchanged.
 
@@ -42,12 +42,12 @@ Today · Closet · Planner · Agent · Profile are the shared destination identi
 | Success surface / `--color-success-soft` | `#E8EFEA` | `#293B30` |
 | Warning / `--color-warning` | `#795B2E` | `#DCC7A2` |
 | Warning surface / `--color-warning-soft` | `#F3EEE4` | `#403728` |
-| Information / `--color-info` | `#765829` | `#D9BD8A` |
-| Information surface / `--color-info-soft` | `#F5F2EC` | `#383125` |
+| Information / `--color-info` | `#6A6863` | `#BCB9B1` |
+| Information surface / `--color-info-soft` | `#F5F4F1` | `#242422` |
 
 Dark partners use `--color-night-*`; existing `--color-dark`, `--color-dark-surface`, `--color-dark-ink`, `--color-dark-secondary` alias night counterparts. Preserve the paired semantic roles and token usage descriptions even without dark phone duplicates. Native dark support remains required.
 
-Primary content labels use white on charcoal in light appearance and dark ink on a light fill in dark appearance. Gold selected content uses the separate on-accent pair. Primary content buttons are solid without blur/shadow; secondary actions are plain regular-weight action-text without fill/border/blur/shadow. Soft-neutral Back/View outfit capsules retain flat accent-soft treatment. Menus/disabled controls stay neutral. Selection also has check/fill/weight/label. Success means acknowledged completion, warning means risk/unknown requiring reconciliation, destructive intent uses red. Native alerts keep system semantics without injected icons. [Feedback](docs/design/components.md#app-owned-semantic-feedback) owns app-message variants; explanations remain unboxed, related actionable lists use opaque surfaces.
+Primary content labels use white on charcoal in light appearance and dark ink on a light fill in dark appearance. Selected content uses the neutral primary-fill/on-primary pair. Primary content buttons are solid without blur/shadow; secondary actions are plain regular-weight action-text without fill/border/blur/shadow. Soft-neutral Back/View outfit capsules retain flat accent-soft treatment. Menus/disabled controls stay neutral. Selection also has check/fill/weight/label. Success means acknowledged completion, warning means risk/unknown requiring reconciliation, destructive intent uses red. Native alerts keep system semantics without injected icons. [Feedback](docs/design/components.md#app-owned-semantic-feedback) owns app-message variants; explanations remain unboxed, related actionable lists use opaque surfaces.
 
 Text targets 4.5:1 (3:1 large), meaningful control boundaries 3:1; color is never the sole cue. Measured solid token ratios for the owner palette: primary labels14.73:1 light/13.79:1 dark, light gold/white4.96:1, action text/canvas6.12:1 light and9.42:1 dark, action text/soft selection5.88:1 light, supporting text/canvas5.19:1 light, dark gold/surface7.15:1. Destructive/error/success/warning roles retain their existing pairs. These do not certify translucent content. Paper alpha/edge/shadow tokens are approximations; runtime materials own optics and accessibility adaptation.
 
@@ -118,3 +118,5 @@ Owner Profile/splash refinement October16: fit post cards use semantic-white out
 Owner card surfaces October17: page canvases retain #F7F7F5. Outer content/post cards are white with a near-white warm image/composition interior (#F5F4F1). Profile posts use one continuous inner well with white card padding. Semantic dark partners remain unchanged.
 
 Owner correction October17: restore the existing #F7F7F5 light app canvas; Profile uses that same canvas, including its opaque navigation background. White belongs to the post/content card component. Card artwork interiors are softened to #F5F4F1, with soft selection #F5F2EC; actual gold selection/action ink stays unchanged. This supersedes the earlier broad pure-white page directive as interpreted during this iteration. Remove the visible Profile navigation label while retaining destination accessibility names.
+
+Owner color refinement October17: interactive navigation and selection use neutral ink/secondary tokens. Gold `actionText` is reserved for Save, Done, Apply and equivalent commit/completion controls; review/continue steps use a neutral forward chevron matching Back. Secondary navigation, selected tabs, filters, checkmarks, calendar selection and read-only charts remain neutral. `controlIcon` aliases secondary text for eye/reorder accessories. Existing logo/brand artwork retains its gold identity; success, warning and danger keep semantic colors. Informational content uses secondary text and the neutral image-ground surface.

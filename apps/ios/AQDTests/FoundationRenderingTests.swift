@@ -291,8 +291,8 @@ final class FoundationRenderingTests: XCTestCase {
             (AppTheme.successSurface, 0xE8EFEA, 0x293B30, 1, 1),
             (AppTheme.warning, 0x795B2E, 0xDCC7A2, 1, 1),
             (AppTheme.warningSurface, 0xF3EEE4, 0x403728, 1, 1),
-            (AppTheme.information, 0x765829, 0xD9BD8A, 1, 1),
-            (AppTheme.informationSurface, 0xF5F2EC, 0x383125, 1, 1)
+            (AppTheme.information, 0x6A6863, 0xBCB9B1, 1, 1),
+            (AppTheme.informationSurface, 0xF5F4F1, 0x242422, 1, 1)
         ]
         for (index, role) in roles.enumerated() {
             for dark in [false, true] {

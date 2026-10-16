@@ -357,3 +357,11 @@ Owner refinement October17 (current): Customize Today lists all widget kinds wit
 Owner visual correction October17: visibility uses a neutral-ink eye / eye.slash icon button instead of a switch. Each retains a44pt target and explicit accessible Show/Hide action and Visible/Hidden state. Reorder remains separate.
 
 Weather setup discovery follows actual preferences: show the compact notice while Weather is disabled or has no saved city, regardless of the Weather widget placement. Merely adding or showing a widget never counts as setup.
+
+Owner native context menus October17: long-press Closet piece/outfit/theme, Planner agenda/plan, or Profile fit → OS lift with bounded enlarged content preview and relevant icon-labelled actions. Open uses the existing destination; Edit/Build/Plan/Record wear reuse existing retained editors and Save safeguards. Planner completed/skipped entries cannot edit or record again from the menu. Plan definitions expose dates and trip packing. Dismiss performs no write; ordinary tap behavior remains. Preview is read-only and does not record wear.
+
+Customize Today color refinement: eye and reorder icons share AppTheme.controlIcon (existing dynamic secondary gray), each with44pt target. Reorder uses native drag/drop and accessible Move up/down actions; invalid/self/locked moves do not change the draft. Shared Closet context-menu Open actions resolve in the current navigation stack, including Settings → Archived pieces.
+
+Owner action color contract October17: Style Continue/Review → dark forward-chevron navigation; final Save stays gold. Review-only Plan/Agent toolbars share the neutral forward control. Gold text belongs to Save/Done/Apply and equivalent commit/completion actions, while secondary navigation, tabs, filters, selections, calendar and read-only metrics use neutral tokens. Existing branded logo/artwork and semantic feedback retain their separate roles.
+
+Profile spacing correction October17: Fits count/label starts at the same leading edge as the name; Outfits/Pieces use equal-width leading-aligned columns. Caption separates the identity row and action row by AppSpacing.section (24pt) on both sides, including the empty-journal header. Accessibility stacking retains that rhythm.

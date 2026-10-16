@@ -129,16 +129,16 @@ struct PlannerCalendarView: View {
             VStack(spacing: 4) {
                 if showWeekday { Text(formatted(date, style: .dateTime.weekday(.narrow))).font(AppTypography.metadata) }
                 Text(number.formatted()).font(AppTypography.body)
-                Circle().fill(count > 0 ? (selected ? AppTheme.onAccent : AppTheme.accent) : .clear).frame(width: 4, height: 4)
+                Circle().fill(count > 0 ? (selected ? AppTheme.onPrimary : AppTheme.ink) : .clear).frame(width: 4, height: 4)
             }.frame(minWidth: 44, maxWidth: .infinity, minHeight: showWeekday ? 64 : 44)
-                .foregroundStyle(selected ? AppTheme.onAccent : AppTheme.ink)
+                .foregroundStyle(selected ? AppTheme.onPrimary : AppTheme.ink)
                 .background {
-                    RoundedRectangle(cornerRadius: 12).fill(selected ? AppTheme.accent : .clear)
+                    RoundedRectangle(cornerRadius: 12).fill(selected ? AppTheme.primaryFill : .clear)
                         .padding(.horizontal, 2)
                 }
                 .overlay {
                     if today && !selected {
-                        RoundedRectangle(cornerRadius: 12).stroke(AppTheme.actionText, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 12).stroke(AppTheme.ink, lineWidth: 1)
                             .padding(.horizontal, 2)
                     }
                 }

@@ -65,7 +65,7 @@ struct OwnedPieceChooser: View {
                                     .overlay(alignment: .topTrailing) {
                                         if isSelected {
                                             Image(systemName: "checkmark.circle.fill").font(.title3)
-                                                .symbolRenderingMode(.palette).foregroundStyle(AppTheme.onAccent, AppTheme.accent)
+                                                .symbolRenderingMode(.palette).foregroundStyle(AppTheme.onPrimary, AppTheme.ink)
                                                 .padding(6)
                                         }
                                     }
@@ -135,8 +135,8 @@ struct OwnedPieceChooser: View {
                 Text(value?.name ?? "All pieces")
             }.font(.subheadline).padding(.horizontal, 12).padding(.vertical, 6)
                 .frame(minHeight: 44)
-                .foregroundStyle(categoryID == value?.id ? AppTheme.onAccent : AppTheme.ink)
-                .background(categoryID == value?.id ? AppTheme.accent : AppTheme.surface, in: Capsule())
+                .foregroundStyle(categoryID == value?.id ? AppTheme.onPrimary : AppTheme.ink)
+                .background(categoryID == value?.id ? AppTheme.primaryFill : AppTheme.surface, in: Capsule())
         }.buttonStyle(.plain).accessibilityAddTraits(categoryID == value?.id ? [.isSelected] : [])
     }
 }

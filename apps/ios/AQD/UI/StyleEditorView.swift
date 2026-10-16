@@ -58,13 +58,18 @@ struct StyleEditorView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     if model.saved != nil {
-                        ToolbarSaveAction(title: model.draft.source == .onboarding ? "Take tour" : "Done") { model.finish() }
-                            .accessibilityLabel(savedContinueTitle).accessibilityIdentifier("style.saved.continue")
+                        if model.draft.source == .onboarding {
+                            ToolbarForwardAction(title: savedContinueTitle) { model.finish() }
+                                .accessibilityIdentifier("style.saved.continue")
+                        } else {
+                            ToolbarSaveAction(title: "Done") { model.finish() }
+                                .accessibilityLabel(savedContinueTitle).accessibilityIdentifier("style.saved.continue")
+                        }
                     } else if page == 6 {
                         ToolbarSaveAction(title: model.unknown ? "Check save" : "Save", isPending: model.pending) { Task { await model.save() } }
                             .disabled(!model.draft.isComplete).accessibilityLabel(model.unknown ? "Check save" : "Save preferences")
                     } else {
-                        ToolbarSaveAction(title: model.draft.editingFromReview ? "Review" : "Continue") { model.next() }
+                        ToolbarForwardAction(title: model.draft.editingFromReview ? "Review preferences" : "Next question") { model.next() }
                             .disabled(!model.draft.isAnswered(page) || model.pending || model.unknown || model.error != nil)
                     }
                 }
@@ -102,7 +107,7 @@ struct StyleEditorView: View {
             EntryIllustration(kind: .ready).padding(.top, 16)
             VStack(alignment: .leading, spacing: 16) {
                 Label("Preferences saved", systemImage: "checkmark.circle")
-                    .font(AppTypography.supporting).foregroundStyle(AppTheme.actionText)
+                    .font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
                 Text("A closet that feels\nmore like you.")
                     .font(.largeTitle).tracking(-0.64).fixedSize(horizontal: false, vertical: true)
                 Text(model.draft.source == .onboarding
@@ -126,7 +131,7 @@ struct StyleEditorView: View {
                             Text(option).foregroundStyle(AppTheme.ink)
                             Spacer(minLength: 8)
                             Image(systemName: selected ? "checkmark.square.fill" : "square")
-                                .foregroundStyle(selected ? AppTheme.accent : AppTheme.secondary)
+                                .foregroundStyle(selected ? AppTheme.ink : AppTheme.secondary)
                         }.padding(16).frame(maxWidth: .infinity, minHeight: 56).contentShape(Rectangle())
                     }.buttonStyle(.plain).accessibilityLabel(option).accessibilityValue(selected ? "Selected" : "Not selected")
                         .disabled(model.pending || model.unknown)
@@ -172,7 +177,7 @@ struct StyleEditorView: View {
                     Text("No color or pattern preference").foregroundStyle(AppTheme.ink)
                     Spacer(minLength: 8)
                     Image(systemName: model.draft.answers.colors.declined ? "checkmark.square.fill" : "square")
-                        .foregroundStyle(model.draft.answers.colors.declined ? AppTheme.accent : AppTheme.secondary).accessibilityHidden(true)
+                        .foregroundStyle(model.draft.answers.colors.declined ? AppTheme.ink : AppTheme.secondary).accessibilityHidden(true)
                 }.padding(16).frame(maxWidth: .infinity, minHeight: 56).contentShape(Rectangle())
             }.buttonStyle(.plain).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                 .accessibilityValue(model.draft.answers.colors.declined ? "Selected" : "Not selected")
@@ -263,7 +268,7 @@ private struct StyleColorSelectionView: View {
                             Text(option).foregroundStyle(AppTheme.ink)
                             Spacer(minLength: 8)
                             Image(systemName: isSelected ? "checkmark.square.fill" : "square")
-                                .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.secondary).accessibilityHidden(true)
+                                .foregroundStyle(isSelected ? AppTheme.ink : AppTheme.secondary).accessibilityHidden(true)
                         }.frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
                     }.buttonStyle(.plain).accessibilityValue(isSelected ? "Selected" : "Not selected")
                         .disabled(model.pending || model.unknown)

@@ -63,6 +63,7 @@ struct FitMemoryArtwork: View {
 }
 
 struct FitJournalGrid: View {
+    @State private var openedMemoryID: UUID?
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
     var body: some View {
@@ -87,11 +88,23 @@ struct FitJournalGrid: View {
                                         .padding(4)
                                         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                             }.buttonStyle(.plain).id(memory.id)
+                                .contextMenu {
+                                    Button("Open fit", systemImage: "arrow.up.forward.square") { openedMemoryID = memory.id }
+                                    Button("Edit fit", systemImage: "square.and.pencil") { state.openFit(memory) }
+                                    Button("Record wear", systemImage: "checkmark.circle") { state.recordWear(from: memory) }
+                                } preview: {
+                                    CollectionContextPreview(title: memory.outfit?.displayName ?? "Fit", detail: memory.day.displayDate) {
+                                        FitMemoryArtwork(memory: memory, thumbnail: memory.photoID == nil)
+                                            .frame(height: 360).clipped()
+                                    }.environment(state)
+                                }
                                 .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.displayName ?? "unlinked"), \(memory.displayNote)")
                         }
                     }.padding(.horizontal, 20)
                 }
             }
+        }.navigationDestination(isPresented: Binding(get: { openedMemoryID != nil }, set: { if !$0 { openedMemoryID = nil } })) {
+            if let id = openedMemoryID { FitMemoryDetailView(id: id) }
         }
     }
 
@@ -164,7 +177,7 @@ struct FitEditorView: View {
                 } else {
                     VStack(spacing: 12) {
                         Image(systemName: "photo.on.rectangle.angled").font(.system(size: 40, weight: .light))
-                            .foregroundStyle(AppTheme.actionText).accessibilityHidden(true)
+                            .foregroundStyle(AppTheme.ink).accessibilityHidden(true)
                         Text("Start with a photo or outfit").font(AppTypography.detailTitle)
                         Text("Keep a look you want to remember.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     }.frame(maxWidth: .infinity, minHeight: 180).padding(16)

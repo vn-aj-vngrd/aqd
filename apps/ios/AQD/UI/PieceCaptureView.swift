@@ -182,7 +182,7 @@ struct PieceCaptureView: View {
                 } else {
                     VStack(spacing: 12) {
                         Image(systemName: "photo.on.rectangle.angled").font(.system(size: 40, weight: .light))
-                            .foregroundStyle(AppTheme.actionText).accessibilityHidden(true)
+                            .foregroundStyle(AppTheme.ink).accessibilityHidden(true)
                         Text(model.draft.photoID == nil ? "Start with a piece photo" : "Photo unavailable")
                             .font(AppTypography.detailTitle)
                         Text(model.draft.photoID == nil ? "Choose a photo or take one now." : "Choose another photo. Your details are kept.")

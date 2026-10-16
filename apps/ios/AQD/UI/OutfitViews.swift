@@ -223,7 +223,7 @@ struct OutfitDetailView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     OutfitComposition(pieceIDs: outfit.pieceIDs)
                     Text("\(outfit.pieceIDs.count) pieces · Private on this iPhone").foregroundStyle(AppTheme.secondary)
-                    if outfit.isFavorite { Label("Favorite", systemImage: "heart.fill").foregroundStyle(AppTheme.actionText) }
+                    if outfit.isFavorite { Label("Favorite", systemImage: "heart.fill").foregroundStyle(AppTheme.ink) }
                     PrimaryAction(title: "Plan outfit") { state.openPlan(outfitID: outfit.id) }.disabled(pendingMutation != nil)
                     SecondaryAction(title: "Record wear") { state.openWear(outfitID: outfit.id) }.disabled(pendingMutation != nil)
                     ForEach(outfit.pieceIDs, id: \.self) { pieceID in

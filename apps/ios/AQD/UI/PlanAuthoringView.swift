@@ -40,7 +40,7 @@ struct PlanAuthoringView: View {
                 if model.saved == nil {
                     if model.draft.reviewing { confirmation }
                     else {
-                        ToolbarSaveAction(title: "Review") {
+                        ToolbarForwardAction(title: "Review") {
                             model.state.reloadPlanEntries(); model.state.reloadOutfits(); model.state.reloadPieces()
                             model.update { $0.reviewing = true }
                         }.disabled(!model.canReview || locked)

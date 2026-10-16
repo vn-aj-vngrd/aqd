@@ -82,7 +82,7 @@ struct LocalAppearanceSettingsView: View {
                                 Text(title(value)).font(AppTypography.body).foregroundStyle(AppTheme.ink)
                                 Text(subtitle(value)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                             }.frame(maxWidth: .infinity, alignment: .leading)
-                            if selected == value { Image(systemName: "checkmark").font(AppTypography.disclosure).foregroundStyle(AppTheme.actionText).accessibilityHidden(true) }
+                            if selected == value { Image(systemName: "checkmark").font(AppTypography.disclosure).foregroundStyle(AppTheme.ink).accessibilityHidden(true) }
                         }.frame(minHeight: 52).contentShape(Rectangle())
                     }.accessibilityValue(selected == value ? "Selected" : "Not selected")
                         .accessibilityAddTraits(selected == value ? [.isSelected] : [])

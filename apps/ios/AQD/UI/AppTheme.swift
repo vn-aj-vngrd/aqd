@@ -6,8 +6,10 @@ enum AppTheme {
     static let surface = color(light: 0xFFFFFF, dark: 0x2B2B29)
     static let ink = color(light: 0x242321, dark: 0xF3F1EB)
     static let secondary = color(light: 0x6A6863, dark: 0xBCB9B1)
+    static let controlIcon = secondary
     static let imageGround = color(light: 0xF5F4F1, dark: 0x242422)
     static let accent = color(light: 0x8C6A36, dark: 0xD3B47C)
+    // Gold text is reserved for committing or completing an editing action.
     static let actionText = color(light: 0x765829, dark: 0xD9BD8A)
     static let onAccent = color(light: 0xFFFFFF, dark: 0x1C1C1B)
     static let primaryFill = color(light: 0x292826, dark: 0xF2F0EB)
@@ -23,8 +25,8 @@ enum AppTheme {
     static let successSurface = color(light: 0xE8EFEA, dark: 0x293B30)
     static let warning = color(light: 0x795B2E, dark: 0xDCC7A2)
     static let warningSurface = color(light: 0xF3EEE4, dark: 0x403728)
-    static let information = actionText
-    static let informationSurface = accentSoft
+    static let information = secondary
+    static let informationSurface = imageGround
     static let regularGlass = color(light: 0xFFFFFF, dark: 0x2B2B29, lightAlpha: 0.88, darkAlpha: 0.94)
     static let prominentGlass = accent
     static let glassEdge = color(light: 0xFFFFFF, dark: 0xFFFFFF, lightAlpha: 0.70, darkAlpha: 0.12)

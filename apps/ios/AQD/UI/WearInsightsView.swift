@@ -36,7 +36,7 @@ struct LocalWearInsightsView: View {
                         let peak = max(1, summary.dailyOccasions.values.max() ?? 0)
                         Chart(Array(1...summary.end.day), id: \.self) { day in
                             BarMark(x: .value("Day", day), y: .value("Wear records", summary.dailyOccasions[day, default: 0]))
-                                .foregroundStyle(AppTheme.actionText).cornerRadius(3)
+                                .foregroundStyle(AppTheme.ink).cornerRadius(3)
                                 .accessibilityLabel("\(monthTitle), day \(day)")
                                 .accessibilityValue("\(summary.dailyOccasions[day, default: 0]) wear records")
                         }.chartYScale(domain: 0...peak)
@@ -54,7 +54,7 @@ struct LocalWearInsightsView: View {
                                 Spacer()
                                 Text(utilization, format: .percent.precision(.fractionLength(0))).font(AppTypography.section).monospacedDigit()
                             }
-                            ProgressView(value: utilization).tint(AppTheme.actionText)
+                            ProgressView(value: utilization).tint(AppTheme.ink)
                             Text("\(summary.usedActiveCount) of \(summary.activeCount) active pieces worn this month")
                                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         }.padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))

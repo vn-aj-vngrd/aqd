@@ -51,7 +51,7 @@ struct PieceAvailabilityView: View {
                             HStack {
                                 Text(value == .laundry ? "In the laundry" : value.rawValue.capitalized)
                                 Spacer()
-                                if piece.availability == value { Image(systemName: "checkmark").foregroundStyle(AppTheme.actionText) }
+                                if piece.availability == value { Image(systemName: "checkmark").foregroundStyle(AppTheme.ink) }
                             }.frame(minHeight: 44).foregroundStyle(AppTheme.ink)
                         }.disabled(pendingValue != nil && pendingValue != value)
                     }

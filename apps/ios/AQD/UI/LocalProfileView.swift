@@ -14,7 +14,7 @@ struct LocalProfileView: View {
                 if state.fitMemories.isEmpty && state.fitError == nil {
                     GeometryReader { geometry in
                         ScrollView {
-                            VStack(alignment: .leading, spacing: 24) {
+                            VStack(alignment: .leading, spacing: AppSpacing.section) {
                                 identityHeader
                                 profileActions
                                 if let error = state.identityError {
@@ -37,7 +37,7 @@ struct LocalProfileView: View {
                 } else {
             ScrollViewReader { proxy in
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: AppSpacing.section) {
                     identityHeader.padding(.horizontal, 20)
                     profileActions.padding(.horizontal, 20)
                     FitJournalGrid()
@@ -98,7 +98,7 @@ struct LocalProfileView: View {
         }
     }
     private var identityHeader: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppSpacing.section) {
             if typeSize.isAccessibilitySize {
                 VStack(alignment: .leading, spacing: 16) {
                     profileAvatar
@@ -140,10 +140,10 @@ struct LocalProfileView: View {
         }.frame(maxWidth: .infinity)
     }
     private func profileStat(_ title: String, count: Int?) -> some View {
-        VStack(alignment: .center, spacing: 4) {
+        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
             Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit()
             Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-        }.frame(maxWidth: .infinity, alignment: .center).accessibilityElement(children: .ignore)
+        }.frame(maxWidth: .infinity, alignment: .leading).accessibilityElement(children: .ignore)
             .accessibilityLabel(count.map { "\($0) \(title.lowercased())" } ?? "\(title) unavailable")
     }
 }

@@ -47,6 +47,19 @@ import Observation
             else { draft.value.instances.append(instance) }
         }
     }
+    func moveInCatalog(_ id: UUID, to destination: Int) {
+        guard !locked, draft.nested == nil else { return }
+        var instances = catalog
+        guard instances.indices.contains(destination), let source = instances.firstIndex(where: { $0.id == id }), source != destination else { return }
+        let instance = instances.remove(at: source)
+        instances.insert(instance, at: destination)
+        let missingStock = stockInstances.filter { stock in !draft.base.instances.contains { $0.kind == stock.kind } }
+        if instances.map(\.id) == (draft.base.instances + missingStock).map(\.id) {
+            let stockIDs = Set(missingStock.map(\.id))
+            instances.removeAll { stockIDs.contains($0.id) && !$0.isVisible && $0.options == nil }
+        }
+        update { $0.value.instances = instances }
+    }
     var availableKinds: [TodayWidgetKind] {
         TodayWidgetKind.allCases.filter { kind in !draft.value.instances.contains { $0.kind == kind } }
     }

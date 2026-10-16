@@ -98,7 +98,7 @@ struct PrivateEntryView: View {
     }
     private func roadmap(_ title: String, symbol: String, active: Bool) -> some View {
         VStack(spacing: 8) { Image(systemName: symbol).font(.title3); Text(title).font(.subheadline) }
-            .foregroundStyle(active ? AppTheme.actionText : AppTheme.secondary).frame(maxWidth: .infinity, minHeight: 68)
+            .foregroundStyle(active ? AppTheme.ink : AppTheme.secondary).frame(maxWidth: .infinity, minHeight: 68)
     }
 
 }
@@ -165,7 +165,7 @@ struct WelcomeView: View {
     private var welcomeHeadline: AttributedString {
         var text = AttributedString("More from what you already own.")
         text.foregroundColor = AppTheme.ink
-        if let range = text.range(of: "already own.") { text[range].foregroundColor = AppTheme.actionText }
+        if let range = text.range(of: "already own.") { text[range].foregroundColor = AppTheme.ink }
         return text
     }
     private func settle() {

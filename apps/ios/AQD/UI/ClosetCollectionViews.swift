@@ -17,6 +17,17 @@ struct PieceCollectionGrid: View {
                             .overlay(alignment: .topTrailing) { PieceAvailabilityBadge(piece: piece) }
                     }
                 }.buttonStyle(.plain).id(piece.id)
+                    .contextMenu {
+                        NavigationLink(value: ClosetRoute.piece(piece.id)) { Label("Open piece", systemImage: "arrow.up.forward.square") }
+                        Button("Edit piece", systemImage: "square.and.pencil") { state.editPiece(piece) }
+                        Button("Build an outfit", systemImage: "square.stack") { state.buildOutfit(pieceID: piece.id) }
+                            .disabled(piece.isArchived || piece.availability != .available)
+                    } preview: {
+                        CollectionContextPreview(title: piece.displayName, detail: state.categoryName(for: piece)) {
+                            PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                                .frame(height: 300).clipped()
+                        }.environment(state)
+                    }
             }
         }.scrollTargetLayout()
     }
@@ -100,7 +111,7 @@ struct ClosetCard<Artwork: View>: View {
                 HStack(spacing: 4) {
                     Text(title).font(AppTypography.fieldLabel).lineLimit(1).truncationMode(.tail)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    if favorite { Image(systemName: "heart.fill").font(AppTypography.metadata).foregroundStyle(AppTheme.actionText).accessibilityLabel("Favorite") }
+                    if favorite { Image(systemName: "heart.fill").font(AppTypography.metadata).foregroundStyle(AppTheme.ink).accessibilityLabel("Favorite") }
                 }.foregroundStyle(AppTheme.ink)
                 Text(detail).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).lineLimit(1).truncationMode(.tail)
             }.padding(.horizontal, 12).padding(.top, 4).padding(.bottom, 12)
@@ -120,6 +131,16 @@ struct OutfitCollectionCard: View {
                 CollectionArtwork(pieceIDs: outfit.pieceIDs)
             }
         }.buttonStyle(.plain).id(outfit.id)
+            .contextMenu {
+                NavigationLink(value: ClosetRoute.outfit(outfit.id)) { Label("Open outfit", systemImage: "arrow.up.forward.square") }
+                Button("Edit outfit", systemImage: "square.and.pencil") { state.buildOutfit(editing: outfit) }
+                Button("Plan outfit", systemImage: "calendar") { state.openPlan(outfitID: outfit.id) }
+                Button("Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: outfit.id) }
+            } preview: {
+                CollectionContextPreview(title: outfit.displayName, detail: "\(outfit.pieceIDs.count) pieces") {
+                    CollectionArtwork(pieceIDs: outfit.pieceIDs, height: 300)
+                }.environment(state)
+            }
     }
 }
 
@@ -166,6 +187,16 @@ struct ThemeCollectionCard: View {
                 CollectionArtwork(pieceIDs: members.first?.pieceIDs ?? [], badge: members.count > 1 ? "+\(members.count - 1) outfits" : nil)
             }
         }.buttonStyle(.plain).id(theme.id)
+            .contextMenu {
+                NavigationLink(value: ClosetRoute.theme(theme.id)) { Label("Open theme", systemImage: "folder") }
+                Button("Edit theme", systemImage: "square.and.pencil") { state.openTheme(editing: theme) }
+                Button("Add outfits", systemImage: "plus") { state.openTheme(editing: theme, chooseOutfits: true) }
+                Button("Build an outfit", systemImage: "square.stack") { state.buildOutfit(themeID: theme.id) }
+            } preview: {
+                CollectionContextPreview(title: theme.displayName, detail: "\(theme.outfitIDs.count) outfits") {
+                    CollectionArtwork(pieceIDs: members.first?.pieceIDs ?? [], badge: members.count > 1 ? "+\(members.count - 1) outfits" : nil, height: 300)
+                }.environment(state)
+            }
     }
 }
 
@@ -230,5 +261,22 @@ struct ThemeDetailView: View {
             self.error = "This theme changed. Review its latest contents before deleting."
             state.reloadThemes()
         } catch { self.error = "Deletion isn’t acknowledged. Retry this same operation to reconcile it." }
+    }
+}
+
+/// The system owns the context-menu lift, backdrop and actions; this is its bounded content preview.
+struct CollectionContextPreview<Artwork: View>: View {
+    let title: String
+    let detail: String
+    @ViewBuilder var artwork: () -> Artwork
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            artwork().frame(maxWidth: .infinity).background(AppTheme.imageGround)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title).font(AppTypography.section).foregroundStyle(AppTheme.ink).lineLimit(2)
+                if !detail.isEmpty { Text(detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).lineLimit(2) }
+            }.frame(maxWidth: .infinity, alignment: .leading)
+        }.padding(16).frame(width: 320).background(AppTheme.surface)
     }
 }

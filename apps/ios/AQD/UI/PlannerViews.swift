@@ -45,6 +45,23 @@ struct LocalPlannerView: View {
                     }
                     ForEach(entries) { entry in
                         NavigationLink(value: PlannerRoute.entry(entry.id)) { PlanAgendaRow(entry: entry) }.buttonStyle(.plain)
+                            .contextMenu {
+                                Button("Open plan", systemImage: "calendar") { state.plannerPath.append(.entry(entry.id)) }
+                                Button("Edit plan", systemImage: "square.and.pencil") { state.openPlan(editing: entry) }
+                                    .disabled(entry.state == .worn || entry.state == .skipped)
+                                if entry.state == .planned || entry.state == .unassigned {
+                                    Button("Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: entry.outfitID, entry: entry) }
+                                }
+                            } preview: {
+                                CollectionContextPreview(title: state.outfits.first { $0.id == entry.outfitID }?.displayName ?? "Outfit unassigned", detail: entry.day.displayDate) {
+                                    if let outfit = state.outfits.first(where: { $0.id == entry.outfitID }) {
+                                        CollectionArtwork(pieceIDs: outfit.pieceIDs, height: 300)
+                                    } else {
+                                        Image(systemName: "calendar").font(.largeTitle).foregroundStyle(AppTheme.secondary)
+                                            .frame(maxWidth: .infinity).frame(height: 180)
+                                    }
+                                }.environment(state)
+                            }
                     }
                     if !state.planDefinitions.isEmpty {
                         Text("Your plans").font(AppTypography.section)
@@ -57,6 +74,19 @@ struct LocalPlannerView: View {
                                 }.foregroundStyle(AppTheme.ink).padding(14).frame(minHeight: 54)
                                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                             }.buttonStyle(.plain)
+                                .contextMenu {
+                                    Button("Open plan", systemImage: "calendar") { state.plannerPath.append(.plan(plan.id)) }
+                                    Button("Review dates", systemImage: "list.bullet") { state.plannerPath.append(.dates(plan.id, false)) }
+                                    if plan.trip != nil {
+                                        Button("Packing list", systemImage: "suitcase") { state.plannerPath.append(.packing(plan.id)) }
+                                    }
+                                } preview: {
+                                    CollectionContextPreview(title: plan.name, detail: "\(plan.start.displayDate) – \(plan.end.displayDate)") {
+                                        Image(systemName: plan.trip != nil ? "suitcase" : plan.routine != nil ? "repeat" : "calendar")
+                                            .font(.system(size: 48)).foregroundStyle(AppTheme.ink)
+                                            .frame(maxWidth: .infinity).frame(height: 180)
+                                    }.environment(state)
+                                }
                         }
                     }
 

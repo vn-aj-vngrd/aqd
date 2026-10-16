@@ -109,7 +109,7 @@ struct WeatherContextView: View {
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button(unknown ? "Check result" : persistsPreference ? "Save" : "Done") { apply() }
-                            .tint(AppTheme.accent)
+                            .tint(AppTheme.ink)
                             .disabled(saving || (!unknown && enabled && (selection == nil || (try? selection?.validated()) == nil)))
                             .accessibilityValue(saving ? "Saving" : "")
                     }

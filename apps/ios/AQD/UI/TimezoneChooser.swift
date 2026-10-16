@@ -21,7 +21,7 @@ struct TimezoneChooser: View {
                         Button { if select(zone) { dismiss() } } label: {
                             HStack(spacing: 12) {
                                 Text(zone).frame(maxWidth: .infinity, alignment: .leading)
-                                if zone == current { Image(systemName: "checkmark").foregroundStyle(AppTheme.actionText) }
+                                if zone == current { Image(systemName: "checkmark").foregroundStyle(AppTheme.ink) }
                             }.foregroundStyle(AppTheme.ink).frame(minHeight: 54).padding(.horizontal, 14)
                         }.buttonStyle(.plain).accessibilityValue(zone == current ? "Selected" : "Not selected")
                     }

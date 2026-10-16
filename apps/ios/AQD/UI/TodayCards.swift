@@ -141,7 +141,7 @@ struct TodayCard: View {
             if let value = summary.utilization {
                 Text(value, format: .percent.precision(.fractionLength(0))).font(.largeTitle)
                 Text("\(summary.usedActiveCount) of \(summary.activeCount) active pieces recorded").foregroundStyle(AppTheme.secondary)
-                ProgressView(value: value).tint(AppTheme.actionText)
+                ProgressView(value: value).tint(AppTheme.ink)
             } else { Text("Your wear story starts here. Record your looks to discover which pieces you reach for.").foregroundStyle(AppTheme.secondary) }
             Text("\(summary.start.displayDate) – \(summary.end.displayDate)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             NavigationLink { LocalWearInsightsView(initialMonth: month) } label: { TodayCardActionLabel(title: "View this month") }.frame(minHeight: 44)
@@ -232,7 +232,7 @@ struct TodayCard: View {
                         .font(AppTypography.metadata)
                     Text(date, format: Date.FormatStyle(timeZone: calendar.timeZone).day())
                         .font(AppTypography.supporting.weight(hasWear ? .semibold : .regular))
-                    Circle().fill(hasWear ? AppTheme.accent : AppTheme.divider).frame(width: 5, height: 5)
+                    Circle().fill(hasWear ? AppTheme.ink : AppTheme.divider).frame(width: 5, height: 5)
                 }
                 .foregroundStyle(hasWear ? AppTheme.ink : AppTheme.secondary)
                 .frame(maxWidth: .infinity).padding(.vertical, 12)

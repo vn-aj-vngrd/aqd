@@ -126,7 +126,7 @@ struct TripPackingView: View {
                                     Text("Used in \(item.uses) planned looks").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                                     if item.piece.isArchived || item.piece.availability != .available { Text("Needs attention").font(AppTypography.metadata).foregroundStyle(AppTheme.warning) }
                                 }.frame(maxWidth: .infinity, alignment: .leading)
-                                Image(systemName: item.checked ? "checkmark.square.fill" : "square").foregroundStyle(item.checked ? AppTheme.accent : AppTheme.controlBoundary)
+                                Image(systemName: item.checked ? "checkmark.square.fill" : "square").foregroundStyle(item.checked ? AppTheme.ink : AppTheme.controlBoundary)
                                     .frame(width: 44, height: 44)
                             }.foregroundStyle(AppTheme.ink).padding(.horizontal, 14).padding(.vertical, 12).frame(minHeight: 80)
                                 .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
