@@ -67,7 +67,7 @@ struct PlanAuthoringView: View {
                 }
                 .navigationDestination(isPresented: Binding(get: { resolvingConflict != nil }, set: { if !$0 { resolvingConflict = nil } })) {
                     if let entry = model.conflicts.first(where: { $0.id == resolvingConflict }) { PlanConflictView(model: model, existing: entry) }
-                    else { AppEmptyState("Conflict changed", systemImage: "calendar", description: Text("Return to the plan review and inspect its current dates.")) }
+                    else { AppEmptyState("Conflict changed", systemImage: "calendar", description: Text("Return to the plan review and inspect its current dates."), fillsAvailableSpace: false) }
                 }
                 .navigationDestination(isPresented: Binding(get: { choosingSlot != nil }, set: { if !$0 { choosingSlot = nil } })) {
                     if let id = choosingSlot { PlanSlotOutfitChooser(model: model, slotID: id) }
@@ -117,7 +117,7 @@ struct PlanAuthoringView: View {
     private var review: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(model.draft.plan.name).font(AppTypography.section)
-            Text("\(model.draft.plan.start.key) – \(model.draft.plan.end.key) · \(model.draft.plan.start.timeZoneID)")
+            Text("\(model.draft.plan.start.displayDate) – \(model.draft.plan.end.displayDate) · \(model.draft.plan.start.timeZoneID)")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             if let scope = model.draft.editScope {
                 Text(scope == .entry ? "This entry only. Shared plan settings stay unchanged." : scope == .future ? "This and future entries. Earlier and completed entries stay intact." : "Whole routine. Recorded wear and completed entries stay intact.")
@@ -134,7 +134,7 @@ struct PlanAuthoringView: View {
                         SemanticFeedback(role: .warning, message: "This outfit changed. Review its current pieces below; Save confirms the updated composition.")
                         OutfitComposition(pieceIDs: outfit.pieceIDs)
                     }
-                    DisclosureRow(title: slot.day.key, value: slot.outfit?.name ?? (slot.unassignedByChoice ? "Intentional gap" : "Choose outfit")) { choosingSlot = slot.id }
+                    DisclosureRow(title: slot.day.displayDate, value: slot.outfit?.name ?? (slot.unassignedByChoice ? "Intentional gap" : "Choose outfit")) { choosingSlot = slot.id }
                     LabeledField(title: "Occasion", text: Binding(get: { model.draft.slots.first { $0.id == slot.id }?.occasion ?? "" }, set: { value in
                         model.update { draft in if let i = draft.slots.firstIndex(where: { $0.id == slot.id }) { draft.slots[i].occasion = value } }
                     }))
@@ -146,7 +146,7 @@ struct PlanAuthoringView: View {
                 }.disabled(locked)
             }
             ForEach(model.conflicts) { entry in
-                DisclosureRow(title: "Resolve \(entry.day.key)", value: conflictLabel(entry)) { resolvingConflict = entry.id }.disabled(locked)
+                DisclosureRow(title: "Resolve \(entry.day.displayDate)", value: conflictLabel(entry)) { resolvingConflict = entry.id }.disabled(locked)
             }
             let assigned = model.draft.slots.filter { $0.outfit != nil }.count
             Text("\(assigned) assigned · \(model.draft.slots.count - assigned) gaps · \(model.conflicts.count) overlaps")
@@ -165,7 +165,7 @@ private struct PlanConflictView: View {
         ScrollView {
         VStack(alignment: .leading, spacing: 16) {
             Text("Resolve a conflict").font(AppTypography.fieldLabel)
-            Text("\(existing.day.key) · \(existing.occasion)")
+            Text("\(existing.day.displayDate) · \(existing.occasion)")
             Text(model.state.outfits.first { $0.id == existing.outfitID }?.name ?? "Existing unassigned entry")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             Button { choose(.keepBoth) } label: {
@@ -239,7 +239,7 @@ struct PlanDefinitionView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 if let plan {
-                    Text("\(plan.start.key) – \(plan.end.key)").font(AppTypography.body)
+                    Text("\(plan.start.displayDate) – \(plan.end.displayDate)").font(AppTypography.body)
                     Text(plan.start.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     if plan.trip != nil { TripDetailContent(plan: plan) }
                     else {

@@ -78,3 +78,5 @@ References use six lanes at470 pitch (390 footprint +80 gap), starting y7898 bes
 - Weather opens existing shared setup/details with actual caller return; adding/opening does not consent/enable. Public Search remains All/Following-only, private personal data excluded.
 
 [Portable evidence](evidence/today-customization.json) records allocated IDs, header roles/source hash, actual static renders, registry/canonical checks and final aggregate counts. [Verification](../delivery/verification.md) distinguishes tooling/static checks from outstanding native behavior. No app, ticket, commit or push is authorized.
+
+Owner follow-up October16: all app-owned card navigation/command rows, including setup, review, record, configuration and retry, use a shared15-point primary-ink label with trailing chevron at the far edge and a44-point minimum target. This supersedes the prior mixed plain blue text and larger Weather setup label. Preserve actual destinations, save/consent guards and supplied legal attribution links.

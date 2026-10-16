@@ -104,3 +104,23 @@ struct PlannerCalendarView: View {
         catch { self.error = "This date couldn’t be opened. Choose another date." }
     }
 }
+
+/// A large-text month can exceed a phone's height. Keep every date reachable
+/// while the surrounding page owns its fixed bottom action footer.
+struct PlannerCalendarHeader: View {
+    @Binding var day: LocalPlanDay
+    @Binding var mode: PlannerCalendarMode
+    let counts: [String: Int]
+    var countLabel = "plans"
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    var body: some View {
+        if typeSize.isAccessibilitySize && mode == .month {
+            ScrollView {
+                PlannerCalendarView(day: $day, mode: $mode, counts: counts, countLabel: countLabel)
+            }
+        } else {
+            PlannerCalendarView(day: $day, mode: $mode, counts: counts, countLabel: countLabel)
+        }
+    }
+}

@@ -127,7 +127,7 @@ struct OutfitComposition: View {
         Group {
             if pieceIDs.isEmpty {
                 AppEmptyState("Choose your pieces", systemImage: "tshirt",
-                                       description: Text("Build a look from your own closet."))
+                                       description: Text("Build a look from your own closet."), fillsAvailableSpace: false)
             } else {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 8) {
                     ForEach(shownIDs, id: \.self) { id in
@@ -158,24 +158,31 @@ struct OutfitCollectionView: View {
         }
     }
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 24) {
-                if let error = state.outfitError {
-                    SemanticFeedback(role: .danger, message: error)
-                    Button("Retry outfits") { state.reloadOutfits() }.frame(minHeight: 44)
-                } else if state.outfits.isEmpty {
-                    AppEmptyState("Your first outfit starts here", systemImage: "square.stack", description: Text("Combine pieces from your closet. Every outfit stays private."))
-                    PrimaryAction(title: "Build outfit") { state.buildOutfit() }
-                } else if outfits.isEmpty {
-                    AppEmptyState("No matching outfits", systemImage: "square.stack", description: Text("Clear the theme or Favorites filter to see your other looks."))
-                    PrimaryAction(title: "Clear filters", action: clearFilters)
-                } else {
-                    ForEach(outfits) { OutfitCollectionCard(outfit: $0) }
-                    PrimaryAction(title: "Suggest an outfit") { state.buildOutfit(suggest: true) }
+        Group {
+            if state.outfitError == nil && outfits.isEmpty {
+                EmptyStatePage(title: state.outfits.isEmpty ? "Your first outfit starts here" : "No matching outfits",
+                               systemImage: "square.stack",
+                               description: Text(state.outfits.isEmpty ? "Combine pieces from your closet. Every outfit stays private." : "Clear the theme or Favorites filter to see your other looks.")) {
+                    if state.outfits.isEmpty {
+                        PrimaryAction(title: "Build outfit") { state.buildOutfit() }
+                    } else {
+                        PrimaryAction(title: "Clear filters", action: clearFilters)
+                    }
                 }
-            }.padding(20).scrollTargetLayout()
-        }.scrollPosition(id: Binding(get: { state.closetOutfitAnchor }, set: { state.closetOutfitAnchor = $0 }))
-            .onAppear { state.reloadOutfits(); state.reloadThemes() }
+            } else {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 24) {
+                        if let error = state.outfitError {
+                            SemanticFeedback(role: .danger, message: error)
+                            Button("Retry outfits") { state.reloadOutfits() }.frame(minHeight: 44)
+                        } else {
+                            ForEach(outfits) { OutfitCollectionCard(outfit: $0) }
+                            PrimaryAction(title: "Suggest an outfit") { state.buildOutfit(suggest: true) }
+                        }
+                    }.padding(20).scrollTargetLayout()
+                }.scrollPosition(id: Binding(get: { state.closetOutfitAnchor }, set: { state.closetOutfitAnchor = $0 }))
+            }
+        }.onAppear { state.reloadOutfits(); state.reloadThemes() }
     }
 }
 

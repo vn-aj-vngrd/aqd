@@ -26,7 +26,7 @@ struct OutfitPlanEditorView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     if let saved = model.saved {
                         Text("Plan saved").font(AppTypography.section)
-                        Text(saved.day.key).font(AppTypography.body)
+                        Text(saved.day.displayDate).font(AppTypography.body)
                         Text(saved.state == .unassigned ? "Outfit unassigned" : model.draft.outfit?.name ?? "Planned outfit")
                         Text("Planning never records wear.").foregroundStyle(AppTheme.secondary)
                         PrimaryAction(title: "Open Planner") { model.finish(openPlanner: true) }
@@ -50,7 +50,7 @@ struct OutfitPlanEditorView: View {
                         DisclosureRow(title: "Timezone", value: model.draft.day.timeZoneID) { choosingZone = true }
                             .disabled(model.pending || model.unknown || namedPlan != nil)
                         if let context = model.draft.weather {
-                            Text("\(context.day.key) · \(context.place.timeZoneID)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                            Text("\(context.day.displayDate) · \(context.place.timeZoneID)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         }
                         if model.hasOverlap {
                             Text("Another plan uses this date and occasion. Existing assignments stay unchanged.")

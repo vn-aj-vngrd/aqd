@@ -259,3 +259,13 @@ These are source changes. Unit/build evidence belongs to the grouped issue27/29 
 - Outfit Favorites and Theme filtering lives in the top-right Filter menu, including during active search. Browse/search filter values remain separate.
 - Today has a discoverable Weather setup card when no Weather widget exists, and matching attributed saved readings when qualified. Live WeatherKit remains disabled pending signed service/attribution qualification, with explicit unavailable copy. Existing user layouts are not rewritten. Card headings use contextual symbols and smaller semantic typography; empty guidance preserves actual wear/plan semantics.
 - Customize Today uses a smaller regular-weight grid symbol. Inactive root tabs use explicit regular symbol weight and selected tabs use semibold/filled variants where available. UIKit continues to own chrome, selected traits and Agent return behavior.
+
+## Owner layout follow-up · October16
+
+- Page empty states center icon/title/explanation and use bottom safe-area actions. Collection, search, Profile, Planner, wear history/insights and recovery roots share this layout; inline notices in real cards/metrics remain compact. Large month calendars have their own scrollable header at accessibility text sizes.
+- iOS27 uses the public native prominent-tab identifier for Agent, visually separating it from Today/Closet/Planner/Profile. It retains Agent identity and intercepted full-screen task launch, with logical root indices preserved. Earlier iOS retains native grouped tabs. No search-role impersonation or custom bar geometry.
+- Closet uses a native36-point segmented rail with a44-point touch region and the existing accessible-size alternate controls.
+- Visible Planner dates use localized complete date labels in their recorded timezone. Keys remain unchanged for storage, comparison and identity.
+- Today card actions use semantic primary ink, 15-point supporting labels,44-point minimum targets and a chevron at the far trailing edge. Native Button/NavigationLink ownership and all callbacks are unchanged.
+
+Source/unit/build verification is separate from rendered native qualification in issue30.

@@ -89,14 +89,24 @@ struct AppEmptyState: View {
     let title: LocalizedStringKey
     let systemImage: String
     let description: Text?
+    let fillsAvailableSpace: Bool
 
-    init(_ title: LocalizedStringKey, systemImage: String, description: Text? = nil) {
+    init(_ title: LocalizedStringKey, systemImage: String, description: Text? = nil, fillsAvailableSpace: Bool = true) {
         self.title = title
         self.systemImage = systemImage
         self.description = description
+        self.fillsAvailableSpace = fillsAvailableSpace
     }
 
     var body: some View {
+        Group {
+            if fillsAvailableSpace {
+                message.containerRelativeFrame(.vertical) { height, _ in max(0, height - 40) }
+            } else { message }
+        }
+    }
+
+    private var message: some View {
         ContentUnavailableView {
             Label { Text(title).font(.headline) } icon: { Image(systemName: systemImage) }
         } description: {

@@ -19,35 +19,37 @@ struct LocalWearHistoryView: View {
     }
     var body: some View {
         @Bindable var state = state
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                if let start = periodStart, let end = periodEnd {
-                    Text("\(start.key) – \(end.key)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+        VStack(alignment: .leading, spacing: 16) {
+            if let start = periodStart, let end = periodEnd {
+                Text("\(start.displayDate) – \(end.displayDate)").font(AppTypography.supporting)
+                    .foregroundStyle(AppTheme.secondary).padding(.horizontal, 20)
+            }
+            if calendarShown {
+                PlannerCalendarHeader(day: $state.wearHistoryDay, mode: $state.wearHistoryMode,
+                    counts: Dictionary(grouping: records, by: { $0.day.key }).mapValues(\.count), countLabel: "recorded wears")
+                    .padding(.horizontal, 20)
+                Text(state.wearHistoryDay.displayDate).font(AppTypography.section).padding(.horizontal, 20)
+            }
+            let shown = records.filter { !calendarShown || $0.day.key == state.wearHistoryDay.key }
+            if let error = state.wearError {
+                SemanticFeedback(role: .danger, message: error).padding(20)
+                Button("Retry history") { state.reloadWear() }.frame(minHeight: 44)
+            } else if shown.isEmpty {
+                EmptyStatePage(title: records.isEmpty ? "Your history starts here" : "No wear recorded for this day",
+                               systemImage: "clock", description: Text("Record what you actually wore. Plans never count as wear.")) {
+                    PrimaryAction(title: "Record a look") { state.openWear(day: recordingDay) }
+                    SecondaryAction(title: "Open Planner") { state.plannerDay = recordingDay; state.selection = 2 }
                 }
-                if let error = state.wearError {
-                    SemanticFeedback(role: .danger, message: error)
-                    Button("Retry history") { state.reloadWear() }.frame(minHeight: 44)
-                } else {
-                    if calendarShown {
-                        PlannerCalendarView(day: $state.wearHistoryDay, mode: $state.wearHistoryMode,
-                            counts: Dictionary(grouping: records, by: { $0.day.key }).mapValues(\.count), countLabel: "recorded wears")
-                        Text(state.wearHistoryDay.key).font(AppTypography.section)
-                    }
-                    let shown = records.filter { !calendarShown || $0.day.key == state.wearHistoryDay.key }
-                    if shown.isEmpty {
-                        AppEmptyState(records.isEmpty ? "Your history starts here" : "No wear recorded for this day", systemImage: "clock",
-                            description: Text("Record what you actually wore. Plans never count as wear."))
-                        PrimaryAction(title: "Record a look") { state.openWear(day: recordingDay) }
-                        SecondaryAction(title: "Open Planner") { state.plannerDay = recordingDay; state.selection = 2 }
-                    }
-                    ForEach(shown) { record in
-                        NavigationLink { LocalWearDetailView(id: record.id) } label: { WearAgendaRow(record: record) }.buttonStyle(.plain)
-                    }
-                    if !calendarShown && !shown.isEmpty {
-                        PrimaryAction(title: "Record a look") { state.openWear(day: recordingDay) }
-                    }
+            } else {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        ForEach(shown) { record in
+                            NavigationLink { LocalWearDetailView(id: record.id) } label: { WearAgendaRow(record: record) }.buttonStyle(.plain)
+                        }
+                        if !calendarShown { PrimaryAction(title: "Record a look") { state.openWear(day: recordingDay) } }
+                    }.padding(20)
                 }
-            }.padding(20)
+            }
         }.background(AppTheme.canvas).navigationTitle(calendarShown ? "Wear calendar" : "Wear history")
             .navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink).onAppear { state.reloadWear() }
             .toolbar {

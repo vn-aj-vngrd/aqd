@@ -45,7 +45,7 @@ struct RoutineOutfitChooser: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Choose outfits for a reviewed rotation. Selecting them doesn’t change saved dates.").foregroundStyle(AppTheme.secondary)
-                if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("Build an outfit in Closet, or leave your routine dates unassigned.")) }
+                if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("Build an outfit in Closet, or leave your routine dates unassigned."), fillsAvailableSpace: false) }
                 ForEach(model.state.outfits.filter { selected.contains($0.id) || query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }) { outfit in
                     Button {
                         if selected.contains(outfit.id) { selected.removeAll { $0 == outfit.id } } else { selected.append(outfit.id) }
@@ -84,7 +84,7 @@ struct RoutineScopeChooser: View {
                     Text("Recorded wear and completed entries stay intact.").foregroundStyle(AppTheme.secondary)
                     if !editable.isEmpty {
                         Picker("Starting entry", selection: $selectedID) {
-                            ForEach(editable) { Text("\($0.day.key) · \($0.occasion)").tag(Optional($0.id)) }
+                            ForEach(editable) { Text("\($0.day.displayDate) · \($0.occasion)").tag(Optional($0.id)) }
                         }.pickerStyle(.menu).frame(minHeight: 44)
                         DisclosureRow(title: "This entry") { choose(.entry, selectedID) }.disabled(selectedID == nil)
                         DisclosureRow(title: "This and future entries") { choose(.future, selectedID) }.disabled(selectedID == nil)

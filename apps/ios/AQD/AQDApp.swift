@@ -40,11 +40,9 @@ private struct AppRootView: View {
                     .foregroundStyle(AppTheme.ink).background(AppTheme.canvas)
                     .accessibilityIdentifier("entry.splash")
             } else if let error = state.openingError {
-                ContentUnavailableView {
-                    Label("Your closet couldn’t open", systemImage: "externaldrive.badge.exclamationmark").font(.headline)
-                } description: { Text(error).font(AppTypography.supporting) } actions: {
-                    Button("Retry") { state.openStore() }
-                    Button("Choose an archive") { state.openRestore() }
+                EmptyStatePage(title: "Your closet couldn’t open", systemImage: "externaldrive.badge.exclamationmark", description: Text(error)) {
+                    PrimaryAction(title: "Retry") { state.openStore() }
+                    SecondaryAction(title: "Choose an archive") { state.openRestore() }
                 }
             } else if state.entry.page != .main {
                 rootContent(PrivateEntryView())

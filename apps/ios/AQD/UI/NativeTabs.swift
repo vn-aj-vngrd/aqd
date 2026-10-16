@@ -65,6 +65,7 @@ struct NativeTabs: UIViewControllerRepresentable {
         private var requestedAgentID: UUID?
         private weak var originAccessibilityElement: AnyObject?
         private let agentIndex = 3
+        private var tabs: [UITab] = []
 
         init(agent: @escaping AgentBuilder, selection: Binding<Int>) {
             self.agent = agent
@@ -77,15 +78,15 @@ struct NativeTabs: UIViewControllerRepresentable {
         }
 
         func selectRoot(_ index: Int) {
-            guard taskID == nil, (0..<5).contains(index), index != agentIndex,
+            guard taskID == nil, tabs.indices.contains(index), index != agentIndex,
                   let controller else { return }
             // UIKit27 invalidates hosted content even for a same-index assignment.
             // A representable update must not schedule another equivalent update.
-            if controller.selectedIndex != index { controller.selectedIndex = index }
+            if controller.selectedTab !== tabs[index] { controller.selectedTab = tabs[index] }
             originIndex = index
         }
 
-        fileprivate func install(on controller: UITabBarController, roots: [AnyView]) {
+        func install(on controller: UITabBarController, roots: [AnyView]) {
             self.controller = controller
             // The launch slot also has real content, never a blank/dead root.
             // Normal tab activation is intercepted below, before selection.
@@ -109,30 +110,41 @@ struct NativeTabs: UIViewControllerRepresentable {
                 host.tabBarItem = item
                 return host
             }
-            controller.setViewControllers(hosts, animated: false)
-            controller.selectedIndex = originIndex
+            tabs = hosts.enumerated().map { index, host in
+                let tab = UITab(title: names[index], image: host.tabBarItem.image,
+                                identifier: "aqd.\(names[index].lowercased())") { _ in host }
+                tab.accessibilityIdentifier = "root.tab.\(names[index].lowercased())"
+                tab.preferredPlacement = .fixed
+                if #available(iOS 26.1, *) { tab.selectedImage = host.tabBarItem.selectedImage }
+                return tab
+            }
+            controller.setTabs(tabs, animated: false)
+            if #available(iOS 27.0, *) { controller.prominentTabIdentifier = tabs[agentIndex].identifier }
+            controller.selectedTab = tabs[originIndex]
         }
 
-        func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-            guard viewController === hosts[agentIndex] else {
-                return taskID == nil
-            }
+        func tabBarController(_ tabBarController: UITabBarController, shouldSelectTab tab: UITab) -> Bool {
+            guard tab === tabs[agentIndex] else { return taskID == nil }
             presentAgent()
             return false
         }
 
-        func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-            if tabBarController.selectedIndex != agentIndex {
-                originIndex = tabBarController.selectedIndex
-                selection.wrappedValue = originIndex
-            }
+        func tabBarController(_ tabBarController: UITabBarController, didSelectTab selectedTab: UITab, previousTab: UITab?) {
+            guard let index = tabs.firstIndex(where: { $0 === selectedTab }), index != agentIndex else { return }
+            originIndex = index
+            selection.wrappedValue = index
+        }
+
+        private var selectedRootIndex: Int {
+            guard let selected = controller?.selectedTab else { return originIndex }
+            return tabs.firstIndex(where: { $0 === selected }) ?? originIndex
         }
 
         private func presentAgent() {
             guard let controller, taskID == nil,
                   controller.presentedViewController == nil,
                   controller.viewIfLoaded?.window != nil else { return }
-            originIndex = controller.selectedIndex
+            originIndex = selectedRootIndex
             originAccessibilityElement = UIAccessibility.focusedElement(using: .notificationVoiceOver) as AnyObject?
             let id = UUID()
             taskID = id
@@ -159,7 +171,7 @@ struct NativeTabs: UIViewControllerRepresentable {
             guard taskID == id else { return }
             let requested = selection.wrappedValue
             let destination = (0..<5).contains(requested) && requested != agentIndex ? requested : originIndex
-            controller?.selectedIndex = destination
+            controller?.selectedTab = tabs[destination]
             selection.wrappedValue = destination
             taskID = nil
             taskHost = nil
@@ -180,6 +192,7 @@ struct NativeTabs: UIViewControllerRepresentable {
             taskID = nil
             taskHost = nil
             hosts.removeAll()
+            tabs.removeAll()
             originAccessibilityElement = nil
             controller = nil
         }

@@ -6,23 +6,30 @@ struct LocalProfileView: View {
     var body: some View {
         @Bindable var state = state
         NavigationStack {
+            Group {
+                if state.fitMemories.isEmpty && state.fitError == nil {
+                    VStack(alignment: .leading, spacing: 16) {
+                        identityHeader.padding(.horizontal, 20)
+                        if let error = state.identityError {
+                            SemanticFeedback(role: .danger, message: error).padding(.horizontal, 20)
+                            Button("Retry profile") { state.reloadIdentity() }.padding(.horizontal, 20)
+                        }
+                        EmptyStatePage(title: "A little space for your style", systemImage: "photo.stack",
+                                       description: Text("Keep a photo or outfit here. Your fit memories stay private.")) {
+                            PrimaryAction(title: "Add fit") { state.openFit() }
+                        }.accessibilityIdentifier("profile.fits.empty")
+                    }.padding(.top, 20)
+                } else {
             ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    HStack(alignment: .center, spacing: 16) {
-                        LocalIdentityAvatar(photoID: state.localIdentity?.photoID, recipe: state.localIdentity?.photoRecipe ?? .fitOriginal).frame(width: 64, height: 64)
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(state.localIdentity?.name ?? "Your profile").font(.title.weight(.medium))
-                            Text("Your private style and fit memories")
-                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        }
-                    }.accessibilityIdentifier("profile.identity")
-                    Label("Private on this iPhone", systemImage: "lock")
-                        .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                    identityHeader
                     FitJournalGrid()
                     if let error = state.identityError { SemanticFeedback(role: .danger, message: error); Button("Retry profile") { state.reloadIdentity() } }
                 }.padding(20)
             }.onChange(of: state.fitAnchor) { _, id in if let id { proxy.scrollTo(id) } }
+            }
+                }
             }.background(AppTheme.canvas).navigationTitle("Profile").onAppear { state.reloadIdentity(); state.reloadFits() }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -45,5 +52,19 @@ struct LocalProfileView: View {
                 .navigationDestination(isPresented: $state.profileHistory) { LocalWearHistoryView() }
                 .navigationDestination(isPresented: $state.profileSettings) { LocalSettingsView() }
         }.tint(AppTheme.ink)
+    }
+    private var identityHeader: some View {
+        VStack(alignment: .leading, spacing: 16) {
+                    HStack(alignment: .center, spacing: 16) {
+                        LocalIdentityAvatar(photoID: state.localIdentity?.photoID, recipe: state.localIdentity?.photoRecipe ?? .fitOriginal).frame(width: 64, height: 64)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(state.localIdentity?.name ?? "Your profile").font(.title.weight(.medium))
+                            Text("Your private style and fit memories")
+                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }
+                    }.accessibilityIdentifier("profile.identity")
+                    Label("Private on this iPhone", systemImage: "lock")
+                        .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+        }
     }
 }

@@ -11,11 +11,9 @@ struct LocalAgentView: View {
             if let model = state.agentModel {
                 AgentConversationView(model: model, close: close)
             } else {
-                ContentUnavailableView {
-                    Label("Conversations couldn’t open", systemImage: "exclamationmark.bubble").font(.headline)
-                } description: { Text("Your local records are retained.").font(AppTypography.supporting) } actions: {
-                    Button("Try again") { open() }
-                    Button("Back", action: close)
+                EmptyStatePage(title: "Conversations couldn’t open", systemImage: "exclamationmark.bubble", description: Text("Your local records are retained.")) {
+                    PrimaryAction(title: "Try again") { open() }
+                    SecondaryAction(title: "Back", action: close)
                 }
             }
         }.tint(AppTheme.ink).task { open() }.onDisappear { state.agentModel?.suspend() }

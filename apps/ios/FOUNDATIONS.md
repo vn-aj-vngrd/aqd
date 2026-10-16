@@ -7,7 +7,8 @@ Foundation #20 extends the existing capture app, not a component-gallery destina
 | Component | Responsibility | Current consumers |
 | --- | --- | --- |
 | `AppTheme` | 25 paired semantic color roles; native appearance inheritance | Existing roots, capture, details and photo editor |
-| `AppMetrics` | Spacing, radii, control minima and scalable system typography | Shared controls and existing content headings |
+| `AppMetrics` | Spacing, radii, control minima, scalable typography and recorded-timezone date labels | Shared controls and visible plan dates |
+| `AppEmptyState`, `EmptyStatePage` | Centered native message with semantic typography; page actions use bottom safe-area footer, inline card notices opt out of viewport filling | Collection/search, Profile, Planner, wear and recovery empties |
 | `PrimaryAction`, `SecondaryAction` | Solid primary/plain secondary; wrapping, neutral disabled state, one pending spinner and duplicate-activation refusal | Capture/save/receipt, photo editor, details and Agent manual return |
 | `ActionStack`, `ActionFooter` | 12-point action gap and native safe-area content footer | Existing capture/editor/detail tasks; no viewport or keyboard offsets |
 | `LabeledControl`, `LabeledField` | Persistent label, opaque native input, associated validation/helper, Increase Contrast boundary; optional feature-owned editing focus | Name/metadata/notes; native Category and Availability Pickers |
@@ -18,7 +19,7 @@ Foundation #20 extends the existing capture app, not a component-gallery destina
 
 TextFields receive their spoken persistent name directly; the input shell must not overwrite a Picker's native selected-value label. Feedback severity is supplied by the caller, never guessed from error prose. Existing mixed failure/conflict/unknown-write channels keep their exact recovery text. Success appears only after a real acknowledgment. `AppAppearance` is a presentation utility; section09 owns persistence and Settings controls.
 
-The Closet destination uses registered `hanger`, not the `tshirt` garment-placeholder role. Selected tab symbols use native semibold configuration and explicit accent tint; inactive symbols use secondary tint. UIKit owns geometry, materials, selected traits and accessibility targets; no private subview hacks or custom glass bar. The icon-only and Agent-as-tab-launch HIG exceptions remain explicit.
+The Closet destination uses registered `hanger`, not the `tshirt` garment-placeholder role. Selected tab symbols use native semibold configuration and explicit accent tint; inactive symbols use secondary tint. UIKit owns geometry, materials, selected traits and accessibility targets; no private subview hacks or custom glass bar. The Agent-as-tab-launch HIG exception remains explicit. On iOS27 the native prominent tab separates Agent from the four destinations, using UITab identity and selection APIs; earlier systems keep native grouped tabs.
 
 ## Paper reference inventory
 

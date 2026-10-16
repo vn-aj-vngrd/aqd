@@ -10,9 +10,17 @@ struct LocalPlannerView: View {
     var body: some View {
         @Bindable var state = state
         NavigationStack(path: $state.plannerPath) {
+            VStack(alignment: .leading, spacing: 16) {
+                PlannerCalendarHeader(day: $state.plannerDay, mode: $state.plannerMode, counts: counts).padding(.horizontal, 20)
+                Text(state.plannerDay.displayDate).font(AppTypography.section).padding(.horizontal, 20)
+                if state.planError == nil && state.planEntries.isEmpty && state.planDefinitions.isEmpty {
+                    EmptyStatePage(title: "No plans for this day", systemImage: "calendar",
+                                   description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear.")) {
+                        PrimaryAction(title: "Plan an outfit") { state.openPlan(day: state.plannerDay) }
+                    }
+                } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    PlannerCalendarView(day: $state.plannerDay, mode: $state.plannerMode, counts: counts)
                     if let error = state.planError {
                         SemanticFeedback(role: .danger, message: error)
                         Button("Retry plans") { state.reloadPlanEntries() }.frame(minHeight: 44)
@@ -20,7 +28,7 @@ struct LocalPlannerView: View {
                     if let recent = state.recentPlan {
                         TimelineView(.periodic(from: .now, by: 1)) { context in
                             HStack {
-                                Text("Plan saved · \(recent.day.key)")
+                                Text("Plan saved · \(recent.day.displayDate)")
                                 Spacer()
                                 if state.planUndoPending || (state.planUndoDeadline ?? .distantPast) >= context.date {
                                     Button(state.planUndoPending ? "Check Undo" : "Undo") { state.undoRecentPlan() }.frame(minHeight: 44)
@@ -28,11 +36,9 @@ struct LocalPlannerView: View {
                             }.font(AppTypography.supporting)
                         }
                     }
-                    Text(state.plannerDay.key).font(AppTypography.section)
                     if entries.isEmpty && state.planError == nil {
                         AppEmptyState("No plans for this day", systemImage: "calendar",
-                            description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear."))
-                        PrimaryAction(title: "Plan an outfit") { state.openPlan(day: state.plannerDay) }
+                            description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear."), fillsAvailableSpace: false)
                     }
                     ForEach(entries) { entry in
                         NavigationLink(value: PlannerRoute.entry(entry.id)) { PlanAgendaRow(entry: entry) }.buttonStyle(.plain)
@@ -43,7 +49,7 @@ struct LocalPlannerView: View {
                             NavigationLink(value: PlannerRoute.plan(plan.id)) {
                                 HStack {
                                     Text(plan.name).frame(maxWidth: .infinity, alignment: .leading)
-                                    Text(plan.start.key).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                                    Text(plan.start.displayDate).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                                     Image(systemName: "chevron.forward").accessibilityHidden(true)
                                 }.foregroundStyle(AppTheme.ink).padding(14).frame(minHeight: 54)
                                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
@@ -58,7 +64,14 @@ struct LocalPlannerView: View {
                         }
                     }
                 }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle("Planner")
+            }
+            .safeAreaInset(edge: .bottom) {
+                if entries.isEmpty && state.planError == nil {
+                    ActionFooter { PrimaryAction(title: "Plan an outfit") { state.openPlan(day: state.plannerDay) } }
+                }
+            }
+                }
+            }.padding(.top, 16).background(AppTheme.canvas).navigationTitle("Planner")
                 .navigationDestination(for: PlannerRoute.self) { route in
                     switch route {
                     case .entry(let id): LocalPlanEntryView(id: id)
@@ -95,7 +108,7 @@ struct PlanAgendaRow: View {
             if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 56, limit: 2).frame(width: 64, height: 80).clipped() }
             VStack(alignment: .leading, spacing: 4) {
                 Text(outfit?.name ?? "Outfit unassigned").font(AppTypography.body).foregroundStyle(AppTheme.ink)
-                if showDate { Text(entry.day.key).font(AppTypography.supporting) }
+                if showDate { Text(entry.day.displayDate).font(AppTypography.supporting) }
                 if !entry.occasion.isEmpty { Text(entry.occasion).font(AppTypography.supporting) }
                 Text(entry.state.rawValue.capitalized).font(AppTypography.supporting)
                 if entry.requiresReview || (outfit != nil && outfit?.revision != entry.outfitRevision) {

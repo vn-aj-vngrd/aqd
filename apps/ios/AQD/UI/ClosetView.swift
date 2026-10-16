@@ -101,9 +101,7 @@ struct ClosetView: View {
                 }
             }.scrollIndicators(.hidden)
         } else {
-            Picker("Closet collection", selection: scopeSelection) {
-                ForEach(ClosetSearchScope.allCases, id: \.self) { Text($0.rawValue).tag($0.rawValue) }
-            }.pickerStyle(.segmented).frame(minHeight: 44)
+            ClosetScopeControl(selection: scopeSelection).frame(height: 36).frame(minHeight: 44)
         }
     }
     private var outfitFilterMenu: some ToolbarContent {
@@ -140,20 +138,23 @@ struct ClosetView: View {
             } label: { Label("Filter and sort pieces", systemImage: "line.3.horizontal.decrease") }.tint(AppTheme.ink)
         }
     }
-    private var pieceCollection: some View {
+    @ViewBuilder private var pieceCollection: some View {
+        if error == nil && results.isEmpty {
+            EmptyStatePage(title: archived ? "No archived pieces" : category == nil && availability == nil ? "Your closet starts here" : "No matching pieces",
+                           systemImage: "tshirt",
+                           description: Text(category == nil && availability == nil ? "Add a photo and a few details. Everything stays on this device." : "Try another category or clear the filters.")) {
+                if category == nil && availability == nil && !archived {
+                    PrimaryAction(title: "Add piece") { state.addPiece() }
+                } else {
+                    PrimaryAction(title: "Clear filters") { category = nil; availability = nil; archived = false }
+                }
+            }
+        } else {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 if let error {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry", action: refreshPieces).frame(minHeight: 44)
-                } else if results.isEmpty {
-                    AppEmptyState(archived ? "No archived pieces" : category == nil && availability == nil ? "Your closet starts here" : "No matching pieces", systemImage: "tshirt",
-                                           description: Text(category == nil && availability == nil ? "Add a photo and a few details. Everything stays on this device." : "Try another category or clear the filters."))
-                    if category == nil && availability == nil && !archived {
-                        PrimaryAction(title: "Add piece") { state.addPiece() }
-                    } else {
-                        PrimaryAction(title: "Clear filters") { category = nil; availability = nil; archived = false }
-                    }
                 } else {
                     if [.mostWorn, .leastWorn, .lastWorn].contains(sort) {
                         Text("Wear totals include prior estimates. Last worn uses recorded dates; pieces without dated history appear last.")
@@ -163,6 +164,7 @@ struct ClosetView: View {
                 }
             }.padding(20)
         }.scrollPosition(id: Binding(get: { state.closetPieceAnchor }, set: { state.closetPieceAnchor = $0 }))
+        }
     }
     private func refresh() {
         refreshPieces(); state.reloadOutfits(); state.reloadThemes()
@@ -494,6 +496,41 @@ private struct ClosetSearchField: ViewModifier {
                                placement: .navigationBarDrawer(displayMode: .always), prompt: prompt)
         } else {
             content
+        }
+    }
+}
+
+private struct ClosetScopeControl: UIViewRepresentable {
+    @Binding var selection: String
+    private let scopes = ClosetSearchScope.allCases.map(\.rawValue)
+
+    func makeCoordinator() -> Coordinator { Coordinator(selection: $selection, scopes: scopes) }
+    func makeUIView(context: Context) -> TouchSegmentControl {
+        let control = TouchSegmentControl(items: scopes)
+        control.accessibilityLabel = "Closet collection"
+        control.addTarget(context.coordinator, action: #selector(Coordinator.changed(_:)), for: .valueChanged)
+        return control
+    }
+    func updateUIView(_ control: TouchSegmentControl, context: Context) {
+        context.coordinator.selection = $selection
+        control.selectedSegmentIndex = scopes.firstIndex(of: selection) ?? 0
+    }
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: TouchSegmentControl, context: Context) -> CGSize? {
+        CGSize(width: proposal.width ?? uiView.intrinsicContentSize.width, height: 36)
+    }
+    final class TouchSegmentControl: UISegmentedControl {
+        override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+            let extra = max(0, (44 - bounds.height) / 2)
+            return bounds.insetBy(dx: 0, dy: -extra).contains(point)
+        }
+    }
+    final class Coordinator: NSObject {
+        var selection: Binding<String>
+        let scopes: [String]
+        init(selection: Binding<String>, scopes: [String]) { self.selection = selection; self.scopes = scopes }
+        @objc func changed(_ sender: UISegmentedControl) {
+            guard scopes.indices.contains(sender.selectedSegmentIndex) else { return }
+            selection.wrappedValue = scopes[sender.selectedSegmentIndex]
         }
     }
 }

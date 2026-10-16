@@ -1,3 +1,4 @@
+import AQDCore
 import SwiftUI
 
 /// DESIGN.md space scale; semantic aliases keep intent readable at call sites.
@@ -61,5 +62,13 @@ extension View {
     /// Apply to a SwiftUI presentation root; system inherits native appearance.
     func appAppearance(_ appearance: AppAppearance) -> some View {
         preferredColorScheme(appearance.colorScheme)
+    }
+}
+
+/// Calendar-day UI formatting retains the day and timezone recorded with a plan.
+extension LocalPlanDay {
+    var displayDate: String {
+        guard let date = try? date(), let zone = TimeZone(identifier: timeZoneID) else { return key }
+        return date.formatted(Date.FormatStyle(date: .complete, time: .omitted, timeZone: zone))
     }
 }

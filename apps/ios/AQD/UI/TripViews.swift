@@ -61,7 +61,7 @@ struct PlanDatesView: View {
             VStack(alignment: .leading, spacing: 20) {
                 if gapsOnly {
                     if let summary {
-                        if summary.gaps.isEmpty { AppEmptyState("Every date has an outfit", systemImage: "checkmark.circle") }
+                        if summary.gaps.isEmpty { AppEmptyState("Every date has an outfit", systemImage: "checkmark.circle", fillsAvailableSpace: false) }
                         ForEach(summary.gaps) { gap in
                             if let entryID = gap.entryID {
                                 NavigationLink(value: PlannerRoute.entry(entryID)) { gapLabel(gap) }.buttonStyle(.plain)
@@ -74,7 +74,7 @@ struct PlanDatesView: View {
                     ForEach(entries) { entry in
                         NavigationLink(value: PlannerRoute.entry(entry.id)) { PlanAgendaRow(entry: entry, showDate: true) }.buttonStyle(.plain)
                     }
-                    if entries.isEmpty { AppEmptyState("No saved entries", systemImage: "calendar") }
+                    if entries.isEmpty { AppEmptyState("No saved entries", systemImage: "calendar", fillsAvailableSpace: false) }
                     if let summary, !summary.gaps.isEmpty {
                         SecondaryAction(title: "Review unassigned dates") { state.plannerPath.append(.dates(id, true)) }
                     }
@@ -86,7 +86,7 @@ struct PlanDatesView: View {
     }
     private func gapLabel(_ gap: PackingGap) -> some View {
         HStack {
-            VStack(alignment: .leading, spacing: 4) { Text(gap.day.key).font(AppTypography.body); Text(gap.reason).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+            VStack(alignment: .leading, spacing: 4) { Text(gap.day.displayDate).font(AppTypography.body); Text(gap.reason).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
             Spacer(); Image(systemName: "chevron.forward").accessibilityHidden(true)
         }.foregroundStyle(AppTheme.ink).padding(14).frame(minHeight: 54).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
     }
@@ -111,12 +111,12 @@ struct TripPackingView: View {
             VStack(alignment: .leading, spacing: 12) {
                 if let plan = state.planDefinitions.first(where: { $0.id == id }) {
                     Text(plan.name).font(AppTypography.section)
-                    Text("\(plan.start.key) – \(plan.end.key) · \(plan.start.timeZoneID)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    Text("\(plan.start.displayDate) – \(plan.end.displayDate) · \(plan.start.timeZoneID)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }
                 if let summary {
                     Text("\(summary.items.count) unique pieces from your assigned outfits. \(summary.gaps.count) dates or assignments need review.")
                         .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    if summary.items.isEmpty { AppEmptyState("No pieces to pack yet", systemImage: "suitcase", description: Text("Assign saved outfits to the trip’s dates to build this list.")) }
+                    if summary.items.isEmpty { AppEmptyState("No pieces to pack yet", systemImage: "suitcase", description: Text("Assign saved outfits to the trip’s dates to build this list."), fillsAvailableSpace: false) }
                     ForEach(summary.items) { item in
                         Button { check(item) } label: {
                             HStack(spacing: 12) {

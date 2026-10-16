@@ -8,16 +8,22 @@ struct LocalWearInsightsView: View {
     @State private var summary: WearPeriodSummary?
     @State private var error: String?
     var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            DatePicker("Period", selection: Binding(get: { (try? month.date()) ?? Date() }, set: { month = LocalPlanDay(date: $0); reload() }), displayedComponents: .date).padding(.horizontal, 20)
+            if error == nil, let summary, summary.occasions == 0 && state.pieces.isEmpty {
+                EmptyStatePage(title: "Not enough recorded history", systemImage: "chart.bar",
+                               description: Text("Record a wear to see which pieces you reach for. Earlier estimates are excluded from this period.")) {
+                    PrimaryAction(title: "Record a look") { state.openWear() }
+                    SecondaryAction(title: "Open Closet") { state.selection = 1 }
+                }
+            } else {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                DatePicker("Period", selection: Binding(get: { (try? month.date()) ?? Date() }, set: { month = LocalPlanDay(date: $0); reload() }), displayedComponents: .date)
                 if let error { SemanticFeedback(role: .danger, message: error); Button("Retry insights", action: reload).frame(minHeight: 44) }
                 else if let summary {
                     Text("\(summary.start.key) – \(summary.end.key)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     if summary.occasions == 0 || summary.activeCount == 0 {
-                        AppEmptyState("Not enough recorded history", systemImage: "chart.bar", description: Text("Record a wear to see which pieces you reach for. Earlier estimates are excluded from this period."))
-                        PrimaryAction(title: "Record a look") { state.openWear() }
-                        SecondaryAction(title: "Open Closet") { state.selection = 1 }
+                        AppEmptyState("Not enough recorded history", systemImage: "chart.bar", description: Text("Record a wear to see which pieces you reach for. Earlier estimates are excluded from this period."), fillsAvailableSpace: false)
                     }
                     if summary.occasions > 0 {
                         Text("\(summary.occasions) wear occasions · \(summary.itemOccurrences) individual item wears").font(AppTypography.body)
@@ -55,7 +61,17 @@ struct LocalWearInsightsView: View {
                     }
                 }
             }.padding(20)
-        }.background(AppTheme.canvas).navigationTitle("Wear insights").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
+        }
+        .safeAreaInset(edge: .bottom) {
+            if error == nil, let summary, summary.occasions == 0 || summary.activeCount == 0 {
+                ActionFooter { ActionStack {
+                    PrimaryAction(title: "Record a look") { state.openWear() }
+                    SecondaryAction(title: "Open Closet") { state.selection = 1 }
+                } }
+            }
+        }
+            }
+        }.padding(.top, 16).background(AppTheme.canvas).navigationTitle("Wear insights").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
             .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
             .onAppear(perform: reload).onChange(of: state.wearRecords) { _, _ in reload() }
     }

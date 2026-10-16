@@ -110,7 +110,7 @@ struct TodayPersonalPhoto: View {
         if let id = card.photoID, let data = try? state.store?.photoRendition(id: id, recipe: card.photoRecipe), let image = UIImage(data: data) {
             Image(uiImage: image).resizable().scaledToFit().accessibilityLabel(card.title.isEmpty ? "Private Today photo" : card.title)
         } else {
-            AppEmptyState(card.photoID == nil ? "Choose your own photo" : "Saved photo unavailable", systemImage: "photo", description: Text("Replace or recover the AQD photo. Your title and caption are retained."))
+            AppEmptyState(card.photoID == nil ? "Choose your own photo" : "Saved photo unavailable", systemImage: "photo", description: Text("Replace or recover the AQD photo. Your title and caption are retained."), fillsAvailableSpace: false)
         }
     }
 }

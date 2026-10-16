@@ -1,0 +1,36 @@
+import AQDCore
+import SwiftUI
+import Testing
+import UIKit
+@testable import AQD
+
+@Suite(.serialized) @MainActor struct NativeNavigationTests {
+    @Test func prominentAgentPreservesLogicalRootsAndInterception() {
+        var selected = 0
+        let binding = Binding(get: { selected }, set: { selected = $0 })
+        let coordinator = NativeTabs.Coordinator(agent: { _ in AnyView(Color.clear) }, selection: binding)
+        let controller = UITabBarController()
+        coordinator.install(on: controller, roots: (0..<4).map { _ in AnyView(Color.clear) })
+        #expect(controller.tabs.map(\.identifier) == ["aqd.today", "aqd.closet", "aqd.planner", "aqd.agent", "aqd.profile"])
+        if #available(iOS 27.0, *) { #expect(controller.prominentTabIdentifier == "aqd.agent") }
+        coordinator.selectRoot(4)
+        #expect(controller.selectedTab?.identifier == "aqd.profile")
+        let profile = controller.selectedTab?.viewController
+        coordinator.selectRoot(4)
+        #expect(controller.selectedTab?.viewController === profile)
+        // Agent is an intercepted task, never an accidentally selected blank root.
+        #expect(!coordinator.tabBarController(controller, shouldSelectTab: controller.tabs[3]))
+        #expect(controller.selectedTab?.identifier == "aqd.profile")
+        coordinator.selectRoot(3)
+        #expect(controller.selectedTab?.identifier == "aqd.profile")
+        coordinator.tabBarController(controller, didSelectTab: controller.tabs[1], previousTab: controller.tabs[4])
+        #expect(selected == 1)
+    }
+
+    @Test func readableDayDoesNotShiftAcrossExtremeTimezones() {
+        let east = LocalPlanDay(year: 2026, month: 10, day: 16, timeZoneID: "Pacific/Kiritimati")
+        let west = LocalPlanDay(year: 2026, month: 10, day: 16, timeZoneID: "Pacific/Honolulu")
+        #expect(east.displayDate == west.displayDate)
+        #expect(east.displayDate != east.key)
+    }
+}

@@ -13,43 +13,45 @@ struct ClosetSearchContent: View {
 
     var body: some View {
         if let model {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    if let error = model.error {
-                        SemanticFeedback(role: .danger, message: error)
-                        PrimaryAction(title: "Retry search") { Task { await model.search(input, debounce: false) } }
+            Group {
+                if model.error == nil && input.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    EmptyStatePage(title: model.closetEmpty ? "Your closet starts here" : "Search your closet",
+                                   systemImage: model.closetEmpty ? "tshirt" : "magnifyingglass",
+                                   description: Text(model.closetEmpty ? "Add a piece to find it here later." : "Find your pieces, outfits and themes.")) {
+                        if model.closetEmpty { PrimaryAction(title: "Add a piece", action: addPiece) }
+                        else { PrimaryAction(title: "Browse closet", action: browse) }
                     }
-                    if input.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && model.error == nil {
-                        if model.closetEmpty {
-                            AppEmptyState("Your closet starts here", systemImage: "tshirt", description: Text("Add a piece to find it here later."))
-                            PrimaryAction(title: "Add a piece", action: addPiece)
-                        } else {
-                            AppEmptyState("Search your closet", systemImage: "magnifyingglass", description: Text("Find your pieces, outfits and themes."))
-                            PrimaryAction(title: "Browse closet", action: browse)
-                        }
-                    } else if model.loading && model.results == nil {
-                        ProgressView("Searching your closet…").tint(AppTheme.actionText)
-                        searchSkeleton
-                    } else if let results = model.results {
-                        if model.loading { ProgressView("Updating results…").tint(AppTheme.actionText) }
-                        if results.count == 0 && model.error == nil {
-                            AppEmptyState("No matches", systemImage: "magnifyingglass", description: Text("No \(input.scope.rawValue.lowercased()) match “\(input.query)”. Try another search or clear the filters."))
-                            PrimaryAction(title: "Clear search", action: clear)
-                            SecondaryAction(title: "Add a piece", action: addPiece)
-                        } else {
-                            Text("\(results.count) results").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                            switch results {
-                            case .pieces(let pieces): PieceCollectionGrid(pieces: pieces)
-                            case .outfits(let outfits):
-                                LazyVStack(spacing: 24) { ForEach(outfits) { OutfitCollectionCard(outfit: $0) } }.scrollTargetLayout()
-                            case .themes(let themes):
-                                LazyVStack(spacing: 12) { ForEach(themes) { ThemeCollectionCard(theme: $0) } }.scrollTargetLayout()
+                } else if model.error == nil && !model.loading && model.results?.count == 0 {
+                    EmptyStatePage(title: "No matches", systemImage: "magnifyingglass",
+                                   description: Text("No \(input.scope.rawValue.lowercased()) match “\(input.query)”. Try another search or clear the filters.")) {
+                        PrimaryAction(title: "Clear search", action: clear)
+                        SecondaryAction(title: "Add a piece", action: addPiece)
+                    }
+                } else {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            if let error = model.error {
+                                SemanticFeedback(role: .danger, message: error)
+                                PrimaryAction(title: "Retry search") { Task { await model.search(input, debounce: false) } }
                             }
-                        }
-                    }
-                }.padding(20)
+                            if model.loading && model.results == nil {
+                                ProgressView("Searching your closet…").tint(AppTheme.actionText)
+                                searchSkeleton
+                            } else if let results = model.results {
+                                if model.loading { ProgressView("Updating results…").tint(AppTheme.actionText) }
+                                Text("\(results.count) results").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                                switch results {
+                                case .pieces(let pieces): PieceCollectionGrid(pieces: pieces)
+                                case .outfits(let outfits):
+                                    LazyVStack(spacing: 24) { ForEach(outfits) { OutfitCollectionCard(outfit: $0) } }.scrollTargetLayout()
+                                case .themes(let themes):
+                                    LazyVStack(spacing: 12) { ForEach(themes) { ThemeCollectionCard(theme: $0) } }.scrollTargetLayout()
+                                }
+                            }
+                        }.padding(20)
+                    }.scrollPosition(id: anchor)
+                }
             }
-            .scrollPosition(id: anchor)
             .task(id: input) { await model.search(input) }
             .onSubmit(of: .search) { Task { await model.search(input, debounce: false) } }
             .onChange(of: input.query) { pieceAnchor = nil; outfitAnchor = nil; themeAnchor = nil }
