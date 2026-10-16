@@ -2068,14 +2068,16 @@ extension PieceStore {
         guard try JSONDecoder().decode(PlanAuthoringDraft.self, from: proof.request) == draft else { throw StoreError.operationConflict }
         let result = try JSONDecoder().decode(PlanAuthoringReceipt.self, from: proof.result)
         try result.plan.validated()
-        guard result.plan == draft.plan, Set(result.entries.map(\.id)).count == result.entries.count,
+        var expectedPlan = draft.plan; expectedPlan.revision = (draft.basePlan?.revision ?? 0) + 1
+        guard result.plan == expectedPlan, Set(result.entries.map(\.id)).count == result.entries.count,
               Set(result.entries.map(\.id)) == Set(draft.slots.map(\.id)), result.entries.count == draft.slots.count else { throw StoreError.invalidRecord }
         for entry in result.entries {
             try entry.validated()
             guard let slot = draft.slots.first(where: { $0.id == entry.id }),
                   entry.ownerID == result.plan.ownerID, entry.planID == result.plan.id, entry.day == slot.day,
                   entry.occasion == slot.occasion, entry.outfitID == slot.outfit?.id,
-                  entry.outfitRevision == slot.outfit?.revision, entry.revision == 1,
+                  entry.outfitRevision == slot.outfit?.revision,
+                  entry.revision == (draft.editableBaseEntries.first(where: { $0.id == entry.id })?.revision ?? 0) + 1,
                   entry.state == (slot.outfit == nil ? .unassigned : .planned), !entry.requiresReview else { throw StoreError.invalidRecord }
         }
         return result
@@ -2088,20 +2090,39 @@ extension PieceStore {
         guard try planAuthoringDraft() == draft else { throw StoreError.staleDraft }
         let active = Set(try pieces().filter { $0.availability == .available }.map(\.id))
         guard draft.slots.allSatisfy({ $0.outfit.map { Set($0.pieceIDs).isSubset(of: active) } ?? true }) else { throw StoreError.staleRevision }
+        let baseEntries = Dictionary(uniqueKeysWithValues: draft.editableBaseEntries.map { ($0.id, $0) })
+        var savedPlan = draft.plan; savedPlan.revision = (draft.basePlan?.revision ?? 0) + 1; try savedPlan.validated()
         let entries = draft.slots.map { slot in
             OutfitPlanEntry(id: slot.id, planID: draft.plan.id, ownerID: draft.plan.ownerID, day: slot.day,
                 occasion: slot.occasion, outfitID: slot.outfit?.id, outfitRevision: slot.outfit?.revision,
-                state: slot.outfit == nil ? .unassigned : .planned)
+                state: slot.outfit == nil ? .unassigned : .planned, revision: (baseEntries[slot.id]?.revision ?? 0) + 1)
         }
         for entry in entries { try entry.validated() }
         let context = ModelContext(container)
-        guard try !context.fetch(FetchDescriptor<StoredPlanDefinition>()).contains(where: { $0.id == draft.plan.id }),
-              Set(entries.map(\.id)).isDisjoint(with: existing.map(\.id)) else { throw StoreError.operationConflict }
+        let definitions = try context.fetch(FetchDescriptor<StoredPlanDefinition>())
+        let record = definitions.first { $0.id == draft.plan.id }
+        if let base = draft.basePlan {
+            guard let record, try record.value() == base else { throw StoreError.staleRevision }
+            let current = existing.filter { $0.planID == base.id }
+            let reviewed = draft.baseEntries ?? []
+            guard current.count == reviewed.count, current.allSatisfy({ reviewed.contains($0) }) else { throw StoreError.staleRevision }
+            record.payload = try encode(savedPlan)
+        } else {
+            guard record == nil else { throw StoreError.operationConflict }
+            context.insert(try StoredPlanDefinition(savedPlan))
+        }
+        let editableIDs = Set(baseEntries.keys)
+        let newIDs = Set(entries.map(\.id))
+        guard newIDs.isDisjoint(with: existing.filter { !editableIDs.contains($0.id) }.map(\.id)) else { throw StoreError.operationConflict }
         let replacing = Set(draft.resolutions.filter { $0.choice == .replace }.map { $0.existing.id })
-        for record in try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()) where replacing.contains(record.id) { context.delete(record) }
-        context.insert(try StoredPlanDefinition(draft.plan))
-        for entry in entries { context.insert(try StoredOutfitPlanEntry(entry)) }
-        let result = PlanAuthoringReceipt(plan: draft.plan, entries: entries)
+            .union(editableIDs.subtracting(newIDs))
+        let entryRecords = try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>())
+        for record in entryRecords where replacing.contains(record.id) { context.delete(record) }
+        for entry in entries {
+            if let record = entryRecords.first(where: { $0.id == entry.id }) { record.payload = try encode(entry) }
+            else { context.insert(try StoredOutfitPlanEntry(entry)) }
+        }
+        let result = PlanAuthoringReceipt(plan: savedPlan, entries: entries)
         context.insert(try StoredPlanAuthoringSave(draft: draft, saved: result))
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()
         return result

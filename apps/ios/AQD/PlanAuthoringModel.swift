@@ -42,6 +42,46 @@ final class PlanAuthoringModel: Identifiable {
             draft.resolutions.append(PlanConflictResolution(existing: entry, choice: choice))
         }
     }
+    func fillRoutine() {
+        guard let routine = draft.plan.routine else { return }
+        state.reloadOutfits(); state.reloadPieces()
+        let eligible = Set(state.pieces.filter { $0.availability == .available }.map(\.id))
+        let chosen = routine.preferredOutfitIDs.compactMap { id in state.outfits.first { $0.id == id } }
+        guard !chosen.isEmpty, chosen.count == routine.preferredOutfitIDs.count,
+              chosen.allSatisfy({ Set($0.pieceIDs).isSubset(of: eligible) }) else {
+            error = "Choose current outfits with available pieces before filling dates. Manual choices and gaps remain available."; return
+        }
+        update { draft in
+            for i in draft.slots.indices {
+                draft.slots[i].outfit = chosen[routine.repetition == .repeatFirst ? 0 : i % chosen.count]
+                draft.slots[i].unassignedByChoice = false
+            }
+            draft.usesRules = true
+        }
+    }
+
+    func refreshReviewedBase() {
+        guard !pending, !unknown, saved == nil, let store = state.store, draft.basePlan != nil else { return }
+        do {
+            guard let current = try store.planDefinitions().first(where: { $0.id == draft.plan.id }) else { throw PieceStore.StoreError.staleRevision }
+            let entries = try store.planEntries().filter { $0.planID == current.id }
+            let editable = try PlanAuthoringDraft(editing: current, entries: entries, outfits: store.outfits(),
+                scope: draft.editScope ?? .whole, anchorEntryID: draft.anchorEntryID)
+            var refreshed = draft
+            refreshed.basePlan = current; refreshed.baseEntries = entries; refreshed.plan.revision = current.revision
+            guard Set(refreshed.slots.map(\.id)).count == refreshed.slots.count else { throw PlanAuthoringError.invalidSlots }
+            let oldBaseIDs = Set((draft.baseEntries ?? []).map(\.id))
+            let latestEditableIDs = Set(editable.editableBaseEntries.map(\.id))
+            refreshed.slots = refreshed.slots.filter { !oldBaseIDs.contains($0.id) || latestEditableIDs.contains($0.id) }
+            let retainedIDs = Set(refreshed.slots.map(\.id))
+            refreshed.slots += editable.slots.filter { !retainedIDs.contains($0.id) }
+            try refreshed.rebuildDates()
+            draft = refreshed
+            try store.savePlanAuthoringDraft(draft)
+            state.reloadPlanEntries(); state.reloadOutfits(); error = nil
+        } catch { self.error = "The reviewed source couldn’t refresh. Keep this draft or cancel and reopen the current routine." }
+    }
+
     func save() async {
         guard !pending, saved == nil else { return }
         pending = true; defer { pending = false }
@@ -81,7 +121,7 @@ extension AppState {
             planAuthoringEditor = try PlanAuthoringModel(state: self, draft: draft)
         } catch { planError = "Your multi-day plan draft couldn’t open. Keep the app data and retry." }
     }
-    func openPlanAuthoring(day: LocalPlanDay) {
+    func openPlanAuthoring(day: LocalPlanDay, routine: Bool = false) {
         guard planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil,
               styleEditor == nil, capture == nil else { return }
         do {
@@ -89,11 +129,38 @@ extension AppState {
             let draft: PlanAuthoringDraft
             if let retained = try store.planAuthoringDraft() { draft = retained }
             else {
-                draft = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: store.todayConfiguration().ownerID, start: day, end: day))
+                var end = day
+                if routine {
+                    var calendar = Calendar(identifier: .gregorian)
+                    let zone = TimeZone(identifier: day.timeZoneID) ?? .current; calendar.timeZone = zone
+                    guard let date = calendar.date(byAdding: .day, value: 13, to: try day.date()) else { throw PlanValidationError.invalidDay }
+                    end = LocalPlanDay(date: date, timeZone: zone)
+                }
+                draft = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: store.todayConfiguration().ownerID, start: day, end: end,
+                    routine: routine ? RoutineConfiguration() : nil))
                 try store.savePlanAuthoringDraft(draft)
             }
             reloadPlanEntries(); reloadOutfits()
             planAuthoringEditor = try PlanAuthoringModel(state: self, draft: draft)
         } catch { collectionError = "A multi-day plan draft couldn’t open. Your existing calendar is unchanged." }
+    }
+}
+
+
+extension AppState {
+    func editPlanDefinition(_ plan: PlanDefinition, scope: RoutineEditScope, anchorEntryID: UUID?) {
+        guard planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil, styleEditor == nil, capture == nil else { return }
+        do {
+            guard let store else { throw PieceStore.StoreError.corruptStore }
+            if let retained = try store.planAuthoringDraft() {
+                planAuthoringEditor = try PlanAuthoringModel(state: self, draft: retained); return
+            }
+            guard let current = try store.planDefinitions().first(where: { $0.id == plan.id }) else { throw PieceStore.StoreError.staleRevision }
+            let entries = try store.planEntries().filter { $0.planID == plan.id }
+            let draft = try PlanAuthoringDraft(editing: current, entries: entries, outfits: store.outfits(), scope: scope, anchorEntryID: anchorEntryID)
+            try store.savePlanAuthoringDraft(draft)
+            reloadPlanEntries(); reloadOutfits()
+            planAuthoringEditor = try PlanAuthoringModel(state: self, draft: draft)
+        } catch { collectionError = "The routine couldn’t open for this edit scope. Your saved entries and history are retained." }
     }
 }

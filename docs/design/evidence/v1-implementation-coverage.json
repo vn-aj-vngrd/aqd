@@ -5,7 +5,7 @@
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
   "sourceHead": "e71e1ded830db3ae2568c547af2de846aeaf0b60",
-  "sourceState": "PR34/v1.3.0 shipped. Group #25/#26 S1 extends the baseline with real calendar and entry management, verified in issue25 receipt; remaining group source is pending. All UI/E2E acceptance deferred to #30.",
+  "sourceState": "Group #25/#26 through S3 implements calendar, named bulk plans, conflict review and three-calendar-month routines/edit scopes. Unit receipts in issue25; trip/packing and #26 remain pending. All UI/E2E acceptance deferred to #30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -18,9 +18,9 @@
     "allRootIdsMatchRegisteredInventory": true
   },
   "counts": {
-    "source-partial": 104,
+    "source-partial": 110,
     "structural-reference": 11,
-    "missing": 115,
+    "missing": 109,
     "placeholder": 2
   },
   "verifiedCompleteScreenStates": 0,
@@ -155,7 +155,7 @@
     "05": {
       "coverage": "source-partial",
       "required": "Week/Month/date/agenda/plans/timezones/routines/trips/packing/conflicts",
-      "source": "PlannerCalendarView/PlannerViews, real Week/Month/date/agenda, identity-preserving edit/move/remove/Save Undo and shared draft timezone; named bulk/routines/trips pending #25 S2\u2013S4."
+      "source": "Real Week/Month/date/agenda, single entry edit/remove/Undo, named atomic plan review/conflicts, timezone and weekday routine/detail/entry-future-whole edits. Trip/packing remains #25 S4."
     },
     "06": {
       "coverage": "source-partial",
@@ -1115,8 +1115,8 @@
       "referenceId": null,
       "registeredLabel": "05.04 \u00b7 L127 \u00b7 Add to Planner",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1135,8 +1135,8 @@
       "referenceId": null,
       "registeredLabel": "05.14 \u00b7 L129 \u00b7 Edit routine",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1555,8 +1555,8 @@
       "referenceId": null,
       "registeredLabel": "05.12 \u00b7 L36 \u00b7 New routine",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1575,8 +1575,8 @@
       "referenceId": null,
       "registeredLabel": "05.13 \u00b7 L37 \u00b7 Office routine",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1615,8 +1615,8 @@
       "referenceId": null,
       "registeredLabel": "05.18 \u00b7 L40 \u00b7 Review plan",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1635,8 +1635,8 @@
       "referenceId": null,
       "registeredLabel": "05.19 \u00b7 L42 \u00b7 Resolve a conflict",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {

@@ -1,7 +1,7 @@
 import AQDCore
 import SwiftUI
 
-enum PlannerAddChoice: String, CaseIterable { case day = "Plan one day", dates = "Plan several days" }
+enum PlannerAddChoice: String, CaseIterable { case day = "Plan one day", dates = "Plan several days", routine = "Create a routine" }
 struct PlannerAddSheet: View {
     let select: (PlannerAddChoice) -> Void
     @Environment(\.dismiss) private var dismiss
@@ -26,6 +26,7 @@ struct PlanAuthoringView: View {
     @State private var choosingSlot: UUID?
     @State private var choosingZone = false
     @State private var resolvingConflict: UUID?
+    @State private var choosingPreferred = false
     private var locked: Bool { model.pending || model.unknown || model.saved != nil }
     var body: some View {
         NavigationStack {
@@ -38,9 +39,14 @@ struct PlanAuthoringView: View {
                     } else if model.draft.reviewing {
                         review
                     } else { fields }
-                    if let error = model.error { SemanticFeedback(role: .danger, message: error) }
+                    if let error = model.error {
+                        SemanticFeedback(role: .danger, message: error)
+                        if model.draft.basePlan != nil && !model.unknown {
+                            Button("Refresh reviewed entries") { model.refreshReviewedBase() }.frame(minHeight: 44).disabled(model.pending)
+                        }
+                    }
                 }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle(model.saved != nil ? "Plan saved" : model.draft.reviewing ? "Review plan" : "New plan")
+            }.background(AppTheme.canvas).navigationTitle(model.saved != nil ? "Plan saved" : model.draft.reviewing ? "Review plan" : model.draft.plan.routine != nil ? "New routine" : "New plan")
                 .navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
                 .toolbar { ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -51,6 +57,7 @@ struct PlanAuthoringView: View {
                         .accessibilityLabel(model.saved != nil ? "Done" : model.draft.reviewing ? "Back to plan" : "Cancel plan")
                         .tint(AppTheme.ink).disabled(model.pending || model.unknown)
                 } }
+                .navigationDestination(isPresented: $choosingPreferred) { RoutineOutfitChooser(model: model) }
                 .navigationDestination(isPresented: $choosingZone) {
                     TimezoneChooser(current: model.draft.plan.start.timeZoneID) { zone in
                         model.dates { $0.start.timeZoneID = zone; $0.end.timeZoneID = zone }; return model.error == nil
@@ -77,9 +84,12 @@ struct PlanAuthoringView: View {
             dateField("Start date", start: true)
             dateField("End date", start: false)
             DisclosureRow(title: "Timezone", value: model.draft.plan.start.timeZoneID) { choosingZone = true }
-            Text("Plan up to two weeks. Every date can have a saved outfit or an intentional gap. Weather context is off.")
+            if model.draft.plan.routine != nil {
+                RoutineFields(model: model) { choosingPreferred = true }
+            }
+            Text(model.draft.plan.routine == nil ? "Plan up to two weeks. Every date can have a saved outfit or an intentional gap. Weather context is off." : "Resolve up to three calendar months of selected weekdays. Every date is reviewed before saving; nothing repeats in the background. Weather context is off.")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-            if (try? model.draft.plan.days()) == nil { SemanticFeedback(role: .warning, message: "Choose an inclusive range of one to fourteen days in the same timezone.") }
+            if (try? model.draft.plan.days()) == nil { SemanticFeedback(role: .warning, message: model.draft.plan.routine == nil ? "Choose an inclusive range of one to fourteen days in the same timezone." : "Choose weekdays and a range of up to three calendar months in the same timezone.") }
             PrimaryAction(title: "Review plan") {
                 model.state.reloadPlanEntries(); model.state.reloadOutfits()
                 model.update { $0.reviewing = true }
@@ -94,6 +104,11 @@ struct PlanAuthoringView: View {
             }), displayedComponents: .date).environment(\.timeZone, TimeZone(identifier: model.draft.plan.start.timeZoneID) ?? .current)
         }
     }
+    private func needsCompositionReview(_ slot: PlanSlotDraft) -> Bool {
+        guard let base = model.draft.baseEntries?.first(where: { $0.id == slot.id }),
+              let outfit = slot.outfit, base.outfitID == outfit.id else { return false }
+        return base.requiresReview || base.outfitRevision != outfit.revision
+    }
     private func conflictLabel(_ entry: OutfitPlanEntry) -> String {
         guard let choice = model.draft.resolutions.first(where: { $0.existing == entry })?.choice else { return "Choose what to keep" }
         return choice == .keepBoth ? "Keep both entries" : "Replace existing entry"
@@ -103,8 +118,20 @@ struct PlanAuthoringView: View {
             Text(model.draft.plan.name).font(AppTypography.section)
             Text("\(model.draft.plan.start.key) – \(model.draft.plan.end.key) · \(model.draft.plan.start.timeZoneID)")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            if let scope = model.draft.editScope {
+                Text(scope == .future ? "This and future entries. Earlier and completed entries stay intact." : "Whole routine. Recorded wear and completed entries stay intact.")
+                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                if !model.draft.removedEntryIDs.isEmpty {
+                    Text("\(model.draft.removedEntryIDs.count) reviewed entries will be removed from this scope.").foregroundStyle(AppTheme.warning)
+                }
+            }
+            if model.draft.usesRules == true { Text("Rule-based rotation · Review before saving").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
             ForEach(model.draft.slots) { slot in
                 VStack(alignment: .leading, spacing: 8) {
+                    if needsCompositionReview(slot), let outfit = slot.outfit {
+                        SemanticFeedback(role: .warning, message: "This outfit changed. Review its current pieces below; Save confirms the updated composition.")
+                        OutfitComposition(pieceIDs: outfit.pieceIDs)
+                    }
                     DisclosureRow(title: slot.day.key, value: slot.outfit?.name ?? (slot.unassignedByChoice ? "Intentional gap" : "Choose outfit")) { choosingSlot = slot.id }
                     LabeledField(title: "Occasion", text: Binding(get: { model.draft.slots.first { $0.id == slot.id }?.occasion ?? "" }, set: { value in
                         model.update { draft in if let i = draft.slots.firstIndex(where: { $0.id == slot.id }) { draft.slots[i].occasion = value } }
@@ -198,6 +225,9 @@ private struct PlanSlotOutfitChooser: View {
 struct PlanDefinitionView: View {
     @Environment(AppState.self) private var state
     let id: UUID
+    @State private var editPresented = false
+    @State private var pendingScope: RoutineEditScope?
+    @State private var anchorEntryID: UUID?
     private var plan: PlanDefinition? { state.planDefinitions.first { $0.id == id } }
     var body: some View {
         ScrollView {
@@ -214,5 +244,21 @@ struct PlanDefinitionView: View {
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle(plan?.name ?? "Plan").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
             .onAppear { state.reloadPlanEntries(); state.reloadOutfits() }
+            .toolbar {
+                if plan != nil { ToolbarItem(placement: .topBarTrailing) {
+                    Button { editPresented = true } label: { Label("Edit plan scope", systemImage: "square.and.pencil") }.tint(AppTheme.ink)
+                } }
+            }
+            .sheet(isPresented: $editPresented, onDismiss: {
+                guard let scope = pendingScope, let plan else { return }
+                pendingScope = nil
+                if scope == .entry {
+                    if let entry = state.planEntries.first(where: { $0.id == anchorEntryID }) { state.openPlan(editing: entry) }
+                } else { state.editPlanDefinition(plan, scope: scope, anchorEntryID: anchorEntryID) }
+            }) {
+                RoutineScopeChooser(entries: state.planEntries.filter { $0.planID == id }, isRoutine: plan?.routine != nil) { scope, anchor in
+                    pendingScope = scope; anchorEntryID = anchor; editPresented = false
+                }
+            }
     }
 }

@@ -74,6 +74,7 @@ struct LocalPlannerView: View {
                     let choice = pendingAdd; pendingAdd = nil
                     if choice == .day { state.openPlan(day: state.plannerDay) }
                     else if choice == .dates { state.openPlanAuthoring(day: state.plannerDay) }
+                    else if choice == .routine { state.openPlanAuthoring(day: state.plannerDay, routine: true) }
                 }) {
                     PlannerAddSheet { pendingAdd = $0; addPresented = false }
                 }

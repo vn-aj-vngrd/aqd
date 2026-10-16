@@ -304,4 +304,87 @@ struct OutfitPlanPersistenceTests {
         #expect(try store.planDefinitions().isEmpty)
         #expect(try store.planAuthoringDraft() == nil)
     }
+    @Test func threeCalendarMonthRoutineUsesReviewedRulesWithoutAutomaticWear() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let outfit = try await seedOutfit(store)
+        let state = AppState(store: store)
+        let start = LocalPlanDay(year: 2026, month: 10, day: 1, timeZoneID: "Asia/Manila")
+        state.openPlanAuthoring(day: start, routine: true)
+        let model = try #require(state.planAuthoringEditor)
+        model.dates { $0.name = "Office weekdays"; $0.end = LocalPlanDay(year: 2026, month: 12, day: 31, timeZoneID: start.timeZoneID) }
+        model.update { $0.plan.routine?.preferredOutfitIDs = [outfit.id] }
+        model.fillRoutine()
+        #expect(model.draft.slots.count == 66)
+        #expect(model.draft.usesRules == true)
+        #expect(try store.planEntries().isEmpty)
+        await model.save()
+        let saved = try #require(model.saved)
+        #expect(saved.entries.count == 66)
+        #expect(saved.entries.allSatisfy { $0.outfitID == outfit.id && $0.state == .planned })
+        #expect(try store.wearRecords().isEmpty)
+        model.finish(openPlan: true)
+        #expect(state.plannerPath == [.plan(saved.plan.id)])
+        #expect(try store.planAuthoringDraft() == nil)
+        state.store = nil
+    }
+
+    @Test func editingFutureRoutineEntriesPreservesEarlierIntentAndReconcilesLostAcknowledgment() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        var loseAck = false
+        let store = try PieceStore(directory: directory, afterOutfitSave: { if loseAck { throw CocoaError(.fileReadUnknown) } })
+        let outfit = try await seedOutfit(store)
+        let start = LocalPlanDay(year: 2026, month: 10, day: 1, timeZoneID: "Asia/Manila")
+        let definition = PlanDefinition(ownerID: outfit.ownerID, name: "Office", start: start,
+            end: LocalPlanDay(year: 2026, month: 10, day: 5, timeZoneID: start.timeZoneID), routine: RoutineConfiguration(occasion: "Office"))
+        var draft = try PlanAuthoringDraft(plan: definition)
+        for i in draft.slots.indices { draft.slots[i].outfit = outfit }
+        try store.savePlanAuthoringDraft(draft); let initial = try store.savePlanAuthoring(draft); try store.finishPlanAuthoring(draft)
+        #expect(initial.entries.count == 3)
+        #expect(initial.entries.allSatisfy { $0.occasion == "Office" })
+        let anchor = initial.entries[1]
+        var edit = try PlanAuthoringDraft(editing: initial.plan, entries: store.planEntries(), outfits: [outfit], scope: .future, anchorEntryID: anchor.id)
+        edit.plan.name = "Updated office"; edit.plan.end.day = 6; try edit.rebuildDates()
+        for i in edit.slots.indices where edit.slots[i].outfit == nil { edit.slots[i].unassignedByChoice = true }
+        try store.savePlanAuthoringDraft(edit)
+        loseAck = true
+        #expect(throws: (any Error).self) { try store.savePlanAuthoring(edit) }
+        let saved = try store.savePlanAuthoring(edit)
+        #expect(saved.plan.id == initial.plan.id)
+        #expect(saved.plan.revision == 2)
+        let reopened = try PieceStore(directory: directory)
+        let current = try reopened.planEntries()
+        #expect(current.count == 4)
+        #expect(current.first == initial.entries.first)
+        #expect(current.first { $0.id == anchor.id }?.revision == 2)
+        #expect(current.last?.day.key == "2026-10-06")
+        #expect(try reopened.savedPlanAuthoring(edit) == saved)
+        #expect(try reopened.wearRecords().isEmpty)
+    }
+    @Test func refreshingStaleRoutineRetainsProposedNewDateIdentityAndOutfit() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let outfit = try await seedOutfit(store)
+        let start = LocalPlanDay(year: 2026, month: 10, day: 1, timeZoneID: "Asia/Manila")
+        var draft = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: outfit.ownerID, name: "Office", start: start,
+            end: LocalPlanDay(year: 2026, month: 10, day: 5, timeZoneID: start.timeZoneID), routine: RoutineConfiguration(occasion: "Office")))
+        for i in draft.slots.indices { draft.slots[i].outfit = outfit }
+        try store.savePlanAuthoringDraft(draft); let saved = try store.savePlanAuthoring(draft); try store.finishPlanAuthoring(draft)
+        let state = AppState(store: store)
+        state.editPlanDefinition(saved.plan, scope: .whole, anchorEntryID: nil)
+        let model = try #require(state.planAuthoringEditor)
+        model.dates { $0.end.day = 6 }
+        let proposed = try #require(model.draft.slots.first { $0.day.day == 6 })
+        model.update { value in if let i = value.slots.firstIndex(where: { $0.id == proposed.id }) { value.slots[i].outfit = outfit } }
+        var changed = OutfitPlanDraft(editing: saved.entries[0], outfit: outfit); changed.occasion = "Changed elsewhere"
+        try store.savePlanDraft(changed); _ = try store.savePlan(changed); try store.finishPlanDraft(changed)
+        await model.save()
+        #expect(model.saved == nil)
+        #expect(model.error != nil)
+        model.refreshReviewedBase()
+        #expect(model.error == nil)
+        #expect(model.draft.slots.first { $0.day.day == 6 }?.id == proposed.id)
+        #expect(model.draft.slots.first { $0.day.day == 6 }?.outfit == outfit)
+        await model.save()
+        #expect(model.saved?.entries.count == 4)
+        state.planAuthoringEditor = nil; state.store = nil
+    }
 }

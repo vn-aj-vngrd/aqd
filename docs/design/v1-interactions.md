@@ -26,6 +26,8 @@ S6 outfit More provides Edit/Favorite/Delete. Favorite/delete retry uses the exa
 
 S2 adds Planner Add → Plan several days → retained Name/Start/End/Timezone → Review every date/outfit/intentional gap. Resolve conflict pushes the exact existing date/occasion and Keep both/Replace choice; Back changes nothing. Save commits the entire reviewed plan or none. Open plan reaches the actual named definition and its shared entry IDs; restart resumes the authoring draft/receipt. No assistance or routine/trip button is shown before its working slice. All runtime/E2E acceptance stays #30.
 
+S3 adds Create a routine → weekdays/occasion/selected outfits/repetition → explicitly rule-based Fill dates or manual choices → Review dates → atomic Save. Edit scope opens the selected entry or retained this/future/whole task; completed entries are protected. Removed dates are counted, changed composition is displayed and stale-source refresh retains proposed new dates/outfits. Three calendar months use the recorded timezone; no background recurrence or implicit wear.
+
 ## Issue #21 entry and shared Style slices · October15
 
 The [issue plan](../plan/issue-21.md) owns current execution evidence. S1 implements Profile's single More → Style and More → Settings → Style with the same seven-step editor. Explicit answer/refusal, goal limits, review edit, Back, dirty exit, atomically saved preferences and retained source/draft/step are real routes. Save failure preserves prior preferences; unknown acknowledgment freezes editing and checks the same operation. A committed receipt survives restart until Done acknowledges it. Local proof uses the physical iPhone; native units and selected UI outcomes do not certify complete section01 or #30.

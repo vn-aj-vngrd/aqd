@@ -15,8 +15,8 @@
 | Slice | Working outcome | Acceptance | State | Marker | SHA |
 | --- | --- | --- | --- | --- | --- |
 | S1 | Week/Month/selected date, real agenda and date-prefilled Add; edit/move/remove/Undo same entry | P1/P3/P4, scoped LOCAL-04/05 | Committed | `AQD-Slice: #25/S1` | `a17d683` |
-| S2 | Named two-week plan authoring, reviewed assignments/gaps and atomic conflict decisions/recovery | P1/P3/P6 | Committed | `AQD-Slice: #25/S2` | Pending |
-| S3 | Three-calendar-month weekday routine authoring/detail/edit scopes with resolved saved entries | P2/P4/P6 | Planned | `AQD-Slice: #25/S3` | Pending |
+| S2 | Named two-week plan authoring, reviewed assignments/gaps and atomic conflict decisions/recovery | P1/P3/P6 | Committed | `AQD-Slice: #25/S2` | `37b2f56` |
+| S3 | Three-calendar-month weekday routine authoring/detail/edit scopes with resolved saved entries | P2/P4/P6 | Committed | `AQD-Slice: #25/S3` | Pending |
 | S4 | Trip dates/destination/activities/detail and persistent deduplicated packing that retains checks | P5/P6, scoped P11/manual-offline | Planned | `AQD-Slice: #25/S4` | Pending |
 
 ## Evidence and review
@@ -25,7 +25,7 @@ Each slice records actual unit/build results, failures, reviewed increment and i
 
 ## Resume
 
-S1/S2 are verified and committed. Next S3 completes weekday routines and reviewed entry/future/whole edit scopes. Continue on the shared branch. No simulator or E2E.
+S1–S3 are verified and committed. Next S4 completes trips, destination/activities and persistent deduplicated packing. Continue on the shared branch. No simulator or E2E.
 
 ## S1 calendar and entry management receipt
 
@@ -42,3 +42,13 @@ Planner Add now offers real one-day and multi-day tasks; routine/trip options ar
 The Core range tracer first failed compilation against missing APIs; Core55 then passed and physical native136 (123 Swift Testing plus13 XCTest) passed with zero failures in `/tmp/aqd-25-s2-unit.log`. Cases exercise fourteen dates with intentional gaps, Keep both, changed conflict rejection, explicit Replace, denied/unknown bulk save, cancel, reopen and populated V11 migration. Final conflict-destination presentation and indentation-only changes compile in the generic iOS Debug build `/tmp/aqd-25-s2-build.log`; unchanged rule/store results retain their full-run scope. No UI/E2E pass is inferred.
 
 Bounded Standards/Spec self-review covered all-or-nothing replacement, completed-state protection, exact receipt contents, owned availability, independent modal guards, date/timezone identity and recoverable invalid drafts. All E2E remains #30; final grouped independent/remote gates remain.
+
+## S3 weekday routine and edit scopes receipt
+
+Create a routine resolves selected weekdays over up to three calendar months, using actual calendar arithmetic rather than ninety days. Occasion, selected outfits and rotate/repeat-a-favorite preferences are retained. Fill dates is explicitly labelled rule-based and creates only a reviewable draft; manual choices and intentional gaps remain available. No recurrence runs in the background or records wear. Existing multiple occasions/IDs survive date rebuilds; new unreviewed duplicate slots are rejected.
+
+The actual scope chooser opens one entry through the existing editor, or this/future/whole through the atomic plan task. Completed worn/skipped entries are excluded from mutation, earlier out-of-scope intentions stay intact and every removed entry is counted before Save. Exact definition plus full entry snapshots protect against stale edits; lost acknowledgments reconcile the same operation. Refresh reviewed entries preserves proposed new-date IDs/outfits while updating the acknowledged source. Changed outfit compositions are shown before parent Save. Optional payload fields preserve V12 records/receipts without modifying native schema attributes.
+
+Routine tracer first failed compilation against absent APIs. Core57 and physical native138 (125 Swift Testing plus13 XCTest) pass, zero failures, `/tmp/aqd-25-s3-unit.log`. Independent literal October–December2026 office weekdays resolves66 dates; Core covers completed-entry exclusion and multiple-occasion rebuilds. Native cases cover actual rule-draft→66 persisted dates with no wear, future-edit identity/earlier-intent preservation and unknown-save restart/retry. The final stale-refresh/presentation correction refreshes all13 Plan native cases successfully (`/tmp/aqd-25-s3-refresh-final.log`); unchanged native cases retain their full-run scope. Xcode27.0/27A266a and physical iPhone17ProMax/iOS27.0.1 are confirmed. All E2E/device quality acceptance remains #30.
+
+Bounded Standards/Spec self-review covered explicit recurrence/rotation, calendar-month boundaries, protected states/scope, current dependency snapshots, no silently lost proposed dates, truthful rule provenance and offline/manual continuation. Final grouped independent/remote gates remain.
