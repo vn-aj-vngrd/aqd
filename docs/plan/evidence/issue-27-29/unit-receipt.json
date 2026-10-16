@@ -5,7 +5,7 @@
   ],
   "branch": "van/issue-27/agent-and-local-controls",
   "baseline": "1a5b44ecf06536d6bb1dae0551348f44a9747d5b",
-  "sourceHead": "b10de1c2bbf1de9717e7dfef1d610d772456c6eb",
+  "sourceHead": "ae22f54e15ae0ffc888eec504ed70af92707e866",
   "checkedOn": "2026-10-16",
   "environment": {
     "destination": "Physical iPhone17ProMax",
@@ -21,8 +21,8 @@
       "failures": 0
     },
     "native": {
-      "passed": 197,
-      "swiftTesting": 184,
+      "passed": 198,
+      "swiftTesting": 185,
       "swiftTestingSuites": 30,
       "xctest": 13,
       "failures": 0
@@ -56,6 +56,11 @@
         "reviewedHead": "53a9fb467866c96b8453ba2335073e50ca3fb2aa",
         "findings": 3,
         "status": "Fixed in8fdaf85/a717b38/b10de1c and independently rechecked; refreshed physical units and unsigned Release pass. New-head Codex remains required."
+      },
+      "codex3": {
+        "reviewedHead": "41de30c6fe5075bfd02bb094722264dc2bd75c3f",
+        "findings": 1,
+        "status": "Fixed inae22f54. History and suspension visibility regressions reproduced, fixed and independently rechecked. Core71/native198 and unsigned Release pass. New-head Codex remains required."
       }
     },
     "interruptedNativeRun": {
@@ -166,11 +171,41 @@
       "name": "aqd-pr37-codex2-docs.log",
       "sha256": "3a1833f5471dbd5df39f9af23e027bebbf338ef36a173d7ca86ae232a01abb9a",
       "published": false
+    },
+    {
+      "name": "aqd-pr37-codex3-red.log",
+      "sha256": "527f474ee69493976f3226159486a44108076a93a43714b2d4d5c4b8edf87988",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex3-visibility-red.log",
+      "sha256": "6e2c15d534b96e3f04ff233ce5bef9ce43472372d67997c15af4e446b11d8700",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex3-suspend-red.log",
+      "sha256": "ba8a98d6b3d3b7fff35ac5d17096e4c4868ffb08dada405cd7e336c01e436fcd",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex3-recovery-unit.log",
+      "sha256": "9e485919388922f1cae448730dbbab160c11fb7b32cb1e947c28a4f5f2a302d2",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex3-release.log",
+      "sha256": "64226df15e14d9b80832a0f9dadc7639b08eb0cbcc003181f7fb862856d8f03c",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex3-docs.log",
+      "sha256": "3a1833f5471dbd5df39f9af23e027bebbf338ef36a173d7ca86ae232a01abb9a",
+      "published": false
     }
   ],
   "sourceFiles": {
     "apps/ios/AQD/AQDApp.swift": "abc57117cab2efffb404d6861290ab84deca3a9b27ee93af72a48392d5aa68ac",
-    "apps/ios/AQD/AgentModel.swift": "985b58eb598949f81e42d501b16820e0b286443e725331bbb7830a9cfe169bc6",
+    "apps/ios/AQD/AgentModel.swift": "8f380d642a81784a020373ac459396c023a334cb9f21ebdf140b390ab77d0b10",
     "apps/ios/AQD/AgentVoiceModel.swift": "ccf6781ac3f4a421921474bd5d0fdb09a51b239700b0d38826bcc6cf5db581d8",
     "apps/ios/AQD/AppState.swift": "f2247c99d732fd508982b87873843a081e4e163eee9746e7db1b24b1b584c6fc",
     "apps/ios/AQD/LocalArchive.swift": "3082053a032dc2fd801d26b7d5abfd7568a1182770c75243b89c635d6bfe1c4b",
@@ -186,7 +221,7 @@
     "apps/ios/AQD/UI/AgentContextView.swift": "516af57309bc31da356e22181f3ba3c447b1f45d89d76714dbb96db4ac5871f1",
     "apps/ios/AQD/UI/AgentMarkdownBody.swift": "28d3c8f63f8d9050f9ef6f4d1a4fd541de77fe32b3d4fbf3b3bd0de31d6f019d",
     "apps/ios/AQD/UI/AgentVoiceView.swift": "93c601cd74fffb2566293cf665de56fc658bd1c4130fa68ce151cf9cc735f4f9",
-    "apps/ios/AQD/UI/LocalAgentView.swift": "f8e5745cead5e9cab3c40383c47decee7ee8a0b102953c78c47651af09dd6494",
+    "apps/ios/AQD/UI/LocalAgentView.swift": "088624d789d5b1df4b0eb4be810d737192f6234082d6f614c9c20a963e812560",
     "apps/ios/AQD/UI/LocalEraseView.swift": "39b41708e6501fd6dcebc72eea81ce67c13ad1d54058525a20342dd30380464e",
     "apps/ios/AQD/UI/LocalExportView.swift": "662292d816445634caabd10ba26bc7cb910db23c6f551bb28ee3ef8283f0fccb",
     "apps/ios/AQD/UI/LocalProfileView.swift": "0e6d25798e412bf00e0f2d8d6fbd8f4f53f13834687ed84ceb8422be92d9821f",
@@ -196,7 +231,7 @@
     "apps/ios/AQD/UI/PlannerCalendarView.swift": "cbd5cc5bdc9daf29106ad9f3abb62cbe5791ac95e74e191cefa2ba764eb7829e",
     "apps/ios/AQD/UI/RootViews.swift": "1cc0878f8e0ed0406a28c1170570eb1b06b7db87de163c08bd600a3f2c607afe",
     "apps/ios/AQDTests/AgentActionPersistenceTests.swift": "513ba4c3acd9aa44c0e0f5774f1f3bd62f1da59f532cb6e54d6d542759bb46ff",
-    "apps/ios/AQDTests/AgentConversationPersistenceTests.swift": "66c0aa06cc76a68802eda4d04bd361386d449fbbdd7543fa8c9cdff9787b6942",
+    "apps/ios/AQDTests/AgentConversationPersistenceTests.swift": "deb976563783ac6642bbc3489b9245ac07bc5ca62c0bb0c1a15a1fa215debf85",
     "apps/ios/AQDTests/AgentGenerationTests.swift": "7da8c436933db398f66a1e8147c17c8bc6af5720edcca6f167896a053c79c3c0",
     "apps/ios/AQDTests/ClosetSearchTests.swift": "78f85c26f2a2c170fc6a4e7df5174e61f8a097224d453027eea6118605182e77",
     "apps/ios/AQDTests/LocalArchiveTests.swift": "ab5c59aff5c84fb6f811624ba24e378e86027276ffd63452c5b75a7e42c22296",

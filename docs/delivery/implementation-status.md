@@ -10,7 +10,7 @@ Foundation #20 shipped in [PR #31](https://github.com/vn-aj-vngrd/aqd/pull/31), 
 
 [#28/#22](../plan/issue-28.md) shipped together in [PR36](https://github.com/vn-aj-vngrd/aqd/pull/36), squash `1a5b44e`, repository release [v1.5.0](https://github.com/vn-aj-vngrd/aqd/releases/tag/v1.5.0). Source-bound unit evidence and all runtime/E2E deferrals remain in their plans.
 
-Active group: [#27](../plan/issue-27.md) + [#29](../plan/issue-29.md), branch `van/issue-27/agent-and-local-controls`, baseline PR36. Private conversations/context/reviewed actions and Settings/all-domain export/restore/erase are implemented in committed vertical slices. Final Core71/native197, unsigned Release and independent Standards/Spec rechecks pass. Current-head PR/CI/Codex/protected delivery remains. Model, voice, image-assistance and numerical Weather activation remain gated pending issue30 qualification. All simulators stay shut down; unit-only CI and all E2E in issue30 remain unchanged.
+Active group: [#27](../plan/issue-27.md) + [#29](../plan/issue-29.md), branch `van/issue-27/agent-and-local-controls`, baseline PR36. Private conversations/context/reviewed actions and Settings/all-domain export/restore/erase are implemented in committed vertical slices. Final Core71/native198, unsigned Release and independent Standards/Spec rechecks pass. Current-head PR/CI/Codex/protected delivery remains. Model, voice, image-assistance and numerical Weather activation remain gated pending issue30 qualification. All simulators stay shut down; unit-only CI and all E2E in issue30 remain unchanged.
 
 The [approved sequence](implementation-plan.md#approved-pr-groups--october16) remains #25+#26, #28+#22, #27+#29, then consolidated #30. No additional planning approval is needed.
 

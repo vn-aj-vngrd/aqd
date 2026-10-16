@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
-  "sourceHead": "b10de1c2bbf1de9717e7dfef1d610d772456c6eb",
-  "sourceState": "Group #27/#29 delivers Agent and Settings/local-data source slices plus reviewed corrections and the owner-requested Planner width fix. Core71/native197 pass. All rendered/E2E acceptance remains issue30.",
+  "sourceHead": "ae22f54e15ae0ffc888eec504ed70af92707e866",
+  "sourceState": "Group #27/#29 delivers Agent and Settings/local-data source slices plus reviewed corrections and the owner-requested Planner width fix. Core71/native198 pass. All rendered/E2E acceptance remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -2596,9 +2596,9 @@
       "docs/plan/issue-29.md"
     ],
     "checkedOn": "2026-10-16",
-    "codeCommit": "b10de1c2bbf1de9717e7dfef1d610d772456c6eb",
+    "codeCommit": "ae22f54e15ae0ffc888eec504ed70af92707e866",
     "state": "Source slices and reviewed Codex corrections committed. Current-head CI/Codex/protected delivery remain separate gates.",
-    "native": "Core71/native197, zero failures, physical iPhone17ProMax/iOS27.0.1.",
+    "native": "Core71/native198, zero failures, physical iPhone17ProMax/iOS27.0.1.",
     "limits": "All rendered/E2E/accessibility/capability/media/performance acceptance remains issue30. No runtimeComplete claim.",
     "receipt": "docs/plan/evidence/issue-27-29/README.md"
   }
