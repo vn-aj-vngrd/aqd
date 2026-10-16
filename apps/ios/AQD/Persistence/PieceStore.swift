@@ -3004,6 +3004,24 @@ extension PieceStore {
 
 #if DEBUG
 extension PieceStore {
+    func replacePreviewSamplePhotos(_ replacements: [(piece: WardrobePiece, photoID: UUID)]) throws {
+        guard allowsSave, Set(replacements.map { $0.piece.id }).count == replacements.count else { throw StoreError.invalidRecord }
+        let context = ModelContext(container)
+        for replacement in replacements {
+            let piece = replacement.piece, id = piece.id
+            guard PreviewSampleContent.sampleIDs["pieces", default: []].contains(id), piece.revision == 1,
+                  piece.photoRecipe == .fitOriginal,
+                  let record = try context.fetch(FetchDescriptor<StoredPiece>(predicate: #Predicate { $0.id == id })).first,
+                  try record.value() == piece else { throw StoreError.staleRevision }
+            _ = try originalPhoto(id: replacement.photoID); _ = try thumbnailPhoto(id: replacement.photoID)
+            let result = WardrobePiece(id: id, name: piece.name, category: piece.category, photoID: replacement.photoID,
+                details: piece.details, availability: piece.availability, revision: piece.revision + 1,
+                isArchived: piece.isArchived, createdAt: piece.createdAt, updatedAt: Date(), photoRecipe: .fitOriginal)
+            try queueCleanup(photoID: piece.photoID, context: context)
+            record.apply(result)
+        }
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+    }
     /// Owner-requested sample population. All graph records commit together;
     /// existing records/drafts and actual wear remain unchanged.
     func insertPreviewSamples(_ samples: PreviewSampleContent.Bundle) throws {

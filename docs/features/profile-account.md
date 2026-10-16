@@ -96,3 +96,5 @@ Owner Settings structure refinement October16: Personalize (Style preferences, A
 Journal grid thumbnails use consistent3:4 portrait tiles: photo cropping is presentation-only, with full-source Fit retained in detail/editing. Outfit compositions use adaptive two-column cells, a quiet composition marker and image-only grid tiles; accessibility labels retain the saved date and memory context.
 
 Latest owner Profile refinement: inline title, white page and full-width fit grid, identity above local counters, neutral Edit profile/Wear insights shortcuts. Add fit stays in native toolbar; Style/Settings stay in More. Fit detail actions including reconciliation are in More, not bottom buttons. Root navigation is icons-only with native accessibility destination labels. The tour reuses these current implementations read-only, with actual local data. No social identity, follow/share counts or network profile features are introduced.
+
+Caption layout follow-up: caption is a full-width bio below the avatar/name/counters row. Name remains above counters; saved caption text, default/explicit-empty behavior and editing are unchanged.

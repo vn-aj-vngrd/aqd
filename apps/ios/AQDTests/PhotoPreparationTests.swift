@@ -100,6 +100,60 @@ struct PhotoPreparationTests {
         #expect(top.sourcePhotoID == source.id)
     }
 
+    @Test func transparentPixelsSurviveImportThumbnailRotationAndCrop() async throws {
+        let preparer = PhotoPreparer()
+        let photo = try await preparer.prepare(data: transparentFixture())
+        try checkTransparency(photo.originalData); try checkTransparency(photo.thumbnailData)
+        let edit = try await preparer.render(data: photo.originalData, sourcePhotoID: photo.id,
+            recipe: PhotoEditRecipe(quarterTurns: 1, crop: .init(x: 0.1, y: 0.1, width: 0.8, height: 0.8)))
+        try checkTransparency(edit.renditionData); try checkTransparency(edit.thumbnailData)
+    }
+
+    @Test @MainActor func transparentPieceAndEditedMediaSurviveExportAndRestore() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let preparer = PhotoPreparer()
+        let photo = try await preparer.prepare(data: transparentFixture())
+        _ = try store.acceptPhoto(photo)
+        let recipe = PhotoEditRecipe(quarterTurns: 1)
+        try store.acceptPhotoEdit(try await preparer.render(data: photo.originalData, sourcePhotoID: photo.id, recipe: recipe))
+        let draft = PieceDraft(name: "Transparent piece", category: .tops, photoID: photo.id, photoRecipe: recipe)
+        _ = try store.savePiece(draft, operationID: UUID())
+        let data = try await LocalArchiveService.create(store: store).data
+        #expect(data[11] == 2)
+        let staged = try await LocalArchiveService.stage(LocalArchivePackage.decode(data))
+        defer { try? FileManager.default.removeItem(at: staged.directory) }
+        try checkTransparency(staged.store.originalPhoto(id: photo.id))
+        try checkTransparency(staged.store.thumbnailPhoto(id: photo.id))
+        try checkTransparency(staged.store.photoRendition(id: photo.id, recipe: recipe))
+        try checkTransparency(staged.store.photoThumbnail(id: photo.id, recipe: recipe))
+    }
+
+    private func transparentFixture() throws -> Data {
+        let context = try #require(CGContext(data: nil, width: 64, height: 64, bitsPerComponent: 8,
+            bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.clear(CGRect(x: 0, y: 0, width: 64, height: 64))
+        context.setFillColor(CGColor(red: 0.2, green: 0.5, blue: 0.8, alpha: 1))
+        context.fill(CGRect(x: 16, y: 16, width: 32, height: 32))
+        let data = NSMutableData()
+        let destination = try #require(CGImageDestinationCreateWithData(data, UTType.png.identifier as CFString, 1, nil))
+        CGImageDestinationAddImage(destination, try #require(context.makeImage()), [kCGImagePropertyExifDictionary: [kCGImagePropertyExifDateTimeOriginal: "2026:10:07 12:00:00"]] as CFDictionary)
+        #expect(CGImageDestinationFinalize(destination)); return data as Data
+    }
+    private func checkTransparency(_ data: Data) throws {
+        let source = try #require(CGImageSourceCreateWithData(data as CFData, nil))
+        #expect(CGImageSourceGetType(source) as String? == UTType.png.identifier)
+        let properties = try #require(CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any])
+        #expect(properties[kCGImagePropertyGPSDictionary] == nil)
+        #expect((properties[kCGImagePropertyExifDictionary] as? [CFString: Any])?[kCGImagePropertyExifDateTimeOriginal] == nil)
+        let image = try #require(CGImageSourceCreateImageAtIndex(source, 0, nil))
+        let context = try #require(CGContext(data: nil, width: 64, height: 64, bitsPerComponent: 8,
+            bytesPerRow: 256, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.draw(image, in: CGRect(x: 0, y: 0, width: 64, height: 64))
+        let pixels = try #require(context.data).assumingMemoryBound(to: UInt8.self)
+        #expect(pixels[3] == 0)
+        #expect(pixels[(32 * 64 + 32) * 4 + 3] == 255)
+    }
+
     private func properties(of data: Data) throws -> [CFString: Any] {
         let source = try #require(CGImageSourceCreateWithData(data as CFData, nil))
         #expect(CGImageSourceGetType(source) as String? == UTType.jpeg.identifier)

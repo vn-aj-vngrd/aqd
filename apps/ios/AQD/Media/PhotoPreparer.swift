@@ -8,7 +8,7 @@ import UniformTypeIdentifiers
 
 struct PreparedPhoto: Sendable {
     let id: UUID
-    /// Upright, metadata-minimized JPEG of the entire source pixel extent.
+    /// Upright, metadata-minimized full-source pixels. PNG retains alpha; opaque images use JPEG.
     let originalData: Data
     let thumbnailData: Data
     let pixelWidth: Int
@@ -100,14 +100,15 @@ actor PhotoPreparer {
                 throw PhotoPreparationError.invalidMedia
             }
             try Task.checkCancellation()
-            let original = try jpegData(image: upright)
+            let preserveAlpha = hasAlpha(upright)
+            let original = try encodedData(image: upright, preserveAlpha: preserveAlpha)
             try Task.checkCancellation()
             guard let thumbnail = transformedImage(source: source, maximumSize: min(320, max(width, height))) else {
                 throw PhotoPreparationError.invalidMedia
             }
             return PreparedPhoto(
                 id: UUID(), originalData: original,
-                thumbnailData: try jpegData(image: thumbnail),
+                thumbnailData: try encodedData(image: thumbnail, preserveAlpha: preserveAlpha),
                 pixelWidth: upright.width, pixelHeight: upright.height
             )
         }
@@ -147,13 +148,14 @@ actor PhotoPreparer {
             guard let pixels = CIContext(options: [.cacheIntermediates: false]).createCGImage(image, from: image.extent) else {
                 throw PhotoPreparationError.encodingFailed
             }
-            let rendition = try jpegData(image: pixels)
+            let preserveAlpha = hasAlpha(original)
+            let rendition = try encodedData(image: pixels, preserveAlpha: preserveAlpha)
             try Task.checkCancellation()
             guard let output = CGImageSourceCreateWithData(rendition as CFData, nil),
                   let thumbnail = transformedImage(source: output, maximumSize: min(320, max(pixels.width, pixels.height))) else {
                 throw PhotoPreparationError.encodingFailed
             }
-            return PreparedPhotoEdit(renditionData: rendition, thumbnailData: try jpegData(image: thumbnail),
+            return PreparedPhotoEdit(renditionData: rendition, thumbnailData: try encodedData(image: thumbnail, preserveAlpha: preserveAlpha),
                 pixelWidth: pixels.width, pixelHeight: pixels.height, sourcePhotoID: sourcePhotoID,
                 recipe: recipe, recipeDigest: try Self.recipeDigest(recipe))
         }
@@ -169,23 +171,29 @@ actor PhotoPreparer {
         ] as CFDictionary)
     }
 
-    private func jpegData(image: CGImage) throws -> Data {
+    private func hasAlpha(_ image: CGImage) -> Bool {
+        switch image.alphaInfo {
+        case .first, .last, .premultipliedFirst, .premultipliedLast, .alphaOnly: true
+        default: false
+        }
+    }
+    private func encodedData(image: CGImage, preserveAlpha: Bool) throws -> Data {
         let output = NSMutableData()
         guard let destination = CGImageDestinationCreateWithData(
-            output, UTType.jpeg.identifier as CFString, 1, nil
+            output, (preserveAlpha ? UTType.png : UTType.jpeg).identifier as CFString, 1, nil
         ) else {
             throw PhotoPreparationError.encodingFailed
         }
         // Encode pixels into a fresh destination, never copy source metadata.
         // ImageIO retains useful image color information; EXIF/GPS, capture
         // timestamps, device identifiers and source thumbnails are not copied.
-        CGImageDestinationAddImage(destination, image, [
-            kCGImageDestinationLossyCompressionQuality: 0.95,
-            kCGImagePropertyOrientation: 1
-        ] as CFDictionary)
+        var properties: [CFString: Any] = [kCGImagePropertyOrientation: 1]
+        if !preserveAlpha { properties[kCGImageDestinationLossyCompressionQuality] = 0.95 }
+        CGImageDestinationAddImage(destination, image, properties as CFDictionary)
         guard CGImageDestinationFinalize(destination) else {
             throw PhotoPreparationError.encodingFailed
         }
+        guard output.length <= Self.maximumInputBytes else { throw PhotoPreparationError.inputTooLarge }
         return output as Data
     }
 }

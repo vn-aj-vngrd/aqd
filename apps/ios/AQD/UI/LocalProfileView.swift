@@ -78,33 +78,32 @@ struct LocalProfileView: View {
         }.buttonStyle(.plain)
     }
     private var identityHeader: some View {
-        Group {
+        VStack(alignment: .leading, spacing: 12) {
             if typeSize.isAccessibilitySize {
                 VStack(alignment: .leading, spacing: 16) {
                     profileAvatar
-                    identityDetails
+                    identityName
                     profileStats
                 }
             } else {
                 HStack(alignment: .top, spacing: 24) {
                     profileAvatar
                     VStack(alignment: .leading, spacing: 16) {
-                        identityDetails
+                        identityName
                         profileStats
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-        }.accessibilityIdentifier("profile.identity")
-    }
-    private var identityDetails: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(state.localIdentity?.name ?? "Your profile").font(AppTypography.detailTitle).lineLimit(2)
             let caption = state.localIdentity?.caption ?? LocalProfileIdentity.defaultCaption
             if !caption.isEmpty {
                 Text(caption).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     .lineLimit(3).fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-        }
+        }.accessibilityIdentifier("profile.identity")
+    }
+    private var identityName: some View {
+        Text(state.localIdentity?.name ?? "Your profile").font(AppTypography.detailTitle).lineLimit(2)
     }
     private var profileAvatar: some View {
         Button { state.openIdentity() } label: {

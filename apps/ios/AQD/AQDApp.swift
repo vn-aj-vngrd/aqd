@@ -75,6 +75,20 @@ private struct AppRootView: View {
                 }
                 state.isOpening = false
             }
+            if process.arguments.contains("--aqd-refresh-transparent-samples"), !process.arguments.contains("--aqd-ui-testing"), let store = state.store {
+                state.isOpening = true
+                do {
+                    let directory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                    _ = try await PreviewSampleContent.refreshTransparentPhotos(store: store, outputDirectory: directory)
+                    state.reloadPieces(); state.reloadOutfits(); state.reloadFits(); state.selection = 1
+                } catch {
+                    if let directory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) {
+                        try? LocalArchiveIO.write(Data(String(reflecting: error).utf8), to: directory.appendingPathComponent("AQD-transparent-samples-error.txt"))
+                    }
+                    state.collectionError = "Sample photos could not be refreshed. Your records are retained; a local backup is kept if staging began."
+                }
+                state.isOpening = false
+            }
             #endif
             for _ in 0..<10 {
                 if state.dataCoordinator?.isWaitingForPreviousStore != true && !LocalArchiveService.hasInFlightWork { break }

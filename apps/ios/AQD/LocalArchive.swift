@@ -29,6 +29,7 @@ struct LocalArchiveHeader: Codable, Sendable {
     let files: [File]
 }
 struct LocalArchivePackage: Sendable {
+    static let supportedFormatVersion = 2
     static let maximumBytes = 64 * 1024 * 1024
     static var maximumSizeDescription: String { ByteCountFormatter.string(fromByteCount: Int64(maximumBytes), countStyle: .memory) }
     static let maximumHeader = 1024 * 1024
@@ -48,7 +49,10 @@ struct LocalArchivePackage: Sendable {
         let metadata = try encoder.encode(header)
         guard metadata.count <= Self.maximumHeader else { throw LocalArchiveError.tooLarge }
         var result = Data("AQDARCH\n".utf8)
-        for number in [UInt32(1), UInt32(metadata.count)] { result.append(contentsOf: [24, 16, 8, 0].map { UInt8(truncatingIfNeeded: number >> $0) }) }
+        // Owned file names retain their legacy .jpg identities. Detect content,
+        // and flag PNG archives so old readers report a newer format safely.
+        let hasPNG = files.contains { $0.path.hasPrefix("media/") && $0.data.starts(with: [137, 80, 78, 71, 13, 10, 26, 10]) }
+        for number in [UInt32(hasPNG ? 2 : 1), UInt32(metadata.count)] { result.append(contentsOf: [24, 16, 8, 0].map { UInt8(truncatingIfNeeded: number >> $0) }) }
         result.append(metadata)
         for file in files { guard file.data.count <= Self.maximumBytes - result.count else { throw LocalArchiveError.tooLarge }; result.append(file.data) }
         return result
@@ -58,8 +62,8 @@ struct LocalArchivePackage: Sendable {
         guard data.count >= 16, data.prefix(8) == Data("AQDARCH\n".utf8) else { throw LocalArchiveError.invalid }
         func integer(_ range: Range<Int>) -> Int { data[range].reduce(0) { ($0 << 8) | Int($1) } }
         let version = integer(8..<12), size = integer(12..<16)
-        guard version <= 1 else { throw LocalArchiveError.newer }
-        guard version == 1, size > 0, size <= maximumHeader, size <= data.count - 16 else { throw LocalArchiveError.invalid }
+        guard version <= supportedFormatVersion else { throw LocalArchiveError.newer }
+        guard version >= 1, size > 0, size <= maximumHeader, size <= data.count - 16 else { throw LocalArchiveError.invalid }
         let header = try JSONDecoder().decode(LocalArchiveHeader.self, from: data.subdata(in: 16..<(16 + size)))
         guard header.databaseSchema <= schema else { throw LocalArchiveError.newer }
         guard header.databaseSchema > 0, header.createdAt.timeIntervalSince1970.isFinite else { throw LocalArchiveError.invalid }
@@ -151,9 +155,11 @@ enum LocalArchiveIO {
         try protect(destination)
     }
     static func validatePhoto(_ data: Data) throws {
-        guard data.count <= 64 * 1024 * 1024, data.suffix(2).elementsEqual([0xFF, 0xD9]),
+        guard data.count <= 64 * 1024 * 1024,
               let source = CGImageSourceCreateWithData(data as CFData, [kCGImageSourceShouldCache: false] as CFDictionary),
-              CGImageSourceGetType(source) as String? == UTType.jpeg.identifier,
+              let type = CGImageSourceGetType(source) as String?,
+              (type == UTType.jpeg.identifier && data.suffix(2).elementsEqual([0xFF, 0xD9]) ||
+               type == UTType.png.identifier && data.suffix(12).elementsEqual([0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130])),
               CGImageSourceGetCount(source) == 1, CGImageSourceGetStatus(source) == .statusComplete,
               let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
               let width = (properties[kCGImagePropertyPixelWidth] as? NSNumber)?.intValue,

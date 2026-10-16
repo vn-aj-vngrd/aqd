@@ -23,6 +23,13 @@ import UIKit
         // Closed constants below are the only callers; this namespace is reserved for samples.
         UUID(uuidString: "A0D51000-0000-4000-8000-" + String(format: "%012d", number))!
     }
+    static let specs: [(String, String, PieceCategory, String)] = [
+            ("shirt", "Blue cotton shirt", .tops, "Blue"), ("knit", "Ivory ribbed knit", .tops, "Ivory"),
+            ("coat", "Navy trench coat", .layers, "Navy"), ("overshirt", "Olive overshirt", .layers, "Olive"),
+            ("trousers", "Tailored trousers", .bottoms, "Charcoal"), ("linen", "Linen trousers", .bottoms, "Sand"),
+            ("dress", "Cream midi dress", .dresses, "Cream"), ("jeans", "Indigo jeans", .bottoms, "Indigo"),
+            ("loafers", "Oxblood loafers", .shoes, "Oxblood"), ("sneakers", "Ivory sneakers", .shoes, "Ivory"),
+            ("bag", "Tan crossbody", .accessories, "Tan"), ("belt", "Black belt", .accessories, "Black")]
     static var sampleIDs: [String: [UUID]] {
         ["pieces": (1...12).map(id), "outfits": (101...106).map(id), "themes": (201...204).map(id),
          "plans": (301...307).map(id), "fits": (401...408).map(id)]
@@ -59,13 +66,6 @@ import UIKit
             return photoID
         }
         var bundle = Bundle()
-        let specs: [(String, String, PieceCategory, String)] = [
-            ("shirt", "Blue cotton shirt", .tops, "Blue"), ("knit", "Ivory ribbed knit", .tops, "Ivory"),
-            ("coat", "Navy trench coat", .layers, "Navy"), ("overshirt", "Olive overshirt", .layers, "Olive"),
-            ("trousers", "Tailored trousers", .bottoms, "Charcoal"), ("linen", "Linen trousers", .bottoms, "Sand"),
-            ("dress", "Cream midi dress", .dresses, "Cream"), ("jeans", "Indigo jeans", .bottoms, "Indigo"),
-            ("loafers", "Oxblood loafers", .shoes, "Oxblood"), ("sneakers", "Ivory sneakers", .shoes, "Ivory"),
-            ("bag", "Tan crossbody", .accessories, "Tan"), ("belt", "Black belt", .accessories, "Black")]
         for (index, spec) in specs.enumerated() {
             guard let data = WelcomeGarments.images[spec.0]?.pngData() else { throw Failure.missingArtwork }
             let photoID = try await photo(data)
@@ -117,6 +117,63 @@ import UIKit
         guard sampleIDs.allSatisfy({ Set(persisted[$0.key, default: []]) == Set($0.value) }) else { throw Failure.invalidGraph }
         let receipt = Receipt(version: 1, added: sampleIDs.mapValues(\.count), ids: sampleIDs, backup: backupName)
         try write(try JSONEncoder().encode(receipt), to: receiptURL)
+        return receipt
+    }
+    struct MediaReceipt: Codable {
+        let updated: [UUID]
+        let skipped: [UUID]
+        let transparent: [UUID]
+        let backup: String?
+    }
+    static func refreshTransparentPhotos(store: PieceStore, outputDirectory: URL) async throws -> MediaReceipt {
+        try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
+        let pieces = try store.pieces() + store.pieces(archived: true)
+        let allSamples = pieces.filter { sampleIDs["pieces", default: []].contains($0.id) }
+        let outfitDraftPieces = Set(try store.outfitDraft()?.pieceIDs ?? [])
+        var candidates: [WardrobePiece] = []
+        for piece in allSamples where piece.revision == 1 && piece.photoRecipe == .fitOriginal && !outfitDraftPieces.contains(piece.id) {
+            if try store.recoverableDraft(itemID: piece.id) == nil { candidates.append(piece) }
+        }
+        var backupName: String?
+        var stamp = try store.mutationStamp()
+        if !candidates.isEmpty {
+            let backup = try await LocalArchiveService.create(store: store)
+            guard try store.mutationStamp() == stamp else { throw Failure.changedStore }
+            let name = "AQD-before-transparent-samples-\(UUID().uuidString).aqdarchive"
+            try write(backup.data, to: outputDirectory.appendingPathComponent(name)); backupName = name
+        }
+        let preparer = PhotoPreparer()
+        var replacements: [(piece: WardrobePiece, photoID: UUID)] = []
+        for piece in candidates {
+            guard let index = (1...12).first(where: { id($0) == piece.id }),
+                  let data = WelcomeGarments.images[specs[index - 1].0]?.pngData() else { throw Failure.missingArtwork }
+            let prepared = try await preparer.prepare(data: data)
+            let png: [UInt8] = [137, 80, 78, 71, 13, 10, 26, 10]
+            guard prepared.originalData.starts(with: png), prepared.thumbnailData.starts(with: png) else { throw Failure.missingArtwork }
+            guard try store.mutationStamp() == stamp else { throw Failure.changedStore }
+            replacements.append((piece, try store.acceptPhoto(prepared)))
+            stamp = try store.mutationStamp()
+        }
+        guard try store.mutationStamp() == stamp else { throw Failure.changedStore }
+        if !replacements.isEmpty {
+            do { try store.replacePreviewSamplePhotos(replacements) }
+            catch {
+                // A post-commit error must reconcile the exact staged references,
+                // never create another update or falsely report unchanged photos.
+                let acknowledged = try replacements.allSatisfy { replacement in
+                    guard let current = try store.piece(id: replacement.piece.id) else { return false }
+                    return current.photoID == replacement.photoID && current.revision == replacement.piece.revision + 1
+                }
+                guard acknowledged else { throw error }
+            }
+        }
+        let refreshed = try store.pieces() + store.pieces(archived: true)
+        let transparent = try refreshed.filter { sampleIDs["pieces", default: []].contains($0.id) }.filter {
+            try store.originalPhoto(id: $0.photoID).starts(with: [137, 80, 78, 71, 13, 10, 26, 10])
+        }.map(\.id)
+        let receipt = MediaReceipt(updated: replacements.map { $0.piece.id },
+            skipped: allSamples.map(\.id).filter { id in !replacements.contains { $0.piece.id == id } }, transparent: transparent, backup: backupName)
+        try write(try JSONEncoder().encode(receipt), to: outputDirectory.appendingPathComponent("AQD-transparent-samples.json"))
         return receipt
     }
     private static func write(_ data: Data, to url: URL) throws {

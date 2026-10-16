@@ -77,3 +77,5 @@ No device quality, latency, memory or energy evaluation has run for this slice. 
 `CenteredPageContent` reuses the scrollable centered-message rhythm for short informational Settings pages. Callers own `safeAreaInset`/`ActionFooter`; long review/forms keep their existing scroll layout. It adds no actions or lifecycle state.
 
 Owner icons-only refinement: NativeTabs uses empty visible UITab titles with explicit destination accessibility labels on native tabs/items. Public UIKit tab roles, selection, separate Agent task and Settings chrome behavior remain unchanged. PrivateTourView hosts the actual root implementations in a separately loaded read state; it does not resume drafts or invoke cleanup. Agent preview suppresses interrupted-attempt persistence and composer autofocus.
+
+PhotoPreparer preserves alpha as metadata-minimized PNG through originals, thumbnails and edit renditions, while opaque sources keep JPEG encoding. Encoded output retains the64MiB byte limit. Legacy owned media `.jpg` paths are opaque identifiers decoded from their bytes; archive envelope2 marks PNG payloads, with version1 still supported.

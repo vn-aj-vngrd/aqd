@@ -37,7 +37,7 @@ import Testing
         #expect(package.header.summary.ownerID == chat.ownerID)
         #expect(package.files.contains { $0.path == "wardrobe.store" })
         #expect(try store.mutationStamp() == stamp)
-        var newer = data; newer[11] = 2
+        var newer = data; newer[11] = UInt8(LocalArchivePackage.supportedFormatVersion + 1)
         #expect(throws: (any Error).self) { try LocalArchivePackage.decode(newer) }
         #expect(throws: (any Error).self) { try LocalArchivePackage(summary: package.header.summary, files: [LocalArchiveFile(path: "wardrobe.store", data: Data([1])), LocalArchiveFile(path: "schema-version", data: Data([1])), LocalArchiveFile(path: "../outside", data: Data([1]))]) }
         var damaged = data; damaged[damaged.count - 1] ^= 1
