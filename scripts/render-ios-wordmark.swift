@@ -1,6 +1,7 @@
 import AppKit
 
-// Reproduce the splash's system-font wordmark as an opaque iOS icon.
+// Render the AQD system-letter mark with a restrained gold Q.
+// Keep the canvas opaque and square; iOS supplies the Home Screen mask.
 let output = CommandLine.arguments.dropFirst().first
     ?? "apps/ios/AQD/Resources/LaunchColors.xcassets/AppIcon.appiconset/AppIcon.png"
 let size = 1024
@@ -11,13 +12,16 @@ guard let context = CGContext(data: nil, width: size, height: size, bitsPerCompo
 }
 NSGraphicsContext.saveGraphicsState()
 NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
-NSColor(srgbRed: 245 / 255, green: 245 / 255, blue: 247 / 255, alpha: 1).setFill()
+NSColor.white.setFill()
 NSRect(x: 0, y: 0, width: size, height: size).fill()
-let wordmark = NSAttributedString(string: "AQD", attributes: [
-    .font: NSFont.systemFont(ofSize: 360, weight: .regular),
-    .kern: -9,
-    .foregroundColor: NSColor(srgbRed: 41 / 255, green: 44 / 255, blue: 48 / 255, alpha: 1)
+let wordmark = NSMutableAttributedString(string: "AQD", attributes: [
+    .font: NSFont.systemFont(ofSize: 330, weight: .regular),
+    .kern: 4,
+    .foregroundColor: NSColor(srgbRed: 36 / 255, green: 35 / 255, blue: 33 / 255, alpha: 1)
 ])
+wordmark.addAttribute(.foregroundColor,
+                      value: NSColor(srgbRed: 140 / 255, green: 106 / 255, blue: 54 / 255, alpha: 1),
+                      range: NSRange(location: 1, length: 1))
 let textSize = wordmark.size()
 wordmark.draw(at: NSPoint(x: (CGFloat(size) - textSize.width) / 2,
                          y: (CGFloat(size) - textSize.height) / 2))

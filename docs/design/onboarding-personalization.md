@@ -76,3 +76,5 @@ The onboarding primary is Take the tour, continuing the existing tour → Ready 
 Paper roots are recorded in [the manifest](paper-manifest.json) under currentPreferenceReceiptRefinement. Existing canonical IDs retain their earlier meanings: VO9-0 is Settings edit Goals, not the saved receipt. The four added references are static design; [issue 21](../plan/issue-21.md) owns actual native proof.
 
 The final MVP logo follows Splash’s 44-point system-font AQD wordmark on Welcome and saved receipts, including the packaged app icon. Paper’s icon reference is `13EP-0`; runtime code reuses `AQDWordmark` rather than three independent text treatments.
+
+Owner icon refinement, October16: the packaged Home Screen mark retains AQD system lettering on pure white, with charcoal A/D and a muted-gold Q (#8C6A36) plus calmer spacing. `scripts/render-ios-wordmark.swift` is its editable source; the universal1024 PNG stays opaque and iOS owns the corner mask. In-app Splash/Welcome/receipt wordmarks retain their existing semantic text treatment. This supersedes the earlier exact splash-to-icon color/spacing match; Paper reference13EP-0 remains historical until refreshed.
