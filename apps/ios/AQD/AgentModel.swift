@@ -171,7 +171,7 @@ import Observation
             let data = try JSONEncoder().encode(snapshot)
             var prompt = "Authorized context: " + String(decoding: data, as: UTF8.self)
             if context.includesStyle, let style = try store.localExperience().style?.answers {
-                prompt += "\nAllowed style: " + (0..<4).map { style.summary(at: $0) }.joined(separator: "; ")
+                prompt += "\nAllowed style: " + [0, 1, 2, 3, 5].map { style.summary(at: $0) }.joined(separator: "; ")
                 if let body = style.body.suggestionContext(styleContextEnabled: true) { prompt += "\nOptional self-described body: \(body)" }
             }
             if context.includesWear && context.scope != .general {
@@ -225,6 +225,8 @@ import Observation
                 if let i = conversation.messages.firstIndex(where: { $0.attemptID == attempt }) { conversation.messages[i].elapsedSeconds = seconds(since: start) }
                 _ = persist()
             }
+        } catch AgentContextError.selectionRequired {
+            self.error = "This request can include up to \(qualification.maximumPieces) pieces. Choose Selected pieces and reduce your selection, or continue Without closet. Your draft is retained."
         } catch { self.error = "Context changed or could not be read. Review the selected records and try again. Your draft is retained." }
     }
     private func seconds(since start: ContinuousClock.Instant) -> Double {

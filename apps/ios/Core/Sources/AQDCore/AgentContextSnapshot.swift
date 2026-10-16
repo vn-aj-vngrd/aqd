@@ -1,5 +1,7 @@
 import Foundation
 
+public enum AgentContextError: Error { case selectionRequired }
+
 public struct AgentContextSnapshot: Codable, Equatable, Sendable {
     public struct Piece: Codable, Equatable, Sendable {
         public let id: UUID
@@ -61,10 +63,11 @@ public struct AgentContextSnapshot: Codable, Equatable, Sendable {
                     }
                 }
             }
-            guard selected.isSubset(of: Set(eligible.map(\.id))), selected.count <= maximumPieces else { throw PlanValidationError.invalidRecord }
+            guard selected.isSubset(of: Set(eligible.map(\.id))) else { throw PlanValidationError.invalidRecord }
         }
         let allowed = eligible.filter { context.scope == .closet || selected.contains($0.id) }.sorted { $0.id.uuidString < $1.id.uuidString }
-        return Self(pieces: allowed.prefix(maximumPieces).map { Piece(id: $0.id, revision: $0.revision, name: $0.name, category: $0.category, color: $0.details.color) }, totalEligible: allowed.count, scope: context.scope)
+        guard allowed.count <= maximumPieces else { throw AgentContextError.selectionRequired }
+        return Self(pieces: allowed.map { Piece(id: $0.id, revision: $0.revision, name: $0.name, category: $0.category, color: $0.details.color) }, totalEligible: allowed.count, scope: context.scope)
     }
     public var summary: String { scope == .general ? "General styling · No closet or wear access" : "\(pieces.count) of \(totalEligible) eligible pieces · Names, categories and colors · No photos or private notes" }
 }

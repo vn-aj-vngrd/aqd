@@ -9,6 +9,45 @@ import AQDCore
         for _ in 0..<200 { if !model.active { return }; try await Task.sleep(for: .milliseconds(5)) }
         Issue.record("Synthetic attempt did not stop")
     }
+    @Test(arguments: [false, true], [false, true]) func styleIncludesColorsAndPatternsWithoutBypassingBodyConsent(includeStyle: Bool, allowBody: Bool) async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        var answers = StylePreferences(); for index in 0..<4 { answers.choose("No preference", at: index) }
+        answers.colors.preferredColors = "Navy"; answers.colors.avoidedColors = "Orange"
+        answers.colors.preferredPatterns = "Stripes"; answers.colors.avoidedPatterns = "Polka dots"
+        answers.body.response = .provided; answers.body.shape = "PRIVATE_BODY_CONTEXT"; answers.body.useForSuggestions = allowBody
+        var style = StylePreferenceDraft(source: .settings, answers: answers); style.page = 6
+        try store.saveStyleDraft(style); _ = try store.saveStylePreferences(style); try store.acknowledgeStyleReceipt(operationID: style.operationID)
+        var prompt = ""
+        let model = try AgentModel(store: store, qualification: qualification) { text, _ in
+            prompt = text; return AsyncThrowingStream { $0.yield("A considered look"); $0.finish() }
+        }
+        model.availability = .awaitingQualification; model.updateDraft("General styling please")
+        model.conversation.context.scope = .general; model.conversation.context.includesStyle = includeStyle
+        model.send(); try await waitUntilStopped(model)
+        for text in ["Preferred colors: Navy", "Colors to avoid: Orange", "Preferred patterns: Stripes", "Patterns to avoid: Polka dots"] {
+            #expect(prompt.contains(text) == includeStyle)
+        }
+        #expect(prompt.contains("PRIVATE_BODY_CONTEXT") == (includeStyle && allowBody))
+        #expect(model.conversation.messages.last?.status == .complete)
+    }
+    @Test func oversizedClosetRetainsTheRequestUntilExplicitBoundedSelection() async throws {
+        let fixture = try await LocalDataFixture(), store = fixture.store
+        let other = try store.savePiece(PieceDraft(name: "EXCLUDED_OTHER_PIECE", category: .tops, photoID: fixture.processed.id), operationID: UUID())
+        let limits = AgentQualification(maximumPieces: 1, maximumPromptCharacters: 20000, responseTokens: 128, slowSeconds: 0.2, timeoutSeconds: 2)
+        var prompts: [String] = []
+        let model = try AgentModel(store: store, qualification: limits) { text, _ in
+            prompts.append(text); return AsyncThrowingStream { $0.yield("One reviewed piece"); $0.finish() }
+        }
+        model.availability = .awaitingQualification; model.updateDraft("What can I wear?")
+        model.send()
+        #expect(prompts.isEmpty && model.conversation.messages.isEmpty && model.conversation.draft == "What can I wear?")
+        #expect(model.error?.contains("Choose Selected pieces") == true)
+        model.conversation.context.scope = .selected
+        model.conversation.context.selected = [AgentSelectedRecord(id: fixture.piece.id, kind: .piece, revision: fixture.piece.revision)]
+        model.send(); try await waitUntilStopped(model)
+        #expect(prompts.count == 1 && prompts.first?.contains(fixture.piece.name) == true && prompts.first?.contains(other.name) == false)
+        #expect(model.conversation.messages.last?.status == .complete)
+    }
     @Test func actualProviderSnapshotsPersistAndRetryKeepsOneUserTurn() async throws {
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         var prompts: [String] = []

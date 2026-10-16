@@ -41,6 +41,16 @@ struct AgentContextTests {
         outfit.pieceIDs = []; outfit.revision += 1
         #expect(throws: (any Error).self) { try AgentContextSnapshot.build(context, pieces: [piece], outfits: [outfit], themes: [theme], maximumPieces: 10) }
     }
+    @Test func oversizedClosetRequiresExplicitSelectionInsteadOfAnArbitrarySubset() throws {
+        let pieces = (0..<3).map { WardrobePiece(id: UUID(), name: "Shirt \($0)", category: .tops, photoID: UUID()) }
+        var context = AgentContext()
+        #expect(throws: (any Error).self) { try AgentContextSnapshot.build(context, pieces: pieces, outfits: [], themes: [], maximumPieces: 2) }
+        context.scope = .selected
+        context.selected = [AgentSelectedRecord(id: pieces[2].id, kind: .piece, revision: pieces[2].revision)]
+        #expect(try AgentContextSnapshot.build(context, pieces: pieces, outfits: [], themes: [], maximumPieces: 2).pieces.map(\.id) == [pieces[2].id])
+        context.scope = .general
+        #expect(try AgentContextSnapshot.build(context, pieces: pieces, outfits: [], themes: [], maximumPieces: 2).pieces.isEmpty)
+    }
     @Test func markdownRejectsExecutableLinksAndRetainsExactSourceForCopy() {
         #expect(!AgentMarkdownPolicy.allowsLink("javascript:alert(1)"))
         #expect(!AgentMarkdownPolicy.allowsLink("file:///private/data"))
