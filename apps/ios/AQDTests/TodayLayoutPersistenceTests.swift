@@ -91,4 +91,19 @@ struct TodayLayoutPersistenceTests {
         #expect(try migrated.todayPersonalCards().isEmpty)
         #expect(try PieceStore(directory: directory).todayConfiguration() == layout)
     }
+    @Test func reopeningFromAnOldCardSnapshotKeepsTheAcknowledgedNewerText() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString), store = try PieceStore(directory: directory)
+        let state = AppState(store: store)
+        state.openTodayEditor(); let first = try #require(state.todayEditor)
+        first.begin(TodayWidgetInstance(kind: .personalNote)); first.nested { $0.options?.personal?.text = "Original note" }; first.applyNested(); await first.save()
+        let oldSnapshot = try #require(state.today?.instances.last)
+        state.openTodayEditor(); let edit = try #require(state.todayEditor)
+        edit.begin(oldSnapshot); edit.nested { $0.options?.personal?.text = "Acknowledged new note" }; edit.applyNested(); await edit.save()
+        state.openTodayEditor(); let reopened = try #require(state.todayEditor)
+        reopened.begin(oldSnapshot)
+        #expect(reopened.draft.nested?.options?.personal?.text == "Acknowledged new note")
+        reopened.cancelNested(); reopened.finish(discarding: true)
+        #expect(try store.todayPersonalCards().first?.text == "Acknowledged new note")
+    }
+
 }

@@ -30,7 +30,8 @@ import Observation
             self.error = "Keep at least one widget. Add another before removing this one."
         } catch { draft = changed; self.error = "These edits could not be retained. Keep this screen open and retry. Your saved layout is unchanged."; draftFailed = true }
     }
-    func begin(_ instance: TodayWidgetInstance) {
+    func begin(_ requested: TodayWidgetInstance) {
+        let instance = draft.value.instances.first { $0.id == requested.id } ?? requested
         cancelImport()
         update { draft in
             draft.nested = instance; draft.nestedBase = instance

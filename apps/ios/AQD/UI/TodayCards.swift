@@ -53,7 +53,7 @@ struct TodayCard: View {
                 if !card.title.isEmpty { Text(card.title).font(AppTypography.section) }
                 if card.kind == .personalPhoto { TodayPersonalPhoto(card: card).frame(maxHeight: 260) }
                 Text(card.text).lineLimit(4).foregroundStyle(AppTheme.ink)
-                NavigationLink("Read more") { TodayPersonalDetail(instance: instance) }.frame(minHeight: 44)
+                NavigationLink("Read more") { TodayPersonalDetail(instanceID: instance.id) }.frame(minHeight: 44)
             } else { configure("Choose your own private content.") }
         }
     }
@@ -188,19 +188,23 @@ struct TodayCard: View {
 }
 
 private struct TodayPersonalDetail: View {
-    let instance: TodayWidgetInstance
+    let instanceID: UUID
     @Environment(AppState.self) private var state
+    private var instance: TodayWidgetInstance? { state.today?.instances.first { $0.id == instanceID } }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                if let card = instance.options?.personal {
+                if let instance, let card = instance.options?.personal {
                     if !card.title.isEmpty { Text(card.title).font(AppTypography.section) }
                     if card.kind == .personalPhoto { TodayPersonalPhoto(card: card).frame(minHeight: 200) }
                     Text(card.text).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
                     SecondaryAction(title: "Edit card") { state.openTodayEditor(); state.todayEditor?.begin(instance) }
                     Text("Private on this iPhone").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                } else {
+                    ContentUnavailableView("This card is no longer on Today", systemImage: "square.stack", description: Text("Saved notes and photos remain available from the widget library."))
+                    SecondaryAction(title: "Customize Today") { state.openTodayEditor() }
                 }
             }.padding(20)
-        }.background(AppTheme.canvas).navigationTitle(instance.kind.title).navigationBarTitleDisplayMode(.inline)
+        }.background(AppTheme.canvas).navigationTitle(instance?.kind.title ?? "Saved card").navigationBarTitleDisplayMode(.inline)
     }
 }
