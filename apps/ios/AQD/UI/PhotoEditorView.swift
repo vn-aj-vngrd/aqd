@@ -3,6 +3,12 @@ import ImageIO
 import SwiftUI
 
 struct PhotoEditorView<Model: PhotoEditingOwner>: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: "Done", isPending: applying) { apply() }
+                        .disabled(!previewState.canUsePhoto(quarterTurns: quarterTurns, applying: applying)
+                                  || recipe == nil || previewImage == nil || originalWidth <= 0 || originalHeight <= 0)
+    }
+
     @Bindable var model: Model
     @Environment(\.dismiss) private var dismiss
     private let sourceID: UUID?
@@ -111,7 +117,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
                                 }
                             }
                         }
-                        Text("Fit keeps the entire photo. Cropping is your choice. Use photo changes only this draft; the original stays available for Reset.")
+                        Text("Fit keeps the entire photo. Cropping is your choice. Done changes only this draft; the original stays available for Reset.")
                             .font(.footnote).foregroundStyle(AppTheme.secondary)
                     } else {
                         AppEmptyState("Photo unavailable", systemImage: "photo.badge.exclamationmark",
@@ -125,10 +131,13 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
             }
             .background(AppTheme.canvas)
             .navigationTitle("Edit photo").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                confirmation
+            } }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { dirty ? (discardDecision = true) : leave() } label: {
-                        Label("Back", systemImage: "chevron.backward")
+                        Label("Cancel", systemImage: "xmark")
                     }.disabled(applying).accessibilityIdentifier("photo.editor.back")
                     .confirmationDialog("Discard photo edits?", isPresented: $discardDecision, titleVisibility: .visible) {
                         Button("Discard edits", role: .destructive) { leave() }
@@ -138,13 +147,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
                     }
                 }
             }
-            .safeAreaInset(edge: .bottom) {
-                ActionFooter {
-                    PrimaryAction(title: "Use photo", isPending: applying) { apply() }
-                        .disabled(!previewState.canUsePhoto(quarterTurns: quarterTurns, applying: applying)
-                                  || recipe == nil || previewImage == nil || originalWidth <= 0 || originalHeight <= 0)
-                }
-            }
+
         }.tint(AppTheme.ink)
             .interactiveDismissDisabled(dirty || applying)
             // Reset must restart preparation even when the requested rotation is already zero.

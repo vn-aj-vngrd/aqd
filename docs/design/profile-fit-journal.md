@@ -8,8 +8,8 @@ Personal like a photo album, familiar like an Instagram profile grid, restrained
 
 Canonical populated Profile L48 keeps the native root header/navigation and uses the paired Foundations roles. Dark duplicate L57 has been removed from the simplified canvas; native dark appearance remains required.
 
-- A 64-point optional avatar/initial, name at 28/34 medium, one-line 15/21 style summary. Edit profile in the toolbar opens L49. Missing identity uses a truthful neutral local identity rather than a social-account prompt; long names wrap at accessibility sizes.
-- A compact lock/privacy line, “Private on this iPhone”, at 13/18. It is not an export/recovery guarantee.
+- A 64-point optional avatar/initial, name at 28/34 medium, editable 15/21 caption. Tapping the avatar or Edit profile in the toolbar opens L49. Missing identity uses a truthful neutral local identity rather than a social-account prompt; long names wrap at accessibility sizes.
+- The caption defaults to "A little of what I wear." Owners may replace or clear it. Do not repeat a separate privacy/lock label below the identity.
 - Your fits with an actual saved-memory count; Add fit in the toolbar opens L161. Do not show a fabricated count or count wardrobe outfits as memories.
 - Chronological three-column thumbnails at the 390-point reference size: 20-point page inset, 114 × 152-point 3:4 image slots, 4-point horizontal gutters, 8-point row gaps, 4-point photographic corners, and 13/18 date labels below. Photo-less entries also say Outfit so a composition is not mistaken for a wearer photo. Thumbnails may crop only the presentation; detail fits the full source and never overwrites it. Missing media is explicitly unavailable.
 - No loose Style/Wear insights footer links. Three native toolbar controls retain at least 44-point targets. More opens an anchored menu with Style, Wear insights and Settings; menu dismissal restores focus and journal position. Closet remains a native destination; the old Your wardrobe settings row is not reproduced here. The V1 phase-owned Profile More reference owns the open-state composition; Foundations retains only generic native-menu grammar.
@@ -33,6 +33,8 @@ Date uses a native date picker and stable local calendar-date/timezone semantics
 No journal action records actual wear or updates planning. Any later explicit Record wear action must route through the existing duplicate-safe wear flow. Photo-only memories do not infer garments or an outfit. This is a memory collection, not proof of utilization.
 
 ## Optional local identity editor
+
+The root preview shows up to3 lines, with full text available in Edit profile. The caption is optional, trimmed on Save and limited to160 user-perceived characters. Retain over-limit input and disable Save with inline validation. A missing legacy caption uses the default; an explicitly cleared caption remains hidden. Caption edits share name/photo draft, cancellation, save/retry and export/restore semantics.
 
 L49 exposes the accessible name-field **Clear name** action and native photo options **Choose photo / Remove photo** when a reference exists, even if its file is unavailable. Both clear only the draft; Save accepts absent name/avatar and shows the neutral identity only after acknowledgment. Cancel/dirty discard restores prior saved identity and journal focus/scroll. [Local identity contract](../features/profile-account.md#local-identity-editing-v1-shared-private-v2) owns import-token invalidation, pending/failure/unknown/restart, export and reference-safe cleanup. These added options reuse native field/menu grammar; no separate Paper state or runtime verification is claimed.
 

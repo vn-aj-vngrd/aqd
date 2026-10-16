@@ -2,6 +2,12 @@ import AQDCore
 import SwiftUI
 
 struct OwnedPieceChooser: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: "Done") {
+                    if apply(selected) { dismiss() }
+                }.disabled(isLocked)
+    }
+
     let pieces: [WardrobePiece]
     let initialSelection: [UUID]
     var pinnedIDs: [UUID] = []
@@ -75,13 +81,19 @@ struct OwnedPieceChooser: View {
                 Text("\(selected.count) selected · Kept when filters change")
                     .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 if let error { SemanticFeedback(role: .danger, message: error) }
-                PrimaryAction(title: actionTitle) {
-                    if apply(selected) { dismiss() }
-                }.disabled(isLocked)
+
             }.padding(20)
         }
         .background(AppTheme.canvas)
         .navigationTitle("Choose pieces").navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden()
+            .toolbar { ToolbarItem(placement: .cancellationAction) {
+                Button { dismiss() } label: { Label("Cancel", systemImage: "xmark") }
+                    .disabled(isLocked)
+            } }
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                confirmation
+            } }
             .tint(AppTheme.ink)
         .searchable(text: $query, prompt: "Search your pieces")
         .onAppear { if !initialized { selected = initialSelection; initialized = true } }

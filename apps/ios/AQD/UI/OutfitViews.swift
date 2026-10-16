@@ -2,6 +2,12 @@ import AQDCore
 import SwiftUI
 
 struct OutfitEditorView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) {
+                            Task { await model.save() }
+                        }.disabled(!model.unknown && !model.canSave)
+    }
+
     @Bindable var model: OutfitEditorModel
     @State private var choosing = false
     @State private var discard = false
@@ -58,9 +64,7 @@ struct OutfitEditorView: View {
                         Text("A partial combination is fine. You can add more pieces whenever you like.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         if let error = model.error { SemanticFeedback(role: .danger, message: error) }
-                        PrimaryAction(title: model.unknown ? "Check save result" : "Save outfit", isPending: model.pending) {
-                            Task { await model.save() }
-                        }.disabled(!model.unknown && !model.canSave)
+
                     }
                     if model.saved != nil, let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(20)
@@ -68,6 +72,9 @@ struct OutfitEditorView: View {
             .background(AppTheme.canvas)
             .navigationTitle(model.saved != nil ? "Outfit saved" : model.draft.stage == .readiness ? "First outfit" : model.draft.stage == .suggest ? "Suggest an outfit" : model.draft.stage == .review ? "Review outfit" : model.draft.baseRevision == 0 ? "Build outfit" : "Edit outfit")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if model.saved == nil && model.draft.stage != .readiness && model.draft.stage != .suggest { confirmation }
+            } }
             .toolbar {
                 ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {

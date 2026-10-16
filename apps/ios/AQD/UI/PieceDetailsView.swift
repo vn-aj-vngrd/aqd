@@ -2,6 +2,13 @@ import AQDCore
 import SwiftUI
 
 struct PieceDetailsView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: "Done") {
+                            model.applyDetails(editedDetails, availability: availability)
+                            dismiss()
+                        }.disabled(!isValid)
+    }
+
     let model: CaptureModel
     @Environment(\.dismiss) private var dismiss
     @State private var details: PieceDetails
@@ -75,21 +82,17 @@ struct PieceDetailsView: View {
                 }
                 .background(AppTheme.canvas)
                 .navigationTitle("Details").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                confirmation
+            } }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button { dirty ? (discardDecision = true) : dismiss() } label: {
-                            Label("Back", systemImage: "chevron.backward")
+                            Label("Cancel", systemImage: "xmark")
                         }
                     }
                 }
-                .safeAreaInset(edge: .bottom) {
-                    ActionFooter {
-                        PrimaryAction(title: "Apply") {
-                            model.applyDetails(editedDetails, availability: availability)
-                            dismiss()
-                        }.disabled(!isValid)
-                    }
-                }
+
                 .confirmationDialog("Discard these detail changes?", isPresented: $discardDecision, titleVisibility: .visible) {
                     Button("Discard changes", role: .destructive) { dismiss() }
                     Button("Keep editing", role: .cancel) {}

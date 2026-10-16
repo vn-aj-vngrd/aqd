@@ -2,6 +2,12 @@ import SwiftUI
 import UIKit
 
 struct AgentVoiceView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: "Done") {
+                            if model.conversation.draft == base { useTranscript() } else { appendReview = true }
+                        }.disabled(voice.transcript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+    }
+
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     @Bindable var model: AgentModel
@@ -32,9 +38,7 @@ struct AgentVoiceView: View {
                     case .review:
                         Text("Review your transcript").font(AppTypography.section)
                         TextField("Transcript", text: $voice.transcript, axis: .vertical).lineLimit(4...12)
-                        PrimaryAction(title: "Use transcript") {
-                            if model.conversation.draft == base { useTranscript() } else { appendReview = true }
-                        }.disabled(voice.transcript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+
                         SecondaryAction(title: "Record again") { voice.discard(); Task { await voice.begin() } }
                         Text("Adds reviewed text to your draft. It never sends a message.").font(.footnote).foregroundStyle(AppTheme.secondary)
                     case .unavailable:
@@ -45,6 +49,9 @@ struct AgentVoiceView: View {
                     SecondaryAction(title: "Keep typing", action: safeExit)
                 }.padding(20)
             }.background(AppTheme.canvas).navigationTitle("Voice input").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if voice.phase == .review { confirmation }
+            } }
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button(action: safeExit) { Image(systemName: "xmark") }.accessibilityLabel("Cancel") } }
                 .alert("Discard this recording?", isPresented: $discard) {
                     Button("Cancel", role: .cancel) {}

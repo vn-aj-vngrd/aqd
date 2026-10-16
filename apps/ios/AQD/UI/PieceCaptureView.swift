@@ -5,6 +5,13 @@ import SwiftUI
 import UIKit
 
 struct PieceCaptureView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: "Save",
+                              isPending: model.isSaving) { model.save() }
+                    .disabled(!model.canSave)
+                    .accessibilityIdentifier("capture.save")
+    }
+
     @Environment(\.openURL) private var openURL
     @Bindable var model: CaptureModel
     @State private var sourceSheet = false
@@ -38,9 +45,12 @@ struct PieceCaptureView: View {
             .background(AppTheme.canvas)
             .navigationTitle(model.saved == nil ? (model.draft.baseRevision == nil ? "Add piece" : "Edit piece") : "Piece saved")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if model.saved == nil { confirmation }
+            } }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button { leave() } label: { Label("Back", systemImage: "chevron.backward") }
+                    Button { leave() } label: { Label("Cancel", systemImage: "xmark") }
                         .accessibilityIdentifier("capture.back")
                         .tint(AppTheme.ink)
                         .disabled(model.isSaving)
@@ -235,14 +245,7 @@ struct PieceCaptureView: View {
             .disabled(model.isSaving)
         }
         .scrollDismissesKeyboard(.interactively)
-        .safeAreaInset(edge: .bottom) {
-            ActionFooter {
-                PrimaryAction(title: model.draft.baseRevision == nil ? "Save piece" : "Save changes",
-                              isPending: model.isSaving) { model.save() }
-                    .disabled(!model.canSave)
-                    .accessibilityIdentifier("capture.save")
-            }
-        }
+
     }
 
     private var nameValidation: String? {

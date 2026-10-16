@@ -37,6 +37,13 @@ struct RoutineFields: View {
 }
 
 struct RoutineOutfitChooser: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: "Done") {
+                    model.update { $0.plan.routine?.preferredOutfitIDs = selected }
+                    if model.error == nil { dismiss() }
+                }
+    }
+
     @Bindable var model: PlanAuthoringModel
     @State private var selected: [UUID] = []
     @State private var query = ""
@@ -57,13 +64,18 @@ struct RoutineOutfitChooser: View {
                         }
                     }.buttonStyle(.plain).accessibilityValue(selected.contains(outfit.id) ? "Selected" : "Not selected")
                 }
-                PrimaryAction(title: "Use outfits") {
-                    model.update { $0.plan.routine?.preferredOutfitIDs = selected }
-                    if model.error == nil { dismiss() }
-                }
+
                 if let error = model.error { SemanticFeedback(role: .danger, message: error) }
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle("Choose outfits").navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden()
+            .toolbar { ToolbarItem(placement: .cancellationAction) {
+                Button { dismiss() } label: { Label("Cancel", systemImage: "xmark") }
+                    .disabled(model.pending || model.unknown)
+            } }
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                confirmation.disabled(model.pending || model.unknown)
+            } }
             .searchable(text: $query, prompt: "Search outfits").tint(AppTheme.ink)
             .onAppear { model.state.reloadOutfits(); selected = model.draft.plan.routine?.preferredOutfitIDs ?? [] }
     }

@@ -57,6 +57,10 @@ struct FitJournalGrid: View {
 }
 
 struct FitEditorView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) { Task { await model.save() } }.disabled(!model.unknown && !model.canSave)
+    }
+
     @Bindable var model: FitEditorModel
     @State private var discard = false
     @State private var removePhoto = false
@@ -69,7 +73,7 @@ struct FitEditorView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     if model.saved != nil {
                         Text("Fit saved").font(AppTypography.section)
-                        PrimaryAction(title: "Done") { model.finish() }
+
                     } else {
                         LabeledControl(title: "Date") {
                             DatePicker("Fit date", selection: Binding(get: { (try? model.draft.value.day.date()) ?? Date() }, set: { date in
@@ -93,11 +97,14 @@ struct FitEditorView: View {
                         Text("\(model.draft.value.note.count) / 500").font(AppTypography.metadata).foregroundStyle(model.draft.value.note.count > 500 ? AppTheme.error : AppTheme.secondary).frame(maxWidth: .infinity, alignment: .trailing)
                         if model.draft.value.note.count > 500 { SemanticFeedback(role: .danger, message: "Keep the note within 500 characters. Your full text is retained.") }
                         Text("Add a photo or link an outfit to save. Saving a fit never records wear.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        PrimaryAction(title: model.unknown ? "Check save result" : "Save fit", isPending: model.pending) { Task { await model.save() } }.disabled(!model.unknown && !model.canSave)
+
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle(model.draft.base == nil ? "Add fit" : "Edit fit").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
+            }.background(AppTheme.canvas).navigationTitle(model.draft.base == nil ? "Add fit" : "Edit fit").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if model.saved == nil { confirmation }
+            } }.tint(AppTheme.ink)
                 .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() }

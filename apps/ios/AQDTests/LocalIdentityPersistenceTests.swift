@@ -7,6 +7,43 @@ import SwiftData
 
 @Suite(.serialized) @MainActor
 struct LocalIdentityPersistenceTests {
+    @Test func captionPersistsReopensClearsAndCancelledEditsRetainSavedValue() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: directory)
+        var draft = LocalIdentityDraft(ownerID: try store.todayConfiguration().ownerID)
+        draft.name = "Van"; draft.caption = "Getting dressed, my way."
+        try store.saveIdentityDraft(draft)
+        let saved = try store.saveIdentity(draft)
+        #expect(try store.saveIdentity(draft) == saved)
+        try store.finishIdentityDraft(draft)
+        #expect(try PieceStore(directory: directory).localIdentity()?.caption == draft.caption)
+        var cancelled = LocalIdentityDraft(ownerID: saved.ownerID, base: saved)
+        cancelled.caption = "Unsaved caption"
+        try store.saveIdentityDraft(cancelled)
+        try store.finishIdentityDraft(cancelled, discarding: true)
+        #expect(try store.localIdentity()?.caption == saved.caption)
+        var clear = LocalIdentityDraft(ownerID: saved.ownerID, base: saved); clear.caption = ""
+        try store.saveIdentityDraft(clear); _ = try store.saveIdentity(clear); try store.finishIdentityDraft(clear)
+        #expect(try PieceStore(directory: directory).localIdentity()?.caption == "")
+    }
+
+    @Test func overLimitCaptionAndOtherEditsSurviveRestartUntilCorrected() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: directory)
+        var draft = LocalIdentityDraft(ownerID: try store.todayConfiguration().ownerID)
+        draft.caption = String(repeating: "a", count: 161)
+        draft.name = "Retain alongside caption"
+        try store.saveIdentityDraft(draft)
+        let reopened = try PieceStore(directory: directory)
+        #expect(try reopened.identityDraft() == draft)
+        #expect(throws: (any Error).self) { try reopened.saveIdentity(draft) }
+        #expect(try reopened.localIdentity() == nil)
+        draft.caption = "Corrected"
+        try reopened.saveIdentityDraft(draft)
+        let saved = try reopened.saveIdentity(draft)
+        #expect(saved.caption == "Corrected" && saved.name == draft.name)
+    }
+
     @Test func absentIdentityClearsAndRetriesWithoutChangingWardrobeOrHistory() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         var fail = false, unknown = false

@@ -7,27 +7,31 @@ struct TodayCard: View {
     private var today: LocalPlanDay { LocalPlanDay() }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label(instance.kind.title, systemImage: symbol)
-                .font(AppTypography.detailTitle).foregroundStyle(AppTheme.ink)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(eyebrow).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                Text(instance.kind.title)
+                    .font(instance.kind == .todayLook || instance.kind == .personalPhoto || instance.kind == .fitJournal ? .title2.weight(.semibold) : AppTypography.detailTitle)
+                    .foregroundStyle(AppTheme.ink)
+            }
             content.font(AppTypography.supporting).buttonStyle(.plain)
-        }.frame(maxWidth: .infinity, alignment: .leading).padding(16)
+        }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
             .accessibilityIdentifier("today.widget.\(instance.id.uuidString)")
     }
-    private var symbol: String {
+    private var eyebrow: String {
         switch instance.kind {
-        case .todayLook: "tshirt"
-        case .weekInWear: "calendar"
-        case .closetInUse: "chart.bar"
-        case .upcomingPlans: "calendar.badge.clock"
-        case .wearAgain: "arrow.clockwise"
-        case .favoriteOutfits: "heart"
-        case .theme: "folder"
-        case .fitJournal: "photo.stack"
-        case .weatherContext: "cloud"
-        case .quickActions: "bolt"
-        case .personalNote: "note.text"
-        case .personalPhoto: "photo"
+        case .todayLook: "For today"
+        case .weekInWear: "This week"
+        case .closetInUse: "Your wardrobe"
+        case .upcomingPlans: "Coming up"
+        case .wearAgain: "Rediscover"
+        case .favoriteOutfits: "Your favorites"
+        case .theme: "Your collection"
+        case .fitJournal: "Your memories"
+        case .weatherContext: "Before you head out"
+        case .quickActions: "Make it yours"
+        case .personalNote: "A note for you"
+        case .personalPhoto: "Your inspiration"
         }
     }
     @ViewBuilder private var content: some View {
@@ -82,6 +86,10 @@ struct TodayCard: View {
             }.sorted { $0.id.uuidString < $1.id.uuidString }
             if entries.isEmpty, instance.options?.pinnedID != nil { configure("The selected plan entry is unavailable. Choose another entry or follow Today.") }
             else if entries.isEmpty {
+                if !state.pieces.isEmpty {
+                    Text("From your closet").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                    closetPreview
+                }
                 Text(state.pieces.isEmpty ? "Start with a photo of a piece you love." : "Choose a look for today. Plans and recorded wear stay separate.").foregroundStyle(AppTheme.secondary)
                 Button {
                     if state.pieces.isEmpty { state.addPiece() } else { state.buildOutfit() }
@@ -90,7 +98,7 @@ struct TodayCard: View {
             }
             ForEach(entries) { entry in
                 if let outfit = state.outfits.first(where: { $0.id == entry.outfitID }) {
-                    OutfitComposition(pieceIDs: outfit.pieceIDs).frame(height: 150)
+                    OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 160, limit: 4)
                     Text(outfit.name).font(AppTypography.body)
                     Text(entry.occasion.isEmpty ? entry.day.timeZoneID : entry.occasion).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     Text(entry.state == .worn ? "Recorded wear" : entry.state == .skipped ? "Skipped" : "Planned · Not recorded as worn")
@@ -110,13 +118,14 @@ struct TodayCard: View {
         if let error = state.wearError { failure(error) { state.reloadWear() } }
         else if let bounds = try? TodaySources.week(containing: instance.options?.period ?? today, through: today) {
             let records = state.wearRecords.filter { $0.day.key >= bounds.start.key && $0.day.key <= bounds.end.key }
+            weekTimeline(start: bounds.start, records: records)
             if state.wearRecords.isEmpty {
                 Text("Record a look to start your week. Plans stay separate from wear.").foregroundStyle(AppTheme.secondary)
                 Button { state.openWear() } label: { TodayCardActionLabel(title: "Record a look") }.frame(minHeight: 44)
             } else {
                 Text("\(Set(records.map(\.day.key)).count) days · \(Set(records.flatMap { $0.pieces.map(\.id) }).count) pieces")
                 if records.isEmpty { Text("No wear recorded in this week yet.").foregroundStyle(AppTheme.secondary) }
-                Text("\(bounds.start.key) – \(bounds.end.key)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                Text("\(bounds.start.displayDate) – \(bounds.end.displayDate)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                 NavigationLink { LocalWearHistoryView(periodStart: bounds.start, periodEnd: bounds.end) } label: { TodayCardActionLabel(title: "View this week") }.frame(minHeight: 44)
             }
         }
@@ -130,7 +139,7 @@ struct TodayCard: View {
                 Text("\(summary.usedActiveCount) of \(summary.activeCount) active pieces recorded").foregroundStyle(AppTheme.secondary)
                 ProgressView(value: value).tint(AppTheme.actionText)
             } else { Text("Your wear story starts here. Record your looks to discover which pieces you reach for.").foregroundStyle(AppTheme.secondary) }
-            Text("\(summary.start.key) – \(summary.end.key)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+            Text("\(summary.start.displayDate) – \(summary.end.displayDate)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             NavigationLink { LocalWearInsightsView(initialMonth: month) } label: { TodayCardActionLabel(title: "View this month") }.frame(minHeight: 44)
         }
     }
@@ -151,6 +160,11 @@ struct TodayCard: View {
     @ViewBuilder private var wearAgain: some View {
         if let error = state.wearError ?? state.pieceReadError { failure(error) { state.reloadWear(); state.reloadPieces() } }
         else if let piece = instance.options?.pinnedID.map({ pin in state.pieces.first { $0.id == pin && $0.availability == .available } }) ?? TodaySources.wearAgain(pieces: state.pieces, records: state.wearRecords, through: today) {
+            NavigationLink(value: ClosetRoute.piece(piece.id)) {
+                PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                    .frame(maxWidth: .infinity).frame(height: 220)
+                    .accessibilityLabel("View \(piece.name)")
+            }.buttonStyle(.plain)
             Text(piece.name).font(AppTypography.body)
             if let date = PieceWearSummary(piece: piece, records: state.wearRecords).lastWorn {
                 Text("Last recorded \(date.key)").foregroundStyle(AppTheme.secondary)
@@ -172,10 +186,58 @@ struct TodayCard: View {
                 Button { state.closetScope = "Outfits"; state.selection = 1 } label: { TodayCardActionLabel(title: "Open Outfits") }.frame(minHeight: 44)
             }
             ForEach(favorites) { outfit in
-                NavigationLink(value: ClosetRoute.outfit(outfit.id)) { TodayCardActionLabel(title: outfit.name) }.frame(minHeight: 44)
+                NavigationLink(value: ClosetRoute.outfit(outfit.id)) {
+                    HStack(spacing: 12) {
+                        if let piece = state.pieces.first(where: { outfit.pieceIDs.contains($0.id) }) {
+                            PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                                .frame(width: 56, height: 72).accessibilityHidden(true)
+                        }
+                        TodayCardActionLabel(title: outfit.name)
+                    }
+                }.frame(minHeight: 44)
             }
         }
     }
+    private var closetPreview: some View {
+        HStack(alignment: .top, spacing: 8) {
+            ForEach(Array(state.pieces.prefix(3))) { piece in
+                NavigationLink(value: ClosetRoute.piece(piece.id)) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                            .frame(maxWidth: .infinity).frame(height: 156)
+                        Text(piece.name).font(AppTypography.metadata).foregroundStyle(AppTheme.ink).lineLimit(2)
+                    }
+                }.buttonStyle(.plain)
+            }
+        }
+    }
+
+    private func weekTimeline(start: LocalPlanDay, records: [OutfitWearRecord]) -> some View {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: start.timeZoneID) ?? .current
+        let days = (0..<7).compactMap { offset in
+            (try? start.date()).flatMap { calendar.date(byAdding: .day, value: offset, to: $0) }
+        }
+        let recorded = Set(records.map(\.day.key))
+        return HStack(spacing: 4) {
+            ForEach(days, id: \.self) { date in
+                let day = LocalPlanDay(date: date, timeZone: calendar.timeZone)
+                let hasWear = recorded.contains(day.key)
+                VStack(spacing: 8) {
+                    Text(date, format: Date.FormatStyle(timeZone: calendar.timeZone).weekday(.narrow))
+                        .font(AppTypography.metadata)
+                    Text(date, format: Date.FormatStyle(timeZone: calendar.timeZone).day())
+                        .font(AppTypography.supporting.weight(hasWear ? .semibold : .regular))
+                    Circle().fill(hasWear ? AppTheme.accent : AppTheme.divider).frame(width: 5, height: 5)
+                }
+                .foregroundStyle(hasWear ? AppTheme.ink : AppTheme.secondary)
+                .frame(maxWidth: .infinity).padding(.vertical, 12)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(day.displayDate), \(hasWear ? "wear recorded" : "no wear recorded")")
+            }
+        }
+    }
+
     private func perform(_ action: TodayAction) {
         switch action {
         case .addPiece: state.addPiece()
@@ -263,10 +325,6 @@ struct TodayWeatherSummary: View {
                     Text("A little context for what to wear.").font(AppTypography.body)
                     Text("Choose a city for optional Apple Weather. Your wardrobe stays private.")
                         .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    if !client.qualified {
-                        Text("Live readings aren’t enabled in this build yet.")
-                            .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                    }
                 }
                 Button { setup = true } label: {
                     TodayCardActionLabel(title: client.local?.enabled == true ? "Weather details" : "Set up weather")

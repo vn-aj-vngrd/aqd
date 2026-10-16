@@ -91,3 +91,23 @@ struct AQDWordmark: View {
             .foregroundStyle(AppTheme.ink).accessibilityLabel("AQD")
     }
 }
+
+/// Native text confirmation for sheet editors. Feature owners retain their
+/// validation, cancellation and immutable save/reconciliation operations.
+struct ToolbarSaveAction: View {
+    let title: String
+    var isPending = false
+    let action: () -> Void
+    @Environment(\.isEnabled) private var isEnabled
+    var body: some View {
+        Button {
+            guard isEnabled && !isPending else { return }
+            action()
+        } label: {
+            Text(title).font(AppTypography.action).frame(minWidth: 44, minHeight: 44)
+        }
+        .tint(AppTheme.accent)
+        .disabled(isPending || !isEnabled)
+        .accessibilityValue(isPending ? "In progress" : "")
+    }
+}

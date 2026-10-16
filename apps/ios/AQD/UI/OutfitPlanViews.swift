@@ -2,6 +2,12 @@ import AQDCore
 import SwiftUI
 
 struct OutfitPlanEditorView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) {
+                                Task { await model.save() }
+                            }.disabled(!model.unknown && (!model.canSave || (model.hasOverlap && model.draft.allowsOverlap != true)))
+    }
+
     @Bindable var model: OutfitPlanEditorModel
     @State private var discard = false
     @State private var choosing = false
@@ -61,17 +67,23 @@ struct OutfitPlanEditorView: View {
                         }
                         if let conflict = model.availabilityConflict { SemanticFeedback(role: .warning, message: conflict) }
                         ActionStack {
-                            PrimaryAction(title: model.unknown ? "Check save result" : "Save plan", isPending: model.pending) {
-                                Task { await model.save() }
-                            }.disabled(!model.unknown && (!model.canSave || (model.hasOverlap && model.draft.allowsOverlap != true)))
-                            SecondaryAction(title: "Leave unassigned") { Task { await model.save(leaveUnassigned: true) } }
-                                .disabled(model.pending || model.unknown || (model.hasOverlap && model.draft.allowsOverlap != true))
+
+
                         }
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(20)
             }.background(AppTheme.canvas)
                 .navigationTitle(model.saved == nil ? model.draft.baseEntry == nil ? "Plan a look" : "Edit plan entry" : "Plan saved").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .topBarTrailing) {
+                if model.saved == nil {
+                    Menu { Button("Leave unassigned") { Task { await model.save(leaveUnassigned: true) } }
+                                .disabled(model.pending || model.unknown || (model.hasOverlap && model.draft.allowsOverlap != true)) } label: { Label("More plan options", systemImage: "ellipsis") }
+                }
+            } }
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if model.saved == nil { confirmation }
+            } }
             .tint(AppTheme.ink)
                 .toolbar {
                     ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {

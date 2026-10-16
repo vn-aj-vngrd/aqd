@@ -2,6 +2,16 @@ import AQDCore
 import SwiftUI
 
 struct BackgroundRemovalView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: "Done", isPending: applying) {
+                        guard let input, candidate != nil, !processing else { return }
+                        applying = true
+                        if capture.acceptBackground(removedSelected ? candidate : nil, input: input) { dismiss() }
+                        else { error = capture.errorText ?? "The source changed. Cancel and open this task again." }
+                        applying = false
+                    }.disabled(processing || candidate == nil || applying)
+    }
+
     @Bindable var capture: CaptureModel
     let cropManually: () -> Void
     @Environment(\.dismiss) private var dismiss
@@ -35,17 +45,12 @@ struct BackgroundRemovalView: View {
                         if !unavailable { SecondaryAction(title: "Try again", action: start).disabled(processing || applying) }
                         SecondaryAction(title: "Crop manually") { cancel(); cropManually() }
                     }
-                    PrimaryAction(title: "Use photo", isPending: applying) {
-                        guard let input, candidate != nil, !processing else { return }
-                        applying = true
-                        if capture.acceptBackground(removedSelected ? candidate : nil, input: input) { dismiss() }
-                        else { error = capture.errorText ?? "The source changed. Cancel and open this task again." }
-                        applying = false
-                    }.disabled(processing || candidate == nil || applying)
-                    SecondaryAction(title: "Cancel") { cancel(); dismiss() }.disabled(applying)
-                    Text("Processing stays on this iPhone. Use photo changes only the draft. Original Photos remain unchanged.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    Text("Processing stays on this iPhone. Done changes only the draft. Original Photos remain unchanged.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }.padding(20)
             }.background(AppTheme.canvas).navigationTitle("Remove background").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                confirmation
+            } }
                 .toolbar { ToolbarItem(placement: .topBarLeading) { Button { cancel(); dismiss() } label: { Image(systemName: "xmark") }.accessibilityLabel("Cancel background removal").disabled(applying) } }
                 .navigationDestination(isPresented: $inspect) { if let selectedData { BackgroundPhotoInspection(data: selectedData) } }
         }.tint(AppTheme.ink).interactiveDismissDisabled()

@@ -22,6 +22,11 @@ struct PlannerAddSheet: View {
 }
 
 struct PlanAuthoringView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) { Task { await model.save() } }
+                .disabled(!model.unknown && !model.canSave)
+    }
+
     @Bindable var model: PlanAuthoringModel
     @State private var discard = false
     @State private var choosingSlot: UUID?
@@ -50,13 +55,16 @@ struct PlanAuthoringView: View {
                     }
                 }.padding(20)
             }.background(AppTheme.canvas).navigationTitle(model.saved != nil ? "Plan saved" : model.draft.reviewing ? "Review plan" : model.draft.basePlan != nil ? "Edit plan" : model.draft.plan.routine != nil ? "New routine" : model.draft.plan.trip != nil ? "New trip" : "New plan")
-                .navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
-                .toolbar { ToolbarItem(placement: .topBarLeading) {
+                .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if model.saved == nil && model.draft.reviewing { confirmation }
+            } }.tint(AppTheme.ink)
+                .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() }
                         else if model.draft.reviewing { model.update(invalidateConflicts: false) { $0.reviewing = false } }
                         else { discard = true }
-                    } label: { Image(systemName: model.saved != nil ? "checkmark" : model.draft.reviewing ? "chevron.backward" : "xmark") }
+                    } label: { if model.saved != nil { Text("Done") } else { Image(systemName: model.draft.reviewing ? "chevron.backward" : "xmark") } }
                         .accessibilityLabel(model.saved != nil ? "Done" : model.draft.reviewing ? "Back to plan" : "Cancel plan")
                         .tint(AppTheme.ink).disabled(model.pending || model.unknown)
                 } }
@@ -152,8 +160,7 @@ struct PlanAuthoringView: View {
             let assigned = model.draft.slots.filter { $0.outfit != nil }.count
             Text("\(assigned) assigned · \(model.draft.slots.count - assigned) gaps · \(model.conflicts.count) overlaps")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-            PrimaryAction(title: model.unknown ? "Check save result" : "Save plan", isPending: model.pending) { Task { await model.save() } }
-                .disabled(!model.unknown && !model.canSave)
+
         }
     }
 }

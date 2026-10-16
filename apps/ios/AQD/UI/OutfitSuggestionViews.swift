@@ -74,6 +74,18 @@ struct OutfitSuggestionContent: View {
 }
 
 struct OutfitReplacementView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: "Done") {
+                    do {
+                        guard let selected else { return }
+                        var updated = model.draft
+                        try updated.replace(pieceID, with: selected, pieces: model.state.pieces)
+                        model.update { $0 = updated }
+                        if model.error == nil { dismiss() }
+                    } catch { self.error = "The selection changed. Keep the current draft and review its pieces again." }
+                }.disabled(selected == nil || model.pending || model.unknown || model.generating)
+    }
+
     @Bindable var model: OutfitEditorModel
     let pieceID: UUID
     @State private var selected: UUID?
@@ -103,18 +115,18 @@ struct OutfitReplacementView: View {
                     }.buttonStyle(.plain).accessibilityValue(selected == piece.id ? "Selected replacement" : "Not selected")
                 }
                 if let error { SemanticFeedback(role: .danger, message: error) }
-                PrimaryAction(title: "Use replacement") {
-                    do {
-                        guard let selected else { return }
-                        var updated = model.draft
-                        try updated.replace(pieceID, with: selected, pieces: model.state.pieces)
-                        model.update { $0 = updated }
-                        if model.error == nil { dismiss() }
-                    } catch { self.error = "The selection changed. Keep the current draft and review its pieces again." }
-                }.disabled(selected == nil || model.pending || model.unknown || model.generating)
+
             }.padding(20)
         }.background(AppTheme.canvas)
             .navigationTitle("Replace a piece").navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden()
+            .toolbar { ToolbarItem(placement: .cancellationAction) {
+                Button { dismiss() } label: { Label("Cancel", systemImage: "xmark") }
+                    .disabled(model.pending || model.unknown || model.generating)
+            } }
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                confirmation
+            } }
             .tint(AppTheme.ink)
     }
 }

@@ -56,15 +56,21 @@ struct LocalProfileView: View {
     private var identityHeader: some View {
         VStack(alignment: .leading, spacing: 16) {
                     HStack(alignment: .center, spacing: 16) {
-                        LocalIdentityAvatar(photoID: state.localIdentity?.photoID, recipe: state.localIdentity?.photoRecipe ?? .fitOriginal).frame(width: 64, height: 64)
+                        Button { state.openIdentity() } label: {
+                            LocalIdentityAvatar(photoID: state.localIdentity?.photoID, recipe: state.localIdentity?.photoRecipe ?? .fitOriginal)
+                                .frame(width: 64, height: 64)
+                        }.buttonStyle(.plain).accessibilityLabel("Edit profile photo")
+                            .accessibilityIdentifier("profile.avatar.edit")
                         VStack(alignment: .leading, spacing: 4) {
                             Text(state.localIdentity?.name ?? "Your profile").font(.title.weight(.medium))
-                            Text("Your private style and fit memories")
-                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                            let caption = state.localIdentity?.caption ?? LocalProfileIdentity.defaultCaption
+                            if !caption.isEmpty {
+                                Text(caption).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                                    .lineLimit(3)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
                     }.accessibilityIdentifier("profile.identity")
-                    Label("Private on this iPhone", systemImage: "lock")
-                        .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
         }
     }
 }

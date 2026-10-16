@@ -279,3 +279,5 @@ Source/unit/build verification is separate from rendered native qualification in
 - Planner removes its duplicate Upcoming section while retaining selected-day entries and plan definitions; Today’s optional widget remains available. Calendar arrows are grouped with zero extra gap and separate44-point targets. Custom disclosure chevrons use scalable footnote weight; row touch areas stay unchanged.
 
 All E2E remains issue30.
+
+Owner refinement October16: Profile avatar opens the same identity draft as toolbar Edit profile. Caption defaults to "A little of what I wear.", supports editing/clearing and a160-character bound, and shares retained draft/save/cancel/retry semantics with name/photo. The root omits the redundant lock/privacy line. All audited sheet editors use X and text Save/Done in the header; nested Done updates its parent draft only. Today headings use gray eyebrows without icons. Inactive native tabs use light outline template images; selection strengthens them.

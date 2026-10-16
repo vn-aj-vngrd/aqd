@@ -2,6 +2,17 @@ import AQDCore
 import SwiftUI
 
 struct OutfitWearEditorView: View {
+    private var duplicateConfirmation: some View {
+        ToolbarSaveAction(title: "Save", isPending: model.pending) { Task { await model.save(useExisting: true) } }
+                                .disabled(!model.canSave || model.unknown)
+    }
+
+    private var confirmation: some View {
+        ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) {
+                                Task { await model.save() }
+                            }.disabled(!model.unknown && !model.canSave)
+    }
+
     @Bindable var model: OutfitWearEditorModel
     @State private var discard = false
     @State private var choosing = false
@@ -15,7 +26,7 @@ struct OutfitWearEditorView: View {
                         Text(saved.day.key).font(AppTypography.body)
                         ForEach(saved.pieces, id: \.id) { Text($0.name) }
                         SecondaryAction(title: "Open wear history") { model.finishOpeningHistory() }
-                        PrimaryAction(title: "Done") { model.finish() }
+
                     } else {
                         OutfitComposition(pieceIDs: model.draft.pieceIDs)
                         if model.draft.planEntry != nil {
@@ -40,14 +51,7 @@ struct OutfitWearEditorView: View {
                             Text("These pieces are already recorded on \(duplicate.day.key). Use that record to keep wear counted once.")
                                 .foregroundStyle(AppTheme.secondary)
                             NavigationLink("View wear record") { LocalWearDetailView(id: duplicate.id) }.frame(minHeight: 44)
-                            if model.draft.baseRecord == nil { PrimaryAction(title: "Use existing record", isPending: model.pending) { Task { await model.save(useExisting: true) } }
-                                .disabled(!model.canSave || model.unknown) }
                             Text("Change the date or pieces above to record a different wear.").font(AppTypography.supporting)
-                        }
-                        if model.duplicate == nil || model.unknown {
-                            PrimaryAction(title: model.unknown ? "Check save result" : model.draft.baseRecord == nil ? "Record wear" : "Save correction", isPending: model.pending) {
-                                Task { await model.save() }
-                            }.disabled(!model.unknown && !model.canSave)
                         }
                         Text("Planning a look does not record it as worn. Record only the pieces you actually wore, on that day.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
@@ -56,6 +60,12 @@ struct OutfitWearEditorView: View {
                 }.padding(20)
             }.background(AppTheme.canvas)
                 .navigationTitle(model.saved == nil ? (model.draft.baseRecord == nil ? "Record wear" : "Correct wear") : "Wear saved").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if model.saved == nil && model.duplicate != nil && !model.unknown && model.draft.baseRecord == nil { duplicateConfirmation }
+            } }
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if model.saved == nil && (model.duplicate == nil || model.unknown) { confirmation }
+            } }
                 .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() } else { discard = true }

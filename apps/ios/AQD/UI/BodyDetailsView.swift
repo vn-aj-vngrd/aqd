@@ -90,6 +90,17 @@ struct BodyDetailsView: View {
 }
 
 private struct BodyShapePickerView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: "Done") {
+                        var edited = picker
+                        do {
+                            try edited.useDescription()
+                            descriptionEditing = false
+                            model.update { $0.bodyShapePicker = edited }
+                        } catch { model.error = "Use a nonblank description of 160 characters or fewer." }
+                    }.disabled(!picker.canUseDescription || model.error != nil)
+    }
+
     @Bindable var model: StyleEditorModel
     @FocusState private var descriptionEditing: Bool
     private var picker: BodyShapeDraft { model.draft.bodyShapePicker ?? BodyShapeDraft(current: nil) }
@@ -100,6 +111,9 @@ private struct BodyShapePickerView: View {
                 else { choices }
             }.background(AppTheme.canvas)
                 .navigationTitle("Body shape").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if picker.isEditingCustom { confirmation }
+            } }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
@@ -170,18 +184,7 @@ private struct BodyShapePickerView: View {
                 if let error = model.error { SemanticFeedback(role: .danger, message: error); Button("Retry saving draft") { model.persist() } }
             }.padding(20)
         }.scrollDismissesKeyboard(.immediately)
-            .safeAreaInset(edge: .bottom) {
-                ActionFooter {
-                    PrimaryAction(title: "Use description") {
-                        var edited = picker
-                        do {
-                            try edited.useDescription()
-                            descriptionEditing = false
-                            model.update { $0.bodyShapePicker = edited }
-                        } catch { model.error = "Use a nonblank description of 160 characters or fewer." }
-                    }.disabled(!picker.canUseDescription || model.error != nil)
-                }
-            }
+
             .task { descriptionEditing = true }
     }
 }

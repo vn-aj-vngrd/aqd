@@ -30,6 +30,12 @@ struct NativeTabs: UIViewControllerRepresentable {
         // Set the bridge explicitly instead of relying on SwiftUI tint inheritance.
         controller.tabBar.tintColor = UIColor(AppTheme.accent)
         controller.tabBar.unselectedItemTintColor = UIColor(AppTheme.secondary)
+        let appearance = controller.tabBar.standardAppearance
+        for layout in [appearance.stackedLayoutAppearance, appearance.inlineLayoutAppearance, appearance.compactInlineLayoutAppearance] {
+            layout.normal.iconColor = UIColor(AppTheme.secondary)
+            layout.selected.iconColor = UIColor(AppTheme.accent)
+        }
+        controller.tabBar.standardAppearance = appearance
         controller.delegate = context.coordinator
         controller.tabBar.isUserInteractionEnabled = !isReadOnlyPreview
         controller.tabBar.accessibilityElementsHidden = isReadOnlyPreview
@@ -95,14 +101,12 @@ struct NativeTabs: UIViewControllerRepresentable {
             }
             let content = [roots[0], roots[1], roots[2], agentRoot, roots[3]]
             let names = ["Today", "Closet", "Planner", "Agent", "Profile"]
-            let symbols = ["house", "hanger", "calendar", "sparkle", "person.crop.circle"]
-            let selectedSymbols = ["house.fill", "hanger", "calendar", "sparkle", "person.crop.circle.fill"]
+            let symbols = ["house", "hanger", "calendar", "sparkle", "person"]
+            let selectedSymbols = ["house.fill", "hanger", "calendar", "sparkle", "person.fill"]
             hosts = content.enumerated().map { index, root in
                 let host = UIHostingController(rootView: root)
-                let item = UITabBarItem(title: nil, image: UIImage(systemName: symbols[index],
-                    withConfiguration: UIImage.SymbolConfiguration(weight: .regular)), tag: index)
-                item.selectedImage = UIImage(systemName: selectedSymbols[index],
-                                             withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
+                let item = UITabBarItem(title: nil, image: Self.tabImage(symbols[index], selected: false), tag: index)
+                item.selectedImage = Self.tabImage(selectedSymbols[index], selected: true)
                 item.accessibilityLabel = names[index]
                 item.accessibilityIdentifier = "root.tab.\(names[index].lowercased())"
                 // UIKit supplies the tab role and selected trait, not an app-owned
@@ -121,6 +125,16 @@ struct NativeTabs: UIViewControllerRepresentable {
             controller.setTabs(tabs, animated: false)
             if #available(iOS 27.0, *) { controller.prominentTabIdentifier = tabs[agentIndex].identifier }
             controller.selectedTab = tabs[originIndex]
+        }
+
+        /// Rasterize the chosen public SF Symbol into a template so UIKit cannot
+        /// replace inactive outlines with its automatic filled-symbol variant.
+        private static func tabImage(_ name: String, selected: Bool) -> UIImage? {
+            guard let symbol = UIImage(systemName: name, withConfiguration:
+                UIImage.SymbolConfiguration(pointSize: 22, weight: selected ? .semibold : .light)) else { return nil }
+            return UIGraphicsImageRenderer(size: symbol.size).image { _ in
+                symbol.draw(at: .zero)
+            }.withRenderingMode(.alwaysTemplate)
         }
 
         func tabBarController(_ tabBarController: UITabBarController, shouldSelectTab tab: UITab) -> Bool {

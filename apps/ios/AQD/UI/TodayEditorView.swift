@@ -2,6 +2,12 @@ import AQDCore
 import SwiftUI
 
 struct TodayEditorView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) {
+                        if model.saved != nil { model.finish() } else { Task { await model.save() } }
+                    }.disabled(model.importing || (model.saved == nil && !model.unknown && (try? model.draft.result()) == nil))
+    }
+
     @Bindable var model: TodayEditorModel
     @State private var discard = false
     @State private var library = false
@@ -31,12 +37,13 @@ struct TodayEditorView: View {
                     DisclosureRow(title: "Restore defaults", value: "") { restore = true }.disabled(model.locked)
                     if model.draft.defaultsUndo != nil { Button("Undo restore defaults") { model.update { $0.undoDefaults() } }.frame(minHeight: 44).disabled(model.locked) }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
-                    PrimaryAction(title: model.saved != nil ? "Done" : model.unknown ? "Check save result" : "Done", isPending: model.pending) {
-                        if model.saved != nil { model.finish() } else { Task { await model.save() } }
-                    }.disabled(model.importing || (model.saved == nil && !model.unknown && (try? model.draft.result()) == nil))
+
                     Text("Changes stay on this iPhone. Removing a widget keeps its saved note or photo.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }.padding(20)
             }.background(AppTheme.canvas).navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if model.saved == nil { confirmation }
+            } }
                 .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() }

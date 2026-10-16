@@ -2,6 +2,10 @@ import AQDCore
 import SwiftUI
 
 struct TodayWidgetConfigurationView: View {
+    private var confirmation: some View {
+        ToolbarSaveAction(title: "Done") { model.applyNested() }.disabled(!model.canApply)
+    }
+
     @Bindable var model: TodayEditorModel
     @State private var discard = false
     @State private var editPhoto = false
@@ -14,10 +18,13 @@ struct TodayWidgetConfigurationView: View {
                     if let instance {
                         configuration(instance).disabled(model.locked)
                         if let error = model.error { SemanticFeedback(role: .danger, message: error) }
-                        PrimaryAction(title: "Apply") { model.applyNested() }.disabled(!model.canApply)
+
                     }
                 }.padding(20)
             }.background(AppTheme.canvas).navigationTitle(instance?.kind.title ?? "Configure widget").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) {
+                if instance != nil { confirmation }
+            } }
                 .navigationDestination(isPresented: $editPhoto) { PhotoEditorView(model: model) }
                 .toolbar { ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -88,7 +95,7 @@ struct TodayWidgetConfigurationView: View {
                 .frame(minHeight: 180).padding(14).scrollContentBackground(.hidden).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).accessibilityLabel(instance.kind == .personalNote ? "Full private note" : "Photo caption")
             if instance.kind == .personalNote, card.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { Text("A note needs some text.").foregroundStyle(AppTheme.error) }
             Button(instance.kind == .personalNote ? "Clear note" : "Clear caption") { model.nested { $0.options?.personal?.text = "" } }.frame(minHeight: 44)
-            Text("Only you can see this card. Apply changes the Today draft; Done saves it.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            Text("Done updates your Today draft. Save in Customize Today keeps it.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
         }
     }
     private var actions: some View {

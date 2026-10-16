@@ -2462,7 +2462,7 @@ extension PieceStore {
     }
     func saveIdentityDraft(_ draft: LocalIdentityDraft) throws {
         guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
-        _ = try draft.result()
+        try draft.validatedForRetention()
         guard try savedIdentity(for: draft) == nil else { throw StoreError.operationConflict }
         let context = ModelContext(container)
         let records = try context.fetch(FetchDescriptor<StoredIdentityDraft>())
