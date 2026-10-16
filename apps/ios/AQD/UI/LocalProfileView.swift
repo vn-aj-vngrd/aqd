@@ -56,9 +56,9 @@ struct LocalProfileView: View {
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
-                            Button("Style", systemImage: "slider.horizontal.3") { state.openStyle(source: .profile) }
-                            Button("Categories", systemImage: "square.grid.2x2") { categories = true }
-                            Button("Settings", systemImage: "gearshape") { state.profileSettings = true }
+                            AccessoryButton("Style", systemImage: "slider.horizontal.3") { state.openStyle(source: .profile) }
+                            AccessoryButton("Categories", systemImage: "square.grid.2x2") { categories = true }
+                            AccessoryButton("Settings", systemImage: "gearshape") { state.profileSettings = true }
                         } label: { Label("More", systemImage: "ellipsis") }
                     }
                 }

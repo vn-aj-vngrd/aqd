@@ -12,7 +12,7 @@ struct TodayEditorView: View {
                         HStack(spacing: 12) {
                             Button { model.begin(instance) } label: {
                                 HStack(spacing: 12) {
-                                    Image(systemName: instance.kind.symbol).font(.system(size: 20)).frame(width: 24).accessibilityHidden(true)
+                                    Image(systemName: instance.kind.symbol).foregroundStyle(AppTheme.controlIcon).font(.system(size: 20)).frame(width: 24).accessibilityHidden(true)
                                     Text(instance.kind.title).font(AppTypography.body).frame(maxWidth: .infinity, alignment: .leading)
                                 }.foregroundStyle(AppTheme.ink).frame(minHeight: 52).contentShape(Rectangle())
                             }.buttonStyle(.borderless).disabled(model.locked).accessibilityHint("Configure widget")

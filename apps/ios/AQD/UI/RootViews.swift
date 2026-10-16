@@ -17,7 +17,7 @@ struct TodayView: View {
                         Button("Retry Today") { state.reloadToday() }.frame(minHeight: 44)
                     }
                     if let instances = state.today?.instances {
-                        if state.weatherClient?.local?.enabled != true || state.weatherClient?.local?.place == nil {
+                        if state.weatherClient?.showsSetupNotice == true {
                             TodayWeatherNotice()
                         }
                         ForEach(instances.filter(\.isVisible)) { instance in
@@ -32,14 +32,14 @@ struct TodayView: View {
             .navigationTitle("").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .topBarLeading) {
                 Menu {
-                    Button("Record wear", systemImage: "tshirt") { state.openWear() }
+                    AccessoryButton("Record wear", systemImage: "tshirt") { state.openWear() }
                         .accessibilityIdentifier("today.recordWear")
-                    Button("Add fit", systemImage: "photo") {
+                    AccessoryButton("Add fit", systemImage: "photo") {
                         state.openFit()
                         if state.fitEditor == nil, let error = state.fitError { state.collectionError = error }
                     }
-                    Button("Plan an outfit", systemImage: "calendar") { state.openPlan(day: LocalPlanDay()) }
-                    Button("Build an outfit", systemImage: "square.stack") { state.buildOutfit() }
+                    AccessoryButton("Plan an outfit", systemImage: "calendar") { state.openPlan(day: LocalPlanDay()) }
+                    AccessoryButton("Build an outfit", systemImage: "square.stack") { state.buildOutfit() }
                 } label: { Label("Add to Today", systemImage: "plus") }
                     .accessibilityIdentifier("today.add").tint(AppTheme.ink)
             } }

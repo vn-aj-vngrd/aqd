@@ -53,9 +53,9 @@ struct ClosetView: View {
                     }
                     ToolbarItem(placement: .topBarLeading) {
                         Menu {
-                            Button("Add a piece", systemImage: "tshirt") { state.addPiece() }
-                            Button("Build an outfit", systemImage: "square.stack") { state.buildOutfit() }
-                            Button("Create a theme", systemImage: "folder") { state.openTheme() }
+                            AccessoryButton("Add a piece", systemImage: "tshirt") { state.addPiece() }
+                            AccessoryButton("Build an outfit", systemImage: "square.stack") { state.buildOutfit() }
+                            AccessoryButton("Create a theme", systemImage: "folder") { state.openTheme() }
                         } label: { Label("Add to closet", systemImage: "plus") }
                             .tint(AppTheme.ink).accessibilityIdentifier("closet.addPiece")
                     }

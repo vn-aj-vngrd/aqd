@@ -16,6 +16,22 @@ enum WeatherQualification { static let enabled = false }
     var epoch = UUID()
     var local: LocalWeatherState?
     var error: String?
+    var setupNoticeHiddenForSession = false
+    var setupNoticeError: String?
+    var showsSetupNotice: Bool {
+        !setupNoticeHiddenForSession && local?.setupNoticeDismissed != true && (local?.enabled != true || local?.place == nil)
+    }
+    func hideSetupNotice(permanently: Bool) {
+        if !permanently { setupNoticeHiddenForSession = true; setupNoticeError = nil; return }
+        do {
+            try store.dismissWeatherSetupNotice()
+            local = try store.weatherState(); setupNoticeError = nil
+        } catch {
+            if let saved = try? store.weatherState(), saved.setupNoticeDismissed == true {
+                local = saved; setupNoticeError = nil
+            } else { setupNoticeError = "The reminder couldn’t be hidden. Please try again." }
+        }
+    }
     init(store: PieceStore, qualified: Bool = WeatherQualification.enabled, provider: @escaping Provider = { try await NativeWeatherProvider.fetch($0) }) {
         self.store = store; self.qualified = qualified; self.provider = provider; reload()
     }

@@ -131,7 +131,7 @@ struct PieceCaptureView: View {
                                 }
                             }
                             Divider()
-                            Button("Manage categories", systemImage: "slider.horizontal.3") {
+                            AccessoryButton("Manage categories", systemImage: "slider.horizontal.3") {
                                 nameEditing = false
                                 manageCategories = true
                             }
@@ -216,10 +216,10 @@ struct PieceCaptureView: View {
                     Spacer()
                     Menu {
                         if image != nil {
-                            Button("Edit photo", systemImage: "crop") { showPhotoEditor = true }
+                            AccessoryButton("Edit photo", systemImage: "crop") { showPhotoEditor = true }
                                 .accessibilityIdentifier("capture.editPhoto")
                         }
-                        Button("Remove background", systemImage: "person.crop.rectangle") { showBackgroundRemoval = true }
+                        AccessoryButton("Remove background", systemImage: "person.crop.rectangle") { showBackgroundRemoval = true }
                         Button("Remove photo", systemImage: "trash", role: .destructive) { model.removePhoto() }
                     } label: { Label("Photo options", systemImage: "ellipsis").labelStyle(.iconOnly).frame(width: 44, height: 44) }
                         .disabled(model.isImporting || model.isSaving)

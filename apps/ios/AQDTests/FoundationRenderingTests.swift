@@ -276,7 +276,7 @@ final class FoundationRenderingTests: XCTestCase {
             (AppTheme.onAccent, 0xFFFFFF, 0x1C1C1B, 1, 1),
             (AppTheme.primaryFill, 0x292826, 0xF2F0EB, 1, 1),
             (AppTheme.onPrimary, 0xFFFFFF, 0x242321, 1, 1),
-            (AppTheme.segmentSelection, 0xEBE7DF, 0x454036, 1, 1),
+            (AppTheme.segmentSelection, 0xE8E8E8, 0x454545, 1, 1),
             (AppTheme.accentSoft, 0xF5F2EC, 0x383125, 1, 1),
             (AppTheme.controlBoundary, 0x807B72, 0x969187, 1, 1),
             (AppTheme.regularGlass, 0xFFFFFF, 0x2B2B29, 0.88, 0.94),

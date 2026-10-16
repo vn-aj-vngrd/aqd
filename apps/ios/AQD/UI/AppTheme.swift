@@ -14,7 +14,7 @@ enum AppTheme {
     static let onAccent = color(light: 0xFFFFFF, dark: 0x1C1C1B)
     static let primaryFill = color(light: 0x292826, dark: 0xF2F0EB)
     static let onPrimary = color(light: 0xFFFFFF, dark: 0x242321)
-    static let segmentSelection = color(light: 0xEBE7DF, dark: 0x454036)
+    static let segmentSelection = color(light: 0xE8E8E8, dark: 0x454545)
     static let divider = color(light: 0xE4E2DC, dark: 0x4A4842)
     static let accentSoft = color(light: 0xF5F2EC, dark: 0x383125)
     static let controlBoundary = color(light: 0x807B72, dark: 0x969187)

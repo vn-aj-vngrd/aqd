@@ -2818,6 +2818,17 @@ extension PieceStore {
         let value = try records.first?.value() ?? LocalWeatherState(ownerID: owner)
         guard value.ownerID == owner else { throw StoreError.invalidRecord }; return value
     }
+    func dismissWeatherSetupNotice() throws {
+        guard allowsSave else { throw StoreError.staleRevision }
+        var value = try weatherState()
+        if value.setupNoticeDismissed == true { return }
+        value.setupNoticeDismissed = true
+        try value.validated()
+        let context = ModelContext(container)
+        if let record = try context.fetch(FetchDescriptor<StoredWeatherState>()).first { record.payload = try encode(value) }
+        else { context.insert(try StoredWeatherState(value)) }
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+    }
     func savedWeatherPreference(_ request: WeatherPreferenceRequest) throws -> WeatherPreference? {
         let records = try ModelContext(container).fetch(FetchDescriptor<StoredWeatherSave>()).filter { $0.id == request.operationID }
         guard let receipt = records.first else { return nil }

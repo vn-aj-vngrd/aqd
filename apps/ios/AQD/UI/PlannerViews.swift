@@ -46,11 +46,11 @@ struct LocalPlannerView: View {
                     ForEach(entries) { entry in
                         NavigationLink(value: PlannerRoute.entry(entry.id)) { PlanAgendaRow(entry: entry) }.buttonStyle(.plain)
                             .contextMenu {
-                                Button("Open plan", systemImage: "calendar") { state.plannerPath.append(.entry(entry.id)) }
-                                Button("Edit plan", systemImage: "square.and.pencil") { state.openPlan(editing: entry) }
+                                AccessoryButton("Open plan", systemImage: "calendar") { state.plannerPath.append(.entry(entry.id)) }
+                                AccessoryButton("Edit plan", systemImage: "square.and.pencil") { state.openPlan(editing: entry) }
                                     .disabled(entry.state == .worn || entry.state == .skipped)
                                 if entry.state == .planned || entry.state == .unassigned {
-                                    Button("Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: entry.outfitID, entry: entry) }
+                                    AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: entry.outfitID, entry: entry) }
                                 }
                             } preview: {
                                 CollectionContextPreview(title: state.outfits.first { $0.id == entry.outfitID }?.displayName ?? "Outfit unassigned", detail: entry.day.displayDate) {
@@ -75,10 +75,10 @@ struct LocalPlannerView: View {
                                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                             }.buttonStyle(.plain)
                                 .contextMenu {
-                                    Button("Open plan", systemImage: "calendar") { state.plannerPath.append(.plan(plan.id)) }
-                                    Button("Review dates", systemImage: "list.bullet") { state.plannerPath.append(.dates(plan.id, false)) }
+                                    AccessoryButton("Open plan", systemImage: "calendar") { state.plannerPath.append(.plan(plan.id)) }
+                                    AccessoryButton("Review dates", systemImage: "list.bullet") { state.plannerPath.append(.dates(plan.id, false)) }
                                     if plan.trip != nil {
-                                        Button("Packing list", systemImage: "suitcase") { state.plannerPath.append(.packing(plan.id)) }
+                                        AccessoryButton("Packing list", systemImage: "suitcase") { state.plannerPath.append(.packing(plan.id)) }
                                     }
                                 } preview: {
                                     CollectionContextPreview(title: plan.name, detail: "\(plan.start.displayDate) – \(plan.end.displayDate)") {
@@ -112,10 +112,10 @@ struct LocalPlannerView: View {
                 .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
                 .toolbar { ToolbarItem(placement: .topBarLeading) {
                     Menu {
-                        Button("Plan one day", systemImage: "calendar") { state.openPlan(day: state.plannerDay) }
-                        Button("Plan several days", systemImage: "calendar.badge.plus") { state.openPlanAuthoring(day: state.plannerDay) }
-                        Button("Create a routine", systemImage: "repeat") { state.openPlanAuthoring(day: state.plannerDay, routine: true) }
-                        Button("Plan an event or trip", systemImage: "suitcase") { state.openPlanAuthoring(day: state.plannerDay, trip: true) }
+                        AccessoryButton("Plan one day", systemImage: "calendar") { state.openPlan(day: state.plannerDay) }
+                        AccessoryButton("Plan several days", systemImage: "calendar.badge.plus") { state.openPlanAuthoring(day: state.plannerDay) }
+                        AccessoryButton("Create a routine", systemImage: "repeat") { state.openPlanAuthoring(day: state.plannerDay, routine: true) }
+                        AccessoryButton("Plan an event or trip", systemImage: "suitcase") { state.openPlanAuthoring(day: state.plannerDay, trip: true) }
                     } label: { Label("Add to Planner", systemImage: "plus") }.tint(AppTheme.ink)
                 } }
                 .onAppear { state.reloadPlanEntries(); state.reloadOutfits() }
@@ -183,12 +183,12 @@ struct LocalPlanEntryView: View {
                 if let entry {
                     Menu {
                         if let outfit = state.outfits.first(where: { $0.id == entry.outfitID }) {
-                            NavigationLink(value: ClosetRoute.outfit(outfit.id)) { Label("Open outfit", systemImage: "square.stack") }
+                            NavigationLink(value: ClosetRoute.outfit(outfit.id)) { AccessoryLabel("Open outfit", systemImage: "square.stack") }
                         }
-                        Button("Edit plan", systemImage: "square.and.pencil") { state.openPlan(editing: entry) }
+                        AccessoryButton("Edit plan", systemImage: "square.and.pencil") { state.openPlan(editing: entry) }
                             .disabled(removal != nil || skipRequest != nil || entry.state == .worn || entry.state == .skipped)
                         if entry.state == .planned || entry.state == .unassigned {
-                            Button(skipRequest == nil ? "Skip this date" : "Check skip result", systemImage: "forward.end") { skip(entry) }
+                            AccessoryButton(skipRequest == nil ? "Skip this date" : "Check skip result", systemImage: "forward.end") { skip(entry) }
                                 .disabled(removal != nil)
                             Section {
                                 Button("Remove from Planner", systemImage: "trash", role: .destructive) {

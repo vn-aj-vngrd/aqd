@@ -22,6 +22,42 @@ private actor WeatherFailureCounter {
 }
 @Suite(.serialized) @MainActor
 struct WeatherContextPersistenceTests {
+    @Test func reminderDismissalSeparatesSessionFromPermanentWithoutChangingWeather() throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let before = try store.weatherState()
+        let client = WeatherClient(store: store)
+        #expect(client.showsSetupNotice)
+        client.hideSetupNotice(permanently: false)
+        client.reload()
+        #expect(!client.showsSetupNotice)
+        #expect(try store.weatherState() == before)
+        let nextLaunch = WeatherClient(store: store)
+        #expect(nextLaunch.showsSetupNotice)
+        nextLaunch.hideSetupNotice(permanently: true)
+        #expect(!nextLaunch.showsSetupNotice)
+        let reopened = try PieceStore(directory: store.localDirectory)
+        #expect(!WeatherClient(store: reopened).showsSetupNotice)
+        #expect(try reopened.weatherState().preference == before.preference)
+        #expect(try reopened.weatherState().cache == before.cache)
+        #expect(try reopened.wearRecords().isEmpty)
+        let oldPayload = try JSONEncoder().encode(before)
+        #expect(!String(decoding: oldPayload, as: UTF8.self).contains("setupNoticeDismissed"))
+        #expect(try JSONDecoder().decode(LocalWeatherState.self, from: oldPayload).setupNoticeDismissed == nil)
+    }
+    @Test func reminderDismissalFailureStaysVisibleAndLostAcknowledgmentReconciles() throws {
+        var denied = true, loseAcknowledgment = false
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),
+            beforeOutfitSave: { if denied { throw CocoaError(.fileWriteNoPermission) } },
+            afterOutfitSave: { if loseAcknowledgment { throw CocoaError(.fileReadUnknown) } })
+        let client = WeatherClient(store: store)
+        client.hideSetupNotice(permanently: true)
+        #expect(client.showsSetupNotice && client.setupNoticeError != nil)
+        #expect(try store.weatherState().setupNoticeDismissed != true)
+        denied = false; loseAcknowledgment = true
+        client.hideSetupNotice(permanently: true)
+        #expect(!client.showsSetupNotice && client.setupNoticeError == nil)
+        #expect(!WeatherClient(store: try PieceStore(directory: store.localDirectory)).showsSetupNotice)
+    }
     private func selection() -> WeatherSelection {
         let place = WeatherPlace(name: "Manila", latitude: 14.6, longitude: 120.98, timeZoneID: "Asia/Manila")
         return WeatherSelection(place: place, day: LocalPlanDay(timeZone: TimeZone(identifier: place.timeZoneID)!))

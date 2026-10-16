@@ -27,7 +27,7 @@ Today · Closet · Planner · Agent · Profile are the shared destination identi
 | On accent / `--color-on-accent` | `#FFFFFF` | `#1C1C1B` |
 | Primary fill / `--color-primary-fill` | `#292826` | `#F2F0EB` |
 | On primary / `--color-on-primary` | `#FFFFFF` | `#242321` |
-| Collection selection / `--color-segment-selection` | `#EBE7DF` | `#454036` |
+| Collection selection / `--color-segment-selection` | `#E8E8E8` | `#454545` |
 | Soft selection / `--color-accent-soft` | `#F5F2EC` | `#383125` |
 | Control boundary / `--color-control-border` | `#807B72` | `#969187` |
 | Regular glass / `--color-glass` | `rgb(255 255 255 / 88%)` | `rgb(43 43 41 / 94%)` |
@@ -120,3 +120,5 @@ Owner card surfaces October17: page canvases retain #F7F7F5. Outer content/post 
 Owner correction October17: restore the existing #F7F7F5 light app canvas; Profile uses that same canvas, including its opaque navigation background. White belongs to the post/content card component. Card artwork interiors are softened to #F5F4F1, with soft selection #F5F2EC; actual gold selection/action ink stays unchanged. This supersedes the earlier broad pure-white page directive as interpreted during this iteration. Remove the visible Profile navigation label while retaining destination accessibility names.
 
 Owner color refinement October17: interactive navigation and selection use neutral ink/secondary tokens. Gold `actionText` is reserved for Save, Done, Apply and equivalent commit/completion controls; review/continue steps use a neutral forward chevron matching Back. Secondary navigation, selected tabs, filters, checkmarks, calendar selection and read-only charts remain neutral. `controlIcon` aliases secondary text for eye/reorder accessories. Existing logo/brand artwork retains its gold identity; success, warning and danger keep semantic colors. Informational content uses secondary text and the neutral image-ground surface.
+
+Decorative icon rule October17: icons paired with visible labels use `controlIcon` (the existing secondary-text gray), including Settings, menu actions, context menus, sheets and widget rows. Shared AccessoryLabel/AccessoryButton preserve that role in native menus without tinting the label. Standalone navigation/actions stay ink; destructive and status symbols retain semantic colors. Top segmented selection uses neutral gray in both appearances to match the bottom navigation style.

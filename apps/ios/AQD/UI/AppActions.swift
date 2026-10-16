@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct PrimaryAction: View {
     let title: String
@@ -129,4 +130,34 @@ struct ToolbarForwardAction: View {
             Image(systemName: "chevron.forward").frame(minWidth: 44, minHeight: 44)
         }.tint(AppTheme.ink).accessibilityLabel(title)
     }
+}
+
+/// Decorative label icons share Settings' semantic gray, including native menus.
+struct AccessoryLabel: View {
+    let title: String
+    let systemImage: String
+    @Environment(\.colorScheme) private var colorScheme
+    init(_ title: String, systemImage: String) { self.title = title; self.systemImage = systemImage }
+    var body: some View {
+        Label {
+            Text(title)
+        } icon: {
+            Image(uiImage: symbol).renderingMode(.original).accessibilityHidden(true)
+        }
+    }
+    private var symbol: UIImage {
+        let traits = UITraitCollection(userInterfaceStyle: colorScheme == .dark ? .dark : .light)
+        let color = UIColor(AppTheme.controlIcon).resolvedColor(with: traits)
+        return UIImage(systemName: systemImage)?.withTintColor(color, renderingMode: .alwaysOriginal) ?? UIImage()
+    }
+}
+
+struct AccessoryButton: View {
+    let title: String
+    let systemImage: String
+    let action: () -> Void
+    init(_ title: String, systemImage: String, action: @escaping () -> Void) {
+        self.title = title; self.systemImage = systemImage; self.action = action
+    }
+    var body: some View { Button(action: action) { AccessoryLabel(title, systemImage: systemImage) } }
 }

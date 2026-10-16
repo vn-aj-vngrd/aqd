@@ -91,7 +91,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
                             Text("Portrait 3:4").tag(true)
                         }.pickerStyle(.segmented)
                         HStack {
-                            Button("Rotate", systemImage: "rotate.right") {
+                            AccessoryButton("Rotate", systemImage: "rotate.right") {
                                 quarterTurns = (quarterTurns + 1) % 4
                                 zoom = 1; positionX = 0.5; positionY = 0.5
                             }.frame(minHeight: 44)

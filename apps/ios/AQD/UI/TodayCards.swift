@@ -300,21 +300,30 @@ struct TodayWeatherNotice: View {
     @State private var setup = false
     var body: some View {
         if let client = state.weatherClient {
-            Button { setup = true } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "cloud.sun").font(.system(size: 20)).accessibilityHidden(true)
-                    Text(client.error != nil ? "Review weather settings" : client.local?.enabled == true ? "Weather · \(client.local?.place?.name ?? "Details")" : "Set up optional weather")
-                        .font(AppTypography.supporting).fixedSize(horizontal: false, vertical: true)
-                    Spacer(minLength: 0)
-                    Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
-                }.foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-                    .padding(.horizontal, 14).padding(.vertical, 8)
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
-                    .contentShape(RoundedRectangle(cornerRadius: AppRadius.field))
-            }.buttonStyle(.plain).accessibilityHint("Apple Weather preferences. Your wardrobe stays private.")
-                .sheet(isPresented: $setup) {
-                    WeatherContextView(client: client, persistsPreference: true) { _ in true }
-                }
+            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                HStack(spacing: 0) {
+                    Button { setup = true } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "cloud.sun").font(.system(size: 20)).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                            Text(client.error != nil ? "Review weather settings" : "Set up optional weather")
+                                .font(AppTypography.supporting).fixedSize(horizontal: false, vertical: true)
+                            Spacer(minLength: 0)
+                            Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
+                        }.foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                            .padding(.leading, 14).padding(.vertical, 8).contentShape(Rectangle())
+                    }.buttonStyle(.plain).accessibilityHint("Apple Weather preferences. Your wardrobe stays private.")
+                    Menu {
+                        AccessoryButton("Hide until next launch", systemImage: "clock") { client.hideSetupNotice(permanently: false) }
+                        AccessoryButton("Don’t show again", systemImage: "eye.slash") { client.hideSetupNotice(permanently: true) }
+                    } label: {
+                        Image(systemName: "xmark").font(.system(size: 13)).foregroundStyle(AppTheme.controlIcon)
+                            .frame(width: 44, height: 44).contentShape(Rectangle())
+                    }.tint(AppTheme.ink).accessibilityLabel("Dismiss weather reminder")
+                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                if let error = client.setupNoticeError { SemanticFeedback(role: .danger, message: error) }
+            }.sheet(isPresented: $setup) {
+                WeatherContextView(client: client, persistsPreference: true) { _ in true }
+            }
         }
     }
 }

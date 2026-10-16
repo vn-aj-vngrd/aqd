@@ -50,7 +50,7 @@ private struct SettingsRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: symbol).font(.system(size: 19, weight: .regular)).frame(width: 24)
-                .foregroundStyle(destructive ? AppTheme.error : AppTheme.secondary).accessibilityHidden(true)
+                .foregroundStyle(destructive ? AppTheme.error : AppTheme.controlIcon).accessibilityHidden(true)
             if typeSize.isAccessibilitySize {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title).foregroundStyle(destructive ? AppTheme.error : AppTheme.ink)

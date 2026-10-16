@@ -89,9 +89,9 @@ struct FitJournalGrid: View {
                                         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                             }.buttonStyle(.plain).id(memory.id)
                                 .contextMenu {
-                                    Button("Open fit", systemImage: "arrow.up.forward.square") { openedMemoryID = memory.id }
-                                    Button("Edit fit", systemImage: "square.and.pencil") { state.openFit(memory) }
-                                    Button("Record wear", systemImage: "checkmark.circle") { state.recordWear(from: memory) }
+                                    AccessoryButton("Open fit", systemImage: "arrow.up.forward.square") { openedMemoryID = memory.id }
+                                    AccessoryButton("Edit fit", systemImage: "square.and.pencil") { state.openFit(memory) }
+                                    AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.recordWear(from: memory) }
                                 } preview: {
                                     CollectionContextPreview(title: memory.outfit?.displayName ?? "Fit", detail: memory.day.displayDate) {
                                         FitMemoryArtwork(memory: memory, thumbnail: memory.photoID == nil)
@@ -197,7 +197,7 @@ struct FitEditorView: View {
                     Text("Photo options").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     Spacer()
                     Menu {
-                        Button("Edit photo", systemImage: "crop") { editingPhoto = true }.disabled(model.importing)
+                        AccessoryButton("Edit photo", systemImage: "crop") { editingPhoto = true }.disabled(model.importing)
                         Button("Remove photo", systemImage: "trash", role: .destructive) { removePhoto = true }
                     } label: { Label("Photo options", systemImage: "ellipsis").labelStyle(.iconOnly).frame(width: 44, height: 44) }
                         .disabled(model.locked)
@@ -299,12 +299,12 @@ struct FitMemoryDetailView: View {
             .toolbar { if memory != nil || request != nil { ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     if request != nil {
-                        Button("Check deletion result", systemImage: "arrow.clockwise", action: delete)
+                        AccessoryButton("Check deletion result", systemImage: "arrow.clockwise", action: delete)
                     } else if let memory {
-                        Button("Edit fit", systemImage: "square.and.pencil") { state.openFit(memory) }
-                        Button("Record wear", systemImage: "checkmark.circle") { state.recordWear(from: memory) }
+                        AccessoryButton("Edit fit", systemImage: "square.and.pencil") { state.openFit(memory) }
+                        AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.recordWear(from: memory) }
                         if let snapshot = memory.outfit, state.outfits.contains(where: { $0.id == snapshot.id }) {
-                            NavigationLink(value: ClosetRoute.outfit(snapshot.id)) { Label("Open linked outfit", systemImage: "square.stack") }
+                            NavigationLink(value: ClosetRoute.outfit(snapshot.id)) { AccessoryLabel("Open linked outfit", systemImage: "square.stack") }
                         }
                         Section {
                             Button("Delete memory", systemImage: "trash", role: .destructive) { request = FitDeletionRequest(memory: memory); confirming = true }

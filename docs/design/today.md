@@ -108,3 +108,5 @@ Owner refinement October17 (current): Home defaults to all twelve widget kinds. 
 Owner visual correction October17: visibility uses a neutral-ink eye / eye.slash icon button instead of a switch. Each retains a44pt target and explicit accessible Show/Hide action and Visible/Hidden state. Reorder remains separate.
 
 Weather setup discovery follows actual preferences: show the compact notice while Weather is disabled or has no saved city, regardless of the Weather widget placement. Merely adding or showing a widget never counts as setup.
+
+Owner Weather reminder refinement October17: the compact setup notice includes a44pt trailing xmark Menu. Hide until next launch suppresses it for the current app session; Don’t show again persists a notice-only preference. Weather consent, saved city/cache and configured widget remain untouched. Settings → Weather remains available. A failed preference write keeps discovery visible with retryable feedback; a post-commit error is reconciled by reading the saved flag. The optional payload field defaults absent/visible for older data. No automatic network, location, or wear writes.
