@@ -17,7 +17,7 @@ struct TodayView: View {
                         Button("Retry Today") { state.reloadToday() }.frame(minHeight: 44)
                     }
                     if let instances = state.today?.instances {
-                        if !instances.contains(where: { $0.kind == .weatherContext }) {
+                        if state.weatherClient?.local?.enabled != true || state.weatherClient?.local?.place == nil {
                             TodayWeatherNotice()
                         }
                         ForEach(instances.filter(\.isVisible)) { instance in

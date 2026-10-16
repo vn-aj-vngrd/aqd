@@ -16,9 +16,13 @@ struct TodayEditorView: View {
                                     Text(instance.kind.title).font(AppTypography.body).frame(maxWidth: .infinity, alignment: .leading)
                                 }.foregroundStyle(AppTheme.ink).frame(minHeight: 52).contentShape(Rectangle())
                             }.buttonStyle(.borderless).disabled(model.locked).accessibilityHint("Configure widget")
-                            Toggle(instance.kind.title, isOn: Binding(get: { instance.isVisible }, set: { model.setVisibility(instance.id, visible: $0) }))
-                                .labelsHidden().tint(AppTheme.accent).disabled(model.locked)
-                                .accessibilityLabel("Show \(instance.kind.title) on Home")
+                            Button { model.setVisibility(instance.id, visible: !instance.isVisible) } label: {
+                                Image(systemName: instance.isVisible ? "eye" : "eye.slash")
+                                    .font(.system(size: 18)).foregroundStyle(AppTheme.ink)
+                                    .frame(width: 44, height: 44).contentShape(Rectangle())
+                            }.buttonStyle(.borderless).disabled(model.locked)
+                                .accessibilityLabel("\(instance.isVisible ? "Hide" : "Show") \(instance.kind.title) on Home")
+                                .accessibilityValue(instance.isVisible ? "Visible" : "Hidden")
                         }.listRowBackground(AppTheme.surface).moveDisabled(model.locked)
                             .accessibilityValue("Position \(index + 1) of \(model.catalog.count)")
                     }.onMove { offsets, destination in
