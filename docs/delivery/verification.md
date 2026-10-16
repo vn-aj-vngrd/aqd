@@ -467,3 +467,8 @@ New current entries identify scope, revision/environment, observed result and li
 ### Populated Week footer simplification
 
 [Original receipt](archive/verification-2026-10-02–07.md#populated-week-footer-simplification).
+
+
+## October16: #25 + #26 grouped feature units
+
+Seven vertical slices on `van/issue-25/planner-and-history` extend merged PR34. Final Core59 and physical native148 (135 Swift Testing plus13 XCTest), zero failures, `/tmp/aqd-25-26-final-unit.log`. Actual public-store checks cover calendar/range/conflicts/routine scope, atomic failure/retry, packing persistence/pruning, explicit matching wear links, correction/Undo/duplicates/restart, named timezone and completed-entry guards, populated preserving migrations and period/estimate denominators. Independent Standards/Spec reviews and four corrected/rechecked findings are recorded in the issue plans. Fast repository tooling remains the only CI job; all simulators stayed shutdown and all E2E/UI/device/model qualification remains #30. Unsigned Release passes `/tmp/aqd-25-26-release.log`; Tooling51/agent-doc/whitespace checks pass. [Sanitized source-bound receipt](../plan/evidence/issue-25-26/unit-receipt.json) and [AC table](../plan/evidence/issue-25-26/README.md) are tracked. Remote current-head/release evidence remains a separate gate.

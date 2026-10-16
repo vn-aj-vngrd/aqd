@@ -58,6 +58,12 @@ final class OutfitWearEditorModel: Identifiable {
             } catch { unknown = true; self.error = "The result is unknown. Check the same operation before editing or recording again." }
         }
     }
+    func finishOpeningHistory() {
+        guard saved != nil else { return }
+        finish()
+        guard state.wearEditor == nil else { return }
+        state.selection = 4; state.profileHistory = true
+    }
     func finish(discarding: Bool = false) {
         guard !pending, !unknown else { return }
         do {

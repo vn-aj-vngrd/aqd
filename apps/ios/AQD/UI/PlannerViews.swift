@@ -140,7 +140,9 @@ struct LocalPlanEntryView: View {
                     PrimaryAction(title: "Edit entry") { state.openPlan(editing: entry) }
                         .disabled(removal != nil || entry.state == .worn || entry.state == .skipped)
                     Text("Planning this date hasn’t recorded wear. Actual wear remains a separate action.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    Button("Remove entry", role: .destructive) { removal = PlanEntryDeletionRequest(entry: entry); confirming = true }.frame(minHeight: 44)
+                    if entry.state == .planned || entry.state == .unassigned {
+                        Button("Remove entry", role: .destructive) { removal = PlanEntryDeletionRequest(entry: entry); confirming = true }.frame(minHeight: 44)
+                    }
                 } else { ContentUnavailableView("Plan unavailable", systemImage: "calendar") }
                 if let error {
                     SemanticFeedback(role: .danger, message: error)

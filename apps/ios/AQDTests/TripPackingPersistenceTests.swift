@@ -134,5 +134,11 @@ struct TripPackingPersistenceTests {
         #expect(throws: PlanValidationError.invalidDay) { try store.savePlan(moved) }
         #expect(try store.planEntries() == saved.entries)
         #expect(try store.planDefinitions() == [saved.plan])
+        try store.finishPlanDraft(moved, discarding: true)
+        var travel = OutfitPlanDraft(editing: saved.entries[0], outfit: outfit)
+        travel.day.timeZoneID = "America/New_York"
+        try store.savePlanDraft(travel)
+        #expect(throws: PlanValidationError.invalidDay) { try store.savePlan(travel) }
+        #expect(try store.planEntries() == saved.entries)
     }
 }

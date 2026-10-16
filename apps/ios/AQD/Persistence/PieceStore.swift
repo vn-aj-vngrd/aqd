@@ -1687,7 +1687,8 @@ extension PieceStore {
         let namedPlan = try planDefinitions().first { $0.id == draft.planID }
         if draft.parentPlanID != nil && namedPlan == nil { throw StoreError.staleRevision }
         if let namedPlan {
-            guard namedPlan.ownerID == draft.ownerID, draft.day.key >= namedPlan.start.key,
+            guard namedPlan.ownerID == draft.ownerID, draft.day.timeZoneID == namedPlan.start.timeZoneID,
+                  draft.day.key >= namedPlan.start.key,
                   draft.day.key <= namedPlan.end.key else { throw PlanValidationError.invalidDay }
         }
         let overlaps = try planEntries().contains {
@@ -2080,7 +2081,8 @@ extension PieceStore {
         guard allowsSave else { throw StoreError.corruptStore }
         guard let record = try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()).first(where: { $0.id == request.entryID }) else { throw StoreError.staleRevision }
         let entry = try record.value()
-        guard entry.ownerID == (try todayConfiguration().ownerID), entry.revision == request.expectedRevision else { throw StoreError.staleRevision }
+        guard entry.ownerID == (try todayConfiguration().ownerID), entry.revision == request.expectedRevision,
+              entry.state == .planned || entry.state == .unassigned else { throw StoreError.staleRevision }
         context.delete(record); context.insert(try StoredPlanEntryDeletion(request))
         try prunePackingChecks(in: context)
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()

@@ -8,6 +8,7 @@ struct PlannerCalendarView: View {
     @Binding var day: LocalPlanDay
     @Binding var mode: PlannerCalendarMode
     let counts: [String: Int]
+    var countLabel = "plans"
     @Environment(\.calendar) private var calendar
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var chooseDate = false
@@ -83,7 +84,7 @@ struct PlannerCalendarView: View {
                 .background(selected ? AppTheme.accent : .clear, in: RoundedRectangle(cornerRadius: 12))
                 .overlay { if today && !selected { RoundedRectangle(cornerRadius: 12).stroke(AppTheme.actionText, lineWidth: 1) } }
         }.buttonStyle(.plain).accessibilityLabel(fullDate)
-            .accessibilityValue("\(today ? "Today. " : "")\(count) plans\(selected ? ". Selected" : "")")
+            .accessibilityValue("\(today ? "Today. " : "")\(count) \(countLabel)\(selected ? ". Selected" : "")")
             .accessibilityAddTraits(selected ? [.isSelected] : [])
     }
     private func formatted(_ date: Date, style: Date.FormatStyle) -> String {

@@ -38,7 +38,7 @@ struct OutfitPlanEditorView: View {
                             .environment(\.timeZone, TimeZone(identifier: model.draft.day.timeZoneID) ?? .current)
                         }.disabled(model.pending || model.unknown)
                         if let plan = namedPlan {
-                            Text("Part of \(plan.name). Edit the whole plan to change its date range.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                            Text("Part of \(plan.name). Edit the whole plan to change its date range or timezone.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         }
                         LabeledField(title: "Occasion", text: Binding(get: { model.draft.occasion }, set: { value in
                             model.update { $0.occasion = value; $0.allowsOverlap = nil }
@@ -46,7 +46,7 @@ struct OutfitPlanEditorView: View {
                         DisclosureRow(title: "Outfit", value: model.draft.outfit?.name ?? "Choose outfit") { choosing = true }
                             .disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Timezone", value: model.draft.day.timeZoneID) { choosingZone = true }
-                            .disabled(model.pending || model.unknown)
+                            .disabled(model.pending || model.unknown || namedPlan != nil)
                         Text("Weather context · Off").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         if model.hasOverlap {
                             Text("Another plan uses this date and occasion. Existing assignments stay unchanged.")

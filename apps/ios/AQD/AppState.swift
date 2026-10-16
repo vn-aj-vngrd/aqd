@@ -64,6 +64,7 @@ final class AppState {
     var outfitError: String?
     var styleEditor: StyleEditorModel?
     var profileSettings = false
+    var profileHistory = false
     var entry = PrivateEntryState(alreadyEntered: true)
     var reloadEntryAfterStyle = false
 

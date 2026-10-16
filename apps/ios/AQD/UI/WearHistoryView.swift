@@ -13,6 +13,10 @@ struct LocalWearHistoryView: View {
             && (periodEnd.map { record.day.key <= $0.key } ?? true)
         }
     }
+    private var calendarShown: Bool {
+        get { periodStart == nil && state.wearHistoryCalendar }
+        nonmutating set { state.wearHistoryCalendar = newValue }
+    }
     var body: some View {
         @Bindable var state = state
         ScrollView {
@@ -24,12 +28,12 @@ struct LocalWearHistoryView: View {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry history") { state.reloadWear() }.frame(minHeight: 44)
                 } else {
-                    if state.wearHistoryCalendar {
+                    if calendarShown {
                         PlannerCalendarView(day: $state.wearHistoryDay, mode: $state.wearHistoryMode,
-                            counts: Dictionary(grouping: records, by: { $0.day.key }).mapValues(\.count))
+                            counts: Dictionary(grouping: records, by: { $0.day.key }).mapValues(\.count), countLabel: "recorded wears")
                         Text(state.wearHistoryDay.key).font(AppTypography.section)
                     }
-                    let shown = records.filter { !state.wearHistoryCalendar || $0.day.key == state.wearHistoryDay.key }
+                    let shown = records.filter { !calendarShown || $0.day.key == state.wearHistoryDay.key }
                     if shown.isEmpty {
                         ContentUnavailableView(records.isEmpty ? "Your history starts here" : "No wear recorded for this day", systemImage: "clock",
                             description: Text("Record what you actually wore. Plans never count as wear."))
@@ -39,23 +43,23 @@ struct LocalWearHistoryView: View {
                     ForEach(shown) { record in
                         NavigationLink { LocalWearDetailView(id: record.id) } label: { WearAgendaRow(record: record) }.buttonStyle(.plain)
                     }
-                    if !state.wearHistoryCalendar && !shown.isEmpty {
+                    if !calendarShown && !shown.isEmpty {
                         PrimaryAction(title: "Record a look") { state.openWear(day: recordingDay) }
                     }
                 }
             }.padding(20)
-        }.background(AppTheme.canvas).navigationTitle(state.wearHistoryCalendar ? "Wear calendar" : "Wear history")
+        }.background(AppTheme.canvas).navigationTitle(calendarShown ? "Wear calendar" : "Wear history")
             .navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink).onAppear { state.reloadWear() }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack {
-                        Button(state.wearHistoryCalendar ? "Recent" : "Calendar") { state.wearHistoryCalendar.toggle() }.frame(minHeight: 44)
+                        if periodStart == nil { Button(calendarShown ? "Recent" : "Calendar") { calendarShown.toggle() }.frame(minHeight: 44) }
                         Button { state.openWear(day: recordingDay) } label: { Label("Record wear", systemImage: "plus") }.frame(minWidth: 44, minHeight: 44)
                     }
                 }
             }
     }
-    private var recordingDay: LocalPlanDay { state.wearHistoryCalendar ? state.wearHistoryDay : LocalPlanDay() }
+    private var recordingDay: LocalPlanDay { calendarShown ? state.wearHistoryDay : LocalPlanDay() }
 }
 
 struct WearAgendaRow: View {

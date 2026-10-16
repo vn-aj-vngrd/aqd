@@ -5,7 +5,7 @@
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
   "sourceHead": "e71e1ded830db3ae2568c547af2de846aeaf0b60",
-  "sourceState": "Group #25 S1\u2013S4 implements calendar, named atomic plans/conflicts, routines/edit scopes and trips/packing. Current unit receipts in issue25; #26 linked wear/correction/history remains pending. All UI/E2E acceptance deferred to #30.",
+  "sourceState": "Group #25/#26 implements all seven source slices, including reviewed corrections. Core59/native148 pass; final release/remote gates recorded in issue plans. All rendered/E2E acceptance deferred to #30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -18,9 +18,9 @@
     "allRootIdsMatchRegisteredInventory": true
   },
   "counts": {
-    "source-partial": 113,
+    "source-partial": 123,
     "structural-reference": 11,
-    "missing": 106,
+    "missing": 96,
     "placeholder": 2
   },
   "verifiedCompleteScreenStates": 0,
@@ -505,8 +505,8 @@
       "referenceId": null,
       "registeredLabel": "06.00 \u00b7 L11 \u00b7 Record wear",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -525,8 +525,8 @@
       "referenceId": null,
       "registeredLabel": "06.05 \u00b7 L12 \u00b7 Wear history",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -655,8 +655,8 @@
       "referenceId": null,
       "registeredLabel": "06.04 \u00b7 L141 \u00b7 Undo wear \u00b7 Native overlay STATE",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -665,8 +665,8 @@
       "referenceId": null,
       "registeredLabel": "06.01 \u00b7 L142 \u00b7 Wear already recorded \u00b7 Native overlay STATE",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -705,8 +705,8 @@
       "referenceId": null,
       "registeredLabel": "06.07 \u00b7 L146 \u00b7 Wear history \u00b7 Empty",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -715,8 +715,8 @@
       "referenceId": null,
       "registeredLabel": "06.09 \u00b7 L147 \u00b7 Insights \u00b7 Insufficient history",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1145,8 +1145,8 @@
       "referenceId": null,
       "registeredLabel": "06.02 \u00b7 L130 \u00b7 Wear record",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1625,8 +1625,8 @@
       "referenceId": null,
       "registeredLabel": "06.08 \u00b7 L41 \u00b7 Wear insights",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1705,8 +1705,8 @@
       "referenceId": null,
       "registeredLabel": "06.06 \u00b7 L137 \u00b7 Wear calendar",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1715,8 +1715,8 @@
       "referenceId": null,
       "registeredLabel": "06.03 \u00b7 L136 \u00b7 Correct wear",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {

@@ -14,7 +14,7 @@ struct OutfitWearEditorView: View {
                         Text(model.draft.baseRecord == nil ? "Wear recorded" : "Correction saved").font(AppTypography.section)
                         Text(saved.day.key).font(AppTypography.body)
                         ForEach(saved.pieces, id: \.id) { Text($0.name) }
-                        NavigationLink("Open wear history") { LocalWearHistoryView() }.frame(minHeight: 44)
+                        SecondaryAction(title: "Open wear history") { model.finishOpeningHistory() }
                         PrimaryAction(title: "Done") { model.finish() }
                     } else {
                         OutfitComposition(pieceIDs: model.draft.pieceIDs)

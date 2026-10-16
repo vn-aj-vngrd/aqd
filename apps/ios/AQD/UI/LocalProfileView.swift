@@ -41,6 +41,7 @@ struct LocalProfileView: View {
                         } label: { Label("More", systemImage: "ellipsis") }
                     }
                 }
+                .navigationDestination(isPresented: $state.profileHistory) { LocalWearHistoryView() }
                 .navigationDestination(isPresented: $state.profileSettings) { LocalSettingsView() }
         }.tint(AppTheme.ink)
     }

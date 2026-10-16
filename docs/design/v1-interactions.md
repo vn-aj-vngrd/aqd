@@ -1,3 +1,7 @@
+## Issues #25 + #26 completed source routes, October16
+
+Seven committed feature slices implement Planner, routines/trips/packing, explicit linked wear, correction/Undo and history/insights. Named-entry timezone belongs to the reviewed parent; completed entries refuse individual removal while explicitly reviewed whole-plan deletion preserves actual history. Wear receipts finish their task before opening actionable history. History calendar announces recorded wears; source-period links show the exact complete filtered month. All UI/E2E acceptance remains deferred to #30. Final Core59/native148 unit pass; see issue plans for source-bound checks/review.
+
 ## Issues #25 + #26 actual-wear S1, October16
 
 Plan-entry Record wear retains exact reviewed entry/date/timezone and requires explicit save or matching-record consent. The atomic write links the existing entry to the acknowledged wear; Skip has no actual count. Delete plan confirms the exact reviewed scope and retains history. Immutable receipts reconcile denied/unknown operations. Unit verified only; all rendered/E2E acceptance remains #30.
