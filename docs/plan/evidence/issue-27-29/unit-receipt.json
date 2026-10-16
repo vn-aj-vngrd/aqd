@@ -6,7 +6,7 @@
   "branch": "van/issue-27/agent-and-local-controls",
   "baseline": "1a5b44ecf06536d6bb1dae0551348f44a9747d5b",
   "sourceHead": "c85254f840dcd1bd9ddf34c87e75e64c703f33ff",
-  "checkedOn": "2026-10-16",
+  "checkedOn": "2026-10-17",
   "environment": {
     "destination": "Physical iPhone17ProMax",
     "deviceOS": "27.0.1",
@@ -32,7 +32,10 @@
       "destination": "generic/platform=iOS",
       "codeSigningAllowed": false,
       "result": "BUILD SUCCEEDED",
-      "sourceHead": "ba72e6b2ca683acb4585321ace7cad5331f433b1"
+      "sourceHead": "9641bfda0a25af7c7a386f53c2467373b8951049",
+      "log": "/tmp/aqd-final-toolbar-grid-release.log",
+      "scope": "Toolbar/menu/grid/minimization increment. Subsequent toolbar placement and Today header/add menu qualified by final Debug build and source review.",
+      "sampleOperationFlagsAbsent": true
     },
     "repositoryTooling": {
       "passed": 51,
@@ -167,6 +170,22 @@
       "log": "/tmp/aqd-style-selection-green.log",
       "redLog": "/tmp/aqd-style-selection-red.log",
       "scope": "Case-insensitive selections, custom-value preservation, Core regression suite; no new native/E2E run"
+    },
+    "ownerToolbarGridUnits": {
+      "sourceHead": "9641bfda0a25af7c7a386f53c2467373b8951049",
+      "core": 78,
+      "native": 230,
+      "swiftTesting": 217,
+      "xctest": 13,
+      "failures": 0,
+      "log": "/tmp/aqd-final-toolbar-grid-unit.log",
+      "scope": "Native menu routes, neutral toolbar icons, grid spacing and native tab minimization source. Existing units; no E2E or rendered scroll proof."
+    },
+    "finalSourceReview": {
+      "sourceHead": "e833d5d13c1bf1e83d0c52a3fd12880949919f6a",
+      "standards": "No actionable findings",
+      "spec": "No actionable findings",
+      "scope": "Final menu, toolbar placement and Today heading increments; read-only independent reviews. No E2E/rendered acceptance."
     }
   },
   "localLogs": [
@@ -619,6 +638,36 @@
       "name": "aqd-neutral-gold-glass-launch.json",
       "sha256": "0dec955bd71a84826fab1f29c23a2efe4c6bba1cdbbe7cb3632487c017321ddd",
       "published": false
+    },
+    {
+      "name": "aqd-final-toolbar-grid-unit.log",
+      "sha256": "1c02215c5b1cb25d528869b3a17de4f0d7af0dd864e395268617b8fc95924935",
+      "published": false
+    },
+    {
+      "name": "aqd-final-toolbar-grid-release.log",
+      "sha256": "eb5c1bf737680c6d45d5d91745ffbb8decb6543a8075c33e494ad42d59dbc6b5",
+      "published": false
+    },
+    {
+      "name": "aqd-final-today-add-debug.log",
+      "sha256": "9b9b0e8df55562b34facc97f4348115f720e47469b72acf00302d8f94ffc444d",
+      "published": false
+    },
+    {
+      "name": "aqd-final-today-add-install.json",
+      "sha256": "05a27d5bbba443d335ac914d224403128313368f2e61cda5ff9aacbe6f7d6511",
+      "published": false
+    },
+    {
+      "name": "aqd-final-today-add-launch.json",
+      "sha256": "44fd752f62d78a2c206d95306cdf308ad310a40739cb1d9a0a33e26f765a6803",
+      "published": false
+    },
+    {
+      "name": "aqd-sample-context-refresh-receipt.json",
+      "sha256": "316d4e6bdf6d83b4191d6c10be443acee027fd82b7d886caa9a61aae6a43f713",
+      "published": false
     }
   ],
   "sourceFiles": {
@@ -730,10 +779,10 @@
     "No native distribution. Current-head CI/Codex and merged-SHA release remain separate gates."
   ],
   "localOwnerPreview": {
-    "sourceHead": "ba72e6b2ca683acb4585321ace7cad5331f433b1",
-    "executableSHA256": "f565ebc0b9741dec221b6ba75fa826db072ea7e30b8fb91982ccafd477a04441",
+    "sourceHead": "e833d5d13c1bf1e83d0c52a3fd12880949919f6a",
+    "executableSHA256": "70cb23341dacc7a8424b962579ec9104b64f5999194c0e3f4804c70d44359bac",
     "destination": "Physical iPhone17ProMax",
-    "build": "Debug BUILD SUCCEEDED /tmp/aqd-create-editor-refinement-debug.log",
+    "build": "Debug BUILD SUCCEEDED /tmp/aqd-final-today-add-debug.log",
     "install": "success",
     "normalLaunch": "success",
     "launchArguments": [],
@@ -755,21 +804,26 @@
       "preservedExistingData": true
     },
     "sourceFiles": {
-      "apps/ios/AQD/UI/AppTheme.swift": "ca67adbf0f967c78af675bf4027e844d1da7dad9eddc1d15b3e72c0176e97045",
+      "apps/ios/AQD/UI/AppTheme.swift": "ba4b30ad0af3f8fbd0b18e231b13addee60209c812c976c2315f9dd8ddded0b1",
       "apps/ios/AQD/UI/AppActions.swift": "21552d43f8d02e935925341375ee3776c2897eb1e8659a47bddaf548ef607545",
-      "apps/ios/AQD/UI/ClosetView.swift": "983265369e1c4fc3c80727f6a37e4001f22b6a1543d0b2196ba8cdb521785000",
-      "apps/ios/AQD/UI/LocalProfileView.swift": "0bc682ee5fe9395ca401154463cb7751379c03fb84dccf50c73bc4eeb0dd5656",
+      "apps/ios/AQD/UI/ClosetView.swift": "0fd188a1c3de497cb88ab6521dbcaeb12659de345d03747ef31084c80852963c",
+      "apps/ios/AQD/UI/LocalProfileView.swift": "d521df353d05e9b17441407c95ae37819669d98b7d26c33d924cd23ba5952a81",
       "apps/ios/AQD/UI/AppMetrics.swift": "85b8d1171aa6347dcdd16411d7355a4a17332c6dc9bb6b1d1a9626b050586980",
-      "apps/ios/AQD/UI/FitJournalViews.swift": "5d9c0e656e4cb5c3f0e74fbcb7c23a58ca6e6935435d0d92383d1ecc2824cd34",
-      "apps/ios/AQD/UI/PlannerCalendarView.swift": "58a300c381087daaa425f9a4fd7c8f3afe67b130ba6c0e277077c114fb3c1a3b",
+      "apps/ios/AQD/UI/FitJournalViews.swift": "b1edb95990d5c2f08fb24c94524855fc768422c82b42dac639d25be554a087e1",
+      "apps/ios/AQD/UI/PlannerCalendarView.swift": "d426ac7a8556d0ca359f2c1d6e73314aff898067a283af4507cabdc3759d7ae0",
       "apps/ios/AQD/UI/StyleEditorView.swift": "2105c6ed209e07c36bea4fba0b9448e635a6a57dc73d6e39118605e9f4daada6",
       "apps/ios/AQD/UI/BodyDetailsView.swift": "053f4bd351cfca614ff37280c8375775aab350fa96fc20bb935c8f9ba4af7b4d",
-      "apps/ios/AQD/UI/PlanAuthoringView.swift": "d638020d522e3f50f698735ded5b0328b1327ee6010a4df140f22cafacecf11c",
+      "apps/ios/AQD/UI/PlanAuthoringView.swift": "0785059cb7c0e15cc61f2a81b7088f349211ee7fa70851604871eb228ef2a173",
       "apps/ios/AQD/UI/OutfitViews.swift": "caca73ce5d8f603d321b58db5c922a5a4be66f6ac67a20b22a98a8a9dc9ea50d",
       "apps/ios/AQD/UI/OutfitSuggestionViews.swift": "be1b3fc23281572e525d1fcbae7a5a97cd3a05a5d856ab2fc654afe96d843baf",
-      "apps/ios/AQD/UI/TodayEditorView.swift": "f4b9baf21fa2ccb18f8a97626586b603624ff04721b7103f78d3227a4319f1e7",
-      "apps/ios/AQD/UI/AgentActionViews.swift": "e34484465ad40eb8034d7194b43b0f97f38cbc7106919ea3ccd677ee3fba8fd3"
-    }
+      "apps/ios/AQD/UI/TodayEditorView.swift": "1b3394ff8f06c8ebfbef72115e34443b063364e59b8092cd3a0691953f7a5c89",
+      "apps/ios/AQD/UI/AgentActionViews.swift": "69f870ccbdc54ef4a77ddb8fe1ad107de276d540ee96e401af9956b30c9b828a",
+      "apps/ios/AQD/UI/NativeTabs.swift": "cafb2f5a61088af0b71032a026630ad1e2070d67ef36ea281f78d68f1a3a29df",
+      "apps/ios/AQD/UI/RootViews.swift": "d5b30cf99aa614fcca81f57fc8cc4d63bc0367a75198dec38aeffd52f4cc33e0",
+      "apps/ios/AQD/UI/PieceCaptureView.swift": "d60f1827859eca3a4ec3da6682b4ebc7b8e2e7ac0b6243c62dad4a45ceae7b8e"
+    },
+    "installReceipt": "/tmp/aqd-final-today-add-install.json",
+    "launchReceipt": "/tmp/aqd-final-today-add-launch.json"
   },
   "verificationScope": "Original Core77/native227 and transparency safety remain bound to c85254f. Additional Core78 selection checks bind to158c8c3. Latest creator/Profile/Planner/Style/splash cosmetic preview ba72e6b passed Debug/Release and source reviews, installed and ordinary-launched. No new native/E2E/rendered acceptance claimed.",
   "sampleMediaRefresh": {
@@ -792,6 +846,30 @@
     "launchReceipt": "/tmp/aqd-create-editor-preview-launch.json",
     "research": "docs/references/planner-create-flows.md",
     "nativeUnitReused": false,
+    "e2eRun": false,
+    "runtimeComplete": false
+  },
+  "sampleContextRefresh": {
+    "sourceHead": "daf71b88441baee0322dab1126cf82d5b21ed8eb",
+    "receipt": "/tmp/aqd-sample-context-refresh-receipt.json",
+    "updatedPlans": 7,
+    "updatedFits": 8,
+    "skippedPlans": 0,
+    "skippedFits": 0,
+    "backup": "AQD-before-sample-contexts-F6B3F8A7-EDA5-4736-801F-1449776623AD.aqdarchive",
+    "normalLaunchAfterRefresh": "success; no arguments",
+    "repeated": false
+  },
+  "finalOwnerRefinement": {
+    "sourceHead": "e833d5d13c1bf1e83d0c52a3fd12880949919f6a",
+    "canvas": "F7F7F5, Profile follows shared canvas; white outer post cards",
+    "innerGround": "F5F4F1",
+    "profile": "glass shortcuts, aligned counts/bio, no title, spaced grid without decorative badge",
+    "planner": "month heading above leading mode control, separate selected/today decoration, no root title",
+    "creation": "media-first Add piece/Fit, top-right text progression, anchored add menus",
+    "today": "8pt title/date gap,24pt widget separation; leading add menu and trailing Customize",
+    "sampleContexts": "7 plans and8 fits refreshed once with protected backup; no wear records created",
+    "releaseBoundary": "9641bfd; later toolbar placement/Today header/menu Debug and source-review only",
     "e2eRun": false,
     "runtimeComplete": false
   }
