@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-17",
   "tokenHash": "fdeb7346",
-  "sourceHead": "11b9cb7303ef32e48ddb095d7279c69259e02fb1",
-  "sourceState": "Final source 11b9cb7303ef32e48ddb095d7279c69259e02fb1: photo import editor handoff, themed date popovers, separate widget surfaces, current-root chrome ownership, DEBUG Development previews, simplified Agent/Style and empty-state footer cleanup. Core83/native250 passed before final presentation correction; final Debug/unsigned Release and source reviews passed. Installed/normal launched, no computer use; full runtime/E2E remains issue30.",
+  "sourceHead": "b5dc1c6d3827536f556913ef3472c4b9a7f39e6e",
+  "sourceState": "Planner creation refinement b5dc1c6d3827536f556913ef3472c4b9a7f39e6e: Close/title/one Next or Save; surfaced explicit unassigned draft selection, Edit details return from review. Core83/native251, Debug/unsigned Release and source reviews passed. Installed and launched; no computer use, runtime acceptance remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -2603,11 +2603,11 @@
     "receipt": "docs/plan/evidence/issue-27-29/README.md"
   },
   "ownerUIRefinementEvidence": {
-    "codeCommit": "11b9cb7303ef32e48ddb095d7279c69259e02fb1",
+    "codeCommit": "b5dc1c6d3827536f556913ef3472c4b9a7f39e6e",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
-    "checks": "Core83/native250, final Debug/unsigned Release/source reviews passed; production debug strings absent",
+    "checks": "Core83/native251, Debug/unsigned Release, source reviews passed",
     "runtimeComplete": false,
-    "qualification": "Installed final source; owner visual/gesture review pending, no computer use. Full acceptance remains issue30."
+    "qualification": "Installed source; owner visual review pending, no computer use. Integrated acceptance remains issue30."
   },
   "closetProfileRefinementEvidence": {
     "codeCommit": "bd5c9f6506ac53efa616efdc8572f1f2226aa3b5",
