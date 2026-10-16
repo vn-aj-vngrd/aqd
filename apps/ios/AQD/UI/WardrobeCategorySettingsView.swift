@@ -31,7 +31,7 @@ struct WardrobeCategorySettingsView: View {
             }.listRowBackground(AppTheme.surface)
             if let error { Section { SemanticFeedback(role: .danger, message: error) }.listRowBackground(AppTheme.surface) }
         }.listStyle(.insetGrouped).scrollContentBackground(.hidden).background(AppTheme.canvas)
-            .navigationTitle("Piece categories").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
+            .navigationTitle("Categories").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) { EditButton().disabled(!loaded) }
                 ToolbarItem(placement: .topBarTrailing) {

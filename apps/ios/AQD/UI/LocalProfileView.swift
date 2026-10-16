@@ -3,6 +3,7 @@ import SwiftUI
 
 struct LocalProfileView: View {
     @Environment(AppState.self) private var state
+    @State private var categories = false
     @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
@@ -56,12 +57,14 @@ struct LocalProfileView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
                             Button("Style") { state.openStyle(source: .profile) }
+                            Button("Categories") { categories = true }
                             Button("Settings") { state.profileSettings = true }
                         } label: { Label("More", systemImage: "ellipsis") }
                     }
                 }
                 .navigationDestination(isPresented: $state.profileInsights) { LocalWearInsightsView() }
                 .navigationDestination(isPresented: $state.profileHistory) { LocalWearHistoryView() }
+                .navigationDestination(isPresented: $categories) { WardrobeCategorySettingsView() }
                 .navigationDestination(isPresented: $state.profileSettings) { LocalSettingsView() }
         }.tint(AppTheme.ink)
     }

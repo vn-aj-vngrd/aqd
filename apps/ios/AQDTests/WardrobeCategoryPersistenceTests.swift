@@ -38,6 +38,17 @@ import Testing
         model.selectCategory(categories[0])
         #expect(model.draft.details.organizationCategoryID == "tops")
         #expect(model.categoryName == "Tees")
+        let beforeManagement = model.draft
+        let custom = WardrobeCategory(name: "Work shirts", type: .tops)
+        try store.savePieceCategories(categories + [custom], expected: categories)
+        state.reloadPieces()
+        #expect(model.draft == beforeManagement)
+        #expect(model.categories.contains(custom))
+        model.selectCategory(custom)
+        #expect(model.categorySelectionID == custom.id)
+        #expect(model.draft.name == beforeManagement.name)
+        #expect(model.draft.photoID == beforeManagement.photoID)
+        #expect(try store.newPieceDraft()?.draft == model.draft)
     }
 
     @Test func catalogAndCategoryReferencesSurviveArchiveRoundTrip() async throws {

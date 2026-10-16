@@ -8,7 +8,7 @@ struct LocalSettingsView: View {
     var body: some View {
         List {
             Section("Personalize") {
-                NavigationLink { WardrobeCategorySettingsView() } label: { SettingsRow(title: "Piece categories", symbol: "square.grid.2x2") }
+                NavigationLink { WardrobeCategorySettingsView() } label: { SettingsRow(title: "Categories", symbol: "square.grid.2x2") }
                 NavigationLink { LocalStyleSettingsView() } label: { SettingsRow(title: "Style preferences", symbol: "slider.horizontal.3") }
                 NavigationLink { LocalAppearanceSettingsView() } label: {
                     SettingsRow(title: "Appearance", symbol: "circle.lefthalf.filled", value: appearanceTitle)

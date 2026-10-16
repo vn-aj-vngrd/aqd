@@ -21,6 +21,7 @@ struct PieceCaptureView: View {
     @State private var pendingSource: PhotoSource?
     @State private var cameraData: Data?
     @State private var showDetails = false
+    @State private var manageCategories = false
     @State private var showPhotoEditor = false
     @State private var showBackgroundRemoval = false
     @State private var backgroundCropRequested = false
@@ -43,6 +44,7 @@ struct PieceCaptureView: View {
                 }
             }
             .background(AppTheme.canvas)
+            .navigationDestination(isPresented: $manageCategories) { WardrobeCategorySettingsView() }
             .navigationTitle(model.saved == nil ? (model.draft.baseRevision == nil ? "Add piece" : "Edit piece") : "Piece saved")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
@@ -128,6 +130,11 @@ struct PieceCaptureView: View {
                                         Label(category.name, systemImage: "checkmark")
                                     } else { Text(category.name) }
                                 }
+                            }
+                            Divider()
+                            Button("Manage categories", systemImage: "slider.horizontal.3") {
+                                nameEditing = false
+                                manageCategories = true
                             }
                         } label: {
                             MenuSelectionLabel(title: model.categoryName)
