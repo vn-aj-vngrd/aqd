@@ -67,7 +67,7 @@ public struct AgentContextSnapshot: Codable, Equatable, Sendable {
         }
         let allowed = eligible.filter { context.scope == .closet || selected.contains($0.id) }.sorted { $0.id.uuidString < $1.id.uuidString }
         guard allowed.count <= maximumPieces else { throw AgentContextError.selectionRequired }
-        return Self(pieces: allowed.map { Piece(id: $0.id, revision: $0.revision, name: $0.name, category: $0.category, color: $0.details.color) }, totalEligible: allowed.count, scope: context.scope)
+        return Self(pieces: allowed.map { Piece(id: $0.id, revision: $0.revision, name: $0.name, category: $0.category, color: $0.details.color) }, totalEligible: eligible.count, scope: context.scope)
     }
     public var summary: String { scope == .general ? "General styling · No closet or wear access" : "\(pieces.count) of \(totalEligible) eligible pieces · Names, categories and colors · No photos or private notes" }
 }

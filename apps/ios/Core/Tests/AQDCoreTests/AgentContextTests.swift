@@ -48,6 +48,8 @@ struct AgentContextTests {
         context.scope = .selected
         context.selected = [AgentSelectedRecord(id: pieces[2].id, kind: .piece, revision: pieces[2].revision)]
         #expect(try AgentContextSnapshot.build(context, pieces: pieces, outfits: [], themes: [], maximumPieces: 2).pieces.map(\.id) == [pieces[2].id])
+        let snapshot = try AgentContextSnapshot.build(context, pieces: pieces, outfits: [], themes: [], maximumPieces: 2)
+        #expect(snapshot.totalEligible == 3 && snapshot.summary.contains("1 of 3 eligible pieces"))
         context.scope = .general
         #expect(try AgentContextSnapshot.build(context, pieces: pieces, outfits: [], themes: [], maximumPieces: 2).pieces.isEmpty)
     }

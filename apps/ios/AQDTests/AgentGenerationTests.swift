@@ -46,6 +46,7 @@ import AQDCore
         model.conversation.context.selected = [AgentSelectedRecord(id: fixture.piece.id, kind: .piece, revision: fixture.piece.revision)]
         model.send(); try await waitUntilStopped(model)
         #expect(prompts.count == 1 && prompts.first?.contains(fixture.piece.name) == true && prompts.first?.contains(other.name) == false)
+        #expect(model.conversation.messages.last?.contextSummary?.contains("1 of 2 eligible pieces") == true)
         #expect(model.conversation.messages.last?.status == .complete)
     }
     @Test func actualProviderSnapshotsPersistAndRetryKeepsOneUserTurn() async throws {
