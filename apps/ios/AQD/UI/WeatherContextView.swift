@@ -31,33 +31,54 @@ struct WeatherContextView: View {
     private var selection: WeatherSelection? { place.map { WeatherSelection(place: $0, day: day) } }
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Toggle("Weather", isOn: $enabled).disabled(saving || unknown)
-                    Text("Weather is optional").font(AppTypography.section)
-                    Text("City search sends your search text to Apple Maps. Weather sends the selected coordinates and date to Apple WeatherKit. Neither receives your wardrobe, photos, body details, journal or chat.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    if let error = client.error { SemanticFeedback(role: .warning, message: error) }
-                    if let place {
-                        Text(place.name).font(AppTypography.body)
-                        Text(place.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            Form {
+                Section {
+                    Toggle("Use weather", isOn: $enabled).disabled(saving || unknown)
+                } footer: {
+                    Text("Search sends your query to Apple Maps. Weather sends coordinates and date to Apple WeatherKit. Your wardrobe, photos, body details, journal and chat stay private.")
+                }.listRowBackground(AppTheme.surface)
+                if let error = client.error {
+                    Section { SemanticFeedback(role: .warning, message: error) }.listRowBackground(AppTheme.surface)
+                }
+                Section {
+                    TextField("City and country", text: $lookup.query).accessibilityLabel("City and country")
+                    Button { cancelFetch(); lookup.searchCity() } label: { Label("Search cities", systemImage: "magnifyingglass") }
+                        .disabled(lookup.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    Button { cancelFetch(); lookup.useCurrentLocation() } label: { Label("Use current location", systemImage: "location") }
+                    if lookup.pending {
+                        ProgressView("Finding place")
+                        Button("Cancel lookup") { lookup.cancel() }
                     }
-                    VStack(alignment: .leading, spacing: 12) {
-                        LabeledField(title: "City and country", text: $lookup.query)
-                        SecondaryAction(title: "Search cities") { cancelFetch(); lookup.searchCity() }.disabled(lookup.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                        SecondaryAction(title: "Use current location") { cancelFetch(); lookup.useCurrentLocation() }
-                        Text("City search needs internet and no location permission. Use current location requests approximate, foreground access once. No account or Apple Intelligence required.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        if lookup.pending { ProgressView("Finding place"); Button("Cancel lookup") { lookup.cancel() }.frame(minHeight: 44) }
-                        if let error = lookup.error { SemanticFeedback(role: .warning, message: error) }
-                        ForEach(Array(lookup.results.enumerated()), id: \.offset) { _, item in
-                            Button(item.name ?? item.placemark.locality ?? "Choose city") { cancelFetch(); lookup.choose(item) }.frame(minHeight: 44)
+                    if let error = lookup.error { SemanticFeedback(role: .warning, message: error) }
+                    ForEach(Array(lookup.results.enumerated()), id: \.offset) { _, item in
+                        Button(item.name ?? item.placemark.locality ?? "Choose city") { cancelFetch(); lookup.choose(item) }.frame(minHeight: 44)
+                    }
+                } header: { Text("Location") }
+                footer: { Text("Search needs internet. Current location asks once for approximate access while using AQD.") }
+                    .disabled(saving || unknown).listRowBackground(AppTheme.surface)
+                if let place {
+                    Section("Selected city") {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(place.name).font(AppTypography.body)
+                            Text(place.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                         }
-                    }.disabled(saving || unknown)
+                    }.listRowBackground(AppTheme.surface)
+                }
+                Section {
                     DatePicker("Weather date", selection: Binding(get: { (try? day.date()) ?? Date() }, set: { date in
                         cancelFetch(); day = LocalPlanDay(date: date, timeZone: TimeZone(identifier: day.timeZoneID) ?? .current)
                     }), displayedComponents: .date).environment(\.timeZone, TimeZone(identifier: day.timeZoneID) ?? .current).disabled(saving || unknown)
-                    if enabled {
-                        if !client.qualified { Text("Live weather isn’t available in this build. Your outfit and plans still work without it.").foregroundStyle(AppTheme.secondary) }
-                        if pending { ProgressView("Loading weather"); Button("Cancel weather request") { cancelFetch() }.frame(minHeight: 44) }
+                }.listRowBackground(AppTheme.surface)
+                if enabled {
+                    Section {
+                        if !client.qualified {
+                            Label("Live weather isn’t available in this build.", systemImage: "cloud.slash")
+                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }
+                        if pending {
+                            ProgressView("Loading weather")
+                            Button("Cancel weather request") { cancelFetch() }
+                        }
                         TimelineView(.periodic(from: .now, by: 30)) { context in
                             if let snapshot, let reading = snapshot.reading(for: day, now: context.date, qualified: client.qualified), let attribution = snapshot.attribution,
                                let image = UIImage(data: colorScheme == .dark ? attribution.dark : attribution.light) {
@@ -66,12 +87,21 @@ struct WeatherContextView: View {
                                 Link("Data sources", destination: attribution.legalURL).frame(minHeight: 44)
                             }
                         }
-                        SecondaryAction(title: "Refresh weather") { fetch(manual: true) }.disabled(selection == nil || pending || saving || unknown || !client.qualified)
-                    }
-                    if let error { SemanticFeedback(role: .warning, message: error) }
-
-                }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle("Weather context").navigationBarTitleDisplayMode(.inline)
+                        Button { fetch(manual: true) } label: { Label("Refresh weather", systemImage: "arrow.clockwise") }
+                            .disabled(selection == nil || pending || saving || unknown || !client.qualified)
+                    }.listRowBackground(AppTheme.surface)
+                }
+                if let error {
+                    Section { SemanticFeedback(role: .warning, message: error) }.listRowBackground(AppTheme.surface)
+                }
+                Section {
+                    DisclosureGroup("Weather and privacy") {
+                        Text("City search sends your search text to Apple Maps. Weather sends the selected coordinates and date to Apple WeatherKit. Neither receives your wardrobe, photos, body details, journal or chat.")
+                        Text("City search needs no location permission. Current location uses approximate, foreground access once. No account or Apple Intelligence is required.")
+                    }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                }.listRowBackground(AppTheme.surface)
+            }.scrollContentBackground(.hidden).background(AppTheme.canvas)
+                .navigationTitle("Weather context").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button { cancelFetch(); lookup.cancel(); dismiss() } label: { Image(systemName: "xmark") }

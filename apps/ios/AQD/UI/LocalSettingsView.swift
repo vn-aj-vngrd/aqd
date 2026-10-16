@@ -148,12 +148,17 @@ struct LocalAssistanceSettingsView: View {
     @State private var availability = OutfitSuggestions.availability()
     var body: some View {
         CenteredPageContent {
-            Text("Apple Intelligence").font(AppTypography.section)
-            Text(availability.message)
-            Text("Quick rules and manual tools").font(AppTypography.section)
-            Text("Agent explains actual availability. Your closet, manual outfits and planning remain usable. No cloud model is used.")
-            Text("Review before saving").font(AppTypography.section)
-            Text("Suggestions are drafts. Approve exact reviewed changes; a receipt follows successful local saving.")
+            Image(systemName: "sparkles").font(.system(size: 32, weight: .light)).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+            VStack(spacing: 8) {
+                Text("On-device Agent").font(AppTypography.section)
+                Text(availability.message).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }
+            VStack(alignment: .leading, spacing: 16) {
+                Label("Manual tools stay available", systemImage: "slider.horizontal.3")
+                Label("Review every change before saving", systemImage: "checkmark.circle")
+                Label("No cloud model", systemImage: "iphone")
+            }.font(AppTypography.supporting).frame(maxWidth: .infinity, alignment: .leading)
+                .padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
         }.background(AppTheme.canvas).navigationTitle("On-device assistance").navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 ActionFooter {

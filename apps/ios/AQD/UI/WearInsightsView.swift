@@ -8,72 +8,105 @@ struct LocalWearInsightsView: View {
     @State private var summary: WearPeriodSummary?
     @State private var error: String?
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            DatePicker("Period", selection: Binding(get: { (try? month.date()) ?? Date() }, set: { month = LocalPlanDay(date: $0); reload() }), displayedComponents: .date).padding(.horizontal, 20)
-            if error == nil, let summary, summary.occasions == 0 && state.pieces.isEmpty {
-                EmptyStatePage(title: "Not enough recorded history", systemImage: "chart.bar",
-                               description: Text("Record a wear to see which pieces you reach for. Earlier estimates are excluded from this period.")) {
-                    PrimaryAction(title: "Record a look") { state.openWear() }
-                    SecondaryAction(title: "Open Closet") { state.selection = 1 }
-                }
-            } else {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                if let error { SemanticFeedback(role: .danger, message: error); Button("Retry insights", action: reload).frame(minHeight: 44) }
-                else if let summary {
-                    Text("\(summary.start.key) – \(summary.end.key)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    if summary.occasions == 0 || summary.activeCount == 0 {
-                        AppEmptyState("Not enough recorded history", systemImage: "chart.bar", description: Text("Record a wear to see which pieces you reach for. Earlier estimates are excluded from this period."), fillsAvailableSpace: false)
-                    }
-                    if summary.occasions > 0 {
-                        Text("\(summary.occasions) wear occasions · \(summary.itemOccurrences) individual item wears").font(AppTypography.body)
-                    }
-                    if let utilization = summary.utilization {
-                        Text("Closet in use").font(AppTypography.section)
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text(utilization, format: .percent.precision(.fractionLength(0))).font(.largeTitle)
-                            Text("\(summary.usedActiveCount) of \(summary.activeCount) active pieces recorded this month")
-                            ProgressView(value: utilization).tint(AppTheme.actionText)
-                        }.padding(16).frame(maxWidth: .infinity, alignment: .leading).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                        Text("Most worn this month").font(AppTypography.section)
-                        ForEach(ranked(summary, descending: true).prefix(5)) { piece in periodRow(piece, summary: summary) }
-                        Text("Least worn this month").font(AppTypography.section)
-                        ForEach(ranked(summary, descending: false).prefix(5)) { piece in periodRow(piece, summary: summary) }
-                    }
-                    Text("Only dated AQD records count in this period. Plans and earlier estimates are excluded. Archived and deleted pieces do not enter the active-closet denominator.")
-                        .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    NavigationLink("View source history") { LocalWearHistoryView(periodStart: summary.start, periodEnd: summary.end) }.frame(minHeight: 44)
-                    if !state.pieces.isEmpty {
-                        Text("All-time totals").font(AppTypography.section)
-                        Text("Includes separately labelled earlier estimates. Estimates have no recorded date.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        ForEach(state.pieces.sorted { a, b in
-                            let first = PieceWearSummary(piece: a, records: state.wearRecords).total
-                            let second = PieceWearSummary(piece: b, records: state.wearRecords).total
-                            return first == second ? a.id.uuidString < b.id.uuidString : first > second
-                        }.prefix(5)) { piece in
-                            let total = PieceWearSummary(piece: piece, records: state.wearRecords)
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(piece.name).font(AppTypography.body)
-                                Text("\(total.total) total · \(total.recorded) recorded · \(total.priorEstimate ?? 0) estimated earlier")
-                                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                            }
+        List {
+            Section {
+                HStack(spacing: 8) {
+                    Button { changeMonth(-1) } label: { Image(systemName: "chevron.left").frame(width: 44, height: 44) }
+                        .accessibilityLabel("Previous month")
+                    Text(monthTitle).font(AppTypography.fieldLabel).frame(maxWidth: .infinity)
+                    Button { changeMonth(1) } label: { Image(systemName: "chevron.right").frame(width: 44, height: 44) }
+                        .accessibilityLabel("Next month")
+                }.buttonStyle(.borderless).listRowBackground(AppTheme.surface)
+            }
+            if let error {
+                Section {
+                    SemanticFeedback(role: .danger, message: error)
+                    Button("Retry insights", action: reload)
+                }.listRowBackground(AppTheme.surface)
+            } else if let summary {
+                if summary.occasions == 0 {
+                    Section {
+                        AppEmptyState("No wear recorded this month", systemImage: "chart.bar",
+                                      description: Text("Your recorded wear will appear here."), fillsAvailableSpace: false)
+                            .frame(maxWidth: .infinity).padding(.vertical, 24)
+                    }.listRowBackground(AppTheme.surface)
+                } else {
+                    Section("This month") {
+                        HStack(spacing: 20) {
+                            metric("Wear occasions", value: summary.occasions)
+                            metric("Item wears", value: summary.itemOccurrences)
+                        }.padding(.vertical, 8)
+                        if let utilization = summary.utilization {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Text("Closet in use")
+                                    Spacer()
+                                    Text(utilization, format: .percent.precision(.fractionLength(0))).font(AppTypography.fieldLabel)
+                                }
+                                ProgressView(value: utilization).tint(AppTheme.actionText)
+                                Text("\(summary.usedActiveCount) of \(summary.activeCount) active pieces")
+                                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            }.padding(.vertical, 8)
                         }
+                    }.listRowBackground(AppTheme.surface)
+                    if summary.utilization != nil {
+                        Section("Most worn") {
+                            ForEach(ranked(summary, descending: true).prefix(5)) { periodRow($0, summary: summary) }
+                        }.listRowBackground(AppTheme.surface)
+                        Section("Least worn") {
+                            ForEach(ranked(summary, descending: false).prefix(5)) { periodRow($0, summary: summary) }
+                        }.listRowBackground(AppTheme.surface)
                     }
                 }
-            }.padding(20)
-        }
-        .safeAreaInset(edge: .bottom) {
-            if error == nil, let summary, summary.occasions == 0 || summary.activeCount == 0 {
-                ActionFooter { ActionStack {
-                    PrimaryAction(title: "Record a look") { state.openWear() }
-                    SecondaryAction(title: "Open Closet") { state.selection = 1 }
-                } }
+                Section {
+                    NavigationLink { LocalWearHistoryView(periodStart: summary.start, periodEnd: summary.end) } label: {
+                        Label("Wear history", systemImage: "clock.arrow.circlepath")
+                    }
+                } footer: {
+                    Text("Monthly insights use dated wear only. Plans and earlier estimates are excluded. Closet in use counts active pieces only.")
+                }.listRowBackground(AppTheme.surface)
+                if !allTimePieces.isEmpty {
+                    Section {
+                        ForEach(allTimePieces.prefix(5)) { piece in
+                            let total = PieceWearSummary(piece: piece, records: state.wearRecords)
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(piece.name).font(AppTypography.fieldLabel)
+                                Text("\(total.total) total · \(total.recorded) recorded · \(total.priorEstimate ?? 0) earlier estimate")
+                                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            }.padding(.vertical, 4)
+                        }
+                    } header: { Text("All-time totals") }
+                    footer: { Text("Earlier estimates are included here. They have no recorded date.") }
+                        .listRowBackground(AppTheme.surface)
+                }
             }
-        }
-            }
-        }.padding(.top, 16).background(AppTheme.canvas).navigationTitle("Wear insights").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
+        }.listStyle(.insetGrouped).scrollContentBackground(.hidden).background(AppTheme.canvas)
+            .navigationTitle("Wear insights").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
             .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
             .onAppear(perform: reload).onChange(of: state.wearRecords) { _, _ in reload() }
+    }
+    private var monthTitle: String {
+        guard let date = try? month.date(), let zone = TimeZone(identifier: month.timeZoneID) else { return month.key }
+        return date.formatted(Date.FormatStyle(date: .omitted, time: .omitted, timeZone: zone).month(.wide).year())
+    }
+    private func changeMonth(_ offset: Int) {
+        guard let date = try? month.date(), let zone = TimeZone(identifier: month.timeZoneID) else { return }
+        var calendar = Calendar(identifier: .gregorian); calendar.timeZone = zone
+        guard let next = calendar.date(byAdding: .month, value: offset, to: date) else { return }
+        month = LocalPlanDay(date: next, timeZone: zone); reload()
+    }
+    private var allTimePieces: [WardrobePiece] {
+        state.pieces.filter { PieceWearSummary(piece: $0, records: state.wearRecords).total > 0 }.sorted { a, b in
+            let first = PieceWearSummary(piece: a, records: state.wearRecords).total
+            let second = PieceWearSummary(piece: b, records: state.wearRecords).total
+            return first == second ? a.id.uuidString < b.id.uuidString : first > second
+        }
+    }
+    private func metric(_ title: String, value: Int) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(value, format: .number).font(.title2.weight(.semibold)).monospacedDigit()
+            Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+        }.frame(maxWidth: .infinity, alignment: .leading).accessibilityElement(children: .combine)
     }
     private func reload() {
         state.reloadWear(); state.reloadPieces()
@@ -92,7 +125,7 @@ struct LocalWearInsightsView: View {
             HStack(spacing: 12) {
                 Text(piece.name).font(AppTypography.body).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
                 Text("\(summary.counts[piece.id, default: 0]) recorded").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-            }.padding(14).frame(minHeight: 54).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+            }.frame(minHeight: 44)
         }.buttonStyle(.plain)
     }
 }
