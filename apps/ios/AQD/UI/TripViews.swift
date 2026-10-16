@@ -122,7 +122,7 @@ struct TripPackingView: View {
                             HStack(spacing: 12) {
                                 PieceThumbnail(photoID: item.piece.photoID, recipe: item.piece.photoRecipe).frame(width: 48, height: 56)
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text(item.piece.name).font(AppTypography.body)
+                                    Text(item.piece.displayName).font(AppTypography.body)
                                     Text("Used in \(item.uses) planned looks").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                                     if item.piece.isArchived || item.piece.availability != .available { Text("Needs attention").font(AppTypography.metadata).foregroundStyle(AppTheme.warning) }
                                 }.frame(maxWidth: .infinity, alignment: .leading)

@@ -56,7 +56,7 @@ struct LocalIdentityEditorView: View {
                 .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() }
-                        else if !model.draft.hasChanges { model.finish(discarding: true) }
+                        else if !model.hasUnsavedChanges { model.finish(discarding: true) }
                         else { discard = true }
                     } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
                         .accessibilityLabel(model.saved == nil ? "Cancel profile edits" : "Done").disabled(model.pending || model.unknown)

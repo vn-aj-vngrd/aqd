@@ -42,9 +42,21 @@ public struct OutfitWearDraft: Identifiable, Codable, Equatable, Sendable {
     public var baseRecord: OutfitWearRecord?
     public var planEntry: OutfitPlanEntry?
     public var acceptedDuplicateID: UUID?
+    public var initialDay: LocalPlanDay?
+    public var initialOutfitID: UUID?
+    public var initialPieceIDs: [UUID]?
+
+    public var hasChanges: Bool {
+        if let baseRecord {
+            return day != baseRecord.day || outfitID != baseRecord.outfitID || Set(pieceIDs) != Set(baseRecord.pieces.map(\.id))
+        }
+        guard let initialDay, let initialPieceIDs else { return true }
+        return day != initialDay || outfitID != initialOutfitID || Set(pieceIDs) != Set(initialPieceIDs)
+    }
 
     public init(ownerID: UUID, outfitID: UUID? = nil, pieces: [WardrobePiece], day: LocalPlanDay = LocalPlanDay()) {
         id = UUID(); wearID = UUID(); operationID = UUID(); self.ownerID = ownerID; self.day = day; self.outfitID = outfitID
+        initialDay = day; initialOutfitID = outfitID; initialPieceIDs = pieces.map(\.id)
         pieceIDs = pieces.map(\.id); reviewedRevisions = Dictionary(uniqueKeysWithValues: pieces.map { ($0.id, $0.revision) })
     }
     public init(editing record: OutfitWearRecord, currentPieces: [WardrobePiece]) {

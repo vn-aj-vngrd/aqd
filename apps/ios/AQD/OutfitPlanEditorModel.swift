@@ -17,6 +17,9 @@ final class OutfitPlanEditorModel: Identifiable {
         saved = try state.store?.savedPlan(for: draft)
     }
     var availabilityConflict: String? { PlanningAvailability.message(outfit: draft.outfit, day: draft.day, pieces: state.ownedPieces) }
+    var hasUnsavedChanges: Bool {
+        saved == nil && (pending || unknown || error != nil || draft.hasChanges)
+    }
     var canSave: Bool { !pending && !unknown && saved == nil && availabilityConflict == nil && (try? draft.validatedForSave(outfits: state.outfits)) != nil }
     var hasOverlap: Bool {
         state.planEntries.contains { $0.id != draft.entryID && $0.day == draft.day && $0.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == draft.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }

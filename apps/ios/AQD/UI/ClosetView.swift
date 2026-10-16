@@ -156,7 +156,7 @@ struct ClosetView: View {
                 Toggle("Favorites", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly)
                 Picker("Theme", selection: state.closetSearchActive ? $searchThemeID : $themeID) {
                     Text("All themes").tag(Optional<UUID>.none)
-                    ForEach(state.themes) { Text($0.name).tag(Optional($0.id)) }
+                    ForEach(state.themes) { Text($0.displayName).tag(Optional($0.id)) }
                     if let selectedID = state.closetSearchActive ? searchThemeID : themeID,
                        !state.themes.contains(where: { $0.id == selectedID }) {
                         Text("Unavailable theme").tag(Optional(selectedID))
@@ -343,7 +343,7 @@ struct PieceDetailView: View {
                         if !piece.details.ownershipAge.isEmpty { detail("Ownership", piece.details.ownershipAge) }
                         if !piece.details.tags.isEmpty { detail("Tags", piece.details.tags.joined(separator: ", ")) }
                         detail("Availability", piece.availability == .laundry ? "In the laundry" : piece.availability.rawValue.capitalized)
-                        if !piece.details.notes.isEmpty { detail("Notes", piece.details.notes) }
+                        if !piece.details.notes.isEmpty { detail("Notes", piece.displayNotes) }
                         if let estimate = piece.details.priorWearCount {
                             detail("Prior wear estimate", String(estimate))
                             Text("This is an estimate, not recorded wear.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
@@ -397,7 +397,7 @@ struct PieceDetailView: View {
         .sheet(isPresented: $deleteDecision) {
             if let piece { PieceDeletionView(piece: piece) { deleteDecision = false; dismiss() } }
         }
-        .confirmationDialog("Archive \(reviewedArchive?.name ?? "this piece")?", isPresented: $archiveDecision, titleVisibility: .visible) {
+        .confirmationDialog("Archive \(reviewedArchive?.displayName ?? "this piece")?", isPresented: $archiveDecision, titleVisibility: .visible) {
             Button("Archive") {
                 if let reviewedArchive { setArchive(true, expectedRevision: reviewedArchive.revision, operation: archiveOperationID) }
             }

@@ -60,7 +60,7 @@ private struct RecordedWearPiecesView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "tshirt").frame(width: 48, height: 56).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(piece.name).font(AppTypography.body)
+                            Text(piece.displayName).font(AppTypography.body)
                             Text(piece.category.rawValue.capitalized).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }.padding(14).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))

@@ -96,10 +96,21 @@ public struct PlanAuthoringDraft: Identifiable, Codable, Equatable, Sendable {
     public var anchorEntryID: UUID?
     public var usesRules: Bool?
     public var tripActivitiesText: String?
+    public var initialPlan: PlanDefinition?
+    public var initialSlots: [PlanSlotDraft]?
+
+    public var hasChanges: Bool {
+        guard let initialPlan, let initialSlots else { return true }
+        let sameSlots = slots.count == initialSlots.count && zip(slots, initialSlots).allSatisfy {
+            $0.day == $1.day && $0.occasion == $1.occasion && $0.outfit == $1.outfit && $0.unassignedByChoice == $1.unassignedByChoice
+        }
+        return plan != initialPlan || !sameSlots || (tripActivitiesText ?? initialPlan.trip?.activities.joined(separator: ", ") ?? "") != (initialPlan.trip?.activities.joined(separator: ", ") ?? "") || !resolutions.isEmpty
+    }
 
     public init(plan: PlanDefinition) throws {
         id = UUID(); operationID = UUID(); self.plan = plan
         slots = try plan.days().map { PlanSlotDraft(day: $0, occasion: plan.routine?.occasion ?? "") }; resolutions = []; reviewing = false
+        initialPlan = plan; initialSlots = slots
     }
     public init(editing plan: PlanDefinition, entries: [OutfitPlanEntry], outfits: [Outfit], scope: RoutineEditScope, anchorEntryID: UUID?) throws {
         id = UUID(); operationID = UUID(); self.plan = plan; basePlan = plan; baseEntries = entries
@@ -109,6 +120,7 @@ public struct PlanAuthoringDraft: Identifiable, Codable, Equatable, Sendable {
                 outfit: outfits.first { $0.id == entry.outfitID }, unassignedByChoice: entry.outfitID == nil))
         }
         try rebuildDates()
+        initialPlan = plan; initialSlots = slots
     }
     public var editableBaseEntries: [OutfitPlanEntry] {
         let anchor = baseEntries?.first { $0.id == anchorEntryID }

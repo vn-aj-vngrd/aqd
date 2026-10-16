@@ -18,6 +18,9 @@ final class LocalIdentityEditorModel: Identifiable {
         self.state = state; self.draft = draft; id = draft.id
         saved = try state.store?.savedIdentity(for: draft)
     }
+    var hasUnsavedChanges: Bool {
+        saved == nil && (pending || unknown || importing || error != nil || draft.hasChanges)
+    }
     var locked: Bool { pending || unknown || saved != nil }
     func update(_ change: (inout LocalIdentityDraft) -> Void) {
         guard !locked else { return }

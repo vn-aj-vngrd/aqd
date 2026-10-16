@@ -24,7 +24,7 @@ struct OutfitWearEditorView: View {
                     if let saved = model.saved {
                         Text(model.draft.baseRecord == nil ? "Wear recorded" : "Correction saved").font(AppTypography.section)
                         Text(saved.day.key).font(AppTypography.body)
-                        ForEach(saved.pieces, id: \.id) { Text($0.name) }
+                        ForEach(saved.pieces, id: \.id) { Text($0.displayName) }
                         SecondaryAction(title: "Open wear history") { model.finishOpeningHistory() }
 
                     } else {
@@ -68,7 +68,9 @@ struct OutfitWearEditorView: View {
             } }
                 .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
-                        if model.saved != nil { model.finish() } else { discard = true }
+                        if model.saved != nil { model.finish() }
+                            else if model.hasUnsavedChanges { discard = true }
+                            else { model.finish(discarding: true) }
                     } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
                         .tint(AppTheme.ink).accessibilityLabel(model.saved == nil ? "Cancel wear" : "Done")
                         .disabled(model.pending || model.unknown)
@@ -96,8 +98,8 @@ struct OutfitWearEditorView: View {
                 }
     }
     private func pieceName(_ id: UUID) -> String {
-        if let snapshot = model.draft.baseRecord?.pieces.first(where: { $0.id == id }) { return snapshot.name }
-        return model.pieces.first(where: { $0.id == id })?.name ?? "Unavailable piece"
+        if let snapshot = model.draft.baseRecord?.pieces.first(where: { $0.id == id }) { return snapshot.displayName }
+        return model.pieces.first(where: { $0.id == id })?.displayName ?? "Unavailable piece"
     }
 
 }

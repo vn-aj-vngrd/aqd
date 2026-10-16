@@ -29,7 +29,7 @@ struct OwnedPieceChooser: View {
         let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
         return pieces.filter {
             selected.contains($0.id) || ((category == nil || $0.category == category) &&
-                (needle.isEmpty || "\($0.name) \($0.details.color) \($0.details.brand)".localizedCaseInsensitiveContains(needle)))
+                (needle.isEmpty || "\($0.displayName) \($0.details.color) \($0.details.brand)".localizedCaseInsensitiveContains(needle)))
         }
     }
     private var filteredPieces: [WardrobePiece] {

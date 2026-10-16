@@ -105,7 +105,7 @@ struct OutfitReplacementView: View {
                     Button { selected = piece.id } label: {
                         VStack(alignment: .leading, spacing: 8) {
                             PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(height: 170)
-                            Label(piece.name, systemImage: selected == piece.id ? "checkmark.circle.fill" : "circle")
+                            Label(piece.displayName, systemImage: selected == piece.id ? "checkmark.circle.fill" : "circle")
                         }
                     }.buttonStyle(.plain).accessibilityValue(selected == piece.id ? "Selected replacement" : "Not selected")
                 }

@@ -101,14 +101,14 @@ struct PlanAgendaRow: View {
     private var outfit: Outfit? { state.outfits.first { $0.id == entry.outfitID } }
     private var occasion: String? {
         let value = entry.occasion.trimmingCharacters(in: .whitespacesAndNewlines)
-        let title = (outfit?.name ?? "Outfit unassigned").trimmingCharacters(in: .whitespacesAndNewlines)
+        let title = (outfit?.displayName ?? "Outfit unassigned").trimmingCharacters(in: .whitespacesAndNewlines)
         return value.isEmpty || value.caseInsensitiveCompare(title) == .orderedSame ? nil : value
     }
     var body: some View {
         HStack(spacing: 12) {
             if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 56, limit: 2).frame(width: 64, height: 80).clipped() }
             VStack(alignment: .leading, spacing: 4) {
-                Text(outfit?.name ?? "Outfit unassigned").font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                Text(outfit?.displayName ?? "Outfit unassigned").font(AppTypography.body).foregroundStyle(AppTheme.ink)
                 if showDate { Text(entry.day.displayDate).font(AppTypography.supporting) }
                 if let occasion { Text(occasion).font(AppTypography.supporting) }
                 Text(entry.state.rawValue.capitalized).font(AppTypography.supporting)

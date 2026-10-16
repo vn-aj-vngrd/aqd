@@ -17,6 +17,76 @@ struct OutfitPersistenceTests {
         return try store.savePiece(PieceDraft(name: "Blue shirt", category: .tops, photoID: photo.id), operationID: UUID())
     }
 
+    @Test func themeCloseProtectsOnlyActualChangesAcrossRecoveryAndEditing() throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let owner = try store.todayConfiguration().ownerID
+        let blank = ThemeDraft(ownerID: owner)
+        try store.saveThemeDraft(blank)
+        let model = try ThemeEditorModel(store: store, draft: blank)
+        #expect(!model.hasUnsavedChanges)
+        model.update { $0.description = "A capsule" }
+        #expect(model.hasUnsavedChanges)
+        let recovered = try ThemeEditorModel(store: store, draft: #require(try store.themeDraft()))
+        #expect(recovered.hasUnsavedChanges)
+        recovered.update { $0.description = "" }
+        #expect(!recovered.hasUnsavedChanges)
+        recovered.update { $0.name = "Weekday" }
+        let saved = try store.saveTheme(recovered.draft)
+        try store.finishThemeDraft(recovered.draft)
+        let editing = ThemeDraft(editing: saved)
+        try store.saveThemeDraft(editing)
+        let editor = try ThemeEditorModel(store: store, draft: editing)
+        #expect(!editor.hasUnsavedChanges)
+        editor.update { $0.outfitIDs = [UUID()] }
+        #expect(editor.hasUnsavedChanges)
+        editor.update { $0.outfitIDs = [] }
+        #expect(!editor.hasUnsavedChanges)
+        #expect(editor.finish(discarding: true))
+        #expect(try store.themes() == [saved])
+        #expect(try store.themeDraft() == nil)
+    }
+
+    @Test func planAndWearClosePreserveStartingContextAcrossStoreRecovery() throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let state = AppState(store: store), owner = try store.todayConfiguration().ownerID
+        let day = LocalPlanDay(year: 2026, month: 10, day: 17, timeZoneID: "Asia/Manila")
+        var plan = OutfitPlanDraft(ownerID: owner, day: day)
+        try store.savePlanDraft(plan)
+        let planner = try OutfitPlanEditorModel(state: state, draft: #require(try store.planDraft()))
+        #expect(!planner.hasUnsavedChanges)
+        planner.update { $0.occasion = "Work" }
+        #expect(planner.hasUnsavedChanges)
+        planner.update { $0.occasion = "" }
+        #expect(!planner.hasUnsavedChanges)
+        plan = planner.draft
+        try store.finishPlanDraft(plan, discarding: true)
+        let wear = OutfitWearDraft(ownerID: owner, pieces: [], day: day)
+        try store.saveWearDraft(wear)
+        let recorder = try OutfitWearEditorModel(state: state, draft: #require(try store.wearDraft()))
+        #expect(!recorder.hasUnsavedChanges)
+        recorder.update { $0.pieceIDs = [UUID()] }
+        #expect(recorder.hasUnsavedChanges)
+        recorder.update { $0.pieceIDs = [] }
+        #expect(!recorder.hasUnsavedChanges)
+        recorder.unknown = true
+        #expect(recorder.hasUnsavedChanges)
+        recorder.finish(discarding: true)
+        #expect(try store.wearDraft() != nil)
+        #expect(try store.wearRecords().isEmpty)
+        var multi = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: owner, start: day, end: day))
+        try store.savePlanAuthoringDraft(multi)
+        let author = try PlanAuthoringModel(state: state, draft: #require(try store.planAuthoringDraft()))
+        #expect(!author.hasUnsavedChanges)
+        author.update { $0.reviewing = true }
+        #expect(!author.hasUnsavedChanges)
+        author.update { $0.plan.name = "Weekend" }
+        #expect(author.hasUnsavedChanges)
+        author.update { $0.plan.name = "" }
+        #expect(!author.hasUnsavedChanges)
+        multi = author.draft
+        #expect(try JSONDecoder().decode(PlanAuthoringDraft.self, from: JSONEncoder().encode(multi)).hasChanges == false)
+    }
+
     @Test func outfitCloseIgnoresNavigationButProtectsActualAndRecoveredChanges() async throws {
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         let piece = try await seedPiece(store)

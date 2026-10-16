@@ -34,11 +34,11 @@ struct AgentContextView: View {
                             Text(error); Button("Retry") { state.reloadPieces(); state.reloadOutfits(); state.reloadThemes() }
                         }
                         if category == "Pieces" {
-                            ForEach(state.pieces.filter { matches($0.name) }) { value in row(value.name, record: AgentSelectedRecord(id: value.id, kind: .piece, revision: value.revision)) }
+                            ForEach(state.pieces.filter { matches($0.displayName) }) { value in row(value.displayName, record: AgentSelectedRecord(id: value.id, kind: .piece, revision: value.revision)) }
                         } else if category == "Outfits" {
-                            ForEach(state.outfits.filter { matches($0.name) }) { value in row(value.name, record: AgentSelectedRecord(id: value.id, kind: .outfit, revision: value.revision)) }
+                            ForEach(state.outfits.filter { matches($0.displayName) }) { value in row(value.displayName, record: AgentSelectedRecord(id: value.id, kind: .outfit, revision: value.revision)) }
                         } else {
-                            ForEach(state.themes.filter { matches($0.name) }) { value in row(value.name, record: AgentSelectedRecord(id: value.id, kind: .theme, revision: value.revision)) }
+                            ForEach(state.themes.filter { matches($0.displayName) }) { value in row(value.displayName, record: AgentSelectedRecord(id: value.id, kind: .theme, revision: value.revision)) }
                         }
                         Text("\(draft.selected.count) selected. Changed or unavailable records must be reviewed before sending.").font(.footnote)
                         if !draft.selected.isEmpty { Button("Clear selections") { draft.selected = [] } }

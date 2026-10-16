@@ -51,7 +51,8 @@ struct PlanAuthoringView: View {
                     Button {
                         if model.saved != nil { model.finish() }
                         else if model.draft.reviewing { model.update(invalidateConflicts: false) { $0.reviewing = false } }
-                        else { discard = true }
+                        else if model.hasUnsavedChanges { discard = true }
+                        else { model.finish(discarding: true) }
                     } label: { if model.saved != nil { Text("Done") } else { Image(systemName: model.draft.reviewing ? "chevron.backward" : "xmark") } }
                         .accessibilityLabel(model.saved != nil ? "Done" : model.draft.reviewing ? "Back to plan" : "Cancel plan")
                         .tint(AppTheme.ink).disabled(model.pending || model.unknown)
@@ -130,7 +131,7 @@ struct PlanAuthoringView: View {
                         SemanticFeedback(role: .warning, message: "This outfit changed. Review its current pieces below; Save confirms the updated composition.")
                         OutfitComposition(pieceIDs: outfit.pieceIDs)
                     }
-                    DisclosureRow(title: slot.day.displayDate, value: slot.outfit?.name ?? (slot.unassignedByChoice ? "Intentional gap" : "Choose outfit")) { choosingSlot = slot.id }
+                    DisclosureRow(title: slot.day.displayDate, value: slot.outfit?.displayName ?? (slot.unassignedByChoice ? "Intentional gap" : "Choose outfit")) { choosingSlot = slot.id }
                     LabeledField(title: "Occasion", text: Binding(get: { model.draft.slots.first { $0.id == slot.id }?.occasion ?? "" }, set: { value in
                         model.update { draft in if let i = draft.slots.firstIndex(where: { $0.id == slot.id }) { draft.slots[i].occasion = value } }
                     }))
@@ -161,7 +162,7 @@ private struct PlanConflictView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Resolve a conflict").font(AppTypography.fieldLabel)
             Text("\(existing.day.displayDate) · \(existing.occasion)")
-            Text(model.state.outfits.first { $0.id == existing.outfitID }?.name ?? "Existing unassigned entry")
+            Text(model.state.outfits.first { $0.id == existing.outfitID }?.displayName ?? "Existing unassigned entry")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             Button { choose(.keepBoth) } label: {
                 Label("Keep both entries", systemImage: selected(.keepBoth) ? "checkmark.circle.fill" : "circle")
@@ -195,11 +196,11 @@ private struct PlanSlotOutfitChooser: View {
             VStack(alignment: .leading, spacing: 20) {
                 SecondaryAction(title: "Leave unassigned") { choose(nil) }
                 if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("Keep this date unassigned. You can build outfits in Closet.")) }
-                ForEach(model.state.outfits.filter { query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }) { outfit in
+                ForEach(model.state.outfits.filter { query.isEmpty || $0.displayName.localizedCaseInsensitiveContains(query) }) { outfit in
                     Button { choose(outfit) } label: {
                         VStack(alignment: .leading, spacing: 8) {
                             OutfitComposition(pieceIDs: outfit.pieceIDs)
-                            Text(outfit.name).foregroundStyle(AppTheme.ink)
+                            Text(outfit.displayName).foregroundStyle(AppTheme.ink)
                         }
                     }.buttonStyle(.plain)
                 }

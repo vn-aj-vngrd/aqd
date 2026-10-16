@@ -322,8 +322,7 @@ struct TodayWeatherSummary: View {
                         }
                     }
                 } else {
-                    Text("A little context for what to wear.").font(AppTypography.body)
-                    Text("Choose a city for optional Apple Weather. Your wardrobe stays private.")
+                    Text("Choose a city for optional Apple Weather.")
                         .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }
                 Button { setup = true } label: {

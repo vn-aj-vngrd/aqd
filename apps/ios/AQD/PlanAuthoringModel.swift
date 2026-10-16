@@ -21,6 +21,9 @@ final class PlanAuthoringModel: Identifiable {
     }
     var availabilityConflicts: [String] { draft.slots.compactMap { availabilityMessage(for: $0) } }
     var canReview: Bool { !pending && !unknown && (try? draft.plan.validated()) != nil }
+    var hasUnsavedChanges: Bool {
+        saved == nil && (pending || unknown || error != nil || draft.hasChanges)
+    }
     var canSave: Bool {
         !pending && !unknown && saved == nil && availabilityConflicts.isEmpty && (try? draft.validatedForSave(outfits: state.outfits, existing: state.planEntries)) != nil
     }

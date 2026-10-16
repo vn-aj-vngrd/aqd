@@ -14,6 +14,14 @@ final class StyleEditorModel: Identifiable {
 
     init(state: AppState, draft: StylePreferenceDraft) { self.state = state; self.draft = draft; id = draft.id }
 
+    var hasUnsavedChanges: Bool {
+        if saved != nil { return false }
+        if pending || unknown || error != nil { return true }
+        guard let experience = try? state.store?.localExperience() else { return true }
+        guard (experience.style?.revision ?? 0) == draft.baseRevision else { return true }
+        return draft.answers != (experience.style?.answers ?? StylePreferences()) || draft.heightInput.map { $0 != HeightInput(body: draft.answers.body) } == true || draft.bodyShapePicker.map { $0 != BodyShapeDraft(current: draft.answers.body.shape) } == true
+    }
+
     func update(_ change: (inout StylePreferenceDraft) -> Void) {
         guard !pending, !unknown, saved == nil else { return }
         var changed = draft

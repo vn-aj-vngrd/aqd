@@ -53,13 +53,13 @@ struct RoutineOutfitChooser: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Choose outfits for a reviewed rotation. Selecting them doesn’t change saved dates.").foregroundStyle(AppTheme.secondary)
                 if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("Build an outfit in Closet, or leave your routine dates unassigned."), fillsAvailableSpace: false) }
-                ForEach(model.state.outfits.filter { selected.contains($0.id) || query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }) { outfit in
+                ForEach(model.state.outfits.filter { selected.contains($0.id) || query.isEmpty || $0.displayName.localizedCaseInsensitiveContains(query) }) { outfit in
                     Button {
                         if selected.contains(outfit.id) { selected.removeAll { $0 == outfit.id } } else { selected.append(outfit.id) }
                     } label: {
                         VStack(alignment: .leading, spacing: 8) {
                             OutfitComposition(pieceIDs: outfit.pieceIDs)
-                            HStack { Text(outfit.name); Spacer(); Image(systemName: selected.contains(outfit.id) ? "checkmark.circle.fill" : "circle") }
+                            HStack { Text(outfit.displayName); Spacer(); Image(systemName: selected.contains(outfit.id) ? "checkmark.circle.fill" : "circle") }
                                 .foregroundStyle(AppTheme.ink).frame(minHeight: 44)
                         }
                     }.buttonStyle(.plain).accessibilityValue(selected.contains(outfit.id) ? "Selected" : "Not selected")

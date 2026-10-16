@@ -17,6 +17,9 @@ final class FitEditorModel: Identifiable {
     init(state: AppState, draft: FitDraft) throws {
         self.state = state; self.draft = draft; id = draft.id; saved = try state.store?.savedFit(for: draft)
     }
+    var hasUnsavedChanges: Bool {
+        saved == nil && (pending || unknown || importing || error != nil || draft.hasChanges)
+    }
     var locked: Bool { pending || unknown || saved != nil }
     var canSave: Bool { !locked && !importing && (try? draft.result()) != nil }
     func update(_ change: (inout FitMemory) -> Void) {

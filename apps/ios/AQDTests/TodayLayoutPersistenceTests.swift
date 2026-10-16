@@ -2,10 +2,70 @@ import AQDCore
 import Foundation
 import SwiftData
 import Testing
+import UIKit
 @testable import AQD
 
 @Suite(.serialized) @MainActor
 struct TodayLayoutPersistenceTests {
+    @Test func everyWidgetCanConfigureReorderDuplicateRestoreAndSaveWithoutChangingWear() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let base = try store.todayConfiguration()
+        var themeDraft = ThemeDraft(ownerID: base.ownerID); themeDraft.name = "Widget capsule"
+        try store.saveThemeDraft(themeDraft)
+        let theme = try store.saveTheme(themeDraft); try store.finishThemeDraft(themeDraft)
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 24, height: 32)).image { context in
+            UIColor.brown.setFill(); context.fill(CGRect(x: 0, y: 0, width: 24, height: 32))
+        }
+        let data = try #require(image.jpegData(compressionQuality: 0.9))
+        let photo = try await PhotoPreparer().prepare(data: data)
+        let state = AppState(store: store); state.openTodayEditor()
+        let model = try #require(state.todayEditor)
+        for kind in TodayWidgetKind.allCases {
+            model.begin(TodayWidgetInstance(kind: kind))
+            switch kind {
+            case .personalNote:
+                #expect(!model.canApply)
+                model.nested { $0.options?.personal?.text = "A private outfit thought" }
+            case .personalPhoto:
+                _ = try store.acceptPhoto(photo)
+                #expect(!model.canApply)
+                model.nested { $0.options?.personal?.photoID = photo.id }
+            case .theme:
+                #expect(!model.canApply)
+                model.nested { $0.options?.pinnedID = theme.id }
+            case .upcomingPlans: model.nested { $0.options?.upcomingDays = 14 }
+            case .quickActions: model.nested { $0.options?.actions = [.addFit, .recordWear] }
+            default: break
+            }
+            try #require(model.canApply)
+            model.applyNested()
+            #expect(model.draft.nested == nil)
+            #expect(model.error == nil)
+        }
+        #expect(try store.todayConfiguration() == base)
+        let note = try #require(model.draft.value.instances.first { $0.kind == .personalNote })
+        let duplicate = note.independentCopy()
+        model.update { $0.value.instances.append(duplicate) }
+        #expect(duplicate.options?.personal?.id != note.options?.personal?.id)
+        model.move(duplicate.id, by: -1)
+        #expect(model.draft.value.instances.dropLast().last?.id == duplicate.id)
+        model.update { try $0.remove(note.id) }
+        let beforeDefaults = model.draft.value.instances
+        model.update { $0.restoreDefaults() }
+        #expect(model.draft.value.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse])
+        model.update { $0.undoDefaults() }
+        #expect(model.draft.value.instances == beforeDefaults)
+        model.begin(try #require(model.draft.value.instances.first))
+        model.cancelNested()
+        #expect(model.draft.value.instances == beforeDefaults)
+        await model.save()
+        #expect(state.todayEditor == nil)
+        let reopened = try PieceStore(directory: store.localDirectory)
+        #expect(try reopened.todayConfiguration().instances == beforeDefaults)
+        #expect(try reopened.wearRecords().isEmpty)
+        #expect(try reopened.todayPersonalCards().contains { $0.photoID == photo.id })
+    }
+
     @Test func noteLayoutIsAtomicUnknownRetryAndRestartKeepIndependentContentAndUndo() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         var deny = false, unknown = false

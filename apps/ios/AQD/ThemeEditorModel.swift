@@ -19,6 +19,17 @@ final class ThemeEditorModel: Identifiable {
         saved = try store.savedTheme(for: draft)
     }
 
+    var hasUnsavedChanges: Bool {
+        if saved != nil { return false }
+        if pending || unknown || error != nil { return true }
+        if draft.baseRevision == 0 {
+            return !draft.name.isEmpty || !draft.description.isEmpty || !draft.outfitIDs.isEmpty
+        }
+        guard let themes = try? store.themes(), let base = themes.first(where: { $0.id == draft.themeID }),
+              base.revision == draft.baseRevision else { return true }
+        return draft.name != base.name || draft.description != base.description || Set(draft.outfitIDs) != Set(base.outfitIDs)
+    }
+
     var canSave: Bool {
         guard !pending, !unknown, saved == nil,
               let themes = try? store.themes(), let outfits = try? store.outfits() else { return false }

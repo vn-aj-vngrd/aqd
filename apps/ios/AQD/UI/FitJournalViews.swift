@@ -87,7 +87,7 @@ struct FitJournalGrid: View {
                                         .padding(4)
                                         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                             }.buttonStyle(.plain).id(memory.id)
-                                .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.displayName ?? "unlinked"), \(memory.note)")
+                                .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.displayName ?? "unlinked"), \(memory.displayNote)")
                         }
                     }.padding(.horizontal, 20)
                 }
@@ -119,7 +119,7 @@ struct FitEditorView: View {
                     } else {
                         mediaContent
                         LabeledControl(title: "Private note") {
-                            TextField("What would you like to remember?", text: Binding(get: { model.draft.value.note }, set: { value in model.update { $0.note = value } }), axis: .vertical)
+                            TextField("What would you like to remember?", text: Binding(get: { model.draft.value.displayNote }, set: { value in model.update { $0.note = value } }), axis: .vertical)
                                 .lineLimit(4...12).font(AppTypography.body).disabled(model.locked)
                         }
                         Text("\(model.draft.value.note.count) / 500").font(AppTypography.metadata).foregroundStyle(model.draft.value.note.count > 500 ? AppTheme.error : AppTheme.secondary).frame(maxWidth: .infinity, alignment: .trailing)
@@ -138,7 +138,7 @@ struct FitEditorView: View {
                 .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() }
-                        else if !model.draft.hasChanges { model.finish(discarding: true) }
+                        else if !model.hasUnsavedChanges { model.finish(discarding: true) }
                         else { discard = true }
                     } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }.accessibilityLabel(model.saved == nil ? "Cancel fit" : "Done").disabled(model.pending || model.unknown)
                 } }
@@ -192,7 +192,7 @@ struct FitEditorView: View {
                         .disabled(model.locked)
                 }
             }
-            DisclosureRow(title: "Outfit", value: model.draft.value.outfit?.name ?? "Link an outfit") { choosingOutfit = true }.disabled(model.locked)
+            DisclosureRow(title: "Outfit", value: model.draft.value.outfit?.displayName ?? "Link an outfit") { choosingOutfit = true }.disabled(model.locked)
             if model.draft.value.outfit != nil {
                 Button("Unlink outfit") { _ = model.link(nil) }.frame(minHeight: 44).disabled(model.locked)
             }
@@ -221,7 +221,7 @@ private struct FitOutfitChooser: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("You can save this memory with a photo instead, or build an outfit in Closet.")) }
-                ForEach(model.state.outfits.filter { query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }) { outfit in
+                ForEach(model.state.outfits.filter { query.isEmpty || $0.displayName.localizedCaseInsensitiveContains(query) }) { outfit in
                     Button { if model.link(outfit) { dismiss() } } label: {
                         VStack(alignment: .leading, spacing: 8) { OutfitComposition(pieceIDs: outfit.pieceIDs); Text(outfit.displayName).foregroundStyle(AppTheme.ink) }
                     }.buttonStyle(.plain).disabled(model.locked)
@@ -248,7 +248,7 @@ struct FitMemoryDetailView: View {
                     FitMemoryArtwork(memory: memory).frame(minHeight: 240, maxHeight: 360)
                     VStack(alignment: .leading, spacing: 12) {
                         Text(memory.day.displayDate).font(AppTypography.detailTitle)
-                        if !memory.note.isEmpty { Text(memory.note).font(AppTypography.body) }
+                        if !memory.note.isEmpty { Text(memory.displayNote).font(AppTypography.body) }
                         Text("A fit memory. Wear is recorded separately.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                         DisclosureGroup("Memory details") {
                             Text(memory.day.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
@@ -258,7 +258,7 @@ struct FitMemoryDetailView: View {
                     if let snapshot = memory.outfit {
                         VStack(alignment: .leading, spacing: 16) {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(snapshot.name).font(AppTypography.fieldLabel)
+                                Text(snapshot.displayName).font(AppTypography.fieldLabel)
                                 Text("\(snapshot.pieces.count) pieces in this memory").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                             }
                             ForEach(snapshot.pieces, id: \.id) { piece in

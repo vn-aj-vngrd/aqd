@@ -9,24 +9,103 @@ struct PieceCollectionGrid: View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 2), alignment: .leading, spacing: 16) {
             ForEach(pieces) { piece in
                 NavigationLink(value: ClosetRoute.piece(piece.id)) {
-                    VStack(alignment: .leading, spacing: 0) {
+                    ClosetCard(title: piece.displayName, detail: [state.categoryName(for: piece), piece.details.color,
+                        piece.isArchived ? "Archived" : ""]
+                        .filter { !$0.isEmpty }.joined(separator: " · ")) {
                         PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
-                            .frame(maxWidth: .infinity).frame(height: 134)
-                            .padding(8).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10))
-                            .padding(8)
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(piece.displayName).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink).lineLimit(1).truncationMode(.tail)
-                            Text([state.categoryName(for: piece), piece.details.color,
-                                  piece.isArchived ? "Archived" : piece.availability == .available ? "" : piece.availability.rawValue.capitalized]
-                                .filter { !$0.isEmpty }.joined(separator: " · "))
-                                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).lineLimit(1).truncationMode(.tail)
-                        }.padding(.horizontal, 12).padding(.top, 4).padding(.bottom, 12)
-                    }.frame(maxWidth: .infinity, alignment: .leading)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                        .contentShape(RoundedRectangle(cornerRadius: 16))
+                            .frame(maxWidth: .infinity).frame(height: 134).clipped()
+                            .overlay(alignment: .topTrailing) { PieceAvailabilityBadge(piece: piece) }
+                    }
                 }.buttonStyle(.plain).id(piece.id)
             }
         }.scrollTargetLayout()
+    }
+}
+
+struct PieceAvailabilityBadge: View {
+    let piece: WardrobePiece
+    private var symbol: String {
+        if piece.isArchived { return "archivebox" }
+        switch piece.availability {
+        case .available: return "checkmark"
+        case .unavailable: return "xmark"
+        case .laundry: return "washer"
+        }
+    }
+    private var tint: Color {
+        if piece.isArchived { return AppTheme.secondary }
+        switch piece.availability {
+        case .available: return AppTheme.success
+        case .unavailable: return AppTheme.error
+        case .laundry: return AppTheme.information
+        }
+    }
+    var body: some View {
+        Image(systemName: symbol).font(.system(size: 11, weight: .semibold)).foregroundStyle(tint)
+            .frame(width: 24, height: 24).background(AppTheme.surface, in: Circle())
+            .accessibilityLabel(piece.isArchived ? "Archived" : piece.availability.rawValue.capitalized)
+    }
+}
+
+/// Collection previews stay bounded; saved outfits keep every selected piece.
+struct CollectionArtwork: View {
+    @Environment(AppState.self) private var state
+    let pieceIDs: [UUID]
+    var badge: String? = nil
+    private var shown: [UUID] { Array(pieceIDs.prefix(4)) }
+    var body: some View {
+        GeometryReader { geometry in
+            let columns = shown.count == 1 ? 1 : 2
+            let rows = max(1, (shown.count + columns - 1) / columns)
+            let height = max(0, (geometry.size.height - CGFloat(rows - 1) * 6) / CGFloat(rows))
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: columns), spacing: 6) {
+                ForEach(shown, id: \.self) { id in
+                    if let piece = state.ownedPieces.first(where: { $0.id == id }) {
+                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                            .frame(maxWidth: .infinity).frame(height: height).clipped()
+                            .accessibilityLabel(piece.displayName)
+                    } else {
+                        Image(systemName: "tshirt").foregroundStyle(AppTheme.secondary)
+                            .frame(maxWidth: .infinity).frame(height: height).accessibilityLabel("Piece unavailable")
+                    }
+                }
+            }
+            if shown.isEmpty {
+                Image(systemName: "folder").font(.title2).foregroundStyle(AppTheme.secondary)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity).accessibilityLabel("Empty theme")
+            }
+        }
+        .frame(height: 134).clipped()
+        .overlay(alignment: .bottomTrailing) {
+            if let text = badge ?? (pieceIDs.count > 4 ? "+\(pieceIDs.count - 4) more" : nil) {
+                Text(text).font(AppTypography.metadata).lineLimit(1).truncationMode(.tail)
+                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .background(AppTheme.surface, in: Capsule()).padding(4)
+                    .accessibilityLabel(text)
+            }
+        }
+    }
+}
+
+struct ClosetCard<Artwork: View>: View {
+    let title: String
+    let detail: String
+    var favorite = false
+    @ViewBuilder var artwork: () -> Artwork
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            artwork().padding(8).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10)).padding(8)
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 4) {
+                    Text(title).font(AppTypography.fieldLabel).lineLimit(1).truncationMode(.tail)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    if favorite { Image(systemName: "heart.fill").font(AppTypography.metadata).foregroundStyle(AppTheme.actionText).accessibilityLabel("Favorite") }
+                }.foregroundStyle(AppTheme.ink)
+                Text(detail).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).lineLimit(1).truncationMode(.tail)
+            }.padding(.horizontal, 12).padding(.top, 4).padding(.bottom, 12)
+        }.frame(maxWidth: .infinity, alignment: .leading)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+            .contentShape(RoundedRectangle(cornerRadius: 16))
     }
 }
 
@@ -35,26 +114,17 @@ struct OutfitCollectionCard: View {
     let outfit: Outfit
     var body: some View {
         NavigationLink(value: ClosetRoute.outfit(outfit.id)) {
-            VStack(alignment: .leading, spacing: 12) {
-                OutfitComposition(pieceIDs: outfit.pieceIDs)
-                    .padding(12).frame(maxWidth: .infinity)
-                    .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10))
-                HStack {
-                    Text(outfit.displayName).font(AppTypography.section)
-                    if outfit.isFavorite { Image(systemName: "heart.fill").foregroundStyle(AppTheme.actionText).accessibilityLabel("Favorite") }
-                }.foregroundStyle(AppTheme.ink)
-                let memberships = state.themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.name)
-                Text((["\(outfit.pieceIDs.count) pieces"] + memberships).joined(separator: " · "))
-                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-            }.padding(12).frame(maxWidth: .infinity, alignment: .leading)
-                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                .contentShape(RoundedRectangle(cornerRadius: 16))
+            let memberships = state.themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.displayName)
+            ClosetCard(title: outfit.displayName, detail: (["\(outfit.pieceIDs.count) pieces"] + memberships).joined(separator: " · "), favorite: outfit.isFavorite) {
+                CollectionArtwork(pieceIDs: outfit.pieceIDs)
+            }
         }.buttonStyle(.plain).id(outfit.id)
     }
 }
 
 struct ThemeCollectionView: View {
     @Environment(AppState.self) private var state
+    @Environment(\.dynamicTypeSize) private var typeSize
     var query = ThemeCollectionQuery()
     var clearFilters: () -> Void = {}
     private var themes: [OutfitTheme] { query.apply(to: state.themes) }
@@ -75,7 +145,9 @@ struct ThemeCollectionView: View {
                             SemanticFeedback(role: .danger, message: error)
                             Button("Retry themes") { state.reloadThemes() }
                         }
-                        ForEach(themes) { ThemeCollectionCard(theme: $0) }
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 16) {
+                            ForEach(themes) { ThemeCollectionCard(theme: $0) }
+                        }.scrollTargetLayout()
                     }.padding(20).scrollTargetLayout()
                 }.scrollPosition(id: Binding(get: { state.closetThemeAnchor }, set: { state.closetThemeAnchor = $0 }))
             }
@@ -89,20 +161,9 @@ struct ThemeCollectionCard: View {
     private var members: [Outfit] { state.outfits.filter { theme.outfitIDs.contains($0.id) } }
     var body: some View {
         NavigationLink(value: ClosetRoute.theme(theme.id)) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 12) {
-                    Text(theme.displayName).font(AppTypography.body).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(theme.outfitIDs.count) outfits").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    Image(systemName: "chevron.forward").foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
-                }.frame(minHeight: 54)
-                if !members.isEmpty {
-                    HStack(spacing: 8) {
-                        ForEach(Array(members.prefix(3))) { OutfitComposition(pieceIDs: $0.pieceIDs, pieceHeight: 30, limit: 4) }
-                    }.padding(8).frame(maxWidth: .infinity)
-                        .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10))
-                    if members.count > 3 { Text("\(members.count - 3) more outfits").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
-                }
-            }.padding(14).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+            ClosetCard(title: theme.displayName, detail: "\(theme.outfitIDs.count) outfits") {
+                CollectionArtwork(pieceIDs: members.first?.pieceIDs ?? [], badge: members.count > 1 ? "+\(members.count - 1) outfits" : nil)
+            }
         }.buttonStyle(.plain).id(theme.id)
     }
 }
@@ -124,7 +185,7 @@ struct ThemeDetailView: View {
             if let theme = state.themes.first(where: { $0.id == id }) {
                 VStack(alignment: .leading, spacing: 20) {
                     Text("\(theme.outfitIDs.count) outfits · Private theme").foregroundStyle(AppTheme.secondary)
-                    if !theme.description.isEmpty { Text(theme.description) }
+                    if !theme.description.isEmpty { Text(theme.displayDescription) }
                     if let error = state.outfitError {
                         SemanticFeedback(role: .danger, message: error)
                         Button("Retry outfits") { state.reloadOutfits() }
@@ -136,7 +197,7 @@ struct ThemeDetailView: View {
                 }.padding(20)
             } else { AppEmptyState("Theme unavailable", systemImage: "folder", description: Text("The theme is no longer in this closet.")) }
         }.background(AppTheme.canvas)
-            .navigationTitle(state.themes.first { $0.id == id }?.name ?? "Theme").navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(state.themes.first { $0.id == id }?.displayName ?? "Theme").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if let theme = state.themes.first(where: { $0.id == id }) {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -144,7 +205,6 @@ struct ThemeDetailView: View {
                             Button("Edit theme", systemImage: "square.and.pencil") { state.openTheme(editing: theme) }
                             Button("Add outfits", systemImage: "plus") { state.openTheme(editing: theme, chooseOutfits: true) }
                             Button("Build an outfit", systemImage: "square.stack") { state.buildOutfit(themeID: theme.id) }
-                            Button("Suggest an outfit", systemImage: "sparkles") { state.buildOutfit(suggest: true, themeID: theme.id) }
                             Button("Delete theme", systemImage: "trash", role: .destructive) {
                                 deletion = ThemeDeletionRequest(theme: theme); confirming = true
                             }

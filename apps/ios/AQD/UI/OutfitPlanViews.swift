@@ -33,7 +33,7 @@ struct OutfitPlanEditorView: View {
                     if let saved = model.saved {
                         Text("Plan saved").font(AppTypography.section)
                         Text(saved.day.displayDate).font(AppTypography.body)
-                        Text(saved.state == .unassigned ? "Outfit unassigned" : model.draft.outfit?.name ?? "Planned outfit")
+                        Text(saved.state == .unassigned ? "Outfit unassigned" : model.draft.outfit?.displayName ?? "Planned outfit")
                         Text("Planning never records wear.").foregroundStyle(AppTheme.secondary)
                         PrimaryAction(title: "Open Planner") { model.finish(openPlanner: true) }
                     } else {
@@ -51,7 +51,7 @@ struct OutfitPlanEditorView: View {
                         LabeledField(title: "Occasion", text: Binding(get: { model.draft.occasion }, set: { value in
                             model.update { $0.occasion = value; $0.allowsOverlap = nil }
                         })).disabled(model.pending || model.unknown)
-                        DisclosureRow(title: "Outfit", value: model.draft.outfit?.name ?? "Choose outfit") { choosing = true }
+                        DisclosureRow(title: "Outfit", value: model.draft.outfit?.displayName ?? "Choose outfit") { choosing = true }
                             .disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Timezone", value: model.draft.day.timeZoneID) { choosingZone = true }
                             .disabled(model.pending || model.unknown || namedPlan != nil)
@@ -88,7 +88,9 @@ struct OutfitPlanEditorView: View {
                 .toolbar {
                     ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                         Button {
-                            if model.saved != nil { model.finish() } else { discard = true }
+                            if model.saved != nil { model.finish() }
+                            else if model.hasUnsavedChanges { discard = true }
+                            else { model.finish(discarding: true) }
                         } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
                             .tint(AppTheme.ink).accessibilityLabel(model.saved == nil ? "Cancel plan" : "Done")
                             .disabled(model.pending || model.unknown)
@@ -128,14 +130,14 @@ private struct PlanOutfitChooser: View {
                     AppEmptyState("No saved outfits", systemImage: "square.stack",
                                            description: Text("Keep this date unassigned, or save an outfit in Closet first."))
                 }
-                ForEach(model.state.outfits.filter { query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }) { outfit in
+                ForEach(model.state.outfits.filter { query.isEmpty || $0.displayName.localizedCaseInsensitiveContains(query) }) { outfit in
                     Button {
                         model.update { $0.outfit = outfit; $0.unassignedByChoice = nil; $0.allowsOverlap = nil }
                         if model.error == nil { dismiss() }
                     } label: {
                         VStack(alignment: .leading, spacing: 8) {
                             OutfitComposition(pieceIDs: outfit.pieceIDs)
-                            Text(outfit.name).foregroundStyle(AppTheme.ink)
+                            Text(outfit.displayName).foregroundStyle(AppTheme.ink)
                         }
                     }.buttonStyle(.plain)
                 }

@@ -139,3 +139,5 @@ Expose the task in the localized accessibility label, such as “Suggest an outf
 | Jump to latest | `arrow.down` / Jump to latest response |
 
 All icon-only actions have at least 44 pt targets. AI badges identify focused assistance outside Agent only, never Agent suggestion/retry actions, manual selection, mic recording, media readiness or navigation. Stop keeps the shared square symbol and spoken busy/cancellation state.
+
+Owner October17 piece availability: compact noninteractive24pt status badges on collection artwork use SF checkmark for Available, xmark for Unavailable and washer for Laundry, with archivebox for archived rows. Semantic success/error/information/secondary colors supplement distinct symbols; each badge has its status accessibility label and never implies a save acknowledgement. They are content statuses, not additional action targets. Widget-kind cues in Customize Today and its library share primary ink.

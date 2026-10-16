@@ -47,7 +47,8 @@ struct StyleEditorView: View {
                         Button {
                             if page > 0 {
                                 model.update { $0.page = $0.editingFromReview ? 6 : $0.page - 1; $0.editingFromReview = false }
-                            } else { confirmsDiscard = true }
+                            } else if model.hasUnsavedChanges { confirmsDiscard = true }
+                            else { model.discard() }
                         } label: { Label("Back", systemImage: "chevron.backward") }
                         .disabled(model.pending || model.unknown)
                         .accessibilityIdentifier("style.back").tint(AppTheme.ink)

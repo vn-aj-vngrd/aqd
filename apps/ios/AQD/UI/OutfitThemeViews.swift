@@ -28,7 +28,7 @@ struct OutfitThemeChooser: View {
                         if selected.contains(theme.id) { selected.remove(theme.id) } else { selected.insert(theme.id) }
                     } label: {
                         HStack(spacing: 16) {
-                            Text(theme.name).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
+                            Text(theme.displayName).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
                             Image(systemName: selected.contains(theme.id) ? "checkmark" : "circle")
                                 .frame(width: 22).foregroundStyle(selected.contains(theme.id) ? AppTheme.actionText : AppTheme.secondary)
                         }.frame(minHeight: 54).padding(.horizontal, 14)
@@ -97,12 +97,12 @@ struct ThemeEditorView: View {
                     if let notice = model.notice { Text(notice).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
                     if let saved = model.saved {
                         Text("Theme saved").font(AppTypography.section)
-                        Text(saved.name)
+                        Text(saved.displayName)
                         Text("Your outfits can belong to more than one theme.").foregroundStyle(AppTheme.secondary)
 
                     } else {
-                        LabeledField(title: "Name", text: Binding(get: { model.draft.name }, set: { name in model.update { $0.name = name } })).disabled(model.pending || model.unknown)
-                        LabeledField(title: "Description", text: Binding(get: { model.draft.description }, set: { value in model.update { $0.description = value } }), multiline: true).disabled(model.pending || model.unknown)
+                        LabeledField(title: "Name", text: Binding(get: { model.draft.displayName }, set: { name in model.update { $0.name = name } })).disabled(model.pending || model.unknown)
+                        LabeledField(title: "Description", text: Binding(get: { model.draft.displayDescription }, set: { value in model.update { $0.description = value } }), multiline: true).disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Outfits", value: model.draft.outfitIDs.isEmpty ? "None selected" : "\(model.draft.outfitIDs.count) selected") { choosingOutfits = true }.disabled(model.pending || model.unknown)
                         Text("An outfit can belong to more than one theme.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
 
@@ -118,7 +118,9 @@ struct ThemeEditorView: View {
                 .toolbar {
                     ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                         Button {
-                            if model.saved != nil { finishSaved() } else { discard = true }
+                            if model.saved != nil { finishSaved() }
+                            else if model.hasUnsavedChanges { discard = true }
+                            else if model.finish(discarding: true) { dismiss() }
                         } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
                             .tint(AppTheme.ink).accessibilityLabel(model.saved == nil ? "Cancel theme" : "Done")
                             .disabled(model.pending || model.unknown)
@@ -167,7 +169,7 @@ private struct ThemeOutfitChooser: View {
                         if selected.contains(outfit.id) { selected.remove(outfit.id) } else { selected.insert(outfit.id) }
                     } label: {
                         HStack {
-                            Text(outfit.name).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
+                            Text(outfit.displayName).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
                             Image(systemName: selected.contains(outfit.id) ? "checkmark.circle.fill" : "circle")
                         }.frame(minHeight: 54).padding(.horizontal, 14)
                             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))

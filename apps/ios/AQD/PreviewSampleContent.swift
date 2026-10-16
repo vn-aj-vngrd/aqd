@@ -28,14 +28,14 @@ import UIKit
     static let planContexts = ["Team planning", "Coffee and errands", "Sunday market", "Client meeting", "Lunch by the waterfront", "Dinner with friends", "Project catch-up"]
     static let legacyFitNote = "Sample fit memory for preview only. This does not represent your photo or recorded wear."
     static let fitNotes = [
-        "Sample preview · A blue coat adds a little color to a city walk. Illustrative photo, not recorded wear.",
-        "Sample preview · Burgundy layers and sunglasses for an afternoon outside. Illustrative photo, not recorded wear.",
-        "Sample preview · Cream and tan with sneakers for a relaxed weekend. Not recorded wear.",
-        "Sample preview · Navy layers, a cotton shirt and loafers for a cooler morning. Not recorded wear.",
-        "Sample preview · A blue shirt with sand linen trousers for a long lunch. Not recorded wear.",
-        "Sample preview · A cream dress and navy coat for dinner. Not recorded wear.",
-        "Sample preview · Charcoal trousers, a cotton shirt and loafers for the studio. Not recorded wear.",
-        "Sample preview · Denim and ivory sneakers for coffee and errands. Not recorded wear."]
+        "A blue coat adds a little color to a city walk. Illustrative photo, not recorded wear.",
+        "Burgundy layers and sunglasses for an afternoon outside. Illustrative photo, not recorded wear.",
+        "Cream and tan with sneakers for a relaxed weekend. Not recorded wear.",
+        "Navy layers, a cotton shirt and loafers for a cooler morning. Not recorded wear.",
+        "A blue shirt with sand linen trousers for a long lunch. Not recorded wear.",
+        "A cream dress and navy coat for dinner. Not recorded wear.",
+        "Charcoal trousers, a cotton shirt and loafers for the studio. Not recorded wear.",
+        "Denim and ivory sneakers for coffee and errands. Not recorded wear."]
     static func legacyPlanOccasion(_ index: Int) -> String {
         "Sample · " + ["Office day", "Coffee run", "Weekend ease", "City layers", "Linen afternoon", "Evening out"][index % 6]
     }
@@ -90,8 +90,8 @@ import UIKit
         for (index, spec) in specs.enumerated() {
             guard let data = WelcomeGarments.images[spec.0]?.pngData() else { throw Failure.missingArtwork }
             let photoID = try await photo(data)
-            let piece = WardrobePiece(id: id(index + 1), name: "Sample · \(spec.1)", category: spec.2, photoID: photoID,
-                details: PieceDetails(color: spec.3, notes: "Sample preview artwork. This is not a personal wardrobe upload."),
+            let piece = WardrobePiece(id: id(index + 1), name: spec.1, category: spec.2, photoID: photoID,
+                details: PieceDetails(color: spec.3, notes: "Preview artwork. This is not a personal wardrobe upload."),
                 availability: index == 1 ? .laundry : index == 3 ? .unavailable : .available,
                 createdAt: now.addingTimeInterval(Double(-index) * 86400), updatedAt: now)
             bundle.pieces.append(piece)
@@ -101,14 +101,14 @@ import UIKit
             ("Weekend ease", [7, 10, 11]), ("City layers", [3, 1, 5, 9]),
             ("Linen afternoon", [1, 6, 9, 12]), ("Evening out", [7, 3, 9])]
         for (index, look) in looks.enumerated() {
-            bundle.outfits.append(Outfit(id: id(101 + index), ownerID: owner, name: "Sample · \(look.0)",
-                pieceIDs: look.1.map(id), mood: "Sample preview", occasion: look.0, isFavorite: index < 3,
+            bundle.outfits.append(Outfit(id: id(101 + index), ownerID: owner, name: look.0,
+                pieceIDs: look.1.map(id), occasion: look.0, isFavorite: index < 3,
                 createdAt: now, updatedAt: now.addingTimeInterval(Double(-index) * 60)))
         }
         let themes: [(String, [Int])] = [("Weekday", [101, 104]), ("Off duty", [102, 103, 105]), ("Evening", [106, 104]), ("Ideas to collect", [])]
         for (index, theme) in themes.enumerated() {
-            bundle.themes.append(OutfitTheme(id: id(201 + index), ownerID: owner, name: "Sample · \(theme.0)",
-                description: "Sample collection for previewing the app.", outfitIDs: theme.1.map(id)))
+            bundle.themes.append(OutfitTheme(id: id(201 + index), ownerID: owner, name: theme.0,
+                description: "A private outfit collection.", outfitIDs: theme.1.map(id)))
         }
         var calendar = Calendar(identifier: .gregorian); calendar.timeZone = timeZone
         for index in 0..<7 {

@@ -114,7 +114,7 @@ struct PieceCaptureView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.large) {
                 mediaContent
-                LabeledField(title: "Name", text: Binding(get: { model.draft.name },
+                LabeledField(title: "Name", text: Binding(get: { model.draft.displayName },
                                                          set: { model.update(\.name, value: $0) }),
                              prompt: "e.g. Cotton shirt", validation: nameValidation, accessibilityID: "capture.field.name",
                              editingFocus: $nameEditing)
@@ -233,7 +233,7 @@ struct PieceCaptureView: View {
     private func receipt(_ piece: WardrobePiece) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                Text(piece.name).font(.title2.weight(.medium))
+                Text(piece.displayName).font(.title2.weight(.medium))
                 SemanticFeedback(role: .success, message: "Saved privately on this device.")
                 if model.receiptIsHistorical {
                     Text("This receipt shows an earlier saved revision. Your closet opens the current piece.")

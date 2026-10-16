@@ -16,12 +16,17 @@ struct TodayWidgetConfigurationView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     if let instance {
-                        configuration(instance).disabled(model.locked)
+                        Label(instance.kind.title, systemImage: instance.kind.symbol)
+                            .font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
+                        VStack(alignment: .leading, spacing: 20) {
+                            configuration(instance)
+                        }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).disabled(model.locked)
                         if let error = model.error { SemanticFeedback(role: .danger, message: error) }
 
                     }
-                }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle(instance?.kind.title ?? "Configure widget").navigationBarTitleDisplayMode(.inline)
+                }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
+            }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading).background(AppTheme.canvas).navigationTitle(instance?.kind.title ?? "Configure widget").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 if instance != nil { confirmation }
             } }
@@ -45,18 +50,19 @@ struct TodayWidgetConfigurationView: View {
             if let period = instance.options?.period {
                 DatePicker(instance.kind == .weekInWear ? "Week containing" : "Completed month", selection: Binding(get: { (try? period.date()) ?? Date() }, set: { date in model.nested { $0.options?.period = LocalPlanDay(date: date) } }), in: ...Date(), displayedComponents: .date)
             }
-            Text("Only recorded wear counts. Future or incomplete reporting periods cannot be applied.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            Text(instance.kind == .closetInUse ? "Only completed months can be selected. Plans and earlier estimates are excluded." : "Only recorded wear in this week counts. Plans and earlier estimates are excluded.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
         case .upcomingPlans:
             Picker("Window", selection: Binding(get: { instance.options?.upcomingDays ?? 7 }, set: { days in model.nested { $0.options?.upcomingDays = days } })) { Text("Next seven days").tag(7); Text("Next fourteen days").tag(14) }
             sourcePicker(instance, title: "Plan", choices: model.state.planDefinitions.map { ($0.id, $0.name) }, defaultTitle: "Follow upcoming plans")
         case .todayLook:
             sourcePicker(instance, title: "Plan entry", choices: model.state.planEntries.map { ($0.id, "\($0.day.key) · \($0.occasion.isEmpty ? "Occasion" : $0.occasion)") }, defaultTitle: "Follow Today")
         case .wearAgain:
-            sourcePicker(instance, title: "Piece", choices: model.state.pieces.filter { $0.availability == .available }.map { ($0.id, $0.name) }, defaultTitle: "Least recently recorded")
+            sourcePicker(instance, title: "Piece", choices: model.state.pieces.filter { $0.availability == .available }.map { ($0.id, $0.displayName) }, defaultTitle: "Least recently recorded")
         case .favoriteOutfits:
-            sourcePicker(instance, title: "Outfit", choices: model.state.outfits.map { ($0.id, $0.name) }, defaultTitle: "Owned favorites")
+            sourcePicker(instance, title: "Outfit", choices: model.state.outfits.map { ($0.id, $0.displayName) }, defaultTitle: "Owned favorites")
         case .theme:
-            sourcePicker(instance, title: "Theme", choices: model.state.themes.map { ($0.id, $0.name) }, defaultTitle: "Choose a theme")
+            sourcePicker(instance, title: "Theme", choices: model.state.themes.map { ($0.id, $0.displayName) }, defaultTitle: "Choose a theme")
+            if instance.options?.pinnedID == nil { Text("Choose a theme or create one before tapping Done.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
             Button("Create theme") {
                 do {
                     guard let store = model.state.store else { return }
@@ -72,13 +78,15 @@ struct TodayWidgetConfigurationView: View {
     }
     private func sourcePicker(_ instance: TodayWidgetInstance, title: String, choices: [(UUID, String)], defaultTitle: String) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Picker(title, selection: Binding(get: { instance.options?.pinnedID }, set: { id in model.nested { $0.options?.pinnedID = id } })) {
-                Text(defaultTitle).tag(nil as UUID?)
-                ForEach(choices, id: \.0) { choice in Text(choice.1).tag(Optional(choice.0)) }
-                if let pin = instance.options?.pinnedID, !choices.contains(where: { $0.0 == pin }) { Text("Selected source unavailable").tag(Optional(pin)) }
+            LabeledControl(title: title) {
+                Picker(title, selection: Binding(get: { instance.options?.pinnedID }, set: { id in model.nested { $0.options?.pinnedID = id } })) {
+                    Text(defaultTitle).tag(nil as UUID?)
+                    ForEach(choices, id: \.0) { choice in Text(choice.1).tag(Optional(choice.0)) }
+                    if let pin = instance.options?.pinnedID, !choices.contains(where: { $0.0 == pin }) { Text("Selected source unavailable").tag(Optional(pin)) }
+                }.pickerStyle(.menu).labelsHidden().frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
             }
-            if choices.isEmpty { Text("No saved \(title.lowercased()) records yet. Your layout draft stays here.").foregroundStyle(AppTheme.secondary) }
-        }
+            if choices.isEmpty { Text("No saved \(title.lowercased()) records yet. Your layout draft stays here.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+        }.frame(maxWidth: .infinity, alignment: .leading)
     }
     @ViewBuilder private func personal(_ instance: TodayWidgetInstance) -> some View {
         NavigationLink("Saved notes and photos") { SavedTodayCardsView(model: model) }.frame(minHeight: 44)
@@ -106,6 +114,7 @@ struct TodayWidgetConfigurationView: View {
                     model.nested { instance in var actions = instance.options?.actions ?? TodayAction.defaults; actions.removeAll { $0 == action }; if enabled { actions.append(action) }; instance.options?.actions = actions }
                 }))
             }
+            if selected.isEmpty { SemanticFeedback(role: .warning, message: "Choose at least one action before tapping Done.") }
             Text("Actions appear in selection order. Turn an action off and on to move it to the end. Keep at least one.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
         }
     }

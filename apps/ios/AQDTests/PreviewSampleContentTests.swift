@@ -40,7 +40,7 @@ struct PreviewSampleContentTests {
             let prior = try #require(fits.first { $0.id == value.id })
             if result.updatedFits.contains(value.id) {
                 var expected = prior; expected.note = value.note; expected.revision += 1
-                #expect(value == expected && value.note.contains("Sample preview"))
+                #expect(value == expected && value.note.localizedCaseInsensitiveContains("not recorded wear"))
             } else { #expect(value == prior) }
         }
         let backup = output.appendingPathComponent(try #require(result.backup))

@@ -23,14 +23,14 @@ struct AgentActionComposerView: View {
                 if ["Outfit", "Wear", "Availability"].contains(kind) {
                     Section("Pieces") {
                         ForEach(state.pieces) { piece in
-                            Toggle(piece.name, isOn: Binding(get: { pieceIDs.contains(piece.id) }, set: { value in
+                            Toggle(piece.displayName, isOn: Binding(get: { pieceIDs.contains(piece.id) }, set: { value in
                                 if value { if kind == "Availability" { pieceIDs = [] }; pieceIDs.insert(piece.id) } else { pieceIDs.remove(piece.id) }
                             }))
                         }
                     }
                 } else {
                     Section("Outfits") { ForEach(state.outfits) { outfit in
-                        Toggle(outfit.name, isOn: Binding(get: { outfitIDs.contains(outfit.id) }, set: { value in if value { if kind == "Plan" { outfitIDs = [] }; outfitIDs.insert(outfit.id) } else { outfitIDs.remove(outfit.id) } }))
+                        Toggle(outfit.displayName, isOn: Binding(get: { outfitIDs.contains(outfit.id) }, set: { value in if value { if kind == "Plan" { outfitIDs = [] }; outfitIDs.insert(outfit.id) } else { outfitIDs.remove(outfit.id) } }))
                     } }
                 }
                 if kind == "Availability" { Picker("Availability", selection: $availability) { ForEach(PieceAvailability.allCases, id: \.self) { Text($0.rawValue.capitalized).tag($0) } } }
@@ -109,12 +109,12 @@ struct AgentActionReviewView: View {
     }
     @ViewBuilder private func preview(_ action: AgentReviewedAction) -> some View {
         switch action {
-        case .theme(let draft): Text(draft.name).font(.headline); ForEach(draft.outfitIDs, id: \.self) { id in Text(state.outfits.first { $0.id == id }?.name ?? "Unavailable outfit") }
-        case .outfit(let draft): Text(draft.name).font(.headline); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.name ?? "Unavailable piece") }
+        case .theme(let draft): Text(draft.displayName).font(.headline); ForEach(draft.outfitIDs, id: \.self) { id in Text(state.outfits.first { $0.id == id }?.displayName ?? "Unavailable outfit") }
+        case .outfit(let draft): Text(draft.displayName).font(.headline); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }
         case .plan(let draft):
             Text(draft.plan.name).font(.headline)
-            ForEach(draft.slots) { slot in VStack(alignment: .leading) { Text(slot.day.key + " · " + slot.day.timeZoneID); Text(slot.outfit?.name ?? "Intentionally unassigned") } }
-        case .wear(let draft): Text(draft.day.key + " · " + draft.day.timeZoneID); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.name ?? "Unavailable piece") }; Text("Records actual wear. This is separate from a plan or fit memory.")
+            ForEach(draft.slots) { slot in VStack(alignment: .leading) { Text(slot.day.key + " · " + slot.day.timeZoneID); Text(slot.outfit?.displayName ?? "Intentionally unassigned") } }
+        case .wear(let draft): Text(draft.day.key + " · " + draft.day.timeZoneID); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }; Text("Records actual wear. This is separate from a plan or fit memory.")
         case .availability(let change): Text(change.pieceName).font(.headline); Text("Availability → " + change.value.rawValue.capitalized); Text("Affected future plans will require review; actual wear stays.")
         }
     }

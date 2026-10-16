@@ -18,7 +18,7 @@ struct TodayView: View {
                     }
                     if let configuration = state.today {
                         if !configuration.instances.contains(where: { $0.kind == .weatherContext }) {
-                            VStack(alignment: .leading, spacing: 12) {
+                            VStack(alignment: .leading, spacing: 8) {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("Before you head out").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                                     Text("Weather").font(AppTypography.detailTitle)

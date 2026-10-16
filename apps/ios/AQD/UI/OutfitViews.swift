@@ -15,7 +15,7 @@ struct OutfitEditorView: View {
                     if let saved = model.saved {
                         OutfitComposition(pieceIDs: saved.pieceIDs)
                         Text("Outfit saved").font(AppTypography.section)
-                        Text(saved.name).font(AppTypography.body)
+                        Text(saved.displayName).font(AppTypography.body)
                         Text("Only you. Saving an outfit doesn’t plan a day or record wear.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         PrimaryAction(title: "Open outfit") { model.finish(openOutfit: true) }
@@ -39,7 +39,7 @@ struct OutfitEditorView: View {
                             }.foregroundStyle(AppTheme.ink).padding(AppSpacing.screen)
                                 .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                         }.buttonStyle(.plain).disabled(locked).accessibilityIdentifier("outfit.choosePieces")
-                        LabeledField(title: "Outfit name", text: Binding(get: { model.draft.name }, set: { value in model.update { $0.name = value } }),
+                        LabeledField(title: "Outfit name", text: Binding(get: { model.draft.displayName }, set: { value in model.update { $0.name = value } }),
                                      prompt: "e.g. An easy afternoon", accessibilityID: "outfit.displayName").disabled(locked)
                         DisclosureRow(title: "Themes", value: model.draft.themeIDs?.isEmpty == false ? "\(model.draft.themeIDs?.count ?? 0) selected" : "None selected") { choosingThemes = true }
                             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field)).disabled(locked)
@@ -145,6 +145,7 @@ enum OutfitCollectionSort: String, CaseIterable {
 }
 
 struct OutfitCollectionView: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(AppState.self) private var state
     var favoritesOnly = false
     var themeID: UUID?
@@ -176,7 +177,9 @@ struct OutfitCollectionView: View {
                             SemanticFeedback(role: .danger, message: error)
                             Button("Retry outfits") { state.reloadOutfits() }.frame(minHeight: 44)
                         } else {
-                            ForEach(outfits) { OutfitCollectionCard(outfit: $0) }
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 16) {
+                                ForEach(outfits) { OutfitCollectionCard(outfit: $0) }
+                            }.scrollTargetLayout()
                         }
                     }.padding(20).scrollTargetLayout()
                 }.scrollPosition(id: Binding(get: { state.closetOutfitAnchor }, set: { state.closetOutfitAnchor = $0 }))
@@ -238,7 +241,7 @@ struct OutfitDetailView: View {
                 }
             }
         }.background(AppTheme.canvas)
-            .navigationTitle(state.outfits.first { $0.id == id }?.name ?? "Outfit").navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(state.outfits.first { $0.id == id }?.displayName ?? "Outfit").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if let outfit = state.outfits.first(where: { $0.id == id }) {
                     ToolbarItem(placement: .topBarTrailing) {

@@ -30,7 +30,7 @@ struct PieceDeletionView: View {
                         Text("Empty outfits and their theme memberships are removed. Future plans keep their dates and occasions for re-selection. Original Photos and historical wear snapshots stay. Unreferenced AQD photos are removed.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         Button(role: .destructive) { confirming = true } label: {
-                            Text("Delete \(piece.name)").frame(maxWidth: .infinity, minHeight: 48)
+                            Text("Delete \(piece.displayName)").frame(maxWidth: .infinity, minHeight: 48)
                         }.buttonStyle(.borderedProminent).tint(AppTheme.dangerFill)
                     }
                     if let error {
@@ -45,7 +45,7 @@ struct PieceDeletionView: View {
                     Button { dismiss() } label: { Image(systemName: "xmark") }.tint(AppTheme.ink)
                         .accessibilityLabel("Cancel deletion").disabled(submitted)
                 } }
-                .confirmationDialog("Delete \(piece.name)?", isPresented: $confirming, titleVisibility: .visible) {
+                .confirmationDialog("Delete \(piece.displayName)?", isPresented: $confirming, titleVisibility: .visible) {
                     Button("Delete piece", role: .destructive, action: remove)
                     Button("Cancel", role: .cancel) {}
                 } message: { Text("This deletes the reviewed piece and changes the references shown here. This cannot be undone.") }
@@ -54,7 +54,7 @@ struct PieceDeletionView: View {
 
     private func outfitImpactLabel(_ outfit: Outfit) -> String {
         let effect = outfit.pieceIDs.count == 1 ? "removed when empty" : "remaining pieces retained"
-        return outfit.name + " · " + effect
+        return outfit.displayName + " · " + effect
     }
 
     private func review() {

@@ -70,7 +70,7 @@ struct WearAgendaRow: View {
         HStack(spacing: 12) {
             OutfitComposition(pieceIDs: record.pieces.map(\.id), pieceHeight: 56, limit: 2).frame(width: 64, height: 80).clipped()
             VStack(alignment: .leading, spacing: 4) {
-                Text(record.pieces.map(\.name).joined(separator: ", ")).font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                Text(record.pieces.map(\.displayName).joined(separator: ", ")).font(AppTypography.body).foregroundStyle(AppTheme.ink)
                 Text("\(record.day.key) · \(record.pieces.count) pieces · Recorded").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             }.frame(maxWidth: .infinity, alignment: .leading)
             Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).frame(width: 22).accessibilityHidden(true)
