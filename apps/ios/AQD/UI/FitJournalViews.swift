@@ -6,15 +6,54 @@ struct FitMemoryArtwork: View {
     var thumbnail = false
     @Environment(AppState.self) private var state
     var body: some View {
-        Group {
-            if let id = memory.photoID {
-                if let data = photoData(id), let image = UIImage(data: data) {
-                    Image(uiImage: image).resizable().scaledToFit().accessibilityLabel("Private fit photo")
-                } else { Label("Photo unavailable", systemImage: "photo.badge.exclamationmark").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
-            } else if let snapshot = memory.outfit {
-                OutfitComposition(pieceIDs: snapshot.pieces.map(\.id), pieceHeight: thumbnail ? 68 : 160)
-            } else { Text("No fit content").foregroundStyle(AppTheme.secondary) }
-        }.frame(maxWidth: .infinity).background(AppTheme.imageGround)
+        if thumbnail {
+            GeometryReader { geometry in
+                thumbnailContent(size: geometry.size)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .background(AppTheme.imageGround).clipped()
+            }.aspectRatio(3 / 4, contentMode: .fit)
+        } else {
+            Group {
+                if let id = memory.photoID {
+                    if let data = photoData(id), let image = UIImage(data: data) {
+                        Image(uiImage: image).resizable().scaledToFit().accessibilityLabel("Private fit photo")
+                    } else { unavailable }
+                } else if let snapshot = memory.outfit {
+                    OutfitComposition(pieceIDs: snapshot.pieces.map(\.id), pieceHeight: 160)
+                } else { Text("No fit content") }
+            }.frame(maxWidth: .infinity).background(AppTheme.imageGround)
+        }
+    }
+    @ViewBuilder private func thumbnailContent(size: CGSize) -> some View {
+        if let id = memory.photoID {
+            if let data = photoData(id), let image = UIImage(data: data) {
+                Image(uiImage: image).resizable().scaledToFill()
+            } else { unavailable }
+        } else if let snapshot = memory.outfit {
+            let pieces = Array(snapshot.pieces.prefix(4))
+            let rows = max(1, (pieces.count + 1) / 2)
+            let cellWidth = max(1, (size.width - 20) / 2)
+            let cellHeight = max(1, (size.height - 16 - CGFloat(rows - 1) * 4) / CGFloat(rows))
+            VStack(spacing: 4) {
+                ForEach(0..<rows, id: \.self) { row in
+                    HStack(spacing: 4) {
+                        ForEach(Array(pieces.dropFirst(row * 2).prefix(2)), id: \.id) { piece in
+                            if let saved = state.ownedPieces.first(where: { $0.id == piece.id }) {
+                                PieceThumbnail(photoID: saved.photoID, recipe: saved.photoRecipe)
+                                    .frame(width: cellWidth, height: cellHeight)
+                            } else {
+                                Image(systemName: "photo.badge.exclamationmark").foregroundStyle(AppTheme.secondary)
+                                    .frame(width: cellWidth, height: cellHeight)
+                            }
+                        }
+                    }
+                }
+            }.padding(8)
+        } else { unavailable }
+    }
+    private var unavailable: some View {
+        Label("Photo unavailable", systemImage: "photo.badge.exclamationmark")
+            .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
     }
     private func photoData(_ id: UUID) -> Data? {
         guard let store = state.store else { return nil }
@@ -39,12 +78,20 @@ struct FitJournalGrid: View {
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
                         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12)).accessibilityIdentifier("profile.fits.empty")
                 } else {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: typeSize.isAccessibilitySize ? 1 : 3), spacing: 8) {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3), spacing: 8) {
                         ForEach(state.fitMemories) { memory in
                             NavigationLink { FitMemoryDetailView(id: memory.id) } label: {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    FitMemoryArtwork(memory: memory, thumbnail: true).aspectRatio(3 / 4, contentMode: .fit).clipShape(RoundedRectangle(cornerRadius: 4))
-                                    Text(journalDate(memory.day) + (memory.photoID == nil ? " · Outfit" : "")).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                                    FitMemoryArtwork(memory: memory, thumbnail: true)
+                                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                                        .overlay(alignment: .topTrailing) {
+                                            if memory.photoID == nil {
+                                                Image(systemName: "square.stack").font(.system(size: 11, weight: .medium))
+                                                    .foregroundStyle(AppTheme.ink).padding(5)
+                                                    .background(AppTheme.surface, in: Circle()).padding(5).accessibilityHidden(true)
+                                            }
+                                        }
+                                    Text(journalDate(memory.day)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).lineLimit(2)
                                 }
                             }.buttonStyle(.plain).id(memory.id)
                                 .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.name ?? "unlinked"), \(memory.note)")

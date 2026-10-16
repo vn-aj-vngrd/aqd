@@ -155,13 +155,13 @@ struct LocalPlanEntryView: View {
                         if let outfit = state.outfits.first(where: { $0.id == entry.outfitID }) {
                             NavigationLink(value: ClosetRoute.outfit(outfit.id)) { Label("Open outfit", systemImage: "square.stack") }
                         }
-                        Button("Edit entry", systemImage: "square.and.pencil") { state.openPlan(editing: entry) }
+                        Button("Edit plan", systemImage: "square.and.pencil") { state.openPlan(editing: entry) }
                             .disabled(removal != nil || skipRequest != nil || entry.state == .worn || entry.state == .skipped)
                         if entry.state == .planned || entry.state == .unassigned {
-                            Button(skipRequest == nil ? "Skip entry" : "Check skip result", systemImage: "forward.end") { skip(entry) }
+                            Button(skipRequest == nil ? "Skip this date" : "Check skip result", systemImage: "forward.end") { skip(entry) }
                                 .disabled(removal != nil)
                             Section {
-                                Button("Remove entry", systemImage: "trash", role: .destructive) {
+                                Button("Remove from Planner", systemImage: "trash", role: .destructive) {
                                     removal = PlanEntryDeletionRequest(entry: entry); confirming = true
                                 }.disabled(removal != nil || skipRequest != nil)
                             }
@@ -189,10 +189,10 @@ struct LocalPlanEntryView: View {
             .navigationDestination(isPresented: $viewingWear) {
                 if let wearID = entry?.wearRecordID { LocalWearDetailView(id: wearID) }
             }
-            .confirmationDialog("Remove this plan entry?", isPresented: $confirming, titleVisibility: .visible) {
+            .alert("Remove from Planner?", isPresented: $confirming) {
                 Button("Remove entry", role: .destructive, action: remove)
                 Button("Cancel", role: .cancel) { removal = nil }
-            } message: { Text("Removes this planned assignment. Its outfit and recorded wear stay. Other dates and your routine remain.") }
+            } message: { Text("Removes this entry only. Your outfits, recorded wear, other dates and routine stay.") }
     }
     private func skip(_ entry: OutfitPlanEntry) {
         if skipRequest == nil { skipRequest = HistoryMutation(action: .skip(entry)) }

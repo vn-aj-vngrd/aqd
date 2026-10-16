@@ -140,47 +140,24 @@ struct ClosetView: View {
                     if !summary.order.isEmpty { Text(summary.order).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
                 }
             }
-            if !summary.detail.isEmpty {
-                Text(summary.detail).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
         }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 20)
             .accessibilityElement(children: .combine).accessibilityIdentifier("closet.collection.summary")
     }
-    private var collectionSummaryData: (title: String, detail: String, order: String) {
+    private var collectionSummaryData: (title: String, order: String) {
         func count(_ value: Int, _ singular: String, _ plural: String) -> String { "\(value) \(value == 1 ? singular : plural)" }
         switch scope {
         case "Pieces":
-            guard error == nil else { return ("Pieces unavailable", "", "") }
-            var labels = ["\(results.filter { $0.availability == .available }.count) ready to wear"]
-            let laundry = results.filter { $0.availability == .laundry }.count
-            let unavailable = results.filter { $0.availability == .unavailable }.count
-            if laundry > 0 { labels.append("\(laundry) in laundry") }
-            if unavailable > 0 { labels.append("\(unavailable) unavailable") }
-            if let category { labels.append(category.rawValue) }
-            else {
-                let categories = Set(results.map(\.category))
-                if categories.count == 1, let category = categories.first { labels.append(category.rawValue) }
-                else { labels.append(count(categories.count, "category", "categories")) }
-            }
-            return (count(results.count, "piece", "pieces"), labels.joined(separator: " · "), sort.title)
+            guard error == nil else { return ("Pieces unavailable", "") }
+            return (count(results.count, "piece", "pieces"), sort.title)
         case "Outfits":
-            guard state.outfitError == nil && state.themeError == nil else { return ("Outfits unavailable", "", "") }
+            guard state.outfitError == nil && state.themeError == nil else { return ("Outfits unavailable", "") }
             let outfits = state.outfits.filter { outfit in
                 (!favoritesOnly || outfit.isFavorite) && (themeID == nil || state.themes.contains { $0.id == themeID && $0.outfitIDs.contains(outfit.id) })
             }
-            let ids = Set(outfits.map(\.id))
-            let memberships = state.themes.filter { $0.outfitIDs.contains { ids.contains($0) } }.count
-            var labels = [count(outfits.filter(\.isFavorite).count, "favorite", "favorites"), count(memberships, "theme", "themes")]
-            if let themeID { labels.append(state.themes.first { $0.id == themeID }?.name ?? "Unavailable theme") }
-            return (count(outfits.count, "outfit", "outfits"), labels.joined(separator: " · "), "Recently updated")
+            return (count(outfits.count, "outfit", "outfits"), "Recently updated")
         default:
-            guard state.themeError == nil else { return ("Themes unavailable", "", "") }
-            let themes = themeQuery.apply(to: state.themes)
-            let empty = themes.filter { $0.outfitIDs.isEmpty }.count
-            var labels = ["\(themes.count - empty) with outfits", "\(empty) empty"]
-            if themeQuery.content != .all { labels.append(themeQuery.content.rawValue) }
-            return (count(themes.count, "theme", "themes"), labels.joined(separator: " · "), themeQuery.sort.rawValue)
+            guard state.themeError == nil else { return ("Themes unavailable", "") }
+            return (count(themeQuery.apply(to: state.themes).count, "theme", "themes"), themeQuery.sort.rawValue)
         }
     }
     private var outfitFilterMenu: some ToolbarContent {
