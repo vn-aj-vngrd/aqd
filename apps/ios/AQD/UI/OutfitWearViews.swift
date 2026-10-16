@@ -3,13 +3,13 @@ import SwiftUI
 
 struct OutfitWearEditorView: View {
     private var duplicateConfirmation: some View {
-        ToolbarSaveAction(title: "Save", isPending: model.pending) { Task { await model.save(useExisting: true) } }
+        ToolbarSaveAction(title: "Save", isPending: model.pending) { Task { await model.save(useExisting: true); if model.saved != nil { model.finish() } } }
                                 .disabled(!model.canSave || model.unknown)
     }
 
     private var confirmation: some View {
         ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) {
-                                Task { await model.save() }
+                                Task { await model.save(); if model.saved != nil { model.finish() } }
                             }.disabled(!model.unknown && !model.canSave)
     }
 

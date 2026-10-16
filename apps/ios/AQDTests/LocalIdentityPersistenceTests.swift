@@ -7,6 +7,31 @@ import SwiftData
 
 @Suite(.serialized) @MainActor
 struct LocalIdentityPersistenceTests {
+    @Test func unchangedProfileDisablesSaveAndSuccessfulChangeClosesEditor() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        var initial = LocalIdentityDraft(ownerID: try store.todayConfiguration().ownerID)
+        initial.name = "Test"; initial.caption = "A little of what I wear."
+        try store.saveIdentityDraft(initial)
+        let saved = try store.saveIdentity(initial)
+        try store.finishIdentityDraft(initial)
+        let state = AppState(store: store)
+        state.openIdentity()
+        let editor = try #require(state.identityEditor)
+        #expect(!editor.canSave)
+        editor.update { $0.name = "Changed" }
+        #expect(editor.canSave)
+        editor.update { $0.name = saved.name ?? "" }
+        #expect(!editor.canSave)
+        editor.update { $0.caption = "New caption" }
+        #expect(editor.canSave)
+        await editor.save()
+        #expect(state.identityEditor == nil)
+        #expect(try store.identityDraft() == nil)
+        #expect(try store.localIdentity()?.caption == "New caption")
+        #expect(try store.wearRecords().isEmpty)
+        state.store = nil
+    }
+
     @Test func successfulImportAloneSignalsPhotoReview() async throws {
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         let state = AppState(store: store)

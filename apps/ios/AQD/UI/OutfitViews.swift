@@ -75,7 +75,7 @@ struct OutfitEditorView: View {
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         if model.saved == nil {
-                            ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) { Task { await model.save() } }
+                            ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) { Task { await model.save(); if model.saved != nil { model.finish() } } }
                                 .disabled(!model.unknown && !model.canSave)
                         }
                     }

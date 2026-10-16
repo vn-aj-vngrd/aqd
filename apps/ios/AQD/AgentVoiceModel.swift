@@ -3,10 +3,11 @@ import Observation
 import AVFoundation
 @preconcurrency import Speech
 
-/// Remains disabled until issue30 qualifies supported locale/on-device recognition.
+/// User-enabled on-device dictation; actual permission/locale readiness is checked before recording.
 @MainActor @Observable final class AgentVoiceModel {
     enum Phase { case permission, listening, transcribing, review, unavailable }
-    static let qualified = false
+    static let qualified = true
+    static var isSupported: Bool { qualified && SFSpeechRecognizer(locale: Locale.current)?.supportsOnDeviceRecognition == true }
     var phase: Phase = qualified ? .permission : .unavailable
     var transcript = ""
     var reason = "On-device voice input isn’t enabled yet. Keep typing; your draft and context stay."
@@ -68,4 +69,16 @@ import AVFoundation
     }
     func discard() { token = UUID(); stopAudio(); recognition?.cancel(); recognition = nil; request = nil; transcript = ""; startedAt = nil }
     func interrupt() { let received = transcript; discard(); transcript = received; reason = "Recording was interrupted. Your typed draft and any received transcript are retained."; phase = received.isEmpty ? .unavailable : .review }
+}
+
+/// A reviewed transcript is appended once, even when its retained save needs retry.
+@MainActor struct AgentTranscriptReview {
+    private(set) var hasApplied = false
+    mutating func apply(_ transcript: String, to model: AgentModel) -> Bool {
+        if !hasApplied {
+            model.updateDraft(model.conversation.draft + (model.conversation.draft.isEmpty ? "" : "\n") + transcript)
+            hasApplied = true
+        }
+        return model.persist()
+    }
 }

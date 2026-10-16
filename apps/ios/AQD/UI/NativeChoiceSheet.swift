@@ -16,7 +16,7 @@ struct NativeChoiceSheet<Content: View>: View {
             }
             .listStyle(.insetGrouped)
             .environment(\.defaultMinListRowHeight, 56)
-            .scrollContentBackground(.hidden)
+            .contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden)
             .background(AppTheme.canvas)
             .navigationTitle(title).navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) {

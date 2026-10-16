@@ -24,8 +24,15 @@ final class PlanAuthoringModel: Identifiable {
     var hasUnsavedChanges: Bool {
         saved == nil && (pending || unknown || error != nil || draft.hasChanges)
     }
+    var needsCompositionReview: Bool {
+        draft.slots.contains { slot in
+            guard let base = draft.baseEntries?.first(where: { $0.id == slot.id }),
+                  let outfit = slot.outfit, base.outfitID == outfit.id else { return false }
+            return base.requiresReview || base.outfitRevision != outfit.revision
+        }
+    }
     var canSave: Bool {
-        !pending && !unknown && saved == nil && availabilityConflicts.isEmpty && (try? draft.validatedForSave(outfits: state.outfits, existing: state.planEntries)) != nil
+        !pending && !unknown && saved == nil && (draft.basePlan == nil || draft.hasChanges || needsCompositionReview) && availabilityConflicts.isEmpty && (try? draft.validatedForSave(outfits: state.outfits, existing: state.planEntries)) != nil
     }
     func update(invalidateConflicts: Bool = true, _ change: (inout PlanAuthoringDraft) -> Void) {
         guard !pending, !unknown, saved == nil else { return }

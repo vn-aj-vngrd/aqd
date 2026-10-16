@@ -47,7 +47,7 @@ struct AgentContextView: View {
                     }
                 }
                 }.listRowBackground(AppTheme.surface)
-            }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Agent context").navigationBarTitleDisplayMode(.inline)
+            }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Agent context").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button { if !model.hasPendingOperation { dismiss() } } label: { Image(systemName: "xmark") }.accessibilityLabel("Cancel") }
                     ToolbarItem(placement: .confirmationAction) {

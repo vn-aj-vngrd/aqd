@@ -532,7 +532,7 @@ final class CaptureModel: Identifiable {
     }
 
     var isImporting: Bool { importGate.pending != nil }
-    var canSave: Bool { saved == nil && (try? draft.validated()) != nil && !isSaving && !isImporting && !draftSaveFailed }
+    var canSave: Bool { saved == nil && (draft.baseRevision == nil || hasUnsavedChanges) && (try? draft.validated()) != nil && !isSaving && !isImporting && !draftSaveFailed }
     var receiptIsHistorical: Bool {
         guard let saved, let current = try? state.store?.piece(id: saved.id) else { return false }
         return current.revision > saved.revision

@@ -4,7 +4,7 @@ import SwiftUI
 struct OutfitPlanEditorView: View {
     private var confirmation: some View {
         ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) {
-                                Task { await model.save() }
+                                Task { await model.save(); if model.saved != nil { model.finish() } }
                             }.disabled(!model.unknown && (!model.canSave || (model.hasOverlap && model.draft.allowsOverlap != true)))
     }
 

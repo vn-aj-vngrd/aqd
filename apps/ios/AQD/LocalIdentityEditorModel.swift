@@ -22,6 +22,7 @@ final class LocalIdentityEditorModel: Identifiable {
     var hasUnsavedChanges: Bool {
         saved == nil && (pending || unknown || importing || error != nil || draft.hasChanges)
     }
+    var canSave: Bool { !locked && !importing && draft.hasChanges && (try? draft.result()) != nil }
     var locked: Bool { pending || unknown || saved != nil }
     func update(_ change: (inout LocalIdentityDraft) -> Void) {
         guard !locked else { return }
@@ -50,7 +51,7 @@ final class LocalIdentityEditorModel: Identifiable {
     }
     func save() async {
         guard !pending, !importing, saved == nil else { return }
-        pending = true; defer { pending = false }; await Task.yield()
+        pending = true; defer { pending = false; if saved != nil { finish() } }; await Task.yield()
         do {
             guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
             if !unknown { try store.saveIdentityDraft(draft) }

@@ -7,6 +7,7 @@ struct LocalSettingsView: View {
     @State private var weather = false
     #if DEBUG
     @State private var previewWelcome = false
+    @State private var tourAfterWelcome = false
     @State private var previewSplash = false
     #endif
     var body: some View {
@@ -45,12 +46,14 @@ struct LocalSettingsView: View {
             #endif
         }
         .listStyle(.insetGrouped).navigationTitle("Settings").navigationBarTitleDisplayMode(.inline)
-        .scrollContentBackground(.hidden).background(AppTheme.canvas).tint(AppTheme.ink)
+        .contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).tint(AppTheme.ink)
         .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
         .onAppear { state.reloadSettings() }
         .sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true } } }
         #if DEBUG
-        .fullScreenCover(isPresented: $previewWelcome) { WelcomeView(previewDismiss: { previewWelcome = false }).background(AppTheme.canvas) }
+        .fullScreenCover(isPresented: $previewWelcome, onDismiss: {
+            if tourAfterWelcome { tourAfterWelcome = false; state.beginTour(from: .settings) }
+        }) { WelcomeView(previewDismiss: { tour in tourAfterWelcome = tour; previewWelcome = false }).background(AppTheme.canvas) }
         .fullScreenCover(isPresented: $previewSplash) { DevelopmentSplashPreview() }
         #endif
     }
@@ -112,7 +115,7 @@ struct LocalAppearanceSettingsView: View {
                     Button("Retry appearance save") { state.retryAppearanceSave() }.tint(AppTheme.actionText)
                 }.listRowBackground(AppTheme.surface)
             }
-        }.listStyle(.insetGrouped).scrollContentBackground(.hidden).background(AppTheme.canvas)
+        }.listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)
             .navigationTitle("Appearance").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
     }
     private func title(_ value: LocalAppearance) -> String { value == .system ? "Automatic" : value.rawValue.capitalized }

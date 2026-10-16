@@ -18,7 +18,7 @@ struct LocalAgentView: View {
                     Button(action: close) { Image(systemName: "chevron.backward") }.accessibilityLabel("Back")
                 } }
             }
-        }.background(AppTheme.canvas.ignoresSafeArea()).tint(AppTheme.ink).task { open() }.onDisappear { state.agentModel?.suspend() }
+        }.appAppearance(state.appearance).background(AppTheme.canvas.ignoresSafeArea()).tint(AppTheme.ink).task { open() }.onDisappear { state.agentModel?.suspend() }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active { state.agentModel?.recheckAvailability() }
                 else { state.agentModel?.suspend() }
@@ -37,6 +37,9 @@ struct AgentConversationView: View {
     let close: () -> Void
     var automaticallyFocusComposer = true
     @State private var history = false
+    @State private var deletingConversation: AgentConversation?
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
     @State private var context = false
     @State private var tools = false
     @State private var voice = false
@@ -106,27 +109,39 @@ struct AgentConversationView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Back").disabled(model.active) }
+                if model.supportsGeneration {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { model.newConversation(); focused = true } label: { Image(systemName: "square.and.pencil") }
+                            .accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation)
+                    }
+                }
                 if model.supportsGeneration || !model.history.isEmpty {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
-                            if model.supportsGeneration {
-                                Button("New conversation") { model.newConversation() }.disabled(model.active)
+                            Section("Conversation") {
+                                if !model.history.isEmpty {
+                                    AccessoryButton("Conversations", systemImage: "bubble.left.and.bubble.right") { model.reloadHistory(); history = true }.disabled(model.active)
+                                }
+                                if model.conversation.revision > 0 {
+                                    Button(role: .destructive) {
+                                        if model.persist() { deletingConversation = model.conversation }
+                                    } label: { Label("Delete conversation", systemImage: "trash") }
+                                        .disabled(model.active || model.hasPendingOperation)
+                                }
                             }
-                            if !model.history.isEmpty {
-                                Button("Conversations") { model.reloadHistory(); history = true }.disabled(model.active)
-                            }
                             if model.supportsGeneration {
-                                Button("Manage context") { context = true }
-                                Button("Local tools") { state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); tools = true }.disabled(model.active || model.hasPendingOperation)
-                                if AgentVoiceModel.qualified { Button("Voice input") { voice = true } }
+                                Section("Tools") {
+                                    AccessoryButton("Manage context", systemImage: "tshirt") { context = true }
+                                    AccessoryButton("Local tools", systemImage: "slider.horizontal.3") { state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); tools = true }.disabled(model.active || model.hasPendingOperation)
+                                }
                             }
                         } label: { Label("More", systemImage: "ellipsis") }
                     }
                 }
             }.navigationDestination(isPresented: $history) { AgentHistoryView(model: model) { value in if value.revision > 0 { model.open(value.id) }; history = false } }
-            .sheet(isPresented: $tools) { AgentActionComposerView(model: model).environment(state) }
-            .sheet(isPresented: $voice) { AgentVoiceView(model: model) }
-            .sheet(isPresented: $context) { AgentContextView(model: model).environment(state) }
+            .sheet(isPresented: $tools) { AgentActionComposerView(model: model).environment(state).appAppearance(state.appearance) }
+            .sheet(isPresented: $voice) { AgentVoiceView(model: model).appAppearance(state.appearance) }
+            .sheet(isPresented: $context) { AgentContextView(model: model).environment(state).appAppearance(state.appearance) }
             .sheet(item: $details) { message in NavigationStack { Form {
                 Group {
                 LabeledContent("Runtime", value: "On-device")
@@ -136,7 +151,13 @@ struct AgentConversationView: View {
                 Text(message.contextSummary ?? "Context measurements unavailable")
                 Text("Generated text cannot change your records. Only an explicit review and saved receipt can do that.")
                 }.listRowBackground(AppTheme.surface)
-            }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarSaveAction(title: "Done") { details = nil } } } } }
+            }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarSaveAction(title: "Done") { details = nil } } } }.appAppearance(state.appearance) }
+            .alert("Delete this conversation?", isPresented: Binding(get: { deletingConversation != nil }, set: { if !$0 { deletingConversation = nil } })) {
+                Button("Cancel", role: .cancel) { deletingConversation = nil }
+                Button("Delete conversation", role: .destructive) {
+                    if let value = deletingConversation { model.delete(value) }; deletingConversation = nil
+                }
+            } message: { Text("Deletes its messages and draft on this iPhone. Saved pieces, outfits and plans stay.") }
             .onAppear { if automaticallyFocusComposer && model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
     }
     @ViewBuilder private func messageRow(_ message: AgentMessage) -> some View {
@@ -209,7 +230,7 @@ struct AgentConversationView: View {
                 } label: { Image(systemName: "plus").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }
                     .accessibilityLabel("Context and tools")
                 Spacer(minLength: AppSpacing.small)
-                if AgentVoiceModel.qualified {
+                if AgentVoiceModel.isSupported {
                     Button { voice = true } label: { Image(systemName: "mic").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }.accessibilityLabel("Voice input")
                 }
                 Button { if model.active { model.stop() } else { model.send() } } label: {
@@ -224,10 +245,19 @@ struct AgentConversationView: View {
                     .disabled(!model.active && !canSend)
             }
         }.padding(AppSpacing.medium)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.composer))
-            .overlay(RoundedRectangle(cornerRadius: AppRadius.composer).stroke(AppTheme.divider, lineWidth: 1))
+            .background { composerBackground }
             .padding(.horizontal, AppSpacing.large).padding(.bottom, AppSpacing.small)
     }
+    @ViewBuilder private var composerBackground: some View {
+        if #available(iOS 26, *), !reduceTransparency, contrast != .increased {
+            RoundedRectangle(cornerRadius: AppRadius.composer).fill(.clear)
+                .glassEffect(.regular, in: RoundedRectangle(cornerRadius: AppRadius.composer))
+        } else {
+            RoundedRectangle(cornerRadius: AppRadius.composer).fill(AppTheme.surface)
+                .overlay(RoundedRectangle(cornerRadius: AppRadius.composer).stroke(contrast == .increased ? AppTheme.controlBoundary : AppTheme.divider, lineWidth: 1))
+        }
+    }
+
     private func copy(_ message: AgentMessage, markdown: Bool) {
         let value = markdown ? (message.status == .complete ? "" : "Incomplete response\n\n") + message.source : AgentMarkdownPolicy.plainText(message.source, incomplete: message.status != .complete)
         UIPasteboard.general.string = value
@@ -286,10 +316,18 @@ struct AgentHistoryView: View {
             ForEach(model.history) { value in
                 Button { open(value) } label: { VStack(alignment: .leading, spacing: 4) { Text(value.title).foregroundStyle(AppTheme.ink); Text(value.updatedAt, style: .date).font(.footnote).foregroundStyle(AppTheme.secondary) } }
                     .disabled(model.hasPendingOperation)
-                    .contextMenu { Button("Delete conversation", role: .destructive) { selected = value } }
+                    .contextMenu {
+                        AccessoryButton("Open conversation", systemImage: "bubble.left") { open(value) }.disabled(model.active || model.hasPendingOperation)
+                        Button(role: .destructive) { selected = value } label: { Label("Delete conversation", systemImage: "trash") }.disabled(model.active || model.hasPendingOperation)
+                    } preview: {
+                        VStack(alignment: .leading, spacing: AppSpacing.medium) {
+                            Text(value.title).font(AppTypography.section)
+                            Text(value.messages.last?.source ?? "No messages yet").font(AppTypography.supporting).lineLimit(6)
+                        }.padding(AppSpacing.screen).frame(width: 280, alignment: .leading).background(AppTheme.surface)
+                    }
                     .swipeActions { Button("Delete", role: .destructive) { selected = value } }
             }
-        }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Conversations")
+        }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Conversations")
             .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { model.newConversation(); open(model.conversation) } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation) } }
             .alert("Delete this conversation?", isPresented: Binding(get: { selected != nil }, set: { if !$0 { selected = nil } })) {
                 Button("Cancel", role: .cancel) { selected = nil }

@@ -161,3 +161,10 @@ struct AccessoryButton: View {
     }
     var body: some View { Button(action: action) { AccessoryLabel(title, systemImage: systemImage) } }
 }
+
+extension View {
+    @ViewBuilder func neutralToolbarGlass() -> some View {
+        if #available(iOS 26, *) { buttonStyle(.glass) }
+        else { self }
+    }
+}

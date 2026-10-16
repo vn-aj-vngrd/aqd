@@ -7,7 +7,7 @@ import UIKit
 struct PieceCaptureView: View {
     private var confirmation: some View {
         ToolbarSaveAction(title: "Save",
-                              isPending: model.isSaving) { model.save() }
+                              isPending: model.isSaving) { model.save(); if model.saved != nil { model.leave() } }
                     .disabled(!model.canSave)
                     .accessibilityIdentifier("capture.save")
     }

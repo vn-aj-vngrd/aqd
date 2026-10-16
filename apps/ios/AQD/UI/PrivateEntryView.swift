@@ -104,7 +104,7 @@ struct PrivateEntryView: View {
 }
 
 struct WelcomeView: View {
-    var previewDismiss: (() -> Void)? = nil
+    var previewDismiss: ((Bool) -> Void)? = nil
     @Environment(AppState.self) private var state
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
@@ -127,11 +127,11 @@ struct WelcomeView: View {
             ActionFooter {
                 ActionStack {
                     PrimaryAction(title: "Start my closet") {
-                        if let previewDismiss { previewDismiss() }
+                        if let previewDismiss { previewDismiss(false) }
                         else { state.updateEntry { $0.page = .introduction } }
                     }
                     SecondaryAction(title: "Take a quick tour") {
-                        if let previewDismiss { previewDismiss() }
+                        if let previewDismiss { previewDismiss(true) }
                         else { state.beginTour(from: .welcome) }
                     }
                     Text("Private on this iPhone. No account needed.").font(.footnote).foregroundStyle(AppTheme.secondary)

@@ -72,7 +72,7 @@ struct StyleEditorView: View {
                         }
                     } else if page == 6 {
                         ToolbarSaveAction(title: model.unknown ? "Check save" : "Save", isPending: model.pending) { Task { await model.save() } }
-                            .disabled(!model.draft.isComplete).accessibilityLabel(model.unknown ? "Check save" : "Save preferences")
+                            .disabled(model.pending || (!model.unknown && (!model.draft.isComplete || (model.draft.baseRevision > 0 && !model.hasUnsavedChanges)))).accessibilityLabel(model.unknown ? "Check save" : "Save preferences")
                     } else {
                         ToolbarForwardAction(title: model.draft.editingFromReview ? "Review preferences" : "Next question") { model.next() }
                             .disabled(!model.draft.isAnswered(page) || model.pending || model.unknown || model.error != nil)

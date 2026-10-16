@@ -46,7 +46,7 @@ struct TodayEditorView: View {
                     }
                 }
                 if let error = model.error { Section { SemanticFeedback(role: .danger, message: error) }.listRowBackground(AppTheme.surface) }
-            }.listStyle(.insetGrouped).scrollContentBackground(.hidden)
+            }.listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden)
                 .contentMargins(.top, AppSpacing.large, for: .scrollContent)
                 .background(AppTheme.canvas)
                 .animation(reduceMotion ? nil : AQDMotion.reflow, value: model.catalog.map(\.id))
@@ -62,7 +62,7 @@ struct TodayEditorView: View {
                     ToolbarItem(placement: .confirmationAction) {
                         ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) {
                             if model.saved != nil { model.finish() } else { Task { await model.save() } }
-                        }.disabled(model.importing || (model.saved == nil && !model.unknown && (try? model.draft.result()) == nil))
+                        }.disabled(model.importing || (model.saved == nil && !model.unknown && (!model.draft.hasChanges || (try? model.draft.result()) == nil)))
                     }
                 }
                 .onAppear { model.state.reloadPlanEntries(); model.state.reloadPieces(); model.state.reloadOutfits(); model.state.reloadThemes(); model.state.reloadFits() }

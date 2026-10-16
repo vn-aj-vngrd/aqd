@@ -4,7 +4,7 @@ import UIKit
 struct AgentVoiceView: View {
     private var confirmation: some View {
         ToolbarSaveAction(title: "Done") {
-                            if model.conversation.draft == base { useTranscript() } else { appendReview = true }
+                            if transcriptReview.hasApplied || model.conversation.draft == base { useTranscript() } else { appendReview = true }
                         }.disabled(voice.transcript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
     }
 
@@ -13,6 +13,7 @@ struct AgentVoiceView: View {
     @Bindable var model: AgentModel
     @State private var voice = AgentVoiceModel()
     @State private var base = ""
+    @State private var transcriptReview = AgentTranscriptReview()
     @State private var discard = false
     @State private var appendReview = false
     var body: some View {
@@ -37,14 +38,19 @@ struct AgentVoiceView: View {
                         SecondaryAction(title: "Cancel transcription") { voice.interrupt() }
                     case .review:
                         Text("Review your transcript").font(AppTypography.section)
-                        TextField("Transcript", text: $voice.transcript, axis: .vertical).lineLimit(4...12)
+                        TextField("Transcript", text: $voice.transcript, axis: .vertical).lineLimit(4...12).disabled(transcriptReview.hasApplied)
 
-                        SecondaryAction(title: "Record again") { voice.discard(); Task { await voice.begin() } }
+                        SecondaryAction(title: "Record again") { voice.discard(); Task { await voice.begin() } }.disabled(transcriptReview.hasApplied)
                         Text("Adds reviewed text to your draft. It never sends a message.").font(.footnote).foregroundStyle(AppTheme.secondary)
                     case .unavailable:
                         Text("Voice isn’t available").font(AppTypography.section)
                         Text(voice.reason)
                         if AgentVoiceModel.qualified { SecondaryAction(title: "Open Settings") { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } }; SecondaryAction(title: "Record again") { Task { await voice.begin() } } }
+                    }
+                    if let error = model.error { SemanticFeedback(role: .danger, message: error) }
+                    if transcriptReview.hasApplied {
+                        Text("Your transcript is in the chat draft. Retry saving it, or return to chat.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        SecondaryAction(title: "Retry saving transcript", action: useTranscript)
                     }
                     SecondaryAction(title: "Keep typing", action: safeExit)
                 }.padding(20)
@@ -67,11 +73,11 @@ struct AgentVoiceView: View {
             .interactiveDismissDisabled(voice.phase == .listening || voice.phase == .transcribing || !voice.transcript.isEmpty)
     }
     private func safeExit() {
+        if transcriptReview.hasApplied { voice.discard(); dismiss(); return }
         if voice.phase == .listening || voice.phase == .transcribing || !voice.transcript.isEmpty { voice.finishRecording(); discard = true }
         else { voice.discard(); dismiss() }
     }
     private func useTranscript() {
-        model.updateDraft(model.conversation.draft + (model.conversation.draft.isEmpty ? "" : "\n") + voice.transcript)
-        if model.persist() { voice.discard(); dismiss() }
+        if transcriptReview.apply(voice.transcript, to: model) { voice.discard(); dismiss() }
     }
 }

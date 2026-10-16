@@ -62,7 +62,7 @@ struct PieceAvailabilityView: View {
                         if let pendingValue { Button("Retry availability") { save(pendingValue) } }
                     }
                 }
-            }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Availability").navigationBarTitleDisplayMode(.inline)
+            }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Availability").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Image(systemName: "xmark") }.tint(AppTheme.ink)
                         .accessibilityLabel("Cancel availability").disabled(pendingValue != nil)

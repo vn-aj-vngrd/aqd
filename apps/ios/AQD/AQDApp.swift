@@ -34,6 +34,7 @@ private struct AppRootView: View {
     @State private var pendingInstallation: (PieceStore, LocalDataCoordinator, Int)?
     #if DEBUG
     @State private var welcomePreview = false
+    @State private var tourAfterWelcome = false
     #endif
 
     var body: some View {
@@ -134,8 +135,13 @@ private struct AppRootView: View {
             state.retryLocalDataCleanup()
         }
         #if DEBUG
-        .fullScreenCover(isPresented: $welcomePreview) {
-            WelcomeView(previewDismiss: { welcomePreview = false })
+        .fullScreenCover(isPresented: $welcomePreview, onDismiss: {
+            if tourAfterWelcome {
+                tourAfterWelcome = false
+                state.beginTour(from: state.entry.page == .main ? .settings : state.entry.page == .welcome ? .welcome : state.entry.page == .introduction ? .introduction : .preview)
+            }
+        }) {
+            WelcomeView(previewDismiss: { tour in tourAfterWelcome = tour; welcomePreview = false })
                 .environment(state).background(AppTheme.canvas)
 
         }

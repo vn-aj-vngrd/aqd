@@ -46,7 +46,7 @@ final class OutfitEditorModel: Identifiable {
     init(state: AppState, draft: OutfitDraft) { self.state = state; self.draft = draft; id = draft.id }
 
     var canSave: Bool {
-        !pending && !unknown && !generating && saved == nil && (try? draft.validatedForSave(pieces: state.pieces)) != nil
+        !pending && !unknown && !generating && saved == nil && (draft.baseRevision == 0 || hasUnsavedChanges || needsPieceReview) && (try? draft.validatedForSave(pieces: state.pieces)) != nil
     }
 
     func update(_ change: (inout OutfitDraft) -> Void) {

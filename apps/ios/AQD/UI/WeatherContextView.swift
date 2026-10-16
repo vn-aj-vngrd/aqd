@@ -28,6 +28,9 @@ struct WeatherContextView: View {
         if let zone = initial?.place.timeZoneID ?? client.local?.place?.timeZoneID { initialDay.timeZoneID = zone }
         _day = State(initialValue: initialDay)
     }
+    private var hasPreferenceChanges: Bool {
+        enabled != (client.local?.enabled ?? false) || place != client.local?.place
+    }
     private var selection: WeatherSelection? { place.map { WeatherSelection(place: $0, day: day) } }
     var body: some View {
         NavigationStack {
@@ -100,7 +103,7 @@ struct WeatherContextView: View {
                         Text("City search needs no location permission. Current location uses approximate, foreground access once. No account or Apple Intelligence is required.")
                     }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }.listRowBackground(AppTheme.surface)
-            }.scrollContentBackground(.hidden).background(AppTheme.canvas)
+            }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)
                 .navigationTitle("Weather context").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -109,8 +112,8 @@ struct WeatherContextView: View {
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button(unknown ? "Check result" : persistsPreference ? "Save" : "Done") { apply() }
-                            .tint(AppTheme.ink)
-                            .disabled(saving || (!unknown && enabled && (selection == nil || (try? selection?.validated()) == nil)))
+                            .tint(AppTheme.actionText)
+                            .disabled(saving || (!unknown && ((persistsPreference && !hasPreferenceChanges) || (enabled && (selection == nil || (try? selection?.validated()) == nil)))))
                             .accessibilityValue(saving ? "Saving" : "")
                     }
                 }

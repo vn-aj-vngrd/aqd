@@ -22,7 +22,7 @@ final class FitEditorModel: Identifiable {
         saved == nil && (pending || unknown || importing || error != nil || draft.hasChanges)
     }
     var locked: Bool { pending || unknown || saved != nil }
-    var canSave: Bool { !locked && !importing && (try? draft.result()) != nil }
+    var canSave: Bool { !locked && !importing && (draft.base == nil || draft.hasChanges) && (try? draft.result()) != nil }
     func update(_ change: (inout FitMemory) -> Void) {
         guard !locked else { return }; var value = draft; change(&value.value); draft = value
         do { guard let store = state.store else { throw PieceStore.StoreError.corruptStore }; try store.saveFitDraft(draft); error = nil }

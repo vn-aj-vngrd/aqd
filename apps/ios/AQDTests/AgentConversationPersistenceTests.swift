@@ -5,6 +5,30 @@ import SwiftData
 import AQDCore
 
 @Suite(.serialized) @MainActor struct AgentConversationPersistenceTests {
+    @Test(arguments: [false, true]) func reviewedVoiceTranscriptRetriesWithoutDuplicateAppend(lostAcknowledgment: Bool) throws {
+        var before = false, after = false
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),
+            beforeOutfitSave: { if before { throw CocoaError(.fileWriteNoPermission) } },
+            afterOutfitSave: { if after { throw CocoaError(.fileReadUnknown) } })
+        let model = try AgentModel(store: store)
+        model.updateDraft("Typed draft"); try #require(model.persist())
+        var review = AgentTranscriptReview()
+        before = !lostAcknowledgment; after = lostAcknowledgment
+        let firstSave = review.apply("Spoken words", to: model)
+        #expect(!firstSave)
+        #expect(review.hasApplied)
+        #expect(model.conversation.draft == "Typed draft\nSpoken words")
+        #expect(model.error != nil && model.hasPendingOperation)
+        before = false; after = false
+        let retry = review.apply("Spoken words", to: model)
+        #expect(retry)
+        #expect(model.conversation.draft == "Typed draft\nSpoken words")
+        #expect(model.conversation.messages.isEmpty)
+        #expect(try store.agentConversations().first?.draft == "Typed draft\nSpoken words")
+        #expect(try store.agentConversations().first?.revision == 2)
+        #expect(try store.wearRecords().isEmpty)
+    }
+
     @Test(arguments: [false, true]) func unknownDeletionReconcilesAfterHistoryReloadRemovesItsRow(deletingCurrent: Bool) throws {
         var unknown = false
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),

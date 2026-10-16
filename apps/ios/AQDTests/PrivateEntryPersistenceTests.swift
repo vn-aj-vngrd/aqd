@@ -26,7 +26,7 @@ struct PrivateEntryPersistenceTests {
         #expect(try #require(store).localExperience().style == nil)
         #expect(try #require(store).localExperience().styleDraft == nil)
         try entry.startTour(from: .settings)
-        for _ in 0..<4 { entry.nextInTour() }
+        for _ in 0..<PrivateEntryState.tourStepCount { entry.nextInTour() }
         try #require(store).saveEntryState(entry)
         #expect(try #require(store).pieces().isEmpty)
         #expect(try #require(store).latestDraft() == RecoverablePieceDraft(draft: draft, operationID: operationID))
@@ -47,7 +47,7 @@ struct PrivateEntryPersistenceTests {
         #expect(try #require(store).localExperience().entryState.page == .introduction)
         #expect(try #require(store).localExperience().style == nil)
         var answers = StylePreferences()
-        for step in 0..<4 { answers.choose("No preference", at: step) }
+        for step in 0..<PrivateEntryState.tourStepCount { answers.choose("No preference", at: step) }
         answers.body.decline(); answers.colors.declined = true
         let saved = StylePreferenceDraft(source: .onboarding, answers: answers)
         try #require(store).saveStyleDraft(saved)
@@ -70,7 +70,7 @@ struct PrivateEntryPersistenceTests {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         var store: PieceStore? = try PieceStore(directory: directory)
         var answers = StylePreferences()
-        for step in 0..<4 { answers.choose("No preference", at: step) }
+        for step in 0..<PrivateEntryState.tourStepCount { answers.choose("No preference", at: step) }
         answers.body.decline(); answers.colors.declined = true
         let draft = StylePreferenceDraft(source: .onboarding, answers: answers)
         try #require(store).saveStyleDraft(draft)

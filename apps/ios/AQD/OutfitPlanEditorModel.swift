@@ -20,7 +20,7 @@ final class OutfitPlanEditorModel: Identifiable {
     var hasUnsavedChanges: Bool {
         saved == nil && (pending || unknown || error != nil || draft.hasChanges)
     }
-    var canSave: Bool { !pending && !unknown && saved == nil && availabilityConflict == nil && (try? draft.validatedForSave(outfits: state.outfits)) != nil }
+    var canSave: Bool { !pending && !unknown && saved == nil && (draft.baseEntry == nil || draft.hasChanges || draft.baseEntry?.requiresReview == true || draft.baseEntry?.outfitRevision != draft.outfit?.revision) && availabilityConflict == nil && (try? draft.validatedForSave(outfits: state.outfits)) != nil }
     var hasOverlap: Bool {
         state.planEntries.contains { $0.id != draft.entryID && $0.day == draft.day && $0.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == draft.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
     }

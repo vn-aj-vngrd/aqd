@@ -8,6 +8,7 @@ enum AQDMotion {
 
 /// DESIGN.md space scale; semantic aliases keep intent readable at call sites.
 enum AppSpacing {
+    static let headerGap: CGFloat = 20
     static let xSmall: CGFloat = 4
     static let small: CGFloat = 8
     static let medium: CGFloat = 12

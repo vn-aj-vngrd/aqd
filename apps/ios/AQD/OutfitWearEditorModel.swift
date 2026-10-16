@@ -24,7 +24,7 @@ final class OutfitWearEditorModel: Identifiable {
     var hasUnsavedChanges: Bool {
         saved == nil && (pending || unknown || error != nil || draft.hasChanges)
     }
-    var canSave: Bool { !pending && !unknown && saved == nil && (try? draft.validatedForSave(pieces: pieces)) != nil }
+    var canSave: Bool { !pending && !unknown && saved == nil && (draft.baseRecord == nil || draft.hasChanges) && (try? draft.validatedForSave(pieces: pieces)) != nil }
     func update(_ change: (inout OutfitWearDraft) -> Void) {
         guard !pending, !unknown, saved == nil else { return }
         var changed = draft; change(&changed); changed.acceptedDuplicateID = nil; draft = changed

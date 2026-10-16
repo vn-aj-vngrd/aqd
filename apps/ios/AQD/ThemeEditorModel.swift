@@ -33,7 +33,7 @@ final class ThemeEditorModel: Identifiable {
     var canSave: Bool {
         guard !pending, !unknown, saved == nil,
               let themes = try? store.themes(), let outfits = try? store.outfits() else { return false }
-        return (try? draft.validatedForSave(themes: themes, outfits: outfits)) != nil
+        return (draft.baseRevision == 0 || hasUnsavedChanges) && (try? draft.validatedForSave(themes: themes, outfits: outfits)) != nil
     }
 
     func update(_ change: (inout ThemeDraft) -> Void) {

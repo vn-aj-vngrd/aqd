@@ -106,6 +106,15 @@ struct OutfitPlanPersistenceTests {
         #expect(try store.planEntries() == [saved])
         #expect(try store.wearRecords().isEmpty)
         #expect(try store.outfit(id: outfit.id) == outfit)
+        editor.finish()
+        #expect(state.planEditor == nil)
+        state.openPlan(editing: saved)
+        let edit = try #require(state.planEditor)
+        #expect(!edit.canSave)
+        edit.update { $0.occasion = "Evening" }
+        #expect(edit.canSave)
+        edit.update { $0.occasion = saved.occasion }
+        #expect(!edit.canSave)
         state.store = nil
     }
 

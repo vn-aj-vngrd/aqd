@@ -7,6 +7,7 @@ struct WardrobeCategorySettingsView: View {
     @State private var editing: WardrobeCategory?
     @State private var error: String?
     @State private var loaded = false
+    @State private var editMode = EditMode.inactive
     var body: some View {
         List {
             Section {
@@ -36,15 +37,24 @@ struct WardrobeCategorySettingsView: View {
                 Text("Choose a category when adding a piece. Removing a category keeps its pieces under their original type. Keep at least one category.")
             }
             if let error { Section { SemanticFeedback(role: .danger, message: error) }.listRowBackground(AppTheme.surface) }
-        }.listStyle(.insetGrouped).scrollContentBackground(.hidden).background(AppTheme.canvas)
+        }.listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)
             .navigationTitle("Categories").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) { EditButton().disabled(!loaded) }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        withAnimation { editMode = editMode.isEditing ? .inactive : .active }
+                    } label: {
+                        if editMode.isEditing { Image(systemName: "checkmark") }
+                        else { Text("Edit") }
+                    }.tint(AppTheme.ink).neutralToolbarGlass().disabled(!loaded)
+                        .accessibilityLabel(editMode.isEditing ? "Finish editing categories" : "Edit categories")
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { editing = WardrobeCategory(name: "", type: .tops) } label: { Label("Add category", systemImage: "plus") }
                         .disabled(!loaded || categories.count >= 64)
                 }
             }
+            .environment(\.editMode, $editMode)
             .onAppear {
                 do {
                     guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
@@ -103,7 +113,7 @@ private struct WardrobeCategoryEditor: View {
                     }
                 }
                 if let error { SemanticFeedback(role: .danger, message: error) }
-            }.scrollContentBackground(.hidden).background(AppTheme.canvas)
+            }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)
                 .navigationTitle(isNew ? "New category" : "Edit category").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {

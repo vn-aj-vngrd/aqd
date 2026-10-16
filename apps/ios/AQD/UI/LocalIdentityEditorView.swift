@@ -20,7 +20,7 @@ struct LocalIdentityAvatar: View {
 
 struct LocalIdentityEditorView: View {
     private var confirmation: some View {
-        ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) { Task { await model.save() } }.disabled(model.pending || model.importing || (!model.unknown && (try? model.draft.result()) == nil))
+        ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) { Task { await model.save() } }.disabled(model.pending || model.importing || (!model.unknown && !model.canSave))
     }
 
     @Bindable var model: LocalIdentityEditorModel
@@ -39,7 +39,7 @@ struct LocalIdentityEditorView: View {
                                     .offset(x: 12, y: 8)
                             }
                         }.frame(maxWidth: .infinity).padding(.bottom, 8)
-                    if model.saved == nil {
+                    Group {
                         if model.importing { ProgressView("Preparing photo"); Button("Cancel import") { model.cancelImport() }.frame(minHeight: 44) }
                         LabeledField(title: "Name", text: Binding(get: { model.draft.name }, set: { name in model.update { $0.name = name } })).disabled(model.locked)
                         LabeledField(title: "Caption", text: Binding(get: { model.draft.caption ?? LocalProfileIdentity.defaultCaption },
@@ -47,9 +47,6 @@ struct LocalIdentityEditorView: View {
                                      validation: (model.draft.caption?.count ?? 0) > 160 ? "Use 160 characters or fewer." : nil)
                             .disabled(model.locked)
                             .accessibilityIdentifier("profile.caption")
-
-                    } else {
-                        Text("Profile saved").font(AppTypography.section)
 
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }

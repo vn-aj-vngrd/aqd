@@ -3,7 +3,7 @@ import SwiftUI
 
 struct PlanAuthoringView: View {
     private var confirmation: some View {
-        ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) { Task { await model.save() } }
+        ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) { Task { await model.save(); if model.saved != nil { model.finish() } } }
                 .disabled(!model.unknown && !model.canSave)
     }
 
