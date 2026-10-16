@@ -73,3 +73,5 @@ Before enabling a capability in its owning section:
 No device quality, latency, memory or energy evaluation has run for this slice. These are release gates and a reusable evaluation recipe, not performance results.
 
 `LocalDataSummaryView` reuses grouped icon/count rows across export, restore and erase reviews, with plural-aware labels and intrinsic accessible text sizing.
+
+`CenteredPageContent` reuses the scrollable centered-message rhythm for short informational Settings pages. Callers own `safeAreaInset`/`ActionFooter`; long review/forms keep their existing scroll layout. It adds no actions or lifecycle state.

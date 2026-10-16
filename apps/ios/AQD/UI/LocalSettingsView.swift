@@ -107,17 +107,39 @@ struct LocalStyleSettingsView: View {
     @Environment(AppState.self) private var state
     @State private var answers: StylePreferences?
     var body: some View {
-        ScrollView { VStack(alignment: .leading, spacing: 20) {
-            Text("Answer six questions, then review. No preference is valid.").font(AppTypography.section)
-            if let answers { ForEach(0..<6, id: \.self) { index in VStack(alignment: .leading, spacing: 4) { Text(StylePreferences.titles[index]).font(.headline); Text(answers.summary(at: index)).foregroundStyle(AppTheme.secondary) } } }
-            else { Text("No preferences added yet.") }
-            PrimaryAction(title: "Edit preferences") { state.openStyle(source: .settings) }
-            Text("Saved on this iPhone. Allowed Style context requires an explicit choice in Agent. Body-use permission starts off and remains separately controlled.").font(.footnote).foregroundStyle(AppTheme.secondary)
-        }.padding(20) }.background(AppTheme.canvas).navigationTitle("Style").navigationBarTitleDisplayMode(.inline)
+        Group {
+            if let answers {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        ForEach(0..<6, id: \.self) { index in
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(StylePreferences.titles[index]).font(AppTypography.fieldLabel)
+                                Text(answers.summary(at: index)).foregroundStyle(AppTheme.secondary)
+                            }
+                        }
+                        stylePrivacy
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
+                }
+            } else {
+                CenteredPageContent {
+                    Text("Make it your style").font(AppTypography.section)
+                    Text("Answer six short questions, then review your preferences. No preference is always an option.")
+                        .foregroundStyle(AppTheme.secondary)
+                    stylePrivacy
+                }
+            }
+        }.background(AppTheme.canvas).navigationTitle("Style").navigationBarTitleDisplayMode(.inline)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                ActionFooter { PrimaryAction(title: "Edit preferences") { state.openStyle(source: .settings) } }
+            }
             .onAppear { answers = try? state.store?.localExperience().style?.answers }
             .onChange(of: state.styleEditor?.id) { _, editorID in
                 if editorID == nil { answers = try? state.store?.localExperience().style?.answers }
             }
+    }
+    private var stylePrivacy: some View {
+        Text("Saved on this iPhone. Share Style with Agent only when you choose. Body details have a separate permission.")
+            .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
     }
 }
 struct LocalAssistanceSettingsView: View {
@@ -125,16 +147,22 @@ struct LocalAssistanceSettingsView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var availability = OutfitSuggestions.availability()
     var body: some View {
-        ScrollView { VStack(alignment: .leading, spacing: 20) {
+        CenteredPageContent {
             Text("Apple Intelligence").font(AppTypography.section)
             Text(availability.message)
-            SecondaryAction(title: "Check availability again") { availability = OutfitSuggestions.availability() }
             Text("Quick rules and manual tools").font(AppTypography.section)
             Text("Agent explains actual availability. Your closet, manual outfits and planning remain usable. No cloud model is used.")
             Text("Review before saving").font(AppTypography.section)
             Text("Suggestions are drafts. Approve exact reviewed changes; a receipt follows successful local saving.")
-            PrimaryAction(title: "Open Agent") { state.agentLaunchID = UUID() }
-        }.padding(20) }.background(AppTheme.canvas).navigationTitle("On-device assistance").navigationBarTitleDisplayMode(.inline)
+        }.background(AppTheme.canvas).navigationTitle("On-device assistance").navigationBarTitleDisplayMode(.inline)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                ActionFooter {
+                    ActionStack {
+                        PrimaryAction(title: "Open Agent") { state.agentLaunchID = UUID() }
+                        SecondaryAction(title: "Check availability again") { availability = OutfitSuggestions.availability() }
+                    }
+                }
+            }
             .onChange(of: scenePhase) { _, phase in if phase == .active { availability = OutfitSuggestions.availability() } }
     }
 }
@@ -147,8 +175,12 @@ struct LocalPrivacySettingsView: View {
             Text("App deletion or device loss can lose your data. Export a sensitive local archive from Settings. Your chosen Files destination may use cloud storage; protect copies you export.")
             Text("Permissions and optional services").font(AppTypography.section)
             Text("Camera and supported microphone/speech permissions are requested only after an explicit action. Photos uses your selected media. Optional Apple city search sends your city query; qualified weather uses the selected place/date without wardrobe, photos, body details or conversations.")
-            SecondaryAction(title: "Open iPhone Settings") { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } }
             Text("Restore replaces local data after review. Erase clears AQD-owned records and files; original Photos and previous exported copies stay outside AQD.")
         }.padding(20) }.background(AppTheme.canvas).navigationTitle("Help and privacy").navigationBarTitleDisplayMode(.inline)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                ActionFooter {
+                    SecondaryAction(title: "Open iPhone Settings") { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } }
+                }
+            }
     }
 }

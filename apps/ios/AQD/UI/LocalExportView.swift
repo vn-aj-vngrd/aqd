@@ -32,23 +32,33 @@ private struct LocalExportContent: View {
             Text("Archives up to \(LocalArchivePackage.maximumSizeDescription). Larger closets cannot be exported in this version; your current data stays in place.").font(.subheadline).foregroundStyle(AppTheme.secondary)
             Text("Choose where to save in Files. A destination may use cloud storage. This archive contains sensitive private data and is not encrypted by AQD at its chosen destination.").font(.subheadline).foregroundStyle(AppTheme.secondary)
             switch model.phase {
-            case .idle: PrimaryAction(title: "Create archive", action: model.start)
+            case .idle: EmptyView()
             case .preparing:
                 ProgressView("Preparing your archive…")
                 Text("Your existing closet stays in place.")
-                SecondaryAction(title: "Cancel export", action: model.cancel)
             case .failed:
                 Text(model.error ?? "The archive couldn’t be prepared.").foregroundStyle(AppTheme.error)
-                PrimaryAction(title: "Try again", action: model.start)
             case .ready:
                 Text("Your archive is ready.").font(AppTypography.section)
                 if let summary = model.summary { LocalDataSummaryView(summary: summary) }
                 if let data = model.data { Text(ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .file)).font(.footnote) }
-                PrimaryAction(title: "Save to Files") { files = true }
-                SecondaryAction(title: "Prepare a new archive", action: model.start)
                 if let result = model.fileResult { Text(result).font(.subheadline) }
             }
         }.padding(20) }.background(AppTheme.canvas)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                ActionFooter {
+                    ActionStack {
+                        switch model.phase {
+                        case .idle: PrimaryAction(title: "Create archive", action: model.start)
+                        case .preparing: SecondaryAction(title: "Cancel export", action: model.cancel)
+                        case .failed: PrimaryAction(title: "Try again", action: model.start)
+                        case .ready:
+                            PrimaryAction(title: "Save to Files") { files = true }
+                            SecondaryAction(title: "Prepare a new archive", action: model.start)
+                        }
+                    }
+                }
+            }
             .fileExporter(isPresented: $files, document: model.data.map(LocalArchiveDocument.init), contentType: .aqdArchive,
                 defaultFilename: "AQD-closet-\(Date.now.formatted(.iso8601.year().month().day().dateSeparator(.dash)))") { result in
                     switch result {

@@ -40,23 +40,29 @@ struct LocalEraseView: View {
                 case .complete:
                     Text("Your local records are erased.").font(.title2)
                     Text("The previous AQD files are queued for safe removal after the old store closes. Any pending cleanup stays visible. Original Photos and exported copies remain outside AQD.")
-                    PrimaryAction(title: "Start again") { if let store = model.installed { onInstall(store, model.coordinator, 0) } }
                 case .failed, .newer:
                     Text("Erase wasn’t completed").font(.title2)
                     Text(model.error ?? "Your previous local records are retained.").foregroundStyle(AppTheme.error)
-                    if model.review != nil { PrimaryAction(title: "Review current impact again") { model.refresh(); phrase = "" } }
-                    else { PrimaryAction(title: "Prepare review again", action: model.prepareErase) }
                 case .unknown:
                     Text("Check the erase outcome").font(.title2)
                     Text(model.error ?? "Check the same operation before erasing again. A completed switch cannot be undone by cancelling.")
-                    PrimaryAction(title: "Check same operation", action: model.checkOutcome)
                 }
             }.padding(20) }.background(AppTheme.canvas).navigationTitle("Erase local closet").navigationBarTitleDisplayMode(.inline)
                 .safeAreaInset(edge: .bottom, spacing: 0) {
-                    if model.phase == .review {
+                    if model.phase != .choose && model.phase != .validating && model.phase != .committing {
                         ActionFooter {
-                            PrimaryAction(title: "Erase closet", systemImage: "trash", role: .destructive) { confirm = true }
-                                .disabled(phrase != "ERASE")
+                            switch model.phase {
+                            case .review:
+                                PrimaryAction(title: "Erase closet", systemImage: "trash", role: .destructive) { confirm = true }
+                                    .disabled(phrase != "ERASE")
+                            case .complete:
+                                PrimaryAction(title: "Start again") { if let store = model.installed { onInstall(store, model.coordinator, 0) } }
+                            case .failed, .newer:
+                                if model.review != nil { PrimaryAction(title: "Review current impact again") { model.refresh(); phrase = "" } }
+                                else { PrimaryAction(title: "Prepare review again", action: model.prepareErase) }
+                            case .unknown: PrimaryAction(title: "Check same operation", action: model.checkOutcome)
+                            case .choose, .validating, .committing: EmptyView()
+                            }
                         }
                     }
                 }

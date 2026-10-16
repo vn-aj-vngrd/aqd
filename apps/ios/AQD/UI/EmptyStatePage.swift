@@ -29,3 +29,19 @@ struct EmptyStatePage<Actions: View>: View {
         }
     }
 }
+
+/// Short informational pages share the empty-page vertical rhythm while their
+/// caller owns the safe-area action footer. Long text remains scrollable.
+struct CenteredPageContent<Content: View>: View {
+    @ViewBuilder let content: () -> Content
+    var body: some View {
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 20, content: content)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, minHeight: max(0, geometry.size.height - 40))
+                    .padding(20)
+            }
+        }
+    }
+}

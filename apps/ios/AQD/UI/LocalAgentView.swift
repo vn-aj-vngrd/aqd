@@ -238,13 +238,11 @@ private struct AgentAvailabilityActions: View {
 private struct AgentAboutView: View {
     let recheck: () -> Void
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+        CenteredPageContent {
                 Text("Private on-device assistance").font(AppTypography.section)
                 Text("AQD uses Apple Intelligence on supported iPhones. In iPhone Settings, open Apple Intelligence & Siri to check whether Apple Intelligence is enabled and ready.")
                 Text("This build keeps generation disabled until on-device quality and performance checks are complete. Your conversations remain readable. Closet, manual outfits and planning work without it.")
-            }.font(AppTypography.body).foregroundStyle(AppTheme.ink).padding(20)
-        }
+        }.font(AppTypography.body).foregroundStyle(AppTheme.ink)
         .background(AppTheme.canvas).navigationTitle("About Agent").navigationBarTitleDisplayMode(.inline)
         .tint(AppTheme.ink)
         .safeAreaInset(edge: .bottom) {
