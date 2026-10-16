@@ -15,8 +15,8 @@
 | Slice | Working outcome | Acceptance | State | Marker | SHA |
 | --- | --- | --- | --- | --- | --- |
 | S1 | Explicit planned/worn/skipped state with matching-record consent and linked immutable wear snapshots | P7/P8, scoped P10 | Implemented, unit verified | `AQD-Slice: #26/S1` | `6327367` |
-| S2 | Wear detail/backdate/correct/Undo with exactly-once counts and duplicate-safe recovery | P7/P8, scoped LOCAL-03/05 | Implemented, unit verified | `AQD-Slice: #26/S2` | Pending |
-| S3 | History/calendar/empty states and reproducible period insights with estimate/denominator labels | P9, supporting P10 | Planned | `AQD-Slice: #26/S3` | Pending |
+| S2 | Wear detail/backdate/correct/Undo with exactly-once counts and duplicate-safe recovery | P7/P8, scoped LOCAL-03/05 | Implemented, unit verified | `AQD-Slice: #26/S2` | `28be512` |
+| S3 | History/calendar/empty states and reproducible period insights with estimate/denominator labels | P9, supporting P10 | Implemented, unit verified | `AQD-Slice: #26/S3` | Pending |
 
 ## Evidence and review
 
@@ -24,7 +24,7 @@ Each slice records actual unit/build results, failures, reviewed increment and i
 
 ## Resume
 
-Companion #25 S1–S4 is implemented and unit verified on this shared branch. Continue #26/S1 explicit plan-linked wear, duplicate consent and skipped states. The physical iPhone remains the only native destination; all E2E stays #30.
+Companion #25 S1–S4 is implemented and unit verified on this shared branch. All seven feature slices are implemented and unit verified. Continue the four independent review corrections, final Release/source-bound receipt, PR/CI/Codex and protected delivery. The physical iPhone remains the only native destination; all E2E stays #30.
 
 ## S1 explicit wear receipt
 
@@ -37,3 +37,9 @@ The new public-store tracer failed compilation before implementation (`/tmp/aqd-
 Wear detail exposes read-only minimal recorded names/categories, correction and confirmed Undo. Correction retains the same record ID, increments its revision, preserves snapshots for retained item IDs including deleted source pieces, and rechecks identical item-set/day duplicates. Changing date/items resets surviving linked intentions rather than silently moving a plan. Undo removes the exact reviewed wear once and resets every surviving linked entry; deleted plans stay deleted. Historical save acknowledgments do not recreate undone wear. The timezone picker reuses the shared searchable chooser; changed dates/zones visibly detach plan linkage.
 
 The correction tracer first failed compilation against absent APIs (`/tmp/aqd-26-s2-red.log`). All5 focused native Wear cases pass on the physical iPhone (`/tmp/aqd-26-s2-final.log`), including two-entry existing-record consent, duplicate refusal, same-ID backdate/correction, lost acknowledgment and exactly-once Undo. SwiftUI name lookup was split to correct compiler timeouts; an accidentally overlapping retry hit the Xcode build lock and was discarded, followed by the successful serial run. No simulator/E2E ran. Bounded Standards/Spec increment review checked stale record equality, snapshot preservation, receipt-first recovery and aggregate count derivation. Full unit/Release/independent review follows S3.
+
+## S3 history and insights receipt
+
+Real recent history opens each actual wear detail, with an alternate selected-day calendar and source-period filtering. Toolbar recording carries the selected date; empty history/day has a useful Record a look path and Planner return. Profile exposes the shared history/insights destinations. Monthly factual insights distinguish wear occasions from individual item occurrences, expose the exact inclusive calendar window, and compute utilization from active recorded IDs / active owned IDs. Period calculations exclude prior estimates; all-time totals separately label recorded and estimated earlier counts. Unknown/zero denominator shows Not enough recorded history. Source history retains the chosen period.
+
+The literal monthly tracer failed before its API existed (`/tmp/aqd-26-s3-red.log`). Core59 and physical native146 (133 Swift Testing +13 XCTest) pass `/tmp/aqd-26-s3-unit-final.log`, including October’s inclusive bounds, archived/deleted denominator behavior, two occasions versus three item occurrences, estimate exclusion and empty denominators. The first implementation’s Swift initialization-order error was corrected before this pass. Tooling51 and agent-doc checks pass. Independent grouped Standards/Spec review identified four source defects to fix next: receipt→history task ownership, named-entry timezone, completed entry removal and recorded calendar accessibility labels. All E2E/rendered/whole-device quality qualification remains #30.

@@ -39,6 +39,9 @@ final class AppState {
     var todayError: String?
     var photoCleanupError: String?
     var wearEditor: OutfitWearEditorModel?
+    var wearHistoryDay = LocalPlanDay()
+    var wearHistoryMode = PlannerCalendarMode.month
+    var wearHistoryCalendar = false
     var wearRecords: [OutfitWearRecord] = []
     var wearError: String?
     var planDefinitions: [PlanDefinition] = []

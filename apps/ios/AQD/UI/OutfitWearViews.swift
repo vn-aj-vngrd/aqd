@@ -93,34 +93,3 @@ struct OutfitWearEditorView: View {
     }
 
 }
-
-struct LocalWearHistoryView: View {
-    var pieceID: UUID? = nil
-    @Environment(AppState.self) private var state
-    private var records: [OutfitWearRecord] {
-        state.wearRecords.filter { record in pieceID.map { id in record.pieces.contains { $0.id == id } } ?? true }
-    }
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                if let error = state.wearError {
-                    SemanticFeedback(role: .danger, message: error)
-                    Button("Retry history") { state.reloadWear() }
-                } else if records.isEmpty {
-                    ContentUnavailableView("No recorded wear yet", systemImage: "clock",
-                                           description: Text("Record what you wore from an outfit. Plans never become wear automatically."))
-                }
-                ForEach(records) { record in
-                    NavigationLink { LocalWearDetailView(id: record.id) } label: { VStack(alignment: .leading, spacing: 8) {
-                        Text(record.day.key).font(AppTypography.fieldLabel)
-                        Text(record.pieces.map(\.name).joined(separator: ", ")).font(AppTypography.body)
-                        Text(record.day.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    }.frame(maxWidth: .infinity, alignment: .leading).padding(14)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12)) }.buttonStyle(.plain)
-                }
-            }.padding(20)
-        }.background(AppTheme.canvas)
-            .navigationTitle("Wear history").navigationBarTitleDisplayMode(.inline)
-            .onAppear { state.reloadWear() }
-    }
-}
