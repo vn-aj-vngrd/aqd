@@ -7,6 +7,7 @@ struct SharedPhotoSourceButton: View {
     let title: String
     let selectionToken: UUID
     var locked = false
+    var presentation: Binding<Bool>? = nil
     let onData: (Data) -> Void
     @State private var sources = false
     @State private var pendingSource: Bool?
@@ -16,21 +17,17 @@ struct SharedPhotoSourceButton: View {
     @State private var error: String?
     @State private var loading = false
     @State private var loadTask: Task<Void, Never>?
+    private var sourcePresentation: Binding<Bool> { presentation ?? $sources }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            DisclosureRow(title: title, value: "Photos or camera") { sources = true }.disabled(locked || loading)
+            DisclosureRow(title: title, value: "Photos or camera") { sourcePresentation.wrappedValue = true }.disabled(locked || loading)
+                .popover(isPresented: sourcePresentation, arrowEdge: .top) {
+                    PhotoSourcePopover(photos: { pendingSource = false; sourcePresentation.wrappedValue = false },
+                                       camera: { pendingSource = true; sourcePresentation.wrappedValue = false })
+                        .onDisappear(perform: presentSource)
+                }
             if loading { ProgressView("Loading selected photo"); Button("Cancel photo loading") { cancel() }.frame(minHeight: 44) }
             if let error { SemanticFeedback(role: .danger, message: error) }
-        }
-        .sheet(isPresented: $sources, onDismiss: presentSource) {
-            NativeChoiceSheet(title: "Add photo", footer: "Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.") {
-                NativeChoiceRow(title: "Choose from Photos", symbol: "photo.on.rectangle", disclosure: false) {
-                    pendingSource = false; sources = false
-                }
-                NativeChoiceRow(title: "Take photo", symbol: "camera", disclosure: false) {
-                    pendingSource = true; sources = false
-                }
-            }
         }
         .photosPicker(isPresented: $photos, selection: $item, matching: .images)
         .fullScreenCover(isPresented: $camera) {

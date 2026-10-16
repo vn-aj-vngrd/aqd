@@ -106,6 +106,7 @@ struct FitEditorView: View {
     @State private var discard = false
     @State private var removePhoto = false
     @State private var choosingOutfit = false
+    @State private var photoSources = false
     @State private var timezone = false
     @State private var editingPhoto = false
     var body: some View {
@@ -156,6 +157,7 @@ struct FitEditorView: View {
     }
     private var mediaContent: some View {
         VStack(alignment: .leading, spacing: 12) {
+            Button { photoSources = true } label: {
             Group {
                 if model.draft.value.photoID != nil || model.draft.value.outfit != nil {
                     FitMemoryArtwork(memory: model.draft.value).frame(minHeight: 160, maxHeight: 280)
@@ -169,7 +171,9 @@ struct FitEditorView: View {
                 }
             }.frame(maxWidth: .infinity).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 12))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-            SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add photo" : "Change photo", selectionToken: model.importID, locked: model.locked, onData: model.importPhoto)
+            }.buttonStyle(.plain).disabled(model.locked)
+                .accessibilityLabel(model.draft.value.photoID == nil ? "Add fit photo" : "Change fit photo")
+            SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add photo" : "Change photo", selectionToken: model.importID, locked: model.locked, presentation: $photoSources, onData: model.importPhoto)
             if model.importing {
                 HStack {
                     ProgressView("Preparing photo")

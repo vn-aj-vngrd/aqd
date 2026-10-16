@@ -28,6 +28,7 @@ struct AQDApp: App {
 
 private struct AppRootView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Bindable var state: AppState
     let onInstall: (PieceStore, LocalDataCoordinator, Int) -> Void
     @State private var pendingInstallation: (PieceStore, LocalDataCoordinator, Int)?
@@ -38,10 +39,7 @@ private struct AppRootView: View {
     var body: some View {
         Group {
             if state.isOpening {
-                AQDWordmark()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .foregroundStyle(AppTheme.ink).background(AppTheme.surface)
-                    .accessibilityIdentifier("entry.splash")
+                BrandSplashView().transition(.opacity)
             } else if let error = state.openingError {
                 EmptyStatePage(title: "Your closet couldn’t open", systemImage: "externaldrive.badge.exclamationmark", description: Text(error)) {
                     PrimaryAction(title: "Retry") { state.openStore() }
@@ -59,6 +57,7 @@ private struct AppRootView: View {
                     .id(ObjectIdentifier(state)).ignoresSafeArea()
             }
         }
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.22), value: state.isOpening)
         .task(id: ObjectIdentifier(state)) {
             if state.isOpening { await Task.yield(); state.openStore() }
             #if DEBUG

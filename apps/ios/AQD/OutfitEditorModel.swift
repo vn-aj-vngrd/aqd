@@ -21,6 +21,23 @@ final class OutfitEditorModel: Identifiable {
         case nil: nil
         }
     }
+    var hasUnsavedChanges: Bool {
+        guard saved == nil else { return false }
+        if pending || unknown || generating { return true }
+        if !(draft.pinnedPieceIDs ?? []).isEmpty || draft.weather != nil || draft.proposalSource != nil { return true }
+        if draft.baseRevision > 0 {
+            guard let store = state.store,
+                  let outfit = try? store.outfit(id: draft.outfitID), outfit.revision == draft.baseRevision,
+                  let themes = try? store.themes() else { return true }
+            let existingThemes = Set(themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.id))
+            return draft.name != outfit.name || draft.pieceIDs != outfit.pieceIDs
+                || draft.mood != outfit.mood || draft.occasion != outfit.occasion
+                || (draft.themeIDs.map(Set.init) ?? existingThemes) != existingThemes
+        }
+        return !draft.name.isEmpty || !draft.pieceIDs.isEmpty || !(draft.themeIDs ?? []).isEmpty
+            || !(draft.mood ?? "").isEmpty || !(draft.occasion ?? "").isEmpty
+    }
+
     var needsPieceReview: Bool {
         guard let revisions = draft.reviewedPieceRevisions else { return false }
         return draft.pieceIDs.contains { id in state.pieces.first(where: { $0.id == id })?.revision != revisions[id] }

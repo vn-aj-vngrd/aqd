@@ -91,16 +91,6 @@ struct PieceCaptureView: View {
             model.importPhoto { try await item.loadTransferable(type: Data.self) }
             selectedPhoto = nil
         }
-        .sheet(isPresented: $sourceSheet, onDismiss: presentPendingSource) {
-            NativeChoiceSheet(title: model.draft.photoID == nil ? "Add photo" : "Change photo", footer: "Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.") {
-                NativeChoiceRow(title: "Choose from Photos", symbol: "photo.on.rectangle", disclosure: false) {
-                    pendingSource = .photos; sourceSheet = false
-                }
-                NativeChoiceRow(title: "Take photo", symbol: "camera", disclosure: false) {
-                    pendingSource = .camera; sourceSheet = false
-                }
-            }
-        }
         .sheet(isPresented: $cameraPresented, onDismiss: {
             if let cameraData {
                 model.importPhoto { cameraData }
@@ -177,6 +167,7 @@ struct PieceCaptureView: View {
     private var mediaContent: some View {
         let image = model.photoData().flatMap { UIImage(data: $0) }
         return VStack(alignment: .leading, spacing: 12) {
+            Button { nameEditing = false; sourceSheet = true } label: {
             Group {
                 if let image {
                     Image(uiImage: image).resizable().scaledToFit()
@@ -194,10 +185,17 @@ struct PieceCaptureView: View {
                 }
             }.frame(maxWidth: .infinity).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 12))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+            }.buttonStyle(.plain).disabled(model.isImporting || model.isSaving)
+                .accessibilityLabel(model.draft.photoID == nil ? "Add piece photo" : "Change piece photo")
             DisclosureRow(title: model.draft.photoID == nil ? "Add photo" : image == nil ? "Replace unavailable photo" : "Change photo", value: "Photos or camera") {
                 nameEditing = false
                 sourceSheet = true
             }.disabled(model.isImporting || model.isSaving)
+                .popover(isPresented: $sourceSheet, arrowEdge: .top) {
+                    PhotoSourcePopover(photos: { pendingSource = .photos; sourceSheet = false },
+                                       camera: { pendingSource = .camera; sourceSheet = false })
+                        .onDisappear(perform: presentPendingSource)
+                }
                 .accessibilityIdentifier("capture.addPhoto").accessibilityFocused($photoFocused)
             if model.isImporting {
                 HStack(spacing: 12) {

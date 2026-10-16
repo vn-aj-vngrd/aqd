@@ -53,3 +53,19 @@ struct NativeChoiceRow: View {
         }
     }
 }
+
+/// A short source choice anchored to its row, including on compact iPhones.
+struct PhotoSourcePopover: View {
+    let photos: () -> Void
+    let camera: () -> Void
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Button(action: photos) { Label("Choose from Photos", systemImage: "photo.on.rectangle").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading) }
+            Divider()
+            Button(action: camera) { Label("Take photo", systemImage: "camera").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading) }
+            Text("Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.")
+                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).padding(.top, 12)
+        }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).padding(16).frame(width: 280)
+            .presentationCompactAdaptation(.popover)
+    }
+}

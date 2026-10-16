@@ -93,7 +93,9 @@ struct OutfitEditorView: View {
             .toolbar {
                 ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
-                        if model.saved != nil { model.finish() } else { discard = true }
+                        if model.saved != nil { model.finish() }
+                        else if model.hasUnsavedChanges { discard = true }
+                        else { model.discard() }
                     } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
                         .accessibilityLabel(model.saved == nil ? "Cancel outfit" : "Done")
                         .tint(AppTheme.ink).disabled(model.pending || model.unknown || model.generating)

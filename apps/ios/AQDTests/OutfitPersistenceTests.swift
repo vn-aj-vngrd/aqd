@@ -17,6 +17,40 @@ struct OutfitPersistenceTests {
         return try store.savePiece(PieceDraft(name: "Blue shirt", category: .tops, photoID: photo.id), operationID: UUID())
     }
 
+    @Test func outfitCloseIgnoresNavigationButProtectsActualAndRecoveredChanges() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let piece = try await seedPiece(store)
+        var draft = OutfitDraft(ownerID: try store.todayConfiguration().ownerID)
+        draft.name = "Saved look"; draft.select(piece.id)
+        try store.saveOutfitDraft(draft)
+        let outfit = try store.saveOutfit(draft)
+        try store.acknowledgeOutfitReceipt(draft)
+        let state = AppState(store: store)
+        state.buildOutfit()
+        let blank = try #require(state.outfitEditor)
+        #expect(!blank.hasUnsavedChanges)
+        blank.update { $0.stage = .builder }
+        #expect(!blank.hasUnsavedChanges)
+        blank.update { $0.name = "New look" }
+        #expect(blank.hasUnsavedChanges)
+        blank.discard()
+        state.buildOutfit(editing: outfit)
+        let editing = try #require(state.outfitEditor)
+        #expect(!editing.hasUnsavedChanges)
+        editing.update { $0.name = "Changed" }
+        #expect(editing.hasUnsavedChanges)
+        state.outfitEditor = nil
+        state.buildOutfit(editing: outfit)
+        let recovered = try #require(state.outfitEditor)
+        #expect(recovered.hasUnsavedChanges)
+        recovered.update { $0.name = outfit.name }
+        #expect(!recovered.hasUnsavedChanges)
+        recovered.update { $0.remove(piece.id) }
+        #expect(recovered.hasUnsavedChanges)
+        recovered.discard()
+        #expect(try store.outfit(id: outfit.id) == outfit)
+    }
+
     @Test func manualOutfitSaveRetryReopenEditAndDiscardKeepStableIdentity() async throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         var store: PieceStore? = try PieceStore(directory: directory)
