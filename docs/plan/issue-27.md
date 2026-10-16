@@ -94,3 +94,12 @@ PR37 fourth review at `afdcee3` found invalid-pointer restore deadlock and synch
 Original regressions failed in `/tmp/aqd-pr37-codex4-red.log`; the larger damaged-store regression failed in `/tmp/aqd-pr37-codex4-large-red.log`. The first complete correction run failed only a raw URL equality assertion; it now compares normalized paths like neighboring tests, retaining data/current-generation assertions. Final Core71/native203, comprising190 Swift Testing and13 XCTest, pass `/tmp/aqd-pr37-codex4-final-unit.log` on the confirmed physical iPhone. Both independent reviewers rechecked without remaining findings. All E2E and capability activation remain issue30. Current-head CI/Codex and protected delivery remain separate gates.
 
 Unsigned generic iOS Release PASSED `/tmp/aqd-pr37-codex4-release.log`. Agent-doc links and whitespace pass.
+
+
+## PR37 selected-context correction
+
+PR37 fifth Codex review at `c0b8b58` found that parent outfit/theme revisions did not bind consent to their resolved descendants. Correction `8878b6b091df446722475780142d8375a48b682f` captures piece/outfit revision maps at selection and requires exact current recapture before building a prompt. Missing legacy descendant consent requires reselection while old conversations still decode. Changed, missing or archived descendants refuse sending; explicit reselection accepts the current records. UI uses the shared capture factory and retains actionable failure feedback.
+
+The actual parent-only consent regression failed in `/tmp/aqd-pr37-codex5-consent-red.log`; the earlier API red and fixture compile failure are retained in local logs. Final Core72/native203, comprising190 Swift Testing and13 XCTest, pass `/tmp/aqd-pr37-codex5-final-unit.log` on the physical iPhone. JSON round-trip, changed descendants, reselection and unavailable records are covered. Both independent reviewers rechecked without findings. All E2E, rendered acceptance and real capability activation remain issue30; new-head CI/Codex and protected shipping remain separate gates.
+
+Refreshed unsigned Release PASSED `/tmp/aqd-pr37-codex5-release.log`; agent-doc links and whitespace pass.

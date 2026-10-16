@@ -5,7 +5,7 @@
   ],
   "branch": "van/issue-27/agent-and-local-controls",
   "baseline": "1a5b44ecf06536d6bb1dae0551348f44a9747d5b",
-  "sourceHead": "819b5a5c19996a25b05ec37b9131f757a2629100",
+  "sourceHead": "8878b6b091df446722475780142d8375a48b682f",
   "checkedOn": "2026-10-16",
   "environment": {
     "destination": "Physical iPhone17ProMax",
@@ -16,7 +16,7 @@
   },
   "results": {
     "core": {
-      "passed": 71,
+      "passed": 72,
       "suites": 22,
       "failures": 0
     },
@@ -66,6 +66,11 @@
         "reviewedHead": "afdcee3046318bfe0e8de46d1e78af279ccc3b1e",
         "findings": 2,
         "status": "Pointer recovery and cancellable SQLite fixed; independent review additionally fixed archive-cap coupling on damaged storage. All actual regressions reproduced before fixes; final Core71/native203 pass and both source rechecks have no findings. New-head remote review remains required."
+      },
+      "codex5": {
+        "reviewedHead": "c0b8b582e6daeb0536b22dabdd244d378f418394",
+        "findings": 1,
+        "status": "Resolved descendant revisions captured at selection and revalidated before sending. Core72/native203 pass, both independent rechecks findings-free. New-head review remains required."
       }
     },
     "interruptedNativeRun": {
@@ -241,6 +246,36 @@
       "name": "aqd-pr37-codex4-final-docs.log",
       "sha256": "7c16d5dffebed7e569b60f27c4bac4607ecb5cee539e7c73509401c482177867",
       "published": false
+    },
+    {
+      "name": "aqd-pr37-codex5-red.log",
+      "sha256": "795e63137a1729c8a1bb43f5796101a0bf33d720c7d08d26a9dc06969ee84d2d",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex5-consent-red.log",
+      "sha256": "c8609e96c828880f386f87ef41c01c04300b111fe05fa5f259bc32d84e7d6100",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex5-unit.log",
+      "sha256": "daf70fad83bd4704fe2f2b91b97cece40346f8bf8f5006a843706981d1684199",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex5-final-unit.log",
+      "sha256": "f52d0c36a290050a3b95fd0ad70bce587efe10d08a63dd6fd8d998e671f3540e",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex5-release.log",
+      "sha256": "30bf2f8475aa26db9062bfd58ae000c06ba747c3ce6b05ced1ac451bc00a3834",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex5-docs.log",
+      "sha256": "7c16d5dffebed7e569b60f27c4bac4607ecb5cee539e7c73509401c482177867",
+      "published": false
     }
   ],
   "sourceFiles": {
@@ -258,7 +293,7 @@
     "apps/ios/AQD/Persistence/StoredAgentConversation.swift": "d3995a166c58767f470fc1ba8b41e817f22b58f0ea4ec008f8045f5b4e712655",
     "apps/ios/AQD/Persistence/StoredLocalSettings.swift": "5ea696e062966c742bf4f69116bd42d607934b48b5f5273875435e1be4d9e182",
     "apps/ios/AQD/UI/AgentActionViews.swift": "08462c1f090b3b73381dacc922c1d47c85865cf2e84a70293038f2ff720b044e",
-    "apps/ios/AQD/UI/AgentContextView.swift": "516af57309bc31da356e22181f3ba3c447b1f45d89d76714dbb96db4ac5871f1",
+    "apps/ios/AQD/UI/AgentContextView.swift": "d7015750dd4ba8824a611a62f7b4787eaf8c32d7b70a937b21b16be1f6d4c2ea",
     "apps/ios/AQD/UI/AgentMarkdownBody.swift": "28d3c8f63f8d9050f9ef6f4d1a4fd541de77fe32b3d4fbf3b3bd0de31d6f019d",
     "apps/ios/AQD/UI/AgentVoiceView.swift": "93c601cd74fffb2566293cf665de56fc658bd1c4130fa68ce151cf9cc735f4f9",
     "apps/ios/AQD/UI/LocalAgentView.swift": "088624d789d5b1df4b0eb4be810d737192f6234082d6f614c9c20a963e812560",
@@ -284,11 +319,11 @@
     "apps/ios/AQDTests/PiecePersistenceTests.swift": "143ddf7e57db0102e1a81e4020a7357be3e26129bea4a610f8599b68db740e9c",
     "apps/ios/Configuration/AppInfo.plist": "13a735ba1fcc1f4b2ebf6bd104114a2f6060d12ea81e93b4d802bf70e6ce3c01",
     "apps/ios/Core/Sources/AQDCore/AgentAction.swift": "2c1aa4261e1cc096624700ef38d889ffdcbc32806e4f609645a124af2b7fe11d",
-    "apps/ios/Core/Sources/AQDCore/AgentContextSnapshot.swift": "782a6be4265fb099ea8f2aa470d447668f08aba53754a7a5bd7806c47b948bc6",
-    "apps/ios/Core/Sources/AQDCore/AgentConversation.swift": "f096f185644aaf4a921ecc5a11febaa5042dc390abb8f45e1f821635f2f4e053",
+    "apps/ios/Core/Sources/AQDCore/AgentContextSnapshot.swift": "3800a6948c1dcd375408194bcca2b16df632e8659e2d7e2d13e1a326b8c94fb9",
+    "apps/ios/Core/Sources/AQDCore/AgentConversation.swift": "e6b15db44c40abe297b72e239e5ec904cef8076590ebb03599c355208b4930b1",
     "apps/ios/Core/Sources/AQDCore/LocalSettings.swift": "5b2d19ee4b78c4d52c57cc316317c8b50cdc8894c5fe63dfb92aa6166495cb80",
     "apps/ios/Core/Tests/AQDCoreTests/AgentActionTests.swift": "dec03d4b04bdf5b6aed8283882b1e8e5e9cd1c39a9649adaf19c13d023db80f9",
-    "apps/ios/Core/Tests/AQDCoreTests/AgentContextTests.swift": "e41ea5244af86c587361c303e72b64c8f6ceaa7cb7c72ac372b6096df022b891",
+    "apps/ios/Core/Tests/AQDCoreTests/AgentContextTests.swift": "85df3021ead7e08ceaecde6e61b2d0a6cae15a4417fc44233dba78f931aaff5e",
     "apps/ios/Core/Tests/AQDCoreTests/AgentConversationTests.swift": "2080518658c91812014ada3a69a5f2bfa567d05feaff9301580686d99af9ebfe",
     "apps/ios/Core/Tests/AQDCoreTests/LocalSettingsTests.swift": "98ce1e8b90ab842c9cac2ca26587a9b1e9df056bad2b94b570b93e952cbe68eb"
   },
