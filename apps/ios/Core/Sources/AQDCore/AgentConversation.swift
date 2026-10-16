@@ -29,7 +29,12 @@ public struct AgentSelectedRecord: Identifiable, Codable, Equatable, Sendable {
     public let id: UUID
     public let kind: Kind
     public let revision: Int
-    public init(id: UUID, kind: Kind, revision: Int) { self.id = id; self.kind = kind; self.revision = revision }
+    public let resolvedPieces: [UUID: Int]?
+    public let resolvedOutfits: [UUID: Int]?
+    public init(id: UUID, kind: Kind, revision: Int, resolvedPieces: [UUID: Int]? = nil, resolvedOutfits: [UUID: Int]? = nil) {
+        self.id = id; self.kind = kind; self.revision = revision
+        self.resolvedPieces = resolvedPieces; self.resolvedOutfits = resolvedOutfits
+    }
 }
 public struct AgentContext: Codable, Equatable, Sendable {
     public var scope: AgentContextScope = .closet

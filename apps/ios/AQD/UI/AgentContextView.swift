@@ -61,7 +61,12 @@ struct AgentContextView: View {
         let selected = draft.selected.contains { $0.kind == record.kind && $0.id == record.id }
         return Button {
             if selected { draft.selected.removeAll { $0.kind == record.kind && $0.id == record.id } }
-            else { draft.selected.append(record) }
+            else {
+                do {
+                    let reviewed = try AgentContextSnapshot.selection(id: record.id, kind: record.kind, pieces: state.pieces, outfits: state.outfits, themes: state.themes)
+                    draft.selected.append(reviewed)
+                } catch { model.error = "This context changed or includes unavailable records. Refresh your closet and select it again." }
+            }
         } label: { HStack { Text(name).foregroundStyle(AppTheme.ink); Spacer(); Image(systemName: selected ? "checkmark.circle.fill" : "circle").foregroundStyle(selected ? AppTheme.actionText : AppTheme.secondary) }.frame(minHeight: 44) }.accessibilityValue(selected ? "Selected" : "Not selected")
     }
 }

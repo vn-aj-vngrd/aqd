@@ -11,6 +11,36 @@ public struct AgentContextSnapshot: Codable, Equatable, Sendable {
     public let pieces: [Piece]
     public let totalEligible: Int
     public let scope: AgentContextScope
+    /// Capture the exact descendants reviewed when an outfit or theme is selected.
+    /// Legacy selections lack these revisions and must be selected again before sending.
+    public static func selection(id: UUID, kind: AgentSelectedRecord.Kind, pieces: [WardrobePiece], outfits: [Outfit], themes: [OutfitTheme]) throws -> AgentSelectedRecord {
+        let eligible = pieces.filter { !$0.isArchived && $0.availability == .available }
+        if kind == .piece {
+            guard let piece = eligible.first(where: { $0.id == id }) else { throw PlanValidationError.invalidRecord }
+            return AgentSelectedRecord(id: id, kind: kind, revision: piece.revision)
+        }
+        let revision: Int, members: [Outfit]
+        if kind == .outfit {
+            guard let outfit = outfits.first(where: { $0.id == id }) else { throw PlanValidationError.invalidRecord }
+            revision = outfit.revision; members = [outfit]
+        } else {
+            guard let theme = themes.first(where: { $0.id == id }) else { throw PlanValidationError.invalidRecord }
+            revision = theme.revision
+            members = try theme.outfitIDs.map { id in
+                guard let outfit = outfits.first(where: { $0.id == id }) else { throw PlanValidationError.invalidRecord }
+                return outfit
+            }
+        }
+        var pieceRevisions: [UUID: Int] = [:], outfitRevisions: [UUID: Int] = [:]
+        for outfit in members {
+            outfitRevisions[outfit.id] = outfit.revision
+            for id in outfit.pieceIDs {
+                guard let piece = eligible.first(where: { $0.id == id }) else { throw PlanValidationError.invalidRecord }
+                pieceRevisions[id] = piece.revision
+            }
+        }
+        return AgentSelectedRecord(id: id, kind: kind, revision: revision, resolvedPieces: pieceRevisions, resolvedOutfits: outfitRevisions)
+    }
     public static func build(_ context: AgentContext, pieces: [WardrobePiece], outfits: [Outfit], themes: [OutfitTheme], maximumPieces: Int) throws -> Self {
         guard maximumPieces > 0 else { throw PlanValidationError.invalidRecord }
         if context.scope == .general { return Self(pieces: [], totalEligible: 0, scope: .general) }
@@ -18,6 +48,7 @@ public struct AgentContextSnapshot: Codable, Equatable, Sendable {
         var selected = Set<UUID>()
         if context.scope == .selected {
             for record in context.selected {
+                guard record == (try selection(id: record.id, kind: record.kind, pieces: pieces, outfits: outfits, themes: themes)) else { throw PlanValidationError.invalidRecord }
                 switch record.kind {
                 case .piece:
                     guard let value = eligible.first(where: { $0.id == record.id }), value.revision == record.revision else { throw PlanValidationError.invalidRecord }; selected.insert(value.id)
