@@ -109,7 +109,7 @@ struct PieceCaptureView: View {
             if backgroundCropRequested { backgroundCropRequested = false; showPhotoEditor = true }
         }) { BackgroundRemovalView(capture: model) { backgroundCropRequested = true; showBackgroundRemoval = false } }
         .editImportedPhoto(model, importing: model.isImporting, locked: model.isSaving, presented: $showPhotoEditor)
-        .sheet(isPresented: $showPhotoEditor) { PhotoEditorView(model: model) }
+        .sheet(isPresented: $showPhotoEditor) { PhotoEditorView(model: model, isPresentedModally: true) }
         .onDisappear { model.cancelImport() }
     }
 

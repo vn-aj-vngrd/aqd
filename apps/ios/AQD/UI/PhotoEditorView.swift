@@ -10,6 +10,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
     }
 
     @Bindable var model: Model
+    let isPresentedModally: Bool
     @Environment(\.dismiss) private var dismiss
     private let sourceID: UUID?
     private let previousRecipe: PhotoEditRecipe
@@ -35,8 +36,9 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
     @State private var previewPreparer = PhotoPreparer()
     @GestureState private var dragging = false
 
-    init(model: Model) {
+    init(model: Model, isPresentedModally: Bool = false) {
         self.model = model
+        self.isPresentedModally = isPresentedModally
         sourceID = model.editingPhotoID
         let recipe = model.editingPhotoRecipe
         previousRecipe = recipe
@@ -78,7 +80,16 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
     }
 
     var body: some View {
-        NavigationStack {
+        Group {
+            if isPresentedModally { NavigationStack { editor } }
+            else { editor }
+        }.tint(AppTheme.ink)
+            .interactiveDismissDisabled(dirty || applying)
+            .task(id: [quarterTurns, previewState.retryGeneration]) { await prepareRotatedPreview() }
+            .onDisappear { cancel() }
+    }
+
+    private var editor: some View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     if let previewImage, let recipe, originalWidth > 0, originalHeight > 0 {
@@ -86,10 +97,8 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
                         if previewState.isPreparing(quarterTurns: quarterTurns, applying: applying) {
                             OperationProgress(title: "Preparing preview…")
                         }
-                        Picker("Framing", selection: $portrait) {
-                            Text("Fit entire photo").tag(false)
-                            Text("Portrait 3:4").tag(true)
-                        }.pickerStyle(.segmented)
+                        AppSegmentedControl(selection: Binding(get: { portrait ? "Portrait 3:4" : "Fit entire photo" }, set: { portrait = $0 == "Portrait 3:4" }),
+                                            options: ["Fit entire photo", "Portrait 3:4"], accessibilityTitle: "Framing", identifierPrefix: "photo.framing")
                         HStack {
                             AccessoryButton("Rotate", systemImage: "rotate.right") {
                                 quarterTurns = (quarterTurns + 1) % 4
@@ -131,14 +140,15 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
             }
             .background(AppTheme.canvas)
             .navigationTitle("Edit photo").navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden()
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 confirmation
             } }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { dirty ? (discardDecision = true) : leave() } label: {
-                        Label("Cancel", systemImage: "xmark")
-                    }.disabled(applying).accessibilityIdentifier("photo.editor.back")
+                        Image(systemName: "chevron.backward")
+                    }.disabled(applying).accessibilityLabel("Back").accessibilityIdentifier("photo.editor.back")
                     .confirmationDialog("Discard photo edits?", isPresented: $discardDecision, titleVisibility: .visible) {
                         Button("Discard edits", role: .destructive) { leave() }
                         Button("Cancel", role: .cancel) {}
@@ -148,11 +158,6 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
                 }
             }
 
-        }.tint(AppTheme.ink)
-            .interactiveDismissDisabled(dirty || applying)
-            // Reset must restart preparation even when the requested rotation is already zero.
-            .task(id: [quarterTurns, previewState.retryGeneration]) { await prepareRotatedPreview() }
-            .onDisappear { cancel() }
     }
 
     private func photoPreview(_ image: UIImage, recipe: PhotoEditRecipe) -> some View {

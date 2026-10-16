@@ -220,3 +220,43 @@ struct ThemedDatePicker: View {
         return formatter.string(from: selection)
     }
 }
+
+struct AppSegmentedControl: View {
+    @Binding var selection: String
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Namespace private var selectedSegment
+    let options: [String]
+    let accessibilityTitle: String
+    var identifierPrefix = "segment"
+
+    var body: some View {
+        Group {
+            if #available(iOS 26, *), !reduceTransparency, contrast != .increased {
+                segments.glassEffect(.regular, in: Capsule())
+            } else {
+                segments.background(AppTheme.surface, in: Capsule())
+                    .overlay(Capsule().stroke(contrast == .increased ? AppTheme.controlBoundary : AppTheme.divider, lineWidth: 1))
+            }
+        }.accessibilityElement(children: .contain).accessibilityLabel(accessibilityTitle)
+    }
+    private var segments: some View {
+        HStack(spacing: 0) {
+            ForEach(options, id: \.self) { scope in
+                Button { selection = scope } label: {
+                    Text(scope).font(AppTypography.supporting).fontWeight(selection == scope ? .semibold : .regular)
+                        .foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, minHeight: 44)
+                        .background {
+                            if selection == scope {
+                                Capsule().fill(AppTheme.segmentSelection)
+                                    .matchedGeometryEffect(id: "selected", in: selectedSegment)
+                            }
+                        }.contentShape(Capsule())
+                }.buttonStyle(.plain)
+                    .accessibilityAddTraits(selection == scope ? [.isSelected] : [])
+                    .accessibilityIdentifier("\(identifierPrefix).\(scope.lowercased())")
+            }
+        }.padding(4).animation(reduceMotion ? nil : .easeInOut(duration: 0.18), value: selection)
+    }
+}

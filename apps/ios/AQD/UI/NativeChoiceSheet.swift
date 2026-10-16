@@ -41,7 +41,7 @@ struct NativeChoiceRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 12) {
-                Label(title, systemImage: symbol)
+                AccessoryLabel(title, systemImage: symbol)
                 Spacer(minLength: 12)
                 if disclosure {
                     Image(systemName: "chevron.forward").font(AppTypography.disclosure)
@@ -63,14 +63,28 @@ struct PhotoSourcePopover: View {
     var remove: (() -> Void)? = nil
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Button(action: photos) { AccessoryLabel("Choose from Photos", systemImage: "photo.on.rectangle").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading) }
+            choice("Choose from Photos", symbol: "photo.on.rectangle", action: photos)
             Divider()
-            Button(action: camera) { AccessoryLabel("Take photo", systemImage: "camera").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading) }
-            if let edit { Divider(); Button(action: edit) { AccessoryLabel("Edit photo", systemImage: "crop").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) } }
-            if let removeBackground { Divider(); Button(action: removeBackground) { AccessoryLabel("Remove background", systemImage: "person.crop.rectangle").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) } }
-            if let remove { Divider(); Button(role: .destructive, action: remove) { Text("Remove photo").foregroundStyle(AppTheme.error).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) } }
-        }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).padding(16).frame(width: 280)
+            choice("Take photo", symbol: "camera", action: camera)
+            if let edit { Divider(); choice("Edit photo", symbol: "crop", action: edit) }
+            if let removeBackground { Divider(); choice("Remove background", symbol: "person.crop.rectangle", action: removeBackground) }
+            if let remove { Divider(); choice("Remove photo", symbol: "trash", role: .destructive, action: remove) }
+        }.padding(AppSpacing.large).frame(width: 280)
             .presentationCompactAdaptation(.popover)
             .accessibilityHint("Selected photos are copied into AQD on this device. Originals stay in Photos.")
+    }
+
+    private func choice(_ title: String, symbol: String, role: ButtonRole? = nil, action: @escaping () -> Void) -> some View {
+        Button(role: role, action: action) {
+            HStack(spacing: AppSpacing.medium) {
+                Image(systemName: symbol)
+                    .foregroundStyle(role == .destructive ? AppTheme.error : AppTheme.controlIcon)
+                    .frame(width: AppControlMetrics.disclosureLane).accessibilityHidden(true)
+                Text(title).foregroundStyle(role == .destructive ? AppTheme.error : AppTheme.ink)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }.font(AppTypography.body)
+                .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading)
+                .contentShape(Rectangle())
+        }.buttonStyle(.plain)
     }
 }

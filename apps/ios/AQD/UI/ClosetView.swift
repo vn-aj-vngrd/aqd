@@ -106,7 +106,7 @@ struct ClosetView: View {
                 }
             }.scrollIndicators(.hidden)
         } else {
-            ClosetScopeControl(selection: scopeSelection)
+            AppSegmentedControl(selection: scopeSelection, options: ClosetSearchScope.allCases.map(\.rawValue), accessibilityTitle: "Closet collection", identifierPrefix: "closet.scope")
         }
     }
     private var themeFilterMenu: some ToolbarContent {
@@ -557,43 +557,6 @@ private struct ClosetSearchField: ViewModifier {
     }
 }
 
-private struct ClosetScopeControl: View {
-    @Binding var selection: String
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.colorSchemeContrast) private var contrast
-    @Namespace private var selectedSegment
-    private let scopes = ClosetSearchScope.allCases.map(\.rawValue)
-
-    var body: some View {
-        Group {
-            if #available(iOS 26, *), !reduceTransparency, contrast != .increased {
-                segments.glassEffect(.regular, in: Capsule())
-            } else {
-                segments.background(AppTheme.surface, in: Capsule())
-                    .overlay(Capsule().stroke(contrast == .increased ? AppTheme.controlBoundary : AppTheme.divider, lineWidth: 1))
-            }
-        }.accessibilityElement(children: .contain).accessibilityLabel("Closet collection")
-    }
-    private var segments: some View {
-        HStack(spacing: 0) {
-            ForEach(scopes, id: \.self) { scope in
-                Button { selection = scope } label: {
-                    Text(scope).font(AppTypography.supporting).fontWeight(selection == scope ? .semibold : .regular)
-                        .foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, minHeight: 44)
-                        .background {
-                            if selection == scope {
-                                Capsule().fill(AppTheme.segmentSelection)
-                                    .matchedGeometryEffect(id: "selected", in: selectedSegment)
-                            }
-                        }.contentShape(Capsule())
-                }.buttonStyle(.plain)
-                    .accessibilityAddTraits(selection == scope ? [.isSelected] : [])
-                    .accessibilityIdentifier("closet.scope.\(scope.lowercased())")
-            }
-        }.padding(4).animation(reduceMotion ? nil : .easeInOut(duration: 0.18), value: selection)
-    }
-}
 
 struct ClosetCollectionSummary: View {
     let title: String
