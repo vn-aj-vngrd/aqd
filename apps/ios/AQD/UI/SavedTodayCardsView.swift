@@ -12,6 +12,8 @@ struct SavedTodayCardsView: View {
     @State private var error: String?
     @State private var selection: UUID?
     @AccessibilityFocusState private var focused: UUID?
+    private var matchingCards: [TodayPersonalCard] { cards.filter { $0.kind == model.draft.nested?.kind } }
+    private var title: String { model.draft.nested?.kind == .personalPhoto ? "Saved photos" : "Saved notes" }
     var body: some View {
         ScrollViewReader { reader in
             List {
@@ -24,10 +26,10 @@ struct SavedTodayCardsView: View {
                         if !unknown { Button("Cancel deletion") { cancelDeletion() }.disabled(pending) }
                     }
                 }
-                if cards.isEmpty && error == nil {
-                    Text("No saved notes or photos").font(AppTypography.section).accessibilityAddTraits(.isHeader)
+                if matchingCards.isEmpty && error == nil {
+                    Text(model.draft.nested?.kind == .personalPhoto ? "No saved photos" : "No saved notes").font(AppTypography.section).accessibilityAddTraits(.isHeader)
                 }
-                ForEach(cards) { card in
+                ForEach(matchingCards) { card in
                     let usage = try? model.state.store?.todayCardUsage(card.id)
                     HStack(spacing: 12) {
                         Button {
@@ -46,7 +48,7 @@ struct SavedTodayCardsView: View {
                         } label: { Label("More for \(label(card))", systemImage: "ellipsis").labelStyle(.iconOnly).frame(width: 44, height: 44) }.disabled(pending || request != nil || model.locked)
                     }.id(card.id).accessibilityFocused($focused, equals: card.id)
                 }
-            }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Saved notes and photos").navigationBarTitleDisplayMode(.inline)
+            }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle(title).navigationBarTitleDisplayMode(.inline)
                 .onAppear { reload(); if let selection { reader.scrollTo(selection); focused = selection } }
                 .alert("Delete this saved \(request?.card.kind == .personalPhoto ? "photo" : "note")?", isPresented: $confirming) {
                     Button("Cancel", role: .cancel) { request = nil; focused = selection }

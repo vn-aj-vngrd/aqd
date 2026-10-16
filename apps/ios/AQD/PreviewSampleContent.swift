@@ -5,6 +5,26 @@ import UIKit
 
 /// Explicit owner preview only. No normal launch, tour or Release path calls this.
 @MainActor enum PreviewSampleContent {
+    static func widgetPreview(state: AppState, base: TodayConfiguration) -> [TodayWidgetInstance] {
+        TodayWidgetKind.allCases.enumerated().map { index, kind in
+            if let existing = base.instances.first(where: { $0.kind == kind }) { return existing }
+            let instanceID = id(901 + index)
+            var options = TodayWidgetOptions()
+            switch kind {
+            case .theme: options.pinnedID = state.themes.first?.id
+            case .personalNote:
+                options.personal = TodayPersonalCard(id: id(951 + index), ownerID: base.ownerID, kind: kind,
+                    text: "Preview note. A place for a thought about what you want to wear.")
+            case .personalPhoto:
+                let memory = state.fitMemories.first(where: { $0.photoID != nil })
+                options.personal = TodayPersonalCard(id: id(951 + index), ownerID: base.ownerID, kind: kind,
+                    text: "Preview photo from your fit journal.", photoID: memory?.photoID, photoRecipe: memory?.photoRecipe ?? .fitOriginal)
+            default: break
+            }
+            return TodayWidgetInstance(id: instanceID, kind: kind, options: options)
+        }
+    }
+
     struct Bundle {
         var pieces: [WardrobePiece] = []
         var outfits: [Outfit] = []

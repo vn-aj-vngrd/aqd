@@ -116,12 +116,16 @@ struct ClosetView: View {
     private var themeFilterMenu: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
-                Picker("Contents", selection: state.closetSearchActive ? $searchThemeQuery.content : $themeQuery.content) {
-                    ForEach(ThemeCollectionQuery.Content.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                Section("Contents") {
+                    Picker("Contents", selection: state.closetSearchActive ? $searchThemeQuery.content : $themeQuery.content) {
+                        ForEach(ThemeCollectionQuery.Content.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    }
                 }
                 if state.closetSearchActive {
-                    Picker("Sort themes", selection: $searchThemeQuery.sort) {
-                        ForEach(ThemeCollectionQuery.Sort.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    Section("Sort") {
+                        Picker("Sort themes", selection: $searchThemeQuery.sort) {
+                            ForEach(ThemeCollectionQuery.Sort.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                        }
                     }
                 }
             } label: { Label("Filter and sort themes", systemImage: "line.3.horizontal.decrease") }
@@ -153,13 +157,17 @@ struct ClosetView: View {
     private var outfitFilterMenu: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
-                Toggle("Favorites", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly)
-                Picker("Theme", selection: state.closetSearchActive ? $searchThemeID : $themeID) {
-                    Text("All themes").tag(Optional<UUID>.none)
-                    ForEach(state.themes) { Text($0.displayName).tag(Optional($0.id)) }
-                    if let selectedID = state.closetSearchActive ? searchThemeID : themeID,
-                       !state.themes.contains(where: { $0.id == selectedID }) {
-                        Text("Unavailable theme").tag(Optional(selectedID))
+                Section("Favorites") {
+                    Toggle("Favorites only", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly)
+                }
+                Section("Theme") {
+                    Picker("Theme", selection: state.closetSearchActive ? $searchThemeID : $themeID) {
+                        Text("All themes").tag(Optional<UUID>.none)
+                        ForEach(state.themes) { Text($0.displayName).tag(Optional($0.id)) }
+                        if let selectedID = state.closetSearchActive ? searchThemeID : themeID,
+                           !state.themes.contains(where: { $0.id == selectedID }) {
+                            Text("Unavailable theme").tag(Optional(selectedID))
+                        }
                     }
                 }
             } label: { Label("Filter outfits", systemImage: "line.3.horizontal.decrease") }
@@ -169,13 +177,17 @@ struct ClosetView: View {
     private var pieceFilterMenu: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
-                Picker("Category", selection: $category) {
-                    Text("All categories").tag(Optional<String>.none)
-                    ForEach(state.pieceCategories) { Text($0.name).tag(Optional($0.id)) }
+                Section("Category") {
+                    Picker("Category", selection: $category) {
+                        Text("All categories").tag(Optional<String>.none)
+                        ForEach(state.pieceCategories) { Text($0.name).tag(Optional($0.id)) }
+                    }
                 }
-                Picker("Availability", selection: $availability) {
-                    Text("All availability").tag(Optional<PieceAvailability>.none)
-                    ForEach([PieceAvailability.available, .unavailable, .laundry], id: \.self) { Text($0.rawValue.capitalized).tag(Optional($0)) }
+                Section("Availability") {
+                    Picker("Availability", selection: $availability) {
+                        Text("All availability").tag(Optional<PieceAvailability>.none)
+                        ForEach([PieceAvailability.available, .unavailable, .laundry], id: \.self) { Text($0.rawValue.capitalized).tag(Optional($0)) }
+                    }
                 }
             } label: { Label("Filter pieces", systemImage: "line.3.horizontal.decrease") }.tint(AppTheme.ink)
         }

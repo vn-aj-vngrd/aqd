@@ -7,6 +7,51 @@ import UIKit
 
 @Suite(.serialized) @MainActor
 struct TodayLayoutPersistenceTests {
+    @Test func addOffersOnlyMissingKindsAndRemovingMakesThemAvailableAgain() throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let state = AppState(store: store)
+        state.openTodayEditor()
+        let model = try #require(state.todayEditor)
+        #expect(!model.availableKinds.contains(.todayLook))
+        let before = model.draft
+        model.beginNew(.todayLook)
+        #expect(model.draft == before)
+        model.beginNew(.quickActions)
+        try #require(model.canApply)
+        model.applyNested()
+        #expect(!model.availableKinds.contains(.quickActions))
+        let after = model.draft
+        model.beginNew(.quickActions)
+        #expect(model.draft == after)
+        let added = try #require(model.draft.value.instances.first { $0.kind == .quickActions })
+        model.update { try $0.remove(added.id) }
+        #expect(model.availableKinds.contains(.quickActions))
+        model.beginNew(.quickActions)
+        model.nested { $0.kind = .todayLook }
+        #expect(!model.canApply)
+        let unchangedInstances = model.draft.value.instances
+        model.applyNested()
+        #expect(model.draft.value.instances == unchangedInstances)
+        model.cancelNested()
+        // Retained legacy duplicates remain editable without introducing another kind.
+        let legacy = TodayWidgetInstance(kind: .todayLook)
+        model.update { $0.value.instances.append(legacy) }
+        model.begin(legacy)
+        #expect(model.canApply)
+        model.cancelNested()
+        #expect(try store.todayConfiguration().instances.count == 3)
+#if DEBUG
+        let stamp = try store.mutationStamp(), saved = try store.todayConfiguration()
+        let preview = PreviewSampleContent.widgetPreview(state: state, base: saved)
+        #expect(preview.map(\.kind) == TodayWidgetKind.allCases)
+        #expect(preview.map(\.id) == PreviewSampleContent.widgetPreview(state: state, base: saved).map(\.id))
+        #expect(try store.mutationStamp() == stamp)
+        #expect(try store.todayConfiguration() == saved)
+        #expect(try store.todayPersonalCards().isEmpty)
+        #expect(try store.wearRecords().isEmpty)
+#endif
+    }
+
     @Test func everyWidgetCanConfigureReorderDuplicateRestoreAndSaveWithoutChangingWear() async throws {
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         let base = try store.todayConfiguration()
@@ -21,7 +66,7 @@ struct TodayLayoutPersistenceTests {
         let state = AppState(store: store); state.openTodayEditor()
         let model = try #require(state.todayEditor)
         for kind in TodayWidgetKind.allCases {
-            model.begin(TodayWidgetInstance(kind: kind))
+            model.begin(model.draft.value.instances.first(where: { $0.kind == kind }) ?? TodayWidgetInstance(kind: kind))
             switch kind {
             case .personalNote:
                 #expect(!model.canApply)

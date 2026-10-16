@@ -17,6 +17,15 @@ struct TodayEditorView: View {
     var body: some View {
         NavigationStack {
             List {
+                if !model.availableKinds.isEmpty {
+                    Section {
+                        HStack {
+                            addButton.disabled(model.locked || pendingKind != nil).accessibilityLabel("Add widget")
+                            Spacer(minLength: 0)
+                        }.listRowInsets(EdgeInsets()).listRowBackground(Color.clear).listRowSeparator(.hidden)
+                            .moveDisabled(true).deleteDisabled(true)
+                    }
+                }
                 Section {
                     ForEach(Array(model.draft.value.instances.enumerated()), id: \.element.id) { index, instance in
                         HStack(spacing: 12) {
@@ -36,20 +45,11 @@ struct TodayEditorView: View {
                     }.onMove { offsets, destination in
                         model.update { $0.value.instances.move(fromOffsets: offsets, toOffset: destination) }
                     }
-                } header: {
-                    HStack(spacing: 8) {
-                        addButton.disabled(model.locked || pendingKind != nil).accessibilityLabel("Add widget")
-                        Spacer(minLength: 0)
-                    }.textCase(nil).tint(AppTheme.ink)
-                } footer: {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Drag to reorder. Tap a widget to edit. Removing widgets keeps saved notes and photos.")
-                    }
                 }
                 if let error = model.error {
                     Section { SemanticFeedback(role: .danger, message: error) }.listRowBackground(AppTheme.surface)
                 }
-            }.listStyle(.insetGrouped).scrollContentBackground(.hidden)
+            }.listStyle(.insetGrouped).listSectionSpacing(12).scrollContentBackground(.hidden)
                 .environment(\.editMode, .constant(.active))
                 .background(AppTheme.canvas).navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
@@ -62,7 +62,7 @@ struct TodayEditorView: View {
                     } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }.accessibilityLabel(model.saved == nil ? "Cancel Today changes" : "Done").disabled(model.pending || model.unknown || pendingKind != nil)
                 } }
                 .navigationDestination(isPresented: $library) {
-                    List(TodayWidgetKind.allCases, id: \.self) { kind in
+                    List(model.availableKinds, id: \.self) { kind in
                         Button {
                             guard pendingKind == nil else { return }
                             pendingKind = kind; library = false
@@ -79,7 +79,7 @@ struct TodayEditorView: View {
                             guard let kind = pendingKind else { return }
                             pendingKind = nil
                             guard model.state.todayEditor?.id == model.id, !model.locked else { return }
-                            model.begin(TodayWidgetInstance(kind: kind))
+                            model.beginNew(kind)
                         }
                 }
                 .onAppear {
@@ -99,14 +99,13 @@ struct TodayEditorView: View {
     }
     private var addAction: some View {
         Button { library = true } label: {
-            Label("Add", systemImage: "plus").padding(.horizontal, 16).frame(minHeight: 44).contentShape(Capsule())
+            Label("Add", systemImage: "plus").font(AppTypography.body).foregroundStyle(AppTheme.ink).padding(.horizontal, 16).frame(minHeight: 44).contentShape(Capsule())
         }.buttonStyle(.plain)
     }
 
     private func widgetOptions(_ instance: TodayWidgetInstance, index: Int) -> some View {
         Menu {
             Button("Configure", systemImage: "slider.horizontal.3") { model.begin(instance) }
-            Button("Duplicate", systemImage: "plus.square.on.square") { model.update { $0.value.instances.insert(instance.independentCopy(), at: index + 1) } }
             Button("Move up", systemImage: "arrow.up") { model.move(instance.id, by: -1) }.disabled(index == 0)
             Button("Move down", systemImage: "arrow.down") { model.move(instance.id, by: 1) }.disabled(index == model.draft.value.instances.count - 1)
             Button("Remove", systemImage: "minus.circle") { model.update { try $0.remove(instance.id) } }

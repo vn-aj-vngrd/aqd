@@ -30,6 +30,13 @@ import Observation
             self.error = "Keep at least one widget. Add another before removing this one."
         } catch { draft = changed; self.error = "These edits could not be retained. Keep this screen open and retry. Your saved layout is unchanged."; draftFailed = true }
     }
+    var availableKinds: [TodayWidgetKind] {
+        TodayWidgetKind.allCases.filter { kind in !draft.value.instances.contains { $0.kind == kind } }
+    }
+    func beginNew(_ kind: TodayWidgetKind) {
+        guard !locked, draft.nested == nil, availableKinds.contains(kind) else { return }
+        begin(TodayWidgetInstance(kind: kind))
+    }
     func begin(_ requested: TodayWidgetInstance) {
         let instance = draft.value.instances.first { $0.id == requested.id } ?? requested
         cancelImport()
@@ -48,6 +55,9 @@ import Observation
     }
     var canApply: Bool {
         guard !locked, !importing, let nested = draft.nested else { return false }
+        let existing = draft.value.instances.first { $0.id == nested.id }
+        if existing?.kind != nested.kind,
+           draft.value.instances.contains(where: { $0.id != nested.id && $0.kind == nested.kind }) { return false }
         return (try? nested.validatedContent(ownerID: draft.base.ownerID)) != nil
     }
     func applyNested() {

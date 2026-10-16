@@ -122,7 +122,6 @@ struct PieceCaptureView: View {
                              editingFocus: $nameEditing)
                 VStack(spacing: 0) {
                     HStack(spacing: 12) {
-                        Text("Category").font(AppTypography.body)
                         Menu {
                             ForEach(model.categories) { category in
                                 Button { model.selectCategory(category) } label: {
