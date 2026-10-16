@@ -4,6 +4,20 @@ import Testing
 @testable import AQD
 
 @Suite(.serialized) @MainActor struct LocalEraseTests {
+    @Test func failedPreparationCanRetryAfterStorageRecovers() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: root), coordinator = LocalDataCoordinator(legacyRoot: root)
+        let model = LocalRestoreModel(coordinator: coordinator, source: store, kind: .erase)
+        try Data("temporary storage obstruction".utf8).write(to: coordinator.controlDirectory)
+        model.prepareErase()
+        for _ in 0..<100 { if model.phase != .validating { break }; try await Task.sleep(for: .milliseconds(5)) }
+        #expect(model.phase == .failed && model.review == nil)
+        try FileManager.default.removeItem(at: coordinator.controlDirectory)
+        model.prepareErase()
+        for _ in 0..<100 { if model.phase != .validating { break }; try await Task.sleep(for: .milliseconds(5)) }
+        #expect(model.phase == .review && model.review?.kind == .erase)
+        #expect(model.cancel())
+    }
     @Test func exactConfirmationClearsAllDomainsButCleanupWaitsForReleasedOwnersAndPreservesOutsideCopies() async throws {
         var fixture: LocalDataFixture? = try await LocalDataFixture()
         var source: PieceStore? = try #require(fixture).store

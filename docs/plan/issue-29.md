@@ -17,7 +17,7 @@ Use existing public Core validators and actual PieceStore/model save/read/reopen
 | S3 | Staged validated reviewed replacement and recovery entry | LOCAL07, J6/TODAY07/PREF | Invalid/newer/cancel/failure/unknown/restart preservation | Committed | `AQD-Slice: #29/S3` | `a02a8d5` |
 | S4 | Exact typed global erase and acknowledged records versus pending AQD cleanup | LOCAL08, J6/TODAY07 | All-domain erase/restart/failure and outside-file preservation | Committed | `AQD-Slice: #29/S4` | `08e727d` |
 
-| S5 | Owner-requested Planner week strip fills its container evenly | Owner follow-up | Native Debug compile; rendered acceptance deferred to issue30 | Committed | `AQD-Slice: #29/S5` | Pending |
+| S5 | Owner-requested Planner week strip fills its container evenly | Owner follow-up | Native Debug compile; rendered acceptance deferred to issue30 | Committed | `AQD-Slice: #29/S5` | `e7c4eb8` |
 
 ## Acceptance and evidence
 
@@ -64,3 +64,7 @@ The physical iPhone unit `LocalEraseTests` passed in `/tmp/aqd-29-s4-native.log`
 ## S5 receipt
 
 The owner supplied a Planner screenshot showing unused width to the right of the seven dates. The shared week row now takes the available width and gives each date an equal flexible column, including its selected highlight. A horizontal fallback retains all seven accessible targets when their minimum sizes cannot fit. The calendar keeps the existing seven-day week and navigation behavior. Native Debug build passed `/tmp/aqd-planner-width-build.log`. Bounded review traced both Planner and shared calendar consumers; no domain change or mirrored layout test was needed. Rendered/device E2E remains issue30 as authorized.
+
+## Full independent review correction
+
+Failed erase preparation can retry on the same model once storage recovers, provided no reviewed operation exists. The coordinator retains pending/published guards. Style Settings refreshes acknowledged answers when its shared editor closes. Standards identified both defects; Spec independently identified erase retry and an Agent deletion-recovery defect, recorded in issue27. The erase retry failed before the fix in `/tmp/aqd-27-29-review-red.log`. Final Core71/native194 pass `/tmp/aqd-27-29-review-final-unit.log` on the confirmed iPhone; both reviewers rechecked the corrected source with no remaining findings. Rendered and E2E acceptance remains issue30.

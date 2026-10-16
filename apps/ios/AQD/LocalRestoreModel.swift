@@ -57,7 +57,7 @@ import Observation
         }
     }
     func prepareErase() {
-        guard kind == .erase, phase == .choose else { return }
+        guard kind == .erase, review == nil, phase == .choose || phase == .failed else { return }
         phase = .validating; error = nil
         task = Task {
             do { await Task.yield(); try Task.checkCancellation(); review = try await coordinator.prepareErase(source: source); phase = .review }

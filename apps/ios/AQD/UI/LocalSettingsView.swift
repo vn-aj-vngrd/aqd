@@ -54,6 +54,9 @@ struct LocalStyleSettingsView: View {
             Text("Saved on this iPhone. Allowed Style context requires an explicit choice in Agent. Body-use permission starts off and remains separately controlled.").font(.footnote).foregroundStyle(AppTheme.secondary)
         }.padding(20) }.background(AppTheme.canvas).navigationTitle("Style").navigationBarTitleDisplayMode(.inline)
             .onAppear { answers = try? state.store?.localExperience().style?.answers }
+            .onChange(of: state.styleEditor?.id) { _, editorID in
+                if editorID == nil { answers = try? state.store?.localExperience().style?.answers }
+            }
     }
 }
 struct LocalAssistanceSettingsView: View {
