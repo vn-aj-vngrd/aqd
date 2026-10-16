@@ -5,44 +5,47 @@ struct OutfitWearEditorView: View {
     @Bindable var model: OutfitWearEditorModel
     @State private var discard = false
     @State private var choosing = false
+    @State private var timezone = false
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     if let saved = model.saved {
-                        Text("Wear recorded").font(AppTypography.section)
+                        Text(model.draft.baseRecord == nil ? "Wear recorded" : "Correction saved").font(AppTypography.section)
                         Text(saved.day.key).font(AppTypography.body)
                         ForEach(saved.pieces, id: \.id) { Text($0.name) }
                         NavigationLink("Open wear history") { LocalWearHistoryView() }.frame(minHeight: 44)
                         PrimaryAction(title: "Done") { model.finish() }
                     } else {
+                        OutfitComposition(pieceIDs: model.draft.pieceIDs)
+                        if model.draft.planEntry != nil {
+                            Text("Recording for this planned date. Choose a different date to keep the plan unchanged.")
+                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }
                         LabeledControl(title: "Worn on") {
                             DatePicker("Worn on", selection: Binding(get: { (try? model.draft.day.date()) ?? Date() }, set: { value in
                                 let zone = TimeZone(identifier: model.draft.day.timeZoneID) ?? .current
-                                model.update { $0.day = LocalPlanDay(date: value, timeZone: zone) }
+                                model.update { $0.day = LocalPlanDay(date: value, timeZone: zone); if $0.day != $0.planEntry?.day { $0.planEntry = nil } }
                             }), displayedComponents: .date)
                             .environment(\.timeZone, TimeZone(identifier: model.draft.day.timeZoneID) ?? .current)
                         }.disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Pieces", value: "\(model.draft.pieceIDs.count) selected") { choosing = true }
                             .disabled(model.pending || model.unknown)
                         ForEach(model.draft.pieceIDs, id: \.self) { id in
-                            Text(model.pieces.first { $0.id == id }?.name ?? "Unavailable piece").foregroundStyle(AppTheme.secondary)
+                            Text(pieceName(id)).foregroundStyle(AppTheme.secondary)
                         }
-                        LabeledControl(title: "Timezone") {
-                            Picker("Timezone", selection: Binding(get: { model.draft.day.timeZoneID }, set: { value in
-                                model.update { $0.day.timeZoneID = value }
-                            })) {
-                                ForEach(TimeZone.knownTimeZoneIdentifiers, id: \.self) { Text($0).tag($0) }
-                            }.pickerStyle(.menu)
-                        }.disabled(model.pending || model.unknown)
+                        DisclosureRow(title: "Timezone", value: model.draft.day.timeZoneID) { timezone = true }
+                            .disabled(model.pending || model.unknown)
                         if let duplicate = model.duplicate {
                             Text("These pieces are already recorded on \(duplicate.day.key). Use that record to keep wear counted once.")
                                 .foregroundStyle(AppTheme.secondary)
-                            PrimaryAction(title: "Use existing record", isPending: model.pending) { Task { await model.save(useExisting: true) } }
-                                .disabled(!model.canSave || model.unknown)
+                            NavigationLink("View wear record") { LocalWearDetailView(id: duplicate.id) }.frame(minHeight: 44)
+                            if model.draft.baseRecord == nil { PrimaryAction(title: "Use existing record", isPending: model.pending) { Task { await model.save(useExisting: true) } }
+                                .disabled(!model.canSave || model.unknown) }
+                            Text("Change the date or pieces above to record a different wear.").font(AppTypography.supporting)
                         }
                         if model.duplicate == nil || model.unknown {
-                            PrimaryAction(title: model.unknown ? "Check save result" : "Record wear", isPending: model.pending) {
+                            PrimaryAction(title: model.unknown ? "Check save result" : model.draft.baseRecord == nil ? "Record wear" : "Save correction", isPending: model.pending) {
                                 Task { await model.save() }
                             }.disabled(!model.unknown && !model.canSave)
                         }
@@ -52,7 +55,7 @@ struct OutfitWearEditorView: View {
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(20)
             }.background(AppTheme.canvas)
-                .navigationTitle(model.saved == nil ? "Record wear" : "Wear recorded").navigationBarTitleDisplayMode(.inline)
+                .navigationTitle(model.saved == nil ? (model.draft.baseRecord == nil ? "Record wear" : "Correct wear") : "Wear saved").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .topBarLeading) {
                     Button {
                         if model.saved != nil { model.finish() } else { discard = true }
@@ -60,6 +63,12 @@ struct OutfitWearEditorView: View {
                         .tint(AppTheme.ink).accessibilityLabel(model.saved == nil ? "Cancel wear" : "Done")
                         .disabled(model.pending || model.unknown)
                 } }
+                .navigationDestination(isPresented: $timezone) {
+                    TimezoneChooser(current: model.draft.day.timeZoneID) { zone in
+                        model.update { $0.day.timeZoneID = zone; if $0.day != $0.planEntry?.day { $0.planEntry = nil } }
+                        return model.error == nil
+                    }
+                }
                 .navigationDestination(isPresented: $choosing) {
                     OwnedPieceChooser(pieces: model.pieces, initialSelection: model.draft.pieceIDs, error: model.error,
                                       isLocked: model.pending || model.unknown, actionTitle: "Use pieces") { ids in
@@ -78,6 +87,11 @@ struct OutfitWearEditorView: View {
                 }
             }
     }
+    private func pieceName(_ id: UUID) -> String {
+        if let snapshot = model.draft.baseRecord?.pieces.first(where: { $0.id == id }) { return snapshot.name }
+        return model.pieces.first(where: { $0.id == id })?.name ?? "Unavailable piece"
+    }
+
 }
 
 struct LocalWearHistoryView: View {
@@ -97,12 +111,12 @@ struct LocalWearHistoryView: View {
                                            description: Text("Record what you wore from an outfit. Plans never become wear automatically."))
                 }
                 ForEach(records) { record in
-                    VStack(alignment: .leading, spacing: 8) {
+                    NavigationLink { LocalWearDetailView(id: record.id) } label: { VStack(alignment: .leading, spacing: 8) {
                         Text(record.day.key).font(AppTypography.fieldLabel)
                         Text(record.pieces.map(\.name).joined(separator: ", ")).font(AppTypography.body)
                         Text(record.day.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(14)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12)) }.buttonStyle(.plain)
                 }
             }.padding(20)
         }.background(AppTheme.canvas)

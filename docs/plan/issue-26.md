@@ -14,8 +14,8 @@
 
 | Slice | Working outcome | Acceptance | State | Marker | SHA |
 | --- | --- | --- | --- | --- | --- |
-| S1 | Explicit planned/worn/skipped state with matching-record consent and linked immutable wear snapshots | P7/P8, scoped P10 | Implemented, unit verified | `AQD-Slice: #26/S1` | Pending |
-| S2 | Wear detail/backdate/correct/Undo with exactly-once counts and duplicate-safe recovery | P7/P8, scoped LOCAL-03/05 | Planned | `AQD-Slice: #26/S2` | Pending |
+| S1 | Explicit planned/worn/skipped state with matching-record consent and linked immutable wear snapshots | P7/P8, scoped P10 | Implemented, unit verified | `AQD-Slice: #26/S1` | `6327367` |
+| S2 | Wear detail/backdate/correct/Undo with exactly-once counts and duplicate-safe recovery | P7/P8, scoped LOCAL-03/05 | Implemented, unit verified | `AQD-Slice: #26/S2` | Pending |
 | S3 | History/calendar/empty states and reproducible period insights with estimate/denominator labels | P9, supporting P10 | Planned | `AQD-Slice: #26/S3` | Pending |
 
 ## Evidence and review
@@ -31,3 +31,9 @@ Companion #25 S1–S4 is implemented and unit verified on this shared branch. Co
 Explicit plan-entry Record wear carries the reviewed entry/day/timezone into the retained task. Saving atomically creates or explicitly reuses the matching item-set/day wear, marks only that exact entry Worn and links its record ID. Skip is revision-bound and creates no wear. Reviewed whole-plan deletion removes only that plan/entries/packing state, preserving actual wear snapshots/counts. New optional payload fields preserve older records; schema V14 adds immutable history-operation receipts and a preserving V13 migration stage. Source photos/notes never become history owners.
 
 The new public-store tracer failed compilation before implementation (`/tmp/aqd-26-s1-red.log`). Core58 and physical iPhone native145 (132 Swift Testing +13 XCTest) passed `/tmp/aqd-26-s1-unit.log`. The compiler first exposed the new skip action’s shadowed error binding, corrected before the successful run. The actual-store case covers explicit link, historical provenance, idempotent plan deletion and skip with unchanged actual counts. Existing denied/unknown wear, snapshot/deletion/reopen and V6 migration cases remain green. Bounded Standards/Spec increment review covered atomicity, stale guards, completed states, owner checks, historical isolation and receipt-first retries. Final independent group review and UI/E2E qualification remain pending, with all E2E in #30.
+
+## S2 correction and Undo receipt
+
+Wear detail exposes read-only minimal recorded names/categories, correction and confirmed Undo. Correction retains the same record ID, increments its revision, preserves snapshots for retained item IDs including deleted source pieces, and rechecks identical item-set/day duplicates. Changing date/items resets surviving linked intentions rather than silently moving a plan. Undo removes the exact reviewed wear once and resets every surviving linked entry; deleted plans stay deleted. Historical save acknowledgments do not recreate undone wear. The timezone picker reuses the shared searchable chooser; changed dates/zones visibly detach plan linkage.
+
+The correction tracer first failed compilation against absent APIs (`/tmp/aqd-26-s2-red.log`). All5 focused native Wear cases pass on the physical iPhone (`/tmp/aqd-26-s2-final.log`), including two-entry existing-record consent, duplicate refusal, same-ID backdate/correction, lost acknowledgment and exactly-once Undo. SwiftUI name lookup was split to correct compiler timeouts; an accidentally overlapping retry hit the Xcode build lock and was discarded, followed by the successful serial run. No simulator/E2E ran. Bounded Standards/Spec increment review checked stale record equality, snapshot preservation, receipt-first recovery and aggregate count derivation. Full unit/Release/independent review follows S3.

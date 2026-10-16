@@ -134,8 +134,8 @@ struct LocalPlanEntryView: View {
                             skip(entry)
                         }
                     }
-                    if entry.wearRecordID != nil {
-                        NavigationLink("View recorded wear") { LocalWearHistoryView() }.frame(minHeight: 44)
+                    if let wearID = entry.wearRecordID {
+                        NavigationLink("View recorded wear") { LocalWearDetailView(id: wearID) }.frame(minHeight: 44)
                     }
                     PrimaryAction(title: "Edit entry") { state.openPlan(editing: entry) }
                         .disabled(removal != nil || entry.state == .worn || entry.state == .skipped)

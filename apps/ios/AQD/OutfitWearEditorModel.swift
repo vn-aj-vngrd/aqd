@@ -80,11 +80,16 @@ extension AppState {
             wearEditor = try OutfitWearEditorModel(state: self, draft: draft)
         } catch { wearError = "Your wear draft couldn’t be read. Keep the app data for recovery." }
     }
-    func openWear(outfitID: UUID? = nil, day: LocalPlanDay = LocalPlanDay(), entry: OutfitPlanEntry? = nil) {
+    func openWear(outfitID: UUID? = nil, day: LocalPlanDay = LocalPlanDay(), entry: OutfitPlanEntry? = nil, correcting: OutfitWearRecord? = nil) {
         guard planAuthoringEditor == nil, wearEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             if let retained = try store.wearDraft() { wearEditor = try OutfitWearEditorModel(state: self, draft: retained); return }
+            if let correcting {
+                guard try store.wearRecords().contains(correcting) else { throw PieceStore.StoreError.staleRevision }
+                let draft = OutfitWearDraft(editing: correcting, currentPieces: try store.ownedPiecesForWear())
+                try store.saveWearDraft(draft); wearEditor = try OutfitWearEditorModel(state: self, draft: draft); return
+            }
             let outfit = try outfitID.flatMap { try store.outfit(id: $0) }
             if outfitID != nil && outfit == nil { throw PieceStore.StoreError.staleRevision }
             let pieces = try (outfit?.pieceIDs ?? []).map { id -> WardrobePiece in

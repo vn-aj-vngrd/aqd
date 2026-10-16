@@ -2,6 +2,7 @@ import Foundation
 
 public struct HistoryMutation: Codable, Equatable, Sendable {
     public enum Action: Codable, Equatable, Sendable {
+        case undoWear(OutfitWearRecord)
         case skip(OutfitPlanEntry)
         case deletePlan(PlanDefinition, [OutfitPlanEntry])
     }

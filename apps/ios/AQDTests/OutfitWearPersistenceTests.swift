@@ -114,6 +114,56 @@ struct OutfitWearPersistenceTests {
         #expect(try store.wearRecords() == [actual])
     }
 
+    @Test func correctionRechecksDuplicatesAndUndoRestoresEverySurvivingLinkExactlyOnce() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        var loseAck = false
+        let store = try PieceStore(directory: directory, afterOutfitSave: { if loseAck { throw CocoaError(.fileReadUnknown) } })
+        let (outfit, piece) = try await seed(store)
+        let day = LocalPlanDay(year: 2026, month: 1, day: 1, timeZoneID: "Asia/Manila")
+        var first: OutfitWearRecord?
+        for occasion in ["Morning", "Afternoon"] {
+            var plan = OutfitPlanDraft(ownerID: outfit.ownerID, outfit: outfit, day: day); plan.occasion = occasion
+            try store.savePlanDraft(plan); let entry = try store.savePlan(plan); try store.finishPlanDraft(plan)
+            var wear = OutfitWearDraft(ownerID: outfit.ownerID, outfitID: outfit.id, pieces: [piece], day: day)
+            wear.planEntry = entry
+            try store.saveWearDraft(wear)
+            if let first {
+                #expect(throws: WearValidationError.alreadyRecorded) { try store.saveWear(wear) }
+                #expect(try store.planEntries().first { $0.id == entry.id }?.state == .planned)
+                wear.acceptedDuplicateID = first.id; try store.saveWearDraft(wear)
+            }
+            first = try store.saveWear(wear); try store.finishWearDraft(wear)
+        }
+        let original = try #require(first)
+        #expect(try store.wearRecords().count == 1)
+        #expect(try store.planEntries().allSatisfy { $0.wearRecordID == original.id })
+        var correction = OutfitWearDraft(editing: original, currentPieces: [piece])
+        correction.day.day = 2
+        try store.saveWearDraft(correction)
+        loseAck = true
+        #expect(throws: (any Error).self) { try store.saveWear(correction) }
+        let corrected = try store.saveWear(correction)
+        #expect(corrected.id == original.id && corrected.revision == 2 && corrected.day.day == 2)
+        #expect(corrected.pieces == original.pieces)
+        #expect(try store.planEntries().allSatisfy { $0.state == .planned && $0.wearRecordID == nil })
+        try store.finishWearDraft(correction)
+        loseAck = false
+        let duplicate = OutfitWearDraft(ownerID: outfit.ownerID, pieces: [piece], day: day)
+        try store.saveWearDraft(duplicate); _ = try store.saveWear(duplicate); try store.finishWearDraft(duplicate)
+        var collision = OutfitWearDraft(editing: corrected, currentPieces: [piece]); collision.day = day
+        try store.saveWearDraft(collision)
+        #expect(throws: WearValidationError.alreadyRecorded) { try store.saveWear(collision) }
+        #expect(try store.wearRecords().count == 2)
+        try store.finishWearDraft(collision, discarding: true)
+        let undo = HistoryMutation(action: .undoWear(corrected))
+        loseAck = true
+        #expect(throws: (any Error).self) { try store.applyHistoryMutation(undo) }
+        try store.applyHistoryMutation(undo)
+        #expect(try store.wearRecords().count == 1)
+        #expect(try store.savedWear(for: correction) == corrected)
+        #expect(try store.wearRecords().allSatisfy { $0.id != corrected.id })
+    }
+
     @Test func v6MigrationKeepsTheExistingPlanWithoutInventingWear() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

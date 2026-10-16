@@ -1763,7 +1763,7 @@ extension PieceStore {
         try commit(context)
     }
     func matchingWear(for draft: OutfitWearDraft) throws -> OutfitWearRecord? {
-        try wearRecords().first { $0.duplicateKey == draft.duplicateKey }
+        try wearRecords().first { $0.duplicateKey == draft.duplicateKey && $0.id != draft.baseRecord?.id }
     }
     func savedWear(for draft: OutfitWearDraft) throws -> OutfitWearRecord? {
         let records = try ModelContext(container).fetch(FetchDescriptor<StoredOutfitWearSave>()).filter { $0.id == draft.operationID }
@@ -1782,8 +1782,13 @@ extension PieceStore {
         let pieces = try ownedPiecesForWear()
         try draft.validatedForSave(pieces: pieces)
         guard try wearDraft() == draft else { throw StoreError.staleDraft }
-        if let id = draft.outfitID, try outfit(id: id) == nil { throw StoreError.staleRevision }
+        if draft.baseRecord == nil, let id = draft.outfitID, try outfit(id: id) == nil { throw StoreError.staleRevision }
         let context = ModelContext(container)
+        var editedRecord: StoredOutfitWear?
+        if let base = draft.baseRecord {
+            editedRecord = try context.fetch(FetchDescriptor<StoredOutfitWear>()).first { $0.id == base.id }
+            guard let editedRecord, try editedRecord.value() == base else { throw StoreError.staleRevision }
+        }
         var linkedRecord: StoredOutfitPlanEntry?
         if let reviewed = draft.planEntry {
             linkedRecord = try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()).first { $0.id == reviewed.id }
@@ -1791,18 +1796,25 @@ extension PieceStore {
         }
         let saved: OutfitWearRecord
         if let existing = try matchingWear(for: draft) {
-            guard draft.acceptedDuplicateID == existing.id else { throw WearValidationError.alreadyRecorded }
+            guard draft.baseRecord == nil, draft.acceptedDuplicateID == existing.id else { throw WearValidationError.alreadyRecorded }
             saved = existing
         } else {
             guard draft.acceptedDuplicateID == nil else { throw StoreError.staleRevision }
             let snapshots = try draft.pieceIDs.map { id -> WearPieceSnapshot in
+                if let previous = draft.baseRecord?.pieces.first(where: { $0.id == id }) { return previous }
                 guard let piece = pieces.first(where: { $0.id == id }) else { throw StoreError.staleRevision }
                 return WearPieceSnapshot(piece)
             }
             saved = OutfitWearRecord(id: draft.wearID, ownerID: draft.ownerID, day: draft.day,
-                                     outfitID: draft.outfitID, pieces: snapshots, planEntryID: draft.planEntry?.id)
+                                     outfitID: draft.outfitID, pieces: snapshots, revision: (draft.baseRecord?.revision ?? 0) + 1,
+                                     planEntryID: draft.planEntry?.id ?? draft.baseRecord?.planEntryID)
             try saved.validated()
-            context.insert(try StoredOutfitWear(saved))
+            if let editedRecord {
+                editedRecord.payload = try encode(saved)
+                if draft.baseRecord?.duplicateKey != saved.duplicateKey {
+                    try resetWearLinks(saved.id, in: context)
+                }
+            } else { context.insert(try StoredOutfitWear(saved)) }
         }
         if let linkedRecord, var entry = draft.planEntry {
             entry.state = .worn; entry.wearRecordID = saved.id; entry.revision += 1
@@ -2250,6 +2262,12 @@ extension PieceStore {
         let owner = try todayConfiguration().ownerID
         let entries = try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>())
         switch request.action {
+        case .undoWear(let base):
+            guard base.ownerID == owner,
+                  let record = try context.fetch(FetchDescriptor<StoredOutfitWear>()).first(where: { $0.id == base.id }),
+                  try record.value() == base else { throw StoreError.staleRevision }
+            try resetWearLinks(base.id, in: context)
+            context.delete(record)
         case .skip(let base):
             guard base.ownerID == owner, base.state == .planned || base.state == .unassigned,
                   let record = entries.first(where: { $0.id == base.id }), try record.value() == base else { throw StoreError.staleRevision }
@@ -2268,5 +2286,17 @@ extension PieceStore {
         }
         context.insert(try StoredHistoryMutation(request))
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+    }
+}
+
+
+extension PieceStore {
+    private func resetWearLinks(_ wearID: UUID, in context: ModelContext) throws {
+        for record in try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()) {
+            var entry = try record.value()
+            guard entry.wearRecordID == wearID else { continue }
+            entry.wearRecordID = nil; entry.state = entry.outfitID == nil ? .unassigned : .planned; entry.revision += 1
+            try entry.validated(); record.payload = try encode(entry)
+        }
     }
 }
