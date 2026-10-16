@@ -32,7 +32,7 @@
       "destination": "generic/platform=iOS",
       "codeSigningAllowed": false,
       "result": "BUILD SUCCEEDED",
-      "sourceHead": "b9a504c532a442a7e2362f5b06ca3be82af246f3"
+      "sourceHead": "ba72e6b2ca683acb4585321ace7cad5331f433b1"
     },
     "repositoryTooling": {
       "passed": 51,
@@ -158,6 +158,15 @@
       "releaseLog": "aqd-closet-profile-refinement-release.log",
       "review": "Independent Standards/Spec source rechecks clean after Theme search reset fix.",
       "scope": "Theme content filters/sort and search cache; accurate Closet metadata; richer adaptive Profile header/local counts, date labels and empty layout; removed editor intro."
+    },
+    "styleSelectionCore": {
+      "sourceHead": "158c8c3cf008f56e8556bde1ce02edc8c6433748",
+      "passed": 78,
+      "suites": 24,
+      "failures": 0,
+      "log": "/tmp/aqd-style-selection-green.log",
+      "redLog": "/tmp/aqd-style-selection-red.log",
+      "scope": "Case-insensitive selections, custom-value preservation, Core regression suite; no new native/E2E run"
     }
   },
   "localLogs": [
@@ -721,10 +730,10 @@
     "No native distribution. Current-head CI/Codex and merged-SHA release remain separate gates."
   ],
   "localOwnerPreview": {
-    "sourceHead": "b9a504c532a442a7e2362f5b06ca3be82af246f3",
-    "executableSHA256": "8fc9bb7de2c12dc0eaa375a0058c199b9937e11b97bb605f6b06f6c5a8cfc0b9",
+    "sourceHead": "ba72e6b2ca683acb4585321ace7cad5331f433b1",
+    "executableSHA256": "f565ebc0b9741dec221b6ba75fa826db072ea7e30b8fb91982ccafd477a04441",
     "destination": "Physical iPhone17ProMax",
-    "build": "Debug BUILD SUCCEEDED",
+    "build": "Debug BUILD SUCCEEDED /tmp/aqd-create-editor-refinement-debug.log",
     "install": "success",
     "normalLaunch": "success",
     "launchArguments": [],
@@ -747,12 +756,22 @@
     },
     "sourceFiles": {
       "apps/ios/AQD/UI/AppTheme.swift": "ca67adbf0f967c78af675bf4027e844d1da7dad9eddc1d15b3e72c0176e97045",
-      "apps/ios/AQD/UI/AppActions.swift": "61cb5d2abe7c45002a8b4dddf308c57d001fdc691faab63ca45033d9d8ae4f20",
+      "apps/ios/AQD/UI/AppActions.swift": "21552d43f8d02e935925341375ee3776c2897eb1e8659a47bddaf548ef607545",
       "apps/ios/AQD/UI/ClosetView.swift": "983265369e1c4fc3c80727f6a37e4001f22b6a1543d0b2196ba8cdb521785000",
-      "apps/ios/AQD/UI/LocalProfileView.swift": "1d93439018b37d48de4230533aa264e0e4ede0cb68dc5bee69e29536ee3dc7e6"
+      "apps/ios/AQD/UI/LocalProfileView.swift": "0bc682ee5fe9395ca401154463cb7751379c03fb84dccf50c73bc4eeb0dd5656",
+      "apps/ios/AQD/UI/AppMetrics.swift": "85b8d1171aa6347dcdd16411d7355a4a17332c6dc9bb6b1d1a9626b050586980",
+      "apps/ios/AQD/UI/FitJournalViews.swift": "5d9c0e656e4cb5c3f0e74fbcb7c23a58ca6e6935435d0d92383d1ecc2824cd34",
+      "apps/ios/AQD/UI/PlannerCalendarView.swift": "58a300c381087daaa425f9a4fd7c8f3afe67b130ba6c0e277077c114fb3c1a3b",
+      "apps/ios/AQD/UI/StyleEditorView.swift": "2105c6ed209e07c36bea4fba0b9448e635a6a57dc73d6e39118605e9f4daada6",
+      "apps/ios/AQD/UI/BodyDetailsView.swift": "053f4bd351cfca614ff37280c8375775aab350fa96fc20bb935c8f9ba4af7b4d",
+      "apps/ios/AQD/UI/PlanAuthoringView.swift": "d638020d522e3f50f698735ded5b0328b1327ee6010a4df140f22cafacecf11c",
+      "apps/ios/AQD/UI/OutfitViews.swift": "caca73ce5d8f603d321b58db5c922a5a4be66f6ac67a20b22a98a8a9dc9ea50d",
+      "apps/ios/AQD/UI/OutfitSuggestionViews.swift": "be1b3fc23281572e525d1fcbae7a5a97cd3a05a5d856ab2fc654afe96d843baf",
+      "apps/ios/AQD/UI/TodayEditorView.swift": "f4b9baf21fa2ccb18f8a97626586b603624ff04721b7103f78d3227a4319f1e7",
+      "apps/ios/AQD/UI/AgentActionViews.swift": "e34484465ad40eb8034d7194b43b0f97f38cbc7106919ea3ccd677ee3fba8fd3"
     }
   },
-  "verificationScope": "Core77/native227 and transparent media/refresh safety bind to source c85254f840dcd1bd9ddf34c87e75e64c703f33ff. Subsequent neutral-gold/glass changes are cosmetic and have final Debug/Release, source review and16 opaque token contrast checks; no repeated native-unit or rendered/E2E claim.",
+  "verificationScope": "Original Core77/native227 and transparency safety remain bound to c85254f. Additional Core78 selection checks bind to158c8c3. Latest creator/Profile/Planner/Style/splash cosmetic preview ba72e6b passed Debug/Release and source reviews, installed and ordinary-launched. No new native/E2E/rendered acceptance claimed.",
   "sampleMediaRefresh": {
     "sourceHead": "c85254f840dcd1bd9ddf34c87e75e64c703f33ff",
     "updated": 12,
@@ -762,5 +781,18 @@
     "receipt": "/tmp/aqd-transparent-seed-receipt.json",
     "explicitOwnerRequest": true,
     "published": false
+  },
+  "ownerCreatorRefinement": {
+    "sourceHead": "ba72e6b2ca683acb4585321ace7cad5331f433b1",
+    "checkedOn": "2026-10-17",
+    "debug": "BUILD SUCCEEDED",
+    "release": "BUILD SUCCEEDED",
+    "sourceReviews": "Standards and Spec clear after arrow hit-target correction",
+    "installReceipt": "/tmp/aqd-create-editor-preview-install.json",
+    "launchReceipt": "/tmp/aqd-create-editor-preview-launch.json",
+    "research": "docs/references/planner-create-flows.md",
+    "nativeUnitReused": false,
+    "e2eRun": false,
+    "runtimeComplete": false
   }
 }
