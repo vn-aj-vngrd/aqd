@@ -63,6 +63,9 @@ final class AppState {
     var outfits: [Outfit] = []
     var outfitError: String?
     var styleEditor: StyleEditorModel?
+    var localIdentity: LocalProfileIdentity?
+    var identityError: String?
+    var identityEditor: LocalIdentityEditorModel?
     var profileSettings = false
     var profileHistory = false
     var profileInsights = false
@@ -80,6 +83,8 @@ final class AppState {
         reloadToday()
         retryPhotoCleanup()
         reloadEntry()
+        reloadIdentity()
+        resumeIdentity()
         resumeStyleDraft()
         reloadOutfits()
         resumeOutfitDraft()
@@ -174,6 +179,8 @@ final class AppState {
             reloadToday()
             retryPhotoCleanup()
             reloadEntry()
+        reloadIdentity()
+        resumeIdentity()
             resumeStyleDraft()
             reloadOutfits()
             resumeOutfitDraft()
@@ -227,7 +234,7 @@ final class AppState {
     }
 
     func openStyle(source: StylePreferenceSource) {
-        guard planAuthoringEditor == nil else { return }
+        guard identityEditor == nil, planAuthoringEditor == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             let experience = try store.localExperience()
@@ -246,6 +253,7 @@ final class AppState {
     }
 
     private func resumeStyleDraft() {
+        guard identityEditor == nil else { return }
         do {
             if let experience = try store?.localExperience(), let draft = experience.styleDraft ?? experience.pendingStyleReceipt {
                 if draft.source != .onboarding {
@@ -311,7 +319,7 @@ final class AppState {
     }
 
     func addPiece() {
-        guard planAuthoringEditor == nil else { return }
+        guard identityEditor == nil, planAuthoringEditor == nil else { return }
         guard let store else { return }
         do {
             let recovered = try store.newPieceDraft()
@@ -324,6 +332,7 @@ final class AppState {
     }
 
     func editPiece(_ piece: WardrobePiece) {
+        guard identityEditor == nil else { return }
         guard let store else { return }
         do {
             let recovered = try store.recoverableDraft(itemID: piece.id)

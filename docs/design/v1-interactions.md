@@ -224,3 +224,6 @@ October16 PR35 Codex correction: timezone-only wear correction detaches links wh
 
 
 October16 PR35 scoped-authoring correction: This entry keeps shared definition fields fixed; retained earlier/completed entries constrain parent range/zone. Refresh reviewed entries explicitly replaces original slots from latest saved values and retains added-date identity, including current outfit snapshots. Single/bulk assignment review identifies date/outfit/unavailable pieces and requires another outfit or an explicit gap before Save. Actual Core59/native152 unit results do not establish rendered/E2E acceptance; #30 remains the owner.
+
+
+October16 issue28 S1: Profile More → Edit profile → optional local name/avatar draft. Clear name/Remove photo are provisional; Save acknowledges one owner/revision-bound result; unknown locks changes and reconciles. Photo preparation/cancel retains fields, stale imports cannot reattach removed media, and recovered identity tasks exclude competing editors. Media cleanup checks saved/current/base draft references. Unit verified only; all rendered/E2E acceptance #30.

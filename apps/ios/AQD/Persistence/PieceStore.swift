@@ -260,8 +260,13 @@ enum LocalSchemaV14: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV13.models + [StoredHistoryMutation.self] }
 }
 
+enum LocalSchemaV15: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(15, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV14.models + [StoredLocalIdentity.self, StoredIdentityDraft.self, StoredIdentitySave.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self, LocalSchemaV15.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
@@ -275,7 +280,8 @@ enum LocalMigrationPlan: SchemaMigrationPlan {
          .lightweight(fromVersion: LocalSchemaV10.self, toVersion: LocalSchemaV11.self),
          .lightweight(fromVersion: LocalSchemaV11.self, toVersion: LocalSchemaV12.self),
          .lightweight(fromVersion: LocalSchemaV12.self, toVersion: LocalSchemaV13.self),
-         .lightweight(fromVersion: LocalSchemaV13.self, toVersion: LocalSchemaV14.self)]
+         .lightweight(fromVersion: LocalSchemaV13.self, toVersion: LocalSchemaV14.self),
+         .lightweight(fromVersion: LocalSchemaV14.self, toVersion: LocalSchemaV15.self)]
     }
 }
 
@@ -321,13 +327,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:14".utf8)
-        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8), Data("AQD-piece-store:6".utf8), Data("AQD-piece-store:7".utf8), Data("AQD-piece-store:8".utf8), Data("AQD-piece-store:9".utf8), Data("AQD-piece-store:10".utf8), Data("AQD-piece-store:11".utf8), Data("AQD-piece-store:12".utf8), Data("AQD-piece-store:13".utf8)]
+        let version = Data("AQD-piece-store:15".utf8)
+        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8), Data("AQD-piece-store:6".utf8), Data("AQD-piece-store:7".utf8), Data("AQD-piece-store:8".utf8), Data("AQD-piece-store:9".utf8), Data("AQD-piece-store:10".utf8), Data("AQD-piece-store:11".utf8), Data("AQD-piece-store:12".utf8), Data("AQD-piece-store:13".utf8), Data("AQD-piece-store:14".utf8)]
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV14.self)
+        let schema = Schema(versionedSchema: LocalSchemaV15.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -489,7 +495,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
+            let candidates = [(schema, 15), (Schema(versionedSchema: LocalSchemaV14.self), 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -515,7 +521,12 @@ final class PieceStore {
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 14) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 15) throws -> Bool {
+        if storeVersion >= 15 {
+            guard try context.fetchCount(FetchDescriptor<StoredLocalIdentity>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredIdentityDraft>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredIdentitySave>()) == 0 else { throw StoreError.unsupportedStore }
+        }
         if storeVersion >= 14 {
             guard try context.fetchCount(FetchDescriptor<StoredHistoryMutation>()) == 0 else { throw StoreError.unsupportedStore }
         }
@@ -1169,7 +1180,8 @@ final class PieceStore {
         // may already have been acknowledged while the original remained live.
         // Probe only the two exact Fit paths for validated live source identities.
         let fitDigest = try PhotoPreparer.recipeDigest(.fitOriginal)
-        let livePhotoIDs = Set(pieces.map(\.photoID) + drafts.compactMap(\.photoID))
+        let identityPhotos = try identityPhotoReferences(in: context)
+        let livePhotoIDs = Set(pieces.map(\.photoID) + drafts.compactMap(\.photoID) + identityPhotos)
         for photoID in livePhotoIDs.sorted(by: { $0.uuidString < $1.uuidString }) {
             let fitFiles = try ["rendition", "thumbnail"].map {
                 try editURL(id: photoID, recipe: .fitOriginal, kind: $0)
@@ -1267,7 +1279,8 @@ final class PieceStore {
         // Corrupt acknowledgment proof still blocks cleanup, even though completed
         // snapshots are not owners. Only current pieces and recoverable drafts own bytes.
         _ = try decodedReceipts(context)
-        let references = Set(pieces.map(\.photoID) + drafts.compactMap(\.photoID))
+        let identityPhotos = try identityPhotoReferences(in: context)
+        let references = Set(pieces.map(\.photoID) + drafts.compactMap(\.photoID) + identityPhotos)
         // A failed editor can leave an unused rendition even when its source is saved.
         // Only exact durably staged recipes may be pruned from a shared source.
         guard stagedRecipeDigests.allSatisfy({ $0.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil }) else {
@@ -2300,5 +2313,74 @@ extension PieceStore {
             entry.wearRecordID = nil; entry.state = entry.outfitID == nil ? .unassigned : .planned; entry.revision += 1
             try entry.validated(); record.payload = try encode(entry)
         }
+    }
+}
+
+
+extension PieceStore {
+    private func identityPhotoReferences(in context: ModelContext) throws -> [UUID] {
+        let identities = try context.fetch(FetchDescriptor<StoredLocalIdentity>()).map { try $0.value() }
+        let drafts = try context.fetch(FetchDescriptor<StoredIdentityDraft>()).map { try $0.value() }
+        return identities.compactMap(\.photoID) + drafts.compactMap(\.photoID) + drafts.compactMap { $0.base?.photoID }
+    }
+    func localIdentity() throws -> LocalProfileIdentity? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredLocalIdentity>())
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let value = try records.first?.value() else { return nil }
+        guard value.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        return value
+    }
+    func identityDraft() throws -> LocalIdentityDraft? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredIdentityDraft>())
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let value = try records.first?.value() else { return nil }
+        guard value.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        return value
+    }
+    func saveIdentityDraft(_ draft: LocalIdentityDraft) throws {
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        _ = try draft.result()
+        guard try savedIdentity(for: draft) == nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredIdentityDraft>())
+        guard records.count <= 1, records.first.map({ $0.id == draft.id }) ?? true else { throw StoreError.operationConflict }
+        if let record = records.first {
+            if let previous = try record.value().photoID { try queueCleanup(photoID: previous, context: context) }
+            record.payload = try encode(draft)
+        } else { context.insert(try StoredIdentityDraft(draft)) }
+        try commit(context)
+    }
+    func savedIdentity(for draft: LocalIdentityDraft) throws -> LocalProfileIdentity? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredIdentitySave>()).filter { $0.id == draft.operationID }
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let receipt = records.first else { return nil }
+        guard try JSONDecoder().decode(LocalIdentityDraft.self, from: receipt.request) == draft else { throw StoreError.operationConflict }
+        let value = try JSONDecoder().decode(LocalProfileIdentity.self, from: receipt.result)
+        guard value == (try draft.result()) else { throw StoreError.invalidRecord }
+        return value
+    }
+    func saveIdentity(_ draft: LocalIdentityDraft) throws -> LocalProfileIdentity {
+        if let saved = try savedIdentity(for: draft) { return saved }
+        guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID), try identityDraft() == draft else { throw StoreError.staleDraft }
+        guard try localIdentity() == draft.base else { throw StoreError.staleRevision }
+        let result = try draft.result()
+        if let photo = result.photoID, photo != draft.base?.photoID { _ = try originalPhoto(id: photo) }
+        let context = ModelContext(container)
+        if let record = try context.fetch(FetchDescriptor<StoredLocalIdentity>()).first { record.payload = try encode(result) }
+        else { context.insert(try StoredLocalIdentity(result)) }
+        if let previous = draft.base?.photoID { try queueCleanup(photoID: previous, context: context) }
+        context.insert(try StoredIdentitySave(draft, result: result))
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+        return result
+    }
+    func finishIdentityDraft(_ draft: LocalIdentityDraft, discarding: Bool = false) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let saved = try savedIdentity(for: draft)
+        guard discarding ? saved == nil : saved != nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        guard let record = try context.fetch(FetchDescriptor<StoredIdentityDraft>()).first, try record.value() == draft else { throw StoreError.staleDraft }
+        if let id = draft.photoID { try queueCleanup(photoID: id, context: context) }
+        if let id = draft.base?.photoID { try queueCleanup(photoID: id, context: context) }
+        context.delete(record); try commit(context)
     }
 }

@@ -9,11 +9,9 @@ struct LocalProfileView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     HStack(alignment: .center, spacing: 16) {
-                        Image(systemName: "person.crop.circle.fill")
-                            .resizable().scaledToFit().frame(width: 64, height: 64)
-                            .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                        LocalIdentityAvatar(photoID: state.localIdentity?.photoID).frame(width: 64, height: 64)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Your profile").font(.title.weight(.medium))
+                            Text(state.localIdentity?.name ?? "Your profile").font(.title.weight(.medium))
                             Text("Your private style and fit memories")
                                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         }
@@ -29,11 +27,13 @@ struct LocalProfileView: View {
                         }.frame(maxWidth: .infinity, alignment: .leading)
                             .padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
                     }.accessibilityIdentifier("profile.fits.empty")
+                    if let error = state.identityError { SemanticFeedback(role: .danger, message: error); Button("Retry profile") { state.reloadIdentity() } }
                 }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle("Profile")
+            }.background(AppTheme.canvas).navigationTitle("Profile").onAppear { state.reloadIdentity() }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
+                            Button("Edit profile") { state.openIdentity() }
                             Button("Style") { state.openStyle(source: .profile) }
                             Button("Wear insights") { state.profileInsights = true }
                             Button("Settings") { state.profileSettings = true }

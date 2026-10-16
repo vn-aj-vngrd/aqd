@@ -64,6 +64,7 @@ private struct AppRootView: View {
         } message: {
             Text(state.collectionError ?? "Keep your existing app data for recovery.")
         }
+        .sheet(item: $state.identityEditor) { model in LocalIdentityEditorView(model: model).environment(state) }
         .sheet(item: $state.themeEditor, onDismiss: { state.reloadThemes(); state.reloadOutfits() }) { model in
             ThemeEditorView(model: model).environment(state)
         }
