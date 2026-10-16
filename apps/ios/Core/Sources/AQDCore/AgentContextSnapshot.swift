@@ -1,0 +1,52 @@
+import Foundation
+
+public struct AgentContextSnapshot: Codable, Equatable, Sendable {
+    public struct Piece: Codable, Equatable, Sendable {
+        public let id: UUID
+        public let revision: Int
+        public let name: String
+        public let category: PieceCategory
+        public let color: String
+    }
+    public let pieces: [Piece]
+    public let totalEligible: Int
+    public let scope: AgentContextScope
+    public static func build(_ context: AgentContext, pieces: [WardrobePiece], outfits: [Outfit], themes: [OutfitTheme], maximumPieces: Int) throws -> Self {
+        guard maximumPieces > 0 else { throw PlanValidationError.invalidRecord }
+        if context.scope == .general { return Self(pieces: [], totalEligible: 0, scope: .general) }
+        let eligible = pieces.filter { !$0.isArchived && $0.availability == .available }
+        var selected = Set<UUID>()
+        if context.scope == .selected {
+            for record in context.selected {
+                switch record.kind {
+                case .piece:
+                    guard let value = eligible.first(where: { $0.id == record.id }), value.revision == record.revision else { throw PlanValidationError.invalidRecord }; selected.insert(value.id)
+                case .outfit:
+                    guard let value = outfits.first(where: { $0.id == record.id }), value.revision == record.revision else { throw PlanValidationError.invalidRecord }; selected.formUnion(value.pieceIDs)
+                case .theme:
+                    guard let value = themes.first(where: { $0.id == record.id }), value.revision == record.revision else { throw PlanValidationError.invalidRecord }
+                    for id in value.outfitIDs {
+                        guard let outfit = outfits.first(where: { $0.id == id }) else { throw PlanValidationError.invalidRecord }; selected.formUnion(outfit.pieceIDs)
+                    }
+                }
+            }
+            guard selected.isSubset(of: Set(eligible.map(\.id))), selected.count <= maximumPieces else { throw PlanValidationError.invalidRecord }
+        }
+        let allowed = eligible.filter { context.scope == .closet || selected.contains($0.id) }.sorted { $0.id.uuidString < $1.id.uuidString }
+        return Self(pieces: allowed.prefix(maximumPieces).map { Piece(id: $0.id, revision: $0.revision, name: $0.name, category: $0.category, color: $0.details.color) }, totalEligible: allowed.count, scope: context.scope)
+    }
+    public var summary: String { scope == .general ? "General styling · No closet or wear access" : "\(pieces.count) of \(totalEligible) eligible pieces · Names, categories and colors · No photos or private notes" }
+}
+
+public enum AgentMarkdownPolicy {
+    public static func allowsLink(_ value: String) -> Bool {
+        guard let url = URL(string: value), let scheme = url.scheme?.lowercased(), ["https", "http"].contains(scheme), url.host?.isEmpty == false else { return false }; return true
+    }
+    public static func plainText(_ source: String, incomplete: Bool) -> String {
+        var value = source.replacingOccurrences(of: #"!?\[([^\]]*)\]\(([^)]+)\)"#, with: "$1 ($2)", options: .regularExpression)
+        value = value.replacingOccurrences(of: #"(?m)^\s{0,3}#{1,6}\s+"#, with: "", options: .regularExpression)
+        value = value.replacingOccurrences(of: "**", with: "").replacingOccurrences(of: "__", with: "")
+        value = value.replacingOccurrences(of: #"(?m)^```[^\n]*\n?"#, with: "", options: .regularExpression)
+        return (incomplete ? "Incomplete response\n\n" : "") + value
+    }
+}

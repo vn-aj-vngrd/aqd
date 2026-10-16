@@ -12,8 +12,8 @@ Use existing public Core validators and actual PieceStore/model save/read/reopen
 
 | Slice | Working outcome | Acceptance | Unit verification | State | Commit marker | SHA |
 | --- | --- | --- | --- | --- | --- | --- |
-| S1 | Durable conversations, drafts/history/new/delete and reason-specific availability/manual routes | LOCAL12/15, A2/A11 | Actual store failure/unknown/reopen + populated migration | Committed | `AQD-Slice: #27/S1` | Pending |
-| S2 | Explicit bounded context, generation/cancel/retry/interruption, Markdown/copy/details and real-provider gated path | A2/A7/A8/A12/A14/A15, LOCAL12 | Core context/stream/copy policy + native model/state tests | Planned | `AQD-Slice: #27/S2` | Pending |
+| S1 | Durable conversations, drafts/history/new/delete and reason-specific availability/manual routes | LOCAL12/15, A2/A11 | Actual store failure/unknown/reopen + populated migration | Committed | `AQD-Slice: #27/S1` | `5a149ff` |
+| S2 | Explicit bounded context, generation/cancel/retry/interruption, Markdown/copy/details and real-provider gated path | A2/A7/A8/A12/A14/A15, LOCAL12 | Core context/stream/copy policy + native model/state tests | Committed | `AQD-Slice: #27/S2` | Pending |
 | S3 | Version-bound domain reviews/receipts, weather context and honest voice/image recovery | A1/A3–6/A13, LOCAL09/16 | Owned/stale/exactly-once approval and parent draft tests | Planned | `AQD-Slice: #27/S3` | Pending |
 
 ## Acceptance and evidence
@@ -35,3 +35,9 @@ Repository vn-aj-vngrd/aqd, head branch above. Resolve/reuse its single PR. Pers
 Durable owner/revision-bound conversations retain typed drafts, received source and interrupted attempts. New/history/delete remain readable independent of runtime availability; fourth-slot dismissal preserves native origin. Same-operation acknowledgments reconcile unknown saves/deletes without resurrecting deleted text or changing wardrobe/plans/wear. Schema21 preserves all earlier versions and includes Agent rows in exact empty-bootstrap checks.
 
 Missing Core API failed `/tmp/aqd-27-s1-red.log`; Core66 and native176 passed `/tmp/aqd-27-s1-unit.log` on the physical iPhone17ProMax/iOS27.0.1. Final three focused actual-store/model tests passed `/tmp/aqd-27-s1-final.log`, including populated V20 migration and retaining newer typing after an unknown write. Bounded Standards/Spec review inspected owner/revision/receipt/delete scope, failed/unknown/reopen paths, availability/manual/history UI and source return; no remaining slice finding. All E2E/rendered acceptance remains issue30. Context/generation/approval closure follows S2/S3.
+
+## S2 receipt
+
+Explicit context supports general/no closet, bounded eligible metadata and selected owned piece/outfit/theme revisions. Style uses allowed answers and separate body-use permission; selected wear summaries use the selected included pieces. Notes/photos are excluded. Draft context changes affect only later requests. The provider bridge uses guarded native Foundation Models streaming, with no tools or cloud fallback; qualification remains nil until measured issue30 evidence supplies budgets. Complete user history is retained or the request refuses the context budget.
+
+Received source, stable message/attempt identities, partial output, prior response versions, measured timing, Stop acknowledgment, hard timeout, interruption and same-turn retry persist locally. Markdown renders safe links/code/prose without remote images/HTML; plain/Markdown/code copy and details are explicit. Busy controls use real provider events, not staged delays. Missing Core APIs failed `/tmp/aqd-27-s2-red.log`. Core68/native181 passed `/tmp/aqd-27-s2-unit.log` on the iPhone. Final six focused generation/persistence cases passed `/tmp/aqd-27-s2-final.log` after selected-wear scope and terminal-reason corrections. Synthetic provider tests prove actual model/store lifecycle, not physical model capability/quality. Bounded Standards/Spec review traced cancellation, stale chunks, budgets, context exclusion, ownership, persistence and source returns. Full native/rendered qualification remains issue30.

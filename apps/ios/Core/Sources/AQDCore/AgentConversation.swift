@@ -16,6 +16,7 @@ public struct AgentMessage: Identifiable, Codable, Equatable, Sendable {
     public var firstTextSeconds: Double?
     public var elapsedSeconds: Double?
     public var contextSummary: String?
+    public var failureReason: String?
     public var versions: [AgentResponseVersion] = []
     public init(role: AgentMessageRole, source: String, status: AgentMessageStatus, attemptID: UUID? = nil) {
         id = UUID(); self.role = role; self.source = source; self.status = status; self.attemptID = attemptID; createdAt = Date()
