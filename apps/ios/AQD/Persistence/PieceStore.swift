@@ -245,8 +245,13 @@ enum LocalSchemaV11: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV10.models + [StoredPlanEntryDeletion.self] }
 }
 
+enum LocalSchemaV12: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(12, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV11.models + [StoredPlanDefinition.self, StoredPlanAuthoringDraft.self, StoredPlanAuthoringSave.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
@@ -257,7 +262,8 @@ enum LocalMigrationPlan: SchemaMigrationPlan {
          .lightweight(fromVersion: LocalSchemaV7.self, toVersion: LocalSchemaV8.self),
          .lightweight(fromVersion: LocalSchemaV8.self, toVersion: LocalSchemaV9.self),
          .lightweight(fromVersion: LocalSchemaV9.self, toVersion: LocalSchemaV10.self),
-         .lightweight(fromVersion: LocalSchemaV10.self, toVersion: LocalSchemaV11.self)]
+         .lightweight(fromVersion: LocalSchemaV10.self, toVersion: LocalSchemaV11.self),
+         .lightweight(fromVersion: LocalSchemaV11.self, toVersion: LocalSchemaV12.self)]
     }
 }
 
@@ -303,13 +309,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:11".utf8)
-        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8), Data("AQD-piece-store:6".utf8), Data("AQD-piece-store:7".utf8), Data("AQD-piece-store:8".utf8), Data("AQD-piece-store:9".utf8), Data("AQD-piece-store:10".utf8)]
+        let version = Data("AQD-piece-store:12".utf8)
+        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8), Data("AQD-piece-store:6".utf8), Data("AQD-piece-store:7".utf8), Data("AQD-piece-store:8".utf8), Data("AQD-piece-store:9".utf8), Data("AQD-piece-store:10".utf8), Data("AQD-piece-store:11".utf8)]
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV11.self)
+        let schema = Schema(versionedSchema: LocalSchemaV12.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -471,7 +477,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
+            let candidates = [(schema, 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -497,7 +503,12 @@ final class PieceStore {
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 11) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 12) throws -> Bool {
+        if storeVersion >= 12 {
+            guard try context.fetchCount(FetchDescriptor<StoredPlanDefinition>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredPlanAuthoringDraft>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredPlanAuthoringSave>()) == 0 else { throw StoreError.unsupportedStore }
+        }
         if storeVersion >= 11 {
             guard try context.fetchCount(FetchDescriptor<StoredPlanEntryDeletion>()) == 0 else { throw StoreError.unsupportedStore }
         }
@@ -2022,5 +2033,86 @@ extension PieceStore {
         guard entry.ownerID == (try todayConfiguration().ownerID), entry.revision == request.expectedRevision else { throw StoreError.staleRevision }
         context.delete(record); context.insert(try StoredPlanEntryDeletion(request))
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+    }
+}
+
+
+extension PieceStore {
+    func planDefinitions() throws -> [PlanDefinition] {
+        let owner = try todayConfiguration().ownerID
+        let values = try ModelContext(container).fetch(FetchDescriptor<StoredPlanDefinition>()).map { try $0.value() }
+        guard values.allSatisfy({ $0.ownerID == owner }) else { throw StoreError.invalidRecord }
+        return values.sorted { $0.start.key == $1.start.key ? $0.id.uuidString < $1.id.uuidString : $0.start.key < $1.start.key }
+    }
+    func planAuthoringDraft() throws -> PlanAuthoringDraft? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredPlanAuthoringDraft>())
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let value = try records.first?.value() else { return nil }
+        guard value.plan.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        return value
+    }
+    func savePlanAuthoringDraft(_ draft: PlanAuthoringDraft) throws {
+        guard allowsSave, draft.plan.ownerID == (try todayConfiguration().ownerID), try savedPlanAuthoring(draft) == nil else { throw StoreError.operationConflict }
+        _ = try draft.plan.start.date(); _ = try draft.plan.end.date()
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredPlanAuthoringDraft>())
+        guard records.count <= 1, records.first.map({ $0.id == draft.id }) ?? true else { throw StoreError.operationConflict }
+        if let record = records.first { record.payload = try encode(draft) }
+        else { context.insert(try StoredPlanAuthoringDraft(draft)) }
+        try commit(context)
+    }
+    func savedPlanAuthoring(_ draft: PlanAuthoringDraft) throws -> PlanAuthoringReceipt? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredPlanAuthoringSave>()).filter { $0.id == draft.operationID }
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        guard let proof = records.first else { return nil }
+        guard try JSONDecoder().decode(PlanAuthoringDraft.self, from: proof.request) == draft else { throw StoreError.operationConflict }
+        let result = try JSONDecoder().decode(PlanAuthoringReceipt.self, from: proof.result)
+        try result.plan.validated()
+        guard result.plan == draft.plan, Set(result.entries.map(\.id)).count == result.entries.count,
+              Set(result.entries.map(\.id)) == Set(draft.slots.map(\.id)), result.entries.count == draft.slots.count else { throw StoreError.invalidRecord }
+        for entry in result.entries {
+            try entry.validated()
+            guard let slot = draft.slots.first(where: { $0.id == entry.id }),
+                  entry.ownerID == result.plan.ownerID, entry.planID == result.plan.id, entry.day == slot.day,
+                  entry.occasion == slot.occasion, entry.outfitID == slot.outfit?.id,
+                  entry.outfitRevision == slot.outfit?.revision, entry.revision == 1,
+                  entry.state == (slot.outfit == nil ? .unassigned : .planned), !entry.requiresReview else { throw StoreError.invalidRecord }
+        }
+        return result
+    }
+    func savePlanAuthoring(_ draft: PlanAuthoringDraft) throws -> PlanAuthoringReceipt {
+        if let saved = try savedPlanAuthoring(draft) { return saved }
+        guard allowsSave, draft.plan.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        let existing = try planEntries()
+        try draft.validatedForSave(outfits: outfits(), existing: existing)
+        guard try planAuthoringDraft() == draft else { throw StoreError.staleDraft }
+        let active = Set(try pieces().filter { $0.availability == .available }.map(\.id))
+        guard draft.slots.allSatisfy({ $0.outfit.map { Set($0.pieceIDs).isSubset(of: active) } ?? true }) else { throw StoreError.staleRevision }
+        let entries = draft.slots.map { slot in
+            OutfitPlanEntry(id: slot.id, planID: draft.plan.id, ownerID: draft.plan.ownerID, day: slot.day,
+                occasion: slot.occasion, outfitID: slot.outfit?.id, outfitRevision: slot.outfit?.revision,
+                state: slot.outfit == nil ? .unassigned : .planned)
+        }
+        for entry in entries { try entry.validated() }
+        let context = ModelContext(container)
+        guard try !context.fetch(FetchDescriptor<StoredPlanDefinition>()).contains(where: { $0.id == draft.plan.id }),
+              Set(entries.map(\.id)).isDisjoint(with: existing.map(\.id)) else { throw StoreError.operationConflict }
+        let replacing = Set(draft.resolutions.filter { $0.choice == .replace }.map { $0.existing.id })
+        for record in try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()) where replacing.contains(record.id) { context.delete(record) }
+        context.insert(try StoredPlanDefinition(draft.plan))
+        for entry in entries { context.insert(try StoredOutfitPlanEntry(entry)) }
+        let result = PlanAuthoringReceipt(plan: draft.plan, entries: entries)
+        context.insert(try StoredPlanAuthoringSave(draft: draft, saved: result))
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+        return result
+    }
+    func finishPlanAuthoring(_ draft: PlanAuthoringDraft, discarding: Bool = false) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let receipt = try savedPlanAuthoring(draft)
+        guard discarding ? receipt == nil : receipt != nil else { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let records = try context.fetch(FetchDescriptor<StoredPlanAuthoringDraft>())
+        guard records.count == 1, let record = records.first, try record.value() == draft else { throw StoreError.staleDraft }
+        context.delete(record); try commit(context)
     }
 }

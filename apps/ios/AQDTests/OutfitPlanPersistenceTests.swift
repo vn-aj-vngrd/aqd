@@ -217,4 +217,91 @@ struct OutfitPlanPersistenceTests {
         #expect(entries.last?.day.key == "2099-01-01")
         #expect(try store.wearRecords().isEmpty)
     }
+    @Test func bulkPlanSavesFourteenReviewedDatesAtomicallyWithKeepBothAndExactRetry() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        var deny = false, loseAck = false
+        let store = try PieceStore(directory: directory,
+            beforeOutfitSave: { if deny { throw CocoaError(.fileWriteNoPermission) } },
+            afterOutfitSave: { if loseAck { throw CocoaError(.fileReadUnknown) } })
+        let outfit = try await seedOutfit(store)
+        let start = LocalPlanDay(year: 2026, month: 11, day: 1, timeZoneID: "America/New_York")
+        let single = OutfitPlanDraft(ownerID: outfit.ownerID, outfit: outfit, day: start)
+        try store.savePlanDraft(single); let previous = try store.savePlan(single); try store.finishPlanDraft(single)
+        var draft = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: outfit.ownerID, name: "Two weeks", start: start,
+            end: LocalPlanDay(year: 2026, month: 11, day: 14, timeZoneID: start.timeZoneID)))
+        draft.slots[0].outfit = outfit
+        for i in draft.slots.indices where i > 0 { draft.slots[i].unassignedByChoice = true }
+        try store.savePlanAuthoringDraft(draft)
+        #expect(throws: PlanAuthoringError.unresolvedConflict) { try store.savePlanAuthoring(draft) }
+        #expect(try store.planEntries() == [previous])
+        draft.resolutions = [PlanConflictResolution(existing: previous, choice: .keepBoth)]
+        try store.savePlanAuthoringDraft(draft)
+        deny = true
+        #expect(throws: (any Error).self) { try store.savePlanAuthoring(draft) }
+        #expect(try store.planDefinitions().isEmpty)
+        #expect(try store.planEntries() == [previous])
+        #expect(try store.planAuthoringDraft() == draft)
+        deny = false; loseAck = true
+        #expect(throws: (any Error).self) { try store.savePlanAuthoring(draft) }
+        let saved = try store.savePlanAuthoring(draft)
+        #expect(saved.entries.count == 14)
+        #expect(saved.entries.filter { $0.state == .unassigned }.count == 13)
+        #expect(saved.entries.last?.day.key == "2026-11-14")
+        let reopened = try PieceStore(directory: directory)
+        #expect(try reopened.planEntries().count == 15)
+        #expect(try reopened.planEntries().contains(previous))
+        #expect(try reopened.planDefinitions() == [saved.plan])
+        #expect(try reopened.planAuthoringDraft() == draft)
+        #expect(try reopened.savedPlanAuthoring(draft) == saved)
+        try reopened.finishPlanAuthoring(draft)
+        #expect(try reopened.planAuthoringDraft() == nil)
+        #expect(try reopened.wearRecords().isEmpty)
+    }
+
+    @Test func bulkConflictChoiceIsRevisionBoundAndCancelLeavesExistingCalendar() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let outfit = try await seedOutfit(store)
+        let day = LocalPlanDay(year: 2026, month: 11, day: 1, timeZoneID: "Asia/Manila")
+        let single = OutfitPlanDraft(ownerID: outfit.ownerID, outfit: outfit, day: day)
+        try store.savePlanDraft(single); let previous = try store.savePlan(single); try store.finishPlanDraft(single)
+        var draft = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: outfit.ownerID, name: "Replace reviewed", start: day, end: day))
+        draft.slots[0].outfit = outfit
+        draft.resolutions = [PlanConflictResolution(existing: previous, choice: .replace)]
+        try store.savePlanAuthoringDraft(draft)
+        let edit = OutfitPlanDraft(editing: previous, outfit: outfit)
+        try store.savePlanDraft(edit); let newer = try store.savePlan(edit); try store.finishPlanDraft(edit)
+        #expect(throws: PlanAuthoringError.unresolvedConflict) { try store.savePlanAuthoring(draft) }
+        #expect(try store.planEntries() == [newer])
+        try store.finishPlanAuthoring(draft, discarding: true)
+        #expect(try store.planEntries() == [newer])
+        #expect(try store.planDefinitions().isEmpty)
+        var fresh = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: outfit.ownerID, name: "Replace confirmed", start: day, end: day))
+        fresh.slots[0].outfit = outfit; fresh.resolutions = [PlanConflictResolution(existing: newer, choice: .replace)]
+        try store.savePlanAuthoringDraft(fresh)
+        let saved = try store.savePlanAuthoring(fresh)
+        #expect(try store.planEntries() == saved.entries)
+        #expect(saved.entries.first?.id != previous.id)
+        #expect(try store.wearRecords().isEmpty)
+    }
+
+    @Test func v11MigrationPreservesSingleEntryBeforeBulkAuthoring() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let today = TodayConfiguration(ownerID: UUID())
+        let day = LocalPlanDay(year: 2026, month: 11, day: 1, timeZoneID: "Asia/Manila")
+        let entry = OutfitPlanEntry(id: UUID(), planID: UUID(), ownerID: today.ownerID, day: day, occasion: "Keep gap",
+            outfitID: nil, outfitRevision: nil, state: .unassigned)
+        do {
+            let schema = Schema(versionedSchema: LocalSchemaV11.self)
+            let config = ModelConfiguration(schema: schema, url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
+            let container = try ModelContainer(for: schema, configurations: [config]); let context = ModelContext(container)
+            context.insert(StoredTodayConfiguration(today)); context.insert(try StoredLocalExperience(LocalExperience(enteredPrivateSpace: true)))
+            context.insert(try StoredOutfitPlanEntry(entry)); try context.save()
+        }
+        try Data("AQD-piece-store:11".utf8).write(to: directory.appendingPathComponent("schema-version"))
+        let store = try PieceStore(directory: directory)
+        #expect(try store.planEntries() == [entry])
+        #expect(try store.planDefinitions().isEmpty)
+        #expect(try store.planAuthoringDraft() == nil)
+    }
 }

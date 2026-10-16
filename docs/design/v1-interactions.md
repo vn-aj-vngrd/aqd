@@ -24,6 +24,8 @@ S5 connects outfit → Record wear → day/pieces/timezone review → explicit s
 
 S6 outfit More provides Edit/Favorite/Delete. Favorite/delete retry uses the exact immutable receipt. Delete previews theme/plan impact, rejects a changed impact and commits reference changes atomically while preserving dates, owned pieces/photos and actual-wear snapshots. Saved Open outfit opens that exact persisted identity via the shared piece/outfit route; Planner and Closet register the same destinations. Saved occasion/mood survive edit/reopen. UI runtime proof remains #30.
 
+S2 adds Planner Add → Plan several days → retained Name/Start/End/Timezone → Review every date/outfit/intentional gap. Resolve conflict pushes the exact existing date/occasion and Keep both/Replace choice; Back changes nothing. Save commits the entire reviewed plan or none. Open plan reaches the actual named definition and its shared entry IDs; restart resumes the authoring draft/receipt. No assistance or routine/trip button is shown before its working slice. All runtime/E2E acceptance stays #30.
+
 ## Issue #21 entry and shared Style slices · October15
 
 The [issue plan](../plan/issue-21.md) owns current execution evidence. S1 implements Profile's single More → Style and More → Settings → Style with the same seven-step editor. Explicit answer/refusal, goal limits, review edit, Back, dirty exit, atomically saved preferences and retained source/draft/step are real routes. Save failure preserves prior preferences; unknown acknowledgment freezes editing and checks the same operation. A committed receipt survives restart until Done acknowledges it. Local proof uses the physical iPhone; native units and selected UI outcomes do not certify complete section01 or #30.

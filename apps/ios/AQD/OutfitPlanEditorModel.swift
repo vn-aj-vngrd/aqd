@@ -69,18 +69,22 @@ final class OutfitPlanEditorModel: Identifiable {
 
 extension AppState {
     func reloadPlanEntries() {
-        do { planEntries = try store?.planEntries() ?? []; planError = nil }
+        do {
+            let entries = try store?.planEntries() ?? []
+            let definitions = try store?.planDefinitions() ?? []
+            planEntries = entries; planDefinitions = definitions; planError = nil
+        }
         catch { planError = "Your plans couldn’t be read. Existing data is retained; retry." }
     }
     func resumePlanDraft() {
-        guard planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil, entry.page == .main else { return }
+        guard planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil, entry.page == .main else { return }
         do {
             guard let draft = try store?.planDraft() else { return }
             planEditor = try OutfitPlanEditorModel(state: self, draft: draft)
         } catch { planError = "Your plan draft couldn’t be read. Keep the app data and retry." }
     }
     func openPlan(outfitID: UUID? = nil, day: LocalPlanDay = LocalPlanDay(), editing entry: OutfitPlanEntry? = nil) {
-        guard planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
+        guard planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             reloadOutfits(); reloadPlanEntries()

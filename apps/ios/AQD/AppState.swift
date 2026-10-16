@@ -41,6 +41,8 @@ final class AppState {
     var wearEditor: OutfitWearEditorModel?
     var wearRecords: [OutfitWearRecord] = []
     var wearError: String?
+    var planDefinitions: [PlanDefinition] = []
+    var planAuthoringEditor: PlanAuthoringModel?
     var plannerDay = LocalPlanDay()
     var plannerMode = PlannerCalendarMode.week
     var plannerPath: [PlannerRoute] = []
@@ -77,6 +79,7 @@ final class AppState {
         reloadOutfits()
         resumeOutfitDraft()
         reloadPlanEntries()
+        resumePlanAuthoring()
         resumePlanDraft()
         reloadWear()
         resumeWearDraft()
@@ -170,6 +173,7 @@ final class AppState {
             reloadOutfits()
             resumeOutfitDraft()
             reloadPlanEntries()
+            resumePlanAuthoring()
             resumePlanDraft()
             reloadWear()
             resumeWearDraft()
@@ -218,6 +222,7 @@ final class AppState {
     }
 
     func openStyle(source: StylePreferenceSource) {
+        guard planAuthoringEditor == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             let experience = try store.localExperience()
@@ -301,6 +306,7 @@ final class AppState {
     }
 
     func addPiece() {
+        guard planAuthoringEditor == nil else { return }
         guard let store else { return }
         do {
             let recovered = try store.newPieceDraft()

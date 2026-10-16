@@ -3,6 +3,8 @@ import SwiftUI
 
 struct LocalPlannerView: View {
     @Environment(AppState.self) private var state
+    @State private var addPresented = false
+    @State private var pendingAdd: PlannerAddChoice?
     private var entries: [OutfitPlanEntry] { state.planEntries.filter { $0.day.key == state.plannerDay.key } }
     private var counts: [String: Int] { Dictionary(grouping: state.planEntries, by: { $0.day.key }).mapValues(\.count) }
     var body: some View {
@@ -35,6 +37,19 @@ struct LocalPlannerView: View {
                     ForEach(entries) { entry in
                         NavigationLink(value: PlannerRoute.entry(entry.id)) { PlanAgendaRow(entry: entry) }.buttonStyle(.plain)
                     }
+                    if !state.planDefinitions.isEmpty {
+                        Text("Your plans").font(AppTypography.section)
+                        ForEach(state.planDefinitions) { plan in
+                            NavigationLink(value: PlannerRoute.plan(plan.id)) {
+                                HStack {
+                                    Text(plan.name).frame(maxWidth: .infinity, alignment: .leading)
+                                    Text(plan.start.key).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                                    Image(systemName: "chevron.forward").accessibilityHidden(true)
+                                }.foregroundStyle(AppTheme.ink).padding(14).frame(minHeight: 54)
+                                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                            }.buttonStyle(.plain)
+                        }
+                    }
                     let upcoming = state.planEntries.filter { $0.day.key > state.plannerDay.key }
                     if !upcoming.isEmpty {
                         Text("Upcoming plans").font(AppTypography.section)
@@ -45,13 +60,23 @@ struct LocalPlannerView: View {
                 }.padding(20)
             }.background(AppTheme.canvas).navigationTitle("Planner")
                 .navigationDestination(for: PlannerRoute.self) { route in
-                    switch route { case .entry(let id): LocalPlanEntryView(id: id) }
+                    switch route {
+                    case .entry(let id): LocalPlanEntryView(id: id)
+                    case .plan(let id): PlanDefinitionView(id: id)
+                    }
                 }
                 .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
                 .toolbar { ToolbarItem(placement: .topBarTrailing) {
-                    Button { state.openPlan(day: state.plannerDay) } label: { Label("Add to Planner", systemImage: "plus") }.tint(AppTheme.ink)
+                    Button { addPresented = true } label: { Label("Add to Planner", systemImage: "plus") }.tint(AppTheme.ink)
                 } }
                 .onAppear { state.reloadPlanEntries(); state.reloadOutfits() }
+                .sheet(isPresented: $addPresented, onDismiss: {
+                    let choice = pendingAdd; pendingAdd = nil
+                    if choice == .day { state.openPlan(day: state.plannerDay) }
+                    else if choice == .dates { state.openPlanAuthoring(day: state.plannerDay) }
+                }) {
+                    PlannerAddSheet { pendingAdd = $0; addPresented = false }
+                }
         }.tint(AppTheme.ink)
     }
 }
