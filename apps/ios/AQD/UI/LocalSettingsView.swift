@@ -11,6 +11,7 @@ struct LocalSettingsView: View {
                 Text("Your closet is on this iPhone.").font(.title2)
                 Text("No account or automatic cloud backup. Device loss or deleting AQD can lose these records.").foregroundStyle(AppTheme.secondary)
             }
+            Section("Local data") { NavigationLink("Export closet") { LocalExportView() } }
             Section("Personal settings") {
                 NavigationLink("Style") { LocalStyleSettingsView() }
                 NavigationLink { LocalAppearanceSettingsView() } label: { HStack { Text("Appearance"); Spacer(); Text(state.appearance.rawValue.capitalized).foregroundStyle(AppTheme.secondary) } }

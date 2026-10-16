@@ -30,6 +30,13 @@
     <string>AQD uses the camera only when you choose to photograph a wardrobe piece.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>AQD uses your approximate location only when you choose Use current location for optional Apple Weather. Choose a city instead to avoid location access.</string>
+    <key>UTExportedTypeDeclarations</key>
+    <array><dict>
+        <key>UTTypeIdentifier</key><string>app.aqd.local-archive</string>
+        <key>UTTypeDescription</key><string>AQD private closet archive</string>
+        <key>UTTypeConformsTo</key><array><string>public.data</string></array>
+        <key>UTTypeTagSpecification</key><dict><key>public.filename-extension</key><array><string>aqdarchive</string></array></dict>
+    </dict></array>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>
