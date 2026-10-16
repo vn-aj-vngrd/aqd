@@ -41,6 +41,10 @@ import Testing
         #expect(try result.store.localExperience().style == nil && result.store.localIdentity() == nil && result.store.todayUndo() == nil)
         try coordinator.acknowledge(request.operationID)
         #expect(try !coordinator.cleanupRetired())
+        let state = AppState(store: result.store, dataRoot: root, coordinator: coordinator)
+        state.retryLocalDataCleanup()
+        #expect(state.entry.page == .welcome)
+        #expect(state.localDataCleanupError != nil)
         fixture = nil; source = nil
         #expect(throws: (any Error).self) { try coordinator.cleanupRetired() }
         #expect(try coordinator.pendingReview() != nil)

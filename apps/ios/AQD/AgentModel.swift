@@ -178,7 +178,9 @@ import Observation
                 prompt += "\nExplicit Apple Weather context: \(selected.place.name), \(selected.day.key), \(selected.day.timeZoneID). Provider \(reading.providerDate), fetched \(reading.fetchedAt). " + String(decoding: try JSONEncoder().encode(reading), as: UTF8.self)
             } else { prompt += "\nWeather not checked or unavailable. Do not infer current weather." }
             // Keep every prior user instruction or request a new conversation. Never silently drop turns.
-            prompt += "\nConversation:\n" + conversation.messages.filter { $0.role == .user || $0.status == .complete }.map { "\($0.role.rawValue): \($0.source)" }.joined(separator: "\n")
+            prompt += "\nConversation:\n" + conversation.messages.filter {
+                $0.id != messageID && ($0.role == .user || $0.status == .complete)
+            }.map { "\($0.role.rawValue): \($0.source)" }.joined(separator: "\n")
             if messageID == nil { prompt += "\nuser: " + conversation.draft }
             guard prompt.count <= qualification.maximumPromptCharacters else { error = "This conversation exceeds the on-device context budget. Start a new conversation; this history and draft will stay."; return }
             let attempt = try messageID.map { try conversation.retry(messageID: $0) } ?? conversation.beginAttempt()

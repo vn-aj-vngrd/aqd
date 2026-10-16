@@ -11,8 +11,10 @@ import AQDCore
     }
     @Test func actualProviderSnapshotsPersistAndRetryKeepsOneUserTurn() async throws {
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
-        let model = try AgentModel(store: store, qualification: qualification) { _, _ in
-            AsyncThrowingStream { continuation in continuation.yield("**A"); continuation.yield("**A look**"); continuation.finish() }
+        var prompts: [String] = []
+        let model = try AgentModel(store: store, qualification: qualification) { prompt, _ in
+            prompts.append(prompt)
+            return AsyncThrowingStream { continuation in continuation.yield("**A"); continuation.yield("**A look**"); continuation.finish() }
         }
         model.availability = .awaitingQualification
         model.updateDraft("General styling please"); model.conversation.context.scope = .general
@@ -23,6 +25,8 @@ import AQDCore
         let message = try #require(model.conversation.messages.last)
         #expect(message.firstTextSeconds != nil && message.elapsedSeconds != nil)
         model.send(retrying: message.id); try await waitUntilStopped(model)
+        #expect(prompts.last?.hasSuffix("user: General styling please") == true)
+        #expect(prompts.last?.contains("assistant: **A look**") == false)
         #expect(model.conversation.messages.count == 2 && model.conversation.messages.last?.versions.count == 1)
         #expect(try store.agentConversations().first?.messages.last?.source == "**A look**")
         #expect(try store.pieces().isEmpty && store.planEntries().isEmpty)

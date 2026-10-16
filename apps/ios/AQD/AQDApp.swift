@@ -47,7 +47,7 @@ private struct AppRootView: View {
                     Button("Choose an archive") { state.openRestore() }
                 }
             } else if state.entry.page != .main {
-                PrivateEntryView().environment(state)
+                rootContent(PrivateEntryView())
             } else {
                 NativeTabs(selection: $state.selection,
                            today: { rootContent(TodayView()) },
@@ -116,11 +116,11 @@ private struct AppRootView: View {
                 state.reloadEntry()
             }
         }) { model in
-            StyleEditorView(model: model)
+            rootContent(StyleEditorView(model: model))
         }
         .fullScreenCover(isPresented: Binding(get: { state.entry.tour != nil }, set: { presented in
             if !presented && state.entry.tour != nil { state.updateEntry { $0.tour = nil } }
-        })) { PrivateTourView().environment(state) }
+        })) { rootContent(PrivateTourView()) }
     }
 
     /// Keep incomplete cleanup visible and retryable on every native destination,
