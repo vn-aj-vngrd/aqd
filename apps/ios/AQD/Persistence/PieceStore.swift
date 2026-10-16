@@ -290,8 +290,13 @@ enum LocalSchemaV20: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV19.models + [StoredWeatherState.self, StoredWeatherSave.self] }
 }
 
+enum LocalSchemaV21: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(21, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV20.models + [StoredAgentConversation.self, StoredAgentOperation.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self, LocalSchemaV15.self, LocalSchemaV16.self, LocalSchemaV17.self, LocalSchemaV18.self, LocalSchemaV19.self, LocalSchemaV20.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self, LocalSchemaV15.self, LocalSchemaV16.self, LocalSchemaV17.self, LocalSchemaV18.self, LocalSchemaV19.self, LocalSchemaV20.self, LocalSchemaV21.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
@@ -311,7 +316,8 @@ enum LocalMigrationPlan: SchemaMigrationPlan {
          .lightweight(fromVersion: LocalSchemaV16.self, toVersion: LocalSchemaV17.self),
          .lightweight(fromVersion: LocalSchemaV17.self, toVersion: LocalSchemaV18.self),
          .lightweight(fromVersion: LocalSchemaV18.self, toVersion: LocalSchemaV19.self),
-         .lightweight(fromVersion: LocalSchemaV19.self, toVersion: LocalSchemaV20.self)]
+         .lightweight(fromVersion: LocalSchemaV19.self, toVersion: LocalSchemaV20.self),
+         .lightweight(fromVersion: LocalSchemaV20.self, toVersion: LocalSchemaV21.self)]
     }
 }
 
@@ -357,13 +363,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:20".utf8)
-        let previousVersions = (1..<20).map { Data("AQD-piece-store:\($0)".utf8) }
+        let version = Data("AQD-piece-store:21".utf8)
+        let previousVersions = (1..<21).map { Data("AQD-piece-store:\($0)".utf8) }
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV20.self)
+        let schema = Schema(versionedSchema: LocalSchemaV21.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -537,7 +543,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, 20), (Schema(versionedSchema: LocalSchemaV19.self), 19), (Schema(versionedSchema: LocalSchemaV18.self), 18), (Schema(versionedSchema: LocalSchemaV17.self), 17), (Schema(versionedSchema: LocalSchemaV16.self), 16), (Schema(versionedSchema: LocalSchemaV15.self), 15), (Schema(versionedSchema: LocalSchemaV14.self), 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
+            let candidates = [(schema, 21), (Schema(versionedSchema: LocalSchemaV20.self), 20), (Schema(versionedSchema: LocalSchemaV19.self), 19), (Schema(versionedSchema: LocalSchemaV18.self), 18), (Schema(versionedSchema: LocalSchemaV17.self), 17), (Schema(versionedSchema: LocalSchemaV16.self), 16), (Schema(versionedSchema: LocalSchemaV15.self), 15), (Schema(versionedSchema: LocalSchemaV14.self), 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -563,7 +569,11 @@ final class PieceStore {
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 20) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 21) throws -> Bool {
+        if storeVersion >= 21 {
+            guard try context.fetchCount(FetchDescriptor<StoredAgentConversation>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredAgentOperation>()) == 0 else { throw StoreError.unsupportedStore }
+        }
         if storeVersion >= 20 {
             guard try context.fetchCount(FetchDescriptor<StoredWeatherState>()) == 0,
                   try context.fetchCount(FetchDescriptor<StoredWeatherSave>()) == 0 else { throw StoreError.unsupportedStore }
@@ -2798,5 +2808,47 @@ extension PieceStore {
         let context = ModelContext(container)
         guard let record = try context.fetch(FetchDescriptor<StoredWeatherState>()).first else { throw StoreError.invalidRecord }
         record.payload = try encode(value); try commit(context)
+    }
+}
+
+
+extension PieceStore {
+    func agentConversations() throws -> [AgentConversation] {
+        let owner = try todayConfiguration().ownerID
+        return try ModelContext(container).fetch(FetchDescriptor<StoredAgentConversation>()).map {
+            let value = try $0.value()
+            guard value.ownerID == owner else { throw StoreError.invalidRecord }; return value
+        }.sorted { $0.updatedAt == $1.updatedAt ? $0.id.uuidString < $1.id.uuidString : $0.updatedAt > $1.updatedAt }
+    }
+    @discardableResult func saveAgentConversation(_ value: AgentConversation, operationID: UUID) throws -> AgentConversation {
+        try value.validated()
+        guard value.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        let context = ModelContext(container), checksum = digest(try encode(value))
+        if let receipt = try context.fetch(FetchDescriptor<StoredAgentOperation>()).first(where: { $0.id == operationID }) {
+            guard receipt.conversationID == value.id, receipt.digest == checksum, let result = receipt.result else { throw StoreError.operationConflict }
+            return try JSONDecoder().decode(AgentConversation.self, from: result)
+        }
+        guard !(try context.fetch(FetchDescriptor<StoredAgentOperation>())).contains(where: { $0.conversationID == value.id && $0.result == nil }) else { throw StoreError.deletedPiece }
+        let stored = try context.fetch(FetchDescriptor<StoredAgentConversation>()).first { $0.id == value.id }
+        guard try stored?.value().revision ?? 0 == value.revision else { throw StoreError.staleRevision }
+        var saved = value; saved.revision += 1; saved.updatedAt = Date()
+        try beforeOutfitSave()
+        if let stored { stored.payload = try encode(saved) } else { context.insert(try StoredAgentConversation(saved)) }
+        context.insert(StoredAgentOperation(id: operationID, conversationID: value.id, digest: checksum, result: try encode(saved)))
+        try commit(context); try afterOutfitSave(); return saved
+    }
+    func deleteAgentConversation(id: UUID, expectedRevision: Int, operationID: UUID) throws {
+        let context = ModelContext(container), checksum = "delete:\(id):\(expectedRevision)"
+        if let receipt = try context.fetch(FetchDescriptor<StoredAgentOperation>()).first(where: { $0.id == operationID }) {
+            guard receipt.conversationID == id, receipt.digest == checksum, receipt.result == nil else { throw StoreError.operationConflict }; return
+        }
+        guard let stored = try context.fetch(FetchDescriptor<StoredAgentConversation>()).first(where: { $0.id == id }),
+              try stored.value().revision == expectedRevision,
+              try stored.value().ownerID == todayConfiguration().ownerID else { throw StoreError.staleRevision }
+        try beforeOutfitSave(); context.delete(stored)
+        // Superseded save acknowledgments no longer retain deleted conversation text.
+        for receipt in try context.fetch(FetchDescriptor<StoredAgentOperation>()) where receipt.conversationID == id { context.delete(receipt) }
+        context.insert(StoredAgentOperation(id: operationID, conversationID: id, digest: checksum, result: nil))
+        try commit(context); try afterOutfitSave()
     }
 }

@@ -47,7 +47,7 @@ private struct AppRootView: View {
                            closet: { rootContent(ClosetView()) },
                            planner: { rootContent(LocalPlannerView()) },
                            profile: { rootContent(LocalProfileView()) },
-                           agent: { close in rootContent(BaselineAgentView(close: close)) })
+                           agent: { close in rootContent(LocalAgentView(close: close)) })
                     .ignoresSafeArea()
             }
         }

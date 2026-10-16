@@ -36,6 +36,7 @@ final class AppState {
     var capture: CaptureModel?
     var collectionError: String?
     var pieceReadError: String?
+    var agentModel: AgentModel?
     var weatherClient: WeatherClient?
     var today: TodayConfiguration?
     var todayUndoAvailable = false

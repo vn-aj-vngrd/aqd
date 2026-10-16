@@ -48,21 +48,3 @@ struct PendingLocalView: View {
         }
     }
 }
-
-struct BaselineAgentView: View {
-    @Environment(AppState.self) private var state
-    let close: () -> Void
-    var body: some View {
-        NavigationStack {
-            VStack(alignment: .leading, spacing: 24) {
-                Text("Local Agent conversations aren’t implemented yet.").font(AppTypography.section)
-                Text("This baseline doesn’t send chat or wardrobe data anywhere. You can still add and manage pieces manually.")
-                    .foregroundStyle(AppTheme.secondary)
-                SecondaryAction(title: "Open Closet") { state.selection = 1; close() }
-                Spacer()
-            }.padding(20).background(AppTheme.canvas)
-                .navigationTitle("Agent").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .topBarLeading) { Button("Back", action: close) } }
-        }.tint(AppTheme.actionText)
-    }
-}
