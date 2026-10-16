@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
-  "sourceHead": "1125307370f91cb3261f4021a67480349e9425f1",
-  "sourceState": "Owner preview through 1125307: Settings source8b5a543 passed Core77/native221 and unsigned Release. Subsequent Profile/Planner/Closet cosmetic changes passed Debug and source review, installed and normally launched. All E2E/rendered acceptance remains issue30.",
+  "sourceHead": "681e1b8a2e496bd1f0041d60cba2b893635e2dd7",
+  "sourceState": "Owner preview through 681e1b8: Core77/native222, final Debug and unsigned Release pass; Ready string-only cleanup occurred after units and before final builds. Installed and normally launched with preserved content. All E2E/rendered acceptance remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -2622,5 +2622,11 @@
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false,
     "scope": "Explicit additive samples; Settings structure and full-screen local-data review; uniform Profile thumbnails; Planner alert; scrolling count/sort metadata."
+  },
+  "liveTourAndProfileEvidence": {
+    "codeCommit": "681e1b8a2e496bd1f0041d60cba2b893635e2dd7",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false,
+    "scope": "Current actual-screen read-only tour; icons-only native tabs; Profile/Fit hierarchy and More recovery; Weather/assistance/Wear insights hierarchy."
   }
 }
