@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-17",
   "tokenHash": "fdeb7346",
-  "sourceHead": "d6c05f43ac87fed2f8b612f9719be68ab29c87a8",
-  "sourceState": "Agent activation/date refinement d6c05f43ac87fed2f8b612f9719be68ab29c87a8: live readiness gated text Agent, hidden unsupported voice/photo options, native appearance propagation, inline Planner Date label. Core83/native253 at text activation input; final cosmetic Debug/unsigned Release and source reviews passed. Installed and launched; no computer use, runtime acceptance remains issue30.",
+  "sourceHead": "1952f857b19b36409ea709d465703c6f0747f1da",
+  "sourceState": "Owned editor/tour/Agent source1952f857b19b36409ea709d465703c6f0747f1da: unchanged Save gates, acknowledged editor closure, eight-step source-preserving tour, native header gap/glass category editing, glass composer/on-device transcript review/conversation actions/direct sheet appearance. Core84/native255 passed with concurrent custom alert; clean Debug/Release/installed snapshot excludes concurrent dialog edits and keeps native alert. No computer use; integrated acceptance/live voice remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -2603,11 +2603,11 @@
     "receipt": "docs/plan/evidence/issue-27-29/README.md"
   },
   "ownerUIRefinementEvidence": {
-    "codeCommit": "d6c05f43ac87fed2f8b612f9719be68ab29c87a8",
+    "codeCommit": "1952f857b19b36409ea709d465703c6f0747f1da",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
-    "checks": "Core83/native253 before final presentation refinements; final Debug/unsigned Release, source reviews passed",
+    "checks": "Core84/native255, clean snapshot Debug/unsigned Release and owned-source reviews passed",
     "runtimeComplete": false,
-    "qualification": "Installed source; owner visual review pending, no computer use. Integrated acceptance remains issue30."
+    "qualification": "Installed native-alert snapshot; owner visual/voice/tour review pending. Integrated acceptance remains issue30."
   },
   "closetProfileRefinementEvidence": {
     "codeCommit": "bd5c9f6506ac53efa616efdc8572f1f2226aa3b5",
