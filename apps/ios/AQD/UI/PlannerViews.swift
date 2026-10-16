@@ -6,13 +6,18 @@ struct LocalPlannerView: View {
     @State private var addPresented = false
     @State private var pendingAdd: PlannerAddChoice?
     private var entries: [OutfitPlanEntry] { state.planEntries.filter { $0.day.key == state.plannerDay.key } }
+    private var selectedDateLabel: String {
+        guard let date = try? state.plannerDay.date(),
+              let zone = TimeZone(identifier: state.plannerDay.timeZoneID) else { return state.plannerDay.displayDate }
+        return date.formatted(Date.FormatStyle(timeZone: zone).weekday(.abbreviated).month(.abbreviated).day())
+    }
     private var counts: [String: Int] { Dictionary(grouping: state.planEntries, by: { $0.day.key }).mapValues(\.count) }
     var body: some View {
         @Bindable var state = state
         NavigationStack(path: $state.plannerPath) {
             VStack(alignment: .leading, spacing: 16) {
                 PlannerCalendarHeader(day: $state.plannerDay, mode: $state.plannerMode, counts: counts).padding(.horizontal, 20)
-                Text(state.plannerDay.displayDate).font(AppTypography.section).padding(.horizontal, 20)
+                Text(selectedDateLabel).font(AppTypography.body).foregroundStyle(AppTheme.secondary).padding(.horizontal, 20)
                 if state.planError == nil && entries.isEmpty && state.planDefinitions.isEmpty {
                     EmptyStatePage(title: "No plans for this day", systemImage: "calendar",
                                    description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear.")) {
@@ -57,7 +62,9 @@ struct LocalPlannerView: View {
                         }
                     }
 
-                }.padding(20)
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
             }
             .safeAreaInset(edge: .bottom) {
                 if entries.isEmpty && state.planError == nil {
@@ -110,7 +117,7 @@ struct PlanAgendaRow: View {
                 }
             }.frame(maxWidth: .infinity, alignment: .leading).foregroundStyle(AppTheme.secondary)
             Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).frame(width: 22).accessibilityHidden(true)
-        }.padding(14).frame(minHeight: 108).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+        }.padding(14).frame(minHeight: outfit == nil ? 80 : 108).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
     }
 }
 
