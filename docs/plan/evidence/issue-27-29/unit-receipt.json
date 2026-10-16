@@ -5,7 +5,7 @@
   ],
   "branch": "van/issue-27/agent-and-local-controls",
   "baseline": "1a5b44ecf06536d6bb1dae0551348f44a9747d5b",
-  "sourceHead": "4212dfee6d80fdfa1da24cedc6e692a91be42444",
+  "sourceHead": "d1032c46945b0e1007d91e4411ed859cbb05c0f2",
   "checkedOn": "2026-10-16",
   "environment": {
     "destination": "Physical iPhone17ProMax",
@@ -16,14 +16,14 @@
   },
   "results": {
     "core": {
-      "passed": 73,
-      "suites": 22,
+      "passed": 75,
+      "suites": 23,
       "failures": 0
     },
     "native": {
-      "passed": 213,
-      "swiftTesting": 200,
-      "swiftTestingSuites": 30,
+      "passed": 217,
+      "swiftTesting": 204,
+      "swiftTestingSuites": 31,
       "xctest": 13,
       "failures": 0
     },
@@ -86,6 +86,12 @@
         "reviewedHead": "3537d2e8b0fb404e56129b97ced02f6b3612487e",
         "findings": 1,
         "status": "Lost-pointer seeding fixed with independently audited adjacent corruption/publication/preparation recovery states. All actual regressions reproduced; final Core73/native213 pass and both whole-path rechecks have no remaining concrete findings. Current-head remote review remains required."
+      },
+      "ownerUIRefinement": {
+        "sourceHead": "d1032c46945b0e1007d91e4411ed859cbb05c0f2",
+        "standards": "Caption overflow and invalid-draft retention fixed; independent source recheck has no remaining findings.",
+        "spec": "Editor callbacks, latest owner refinements and richer Today content rechecked; authoritative contract updates resolve documentation finding.",
+        "limits": "Source review only; no rendered/E2E claim."
       }
     },
     "interruptedNativeRun": {
@@ -113,7 +119,14 @@
       "result": "FAILED",
       "reason": "Generated-original variants reproduced staleReview during second prepareRestore due to URL representation equality. Normalized source path comparison fixes the defect; full final rerun passes."
     },
-    "opaqueRecoveryLimit": "Unreadable metadata and untracked generation files remain protected; cleanup keeps its receipt and warning. Retry alone cannot establish ownership of uncertain files."
+    "opaqueRecoveryLimit": "Unreadable metadata and untracked generation files remain protected; cleanup keeps its receipt and warning. Retry alone cannot establish ownership of uncertain files.",
+    "ownerUIRefinement": {
+      "sourceHead": "d1032c46945b0e1007d91e4411ed859cbb05c0f2",
+      "unitLog": "aqd-pr37-editor-rich-today-unit.log",
+      "releaseLog": "aqd-pr37-editor-rich-today-release.log",
+      "toolingLog": "aqd-pr37-editor-final-tooling.log",
+      "coverage": "Sheet confirmation audit, native outlines, actual-record Today imagery/week strip, optional caption persistence/recovery, avatar edit. Earlier UI slices remain included."
+    }
   },
   "localLogs": [
     {
@@ -400,10 +413,40 @@
       "name": "aqd-pr37-codex8-docs.log",
       "sha256": "7c16d5dffebed7e569b60f27c4bac4607ecb5cee539e7c73509401c482177867",
       "published": false
+    },
+    {
+      "name": "aqd-profile-caption-red.log",
+      "sha256": "8810fa80f3cbbec10db4cfaded82ac5e882cfba8556007af451c3b1d7e28b0c9",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-editor-caption-unit.log",
+      "sha256": "1aa18b3fa09cad928bb653d3590bbba91610fc2b123ccfc71bb7a0b1453241c3",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-editor-rich-today-unit.log",
+      "sha256": "b5b3eb8a0e1e5250b698fa813c6a6724947e826679ac10f63e9a9cf3db0c4c30",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-editor-rich-today-release.log",
+      "sha256": "d5f75e68821df6c3d02897306fc6830f210f1c4f4d013c8ff1cfafe8c750e543",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-editor-final-tooling.log",
+      "sha256": "f951f702f0007455c8680730ca2161b3c8003ce373c6c0a41dbb12d5048ca5cb",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-editor-final-docs.log",
+      "sha256": "7c16d5dffebed7e569b60f27c4bac4607ecb5cee539e7c73509401c482177867",
+      "published": false
     }
   ],
   "sourceFiles": {
-    "apps/ios/AQD/AQDApp.swift": "abc57117cab2efffb404d6861290ab84deca3a9b27ee93af72a48392d5aa68ac",
+    "apps/ios/AQD/AQDApp.swift": "c3825fbd7a5bfc817e2f519a9e9736aa5f32d4c165106b8feb7caef33faae3f2",
     "apps/ios/AQD/AgentModel.swift": "b41b51f1dbf888af4325b84ddc586bcd0945b8416852c7d439b1f047df6204b8",
     "apps/ios/AQD/AgentVoiceModel.swift": "ccf6781ac3f4a421921474bd5d0fdb09a51b239700b0d38826bcc6cf5db581d8",
     "apps/ios/AQD/AppState.swift": "8abcd49a95bd51350a8065200dd7cd6f3a115aaffe63876009da04d8df5584d4",
@@ -413,47 +456,105 @@
     "apps/ios/AQD/LocalExportModel.swift": "0bf83ae03fece8bd0f1f5f7b6b2398358377ac7345aa383458e2d148dbdc9842",
     "apps/ios/AQD/LocalRestoreModel.swift": "ed9b59974814d0ce06a94fb7c147f581c35199bc88954532b386dd1d16db9fcf",
     "apps/ios/AQD/NativeAgentProvider.swift": "3cdb669b3bb16a3ed3b335201c3e3f11aa0b88a7e638a07d152a25c0d2cf6641",
-    "apps/ios/AQD/Persistence/PieceStore.swift": "0064b5bc733121b4af9b6fe5cf6c90e342063c874c48343ff1216974a463ac76",
+    "apps/ios/AQD/Persistence/PieceStore.swift": "5678191e042b4bd7dfd8cc42a62b5d3e63617f1f8c72805ddf1e9eea2545959b",
     "apps/ios/AQD/Persistence/StoredAgentConversation.swift": "d3995a166c58767f470fc1ba8b41e817f22b58f0ea4ec008f8045f5b4e712655",
+    "apps/ios/AQD/Persistence/StoredLocalIdentity.swift": "26ac00c06fa3d3c2209b70108b47a0c9129f0b4d0358c2999820eecd0a47a33d",
     "apps/ios/AQD/Persistence/StoredLocalSettings.swift": "5ea696e062966c742bf4f69116bd42d607934b48b5f5273875435e1be4d9e182",
     "apps/ios/AQD/UI/AgentActionViews.swift": "08462c1f090b3b73381dacc922c1d47c85865cf2e84a70293038f2ff720b044e",
-    "apps/ios/AQD/UI/AgentContextView.swift": "d7015750dd4ba8824a611a62f7b4787eaf8c32d7b70a937b21b16be1f6d4c2ea",
+    "apps/ios/AQD/UI/AgentContextView.swift": "c4abda7ddacd8d84a3040a23e0c06bf0649be10be2d3795b8675c9a721b96d33",
     "apps/ios/AQD/UI/AgentMarkdownBody.swift": "28d3c8f63f8d9050f9ef6f4d1a4fd541de77fe32b3d4fbf3b3bd0de31d6f019d",
-    "apps/ios/AQD/UI/AgentVoiceView.swift": "93c601cd74fffb2566293cf665de56fc658bd1c4130fa68ce151cf9cc735f4f9",
-    "apps/ios/AQD/UI/LocalAgentView.swift": "088624d789d5b1df4b0eb4be810d737192f6234082d6f614c9c20a963e812560",
-    "apps/ios/AQD/UI/LocalEraseView.swift": "39b41708e6501fd6dcebc72eea81ce67c13ad1d54058525a20342dd30380464e",
+    "apps/ios/AQD/UI/AgentVoiceView.swift": "066619cd12bf358e5e5b15d9a8b65088594ef2aa41f7a33d86d63aff2d8f0118",
+    "apps/ios/AQD/UI/AppActions.swift": "b5606ec3195b39dd22510177bcbec85ce1971a1472d1742e566872898b26c3de",
+    "apps/ios/AQD/UI/AppFeedback.swift": "da5a481c24710f6ab7f0369144e21d1bb6591eaf8f631a66b3ba839a017527ec",
+    "apps/ios/AQD/UI/AppFields.swift": "b525fa34e0c1c755bd67b70aaf1ed7cc1227ed0e326d312222d42069be818281",
+    "apps/ios/AQD/UI/AppMetrics.swift": "dc93c2a504f013d9306efdf901cddd6432be905cef6e6b8da9b3cb62ec5c3347",
+    "apps/ios/AQD/UI/AppRows.swift": "418ae56200834caf33d7a13587991dea44c1e45056725bba505b8b734406fbeb",
+    "apps/ios/AQD/UI/BackgroundRemovalView.swift": "886fa9aeae504a1cae9821b9aa0ab704b8ea04cb8a84632fe5d0c72860e55cca",
+    "apps/ios/AQD/UI/BodyDetailsView.swift": "81e45998ebd08b20fe0725f8c77a0157ac4e3136f196d38ff65c9f533bb86883",
+    "apps/ios/AQD/UI/ClosetCollectionViews.swift": "365fd2e297ab76bc418d103e2a4f8ece4b1bf82e8bdcb8a6236f3b48903b68a9",
+    "apps/ios/AQD/UI/ClosetSearchContent.swift": "5635cb2809ed11e1e5d88e2ef4c422b62accf7d86e35e43f1e7881efd0b9f54b",
+    "apps/ios/AQD/UI/ClosetView.swift": "6dc3c0b6e3c03816e7ddf7957b8ac8f6ff9524145d6f648e5eac8740608fe8e5",
+    "apps/ios/AQD/UI/DraftDiscardSheet.swift": "25f7a2a62a69fbd2b354b65cf798798fc7d9e2f4b25707643a2094985ae0b5bb",
+    "apps/ios/AQD/UI/EmptyStatePage.swift": "86039ad8c3c160d23d498de5d683035775e88d992e0fa9d3133f2f39547cdad8",
+    "apps/ios/AQD/UI/FitJournalViews.swift": "d072892114b0a0de995cee221bc5de5794f79932fdfd033754f37835fda8fdd3",
+    "apps/ios/AQD/UI/LocalAgentView.swift": "527668ebc9b6bca0b91d8f41f5e7aea5b907c4bb2f0d3830cc6bd1a53f22cc0e",
+    "apps/ios/AQD/UI/LocalEraseView.swift": "b250a1193837cbb4b18daa31b62764269a2cfc73f95377e4138d284a6007e39f",
     "apps/ios/AQD/UI/LocalExportView.swift": "662292d816445634caabd10ba26bc7cb910db23c6f551bb28ee3ef8283f0fccb",
-    "apps/ios/AQD/UI/LocalProfileView.swift": "0e6d25798e412bf00e0f2d8d6fbd8f4f53f13834687ed84ceb8422be92d9821f",
+    "apps/ios/AQD/UI/LocalIdentityEditorView.swift": "07aaaf22b17e3fc9f43bdaaa5005ebaab404b4a26296033f4b66331fd3c93479",
+    "apps/ios/AQD/UI/LocalProfileView.swift": "6b5abd30b16f18a488cfd6ece7a7149cd6e5f80183238bf3b11d75fdec89fe4e",
     "apps/ios/AQD/UI/LocalRestoreView.swift": "c9d921c82e9462cad296daeab876e94d529eefd353bcd81af73b7da273309823",
     "apps/ios/AQD/UI/LocalSettingsView.swift": "13a70100ef4f44dac2b5b054da4cf84d79e9adcd77948b732f9cbafbee249645",
-    "apps/ios/AQD/UI/NativeTabs.swift": "5954f1355663954ba6393149f7196f7829deb377eecec2feb0f44c96269aa8e4",
-    "apps/ios/AQD/UI/PlannerCalendarView.swift": "cbd5cc5bdc9daf29106ad9f3abb62cbe5791ac95e74e191cefa2ba764eb7829e",
-    "apps/ios/AQD/UI/RootViews.swift": "1cc0878f8e0ed0406a28c1170570eb1b06b7db87de163c08bd600a3f2c607afe",
+    "apps/ios/AQD/UI/NativeChoiceSheet.swift": "93145b3e763f158db9101b01736cf0a11c06017929996c6238804c179daa9d1b",
+    "apps/ios/AQD/UI/NativeTabs.swift": "bd09c60bbf72bc0e51b16baebcf826a6a9852e36cc7181247e6dc14ffad25cce",
+    "apps/ios/AQD/UI/OutfitPlanViews.swift": "78ac2c8a0f12c5b6ffa38b276fe3dd74c87f14bf1a6fc0b50b9587f137e38483",
+    "apps/ios/AQD/UI/OutfitSuggestionViews.swift": "588842da451bdb24fcbcd6653bbbf96a09dc70035241846ae9b4bd6d41fec0f1",
+    "apps/ios/AQD/UI/OutfitThemeViews.swift": "4252e82dd7d21da01f7a7c8a219425185c32fe0776fba8e2507728dd4e95d15e",
+    "apps/ios/AQD/UI/OutfitViews.swift": "abd1a2068b240245462493f561b166bc21997c75e626ec83f8980b48c22a11ef",
+    "apps/ios/AQD/UI/OutfitWearViews.swift": "cbf68e989afe7242de9c8ded20a040fef356d16738507d661b9306b7601d7300",
+    "apps/ios/AQD/UI/OwnedPieceChooser.swift": "c0f778fbfb9226f3319984cbf2a7263bd52acf688bfe87727a8f85e4ad9b5cad",
+    "apps/ios/AQD/UI/PhotoEditorView.swift": "329fec15650cdc509d34b5a3038f9bc6697feb3af7867d0aa6c138f6b2d8fd4e",
+    "apps/ios/AQD/UI/PieceCaptureView.swift": "b2c77f65f3bb9090d740c5186cf2a22444c5760a821e8c176dd697327c381680",
+    "apps/ios/AQD/UI/PieceCollectionManagement.swift": "c536186d7238a8d664c366df31d78ca3b18376b0eb34f4b26ad78292bd8803b2",
+    "apps/ios/AQD/UI/PieceDetailsView.swift": "7d2ab7937ee949edc0a6417563b81f18137d94fd78f65d3add5a51346a2db636",
+    "apps/ios/AQD/UI/PlanAuthoringView.swift": "b6e8b55867df075a15b503da391cb40110cad9a9dd924c3b94cdf409b3a50e4f",
+    "apps/ios/AQD/UI/PlannerCalendarView.swift": "a8087162ba63f675c5aa6e96c1f2a475fae97ffe6c47a1938a101316f4c904ce",
+    "apps/ios/AQD/UI/PlannerViews.swift": "109baf5fac57bf3d977030b29e46ddd17eacbae8694a76b4f96fa067c83546d3",
+    "apps/ios/AQD/UI/PrivateEntryView.swift": "cd20210997970dda3d16f893bc0f2fbdde6fe78c0512727e8512046a007280bf",
+    "apps/ios/AQD/UI/RootViews.swift": "bec819ee8bd611bc7239208e89c426a642bd801870ead50082bad5e257d3f453",
+    "apps/ios/AQD/UI/RoutineViews.swift": "1ada55470e7df5ad3f43fa7d5a42b38ee0a5c87a039ee61a56521a3fbddee8d0",
+    "apps/ios/AQD/UI/SharedPhotoSourceButton.swift": "4552bb7c2e5c3d53d0b0f479bf5b91fed4c14da3f6042b18a85808c73c67988a",
+    "apps/ios/AQD/UI/StyleEditorView.swift": "b6294c09929da788f00114c401bcbfcaf83c45a143a2325698b39080740f1740",
+    "apps/ios/AQD/UI/TimezoneChooser.swift": "1f86d1881e1cf467c16d1e3d3e9f4e7d3233294991f7411642d53a2c5aac6c09",
+    "apps/ios/AQD/UI/TodayCards.swift": "9b4c3987d900b672165b1efd0fcfd3a6cb5bd7195c0a7d1ad84e0a8b64f5b5fe",
+    "apps/ios/AQD/UI/TodayEditorView.swift": "039da36689d1ef5f763d3b222fcc17bf1a2e79e7516bd66acb4cdcb1b64b6e35",
+    "apps/ios/AQD/UI/TodayWidgetConfigurationView.swift": "38f08cf77f8d064470296e6f3caca2337217e663c7d068d74a48fd7d14a4eed2",
+    "apps/ios/AQD/UI/TripViews.swift": "b01aed58959dff8ae5e247dbac617dfe2609b7bbefb85454522eb09a03f90e32",
+    "apps/ios/AQD/UI/WearDetailView.swift": "cae839250bf3d77670de870ceeb08889158c8546b1f0a7cc1042c838a4e50d62",
+    "apps/ios/AQD/UI/WearHistoryView.swift": "05e2b952d2eb31f7b3b4401c824e04de4a3ae31b18872fed96596dd2f0753b91",
+    "apps/ios/AQD/UI/WearInsightsView.swift": "de927d646411233cdeebcf0569e77b872ba9b2602b40102d4dfb4fa4c5f5297c",
+    "apps/ios/AQD/UI/WeatherContextView.swift": "9d56e50a9154ec4d00e44856d83bf59f2862ff8c9be661446e3c3d2d5d1f5417",
     "apps/ios/AQDTests/AgentActionPersistenceTests.swift": "513ba4c3acd9aa44c0e0f5774f1f3bd62f1da59f532cb6e54d6d542759bb46ff",
     "apps/ios/AQDTests/AgentConversationPersistenceTests.swift": "deb976563783ac6642bbc3489b9245ac07bc5ca62c0bb0c1a15a1fa215debf85",
-    "apps/ios/AQDTests/AgentGenerationTests.swift": "bea1fb2abcb2667f8e6f9c39d1a40a033a612542d155e0a745e3a9bcf6b75838",
+    "apps/ios/AQDTests/AgentGenerationTests.swift": "b421a039a452453b28bf165a39da842cff910d203d2296518be8ca5220ca8931",
     "apps/ios/AQDTests/ClosetSearchTests.swift": "78f85c26f2a2c170fc6a4e7df5174e61f8a097224d453027eea6118605182e77",
     "apps/ios/AQDTests/LocalArchiveTests.swift": "9ea99a361e24664ba3eb5e73f26f2455f47bb6883f784c5f9eb435cf29ac0e81",
     "apps/ios/AQDTests/LocalDataFixture.swift": "ebb5568e1d84c662b65daec12394446cd5c7ac1de8f8711dd78d5121a680d625",
     "apps/ios/AQDTests/LocalEraseTests.swift": "9e3447fda46b2293932079ac585c9978dee94013970cae17552dd89379d5c756",
+    "apps/ios/AQDTests/LocalIdentityPersistenceTests.swift": "fd3027978a8cfeca22be551d13b238367e1ffa280e365a22d41b9865a3b8bb04",
     "apps/ios/AQDTests/LocalReplacementTests.swift": "7271ac80fabbed879e7754b91b7bd6c594efa4faf0ee6aa06bdbffaec1ee0fcb",
     "apps/ios/AQDTests/LocalSettingsPersistenceTests.swift": "fdd147136c5451970c474d1d508a8d1f59d5b07e767e170d4dfbfd3da5bbeeb4",
+    "apps/ios/AQDTests/NativeNavigationTests.swift": "31cf70f223ac5dd9774b40cb9365087d4229ea2a16704db53a47472de96f8ef9",
     "apps/ios/AQDTests/OutfitPersistenceTests.swift": "28f0f1f8bc76cd803a88ef154fd13e8e7e95738e845bf69e9f858aa56ec4d832",
     "apps/ios/AQDTests/PersonalEditorRecoveryTests.swift": "8236bc5e2e52de074b0e33405b83735eae05e9294ee3dab01dcb75774d4e2430",
     "apps/ios/AQDTests/PiecePersistenceTests.swift": "143ddf7e57db0102e1a81e4020a7357be3e26129bea4a610f8599b68db740e9c",
     "apps/ios/Configuration/AppInfo.plist": "13a735ba1fcc1f4b2ebf6bd104114a2f6060d12ea81e93b4d802bf70e6ce3c01",
     "apps/ios/Core/Sources/AQDCore/AgentAction.swift": "2c1aa4261e1cc096624700ef38d889ffdcbc32806e4f609645a124af2b7fe11d",
-    "apps/ios/Core/Sources/AQDCore/AgentContextSnapshot.swift": "b090648a0fbce570efc884207b8a03eb55c108076445a4ec445bb656f04c3dce",
+    "apps/ios/Core/Sources/AQDCore/AgentContextSnapshot.swift": "5fcb63ccd2badf4a2ef74577dbbb1546bfc0f164616d997ed3eee28d8d85ee0d",
     "apps/ios/Core/Sources/AQDCore/AgentConversation.swift": "e6b15db44c40abe297b72e239e5ec904cef8076590ebb03599c355208b4930b1",
+    "apps/ios/Core/Sources/AQDCore/LocalIdentity.swift": "01ea32c4a7e9933183283f4864167054331cb6eec1e720d6503b0b1a32bf9591",
     "apps/ios/Core/Sources/AQDCore/LocalSettings.swift": "5b2d19ee4b78c4d52c57cc316317c8b50cdc8894c5fe63dfb92aa6166495cb80",
     "apps/ios/Core/Tests/AQDCoreTests/AgentActionTests.swift": "dec03d4b04bdf5b6aed8283882b1e8e5e9cd1c39a9649adaf19c13d023db80f9",
-    "apps/ios/Core/Tests/AQDCoreTests/AgentContextTests.swift": "098dbf01ffba8a0fc562131809245147f30074c5e84f9f0224b2b2299701136e",
+    "apps/ios/Core/Tests/AQDCoreTests/AgentContextTests.swift": "28d4446c3eab36ad9d6beb33b34b9f6b0d71adf8144a750cb0f279e2b247fb87",
     "apps/ios/Core/Tests/AQDCoreTests/AgentConversationTests.swift": "2080518658c91812014ada3a69a5f2bfa567d05feaff9301580686d99af9ebfe",
-    "apps/ios/Core/Tests/AQDCoreTests/LocalSettingsTests.swift": "98ce1e8b90ab842c9cac2ca26587a9b1e9df056bad2b94b570b93e952cbe68eb"
+    "apps/ios/Core/Tests/AQDCoreTests/LocalSettingsTests.swift": "98ce1e8b90ab842c9cac2ca26587a9b1e9df056bad2b94b570b93e952cbe68eb",
+    "apps/ios/Core/Tests/AQDCoreTests/ProfileCaptionTests.swift": "11b31a63ce21cb18ee91dabd04e97d1b0ad7d48c3c9ca83c2c0f728e73703e1d",
+    "apps/ios/FOUNDATIONS.md": "c55720ade49a1e5adcaddf3a72d6d0e49ca01297f40063775344d28fcc036133"
   },
   "limits": [
     "All E2E and rendered acceptance deferred to issue30 by owner direction.",
     "Synthetic providers/media do not qualify model, voice, Weather, garment quality or permissions.",
     "No native distribution. Current-head CI/Codex and merged-SHA release remain separate gates."
-  ]
+  ],
+  "localOwnerPreview": {
+    "sourceHead": "d1032c46945b0e1007d91e4411ed859cbb05c0f2",
+    "executableSHA256": "bf13ce5f4ee321ca943594a1a6790614b0667f3eb039678b82b113dcb0362dad",
+    "destination": "Physical iPhone17ProMax",
+    "install": "success",
+    "normalLaunch": "success",
+    "fixtures": false,
+    "dataReset": false,
+    "localReceipt": "/tmp/aqd-pr37-editor-preview-receipt.json",
+    "published": false,
+    "renderedAcceptance": "Not run; remains issue30"
+  }
 }
