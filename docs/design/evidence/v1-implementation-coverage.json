@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-17",
   "tokenHash": "fdeb7346",
-  "sourceHead": "87f5f55ebd353dc9c353f97ea8ca443ce1ce8c24",
-  "sourceState": "Final native menus/color/Profile spacing source 87f5f55ebd353dc9c353f97ea8ca443ce1ce8c24 installed and normally launched; Core81/Swift233 passed, stale palette XCTest oracle fixed and focused9 passed, Debug/unsigned Release passed. Source reviews clear. Owner stopped computer use; visual/gesture verification is owner-led. No full runtime/E2E claim.",
+  "sourceHead": "4ee4231c3fca51605508a02bd5c0aec52b3aa2e3",
+  "sourceState": "Final source 4ee4231c3fca51605508a02bd5c0aec52b3aa2e3: multiline limits/counters, native Weather reminder dismissal, neutral top selection and gray labelled accessory icons. Core83/native248 passed before cosmetic icon wrapper; final Debug/unsigned Release/source reviews passed; installed and normally launched. No computer use, owner visual review pending; full E2E remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -2603,11 +2603,11 @@
     "receipt": "docs/plan/evidence/issue-27-29/README.md"
   },
   "ownerUIRefinementEvidence": {
-    "codeCommit": "87f5f55ebd353dc9c353f97ea8ca443ce1ce8c24",
+    "codeCommit": "4ee4231c3fca51605508a02bd5c0aec52b3aa2e3",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
-    "checks": "Core81/Swift233 passed, independent palette oracle corrected and Foundation9 passed, final Debug/unsigned Release and source reviews passed",
+    "checks": "Core83/native248 passed; final cosmetic icon Debug, unsigned Release and Standards/Spec source reviews passed",
     "runtimeComplete": false,
-    "qualification": "Final installed build awaits owner visual/gesture verification; no computer use after stop; full acceptance remains issue30."
+    "qualification": "Final source installed and normally launched, no reset/seed. Computer use stopped; visual/gesture verification is owner-led. Full acceptance remains issue30."
   },
   "closetProfileRefinementEvidence": {
     "codeCommit": "bd5c9f6506ac53efa616efdc8572f1f2226aa3b5",
