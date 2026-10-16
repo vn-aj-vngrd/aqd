@@ -29,6 +29,22 @@ struct ClosetSearchTests {
         try store.finishThemeDraft(theme)
         return (first, archived, outfit, saved)
     }
+    @Test func themeSearchAppliesContentAndSortWithoutReusingOtherFilterResults() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let (_, _, _, populated) = try await seed(store)
+        var draft = ThemeDraft(ownerID: populated.ownerID); draft.name = "Blue archive"
+        try store.saveThemeDraft(draft)
+        let empty = try store.saveTheme(draft); try store.finishThemeDraft(draft)
+        let model = ClosetSearchModel(store: store)
+        await model.search(ClosetSearchInput(query: "blue", scope: .themes, themeQuery: ThemeCollectionQuery(content: .withOutfits)), debounce: false)
+        #expect(model.results == .themes([populated]))
+        await model.search(ClosetSearchInput(query: "blue", scope: .themes, themeQuery: ThemeCollectionQuery(content: .empty)), debounce: false)
+        #expect(model.results == .themes([empty]))
+        await model.search(ClosetSearchInput(query: "blue", scope: .themes, themeQuery: ThemeCollectionQuery(sort: .nameDescending)), debounce: false)
+        #expect(model.results == .themes([populated, empty]))
+        #expect(try store.themes() == [empty, populated])
+    }
+
     @Test func searchIsScopedAndMetadataAndArchivedMatchesRemainExplicit() async throws {
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         let (piece, archived, outfit, theme) = try await seed(store)

@@ -28,7 +28,7 @@ struct FitJournalGrid: View {
     var body: some View {
         Group {
             VStack(alignment: .leading, spacing: 16) {
-                HStack { Text("Your fits").font(AppTypography.section); Text("\(state.fitMemories.count)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+                Text("Your fits").font(AppTypography.fieldLabel)
                 if let error = state.fitError {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry journal") { state.reloadFits() }.frame(minHeight: 44)
@@ -44,7 +44,7 @@ struct FitJournalGrid: View {
                             NavigationLink { FitMemoryDetailView(id: memory.id) } label: {
                                 VStack(alignment: .leading, spacing: 4) {
                                     FitMemoryArtwork(memory: memory, thumbnail: true).aspectRatio(3 / 4, contentMode: .fit).clipShape(RoundedRectangle(cornerRadius: 4))
-                                    Text(memory.day.key + (memory.photoID == nil ? " · Outfit" : "")).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                                    Text(journalDate(memory.day) + (memory.photoID == nil ? " · Outfit" : "")).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                                 }
                             }.buttonStyle(.plain).id(memory.id)
                                 .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.name ?? "unlinked"), \(memory.note)")
@@ -54,6 +54,11 @@ struct FitJournalGrid: View {
             }
         }
     }
+    private func journalDate(_ day: LocalPlanDay) -> String {
+        guard let date = try? day.date(), let zone = TimeZone(identifier: day.timeZoneID) else { return day.key }
+        return date.formatted(Date.FormatStyle(date: .abbreviated, time: .omitted, timeZone: zone))
+    }
+
 }
 
 struct FitEditorView: View {

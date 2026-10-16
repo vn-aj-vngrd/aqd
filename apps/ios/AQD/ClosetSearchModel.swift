@@ -7,6 +7,7 @@ struct ClosetSearchInput: Hashable {
     let scope: ClosetSearchScope
     var favoritesOnly = false
     var themeID: UUID?
+    var themeQuery = ThemeCollectionQuery()
 }
 
 @MainActor @Observable
@@ -37,8 +38,9 @@ final class ClosetSearchModel {
             if debounce { try await Task.sleep(for: .milliseconds(150)) }
             try Task.checkCancellation()
             guard requestID == request else { return }
-            let value = try store.searchCloset(query: input.query, scope: input.scope,
+            var value = try store.searchCloset(query: input.query, scope: input.scope,
                 favoritesOnly: input.favoritesOnly, themeID: input.themeID)
+            if case .themes(let themes) = value { value = .themes(input.themeQuery.apply(to: themes)) }
             try Task.checkCancellation()
             guard requestID == request else { return }
             cache[input.scope] = (input, value); results = value

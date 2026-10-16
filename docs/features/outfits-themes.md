@@ -33,6 +33,8 @@ A generated theme is a proposed name/description/membership; review each before 
 
 ## Collection and detail
 
+Owner update October16: Closet Themes has the same top-right native filter entry as Pieces/Outfits. Filter All themes / With outfits / Empty themes, and sort Name A–Z / Name Z–A / Most outfits. Count explicit memberships; ties use localized name order and stable IDs. Apply the same options after theme name/description search. Browse and Search choices stay independent, retained across segment switches; Clear filters restores All themes and Name A–Z without changing the search query. A filtered empty collection offers Clear filters, while a genuinely empty collection offers Create theme. Reading/filtering never writes membership or other records.
+
 ### First usable outfit
 
 E12 and Today link to the same first-outfit task: W28 when categories are missing, W29/W17 when a complete suggestion is possible, or W13 for manual composition. Carry the first saved piece as an explicit pin; the user can unpin it. Readiness is evaluated against the requested outfit form and current availability, not a fixed inventory size. If no supported form can include the pinned piece, explain the gap and offer a different form, unpin or manual composition.

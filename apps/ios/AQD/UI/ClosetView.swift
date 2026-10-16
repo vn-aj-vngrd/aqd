@@ -16,12 +16,14 @@ struct ClosetView: View {
     @State private var themeID: UUID?
     @State private var searchFavoritesOnly = false
     @State private var searchThemeID: UUID?
+    @State private var themeQuery = ThemeCollectionQuery()
+    @State private var searchThemeQuery = ThemeCollectionQuery()
     @State private var searchModel: ClosetSearchModel?
 
     private var scope: String { state.closetSearchActive ? state.closetSearchScope : state.closetScope }
     private var searchInput: ClosetSearchInput {
         ClosetSearchInput(query: state.closetSearchQuery, scope: ClosetSearchScope(rawValue: state.closetSearchScope) ?? .pieces,
-                          favoritesOnly: searchFavoritesOnly, themeID: searchThemeID)
+                          favoritesOnly: searchFavoritesOnly, themeID: searchThemeID, themeQuery: searchThemeQuery)
     }
 
     var body: some View {
@@ -29,16 +31,18 @@ struct ClosetView: View {
         NavigationStack(path: $state.closetPath) {
             VStack(spacing: 0) {
                 scopePicker.padding(.horizontal, 20).padding(.bottom, 12)
+                if !state.closetSearchActive { collectionSummary }
                 if state.closetSearchActive {
                     ClosetSearchContent(model: searchModel, input: searchInput,
                                         clear: { state.closetSearchQuery = "" },
                                         browse: { state.closetSearchActive = false },
-                                        addPiece: { state.addPiece() })
+                                        addPiece: { state.addPiece() },
+                                        clearFilters: scope == "Themes" && searchThemeQuery.content != .all ? { searchThemeQuery = ThemeCollectionQuery() } : nil)
                 } else if scope == "Pieces" {
                     pieceCollection
                 } else if scope == "Outfits" {
                     OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID) { favoritesOnly = false; themeID = nil }
-                } else { ThemeCollectionView() }
+                } else { ThemeCollectionView(query: themeQuery) { themeQuery = ThemeCollectionQuery() } }
             }
             .background(AppTheme.canvas)
             .navigationTitle("Closet")
@@ -55,6 +59,7 @@ struct ClosetView: View {
                 }
                 if scope == "Pieces", !state.closetSearchActive { pieceFilterMenu }
                 if scope == "Outfits" { outfitFilterMenu }
+                if scope == "Themes" { themeFilterMenu }
             }
             .modifier(ClosetSearchField(query: $state.closetSearchQuery, active: $state.closetSearchActive,
                                         prompt: "Search your \(scope.lowercased())"))
@@ -102,6 +107,57 @@ struct ClosetView: View {
             }.scrollIndicators(.hidden)
         } else {
             ClosetScopeControl(selection: scopeSelection).frame(height: 36).frame(minHeight: 44)
+        }
+    }
+    private var themeFilterMenu: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                Picker("Contents", selection: state.closetSearchActive ? $searchThemeQuery.content : $themeQuery.content) {
+                    ForEach(ThemeCollectionQuery.Content.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                }
+                Picker("Sort themes", selection: state.closetSearchActive ? $searchThemeQuery.sort : $themeQuery.sort) {
+                    ForEach(ThemeCollectionQuery.Sort.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                }
+                Button("Clear filters") {
+                    if state.closetSearchActive { searchThemeQuery = ThemeCollectionQuery() }
+                    else { themeQuery = ThemeCollectionQuery() }
+                }
+            } label: { Label("Filter and sort themes", systemImage: "line.3.horizontal.decrease") }
+            .tint(AppTheme.ink).accessibilityIdentifier("closet.themes.filter")
+            .accessibilityValue((state.closetSearchActive ? searchThemeQuery : themeQuery).content.rawValue)
+        }
+    }
+    private var collectionSummary: some View {
+        Text(collectionSummaryText).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 20)
+            .accessibilityIdentifier("closet.collection.summary")
+    }
+    private var collectionSummaryText: String {
+        func count(_ value: Int, _ singular: String, _ plural: String) -> String { "\(value) \(value == 1 ? singular : plural)" }
+        switch scope {
+        case "Pieces":
+            guard error == nil else { return "Pieces unavailable" }
+            var labels = [count(results.count, "piece", "pieces")]
+            if let category { labels.append(category.rawValue) }
+            else { labels.append(count(Set(results.map(\.category)).count, "category", "categories")) }
+            if let availability { labels.append(availability == .laundry ? "In the laundry" : availability.rawValue.capitalized) }
+            return labels.joined(separator: " · ")
+        case "Outfits":
+            guard state.outfitError == nil && state.themeError == nil else { return "Outfits unavailable" }
+            let outfits = state.outfits.filter { outfit in
+                (!favoritesOnly || outfit.isFavorite) && (themeID == nil || state.themes.contains { $0.id == themeID && $0.outfitIDs.contains(outfit.id) })
+            }
+            var labels = [count(outfits.count, "outfit", "outfits"), favoritesOnly ? "Favorites" : count(outfits.filter(\.isFavorite).count, "favorite", "favorites")]
+            if let themeID { labels.append(state.themes.first { $0.id == themeID }?.name ?? "Unavailable theme") }
+            return labels.joined(separator: " · ")
+        default:
+            guard state.themeError == nil else { return "Themes unavailable" }
+            let themes = themeQuery.apply(to: state.themes)
+            var labels = [count(themes.count, "theme", "themes")]
+            if themeQuery.content == .all { labels.append("\(themes.filter { $0.outfitIDs.isEmpty }.count) empty") }
+            else { labels.append(themeQuery.content.rawValue) }
+            if themeQuery.sort != .nameAscending { labels.append(themeQuery.sort.rawValue) }
+            return labels.joined(separator: " · ")
         }
     }
     private var outfitFilterMenu: some ToolbarContent {

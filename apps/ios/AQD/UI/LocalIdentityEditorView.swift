@@ -30,7 +30,6 @@ struct LocalIdentityEditorView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Name, photo and caption are optional.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     LocalIdentityAvatar(photoID: model.draft.photoID, recipe: model.draft.photoRecipe ?? .fitOriginal).frame(width: 96, height: 96).frame(maxWidth: .infinity)
                     if model.saved == nil {
                         SharedPhotoSourceButton(title: "Choose photo", selectionToken: model.importID, locked: model.locked, onData: model.importPhoto)

@@ -7,6 +7,7 @@ struct ClosetSearchContent: View {
     let clear: () -> Void
     let browse: () -> Void
     let addPiece: () -> Void
+    var clearFilters: (() -> Void)? = nil
     @State private var pieceAnchor: UUID?
     @State private var outfitAnchor: UUID?
     @State private var themeAnchor: UUID?
@@ -24,8 +25,13 @@ struct ClosetSearchContent: View {
                 } else if model.error == nil && !model.loading && model.results?.count == 0 {
                     EmptyStatePage(title: "No matches", systemImage: "magnifyingglass",
                                    description: Text("No \(input.scope.rawValue.lowercased()) match “\(input.query)”. Try another search or clear the filters.")) {
-                        PrimaryAction(title: "Clear search", action: clear)
-                        SecondaryAction(title: "Add a piece", action: addPiece)
+                        if let clearFilters {
+                            PrimaryAction(title: "Clear filters", action: clearFilters)
+                            SecondaryAction(title: "Clear search", action: clear)
+                        } else {
+                            PrimaryAction(title: "Clear search", action: clear)
+                            SecondaryAction(title: "Add a piece", action: addPiece)
+                        }
                     }
                 } else {
                     ScrollView {
