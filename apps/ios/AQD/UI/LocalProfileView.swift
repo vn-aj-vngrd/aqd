@@ -4,6 +4,8 @@ import SwiftUI
 struct LocalProfileView: View {
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
     var body: some View {
         @Bindable var state = state
         NavigationStack {
@@ -68,16 +70,27 @@ struct LocalProfileView: View {
         }
     }
     private var editProfile: some View {
-        Button { state.openIdentity() } label: {
-            Text("Edit profile").font(AppTypography.fieldLabel).frame(maxWidth: .infinity, minHeight: 44)
-                .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 12))
-        }.buttonStyle(.plain).accessibilityIdentifier("profile.edit")
+        profileAction("Edit profile") { state.openIdentity() }
+            .accessibilityIdentifier("profile.edit")
     }
     private var wearInsights: some View {
-        Button { state.profileInsights = true } label: {
-            Text("Wear insights").font(AppTypography.fieldLabel).frame(maxWidth: .infinity, minHeight: 44)
-                .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 12))
+        profileAction("Wear insights") { state.profileInsights = true }
+    }
+    @ViewBuilder private func profileAction(_ title: String, action: @escaping () -> Void) -> some View {
+        let button = Button(action: action) {
+            Text(title).font(AppTypography.fieldLabel).frame(maxWidth: .infinity, minHeight: 44)
+                .contentShape(RoundedRectangle(cornerRadius: 12))
         }.buttonStyle(.plain)
+        if #available(iOS 26.0, *), !reduceTransparency, contrast != .increased {
+            button.glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 12))
+        } else {
+            button.background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 12))
+                .overlay {
+                    if contrast == .increased {
+                        RoundedRectangle(cornerRadius: 12).stroke(AppTheme.controlBoundary, lineWidth: 1)
+                    }
+                }
+        }
     }
     private var identityHeader: some View {
         VStack(alignment: .leading, spacing: 12) {
