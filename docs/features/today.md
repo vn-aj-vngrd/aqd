@@ -1,6 +1,6 @@
 # Today — personal in-app widget stack
 
-Owner-approved October 7, 2026. V1 private local feature, inherited unchanged by V2. **Specification and Paper only; not implemented.** [Design](../design/today.md) owns composition and reference IDs. [V1 release](../product/v1-release.md) owns launch scope; existing wardrobe/outfit/planning/wear/journal contracts still own their records.
+Owner-approved October 7, 2026. V1 private local feature, inherited unchanged by V2. Native source and unit coverage are delivered in [issue22](../plan/issue-22.md). E2E/rendered acceptance remains issue30; this document defines required behavior, not proof of complete native acceptance. [Design](../design/today.md) owns composition and reference IDs. [V1 release](../product/v1-release.md) owns launch scope; existing wardrobe/outfit/planning/wear/journal contracts still own their records.
 
 ## Outcome and boundary
 

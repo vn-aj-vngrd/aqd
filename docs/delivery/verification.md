@@ -478,3 +478,7 @@ PR35 first Codex review completed on `4d0d126` with three P2 findings. Code fix 
 
 
 PR35 second review on `db0f7c4`: three plan-authoring regressions reproduced, then fixed. Core59/native152 and refreshed unsigned Release pass (`/tmp/aqd-25-26-codex2-unit.log`, `/tmp/aqd-25-26-codex2-release.log`); details and current source hashes are in issue25 and the grouped receipt. Unit-only CI, physical iPhone only, all E2E #30.
+
+## October16: #28 + #22 grouped feature units
+
+Eight vertical slices on `van/issue-28/profile-and-today` extend merged PR35. Final source `1d037b6a2dfadcc875f7ad6521919b26a20ab4ea` passes Core64/native175, comprising162 Swift Testing and13 XCTest, on the confirmed physical iPhone17ProMax/iOS27.0.1. Final unsigned Release passes. [Sanitized source-bound receipt](../plan/evidence/issue-28-22/unit-receipt.json) and [AC table](../plan/evidence/issue-28-22/README.md) retain exact source hashes, counts and limits; plans retain the slice commits and red/green records. Independent Standards found one recovery defect and Spec found two state defects; all are fixed/rechecked. A further stale-card-return regression was reproduced, fixed and rechecked by both reviewers. Tooling51, agent-doc links and whitespace pass. No simulator, E2E or hosted native CI ran. Background-removal and numerical Weather activation stay gated pending issue30 qualification; shared archive/restore/global erase remains issue29. Current-head remote CI/Codex and merged-SHA release evidence remain separate gates.

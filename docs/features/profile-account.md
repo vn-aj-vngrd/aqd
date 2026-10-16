@@ -35,7 +35,7 @@ Acceptance: save/reopen a cleared name and removed avatar as the no-identity sta
 - J6: Export/restore round-trips journal data/media/dates; cancelled/invalid/failed restore preserves good data. Erase clears AQD-owned journal copies/drafts, not Photos/exported copies. Verify backup exclusion and no AQD uploads/public surface; disclose device/app-loss risk.
 - J7: VoiceOver labels date, photo/link state, validation and actions; focus enters/returns from source sheet. Dynamic Type, 44-point targets, keyboard-safe scrolling, light/dark and reduced motion/transparency retain access to Save and safe exits.
 
-This is owner-approved design/spec scope only, not application implementation or verified native behavior. V2 adds [explicit reviewed sharing](../product/v2-backlog.md#private-fit-journal-and-explicit-sharing), never automatic posting.
+Native identity/journal source and unit coverage are recorded in [issue28](../plan/issue-28.md). All E2E/rendered acceptance remains issue30; source delivery is not complete native acceptance. V2 adds [explicit reviewed sharing](../product/v2-backlog.md#private-fit-journal-and-explicit-sharing), never automatic posting.
 
 ## Outcome and separation
 

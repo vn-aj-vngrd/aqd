@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
-  "sourceHead": "c9639dddef5d21833126f21c97f04dd19cd61d34",
-  "sourceState": "Group #25/#26 implements seven source slices and independent/Codex corrections at sourceHead. Core59/native152 and unsigned Release pass; source-bound receipt in docs/plan/evidence/issue-25-26. All rendered/E2E acceptance remains #30.",
+  "sourceHead": "1d037b6a2dfadcc875f7ad6521919b26a20ab4ea",
+  "sourceState": "Group #28/#22 implements eight source slices and independent review corrections at sourceHead. Core64/native175 and unsigned Release pass. Source-bound AC receipt in docs/plan/evidence/issue-28-22. All rendered/E2E acceptance remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -18,10 +18,10 @@
     "allRootIdsMatchRegisteredInventory": true
   },
   "counts": {
-    "source-partial": 123,
+    "source-partial": 165,
     "structural-reference": 11,
-    "missing": 96,
-    "placeholder": 2
+    "missing": 55,
+    "placeholder": 1
   },
   "verifiedCompleteScreenStates": 0,
   "classificationLimits": [
@@ -140,7 +140,7 @@
     "02": {
       "coverage": "source-partial",
       "required": "Complete capture/first-outfit activation; Today configuration and retained personal content; shared writes across all domains",
-      "source": "PieceCaptureView/PhotoEditorView/CaptureModel and stable Today instances; TodayView stock cards are placeholders"
+      "source": "TodayCard/TodayEditorModel, twelve-kind configuration and retained private cards, original-safe shared media/capture review, category-derived first-outfit flow and shared Weather context. Background and numerical-weather activation remain gated until issue30 qualification."
     },
     "03": {
       "coverage": "source-partial",
@@ -160,7 +160,7 @@
     "06": {
       "coverage": "source-partial",
       "required": "Wear dedup/backdate/correct/Undo/history/calendar/insights and durable snapshots",
-      "source": "Actual OutfitWearRecord/draft/receipt, explicit recorded wear/duplicate consent and immutable non-photo history; full correction/Undo/calendar/insights remain #26."
+      "source": "Merged PR35 delivers actual wear/dedup/history/correction/Undo/insights with stable snapshots and recorded dates; runtime acceptance remains issue30."
     },
     "07": {
       "coverage": "placeholder",
@@ -168,9 +168,9 @@
       "source": "BaselineAgentView only Back/Open Closet; native presentation exists"
     },
     "08": {
-      "coverage": "placeholder",
+      "coverage": "source-partial",
       "required": "Profile More/local identity/avatar/private journal/fit memories/media lifecycle/source returns",
-      "source": "PendingLocalView Profile; no journal/identity models"
+      "source": "Optional LocalProfileIdentity and FitMemory records, retained drafts and immutable receipts; actual Profile More/grid/detail/edit/delete, shared optional photo framing and independent explicit wear route."
     },
     "09": {
       "coverage": "missing",
@@ -575,7 +575,7 @@
       "referenceId": null,
       "registeredLabel": "REF \u00b7 V1/V2 WeatherKit \u00b7 Setup / Off",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -875,7 +875,7 @@
       "referenceId": null,
       "registeredLabel": "08.03 \u00b7 L48 \u00b7 Profile \u00b7 Local",
       "flowSection": "08",
-      "functionalCoverage": "placeholder",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -885,7 +885,7 @@
       "referenceId": null,
       "registeredLabel": "08.04 \u00b7 L165 \u00b7 Profile options \u00b7 Open",
       "flowSection": "08",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -895,7 +895,7 @@
       "referenceId": null,
       "registeredLabel": "08.00 \u00b7 L160 \u00b7 Profile \u00b7 Journal empty",
       "flowSection": "08",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -905,7 +905,7 @@
       "referenceId": null,
       "registeredLabel": "08.06 \u00b7 L49 \u00b7 Edit local profile",
       "flowSection": "08",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1255,7 +1255,7 @@
       "referenceId": null,
       "registeredLabel": "02.01 \u00b7 L23 \u00b7 Today \u00b7 Planned outfit",
       "flowSection": "02",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1285,7 +1285,7 @@
       "referenceId": null,
       "registeredLabel": "WeatherKit \u00b7 Fresh details",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1335,7 +1335,7 @@
       "referenceId": null,
       "registeredLabel": "WeatherKit \u00b7 Enabled Home inline date",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1645,7 +1645,7 @@
       "referenceId": null,
       "registeredLabel": "02.15 \u00b7 L43 \u00b7 First outfit \u00b7 Missing categories",
       "flowSection": "02",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1655,7 +1655,7 @@
       "referenceId": null,
       "registeredLabel": "02.16 \u00b7 L44 \u00b7 First outfit \u00b7 Ready",
       "flowSection": "02",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1985,7 +1985,7 @@
       "referenceId": null,
       "registeredLabel": "08.01 \u00b7 L161 \u00b7 New fit \u00b7 No content",
       "flowSection": "08",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -1995,7 +1995,7 @@
       "referenceId": null,
       "registeredLabel": "08.02 \u00b7 L162 \u00b7 New fit \u00b7 Ready / edit",
       "flowSection": "08",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2005,7 +2005,7 @@
       "referenceId": null,
       "registeredLabel": "08.05 \u00b7 L163 \u00b7 Private fit memory",
       "flowSection": "08",
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2115,7 +2115,7 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 V1 native decision \u00b7 Delete fit memory",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2125,7 +2125,7 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 V1 native decision \u00b7 Discard fit draft",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2145,7 +2145,7 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 V1 native decision \u00b7 Remove fit photo",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2195,7 +2195,7 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 Background removal \u00b7 Processing \u00b7 Shared local V1/V2",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2205,7 +2205,7 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 Background preview \u00b7 Original selected",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2215,7 +2215,7 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 Background removal \u00b7 Failed / ambiguous",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2225,7 +2225,7 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 Background removal \u00b7 Unavailable",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2235,7 +2235,7 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 Background preview \u00b7 Removed selected",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2245,7 +2245,7 @@
       "referenceId": "TW01",
       "registeredLabel": "Today \u00b7 Personalized stack",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2255,7 +2255,7 @@
       "referenceId": "TW02",
       "registeredLabel": "Customize Today \u00b7 Edit",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2265,7 +2265,7 @@
       "referenceId": "TW03",
       "registeredLabel": "Widget library",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2275,7 +2275,7 @@
       "referenceId": "TW04",
       "registeredLabel": "Configure current or pinned record",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2285,7 +2285,7 @@
       "referenceId": "TW05",
       "registeredLabel": "Configure collection",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2295,7 +2295,7 @@
       "referenceId": "TW06",
       "registeredLabel": "Configure reporting period",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2305,7 +2305,7 @@
       "referenceId": "TW07",
       "registeredLabel": "Configure Quick actions and Weather",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2315,7 +2315,7 @@
       "referenceId": "TW08",
       "registeredLabel": "Note editor validation",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2325,7 +2325,7 @@
       "referenceId": "TW09",
       "registeredLabel": "Photo editor",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2335,7 +2335,7 @@
       "referenceId": "TW10",
       "registeredLabel": "Widget native Menu",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2345,7 +2345,7 @@
       "referenceId": "TW11",
       "registeredLabel": "Accessible reorder",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2355,7 +2355,7 @@
       "referenceId": "TW12",
       "registeredLabel": "Minimum-one guard",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2365,7 +2365,7 @@
       "referenceId": "TW13",
       "registeredLabel": "Source-derived scoped native discard",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2375,7 +2375,7 @@
       "referenceId": "TW14",
       "registeredLabel": "Provisional default layout Done/Undo",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2385,7 +2385,7 @@
       "referenceId": "TW15",
       "registeredLabel": "Saving",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2395,7 +2395,7 @@
       "referenceId": "TW16",
       "registeredLabel": "Definite save failure",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2405,7 +2405,7 @@
       "referenceId": "TW17",
       "registeredLabel": "Unknown save/reconciliation",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2415,7 +2415,7 @@
       "referenceId": "TW18",
       "registeredLabel": "Independent source states/offline",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2425,7 +2425,7 @@
       "referenceId": "TW19",
       "registeredLabel": "Personal media recovery",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2435,7 +2435,7 @@
       "referenceId": "TW20",
       "registeredLabel": "Large text/keyboard",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2445,7 +2445,7 @@
       "referenceId": null,
       "registeredLabel": "Today twelve-kind feature catalog",
       "flowSection": null,
-      "functionalCoverage": "missing",
+      "functionalCoverage": "source-partial",
       "screenAcceptance": "not-verified",
       "runtimeComplete": false
     },
@@ -2529,5 +2529,17 @@
     "limits": "All E2E/integrated UI/accessibility/device/model qualification deferred to #30. No simulator or hosted native CI. No runtimeComplete claim.",
     "checkedOn": "2026-10-16",
     "receipt": "docs/plan/evidence/issue-24-23/README.md"
+  },
+  "issue2822Evidence": {
+    "plans": [
+      "docs/plan/issue-28.md",
+      "docs/plan/issue-22.md"
+    ],
+    "checkedOn": "2026-10-16",
+    "codeCommit": "1d037b6a2dfadcc875f7ad6521919b26a20ab4ea",
+    "state": "Eight slices and reviewed corrections committed/pushed; independent Standards/Spec rechecks complete, unsigned Release passes. Current-head remote CI/Codex/protected shipping remain separate gates.",
+    "native": "Core64/native175, zero failures, and unsigned Release pass. Physical iPhone17ProMax iOS27.0.1; no simulators or E2E.",
+    "limits": "All E2E/rendered/accessibility/garment/device-performance acceptance remains issue30. Numerical Weather requires entitlement, supplied attribution/legal placement and complete LOCAL16 before activation. No runtimeComplete claim.",
+    "receipt": "docs/plan/evidence/issue-28-22/README.md"
   }
 }

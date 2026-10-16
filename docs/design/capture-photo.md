@@ -1,6 +1,6 @@
 # Piece photo capture and editing
 
-October 6, 2026. Shared by the complete local V1 and additive V2. [Wardrobe](../features/wardrobe.md) owns record validation and persistence. Paper remains the visual source. This is a prepared design and implementation contract, not working native functionality.
+October 6, 2026. Shared by the complete local V1 and additive V2. [Wardrobe](../features/wardrobe.md) owns record validation and persistence. Paper remains the visual source. Native source and unit receipts are recorded in [issue22](../plan/issue-22.md). This contract remains the visual/interaction target; rendered and media-quality acceptance stays issue30. Background-removal activation remains gated until that qualification.
 
 ## Flow and references
 
