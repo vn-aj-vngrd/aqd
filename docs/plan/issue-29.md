@@ -31,7 +31,7 @@ Local implementation, slice review and independent Standards/Spec review are com
 
 ## Shipping and resume
 
-Repository vn-aj-vngrd/aqd, head branch above. Resolve/reuse its single PR. Persist slice SHAs immediately in the next slice/receipt. GitHub owns live remote gates; no extra commits for polling or the new PR URL. Current next action: publish/reuse the grouped PR, obtain current-head Repository tooling and Codex review, fix findings, then protected squash merge and verify exact merged-SHA CI/release. No dirty unrelated files or known local failures.
+Repository vn-aj-vngrd/aqd, head branch above. Resolve/reuse its single PR. Persist slice SHAs immediately in the next slice/receipt. GitHub owns live remote gates; no extra commits for polling or the new PR URL. Current next action: resume PR37 current-head Repository tooling/Codex gates, fix any further findings, then protected squash merge and verify exact merged-SHA CI/release. No dirty unrelated files or known local failures.
 
 ## S1 receipt
 
@@ -77,4 +77,4 @@ Final source `1356ebbf655ac1b5edbdc5ac493762308e1bc8f7` includes terminal-state 
 
 [PR37](https://github.com/vn-aj-vngrd/aqd/pull/37), initial head `0b910aa`, passed Repository tooling. Codex completed with two P2 findings: retry included the completed answer it was replacing, and erase cleanup recovery was hidden before main. Retry now omits only the targeted assistant message while retaining preceding turns and its user request. Welcome, Style and tour use the shared observable cleanup wrapper, preserving warning/retry before onboarding completes.
 
-Prompt assertions reproduced the defect in `/tmp/aqd-pr37-codex-red.log`. Refreshed Core71/native194 pass `/tmp/aqd-pr37-codex-unit.log`; the all-domain erase test confirms a new welcome AppState retains pending cleanup. Both independent reviewers rechecked the changed consumers with no findings. Updated unsigned Release and final-head CI/Codex remain required. All E2E remains issue30.
+Prompt assertions reproduced the defect in `/tmp/aqd-pr37-codex-red.log`. Refreshed Core71/native194 pass `/tmp/aqd-pr37-codex-unit.log`; the all-domain erase test confirms a new welcome AppState retains pending cleanup. Both independent reviewers rechecked the changed consumers with no findings. Refreshed unsigned Release passed `/tmp/aqd-pr37-codex-release.log`; agent-doc/whitespace checks pass. Final-head CI/Codex remain required. All E2E remains issue30.

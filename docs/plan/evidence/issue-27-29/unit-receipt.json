@@ -5,7 +5,7 @@
   ],
   "branch": "van/issue-27/agent-and-local-controls",
   "baseline": "1a5b44ecf06536d6bb1dae0551348f44a9747d5b",
-  "sourceHead": "1356ebbf655ac1b5edbdc5ac493762308e1bc8f7",
+  "sourceHead": "e0d019b87752f8e98a3e1e9001d4e74f15bf55ca",
   "checkedOn": "2026-10-16",
   "environment": {
     "destination": "Physical iPhone17ProMax",
@@ -46,7 +46,12 @@
         "findings": 2,
         "status": "Fixed and independently rechecked"
       },
-      "additionalTerminalApproval": "Reproduced in actual store regression, fixed and rechecked by both reviewers"
+      "additionalTerminalApproval": "Reproduced in actual store regression, fixed and rechecked by both reviewers",
+      "codex": {
+        "reviewedHead": "0b910aad1f37f415f05a71fcf2fe0f24ce7073eb",
+        "findings": 2,
+        "status": "Fixed and independently rechecked; refreshed native units pass. Current-head remote review remains required."
+      }
     }
   },
   "localLogs": [
@@ -94,11 +99,31 @@
       "name": "aqd-27-29-final-tooling.log",
       "sha256": "6061e7f50cdc9dbb26749becb8075c236e1ab5c33c2899f969f46ae7d7ae255b",
       "published": false
+    },
+    {
+      "name": "aqd-pr37-codex-red.log",
+      "sha256": "683d7203290dc047f2278b4be5f02cfe22c6148866546ec736439f2342ae1fc4",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex-unit.log",
+      "sha256": "c057a5a6021d84c4b3089adab58bb9c743a6dc5946af3c0daef21878821b591e",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex-release.log",
+      "sha256": "de15493936a0ee1563907fac2dee93314c6fc068f9853b4f99ddc8bfe5a61d5f",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex-docs.log",
+      "sha256": "3a1833f5471dbd5df39f9af23e027bebbf338ef36a173d7ca86ae232a01abb9a",
+      "published": false
     }
   ],
   "sourceFiles": {
-    "apps/ios/AQD/AQDApp.swift": "2471fd0531d440793111b9503ed79713fcdac601b78124bd29d0889aee1ee4a5",
-    "apps/ios/AQD/AgentModel.swift": "550b469aa61a40d1dd09c43baaf4f54a4ee15da1fa7458b86887d26add906a27",
+    "apps/ios/AQD/AQDApp.swift": "abc57117cab2efffb404d6861290ab84deca3a9b27ee93af72a48392d5aa68ac",
+    "apps/ios/AQD/AgentModel.swift": "c791edafced90e9263441ad23cd6351fcece15d4f88ab7fb34f8ae516ad0942e",
     "apps/ios/AQD/AgentVoiceModel.swift": "ccf6781ac3f4a421921474bd5d0fdb09a51b239700b0d38826bcc6cf5db581d8",
     "apps/ios/AQD/AppState.swift": "04f44db854548855705919ca45a5e55e71825abe06d090bf7ba2105a6bab9693",
     "apps/ios/AQD/LocalArchive.swift": "9ca75608ccfc2afda306b0751e1b8947a441f4876665117ed35929aa8debb0f4",
@@ -125,11 +150,11 @@
     "apps/ios/AQD/UI/RootViews.swift": "1cc0878f8e0ed0406a28c1170570eb1b06b7db87de163c08bd600a3f2c607afe",
     "apps/ios/AQDTests/AgentActionPersistenceTests.swift": "513ba4c3acd9aa44c0e0f5774f1f3bd62f1da59f532cb6e54d6d542759bb46ff",
     "apps/ios/AQDTests/AgentConversationPersistenceTests.swift": "5253fb8bb4fa40326e5b0754ea74d185e581fada2457f9b0a3176d430c52847d",
-    "apps/ios/AQDTests/AgentGenerationTests.swift": "266d1defe58fbb878bc1032860abadc78f8a0a12c7fe8217e380757658241582",
+    "apps/ios/AQDTests/AgentGenerationTests.swift": "7da8c436933db398f66a1e8147c17c8bc6af5720edcca6f167896a053c79c3c0",
     "apps/ios/AQDTests/ClosetSearchTests.swift": "78f85c26f2a2c170fc6a4e7df5174e61f8a097224d453027eea6118605182e77",
     "apps/ios/AQDTests/LocalArchiveTests.swift": "3a1f401af501e910d7cf075471841e8a35452564705fad3db0ff2cc35c70c7b8",
     "apps/ios/AQDTests/LocalDataFixture.swift": "ebb5568e1d84c662b65daec12394446cd5c7ac1de8f8711dd78d5121a680d625",
-    "apps/ios/AQDTests/LocalEraseTests.swift": "b422ee75f56a1f673c4e37e07f138dd6a736783e6db5684eedb735b687a8e46b",
+    "apps/ios/AQDTests/LocalEraseTests.swift": "9e3447fda46b2293932079ac585c9978dee94013970cae17552dd89379d5c756",
     "apps/ios/AQDTests/LocalReplacementTests.swift": "820ee2810508b12d2f691db99679e2c5612a7cd82b6fe4110fd40b0bc9746c48",
     "apps/ios/AQDTests/LocalSettingsPersistenceTests.swift": "9f046ffff9f0b4054d69f1d7524bb7ba1e61949147fc0c5a77eab1cb3b8d1d41",
     "apps/ios/AQDTests/OutfitPersistenceTests.swift": "28f0f1f8bc76cd803a88ef154fd13e8e7e95738e845bf69e9f858aa56ec4d832",
