@@ -268,3 +268,7 @@ Owner scroll refinement: keep the Closet title/toolbars and segment rail fixed, 
 Scroll refinement checks: the first compile required explicit memberwise callback arguments; corrected and final Debug BUILD SUCCEEDED `/tmp/aqd-closet-scrolling-summary-final-build.log`. Independent Standards source review has no actionable findings; doc links and whitespace pass. No new unit or E2E claim for this layout-only change.
 
 Latest owner preview source `1125307370f91cb3261f4021a67480349e9425f1`: physical install and normal launch succeeded with no arguments or data reset. Executable SHA256 `d16106dc59d69e1c0f603e6d903142920ea58ce8bd16e456ba527c796e226d70`; local binding `/tmp/aqd-closet-scrolling-summary-preview-receipt.json`. Consolidated receipt separates Settings unit/Release source8b5a543 from subsequent cosmetic Debug-only previews. PR37 remains open.
+
+Owner Profile ordering refinement: place name/caption above the Fits/Outfits/Pieces counters in the column beside the editable avatar. Accessibility sizes stack avatar, identity text, then counters. Preserve caption defaults/hidden-empty behavior and actual/error-aware counts. Layout-only; verify Debug build/source and update physical preview.
+
+Profile identity ordering: Debug BUILD SUCCEEDED `/tmp/aqd-profile-identity-order-build.log`; independent Standards source review, doc links and whitespace pass. Physical install succeeded. No new unit/E2E claim for this layout-only update.

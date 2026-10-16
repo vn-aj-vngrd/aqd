@@ -63,25 +63,33 @@ struct LocalProfileView: View {
         }.tint(AppTheme.ink)
     }
     private var identityHeader: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        Group {
             if typeSize.isAccessibilitySize {
-                profileAvatar
-                profileStats
-            } else {
-                HStack(spacing: 24) {
+                VStack(alignment: .leading, spacing: 16) {
                     profileAvatar
+                    identityDetails
                     profileStats
                 }
-            }
-            VStack(alignment: .leading, spacing: 6) {
-                Text(state.localIdentity?.name ?? "Your profile").font(AppTypography.detailTitle).lineLimit(2)
-                let caption = state.localIdentity?.caption ?? LocalProfileIdentity.defaultCaption
-                if !caption.isEmpty {
-                    Text(caption).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        .lineLimit(3).fixedSize(horizontal: false, vertical: true)
+            } else {
+                HStack(alignment: .top, spacing: 24) {
+                    profileAvatar
+                    VStack(alignment: .leading, spacing: 16) {
+                        identityDetails
+                        profileStats
+                    }.frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
         }.accessibilityIdentifier("profile.identity")
+    }
+    private var identityDetails: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(state.localIdentity?.name ?? "Your profile").font(AppTypography.detailTitle).lineLimit(2)
+            let caption = state.localIdentity?.caption ?? LocalProfileIdentity.defaultCaption
+            if !caption.isEmpty {
+                Text(caption).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    .lineLimit(3).fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
     private var profileAvatar: some View {
         Button { state.openIdentity() } label: {
