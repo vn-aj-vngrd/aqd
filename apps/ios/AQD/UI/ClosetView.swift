@@ -41,6 +41,7 @@ struct ClosetView: View {
                     OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID, clearFilters: { favoritesOnly = false; themeID = nil }, summary: collectionSummary)
                 } else { ThemeCollectionView(query: themeQuery, clearFilters: { themeQuery = ThemeCollectionQuery() }, summary: collectionSummary) }
             }
+            .padding(.top, AppSpacing.large)
             .background(AppTheme.canvas)
             .navigationTitle("").navigationBarTitleDisplayMode(.inline)
             .toolbar {

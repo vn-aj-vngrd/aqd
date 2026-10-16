@@ -25,7 +25,9 @@ struct LocalProfileView: View {
                                               description: Text("Keep a photo or outfit here. Your fit memories stay private."), fillsAvailableSpace: false)
                                     .frame(maxWidth: .infinity)
                                 Spacer(minLength: 0)
-                            }.frame(minHeight: max(0, geometry.size.height - 40)).padding(20)
+                            }.frame(minHeight: max(0, geometry.size.height - AppSpacing.large - AppSpacing.screen))
+                                .padding(.horizontal, AppSpacing.screen)
+                                .padding(.top, AppSpacing.large).padding(.bottom, AppSpacing.screen)
                         }
                     }
                     .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -39,7 +41,7 @@ struct LocalProfileView: View {
                     profileActions.padding(.horizontal, 20)
                     FitJournalGrid()
                     if let error = state.identityError { SemanticFeedback(role: .danger, message: error); Button("Retry profile") { state.reloadIdentity() } }
-                }.padding(.top, 20).padding(.bottom, 20)
+                }.padding(.top, AppSpacing.large).padding(.bottom, AppSpacing.screen)
             }.onChange(of: state.fitAnchor) { _, id in if let id { proxy.scrollTo(id) } }
             }
                 }

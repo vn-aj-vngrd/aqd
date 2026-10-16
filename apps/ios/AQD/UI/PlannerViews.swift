@@ -70,7 +70,7 @@ struct LocalPlannerView: View {
                 }
             }
                 }
-            }.padding(.top, 16).background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline)
+            }.padding(.top, AppSpacing.large).background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline)
                 .navigationDestination(for: PlannerRoute.self) { route in
                     switch route {
                     case .entry(let id): LocalPlanEntryView(id: id)

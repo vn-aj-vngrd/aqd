@@ -409,3 +409,7 @@ Final owner preview source `e833d5d13c1bf1e83d0c52a3fd12880949919f6a`: `/tmp/aqd
 ### Owner Piece detail surface consistency — October17
 
 Use the existing Fit-memory card treatment for Piece detail: white semantic surface parents on the shared canvas,20pt card insets and16pt corners. Separate piece identity/details from recorded-wear/history; keep estimates explicitly labelled and visible independently of wear-summary availability. Photo keeps the existing neutral inner artwork well with a12pt surface frame. Preserve all values, archive/undo/errors, photo viewer and toolbar actions. Cosmetic/layout scope: final Debug, source reviews and ordinary physical install; no new data/test seam or E2E run.
+
+### Owner root-header spacing consistency — October17
+
+Today, Closet, Planner and Profile all use AppSpacing.large (16pt) from the native toolbar content boundary to the first component. This supersedes Today8pt/Profile20pt/Closet0pt offsets; Planner's existing16pt becomes the shared token. Profile empty and populated states match; empty geometry subtracts the actual16pt top plus20pt bottom inset. Title/date8pt and widget24pt rhythm stay unchanged. No navigation, search, data, canvas or toolbar changes. Final Debug and source reviews qualify this cosmetic slice; no repeat unit/Release or E2E run.

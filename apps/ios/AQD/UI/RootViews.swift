@@ -34,7 +34,7 @@ struct TodayView: View {
                     }
 
                 }.padding(.horizontal, AppSpacing.screen)
-                    .padding(.top, AppSpacing.small).padding(.bottom, AppSpacing.screen)
+                    .padding(.top, AppSpacing.large).padding(.bottom, AppSpacing.screen)
             }
             .background(AppTheme.canvas)
             .navigationTitle("").navigationBarTitleDisplayMode(.inline)
