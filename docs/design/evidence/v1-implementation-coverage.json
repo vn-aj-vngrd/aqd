@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-17",
   "tokenHash": "fdeb7346",
-  "sourceHead": "35b662b103121b9a181b67ef36507ee3d0d7b06d",
-  "sourceState": "Owner refinement 35b662b103121b9a181b67ef36507ee3d0d7b06d: actual saved twelve-widget Home, protected explicit setup and personal-card reuse; full-width/missing-only customization; compact Weather notice; shared Categories routes; bounded cards/status/truncation; creation keyboard/selection polish; visible native Filter by headings; unchanged-close guards; real analytics and exact single-logo launch. Core81/native243 and Debug pass; repository51 and source reviews pass. Ordinary physical install/launch and bounded Home/list/menu spot checks observed. Final unsigned Release pending. Integrated E2E/rendered/gesture acceptance remains issue30.",
+  "sourceHead": "87f5f55ebd353dc9c353f97ea8ca443ce1ce8c24",
+  "sourceState": "Final native menus/color/Profile spacing source 87f5f55ebd353dc9c353f97ea8ca443ce1ce8c24 installed and normally launched; Core81/Swift233 passed, stale palette XCTest oracle fixed and focused9 passed, Debug/unsigned Release passed. Source reviews clear. Owner stopped computer use; visual/gesture verification is owner-led. No full runtime/E2E claim.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -2603,11 +2603,11 @@
     "receipt": "docs/plan/evidence/issue-27-29/README.md"
   },
   "ownerUIRefinementEvidence": {
-    "codeCommit": "b837719994c66d5cd68d3ae68810de160d7ae2d2",
+    "codeCommit": "87f5f55ebd353dc9c353f97ea8ca443ce1ce8c24",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
-    "checks": "Core81/native245, Debug, unsigned Release and both source reviews passed; repository51 historical, docs check current",
+    "checks": "Core81/Swift233 passed, independent palette oracle corrected and Foundation9 passed, final Debug/unsigned Release and source reviews passed",
     "runtimeComplete": false,
-    "qualification": "Installed final source; bounded checks confirmed Weather notice, eye controls, unchanged close and equal Profile columns. Full rendered/E2E acceptance remains issue30."
+    "qualification": "Final installed build awaits owner visual/gesture verification; no computer use after stop; full acceptance remains issue30."
   },
   "closetProfileRefinementEvidence": {
     "codeCommit": "bd5c9f6506ac53efa616efdc8572f1f2226aa3b5",
