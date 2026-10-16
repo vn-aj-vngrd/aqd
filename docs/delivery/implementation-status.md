@@ -8,7 +8,9 @@ Foundation #20 shipped in [PR #31](https://github.com/vn-aj-vngrd/aqd/pull/31), 
 
 [#25/#26](../plan/issue-25.md) shipped in [PR35](https://github.com/vn-aj-vngrd/aqd/pull/35), squash `51c87f3`, with successful current-head unit CI/Codex, resolved findings, merged-main CI/Release and published v1.4.0 exactly at that SHA. E2E remains #30.
 
-Active group: [#28](../plan/issue-28.md) + [#22](../plan/issue-22.md), branch `van/issue-28/profile-and-today`, baseline PR35. Profile identity/journal/shared photo editing and Today’s real cards/twelve-kind configuration/retained-content management/capture review/shared Weather source are implemented in committed vertical slices. Final Core65/native175 pass on the confirmed physical iPhone17ProMax/iOS27.0.1; the generic unsigned Release build also passes. Background-removal activation and numerical weather remain gated pending issue30 qualification. Independent Standards/Spec review findings and a stale-card regression are fixed and rechecked. PR/CI/Codex/protected delivery remain. All simulators stay shut down; unit-only CI and all E2E #30 remain unchanged.
+[#28/#22](../plan/issue-28.md) shipped together in [PR36](https://github.com/vn-aj-vngrd/aqd/pull/36), squash `1a5b44e`, repository release [v1.5.0](https://github.com/vn-aj-vngrd/aqd/releases/tag/v1.5.0). Source-bound unit evidence and all runtime/E2E deferrals remain in their plans.
+
+Active group: [#27](../plan/issue-27.md) + [#29](../plan/issue-29.md), branch `van/issue-27/agent-and-local-controls`, baseline PR36. Private conversations/context/reviewed actions and Settings/all-domain export/restore/erase are implemented in committed vertical slices. Final Core71/native194, unsigned Release and independent Standards/Spec rechecks pass. Current-head PR/CI/Codex/protected delivery remains. Model, voice, image-assistance and numerical Weather activation remain gated pending issue30 qualification. All simulators stay shut down; unit-only CI and all E2E in issue30 remain unchanged.
 
 The [approved sequence](implementation-plan.md#approved-pr-groups--october16) remains #25+#26, #28+#22, #27+#29, then consolidated #30. No additional planning approval is needed.
 
@@ -24,7 +26,7 @@ Current iPhone 17 Pro Max/iOS27 focused Notes proof passes after anchoring the f
 
 [Autonomous workflow](../agents/autonomous-workflow.md) routes full issue delivery through `aqd-ship`, which orchestrates implementation, verification and review plus protected delivery stages. #20's published proof, current-head CI/Codex, protected merge and repository release passed. [Persisted issue plans](../plan/README.md) hold vertical slices, commit SHAs, checks and the next action. Local native checks use the owner's physical iPhone 17 Pro Max, discovered on iOS27.0.1/24A446 for #21; the owner confirmed readiness and its baseline Core/native unit checks passed. Local simulators remain shut down. Hosted native CI is removed; all E2E and broad personal-phone acceptance remain #30. Current deployment settings stay in place.
 
-[Issue #20 execution record](../plan/issue-20.md) retains its delivery receipt; [issue #21](../plan/issue-21.md) retains its source-bound receipts. PR33 delivery is verified above; the #24/#23 plans own active implementation. Neither a repository release nor these unit checks establish complete V1 acceptance or native distribution.
+[Issue #20 execution record](../plan/issue-20.md) retains its delivery receipt; [issue #21](../plan/issue-21.md) retains its source-bound receipts. PR33 delivery is verified above; the #27/#29 plans own active implementation. Neither a repository release nor these unit checks establish complete V1 acceptance or native distribution.
 
 ## Earlier handoffs
 

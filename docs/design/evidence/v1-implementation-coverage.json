@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
-  "sourceHead": "07777a27e3ed9fd4f05a373334988feae668dbe7",
-  "sourceState": "Group #28/#22 implements eight source slices and independent review corrections at sourceHead. Core65/native175 and unsigned Release pass. Source-bound AC receipt in docs/plan/evidence/issue-28-22. All rendered/E2E acceptance remains issue30.",
+  "sourceHead": "1356ebbf655ac1b5edbdc5ac493762308e1bc8f7",
+  "sourceState": "Group #27/#29 delivers Agent and Settings/local-data source slices plus reviewed corrections and the owner-requested Planner width fix. Core71/native194 pass. All rendered/E2E acceptance remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -18,10 +18,9 @@
     "allRootIdsMatchRegisteredInventory": true
   },
   "counts": {
-    "source-partial": 165,
+    "source-partial": 212,
     "structural-reference": 11,
-    "missing": 55,
-    "placeholder": 1
+    "missing": 9
   },
   "verifiedCompleteScreenStates": 0,
   "classificationLimits": [
@@ -163,9 +162,9 @@
       "source": "Merged PR35 delivers actual wear/dedup/history/correction/Undo/insights with stable snapshots and recorded dates; runtime acceptance remains issue30."
     },
     "07": {
-      "coverage": "placeholder",
+      "coverage": "source-partial",
       "required": "Capability states, conversations/composer/context/voice/streaming/cancel/proposals/approval/receipts/recovery",
-      "source": "BaselineAgentView only Back/Open Closet; native presentation exists"
+      "source": "LocalAgentView, durable conversations/context, gated streaming/cancellation/retry, Markdown/copy/details, reviewed manual actions/receipts and guarded on-device voice/transcript review. Model/voice/image activation remains unqualified; all rendered acceptance remains issue30."
     },
     "08": {
       "coverage": "source-partial",
@@ -173,9 +172,9 @@
       "source": "Optional LocalProfileIdentity and FitMemory records, retained drafts and immutable receipts; actual Profile More/grid/detail/edit/delete, shared optional photo framing and independent explicit wear route."
     },
     "09": {
-      "coverage": "missing",
+      "coverage": "source-partial",
       "required": "Settings/Style/appearance/help/capability/tour replay/export/restore/global erase/recovery",
-      "source": "Semantic colors/protected persistence exist, but no functional Settings/local-data flows"
+      "source": "Local Settings/appearance/shared Style/tour/weather, bounded all-domain archive export, staged version-bound replacement/recovery and exact typed erase with separately acknowledged AQD-only cleanup. Physical unit verified; all native Files/rendered acceptance remains issue30."
     }
   },
   "roots": [
@@ -365,9 +364,10 @@
       "referenceId": null,
       "registeredLabel": "07.02 \u00b7 L68 \u00b7 Agent \u00b7 Keyboard focused",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "N43-0",
@@ -375,9 +375,10 @@
       "referenceId": null,
       "registeredLabel": "07.20 \u00b7 L69 \u00b7 Voice \u00b7 Permission",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "N5P-0",
@@ -385,9 +386,10 @@
       "referenceId": null,
       "registeredLabel": "07.21 \u00b7 L70 \u00b7 Voice \u00b7 Listening",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "N7F-0",
@@ -395,9 +397,10 @@
       "referenceId": null,
       "registeredLabel": "07.22 \u00b7 L71 \u00b7 Voice \u00b7 Transcribing",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "N91-0",
@@ -405,9 +408,10 @@
       "referenceId": null,
       "registeredLabel": "07.23 \u00b7 L72 \u00b7 Voice \u00b7 Review transcript",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "NAN-0",
@@ -415,9 +419,10 @@
       "referenceId": null,
       "registeredLabel": "07.24 \u00b7 L73 \u00b7 Voice \u00b7 Unavailable",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "NC6-0",
@@ -425,9 +430,10 @@
       "referenceId": null,
       "registeredLabel": "07.04 \u00b7 L74 \u00b7 Choose local context",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "JXA-0",
@@ -675,9 +681,10 @@
       "referenceId": null,
       "registeredLabel": "07.17 \u00b7 L143 \u00b7 Delete conversation \u00b7 Native overlay STATE",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "S2C-0",
@@ -725,9 +732,10 @@
       "referenceId": null,
       "registeredLabel": "09.14 \u00b7 L148 \u00b7 Restore \u00b7 Failed",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "S6S-0",
@@ -775,9 +783,10 @@
       "referenceId": null,
       "registeredLabel": "09.06 \u00b7 L109 \u00b7 Export \u00b7 Preparing",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "R07-0",
@@ -785,9 +794,10 @@
       "referenceId": null,
       "registeredLabel": "09.07 \u00b7 L110 \u00b7 Export \u00b7 Ready",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "R13-0",
@@ -795,9 +805,10 @@
       "referenceId": null,
       "registeredLabel": "09.08 \u00b7 L111 \u00b7 Export \u00b7 Failed",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "R1Z-0",
@@ -805,9 +816,10 @@
       "referenceId": null,
       "registeredLabel": "09.10 \u00b7 L112 \u00b7 Restore \u00b7 Invalid archive",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "R2V-0",
@@ -815,9 +827,10 @@
       "referenceId": null,
       "registeredLabel": "09.11 \u00b7 L113 \u00b7 Restore \u00b7 Newer AQD needed",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "R3R-0",
@@ -825,9 +838,10 @@
       "referenceId": null,
       "registeredLabel": "09.12 \u00b7 L114 \u00b7 Restore \u00b7 Committing",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "R4N-0",
@@ -835,9 +849,10 @@
       "referenceId": null,
       "registeredLabel": "09.13 \u00b7 L115 \u00b7 Restore \u00b7 Complete",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "R5J-0",
@@ -865,9 +880,10 @@
       "referenceId": null,
       "registeredLabel": "09.00 \u00b7 L13 \u00b7 Settings",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "LS0-0",
@@ -915,9 +931,10 @@
       "referenceId": null,
       "registeredLabel": "09.01 \u00b7 L50 \u00b7 Appearance",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "S9L-0",
@@ -1095,9 +1112,10 @@
       "referenceId": null,
       "registeredLabel": "07.01 \u00b7 L125 \u00b7 Agent options",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "REF-0",
@@ -1165,9 +1183,10 @@
       "referenceId": null,
       "registeredLabel": "09.02 \u00b7 L51 \u00b7 Help and privacy",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "LW3-0",
@@ -1175,9 +1194,10 @@
       "referenceId": null,
       "registeredLabel": "09.03 \u00b7 L52 \u00b7 Local Agent capability",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "KHP-0",
@@ -1185,9 +1205,10 @@
       "referenceId": null,
       "registeredLabel": "09.05 \u00b7 L14 \u00b7 Export closet",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "KIK-0",
@@ -1195,9 +1216,10 @@
       "referenceId": null,
       "registeredLabel": "09.09 \u00b7 L15 \u00b7 Restore closet",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "KJF-0",
@@ -1205,9 +1227,10 @@
       "referenceId": null,
       "registeredLabel": "09.16 \u00b7 L16 \u00b7 Erase local closet",
       "flowSection": "09",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "KKA-0",
@@ -1216,8 +1239,9 @@
       "registeredLabel": "09.15 \u00b7 L22 \u00b7 Closet needs recovery",
       "flowSection": "09",
       "functionalCoverage": "source-partial",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "K63-0",
@@ -1225,9 +1249,10 @@
       "referenceId": null,
       "registeredLabel": "07.25 \u00b7 L19 \u00b7 Agent \u00b7 Unsupported iPhone",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "OPA-0",
@@ -1235,9 +1260,10 @@
       "referenceId": null,
       "registeredLabel": "07.26 \u00b7 L80 \u00b7 Agent \u00b7 Intelligence off",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "OQA-0",
@@ -1245,9 +1271,10 @@
       "referenceId": null,
       "registeredLabel": "07.27 \u00b7 L81 \u00b7 Agent \u00b7 Model preparing",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "KBP-0",
@@ -1345,9 +1372,10 @@
       "referenceId": null,
       "registeredLabel": "07.00 \u00b7 L24 \u00b7 Agent",
       "flowSection": "07",
-      "functionalCoverage": "placeholder",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "MJJ-0",
@@ -1475,9 +1503,10 @@
       "referenceId": null,
       "registeredLabel": "07.10 \u00b7 L100 \u00b7 Agent \u00b7 Stopped",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "QQX-0",
@@ -1485,9 +1514,10 @@
       "referenceId": null,
       "registeredLabel": "07.11 \u00b7 L101 \u00b7 Agent \u00b7 Interrupted",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "QSL-0",
@@ -1495,9 +1525,10 @@
       "referenceId": null,
       "registeredLabel": "07.09 \u00b7 L102 \u00b7 Response details",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "QTQ-0",
@@ -1505,9 +1536,10 @@
       "referenceId": null,
       "registeredLabel": "07.18 \u00b7 L103 \u00b7 Conversations \u00b7 Empty",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "QUC-0",
@@ -1515,9 +1547,10 @@
       "referenceId": null,
       "registeredLabel": "07.19 \u00b7 L104 \u00b7 Conversations \u00b7 Failed",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "QV1-0",
@@ -1525,9 +1558,10 @@
       "referenceId": null,
       "registeredLabel": "07.12 \u00b7 L105 \u00b7 Message \u00b7 Failed",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "MQ5-0",
@@ -1586,8 +1620,9 @@
       "registeredLabel": "09.04 \u00b7 L45 \u00b7 Style",
       "flowSection": "09",
       "functionalCoverage": "source-partial",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "LCX-0",
@@ -1785,9 +1820,10 @@
       "referenceId": null,
       "registeredLabel": "07.08 \u00b7 L25 \u00b7 Agent \u00b7 Local response",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "KVA-0",
@@ -1815,9 +1851,10 @@
       "referenceId": null,
       "registeredLabel": "07.15 \u00b7 L26 \u00b7 Conversations",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "SJC-0",
@@ -1825,9 +1862,10 @@
       "referenceId": null,
       "registeredLabel": "07.16 \u00b7 L158 \u00b7 Manage conversations",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "KWC-0",
@@ -1835,9 +1873,10 @@
       "referenceId": null,
       "registeredLabel": "07.03 \u00b7 L28 \u00b7 Agent context",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "LMY-0",
@@ -1845,9 +1884,10 @@
       "referenceId": null,
       "registeredLabel": "07.13 \u00b7 L46 \u00b7 Review theme",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "LNT-0",
@@ -1855,9 +1895,10 @@
       "referenceId": null,
       "registeredLabel": "07.14 \u00b7 L47 \u00b7 Review local changes",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "KXH-0",
@@ -1865,9 +1906,10 @@
       "referenceId": null,
       "registeredLabel": "07.05 \u00b7 L29 \u00b7 Agent \u00b7 Waiting",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "KZ2-0",
@@ -1875,9 +1917,10 @@
       "referenceId": null,
       "registeredLabel": "07.06 \u00b7 L30 \u00b7 Agent \u00b7 Streaming",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "L0T-0",
@@ -1885,9 +1928,10 @@
       "referenceId": null,
       "registeredLabel": "07.07 \u00b7 L31 \u00b7 Agent \u00b7 Complete",
       "flowSection": "07",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "MZ2-0",
@@ -2155,9 +2199,10 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 V1 native decision \u00b7 Discard recording",
       "flowSection": null,
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "ZAS-0",
@@ -2165,9 +2210,10 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 V1 native decision \u00b7 Major unsaved loss",
       "flowSection": null,
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "ZCU-0",
@@ -2175,9 +2221,10 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 V1 native decision \u00b7 Restore commit",
       "flowSection": null,
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "ZE7-0",
@@ -2185,9 +2232,10 @@
       "referenceId": null,
       "registeredLabel": "REFERENCE \u00b7 V1 native decision \u00b7 Erase commit",
       "flowSection": null,
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
-      "runtimeComplete": false
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
+      "runtimeComplete": false,
+      "source": "Issue27/29 native source and unit seams; docs/plan/evidence/issue-27-29. No rendered/capability acceptance claimed."
     },
     {
       "nodeId": "1010-0",
@@ -2541,5 +2589,17 @@
     "native": "Core65/native175, zero failures, and unsigned Release pass. Physical iPhone17ProMax iOS27.0.1; no simulators or E2E.",
     "limits": "All E2E/rendered/accessibility/garment/device-performance acceptance remains issue30. Numerical Weather requires entitlement, supplied attribution/legal placement and complete LOCAL16 before activation. No runtimeComplete claim.",
     "receipt": "docs/plan/evidence/issue-28-22/README.md"
+  },
+  "issue2729Evidence": {
+    "plans": [
+      "docs/plan/issue-27.md",
+      "docs/plan/issue-29.md"
+    ],
+    "checkedOn": "2026-10-16",
+    "codeCommit": "1356ebbf655ac1b5edbdc5ac493762308e1bc8f7",
+    "state": "Eight slices plus source review corrections committed. Current-head CI/Codex/protected delivery remain separate gates.",
+    "native": "Core71/native194, zero failures, physical iPhone17ProMax/iOS27.0.1.",
+    "limits": "All rendered/E2E/accessibility/capability/media/performance acceptance remains issue30. No runtimeComplete claim.",
+    "receipt": "docs/plan/evidence/issue-27-29/README.md"
   }
 }

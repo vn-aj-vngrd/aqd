@@ -27,11 +27,11 @@ Each slice will record actual commands, revision, result and local artifact. AC 
 
 ## Review and delivery
 
-Pending implementation, bounded slice review, independent full Standards/Spec review, physical unit/build receipt, current-head CI/Codex, resolved findings, protected SHA-bound squash and merged-SHA release verification.
+Local implementation, slice review and independent Standards/Spec review are complete. Core71/native194 and unsigned Release pass. Current-head CI/Codex, resolved remote findings, protected SHA-bound squash and merged-SHA release verification remain required.
 
 ## Shipping and resume
 
-Repository vn-aj-vngrd/aqd, head branch above. Resolve/reuse its single PR. Persist slice SHAs immediately in the next slice/receipt. GitHub owns live remote gates; no extra commits for polling or the new PR URL. Current next action: implement issue27 S1 before subsequent slices. No dirty unrelated files or known baseline failures.
+Repository vn-aj-vngrd/aqd, head branch above. Resolve/reuse its single PR. Persist slice SHAs immediately in the next slice/receipt. GitHub owns live remote gates; no extra commits for polling or the new PR URL. Current next action: publish/reuse the grouped PR, obtain current-head Repository tooling and Codex review, fix findings, then protected squash merge and verify exact merged-SHA CI/release. No dirty unrelated files or known local failures.
 
 ## S1 receipt
 
@@ -68,3 +68,7 @@ The owner supplied a Planner screenshot showing unused width to the right of the
 ## Full independent review correction
 
 Failed erase preparation can retry on the same model once storage recovers, provided no reviewed operation exists. The coordinator retains pending/published guards. Style Settings refreshes acknowledged answers when its shared editor closes. Standards identified both defects; Spec independently identified erase retry and an Agent deletion-recovery defect, recorded in issue27. The erase retry failed before the fix in `/tmp/aqd-27-29-review-red.log`. Final Core71/native194 pass `/tmp/aqd-27-29-review-final-unit.log` on the confirmed iPhone; both reviewers rechecked the corrected source with no remaining findings. Rendered and E2E acceptance remains issue30.
+
+## Local closeout receipt
+
+Final source `1356ebbf655ac1b5edbdc5ac493762308e1bc8f7` includes terminal-state correction `1272f2a`, Agent review correction `f485d0f` and Settings correction `1356ebb`; erase slice `08e727d` and Planner width slice `e7c4eb8` remain separate. [Grouped AC evidence](evidence/issue-27-29/README.md) and [source-bound receipt](evidence/issue-27-29/unit-receipt.json) retain source hashes and local log digests. Final Core71/native194 and unsigned Release pass; Tooling51, agent-doc links and whitespace pass. Standards2/Spec2 findings, including the overlapping erase issue, and the additionally reproduced terminal approval defect are fixed and independently rechecked. All E2E/rendered/capability qualification remains issue30. Live GitHub gates are the next action, not a local pass claim.
