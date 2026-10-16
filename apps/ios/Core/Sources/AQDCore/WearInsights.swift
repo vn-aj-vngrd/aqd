@@ -4,6 +4,7 @@ public struct WearPeriodSummary: Equatable, Sendable {
     public let start: LocalPlanDay
     public let end: LocalPlanDay
     public let occasions: Int
+    public let dailyOccasions: [Int: Int]
     public let itemOccurrences: Int
     public let counts: [UUID: Int]
     public let activeCount: Int
@@ -20,6 +21,7 @@ public struct WearPeriodSummary: Equatable, Sendable {
         let firstKey = start.key, lastKey = end.key
         let selected = records.filter { $0.day.key >= firstKey && $0.day.key <= lastKey }
         occasions = selected.count
+        dailyOccasions = Dictionary(grouping: selected, by: { $0.day.day }).mapValues { $0.count }
         var counts: [UUID: Int] = [:]
         for record in selected { for piece in record.pieces { counts[piece.id, default: 0] += 1 } }
         self.counts = counts; itemOccurrences = selected.reduce(0) { $0 + $1.pieces.count }

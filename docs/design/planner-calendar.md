@@ -50,3 +50,5 @@ Owner creator refinement October17: new multi-day plans/routines/trips lead with
 Owner header refinement October17: month/year is a distinct leading section heading above the controls and remains the native date-chooser trigger. Week/Month sits at the far left of the control row; previous/next stay at the right. Weekday/day text remains subordinate. Existing selection, motion, date-picker and accessibility behavior is retained.
 
 Owner calendar spacing correction October17: inset the selected-day fill and today outline by2pt horizontally inside each existing date hit region. Adjacent state backgrounds have a visible gap instead of touching/overlapping; seven-column alignment and at-least44pt targets remain unchanged in Week and Month.
+
+Calendar view refinement October17: the left control is neutral current-state text, Week or Month, followed by up/down chevrons. It opens a native checked picker menu for the two modes; selected date is retained and existing reduced-motion-aware reflow applies. Do not label the control with the opposite destination. Month/year remains above; previous/next controls remain on the right.

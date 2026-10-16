@@ -119,20 +119,3 @@ struct ToolbarSaveAction: View {
         .accessibilityValue(isPending ? "In progress" : "")
     }
 }
-
-/// Matches the static system launch artwork; motion never blocks store opening.
-struct BrandSplashView: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var arrived = false
-    var body: some View {
-        AQDWordmark().environment(\.colorScheme, .light)
-            .scaleEffect(reduceMotion || arrived ? 1 : 0.96)
-            .opacity(reduceMotion || arrived ? 1 : 0.85)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color("LaunchCanvas")).ignoresSafeArea()
-            .accessibilityIdentifier("entry.splash")
-            .onAppear {
-                withAnimation(reduceMotion ? nil : .easeOut(duration: 0.32)) { arrived = true }
-            }
-    }
-}

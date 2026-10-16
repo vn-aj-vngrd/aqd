@@ -39,7 +39,9 @@ private struct AppRootView: View {
     var body: some View {
         Group {
             if state.isOpening {
-                BrandSplashView().transition(.opacity)
+                Color("LaunchCanvas").ignoresSafeArea()
+                    .accessibilityLabel("Opening your closet").accessibilityIdentifier("entry.splash")
+                    .transition(.opacity)
             } else if let error = state.openingError {
                 EmptyStatePage(title: "Your closet couldn’t open", systemImage: "externaldrive.badge.exclamationmark", description: Text(error)) {
                     PrimaryAction(title: "Retry") { state.openStore() }

@@ -1,89 +1,113 @@
 import AQDCore
 import SwiftUI
+import Charts
 
 struct LocalWearInsightsView: View {
     @Environment(AppState.self) private var state
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var month: LocalPlanDay
     init(initialMonth: LocalPlanDay = LocalPlanDay()) { _month = State(initialValue: initialMonth) }
     @State private var summary: WearPeriodSummary?
     @State private var error: String?
     var body: some View {
-        List {
-            Section {
-                HStack(spacing: 8) {
-                    Button { changeMonth(-1) } label: { Image(systemName: "chevron.left").frame(width: 44, height: 44) }
-                        .accessibilityLabel("Previous month")
-                    Text(monthTitle).font(AppTypography.fieldLabel).frame(maxWidth: .infinity)
-                    Button { changeMonth(1) } label: { Image(systemName: "chevron.right").frame(width: 44, height: 44) }
-                        .accessibilityLabel("Next month")
-                }.buttonStyle(.borderless).listRowBackground(AppTheme.surface)
-            }
-            if let error {
-                Section {
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppSpacing.section) {
+                HStack {
+                    Text(monthTitle).font(AppTypography.section)
+                    Spacer(minLength: 12)
+                    monthButton(-1)
+                    monthButton(1)
+                }
+                if let error {
                     SemanticFeedback(role: .danger, message: error)
-                    Button("Retry insights", action: reload)
-                }.listRowBackground(AppTheme.surface)
-            } else if let summary {
-                if summary.occasions == 0 {
-                    Section {
-                        AppEmptyState("No wear recorded this month", systemImage: "chart.bar",
-                                      description: Text("Your recorded wear will appear here."), fillsAvailableSpace: false)
-                            .frame(maxWidth: .infinity).padding(.vertical, 24)
-                    }.listRowBackground(AppTheme.surface)
-                } else {
-                    Section("This month") {
-                        HStack(spacing: 20) {
-                            metric("Wear occasions", value: summary.occasions)
-                            metric("Item wears", value: summary.itemOccurrences)
-                        }.padding(.vertical, 8)
-                        if let utilization = summary.utilization {
-                            VStack(alignment: .leading, spacing: 8) {
-                                HStack {
-                                    Text("Closet in use")
-                                    Spacer()
-                                    Text(utilization, format: .percent.precision(.fractionLength(0))).font(AppTypography.fieldLabel)
+                    Button("Retry insights", action: reload).frame(minHeight: 44)
+                } else if let summary {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 12) {
+                        metric("Wear records", value: summary.occasions)
+                        metric("Pieces worn", value: summary.counts.count)
+                        metric("Days recorded", value: summary.dailyOccasions.count)
+                        metric("Active pieces", value: summary.activeCount)
+                    }
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Daily wear").font(AppTypography.detailTitle)
+                        let peak = max(1, summary.dailyOccasions.values.max() ?? 0)
+                        Chart(Array(1...summary.end.day), id: \.self) { day in
+                            BarMark(x: .value("Day", day), y: .value("Wear records", summary.dailyOccasions[day, default: 0]))
+                                .foregroundStyle(AppTheme.actionText).cornerRadius(3)
+                                .accessibilityLabel("\(monthTitle), day \(day)")
+                                .accessibilityValue("\(summary.dailyOccasions[day, default: 0]) wear records")
+                        }.chartYScale(domain: 0...peak)
+                            .chartXAxis { AxisMarks(values: [1, 8, 15, 22, summary.end.day]) { _ in AxisValueLabel() } }
+                            .chartYAxis { AxisMarks(values: [0, peak]) { _ in AxisGridLine(); AxisValueLabel() } }
+                            .chartXAxisLabel("Day of month").frame(height: 180)
+                            .accessibilityLabel("Daily recorded wear")
+                        Text(summary.occasions == 0 ? "No wear recorded this month. Your dated records will build this chart." : "\(summary.itemOccurrences) item wears across \(summary.occasions) wear records.")
+                            .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    }.padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                    if let utilization = summary.utilization {
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Closet in use").font(AppTypography.detailTitle)
+                                Spacer()
+                                Text(utilization, format: .percent.precision(.fractionLength(0))).font(AppTypography.section).monospacedDigit()
+                            }
+                            ProgressView(value: utilization).tint(AppTheme.actionText)
+                            Text("\(summary.usedActiveCount) of \(summary.activeCount) active pieces worn this month")
+                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }.padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                        ranking("Most worn", pieces: Array(ranked(summary, descending: true).prefix(5)), summary: summary)
+                        ranking("Least worn", pieces: Array(ranked(summary, descending: false).prefix(5)), summary: summary)
+                    }
+                    if !allTimePieces.isEmpty {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("All-time totals").font(AppTypography.detailTitle)
+                            ForEach(allTimePieces.prefix(5)) { piece in
+                                let total = PieceWearSummary(piece: piece, records: state.wearRecords)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(piece.displayName).font(AppTypography.fieldLabel).lineLimit(1)
+                                    Text("\(total.total) total · \(total.recorded) recorded · \(total.priorEstimate ?? 0) earlier estimate")
+                                        .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                                 }
-                                ProgressView(value: utilization).tint(AppTheme.actionText)
-                                Text("\(summary.usedActiveCount) of \(summary.activeCount) active pieces")
-                                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                            }.padding(.vertical, 8)
-                        }
-                    }.listRowBackground(AppTheme.surface)
-                    if summary.utilization != nil {
-                        Section("Most worn") {
-                            ForEach(ranked(summary, descending: true).prefix(5)) { periodRow($0, summary: summary) }
-                        }.listRowBackground(AppTheme.surface)
-                        Section("Least worn") {
-                            ForEach(ranked(summary, descending: false).prefix(5)) { periodRow($0, summary: summary) }
-                        }.listRowBackground(AppTheme.surface)
+                            }
+                            Text("Earlier estimates have no recorded date.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                        }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
                     }
-                }
-                Section {
-                    NavigationLink { LocalWearHistoryView(periodStart: summary.start, periodEnd: summary.end) } label: {
-                        Label("Wear history", systemImage: "clock.arrow.circlepath")
-                    }
-                } footer: {
                     Text("Monthly insights use dated wear only. Plans and earlier estimates are excluded. Closet in use counts active pieces only.")
-                }.listRowBackground(AppTheme.surface)
-                if !allTimePieces.isEmpty {
-                    Section {
-                        ForEach(allTimePieces.prefix(5)) { piece in
-                            let total = PieceWearSummary(piece: piece, records: state.wearRecords)
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(piece.name).font(AppTypography.fieldLabel)
-                                Text("\(total.total) total · \(total.recorded) recorded · \(total.priorEstimate ?? 0) earlier estimate")
-                                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                            }.padding(.vertical, 4)
-                        }
-                    } header: { Text("All-time totals") }
-                    footer: { Text("Earlier estimates are included here. They have no recorded date.") }
-                        .listRowBackground(AppTheme.surface)
-                }
-            }
-        }.listStyle(.insetGrouped).scrollContentBackground(.hidden).background(AppTheme.canvas)
+                        .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                } else { ProgressView("Loading insights").frame(maxWidth: .infinity) }
+            }.padding(.horizontal, 20).padding(.vertical, 16)
+        }.background(AppTheme.canvas)
             .navigationTitle("Wear insights").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
+            .toolbar { ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink { LocalWearHistoryView(periodStart: summary?.start, periodEnd: summary?.end) } label: {
+                    Image(systemName: "clock.arrow.circlepath")
+                }.accessibilityLabel("Wear history").disabled(summary == nil)
+            } }
             .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
             .onAppear(perform: reload).onChange(of: state.wearRecords) { _, _ in reload() }
+    }
+    @ViewBuilder private func monthButton(_ offset: Int) -> some View {
+        if #available(iOS 26.0, *), !reduceTransparency, contrast != .increased {
+            monthAction(offset).glassEffect(.regular.interactive(), in: Circle())
+        } else {
+            monthAction(offset).background(AppTheme.surface, in: Circle())
+                .overlay { Circle().stroke(contrast == .increased ? AppTheme.controlBoundary : AppTheme.divider, lineWidth: 1) }
+        }
+    }
+    private func monthAction(_ offset: Int) -> some View {
+        Button { withAnimation(reduceMotion ? nil : AQDMotion.reflow) { changeMonth(offset) } } label: {
+            Image(systemName: offset < 0 ? "chevron.backward" : "chevron.forward").frame(width: 44, height: 44).contentShape(Circle())
+        }.buttonStyle(.plain).accessibilityLabel(offset < 0 ? "Previous month" : "Next month")
+    }
+    private func ranking(_ title: String, pieces: [WardrobePiece], summary: WearPeriodSummary) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title).font(AppTypography.detailTitle)
+            ForEach(pieces) { piece in periodRow(piece, summary: summary) }
+        }.padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
     }
     private var monthTitle: String {
         guard let date = try? month.date(), let zone = TimeZone(identifier: month.timeZoneID) else { return month.key }
@@ -106,7 +130,8 @@ struct LocalWearInsightsView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(value, format: .number).font(.title2.weight(.semibold)).monospacedDigit()
             Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-        }.frame(maxWidth: .infinity, alignment: .leading).accessibilityElement(children: .combine)
+        }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).accessibilityElement(children: .combine)
     }
     private func reload() {
         state.reloadWear(); state.reloadPieces()
@@ -123,7 +148,7 @@ struct LocalWearInsightsView: View {
     private func periodRow(_ piece: WardrobePiece, summary: WearPeriodSummary) -> some View {
         NavigationLink(value: ClosetRoute.piece(piece.id)) {
             HStack(spacing: 12) {
-                Text(piece.name).font(AppTypography.body).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
+                Text(piece.displayName).font(AppTypography.body).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
                 Text("\(summary.counts[piece.id, default: 0]) recorded").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             }.frame(minHeight: 44)
         }.buttonStyle(.plain)

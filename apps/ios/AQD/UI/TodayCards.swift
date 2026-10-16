@@ -45,7 +45,7 @@ struct TodayCard: View {
         case .theme:
             if let error = state.themeError { failure(error) { state.reloadThemes() } }
             else if let pin = instance.options?.pinnedID, let theme = state.themes.first(where: { $0.id == pin }) {
-                Text(theme.name).font(AppTypography.body)
+                Text(theme.displayName).font(AppTypography.body)
                 Text("\(theme.outfitIDs.count) outfits").foregroundStyle(AppTheme.secondary)
                 NavigationLink(value: ClosetRoute.theme(theme.id)) { TodayCardActionLabel(title: theme.outfitIDs.isEmpty ? "Add outfits" : "Open theme") }.frame(minHeight: 44)
             } else { configure("Choose an available theme to keep its outfits here.") }
@@ -99,7 +99,7 @@ struct TodayCard: View {
             ForEach(entries) { entry in
                 if let outfit = state.outfits.first(where: { $0.id == entry.outfitID }) {
                     OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 160, limit: 4)
-                    Text(outfit.name).font(AppTypography.body)
+                    Text(outfit.displayName).font(AppTypography.body)
                     Text(entry.occasion.isEmpty ? entry.day.timeZoneID : entry.occasion).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     Text(entry.state == .worn ? "Recorded wear" : entry.state == .skipped ? "Skipped" : "Planned · Not recorded as worn")
                         .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
@@ -163,9 +163,9 @@ struct TodayCard: View {
             NavigationLink(value: ClosetRoute.piece(piece.id)) {
                 PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                     .frame(maxWidth: .infinity).frame(height: 220)
-                    .accessibilityLabel("View \(piece.name)")
+                    .accessibilityLabel("View \(piece.displayName)")
             }.buttonStyle(.plain)
-            Text(piece.name).font(AppTypography.body)
+            Text(piece.displayName).font(AppTypography.body)
             if let date = PieceWearSummary(piece: piece, records: state.wearRecords).lastWorn {
                 Text("Last recorded \(date.key)").foregroundStyle(AppTheme.secondary)
             } else { Text("No dated wear recorded for this piece.").foregroundStyle(AppTheme.secondary) }
@@ -192,7 +192,7 @@ struct TodayCard: View {
                             PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                                 .frame(width: 56, height: 72).accessibilityHidden(true)
                         }
-                        TodayCardActionLabel(title: outfit.name)
+                        TodayCardActionLabel(title: outfit.displayName)
                     }
                 }.frame(minHeight: 44)
             }
@@ -205,7 +205,7 @@ struct TodayCard: View {
                     VStack(alignment: .leading, spacing: 6) {
                         PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                             .frame(maxWidth: .infinity).frame(height: 156)
-                        Text(piece.name).font(AppTypography.metadata).foregroundStyle(AppTheme.ink).lineLimit(2)
+                        Text(piece.displayName).font(AppTypography.metadata).foregroundStyle(AppTheme.ink).lineLimit(2)
                     }
                 }.buttonStyle(.plain)
             }

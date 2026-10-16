@@ -436,3 +436,27 @@ Add explicit Debug-only `--aqd-preview-welcome` read-only review presentation ov
 ### Owner photo source popovers — October17
 
 Piece photo hero and its Photos or camera row both open one native popover anchored to the source row; retain explicit Photos/camera choices and the on-device/iCloud/originals explanation. The shared photo source chooser uses the same compact popover instead of a bottom sheet across Fit, Profile and Today photo flows. Selected source dispatch happens after popover dismissal; keep camera permission/denial, import cancellation, request identity and draft locks intact. Add fit's hero also opens its shared chooser. Compact adaptation stays popover on iPhone; this does not change the native Photos picker or camera presentation.
+
+### Owner manual outfit composition and personal categories — October17
+
+Manual builder becomes a live visual composition with a direct multi-select chooser, no readiness/suggestion step or pinned-selection restriction. Remove Closet suggestion actions and Agent's new-Outfit tool entry; keep historical proposals/data readable. Retained suggestion drafts open through the same manual UI and preserve their selected content until the user changes it.
+
+Personal wardrobe categories: default Shirts/Bottoms/Dresses/Layers/Shoes/Accessories, stable IDs and underlying garment type; Settings supports add, rename, reorder and remove. Add/Edit piece chooses from this list; category labels/filters and outfit chooser use it. Extend existing versioned Codable payloads with optional fields, preserving legacy pieces/archives. Removing a category retains pieces and falls back to their garment type; changing a category name keeps IDs/references intact. Do not reclassify saved pieces implicitly. Validate bounds/duplicate names/IDs, retain pending settings on failed saves, and use compare-and-swap plus idempotent readback for retries. No database model rewrite or server.
+
+Independent manual/category review found two source defects: legacy unassigned draft category labels/checkmarks ignored a renamed default, and the rewritten saved receipt lost More → Edit outfit. Both corrected using stable category-ID/type resolution and restoring the existing saved-only toolbar action. Added renamed-default and archive/catalog/reference regression cases; repeat native checks include these corrections.
+
+### Owner natural seed names and equal card heights — October17
+
+Reserved seed IDs use a presentation-only natural name without the “Sample · ” prefix across primary Closet/composition/detail labels; ordinary user-named records are unchanged. Stored names, explicit preview notes, archive provenance and existing revisions remain intact. Piece cards use one tail-truncated name line and one metadata line (category/color/status) under fixed-height media, so statuses do not add extra card rows. Full text remains accessible and available in details. No data rewrite or synthetic wear activity.
+
+### Owner insights, calendar state and sort refinements — October17
+
+Wear insights uses an unsurfaced month heading, glass previous/next controls with accessibility fallbacks, and native icon-only Wear history at top right. Summary surfaces show actual wear-record count, unique pieces, recorded days and active pieces; native Swift Charts shows daily counts, including a truthful zero baseline for an empty month. Existing utilization/rankings, error retry and separately labelled all-time estimates remain. No sample wears or invented trends. Core daily-count test adds month boundaries and empty-period expectations. Research: TikTok's official overview/key-metric hierarchy and Apple's native Charts accessibility informed the summary/chart layout.
+
+Planner calendar view is a neutral Menu/Picker with up/down chevrons showing current Week/Month state, not the opposite destination. Existing selection/date animation retained. Closet browse sorting moves out of filters onto its visible order label with an arrow and native menu; Pieces and Themes have native checked sort choices. Theme search keeps its sort entry because its browse summary is not visible there. Count and sort stay separate accessibility elements and44pt sort targets.
+
+### Owner archive location and single launch correction — October17
+
+Move Archived pieces from Closet filters to Settings → Your data. Settings registers the existing ClosetRoute destinations so archive cards still open the existing Piece details and restoration returns through the same settings stack. No archive data is moved or changed.
+
+The owner observed two branded startup screens. Remove the in-app AQD splash wordmark entirely; the system LaunchScreen remains the only branded splash. While the store opens, the app uses the same white LaunchCanvas with an accessible loading label, then the existing0.22s reduced-motion-aware fade hands off immediately. No minimum-duration timer, second logo or app-wide palette change. This supersedes the earlier0.32s runtime wordmark animation; Welcome's wardrobe animation remains.

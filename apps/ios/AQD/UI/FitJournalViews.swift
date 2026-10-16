@@ -87,7 +87,7 @@ struct FitJournalGrid: View {
                                         .padding(4)
                                         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                             }.buttonStyle(.plain).id(memory.id)
-                                .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.name ?? "unlinked"), \(memory.note)")
+                                .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.displayName ?? "unlinked"), \(memory.note)")
                         }
                     }.padding(.horizontal, 20)
                 }
@@ -223,7 +223,7 @@ private struct FitOutfitChooser: View {
                 if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("You can save this memory with a photo instead, or build an outfit in Closet.")) }
                 ForEach(model.state.outfits.filter { query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }) { outfit in
                     Button { if model.link(outfit) { dismiss() } } label: {
-                        VStack(alignment: .leading, spacing: 8) { OutfitComposition(pieceIDs: outfit.pieceIDs); Text(outfit.name).foregroundStyle(AppTheme.ink) }
+                        VStack(alignment: .leading, spacing: 8) { OutfitComposition(pieceIDs: outfit.pieceIDs); Text(outfit.displayName).foregroundStyle(AppTheme.ink) }
                     }.buttonStyle(.plain).disabled(model.locked)
                 }
                 if let error = model.error { SemanticFeedback(role: .danger, message: error) }
@@ -268,7 +268,7 @@ struct FitMemoryDetailView: View {
                                             .frame(width: 56, height: 64).background(AppTheme.imageGround)
                                     }
                                     VStack(alignment: .leading, spacing: 4) {
-                                        Text(piece.name).font(AppTypography.supporting)
+                                        Text(piece.displayName).font(AppTypography.supporting)
                                         Text(piece.category.rawValue.capitalized).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                                     }.frame(maxWidth: .infinity, alignment: .leading)
                                 }

@@ -29,12 +29,20 @@ struct PlannerCalendarView: View {
                     .contentShape(Rectangle())
             }.buttonStyle(.plain).accessibilityHint("Choose a date")
             HStack(spacing: 8) {
-                Button(mode == .week ? "Month" : "Week") {
-                    withAnimation(reduceMotion ? nil : AQDMotion.reflow) {
-                        mode = mode == .week ? .month : .week
+                Menu {
+                    Picker("Calendar view", selection: Binding(get: { mode }, set: { value in
+                        withAnimation(reduceMotion ? nil : AQDMotion.reflow) { mode = value }
+                    })) {
+                        Text("Week").tag(PlannerCalendarMode.week)
+                        Text("Month").tag(PlannerCalendarMode.month)
                     }
-                }
-                    .frame(minWidth: 44, minHeight: 44).tint(AppTheme.actionText)
+                } label: {
+                    HStack(spacing: 6) {
+                        Text(mode == .week ? "Week" : "Month")
+                        Image(systemName: "chevron.up.chevron.down").font(AppTypography.metadata).accessibilityHidden(true)
+                    }.frame(minHeight: 44).contentShape(Rectangle())
+                }.tint(AppTheme.ink).accessibilityLabel("Calendar view")
+                    .accessibilityValue(mode == .week ? "Week" : "Month")
                 Spacer(minLength: 0)
                 HStack(spacing: 8) {
                     stepControl(-1)
