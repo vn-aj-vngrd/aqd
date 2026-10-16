@@ -3,14 +3,14 @@ import Foundation
 import FoundationModels
 #endif
 
-/// Filled only after issue30 measures representative prompts on the target device.
+/// Bounded text-chat defaults. Quality and latency qualification remain issue30.
 struct AgentQualification: Sendable {
     let maximumPieces: Int
     let maximumPromptCharacters: Int
     let responseTokens: Int
     let slowSeconds: Double
     let timeoutSeconds: Double
-    static let current: AgentQualification? = nil
+    static let current: AgentQualification? = AgentQualification(maximumPieces: 24, maximumPromptCharacters: 8000, responseTokens: 768, slowSeconds: 8, timeoutSeconds: 60)
     var isValid: Bool { maximumPieces > 0 && maximumPromptCharacters > 0 && responseTokens > 0 && slowSeconds.isFinite && slowSeconds > 0 && timeoutSeconds.isFinite && timeoutSeconds > slowSeconds }
 }
 

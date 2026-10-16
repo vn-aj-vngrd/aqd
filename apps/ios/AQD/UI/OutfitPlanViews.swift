@@ -37,13 +37,15 @@ struct OutfitPlanEditorView: View {
                         Text("Planning never records wear.").foregroundStyle(AppTheme.secondary)
                         PrimaryAction(title: "Open Planner") { model.finish(openPlanner: true) }
                     } else {
-                        LabeledControl(title: "Date") {
-                            ThemedDatePicker("Date", selection: Binding(get: { (try? model.draft.day.date()) ?? Date() }, set: { date in
+                        ThemedDatePicker("Date", selection: Binding(get: { (try? model.draft.day.date()) ?? Date() }, set: { date in
                                 let zone = TimeZone(identifier: model.draft.day.timeZoneID) ?? .current
                                 model.update { $0.day = LocalPlanDay(date: date, timeZone: zone); $0.allowsOverlap = nil }
-                            }), in: dateBounds, displayedComponents: .date, showsTitle: false)
+                            }), in: dateBounds, displayedComponents: .date)
                             .environment(\.timeZone, TimeZone(identifier: model.draft.day.timeZoneID) ?? .current).labelsHidden()
-                        }.disabled(model.pending || model.unknown)
+                            .padding(.horizontal, AppControlMetrics.fieldPadding)
+                            .frame(minHeight: AppControlMetrics.rowHeight)
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                            .disabled(model.pending || model.unknown)
                         if let plan = namedPlan {
                             Text("Part of \(plan.name). Edit the whole plan to change its date range or timezone.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         }

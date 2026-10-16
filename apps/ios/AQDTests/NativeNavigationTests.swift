@@ -5,6 +5,18 @@ import UIKit
 @testable import AQD
 
 @Suite(.serialized) @MainActor struct NativeNavigationTests {
+    @Test func nativePresentationAppearanceTracksEffectiveAppScheme() {
+        let coordinator = NativeTabs.Coordinator(agent: { _ in AnyView(Color.clear) }, selection: .constant(0))
+        let controller = UITabBarController()
+        coordinator.install(on: controller, roots: (0..<4).map { _ in AnyView(Color.clear) })
+        coordinator.setAppearance(.light)
+        #expect(controller.overrideUserInterfaceStyle == .light)
+        coordinator.setAppearance(.dark)
+        #expect(controller.overrideUserInterfaceStyle == .dark)
+        coordinator.setAppearance(.light)
+        #expect(controller.overrideUserInterfaceStyle == .light)
+    }
+
     @Test func prominentAgentPreservesLogicalRootsAndInterception() {
         var selected = 0
         let binding = Binding(get: { selected }, set: { selected = $0 })

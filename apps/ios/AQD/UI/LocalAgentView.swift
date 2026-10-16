@@ -40,7 +40,6 @@ struct AgentConversationView: View {
     @State private var context = false
     @State private var tools = false
     @State private var voice = false
-    @State private var imageHelp = false
     @State private var details: AgentMessage?
     @State private var copied: UUID?
     @State private var followsLatest = true
@@ -126,24 +125,26 @@ struct AgentConversationView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Back").disabled(model.active) }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button("New conversation") { model.newConversation() }.disabled(model.active)
-                        Button("Conversations") { model.reloadHistory(); history = true }.disabled(model.active)
-                        Button("Manage context") { context = true }
-                        Button("Local tools") { state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); tools = true }.disabled(model.active || model.hasPendingOperation)
-                        Button("Voice input") { voice = true }
-                        Button("Photo assistance") { imageHelp = true }
-                    } label: { Label("More", systemImage: "ellipsis") }
+                if model.supportsGeneration || !model.history.isEmpty {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu {
+                            if model.supportsGeneration {
+                                Button("New conversation") { model.newConversation() }.disabled(model.active)
+                            }
+                            if !model.history.isEmpty {
+                                Button("Conversations") { model.reloadHistory(); history = true }.disabled(model.active)
+                            }
+                            if model.supportsGeneration {
+                                Button("Manage context") { context = true }
+                                Button("Local tools") { state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); tools = true }.disabled(model.active || model.hasPendingOperation)
+                                if AgentVoiceModel.qualified { Button("Voice input") { voice = true } }
+                            }
+                        } label: { Label("More", systemImage: "ellipsis") }
+                    }
                 }
             }.navigationDestination(isPresented: $history) { AgentHistoryView(model: model) { value in if value.revision > 0 { model.open(value.id) }; history = false } }
             .sheet(isPresented: $tools) { AgentActionComposerView(model: model).environment(state) }
             .sheet(isPresented: $voice) { AgentVoiceView(model: model) }
-            .sheet(isPresented: $imageHelp) { NavigationStack { VStack(alignment: .leading, spacing: 20) {
-                Text("Photo assistance isn’t enabled").font(AppTypography.section)
-                Text("You can describe your photo in a message, select existing closet pieces, or add a piece manually. Your text and selected context stay. Photos are never sent to a cloud model.")
-                SecondaryAction(title: "Select closet context") { imageHelp = false; context = true }
-            }.padding(20).navigationTitle("Photo assistance").toolbar { ToolbarItem(placement: .confirmationAction) { Button { imageHelp = false } label: { Text("Done") }.accessibilityLabel("Done") } } } }
             .sheet(isPresented: $context) { AgentContextView(model: model).environment(state) }
             .sheet(item: $details) { message in NavigationStack { Form {
                 LabeledContent("Runtime", value: "On-device")
@@ -161,12 +162,13 @@ struct AgentConversationView: View {
             HStack {
                 Menu {
                     Button("Select closet context") { context = true }
-                    Button("Photo assistance") { imageHelp = true }
                     Button("Local tools") { tools = true }
                 } label: { Image(systemName: "plus").frame(width: 44, height: 44) }.accessibilityLabel("Attach or select context")
                 Button { context = true } label: { Label(model.conversation.context.scope == .general ? "General" : "Closet", systemImage: "tshirt") }.frame(minHeight: 44)
                 Spacer()
-                Button { voice = true } label: { Image(systemName: "mic").frame(width: 44, height: 44) }.accessibilityLabel("Voice input")
+                if AgentVoiceModel.qualified {
+                    Button { voice = true } label: { Image(systemName: "mic").frame(width: 44, height: 44) }.accessibilityLabel("Voice input")
+                }
                 if model.active {
                     Button(action: model.stop) { Image(systemName: "stop.fill").frame(width: 44, height: 44) }.accessibilityLabel("Stop response")
                 } else {

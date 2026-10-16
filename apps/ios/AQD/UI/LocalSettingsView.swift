@@ -169,7 +169,7 @@ struct LocalStyleSettingsView: View {
 struct LocalAssistanceSettingsView: View {
     @Environment(AppState.self) private var state
     @Environment(\.scenePhase) private var scenePhase
-    @State private var availability = OutfitSuggestions.availability()
+    @State private var availability = OutfitSuggestions.modelAvailability()
     var body: some View {
         CenteredPageContent {
             Image(systemName: "sparkles").font(.system(size: 32, weight: .light)).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
@@ -188,11 +188,11 @@ struct LocalAssistanceSettingsView: View {
                 ActionFooter {
                     ActionStack {
                         PrimaryAction(title: "Open Agent") { state.agentLaunchID = UUID() }
-                        SecondaryAction(title: "Check availability again") { availability = OutfitSuggestions.availability() }
+                        SecondaryAction(title: "Check availability again") { availability = OutfitSuggestions.modelAvailability() }
                     }
                 }
             }
-            .onChange(of: scenePhase) { _, phase in if phase == .active { availability = OutfitSuggestions.availability() } }
+            .onChange(of: scenePhase) { _, phase in if phase == .active { availability = OutfitSuggestions.modelAvailability() } }
     }
 }
 struct LocalPrivacySettingsView: View {

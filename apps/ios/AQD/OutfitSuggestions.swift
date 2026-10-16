@@ -29,12 +29,17 @@ enum OutfitSuggestionAvailability: Equatable {
 
 enum OutfitSuggestions {
     static func availability() -> OutfitSuggestionAvailability {
+        let runtime = modelAvailability()
+        return runtime == .available && OutfitSuggestionQualification.current == nil ? .awaitingQualification : runtime
+    }
+
+    static func modelAvailability() -> OutfitSuggestionAvailability {
         #if canImport(FoundationModels)
         if #available(iOS 26, *) {
             switch SystemLanguageModel.default.availability {
             case .available:
                 guard SystemLanguageModel.default.supportsLocale() else { return .localeUnavailable }
-                return OutfitSuggestionQualification.current == nil ? .awaitingQualification : .available
+                return .available
             case .unavailable(.deviceNotEligible): return .unsupported
             case .unavailable(.appleIntelligenceNotEnabled): return .intelligenceOff
             case .unavailable(.modelNotReady): return .preparing

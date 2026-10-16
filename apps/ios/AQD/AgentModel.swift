@@ -7,7 +7,7 @@ import Observation
     var conversation: AgentConversation
     var history: [AgentConversation] = []
     var error: String?
-    var availability = OutfitSuggestions.availability()
+    var availability = OutfitSuggestions.modelAvailability()
     var weatherClient: WeatherClient?
     let qualification: AgentQualification?
     private let provider: @MainActor (String, Int) -> AsyncThrowingStream<String, any Error>
@@ -246,5 +246,5 @@ import Observation
         if deletion != nil { reconcileDeletion() }
         else { _ = persist() }
     }
-    func recheckAvailability() { availability = OutfitSuggestions.availability(); if active && !supportsGeneration { suspend() } }
+    func recheckAvailability() { availability = OutfitSuggestions.modelAvailability(); if active && !supportsGeneration { suspend() } }
 }

@@ -5,6 +5,20 @@ import AQDCore
 
 @Suite(.serialized) @MainActor struct AgentGenerationTests {
     private let qualification = AgentQualification(maximumPieces: 5, maximumPromptCharacters: 20000, responseTokens: 128, slowSeconds: 0.2, timeoutSeconds: 2)
+    @Test func defaultTextAgentUsesRuntimeReadinessAndBoundedRequests() throws {
+        let limits = try #require(AgentQualification.current)
+        #expect(limits.isValid)
+        #expect(limits.maximumPieces == 24 && limits.maximumPromptCharacters == 8000)
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let model = try AgentModel(store: store)
+        model.availability = .available
+        #expect(model.supportsGeneration && model.canGenerate)
+        for unavailable in [OutfitSuggestionAvailability.unsupported, .intelligenceOff, .preparing, .localeUnavailable] {
+            model.availability = unavailable
+            #expect(!model.supportsGeneration && !model.canGenerate)
+        }
+    }
+
     private func waitUntilStopped(_ model: AgentModel) async throws {
         for _ in 0..<200 { if !model.active { return }; try await Task.sleep(for: .milliseconds(5)) }
         Issue.record("Synthetic attempt did not stop")
@@ -87,7 +101,8 @@ import AQDCore
     @Test func unqualifiedRuntimeNeverCallsProviderAndPreservesTypedDraft() throws {
         var calls = 0
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
-        let model = try AgentModel(store: store) { _, _ in calls += 1; return AsyncThrowingStream { $0.finish() } }
+        let model = try AgentModel(store: store, qualification: nil) { _, _ in calls += 1; return AsyncThrowingStream { $0.finish() } }
+        model.availability = .available
         model.updateDraft("Retained"); model.send()
         #expect(calls == 0 && model.conversation.messages.isEmpty && model.conversation.draft == "Retained")
         #expect(model.persist())

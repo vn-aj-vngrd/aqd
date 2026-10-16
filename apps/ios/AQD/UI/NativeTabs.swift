@@ -9,6 +9,7 @@ struct NativeTabs: UIViewControllerRepresentable {
     typealias RootBuilder = @MainActor () -> AnyView
     typealias AgentBuilder = @MainActor (@escaping @MainActor () -> Void) -> AnyView
 
+    @Environment(\.colorScheme) private var colorScheme
     @Binding var selection: Int
     let today: RootBuilder
     let closet: RootBuilder
@@ -47,12 +48,14 @@ struct NativeTabs: UIViewControllerRepresentable {
             on: controller,
             roots: [today(), closet(), planner(), profile()]
         )
+        context.coordinator.setAppearance(colorScheme)
         context.coordinator.setRootChromeHidden(isTabBarHidden)
         return controller
     }
 
     func updateUIViewController(_ controller: UITabBarController, context: Context) {
         // Never rebuild root controllers/stacks in response to a parent update.
+        context.coordinator.setAppearance(colorScheme)
         context.coordinator.agent = agent
         context.coordinator.selection = $selection
         context.coordinator.setRootChromeHidden(isTabBarHidden)
@@ -170,6 +173,12 @@ struct NativeTabs: UIViewControllerRepresentable {
             return tabs.firstIndex(where: { $0 === selected }) ?? originIndex
         }
 
+        func setAppearance(_ scheme: ColorScheme) {
+            let style: UIUserInterfaceStyle = scheme == .dark ? .dark : .light
+            controller?.overrideUserInterfaceStyle = style
+            taskHost?.overrideUserInterfaceStyle = style
+        }
+
         private func presentAgent() {
             guard let controller, taskID == nil,
                   controller.presentedViewController == nil,
@@ -181,6 +190,7 @@ struct NativeTabs: UIViewControllerRepresentable {
             let host = AgentHostingController(rootView: agent { [weak self] in
                 self?.dismissAgent(id: id)
             })
+            host.overrideUserInterfaceStyle = controller.overrideUserInterfaceStyle
             host.onDismiss = { [weak self] in self?.finishAgent(id: id) }
             host.modalPresentationStyle = .fullScreen
             taskHost = host
