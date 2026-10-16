@@ -32,9 +32,8 @@ final class OutfitPlanEditorModel: Identifiable {
             try store.savePlanDraft(draft); error = nil
         } catch { self.error = "These plan edits couldn’t be retained. Keep the screen open and retry." }
     }
-    func save(leaveUnassigned: Bool = false) async {
+    func save() async {
         guard !pending, saved == nil else { return }
-        if leaveUnassigned && !unknown { update { $0.outfit = nil; $0.unassignedByChoice = true } }
         pending = true
         defer { pending = false }
         await Task.yield()

@@ -53,6 +53,9 @@ struct OutfitPlanEditorView: View {
                         })).disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Outfit", value: model.draft.outfit?.displayName ?? "Choose outfit") { choosing = true }
                             .disabled(model.pending || model.unknown)
+                        PlanUnassignedAction(isSelected: model.draft.outfit == nil && model.draft.unassignedByChoice == true) {
+                            model.update { $0.outfit = nil; $0.unassignedByChoice = true; $0.allowsOverlap = nil }
+                        }.disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Timezone", value: model.draft.day.timeZoneID) { choosingZone = true }
                             .disabled(model.pending || model.unknown || namedPlan != nil)
                         if let context = model.draft.weather {
@@ -66,21 +69,11 @@ struct OutfitPlanEditorView: View {
                             })).disabled(model.pending || model.unknown)
                         }
                         if let conflict = model.availabilityConflict { SemanticFeedback(role: .warning, message: conflict) }
-                        ActionStack {
-
-
-                        }
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(20)
             }.background(AppTheme.canvas)
                 .navigationTitle(model.saved == nil ? model.draft.baseEntry == nil ? "Plan a look" : "Edit plan entry" : "Plan saved").navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .topBarTrailing) {
-                if model.saved == nil {
-                    Menu { Button("Leave unassigned") { Task { await model.save(leaveUnassigned: true) } }
-                                .disabled(model.pending || model.unknown || (model.hasOverlap && model.draft.allowsOverlap != true)) } label: { Label("More plan options", systemImage: "ellipsis") }
-                }
-            } }
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 if model.saved == nil { confirmation }
             } }
@@ -92,7 +85,7 @@ struct OutfitPlanEditorView: View {
                             else if model.hasUnsavedChanges { discard = true }
                             else { model.finish(discarding: true) }
                         } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
-                            .tint(AppTheme.ink).accessibilityLabel(model.saved == nil ? "Cancel plan" : "Done")
+                            .tint(model.saved == nil ? AppTheme.ink : AppTheme.actionText).accessibilityLabel(model.saved == nil ? "Cancel plan" : "Done")
                             .disabled(model.pending || model.unknown)
                     }
                 }
@@ -123,6 +116,10 @@ private struct PlanOutfitChooser: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
+                PlanUnassignedAction(isSelected: model.draft.outfit == nil && model.draft.unassignedByChoice == true) {
+                    model.update { $0.outfit = nil; $0.unassignedByChoice = true; $0.allowsOverlap = nil }
+                    if model.error == nil { dismiss() }
+                }.disabled(model.pending || model.unknown)
                 if let error = model.state.outfitError {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry outfits") { model.state.reloadOutfits() }
@@ -148,5 +145,31 @@ private struct PlanOutfitChooser: View {
             .tint(AppTheme.ink)
             .searchable(text: $query, prompt: "Search outfits")
             .onAppear { model.state.reloadOutfits(); model.state.reloadPieces() }
+    }
+}
+
+/// An explicit draft choice. The editor's Save action commits the plan.
+struct PlanUnassignedAction: View {
+    var title = "Leave unassigned"
+    var isSelected = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: AppSpacing.medium) {
+                Text(title).font(AppTypography.body)
+                    .multilineTextAlignment(.leading)
+                Spacer(minLength: AppSpacing.small)
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+            }
+            .foregroundStyle(AppTheme.ink)
+            .padding(AppSpacing.large)
+            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.rowHeight)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .contentShape(RoundedRectangle(cornerRadius: AppRadius.field))
+        }.buttonStyle(.plain)
+            .accessibilityValue(isSelected ? "Selected" : "Not selected")
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }

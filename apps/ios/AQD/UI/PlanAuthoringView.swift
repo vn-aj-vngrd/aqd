@@ -40,7 +40,7 @@ struct PlanAuthoringView: View {
                 if model.saved == nil {
                     if model.draft.reviewing { confirmation }
                     else {
-                        ToolbarForwardAction(title: "Review") {
+                        ToolbarForwardAction(title: "Next") {
                             model.state.reloadPlanEntries(); model.state.reloadOutfits(); model.state.reloadPieces()
                             model.update { $0.reviewing = true }
                         }.disabled(!model.canReview || locked)
@@ -50,12 +50,11 @@ struct PlanAuthoringView: View {
                 .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() }
-                        else if model.draft.reviewing { model.update(invalidateConflicts: false) { $0.reviewing = false } }
                         else if model.hasUnsavedChanges { discard = true }
                         else { model.finish(discarding: true) }
-                    } label: { if model.saved != nil { Text("Done") } else { Image(systemName: model.draft.reviewing ? "chevron.backward" : "xmark") } }
-                        .accessibilityLabel(model.saved != nil ? "Done" : model.draft.reviewing ? "Back to plan" : "Cancel plan")
-                        .tint(AppTheme.ink).disabled(model.pending || model.unknown)
+                    } label: { if model.saved != nil { Text("Done") } else { Image(systemName: "xmark") } }
+                        .accessibilityLabel(model.saved != nil ? "Done" : "Cancel plan")
+                        .tint(model.saved == nil ? AppTheme.ink : AppTheme.actionText).disabled(model.pending || model.unknown)
                 } }
                 .navigationDestination(isPresented: $choosingPreferred) { RoutineOutfitChooser(model: model) }
                 .navigationDestination(isPresented: $choosingZone) {
@@ -90,7 +89,7 @@ struct PlanAuthoringView: View {
             if model.draft.plan.routine != nil {
                 RoutineFields(model: model) { choosingPreferred = true }.disabled(definitionLocked)
             }
-            Text(model.draft.plan.routine == nil ? "Plan up to two weeks. Choose an outfit or leave a gap for each date during review." : "Choose weekdays for up to three months. Review every date before saving; nothing repeats in the background.")
+            Text(model.draft.plan.routine == nil ? "Plan up to two weeks. Assign outfits on the next step." : "Choose weekdays for up to three months. Review dates before saving.")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             if (try? model.draft.plan.days()) == nil { SemanticFeedback(role: .warning, message: model.draft.plan.routine == nil ? "Choose an inclusive range of one to fourteen days in the same timezone." : "Choose weekdays and a range of up to three calendar months in the same timezone.") }
         }.disabled(locked)
@@ -113,7 +112,9 @@ struct PlanAuthoringView: View {
     }
     private var review: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(model.draft.plan.name).font(AppTypography.section)
+            DisclosureRow(title: model.draft.plan.name, value: "Edit details") {
+                model.update(invalidateConflicts: false) { $0.reviewing = false }
+            }.disabled(locked)
             Text("\(model.draft.plan.start.displayDate) – \(model.draft.plan.end.displayDate) · \(model.draft.plan.start.timeZoneID)")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             if let scope = model.draft.editScope {
@@ -138,7 +139,7 @@ struct PlanAuthoringView: View {
                 }.disabled(locked)
             }
             if model.draft.slots.contains(where: { $0.outfit == nil && !$0.unassignedByChoice }) {
-                SecondaryAction(title: "Leave remaining dates unassigned") {
+                PlanUnassignedAction(title: "Leave remaining dates unassigned") {
                     model.update { draft in for i in draft.slots.indices where draft.slots[i].outfit == nil { draft.slots[i].unassignedByChoice = true } }
                 }.disabled(locked)
             }
@@ -194,7 +195,8 @@ private struct PlanSlotOutfitChooser: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                SecondaryAction(title: "Leave unassigned") { choose(nil) }
+                PlanUnassignedAction(isSelected: model.draft.slots.contains { $0.id == slotID && $0.outfit == nil && $0.unassignedByChoice }) { choose(nil) }
+                    .disabled(model.pending || model.unknown)
                 if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("Keep this date unassigned. You can build outfits in Closet.")) }
                 ForEach(model.state.outfits.filter { query.isEmpty || $0.displayName.localizedCaseInsensitiveContains(query) }) { outfit in
                     Button { choose(outfit) } label: {

@@ -82,6 +82,33 @@ struct OutfitPlanPersistenceTests {
         store = nil
     }
 
+    @Test func unassignedSelectionRetainsDraftUntilExplicitSave() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: directory)
+        let outfit = try await seedOutfit(store)
+        let state = AppState(store: store)
+        state.openPlan(outfitID: outfit.id)
+        let editor = try #require(state.planEditor)
+        editor.update { $0.outfit = nil; $0.unassignedByChoice = true; $0.allowsOverlap = nil }
+        #expect(editor.canSave)
+        #expect(try store.planEntries().isEmpty)
+        #expect(try store.planDraft()?.unassignedByChoice == true)
+        #expect(try store.wearRecords().isEmpty)
+
+        // Returning to an outfit replaces the gap choice without saving either choice.
+        editor.update { $0.outfit = outfit; $0.unassignedByChoice = nil }
+        #expect(try store.planDraft()?.outfit?.id == outfit.id)
+        #expect(try store.planEntries().isEmpty)
+        editor.update { $0.outfit = nil; $0.unassignedByChoice = true }
+        await editor.save()
+        let saved = try #require(editor.saved)
+        #expect(saved.state == .unassigned && saved.outfitID == nil)
+        #expect(try store.planEntries() == [saved])
+        #expect(try store.wearRecords().isEmpty)
+        #expect(try store.outfit(id: outfit.id) == outfit)
+        state.store = nil
+    }
+
     @Test func v5MigrationPreservesOutfitAndThemeMembershipBeforePlanning() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
