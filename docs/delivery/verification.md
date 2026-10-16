@@ -514,3 +514,14 @@ PR37 fifth Codex review at `c0b8b58` found that parent outfit/theme revisions di
 The actual parent-only consent regression failed in `/tmp/aqd-pr37-codex5-consent-red.log`; the earlier API red and fixture compile failure are retained in local logs. Final Core72/native203, comprising190 Swift Testing and13 XCTest, pass `/tmp/aqd-pr37-codex5-final-unit.log` on the physical iPhone. JSON round-trip, changed descendants, reselection and unavailable records are covered. Both independent reviewers rechecked without findings. All E2E, rendered acceptance and real capability activation remain issue30; new-head CI/Codex and protected shipping remain separate gates.
 
 Refreshed unsigned Release PASSED `/tmp/aqd-pr37-codex5-release.log`; agent-doc links and whitespace pass.
+
+
+## PR37 sixth review correction
+
+Codex at `f246ba7` found that an invalid unacknowledged candidate with a missing/corrupt pointer did not reopen its intact original. Correction `1faff5ff1b19cd40a7595479932e48dd1f5a60fb` shares validated original recovery across both pointer paths, checking directory/database/marker/domain contents and recorded owner before republishing. Acknowledged replacements never roll back. Failed candidates remain retained for explicit cancellation or reviewed recovery.
+
+The physical regression additionally exposed URL representation equality rejecting a second restore from an installed generation. Source identity now compares normalized filesystem paths while retaining generation, owner and mutation checks. The initial full run and focused diagnosis failed for both generated-original cases; these remain failed evidence in `/tmp/aqd-pr37-codex6-unit.log` and `/tmp/aqd-pr37-codex6-diagnostic.log`.
+
+After renewed owner readiness, final Core72/native204, comprising191 Swift Testing and13 XCTest, PASSED `/tmp/aqd-pr37-codex6-final-unit.log`. The parameterized regression covers missing/corrupt pointer × legacy/generated original, retained conversation content, correct active path, failed-review cancellation and a second restore from an installed generation. Both independent reviewers rechecked the final correction without findings. All checks use the physical iPhone17ProMax; no simulator or E2E. All real capability activation and rendered acceptance remain issue30. Current-head CI/Codex/protected merge and exact merged-SHA release remain separate gates.
+
+Final unsigned iOS Release PASSED `/tmp/aqd-pr37-codex6-final-release.log`; agent-doc links and whitespace pass.

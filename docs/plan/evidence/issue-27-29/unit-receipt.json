@@ -5,7 +5,7 @@
   ],
   "branch": "van/issue-27/agent-and-local-controls",
   "baseline": "1a5b44ecf06536d6bb1dae0551348f44a9747d5b",
-  "sourceHead": "8878b6b091df446722475780142d8375a48b682f",
+  "sourceHead": "1faff5ff1b19cd40a7595479932e48dd1f5a60fb",
   "checkedOn": "2026-10-16",
   "environment": {
     "destination": "Physical iPhone17ProMax",
@@ -21,8 +21,8 @@
       "failures": 0
     },
     "native": {
-      "passed": 203,
-      "swiftTesting": 190,
+      "passed": 204,
+      "swiftTesting": 191,
       "swiftTestingSuites": 30,
       "xctest": 13,
       "failures": 0
@@ -71,6 +71,11 @@
         "reviewedHead": "c0b8b582e6daeb0536b22dabdd244d378f418394",
         "findings": 1,
         "status": "Resolved descendant revisions captured at selection and revalidated before sending. Core72/native203 pass, both independent rechecks findings-free. New-head review remains required."
+      },
+      "codex6": {
+        "reviewedHead": "f246ba7aa5117d8b67ef61bca60bb4dacaa8501f",
+        "findings": 1,
+        "status": "Validated original recovery shared across pointer paths. Physical regression additionally fixed normalized source identity for repeated restore from a generation. Core72/native204 pass; both independent rechecks findings-free. New-head review remains required."
       }
     },
     "interruptedNativeRun": {
@@ -89,6 +94,14 @@
       "log": "aqd-pr37-codex4-unit.log",
       "result": "FAILED",
       "reason": "One raw URL equality assertion failed. Compare standardized filesystem paths while retaining appearance, review and generation checks. Final full rerun passes."
+    },
+    "sixthReviewInitialRun": {
+      "logs": [
+        "aqd-pr37-codex6-unit.log",
+        "aqd-pr37-codex6-diagnostic.log"
+      ],
+      "result": "FAILED",
+      "reason": "Generated-original variants reproduced staleReview during second prepareRestore due to URL representation equality. Normalized source path comparison fixes the defect; full final rerun passes."
     }
   },
   "localLogs": [
@@ -276,6 +289,31 @@
       "name": "aqd-pr37-codex5-docs.log",
       "sha256": "7c16d5dffebed7e569b60f27c4bac4607ecb5cee539e7c73509401c482177867",
       "published": false
+    },
+    {
+      "name": "aqd-pr37-codex6-unit.log",
+      "sha256": "5df9727780ef9ac397dcc1aa9d1fe937e878200c35294ee746d23f1cf4f8d820",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex6-diagnostic.log",
+      "sha256": "1dec981f2e8e4d58d2e18b97d35d1907c50a8e6936f010557d57f7de7cfc218a",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex6-final-unit.log",
+      "sha256": "de4ee107ce152111264f64db81eac95f1f28ed89e9ab741c2ae0fba0796873e5",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex6-final-release.log",
+      "sha256": "4493fad6a8e0374215b8b5cadbd2a2b374c93a62c590a8ec7ed02ee0e7862989",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex6-docs.log",
+      "sha256": "7c16d5dffebed7e569b60f27c4bac4607ecb5cee539e7c73509401c482177867",
+      "published": false
     }
   ],
   "sourceFiles": {
@@ -285,7 +323,7 @@
     "apps/ios/AQD/AppState.swift": "8abcd49a95bd51350a8065200dd7cd6f3a115aaffe63876009da04d8df5584d4",
     "apps/ios/AQD/LocalArchive.swift": "332dc47cce947c93a915e2b754cef676b581ff666d1d3043cb5fbe1e864784f9",
     "apps/ios/AQD/LocalArchiveService.swift": "6dc0ad28f7c485f766a5def30282ef544118b0d874d471063fb213cc4713e80e",
-    "apps/ios/AQD/LocalDataCoordinator.swift": "447e86f0aa6507229a2389df2be02f037af342dbd0e3707239c19bf8cf875708",
+    "apps/ios/AQD/LocalDataCoordinator.swift": "4b7b8e02b36c74fc12dfe5c7ccbccd4caed993846eccda275bc6baeaa7df5809",
     "apps/ios/AQD/LocalExportModel.swift": "0bf83ae03fece8bd0f1f5f7b6b2398358377ac7345aa383458e2d148dbdc9842",
     "apps/ios/AQD/LocalRestoreModel.swift": "ed9b59974814d0ce06a94fb7c147f581c35199bc88954532b386dd1d16db9fcf",
     "apps/ios/AQD/NativeAgentProvider.swift": "3cdb669b3bb16a3ed3b335201c3e3f11aa0b88a7e638a07d152a25c0d2cf6641",
@@ -312,7 +350,7 @@
     "apps/ios/AQDTests/LocalArchiveTests.swift": "9ea99a361e24664ba3eb5e73f26f2455f47bb6883f784c5f9eb435cf29ac0e81",
     "apps/ios/AQDTests/LocalDataFixture.swift": "ebb5568e1d84c662b65daec12394446cd5c7ac1de8f8711dd78d5121a680d625",
     "apps/ios/AQDTests/LocalEraseTests.swift": "9e3447fda46b2293932079ac585c9978dee94013970cae17552dd89379d5c756",
-    "apps/ios/AQDTests/LocalReplacementTests.swift": "dfdc7dc311c97e6361ef7fd9fbf61dc1d5e6cdd772bcdc6870685ccf83f16c72",
+    "apps/ios/AQDTests/LocalReplacementTests.swift": "bfa3dbfc5319beaf2f5b15afe697a3a63818675962017b431b2de51d7f6c37ea",
     "apps/ios/AQDTests/LocalSettingsPersistenceTests.swift": "fdd147136c5451970c474d1d508a8d1f59d5b07e767e170d4dfbfd3da5bbeeb4",
     "apps/ios/AQDTests/OutfitPersistenceTests.swift": "28f0f1f8bc76cd803a88ef154fd13e8e7e95738e845bf69e9f858aa56ec4d832",
     "apps/ios/AQDTests/PersonalEditorRecoveryTests.swift": "8236bc5e2e52de074b0e33405b83735eae05e9294ee3dab01dcb75774d4e2430",
