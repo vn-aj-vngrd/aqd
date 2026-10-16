@@ -46,7 +46,7 @@ struct PlanAuthoringView: View {
                         }
                     }
                 }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle(model.saved != nil ? "Plan saved" : model.draft.reviewing ? "Review plan" : model.draft.plan.routine != nil ? "New routine" : model.draft.plan.trip != nil ? "New trip" : "New plan")
+            }.background(AppTheme.canvas).navigationTitle(model.saved != nil ? "Plan saved" : model.draft.reviewing ? "Review plan" : model.draft.basePlan != nil ? "Edit plan" : model.draft.plan.routine != nil ? "New routine" : model.draft.plan.trip != nil ? "New trip" : "New plan")
                 .navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
                 .toolbar { ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -226,6 +226,10 @@ private struct PlanSlotOutfitChooser: View {
 struct PlanDefinitionView: View {
     @Environment(AppState.self) private var state
     let id: UUID
+    @Environment(\.dismiss) private var dismiss
+    @State private var deletion: HistoryMutation?
+    @State private var confirmingDeletion = false
+    @State private var deletionError: String?
     @State private var editPresented = false
     @State private var pendingScope: RoutineEditScope?
     @State private var anchorEntryID: UUID?
@@ -242,11 +246,23 @@ struct PlanDefinitionView: View {
                             NavigationLink(value: PlannerRoute.entry(entry.id)) { PlanAgendaRow(entry: entry, showDate: true) }.buttonStyle(.plain)
                         }
                     }
+                    Button("Delete plan", role: .destructive) {
+                        deletion = HistoryMutation(action: .deletePlan(plan, state.planEntries.filter { $0.planID == id }))
+                        confirmingDeletion = true
+                    }.frame(minHeight: 44)
+                    if let deletionError {
+                        SemanticFeedback(role: .danger, message: deletionError)
+                        if deletion != nil { Button("Retry reviewed deletion", action: deletePlan).frame(minHeight: 44) }
+                    }
                     Text("Saved dates are intentions. Recorded wear and history are separate.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 } else { ContentUnavailableView("Plan unavailable", systemImage: "calendar") }
                 if let error = state.planError { SemanticFeedback(role: .danger, message: error); Button("Retry plans") { state.reloadPlanEntries() } }
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle(plan?.name ?? "Plan").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
+            .confirmationDialog("Delete this plan and its entries?", isPresented: $confirmingDeletion, titleVisibility: .visible) {
+                Button("Delete plan", role: .destructive, action: deletePlan)
+                Button("Cancel", role: .cancel) { deletion = nil }
+            } message: { Text("Actual wear and its counts stay in history. Outfits and pieces stay in Closet.") }
             .onAppear { state.reloadPlanEntries(); state.reloadOutfits() }
             .toolbar {
                 if plan != nil { ToolbarItem(placement: .topBarTrailing) {
@@ -265,4 +281,14 @@ struct PlanDefinitionView: View {
                 }
             }
     }
+    private func deletePlan() {
+        guard let deletion else { return }
+        do {
+            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
+            try store.applyHistoryMutation(deletion); state.reloadPlanEntries(); dismiss()
+        } catch PieceStore.StoreError.staleRevision {
+            self.deletion = nil; deletionError = "The plan changed. Review it before deleting."; state.reloadPlanEntries()
+        } catch { deletionError = "Deletion is not acknowledged. Retry this reviewed operation." }
+    }
+
 }

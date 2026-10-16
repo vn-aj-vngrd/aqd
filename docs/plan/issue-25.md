@@ -17,7 +17,7 @@
 | S1 | Week/Month/selected date, real agenda and date-prefilled Add; edit/move/remove/Undo same entry | P1/P3/P4, scoped LOCAL-04/05 | Committed | `AQD-Slice: #25/S1` | `a17d683` |
 | S2 | Named two-week plan authoring, reviewed assignments/gaps and atomic conflict decisions/recovery | P1/P3/P6 | Committed | `AQD-Slice: #25/S2` | `37b2f56` |
 | S3 | Three-calendar-month weekday routine authoring/detail/edit scopes with resolved saved entries | P2/P4/P6 | Committed | `AQD-Slice: #25/S3` | `c6c4e3b` |
-| S4 | Trip dates/destination/activities/detail and persistent deduplicated packing that retains checks | P5/P6, scoped P11/manual-offline | Committed | `AQD-Slice: #25/S4` | Pending |
+| S4 | Trip dates/destination/activities/detail and persistent deduplicated packing that retains checks | P5/P6, scoped P11/manual-offline | Committed | `AQD-Slice: #25/S4` | `66fdd75` |
 
 ## Evidence and review
 

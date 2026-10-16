@@ -16,9 +16,10 @@ public struct OutfitWearRecord: Identifiable, Codable, Equatable, Sendable {
     public let outfitID: UUID?
     public let pieces: [WearPieceSnapshot]
     public var revision: Int
+    public var planEntryID: UUID?
 
-    public init(id: UUID, ownerID: UUID, day: LocalPlanDay, outfitID: UUID?, pieces: [WearPieceSnapshot], revision: Int = 1) {
-        self.id = id; self.ownerID = ownerID; self.day = day; self.outfitID = outfitID; self.pieces = pieces; self.revision = revision
+    public init(id: UUID, ownerID: UUID, day: LocalPlanDay, outfitID: UUID?, pieces: [WearPieceSnapshot], revision: Int = 1, planEntryID: UUID? = nil) {
+        self.id = id; self.ownerID = ownerID; self.day = day; self.outfitID = outfitID; self.pieces = pieces; self.revision = revision; self.planEntryID = planEntryID
     }
     public func validated() throws {
         _ = try day.date()
@@ -38,6 +39,7 @@ public struct OutfitWearDraft: Identifiable, Codable, Equatable, Sendable {
     public var outfitID: UUID?
     public var pieceIDs: [UUID]
     public var reviewedRevisions: [UUID: Int]
+    public var planEntry: OutfitPlanEntry?
     public var acceptedDuplicateID: UUID?
 
     public init(ownerID: UUID, outfitID: UUID? = nil, pieces: [WardrobePiece], day: LocalPlanDay = LocalPlanDay()) {
@@ -46,6 +48,11 @@ public struct OutfitWearDraft: Identifiable, Codable, Equatable, Sendable {
     }
     public func validatedForSave(pieces: [WardrobePiece], now: Date = Date()) throws {
         _ = try day.date()
+        if let planEntry {
+            try planEntry.validated()
+            guard planEntry.ownerID == ownerID, planEntry.state == .planned || planEntry.state == .unassigned,
+                  planEntry.day == day else { throw WearValidationError.invalidRecord }
+        }
         guard !pieceIDs.isEmpty else { throw WearValidationError.piecesRequired }
         guard Set(pieceIDs).count == pieceIDs.count else { throw WearValidationError.invalidRecord }
         let zone = TimeZone(identifier: day.timeZoneID) ?? .current

@@ -114,6 +114,7 @@ struct LocalPlanEntryView: View {
     @State private var confirming = false
     @State private var removal: PlanEntryDeletionRequest?
     @State private var error: String?
+    @State private var skipRequest: HistoryMutation?
     private var entry: OutfitPlanEntry? { state.planEntries.first { $0.id == id } }
     var body: some View {
         ScrollView {
@@ -126,6 +127,16 @@ struct LocalPlanEntryView: View {
                         NavigationLink(value: ClosetRoute.outfit(outfit.id)) { Text("Open outfit") }.frame(minHeight: 44)
                     }
                     if entry.requiresReview { SemanticFeedback(role: .warning, message: "Review the current outfit before using this plan.") }
+                    if entry.state == .planned || entry.state == .unassigned {
+                        PrimaryAction(title: "Record wear") { state.openWear(outfitID: entry.outfitID, entry: entry) }
+                            .disabled(removal != nil || skipRequest != nil)
+                        SecondaryAction(title: skipRequest == nil ? "Skip entry" : "Check skip result") {
+                            skip(entry)
+                        }
+                    }
+                    if entry.wearRecordID != nil {
+                        NavigationLink("View recorded wear") { LocalWearHistoryView() }.frame(minHeight: 44)
+                    }
                     PrimaryAction(title: "Edit entry") { state.openPlan(editing: entry) }
                         .disabled(removal != nil || entry.state == .worn || entry.state == .skipped)
                     Text("Planning this date hasn’t recorded wear. Actual wear remains a separate action.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
@@ -141,6 +152,15 @@ struct LocalPlanEntryView: View {
                 Button("Remove entry", role: .destructive, action: remove)
                 Button("Cancel", role: .cancel) { removal = nil }
             } message: { Text("Removes this planned assignment. Its outfit and recorded wear stay. Other dates and your routine remain.") }
+    }
+    private func skip(_ entry: OutfitPlanEntry) {
+        if skipRequest == nil { skipRequest = HistoryMutation(action: .skip(entry)) }
+        do {
+            guard let store = state.store, let request = skipRequest else { throw PieceStore.StoreError.corruptStore }
+            try store.applyHistoryMutation(request); skipRequest = nil; state.reloadPlanEntries(); error = nil
+        } catch PieceStore.StoreError.staleRevision {
+            skipRequest = nil; error = "This entry changed. Review it again."; state.reloadPlanEntries()
+        } catch { self.error = "Skip is not acknowledged. Retry the same operation." }
     }
     private func remove() {
         guard let removal else { return }

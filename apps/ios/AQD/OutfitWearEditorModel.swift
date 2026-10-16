@@ -46,7 +46,7 @@ final class OutfitWearEditorModel: Identifiable {
         do {
             guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
             if !unknown { try store.saveWearDraft(draft) }
-            saved = try store.saveWear(draft); unknown = false; error = nil; state.reloadWear()
+            saved = try store.saveWear(draft); unknown = false; error = nil; state.reloadWear(); state.reloadPlanEntries()
         } catch {
             do {
                 guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
@@ -54,7 +54,7 @@ final class OutfitWearEditorModel: Identifiable {
                 duplicate = try store.matchingWear(for: draft)
                 unknown = false
                 self.error = saved == nil ? "Wear wasn’t recorded. Check the day and current pieces, or use the matching existing record. Your draft is retained." : nil
-                state.reloadWear()
+                state.reloadWear(); state.reloadPlanEntries()
             } catch { unknown = true; self.error = "The result is unknown. Check the same operation before editing or recording again." }
         }
     }
@@ -63,7 +63,7 @@ final class OutfitWearEditorModel: Identifiable {
         do {
             guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
             try store.finishWearDraft(draft, discarding: discarding)
-            state.wearEditor = nil; state.reloadWear()
+            state.wearEditor = nil; state.reloadWear(); state.reloadPlanEntries()
         } catch { self.error = "This task couldn’t close. The draft and history are retained; retry." }
     }
 }
@@ -80,17 +80,19 @@ extension AppState {
             wearEditor = try OutfitWearEditorModel(state: self, draft: draft)
         } catch { wearError = "Your wear draft couldn’t be read. Keep the app data for recovery." }
     }
-    func openWear(outfitID: UUID) {
+    func openWear(outfitID: UUID? = nil, day: LocalPlanDay = LocalPlanDay(), entry: OutfitPlanEntry? = nil) {
         guard planAuthoringEditor == nil, wearEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             if let retained = try store.wearDraft() { wearEditor = try OutfitWearEditorModel(state: self, draft: retained); return }
-            guard let outfit = try store.outfit(id: outfitID) else { throw PieceStore.StoreError.staleRevision }
-            let pieces = try outfit.pieceIDs.map { id -> WardrobePiece in
+            let outfit = try outfitID.flatMap { try store.outfit(id: $0) }
+            if outfitID != nil && outfit == nil { throw PieceStore.StoreError.staleRevision }
+            let pieces = try (outfit?.pieceIDs ?? []).map { id -> WardrobePiece in
                 guard let value = try store.piece(id: id) else { throw PieceStore.StoreError.staleRevision }
                 return value
             }
-            let draft = OutfitWearDraft(ownerID: outfit.ownerID, outfitID: outfit.id, pieces: pieces)
+            var draft = OutfitWearDraft(ownerID: try store.todayConfiguration().ownerID, outfitID: outfit?.id, pieces: pieces, day: entry?.day ?? day)
+            draft.planEntry = entry
             try store.saveWearDraft(draft)
             wearEditor = try OutfitWearEditorModel(state: self, draft: draft)
         } catch { collectionError = "A wear draft couldn’t open. Your saved outfit and history haven’t changed." }

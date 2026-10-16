@@ -64,7 +64,7 @@ struct ClosetSearchTests {
         let store = try PieceStore(directory: directory)
         _ = try await seed(store)
         do {
-            let schema = Schema(versionedSchema: LocalSchemaV13.self)
+            let schema = Schema(versionedSchema: LocalSchemaV14.self)
             let config = ModelConfiguration(schema: schema, url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
             let container = try ModelContainer(for: schema, configurations: [config])
             let context = ModelContext(container)

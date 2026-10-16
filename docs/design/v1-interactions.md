@@ -1,3 +1,7 @@
+## Issues #25 + #26 actual-wear S1, October16
+
+Plan-entry Record wear retains exact reviewed entry/date/timezone and requires explicit save or matching-record consent. The atomic write links the existing entry to the acknowledged wear; Skip has no actual count. Delete plan confirms the exact reviewed scope and retains history. Immutable receipts reconcile denied/unknown operations. Unit verified only; all rendered/E2E acceptance remains #30.
+
 # V1 interaction and state coverage
 
 ## Issues #25 + #26 Planner S1, October16

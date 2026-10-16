@@ -47,10 +47,12 @@ public struct OutfitPlanEntry: Identifiable, Codable, Equatable, Sendable {
     public var state: PlanEntryState
     public var requiresReview: Bool
     public var revision: Int
+    public var wearRecordID: UUID?
 
     public func validated() throws {
         _ = try day.date()
         guard revision > 0, revision < Int.max, occasion.count <= 80,
+              wearRecordID == nil || state == .worn,
               (outfitID == nil) == (outfitRevision == nil), outfitRevision.map({ $0 > 0 }) ?? true,
               state != .planned || outfitID != nil else { throw PlanValidationError.invalidRecord }
     }

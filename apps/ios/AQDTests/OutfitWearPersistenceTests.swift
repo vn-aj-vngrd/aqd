@@ -76,6 +76,44 @@ struct OutfitWearPersistenceTests {
         #expect(try store.savedWear(for: draft) == saved)
     }
 
+    @Test func explicitWearLinksPlansAndSkipAndPlanDeletionPreserveActualFacts() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: directory)
+        let (outfit, piece) = try await seed(store)
+        let day = LocalPlanDay(year: 2026, month: 1, day: 1, timeZoneID: "Asia/Manila")
+        var authoring = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: outfit.ownerID, name: "Real plan", start: day, end: day))
+        authoring.plan.name = "Real plan"
+        authoring.slots[0].outfit = outfit
+        try store.savePlanAuthoringDraft(authoring)
+        let receipt = try store.savePlanAuthoring(authoring)
+        try store.finishPlanAuthoring(authoring)
+        let entry = try #require(receipt.entries.first)
+        #expect(try store.wearRecords().isEmpty)
+        var wear = OutfitWearDraft(ownerID: outfit.ownerID, outfitID: outfit.id, pieces: [piece], day: day)
+        wear.planEntry = entry
+        try store.saveWearDraft(wear)
+        let actual = try store.saveWear(wear)
+        try store.finishWearDraft(wear)
+        let linked = try #require(try store.planEntries().first)
+        #expect(linked.state == .worn && linked.wearRecordID == actual.id)
+        #expect(actual.planEntryID == entry.id)
+        let deletion = HistoryMutation(action: .deletePlan(receipt.plan, [linked]))
+        try store.applyHistoryMutation(deletion)
+        try store.applyHistoryMutation(deletion)
+        #expect(try store.planEntries().isEmpty)
+        #expect(try store.wearRecords() == [actual])
+        var other = OutfitPlanDraft(ownerID: outfit.ownerID, outfit: outfit, day: day)
+        other.occasion = "Evening"
+        try store.savePlanDraft(other)
+        let skippable = try store.savePlan(other)
+        try store.finishPlanDraft(other)
+        let skip = HistoryMutation(action: .skip(skippable))
+        try store.applyHistoryMutation(skip)
+        try store.applyHistoryMutation(skip)
+        #expect(try store.planEntries().first?.state == .skipped)
+        #expect(try store.wearRecords() == [actual])
+    }
+
     @Test func v6MigrationKeepsTheExistingPlanWithoutInventingWear() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
