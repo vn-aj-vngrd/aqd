@@ -27,6 +27,7 @@ struct PlanAuthoringView: View {
     @State private var choosingZone = false
     @State private var resolvingConflict: UUID?
     @State private var choosingPreferred = false
+    private var definitionLocked: Bool { model.draft.editScope == .entry }
     private var locked: Bool { model.pending || model.unknown || model.saved != nil }
     var body: some View {
         NavigationStack {
@@ -42,6 +43,7 @@ struct PlanAuthoringView: View {
                     if let error = model.error {
                         SemanticFeedback(role: .danger, message: error)
                         if model.draft.basePlan != nil && !model.unknown {
+                            Text("Refresh replaces original entries with their latest saved values and keeps your added dates.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                             Button("Refresh reviewed entries") { model.refreshReviewedBase() }.frame(minHeight: 44).disabled(model.pending)
                         }
                     }
@@ -70,7 +72,7 @@ struct PlanAuthoringView: View {
                 .navigationDestination(isPresented: Binding(get: { choosingSlot != nil }, set: { if !$0 { choosingSlot = nil } })) {
                     if let id = choosingSlot { PlanSlotOutfitChooser(model: model, slotID: id) }
                 }
-        }.interactiveDismissDisabled()
+        }.onAppear { model.state.reloadPieces(); model.state.reloadOutfits() }.interactiveDismissDisabled()
             .sheet(isPresented: $discard) {
                 DraftDiscardSheet(title: "Discard plan draft?", message: "No dates are saved by discarding. Existing plans and history stay unchanged.") {
                     model.finish(discarding: true)
@@ -80,19 +82,19 @@ struct PlanAuthoringView: View {
     }
     private var fields: some View {
         VStack(alignment: .leading, spacing: 16) {
-            LabeledField(title: "Name", text: Binding(get: { model.draft.plan.name }, set: { value in model.update { $0.plan.name = value } }))
-            dateField("Start date", start: true)
-            dateField("End date", start: false)
-            DisclosureRow(title: "Timezone", value: model.draft.plan.start.timeZoneID) { choosingZone = true }
-            if model.draft.plan.trip != nil { TripFields(model: model) }
+            LabeledField(title: "Name", text: Binding(get: { model.draft.plan.name }, set: { value in model.update { $0.plan.name = value } })).disabled(definitionLocked)
+            dateField("Start date", start: true).disabled(definitionLocked)
+            dateField("End date", start: false).disabled(definitionLocked)
+            DisclosureRow(title: "Timezone", value: model.draft.plan.start.timeZoneID) { choosingZone = true }.disabled(definitionLocked)
+            if model.draft.plan.trip != nil { TripFields(model: model).disabled(definitionLocked) }
             if model.draft.plan.routine != nil {
-                RoutineFields(model: model) { choosingPreferred = true }
+                RoutineFields(model: model) { choosingPreferred = true }.disabled(definitionLocked)
             }
             Text(model.draft.plan.routine == nil ? "Plan up to two weeks. Every date can have a saved outfit or an intentional gap. Weather context is off." : "Resolve up to three calendar months of selected weekdays. Every date is reviewed before saving; nothing repeats in the background. Weather context is off.")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             if (try? model.draft.plan.days()) == nil { SemanticFeedback(role: .warning, message: model.draft.plan.routine == nil ? "Choose an inclusive range of one to fourteen days in the same timezone." : "Choose weekdays and a range of up to three calendar months in the same timezone.") }
             PrimaryAction(title: "Review plan") {
-                model.state.reloadPlanEntries(); model.state.reloadOutfits()
+                model.state.reloadPlanEntries(); model.state.reloadOutfits(); model.state.reloadPieces()
                 model.update { $0.reviewing = true }
             }.disabled(!model.canReview)
         }.disabled(locked)
@@ -120,7 +122,7 @@ struct PlanAuthoringView: View {
             Text("\(model.draft.plan.start.key) – \(model.draft.plan.end.key) · \(model.draft.plan.start.timeZoneID)")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             if let scope = model.draft.editScope {
-                Text(scope == .future ? "This and future entries. Earlier and completed entries stay intact." : "Whole routine. Recorded wear and completed entries stay intact.")
+                Text(scope == .entry ? "This entry only. Shared plan settings stay unchanged." : scope == .future ? "This and future entries. Earlier and completed entries stay intact." : "Whole routine. Recorded wear and completed entries stay intact.")
                     .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 if !model.draft.removedEntryIDs.isEmpty {
                     Text("\(model.draft.removedEntryIDs.count) reviewed entries will be removed from this scope.").foregroundStyle(AppTheme.warning)
@@ -129,6 +131,7 @@ struct PlanAuthoringView: View {
             if model.draft.usesRules == true { Text("Rule-based rotation · Review before saving").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
             ForEach(model.draft.slots) { slot in
                 VStack(alignment: .leading, spacing: 8) {
+                    if let conflict = model.availabilityMessage(for: slot) { SemanticFeedback(role: .warning, message: conflict) }
                     if needsCompositionReview(slot), let outfit = slot.outfit {
                         SemanticFeedback(role: .warning, message: "This outfit changed. Review its current pieces below; Save confirms the updated composition.")
                         OutfitComposition(pieceIDs: outfit.pieceIDs)

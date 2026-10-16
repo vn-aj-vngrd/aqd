@@ -387,4 +387,65 @@ struct OutfitPlanPersistenceTests {
         #expect(model.saved?.entries.count == 4)
         state.planAuthoringEditor = nil; state.store = nil
     }
+    @Test func entryScopedAuthoringCannotChangeSharedDefinition() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let outfit = try await seedOutfit(store)
+        let start = LocalPlanDay(year: 2099, month: 1, day: 1, timeZoneID: "Asia/Manila")
+        var end = start; end.day = 2
+        var draft = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: outfit.ownerID, name: "Keep parent", start: start, end: end))
+        for i in draft.slots.indices { draft.slots[i].outfit = outfit }
+        try store.savePlanAuthoringDraft(draft); let saved = try store.savePlanAuthoring(draft); try store.finishPlanAuthoring(draft)
+        var edit = try PlanAuthoringDraft(editing: saved.plan, entries: saved.entries, outfits: [outfit], scope: .entry, anchorEntryID: saved.entries[0].id)
+        edit.plan.name = "Unauthorized shared edit"
+        try store.savePlanAuthoringDraft(edit)
+        #expect(throws: PlanAuthoringError.invalidSlots) { try store.savePlanAuthoring(edit) }
+        #expect(try store.planDefinitions() == [saved.plan])
+        #expect(try store.planEntries() == saved.entries)
+    }
+
+    @Test func refreshReplacesStaleOutfitSnapshotsAndKeepsAddedDateIdentity() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let outfit = try await seedOutfit(store)
+        let day = LocalPlanDay(year: 2099, month: 1, day: 1, timeZoneID: "Asia/Manila")
+        var draft = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: outfit.ownerID, name: "Refresh", start: day, end: day))
+        draft.slots[0].outfit = outfit
+        try store.savePlanAuthoringDraft(draft); let saved = try store.savePlanAuthoring(draft); try store.finishPlanAuthoring(draft)
+        let state = AppState(store: store); state.editPlanDefinition(saved.plan, scope: .whole, anchorEntryID: nil)
+        let model = try #require(state.planAuthoringEditor)
+        model.dates { $0.end.day = 2 }
+        let added = try #require(model.draft.slots.first { $0.day.day == 2 })
+        model.update { value in if let i = value.slots.firstIndex(where: { $0.id == added.id }) { value.slots[i].outfit = outfit } }
+        var outfitEdit = OutfitDraft(editing: outfit); outfitEdit.name = "Updated current outfit"
+        try store.saveOutfitDraft(outfitEdit); let updated = try store.saveOutfit(outfitEdit); try store.acknowledgeOutfitReceipt(outfitEdit)
+        await model.save(); #expect(model.saved == nil)
+        model.refreshReviewedBase()
+        #expect(model.draft.slots.allSatisfy { $0.outfit == updated })
+        #expect(model.draft.slots.first { $0.day.day == 2 }?.id == added.id)
+        await model.save(); #expect(model.saved?.entries.count == 2)
+        state.store = nil
+    }
+
+    @Test func unavailableAssignmentsExposeAffectedOutfitPieceAndDateBeforeSave() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let outfit = try await seedOutfit(store)
+        let piece = try #require(try store.piece(id: outfit.pieceIDs[0]))
+        _ = try store.setAvailability(id: piece.id, value: .laundry, expectedRevision: piece.revision, operationID: UUID())
+        let state = AppState(store: store)
+        let day = LocalPlanDay(year: 2099, month: 1, day: 1, timeZoneID: "Asia/Manila")
+        state.openPlan(outfitID: outfit.id, day: day)
+        let single = try #require(state.planEditor)
+        #expect(!single.canSave)
+        await single.save()
+        #expect(single.error?.contains("Shirt") == true && single.error?.contains(day.key) == true)
+        single.finish(discarding: true)
+        state.openPlanAuthoring(day: day)
+        let bulk = try #require(state.planAuthoringEditor)
+        bulk.update { $0.plan.name = "Unavailable"; $0.slots[0].outfit = outfit }
+        #expect(!bulk.canSave)
+        await bulk.save()
+        #expect(bulk.error?.contains("Weekend") == true && bulk.error?.contains(day.key) == true)
+        #expect(try store.planEntries().isEmpty)
+        state.store = nil
+    }
+
 }

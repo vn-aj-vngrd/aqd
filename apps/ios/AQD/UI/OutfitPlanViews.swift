@@ -55,6 +55,7 @@ struct OutfitPlanEditorView: View {
                                 model.update { $0.allowsOverlap = value }
                             })).disabled(model.pending || model.unknown)
                         }
+                        if let conflict = model.availabilityConflict { SemanticFeedback(role: .warning, message: conflict) }
                         ActionStack {
                             PrimaryAction(title: model.unknown ? "Check save result" : "Save plan", isPending: model.pending) {
                                 Task { await model.save() }
@@ -125,6 +126,6 @@ private struct PlanOutfitChooser: View {
             .navigationTitle("Choose one outfit").navigationBarTitleDisplayMode(.inline)
             .tint(AppTheme.ink)
             .searchable(text: $query, prompt: "Search outfits")
-            .onAppear { model.state.reloadOutfits() }
+            .onAppear { model.state.reloadOutfits(); model.state.reloadPieces() }
     }
 }

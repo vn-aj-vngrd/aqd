@@ -16,9 +16,13 @@ final class PlanAuthoringModel: Identifiable {
         saved = try state.store?.savedPlanAuthoring(draft)
     }
     var conflicts: [OutfitPlanEntry] { draft.conflicts(in: state.planEntries) }
+    func availabilityMessage(for slot: PlanSlotDraft) -> String? {
+        PlanningAvailability.message(outfit: slot.outfit, day: slot.day, pieces: state.ownedPieces)
+    }
+    var availabilityConflicts: [String] { draft.slots.compactMap { availabilityMessage(for: $0) } }
     var canReview: Bool { !pending && !unknown && (try? draft.plan.validated()) != nil }
     var canSave: Bool {
-        !pending && !unknown && saved == nil && (try? draft.validatedForSave(outfits: state.outfits, existing: state.planEntries)) != nil
+        !pending && !unknown && saved == nil && availabilityConflicts.isEmpty && (try? draft.validatedForSave(outfits: state.outfits, existing: state.planEntries)) != nil
     }
     func update(invalidateConflicts: Bool = true, _ change: (inout PlanAuthoringDraft) -> Void) {
         guard !pending, !unknown, saved == nil else { return }
@@ -71,10 +75,16 @@ final class PlanAuthoringModel: Identifiable {
             refreshed.basePlan = current; refreshed.baseEntries = entries; refreshed.plan.revision = current.revision
             guard Set(refreshed.slots.map(\.id)).count == refreshed.slots.count else { throw PlanAuthoringError.invalidSlots }
             let oldBaseIDs = Set((draft.baseEntries ?? []).map(\.id))
-            let latestEditableIDs = Set(editable.editableBaseEntries.map(\.id))
-            refreshed.slots = refreshed.slots.filter { !oldBaseIDs.contains($0.id) || latestEditableIDs.contains($0.id) }
-            let retainedIDs = Set(refreshed.slots.map(\.id))
-            refreshed.slots += editable.slots.filter { !retainedIDs.contains($0.id) }
+            let currentOutfits = try store.outfits()
+            var proposed = refreshed.slots.filter { !oldBaseIDs.contains($0.id) }
+            for i in proposed.indices {
+                if let old = proposed[i].outfit {
+                    proposed[i].outfit = currentOutfits.first { $0.id == old.id }
+                    if proposed[i].outfit == nil { proposed[i].unassignedByChoice = false }
+                }
+            }
+            refreshed.slots = editable.slots + proposed
+            if refreshed.editScope == .entry { refreshed.plan = current }
             try refreshed.rebuildDates()
             draft = refreshed
             try store.savePlanAuthoringDraft(draft)
@@ -94,7 +104,8 @@ final class PlanAuthoringModel: Identifiable {
             do {
                 guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
                 saved = try store.savedPlanAuthoring(draft); unknown = false
-                self.error = saved == nil ? "The plan wasn’t saved. Review its dates, current outfits, intentional gaps and conflict choices, then retry." : nil
+                state.reloadPieces()
+                self.error = saved == nil ? (availabilityConflicts.isEmpty ? "The plan wasn’t saved. Review its dates, current outfits, intentional gaps and conflict choices, then retry." : availabilityConflicts.joined(separator: "\n")) : nil
                 state.reloadPlanEntries(); state.reloadOutfits()
             } catch { unknown = true; self.error = "The result is unknown. Check this same save before editing or starting another plan." }
         }

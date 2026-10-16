@@ -2142,7 +2142,7 @@ extension PieceStore {
         try draft.validatedForSave(outfits: outfits(), existing: existing)
         guard try planAuthoringDraft() == draft else { throw StoreError.staleDraft }
         let active = Set(try pieces().filter { $0.availability == .available }.map(\.id))
-        guard draft.slots.allSatisfy({ $0.outfit.map { Set($0.pieceIDs).isSubset(of: active) } ?? true }) else { throw StoreError.staleRevision }
+        guard draft.slots.allSatisfy({ $0.outfit.map { Set($0.pieceIDs).isSubset(of: active) } ?? true }) else { throw PlanValidationError.unavailablePieces }
         let baseEntries = Dictionary(uniqueKeysWithValues: draft.editableBaseEntries.map { ($0.id, $0) })
         var savedPlan = draft.plan; savedPlan.revision = (draft.basePlan?.revision ?? 0) + 1; try savedPlan.validated()
         let entries = draft.slots.map { slot in

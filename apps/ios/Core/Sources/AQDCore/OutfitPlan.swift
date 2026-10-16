@@ -1,6 +1,6 @@
 import Foundation
 
-public enum PlanValidationError: Error, Equatable { case invalidDay, invalidTimezone, invalidOutfit, overlap, invalidRecord }
+public enum PlanValidationError: Error, Equatable { case invalidDay, invalidTimezone, invalidOutfit, overlap, invalidRecord, unavailablePieces }
 
 /// A calendar day in its recorded timezone, independent of later device travel.
 public struct LocalPlanDay: Codable, Equatable, Sendable {

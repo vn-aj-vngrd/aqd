@@ -165,7 +165,10 @@ public struct PlanAuthoringDraft: Identifiable, Codable, Equatable, Sendable {
             guard basePlan.id == plan.id, basePlan.ownerID == plan.ownerID, basePlan.revision == plan.revision,
                   editScope != nil, Set(base.map(\.id)).count == base.count,
                   base.allSatisfy({ $0.planID == plan.id && $0.ownerID == plan.ownerID }) else { throw PlanAuthoringError.invalidSlots }
+            if editScope == .entry, plan != basePlan { throw PlanAuthoringError.invalidSlots }
             for entry in base { try entry.validated() }
+            let retained = base.filter { entry in !editableBaseEntries.contains { $0.id == entry.id } }
+            guard retained.allSatisfy({ $0.day.timeZoneID == plan.start.timeZoneID && $0.day.key >= plan.start.key && $0.day.key <= plan.end.key }) else { throw PlanAuthoringError.invalidSlots }
             let editable = Set(editableBaseEntries.map(\.id))
             let protected = Set(base.filter { !editable.contains($0.id) }.map(\.id))
             guard Set(slots.map(\.id)).isDisjoint(with: protected) else { throw PlanAuthoringError.invalidSlots }

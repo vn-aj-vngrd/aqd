@@ -16,7 +16,8 @@ final class OutfitPlanEditorModel: Identifiable {
         self.state = state; self.draft = draft; id = draft.id
         saved = try state.store?.savedPlan(for: draft)
     }
-    var canSave: Bool { !pending && !unknown && saved == nil && (try? draft.validatedForSave(outfits: state.outfits)) != nil }
+    var availabilityConflict: String? { PlanningAvailability.message(outfit: draft.outfit, day: draft.day, pieces: state.ownedPieces) }
+    var canSave: Bool { !pending && !unknown && saved == nil && availabilityConflict == nil && (try? draft.validatedForSave(outfits: state.outfits)) != nil }
     var hasOverlap: Bool {
         state.planEntries.contains { $0.id != draft.entryID && $0.day == draft.day && $0.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == draft.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
     }
@@ -44,7 +45,8 @@ final class OutfitPlanEditorModel: Identifiable {
                 guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
                 saved = try store.savedPlan(for: draft)
                 unknown = false
-                self.error = saved == nil ? "The plan wasn’t saved. Check its current outfit and date, and explicitly keep both if that occasion already has a plan. Your draft is retained." : nil
+                state.reloadPieces()
+                self.error = saved == nil ? (availabilityConflict ?? "The plan wasn’t saved. Check its current outfit and date, and explicitly keep both if that occasion already has a plan. Your draft is retained.") : nil
                 state.reloadPlanEntries()
             } catch { unknown = true; self.error = "The save result is unknown. Check the same operation before editing or starting another plan." }
         }
