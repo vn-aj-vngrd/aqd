@@ -53,3 +53,5 @@ Search uses one trailing Cancel in every query/scope/loading/recovery state. Do 
 ## V1 local search references
 
 L92/L93 are initial/empty closet; L86–L88 are Pieces/Outfits/Themes results; L89 no matches, L90 loading, L91 read failure. L121–L122 own filters/sort. V1 does not persist recent queries in this slice and has no remote feed pagination. Cancel restores the source; return from detail preserves query/scope/filters/scroll. Field and compact scope controls use the latest flat component contract. See [V1 interactions](v1-interactions.md).
+
+Closet browse sort refinement October17: the visible order label beside the count is a native sort menu with an arrow icon and44pt target. Pieces and Themes expose their checked sort choices there instead of the browse filter toolbar. Filters retain category/availability/content responsibilities. Keep sort available in Theme search's filter menu because the browse order row is absent during search. Outfits retain their existing single Recently updated order. Preserve independent count/sort accessibility and single-line piece-card names/metadata.

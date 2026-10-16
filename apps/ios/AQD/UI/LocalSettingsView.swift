@@ -8,6 +8,7 @@ struct LocalSettingsView: View {
     var body: some View {
         List {
             Section("Personalize") {
+                NavigationLink { WardrobeCategorySettingsView() } label: { SettingsRow(title: "Piece categories", symbol: "square.grid.2x2") }
                 NavigationLink { LocalStyleSettingsView() } label: { SettingsRow(title: "Style preferences", symbol: "slider.horizontal.3") }
                 NavigationLink { LocalAppearanceSettingsView() } label: {
                     SettingsRow(title: "Appearance", symbol: "circle.lefthalf.filled", value: appearanceTitle)
@@ -22,6 +23,7 @@ struct LocalSettingsView: View {
                 Button { state.beginTour(from: .settings) } label: { SettingsRow(title: "App tour", symbol: "play.rectangle", disclosure: true) }
             }.listRowBackground(AppTheme.surface)
             Section {
+                NavigationLink { ArchivedPiecesView() } label: { SettingsRow(title: "Archived pieces", symbol: "archivebox") }
                 NavigationLink { LocalExportView() } label: { SettingsRow(title: "Export closet", symbol: "square.and.arrow.up") }
                 Button { state.openRestore() } label: { SettingsRow(title: "Restore closet", symbol: "arrow.counterclockwise", disclosure: true) }
                 Button(role: .destructive) { state.openErase() } label: { SettingsRow(title: "Erase closet", symbol: "trash", disclosure: true, destructive: true) }
@@ -31,6 +33,7 @@ struct LocalSettingsView: View {
         }
         .listStyle(.insetGrouped).navigationTitle("Settings").navigationBarTitleDisplayMode(.inline)
         .scrollContentBackground(.hidden).background(AppTheme.canvas).tint(AppTheme.ink)
+        .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
         .onAppear { state.reloadSettings() }
         .sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true } } }
     }

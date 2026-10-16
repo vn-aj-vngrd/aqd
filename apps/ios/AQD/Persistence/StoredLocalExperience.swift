@@ -15,6 +15,7 @@ final class StoredLocalExperience {
 /// One private entry state and one active preference task, shared by all callers.
 struct LocalExperience: Codable, Equatable {
     var schemaVersion = 1
+    var pieceCategories: [WardrobeCategory]?
     var enteredPrivateSpace: Bool
     var style: SavedStylePreferences?
     var styleDraft: StylePreferenceDraft?
@@ -24,6 +25,7 @@ struct LocalExperience: Codable, Equatable {
 
     func validated() throws {
         guard schemaVersion == 1 else { throw PieceStore.StoreError.unsupportedStore }
+        if let pieceCategories { try WardrobeCategory.validate(pieceCategories) }
         try entryState.validated()
         if entry != nil, enteredPrivateSpace != (entryState.page == .main) { throw PieceStore.StoreError.invalidRecord }
         if let style {

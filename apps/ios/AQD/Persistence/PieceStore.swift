@@ -714,6 +714,20 @@ final class PieceStore {
         return (record, value)
     }
 
+    func savePieceCategories(_ categories: [WardrobeCategory], expected: [WardrobeCategory]) throws {
+        try WardrobeCategory.validate(categories)
+        guard allowsSave else { throw StoreError.corruptStore }
+        let context = ModelContext(container)
+        var (record, value) = try experienceRecord(in: context)
+        let current = value.pieceCategories ?? WardrobeCategory.defaults
+        if current == categories { return }
+        guard current == expected else { throw StoreError.staleRevision }
+        value.pieceCategories = categories
+        try value.validated()
+        record.payload = try JSONEncoder().encode(value)
+        try commit(context)
+    }
+
     func saveStyleDraft(_ draft: StylePreferenceDraft) throws {
         guard allowsSave else { throw StoreError.corruptStore }
         try draft.validated()

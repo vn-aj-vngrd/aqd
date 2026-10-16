@@ -122,19 +122,19 @@ struct PieceCaptureView: View {
                     HStack(spacing: 12) {
                         Text("Category").font(AppTypography.body)
                         Menu {
-                            Picker("Category", selection: Binding(get: { model.draft.category },
-                                                                  set: { model.update(\.category, value: $0) })) {
-                                Text("Choose category").tag(Optional<PieceCategory>.none)
-                                ForEach(PieceCategory.allCases, id: \.self) { category in
-                                    Text(category.rawValue).tag(Optional(category))
+                            ForEach(model.categories) { category in
+                                Button { model.selectCategory(category) } label: {
+                                    if model.categorySelectionID == category.id {
+                                        Label(category.name, systemImage: "checkmark")
+                                    } else { Text(category.name) }
                                 }
                             }
                         } label: {
-                            MenuSelectionLabel(title: model.draft.category?.rawValue ?? "Choose category")
+                            MenuSelectionLabel(title: model.categoryName)
                         }
                         .menuIndicator(.hidden).buttonStyle(.plain).foregroundStyle(AppTheme.ink)
                         .accessibilityLabel("Category")
-                        .accessibilityValue(model.draft.category?.rawValue ?? "Not selected")
+                        .accessibilityValue(model.categoryName)
                         .accessibilityIdentifier("capture.category")
                     }.padding(.horizontal, 14).frame(minHeight: 54)
                     Divider().padding(.leading, 14)

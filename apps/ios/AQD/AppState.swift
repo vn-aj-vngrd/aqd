@@ -33,6 +33,7 @@ final class AppState {
     var openingError: String?
     var isOpening = false
     var pieces: [WardrobePiece] = []
+    var pieceCategories = WardrobeCategory.defaults
     var archivedPieces: [WardrobePiece] = []
     var ownedPieces: [WardrobePiece] { pieces + archivedPieces }
     var pendingOutfitEditID: UUID?
@@ -304,6 +305,7 @@ final class AppState {
         guard let store else { return }
         do {
             let owned = try store.ownedPiecesForWear()
+            pieceCategories = try store.localExperience().pieceCategories ?? WardrobeCategory.defaults
             pieces = owned.filter { !$0.isArchived }
             archivedPieces = owned.filter(\.isArchived)
             collectionError = nil; pieceReadError = nil
@@ -313,6 +315,17 @@ final class AppState {
             collectionError = "Your pieces couldn’t be read. The saved collection has not been cleared."
             pieceReadError = collectionError
         }
+    }
+
+    func category(for piece: WardrobePiece) -> WardrobeCategory? {
+        if let id = piece.details.organizationCategoryID,
+           let category = pieceCategories.first(where: { $0.id == id && $0.type == piece.category }) { return category }
+        let defaultID = WardrobeCategory.defaults.first { $0.type == piece.category }?.id
+        return pieceCategories.first { $0.id == defaultID && $0.type == piece.category }
+    }
+
+    func categoryName(for piece: WardrobePiece) -> String {
+        category(for: piece)?.name ?? WardrobeCategory.defaults.first { $0.type == piece.category }?.name ?? piece.category.rawValue
     }
 
     func deletePiece(id: UUID, expectedRevision: Int, operationID: UUID, impact: PieceDeletionImpact? = nil) throws {
@@ -479,6 +492,24 @@ final class CaptureModel: Identifiable {
     private static let draftPersistenceError = "These changes couldn’t be kept as a recoverable draft. Keep editing or discard this draft before leaving."
     private static let photoImportError = "That photo couldn’t be prepared. Your fields and previous photo are unchanged. Choose another photo or keep the draft."
     private static let photoEditError = "These photo edits couldn’t be prepared. Your previous photo and framing are unchanged. Try again or keep the original."
+
+    var categories: [WardrobeCategory] { state.pieceCategories }
+    var categorySelectionID: String? {
+        if let category = categories.first(where: { $0.id == draft.details.organizationCategoryID && $0.type == draft.category }) { return category.id }
+        guard let type = draft.category, let id = WardrobeCategory.defaults.first(where: { $0.type == type })?.id else { return nil }
+        return categories.first { $0.id == id && $0.type == type }?.id
+    }
+    var categoryName: String {
+        if let category = categories.first(where: { $0.id == categorySelectionID }) { return category.name }
+        return draft.category.flatMap { type in WardrobeCategory.defaults.first { $0.type == type }?.name } ?? "Choose category"
+    }
+    func selectCategory(_ category: WardrobeCategory) {
+        guard !isSaving, saved == nil, categories.contains(category) else { return }
+        draft.category = category.type
+        draft.details.organizationCategoryID = category.id
+        operationID = UUID()
+        persistDraft()
+    }
 
     var hasUnsavedChanges: Bool {
         guard saved == nil else { return false }

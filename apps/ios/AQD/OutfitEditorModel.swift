@@ -155,6 +155,23 @@ extension AppState {
 }
 
 extension OutfitEditorModel {
+    @discardableResult func applyManualPieces(_ ids: [UUID]) -> Bool {
+        guard !pending, !unknown, !generating, saved == nil else { return false }
+        do {
+            var updated = draft
+            updated.pinnedPieceIDs = []
+            updated.starterPieceID = nil
+            updated.proposalSource = nil
+            updated.stage = .builder
+            try updated.applyManualSelection(ids, pieces: state.pieces)
+            update { $0 = updated }
+            return error == nil
+        } catch {
+            self.error = "These pieces are no longer available. Refresh your closet and choose again. Your previous selection is kept."
+            return false
+        }
+    }
+
     var readiness: OutfitReadiness { OutfitReadiness(pieces: state.pieces, pinnedIDs: draft.pinnedPieceIDs ?? []) }
 
     func useRules() {

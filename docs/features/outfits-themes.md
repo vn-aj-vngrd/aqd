@@ -58,3 +58,7 @@ Browse outfits with search, theme and favorites filters. Detail opens each piece
 ## Dependencies
 
 [Wardrobe](wardrobe.md) IDs/lifecycle are required. Manual composition precedes assisted composition. Planning and V2-only publishing consume the same saved outfit identity; neither is required for the first manual slice. V1 never exposes a connected publication action.
+
+## Owner manual-composition refinement October17
+
+The visible builder is manual: select any active pieces, see a live visual selection, remove/add freely, name and save. Partial outfits are valid. No readiness, pin, replacement, rule-based or model-suggestion step is required or exposed. Retained suggestion drafts preserve their content and open in the manual editor; manually applying a selection clears obsolete pins/starter/proposal metadata and validates current IDs/revisions before saving. Closet suggestion entry points and Agent's new-outfit task choice are hidden for now; existing saved outfits, proposals, receipts and editing paths remain readable. Keep existing duplicate/write/revision safeguards and no-change close behavior.

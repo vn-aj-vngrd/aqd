@@ -51,6 +51,24 @@ struct OutfitPersistenceTests {
         #expect(try store.outfit(id: outfit.id) == outfit)
     }
 
+    @Test func manualCompositionCanRemovePinnedStartersAndRejectUnavailableSelections() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let piece = try await seedPiece(store)
+        let state = AppState(store: store)
+        state.reloadPieces()
+        state.buildOutfit(pieceID: piece.id, suggest: true)
+        let model = try #require(state.outfitEditor)
+        #expect(model.applyManualPieces([]))
+        #expect(model.draft.pieceIDs.isEmpty)
+        #expect(model.draft.pinnedPieceIDs?.isEmpty != false)
+        #expect(model.draft.starterPieceID == nil)
+        #expect(model.applyManualPieces([piece.id]))
+        let accepted = model.draft
+        #expect(!model.applyManualPieces([UUID()]))
+        #expect(model.draft == accepted)
+        #expect(try store.outfitDraft() == accepted)
+    }
+
     @Test func manualOutfitSaveRetryReopenEditAndDiscardKeepStableIdentity() async throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         var store: PieceStore? = try PieceStore(directory: directory)

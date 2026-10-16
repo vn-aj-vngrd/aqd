@@ -2,6 +2,7 @@ import AQDCore
 import SwiftUI
 
 struct PieceCollectionGrid: View {
+    @Environment(AppState.self) private var state
     let pieces: [WardrobePiece]
     @Environment(\.dynamicTypeSize) private var typeSize
     var body: some View {
@@ -14,11 +15,11 @@ struct PieceCollectionGrid: View {
                             .padding(8).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10))
                             .padding(8)
                         VStack(alignment: .leading, spacing: 6) {
-                            Text(piece.name).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
-                            Text([piece.category.rawValue, piece.details.color].filter { !$0.isEmpty }.joined(separator: " · "))
-                                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                            if piece.isArchived { Text("Archived").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
-                            if piece.availability != .available { Text(piece.availability.rawValue.capitalized).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+                            Text(piece.displayName).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink).lineLimit(1).truncationMode(.tail)
+                            Text([state.categoryName(for: piece), piece.details.color,
+                                  piece.isArchived ? "Archived" : piece.availability == .available ? "" : piece.availability.rawValue.capitalized]
+                                .filter { !$0.isEmpty }.joined(separator: " · "))
+                                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).lineLimit(1).truncationMode(.tail)
                         }.padding(.horizontal, 12).padding(.top, 4).padding(.bottom, 12)
                     }.frame(maxWidth: .infinity, alignment: .leading)
                         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
@@ -39,7 +40,7 @@ struct OutfitCollectionCard: View {
                     .padding(12).frame(maxWidth: .infinity)
                     .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10))
                 HStack {
-                    Text(outfit.name).font(AppTypography.section)
+                    Text(outfit.displayName).font(AppTypography.section)
                     if outfit.isFavorite { Image(systemName: "heart.fill").foregroundStyle(AppTheme.actionText).accessibilityLabel("Favorite") }
                 }.foregroundStyle(AppTheme.ink)
                 let memberships = state.themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.name)
@@ -90,7 +91,7 @@ struct ThemeCollectionCard: View {
         NavigationLink(value: ClosetRoute.theme(theme.id)) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 12) {
-                    Text(theme.name).font(AppTypography.body).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
+                    Text(theme.displayName).font(AppTypography.body).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
                     Text("\(theme.outfitIDs.count) outfits").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     Image(systemName: "chevron.forward").foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
                 }.frame(minHeight: 54)

@@ -4,7 +4,7 @@ import SwiftUI
 struct ClosetView: View {
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
-    @State private var category: PieceCategory?
+    @State private var category: String?
     @State private var archived = false
     @State private var availability: PieceAvailability?
     @State private var sort = PieceSort.name
@@ -114,8 +114,10 @@ struct ClosetView: View {
                 Picker("Contents", selection: state.closetSearchActive ? $searchThemeQuery.content : $themeQuery.content) {
                     ForEach(ThemeCollectionQuery.Content.allCases, id: \.self) { Text($0.rawValue).tag($0) }
                 }
-                Picker("Sort themes", selection: state.closetSearchActive ? $searchThemeQuery.sort : $themeQuery.sort) {
-                    ForEach(ThemeCollectionQuery.Sort.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                if state.closetSearchActive {
+                    Picker("Sort themes", selection: $searchThemeQuery.sort) {
+                        ForEach(ThemeCollectionQuery.Sort.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    }
                 }
                 Button("Clear filters") {
                     if state.closetSearchActive { searchThemeQuery = ThemeCollectionQuery() }
@@ -128,7 +130,7 @@ struct ClosetView: View {
     }
     private var collectionSummary: ClosetCollectionSummary {
         let summary = collectionSummaryData
-        return ClosetCollectionSummary(title: summary.title, order: summary.order)
+        return ClosetCollectionSummary(title: summary.title, order: summary.order, pieceSort: scope == "Pieces" ? $sort : nil, themeSort: scope == "Themes" ? $themeQuery.sort : nil)
     }
     private var collectionSummaryData: (title: String, order: String) {
         func count(_ value: Int, _ singular: String, _ plural: String) -> String { "\(value) \(value == 1 ? singular : plural)" }
@@ -167,18 +169,14 @@ struct ClosetView: View {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
                 Picker("Category", selection: $category) {
-                    Text("All categories").tag(Optional<PieceCategory>.none)
-                    ForEach(PieceCategory.allCases, id: \.self) { Text($0.rawValue).tag(Optional($0)) }
+                    Text("All categories").tag(Optional<String>.none)
+                    ForEach(state.pieceCategories) { Text($0.name).tag(Optional($0.id)) }
                 }
                 Picker("Availability", selection: $availability) {
                     Text("All availability").tag(Optional<PieceAvailability>.none)
                     ForEach([PieceAvailability.available, .unavailable, .laundry], id: \.self) { Text($0.rawValue.capitalized).tag(Optional($0)) }
                 }
-                Button("Archived pieces") { state.closetPath.append(.archivedPieces) }
-                Picker("Sort pieces", selection: $sort) {
-                    ForEach(PieceSort.allCases, id: \.self) { Text($0.title).tag($0) }
-                }
-            } label: { Label("Filter and sort pieces", systemImage: "line.3.horizontal.decrease") }.tint(AppTheme.ink)
+            } label: { Label("Filter pieces", systemImage: "line.3.horizontal.decrease") }.tint(AppTheme.ink)
         }
     }
     @ViewBuilder private var pieceCollection: some View {
@@ -217,7 +215,7 @@ struct ClosetView: View {
     private func refreshPieces() {
         do {
             guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-            results = try store.pieces(category: category, archived: archived, availability: availability, sort: sort); error = nil
+            results = try store.pieces(category: nil, archived: archived, availability: availability, sort: sort).filter { category == nil || state.category(for: $0)?.id == category }; error = nil
         } catch { self.error = "Your saved collection couldn’t be read. Its data is retained; retry." }
     }
 
@@ -326,13 +324,13 @@ struct PieceDetailView: View {
                             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("View photo of \(piece.name) full screen")
+                    .accessibilityLabel("View photo of \(piece.displayName) full screen")
                     .accessibilityHint("Opens a zoomable photo viewer")
                     .accessibilityIdentifier("piece.photo.fullScreen")
                     VStack(alignment: .leading, spacing: AppSpacing.large) {
                         VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                            Text(piece.name).font(AppTypography.section)
-                            Text(piece.category.rawValue).foregroundStyle(AppTheme.secondary)
+                            Text(piece.displayName).font(AppTypography.section)
+                            Text(state.categoryName(for: piece)).foregroundStyle(AppTheme.secondary)
                         }
                         if !piece.details.color.isEmpty { detail("Color", piece.details.color) }
                         if !piece.details.brand.isEmpty { detail("Brand", piece.details.brand) }
@@ -384,15 +382,6 @@ struct PieceDetailView: View {
         .navigationTitle("Piece").navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if let piece {
-                if !piece.isArchived && piece.availability == .available {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button { state.buildOutfit(pieceID: piece.id, suggest: true) } label: {
-                            Label("Style this", systemImage: "sparkles")
-                        }
-                        .tint(AppTheme.ink).accessibilityIdentifier("piece.style")
-                        .disabled(deleteInFlight)
-                    }
-                }
                 optionsToolbar(for: piece)
             }
         }
@@ -495,7 +484,7 @@ private struct PiecePhotoViewer: View {
                             Image(uiImage: image)
                                 .resizable().scaledToFit()
                                 .frame(width: geometry.size.width * zoom, height: geometry.size.height * zoom)
-                                .accessibilityLabel("Photo of \(piece.name)")
+                                .accessibilityLabel("Photo of \(piece.displayName)")
                         }
                         .scrollIndicators(.hidden)
                         .simultaneousGesture(MagnifyGesture()
@@ -510,7 +499,7 @@ private struct PiecePhotoViewer: View {
                 }
             }
             .background(AppTheme.canvas)
-            .navigationTitle(piece.name).navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(piece.displayName).navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if image != nil {
                     ToolbarItemGroup(placement: .bottomBar) {
@@ -601,20 +590,38 @@ private struct ClosetScopeControl: View {
 struct ClosetCollectionSummary: View {
     let title: String
     let order: String
+    var pieceSort: Binding<PieceSort>? = nil
+    var themeSort: Binding<ThemeCollectionQuery.Sort>? = nil
     @Environment(\.dynamicTypeSize) private var typeSize
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             if typeSize.isAccessibilitySize {
                 Text(title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
-                if !order.isEmpty { Text(order).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+                if !order.isEmpty { sortControl }
             } else {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text(title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
                     Spacer(minLength: 12)
-                    if !order.isEmpty { Text(order).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+                    if !order.isEmpty { sortControl }
                 }
             }
         }.frame(maxWidth: .infinity, alignment: .leading)
-            .accessibilityElement(children: .combine).accessibilityIdentifier("closet.collection.summary")
+            .accessibilityElement(children: .contain).accessibilityIdentifier("closet.collection.summary")
     }
+    @ViewBuilder private var sortControl: some View {
+        if pieceSort != nil || themeSort != nil {
+            Menu {
+                if let pieceSort {
+                    Picker("Sort pieces", selection: pieceSort) { ForEach(PieceSort.allCases, id: \.self) { Text($0.title).tag($0) } }
+                }
+                if let themeSort {
+                    Picker("Sort themes", selection: themeSort) { ForEach(ThemeCollectionQuery.Sort.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+                }
+            } label: {
+                HStack(spacing: 5) { Text(order); Image(systemName: "arrow.up").accessibilityHidden(true) }
+                    .font(AppTypography.metadata).frame(minHeight: 44).contentShape(Rectangle())
+            }.tint(AppTheme.ink).accessibilityLabel("Sort").accessibilityValue(order)
+        } else { Text(order).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+    }
+
 }

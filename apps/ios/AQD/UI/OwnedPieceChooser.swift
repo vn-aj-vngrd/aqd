@@ -14,9 +14,12 @@ struct OwnedPieceChooser: View {
     var error: String?
     var isLocked = false
     var actionTitle = "Add selected pieces"
+    var showsComposition = false
+    @Environment(AppState.self) private var state
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let apply: ([UUID]) -> Bool
     @State private var query = ""
-    @State private var category: PieceCategory?
+    @State private var categoryID: String?
     @State private var selected: [UUID] = []
     @State private var initialized = false
     @Environment(\.dismiss) private var dismiss
@@ -30,16 +33,18 @@ struct OwnedPieceChooser: View {
         }
     }
     private var filteredPieces: [WardrobePiece] {
-        Self.visiblePieces(in: pieces, selected: selected, category: category, query: query)
+        Self.visiblePieces(in: pieces, selected: selected, category: nil, query: query)
+            .filter { selected.contains($0.id) || categoryID == nil || state.category(for: $0)?.id == categoryID }
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
+                if showsComposition { liveComposition }
                 ScrollView(.horizontal) {
                     HStack(spacing: 8) {
                         categoryButton(nil)
-                        ForEach(PieceCategory.allCases, id: \.self) { categoryButton($0) }
+                        ForEach(state.pieceCategories) { categoryButton($0) }
                     }
                 }.scrollIndicators(.hidden)
                 if filteredPieces.isEmpty {
@@ -64,12 +69,12 @@ struct OwnedPieceChooser: View {
                                                 .padding(8)
                                         }
                                     }
-                                Text(piece.name).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
-                                Text([piece.category.rawValue, piece.details.color].filter { !$0.isEmpty }.joined(separator: " · "))
+                                Text(piece.displayName).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
+                                Text([state.categoryName(for: piece), piece.details.color].filter { !$0.isEmpty }.joined(separator: " · "))
                                     .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                             }.frame(maxWidth: .infinity, alignment: .leading)
                         }.buttonStyle(.plain)
-                            .accessibilityLabel(piece.name)
+                            .accessibilityLabel(piece.displayName)
                             .accessibilityValue(pinnedIDs.contains(piece.id) ? "Pinned and selected" : isSelected ? "Selected" : "Not selected")
                             .accessibilityHint(pinnedIDs.contains(piece.id) ? "Unpin in the outfit editor before removing this piece." : "")
                             .accessibilityAddTraits(isSelected ? [.isSelected] : [])
@@ -99,15 +104,40 @@ struct OwnedPieceChooser: View {
         .onAppear { if !initialized { selected = initialSelection; initialized = true } }
     }
 
-    private func categoryButton(_ value: PieceCategory?) -> some View {
-        Button { category = value } label: {
+    private var liveComposition: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack { Text("Your outfit").font(AppTypography.fieldLabel); Spacer(); Text("\(selected.count) selected").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+            if selected.isEmpty {
+                Text("Tap pieces below to form your outfit.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).frame(minHeight: 92)
+            } else {
+                ScrollView(.horizontal) {
+                    HStack(spacing: 12) {
+                        ForEach(selected, id: \.self) { id in
+                            if let piece = pieces.first(where: { $0.id == id }) {
+                                Button { selected.removeAll { $0 == id } } label: {
+                                    PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                                        .frame(width: 72, height: 92).clipShape(RoundedRectangle(cornerRadius: 8))
+                                        .overlay(alignment: .topTrailing) { Image(systemName: "minus.circle.fill").foregroundStyle(AppTheme.ink, AppTheme.surface).accessibilityHidden(true) }
+                                }.buttonStyle(.plain).accessibilityLabel("Remove \(piece.displayName)")
+                                    .transition(.scale(scale: 0.9).combined(with: .opacity))
+                            }
+                        }
+                    }.padding(.vertical, 4)
+                }.scrollIndicators(.hidden)
+            }
+        }.padding(16).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+            .animation(reduceMotion ? nil : AQDMotion.reflow, value: selected)
+    }
+
+    private func categoryButton(_ value: WardrobeCategory?) -> some View {
+        Button { categoryID = value?.id } label: {
             HStack(spacing: 6) {
-                if category == value { Image(systemName: "checkmark") }
-                Text(value?.rawValue ?? "All pieces")
+                if categoryID == value?.id { Image(systemName: "checkmark") }
+                Text(value?.name ?? "All pieces")
             }.font(.subheadline).padding(.horizontal, 12).padding(.vertical, 6)
                 .frame(minHeight: 44)
-                .foregroundStyle(category == value ? AppTheme.onAccent : AppTheme.ink)
-                .background(category == value ? AppTheme.accent : AppTheme.surface, in: Capsule())
-        }.buttonStyle(.plain).accessibilityAddTraits(category == value ? [.isSelected] : [])
+                .foregroundStyle(categoryID == value?.id ? AppTheme.onAccent : AppTheme.ink)
+                .background(categoryID == value?.id ? AppTheme.accent : AppTheme.surface, in: Capsule())
+        }.buttonStyle(.plain).accessibilityAddTraits(categoryID == value?.id ? [.isSelected] : [])
     }
 }

@@ -18,7 +18,7 @@ struct AgentActionComposerView: View {
         NavigationStack {
             Form {
                 Text("Manual draft · Not saved. Choose exact records, then review before applying. Conversation text never approves a change.").font(.subheadline)
-                Picker("Task", selection: $kind) { ForEach(["Theme", "Outfit", "Plan", "Wear", "Availability"], id: \.self) { Text($0) } }
+                Picker("Task", selection: $kind) { ForEach(["Theme", "Plan", "Wear", "Availability"], id: \.self) { Text($0) } }
                 if ["Theme", "Outfit", "Plan"].contains(kind) { TextField("Name", text: $name) }
                 if ["Outfit", "Wear", "Availability"].contains(kind) {
                     Section("Pieces") {
