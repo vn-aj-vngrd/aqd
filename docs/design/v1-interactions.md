@@ -1,4 +1,17 @@
+## Issues #25 + #26 completed source routes, October16
+
+Seven committed feature slices implement Planner, routines/trips/packing, explicit linked wear, correction/Undo and history/insights. Named-entry timezone belongs to the reviewed parent; completed entries refuse individual removal while explicitly reviewed whole-plan deletion preserves actual history. Wear receipts finish their task before opening actionable history. History calendar announces recorded wears; source-period links show the exact complete filtered month. All UI/E2E acceptance remains deferred to #30. Final Core59/native148 unit pass; see issue plans for source-bound checks/review.
+
+## Issues #25 + #26 actual-wear S1, October16
+
+Plan-entry Record wear retains exact reviewed entry/date/timezone and requires explicit save or matching-record consent. The atomic write links the existing entry to the acknowledged wear; Skip has no actual count. Delete plan confirms the exact reviewed scope and retains history. Immutable receipts reconcile denied/unknown operations. Unit verified only; all rendered/E2E acceptance remains #30.
+
 # V1 interaction and state coverage
+
+## Issues #25 + #26 Planner S1, October16
+
+Week/Month/previous/next/date picker/Today update retained Planner date/view state. Calendar marks/counts and agenda use actual saved entries. Add preselects the displayed day; shared timezone selection changes only the retained draft without shifting calendar values. Entry Edit preserves identity/other dates; Remove retains outfits/history. Save acknowledges one write; Undo removes only that saved entry and remains reconcilable after its normal window if interrupted. Outfit composition edits flag affected future assignments; past intent/wear stays intact. Routines/trips/bulk and linked wear/history follow in the same group. Native unit checks are in [issue25](../plan/issue-25.md); all rendered/E2E acceptance stays #30.
+
 
 October16 implementation receipt: #24/#23 supplies the real Closet collections/Add/scoped search, piece metadata/availability/archive/Undo/restore/reviewed deletion, outfit builder/pins/choosers/rules/review/save/detail/favorite/delete, theme creation/multiple memberships/edit/delete and shared explicit Plan/Wear tasks. Saved outfit links select the exact identity; new themes open actual detail, edits retain their caller and nested theme selection remains provisional. Recorded wear and prior estimates remain distinct. Native units verify persistence/retry/cascade/source coordination; every UI/runtime acceptance claim remains Deferred to #30 under the owner-approved unit-only feature policy. Existing E2E contextual-Add selectors must be reconciled there.
 
@@ -18,6 +31,12 @@ S4 connects outfit detail/receipt → real Plan a look. Date/timezone, explicit 
 S5 connects outfit → Record wear → day/pieces/timezone review → explicit save → actual wear receipt/history. The shared owned-piece chooser keeps parent drafts until Apply. A previously recorded identical item set/day offers Use existing record; it never doubles counts. Future days are rejected as wear. Definite/unknown failures retain exact operation state and drafts. Minimal non-photo historical snapshots survive source piece changes/deletion. Plans remain separate, and #26 extends this same record/history model. All E2E/runtime acceptance remains #30.
 
 S6 outfit More provides Edit/Favorite/Delete. Favorite/delete retry uses the exact immutable receipt. Delete previews theme/plan impact, rejects a changed impact and commits reference changes atomically while preserving dates, owned pieces/photos and actual-wear snapshots. Saved Open outfit opens that exact persisted identity via the shared piece/outfit route; Planner and Closet register the same destinations. Saved occasion/mood survive edit/reopen. UI runtime proof remains #30.
+
+S2 adds Planner Add → Plan several days → retained Name/Start/End/Timezone → Review every date/outfit/intentional gap. Resolve conflict pushes the exact existing date/occasion and Keep both/Replace choice; Back changes nothing. Save commits the entire reviewed plan or none. Open plan reaches the actual named definition and its shared entry IDs; restart resumes the authoring draft/receipt. No assistance or routine/trip button is shown before its working slice. All runtime/E2E acceptance stays #30.
+
+S3 adds Create a routine → weekdays/occasion/selected outfits/repetition → explicitly rule-based Fill dates or manual choices → Review dates → atomic Save. Edit scope opens the selected entry or retained this/future/whole task; completed entries are protected. Removed dates are counted, changed composition is displayed and stale-source refresh retains proposed new dates/outfits. Three calendar months use the recorded timezone; no background recurrence or implicit wear.
+
+S4 adds Plan an event or trip → retained dates/destination/activities/timezone → atomic reviewed plan → real trip detail/date plan/packing. Packing checks persist by owned piece ID, deduplicate scheduled uses, retain surviving checks after assignment changes and expose missing/unassigned/unavailable gaps. Review unassigned dates opens actual entry edit or same-parent date creation. Named-entry date bounds require editing the whole plan to expand its range. Destination text does not enable location/weather; manual/offline path stays complete. No runtime/E2E acceptance claim.
 
 ## Issue #21 entry and shared Style slices · October15
 
@@ -199,3 +218,9 @@ L152–L154/L166–L169 define six preference questions plus Review, with unnumb
 The [verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) retains the broad matrix in #30. Each feature must already execute focused E2E and inspect/publish rendered proof of its own UI ACs. Implement control behavior and update this inventory during each feature; retained failures and genuinely deferred qualification remain explicit.
 
 For every row above, open from each listed source, complete once, cancel once, return with Back, then test the applicable empty/error path. Check draft retention, exact record identity, duplicate prevention, keyboard/focus return, largest text, dark appearance and Reduce Motion. Every newly introduced control must update this ledger and the manifest in the same change. Static Paper inspection does not establish native animation, persistence, OS presentation or accessibility correctness.
+
+
+October16 PR35 Codex correction: timezone-only wear correction detaches links while preserving the intended day/zone on existing plans. Profile More → Wear insights → same-period source history is the canonical root entry; saved-wear receipt still finishes before explicitly opening history. No duplicate Profile body controls. Core59/native149 pass; rendered/E2E acceptance stays #30.
+
+
+October16 PR35 scoped-authoring correction: This entry keeps shared definition fields fixed; retained earlier/completed entries constrain parent range/zone. Refresh reviewed entries explicitly replaces original slots from latest saved values and retains added-date identity, including current outfit snapshots. Single/bulk assignment review identifies date/outfit/unavailable pieces and requires another outfit or an explicit gap before Save. Actual Core59/native152 unit results do not establish rendered/E2E acceptance; #30 remains the owner.

@@ -1,6 +1,6 @@
 import Foundation
 
-public enum PlanValidationError: Error, Equatable { case invalidDay, invalidTimezone, invalidOutfit, overlap, invalidRecord }
+public enum PlanValidationError: Error, Equatable { case invalidDay, invalidTimezone, invalidOutfit, overlap, invalidRecord, unavailablePieces }
 
 /// A calendar day in its recorded timezone, independent of later device travel.
 public struct LocalPlanDay: Codable, Equatable, Sendable {
@@ -47,10 +47,12 @@ public struct OutfitPlanEntry: Identifiable, Codable, Equatable, Sendable {
     public var state: PlanEntryState
     public var requiresReview: Bool
     public var revision: Int
+    public var wearRecordID: UUID?
 
     public func validated() throws {
         _ = try day.date()
         guard revision > 0, revision < Int.max, occasion.count <= 80,
+              wearRecordID == nil || state == .worn,
               (outfitID == nil) == (outfitRevision == nil), outfitRevision.map({ $0 > 0 }) ?? true,
               state != .planned || outfitID != nil else { throw PlanValidationError.invalidRecord }
     }
@@ -74,14 +76,28 @@ public struct OutfitPlanDraft: Identifiable, Codable, Equatable, Sendable {
     public var outfit: Outfit?
     public var unassignedByChoice: Bool?
     public var allowsOverlap: Bool?
+    public var baseEntry: OutfitPlanEntry?
+    public var parentPlanID: UUID?
 
-    public init(ownerID: UUID, outfit: Outfit? = nil, day: LocalPlanDay = LocalPlanDay()) {
-        id = UUID(); entryID = UUID(); planID = UUID(); operationID = UUID()
+    public init(ownerID: UUID, outfit: Outfit? = nil, day: LocalPlanDay = LocalPlanDay(), planID: UUID? = nil) {
+        id = UUID(); entryID = UUID(); self.planID = planID ?? UUID(); parentPlanID = planID; operationID = UUID()
         self.ownerID = ownerID; self.outfit = outfit; self.day = day; occasion = ""
+    }
+
+    public init(editing entry: OutfitPlanEntry, outfit: Outfit?) {
+        id = UUID(); operationID = UUID(); entryID = entry.id; planID = entry.planID; ownerID = entry.ownerID
+        day = entry.day; occasion = entry.occasion; self.outfit = outfit; baseEntry = entry
+        unassignedByChoice = entry.outfitID == nil
     }
 
     public func validatedForSave(outfits: [Outfit]) throws {
         _ = try day.date()
+        guard parentPlanID == nil || parentPlanID == planID else { throw PlanValidationError.invalidRecord }
+        if let baseEntry {
+            try baseEntry.validated()
+            guard baseEntry.id == entryID, baseEntry.planID == planID, baseEntry.ownerID == ownerID,
+                  baseEntry.state == .planned || baseEntry.state == .unassigned else { throw PlanValidationError.invalidRecord }
+        }
         guard occasion.count <= 80 else { throw PlanValidationError.invalidRecord }
         guard outfit != nil || unassignedByChoice == true else { throw PlanValidationError.invalidOutfit }
         if let outfit {

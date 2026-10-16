@@ -16,9 +16,10 @@ final class OutfitPlanEditorModel: Identifiable {
         self.state = state; self.draft = draft; id = draft.id
         saved = try state.store?.savedPlan(for: draft)
     }
-    var canSave: Bool { !pending && !unknown && saved == nil && (try? draft.validatedForSave(outfits: state.outfits)) != nil }
+    var availabilityConflict: String? { PlanningAvailability.message(outfit: draft.outfit, day: draft.day, pieces: state.ownedPieces) }
+    var canSave: Bool { !pending && !unknown && saved == nil && availabilityConflict == nil && (try? draft.validatedForSave(outfits: state.outfits)) != nil }
     var hasOverlap: Bool {
-        state.planEntries.contains { $0.day == draft.day && $0.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == draft.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+        state.planEntries.contains { $0.id != draft.entryID && $0.day == draft.day && $0.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == draft.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
     }
     func update(_ change: (inout OutfitPlanDraft) -> Void) {
         guard !pending, !unknown, saved == nil else { return }
@@ -44,7 +45,8 @@ final class OutfitPlanEditorModel: Identifiable {
                 guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
                 saved = try store.savedPlan(for: draft)
                 unknown = false
-                self.error = saved == nil ? "The plan wasn’t saved. Check its current outfit and date, and explicitly keep both if that occasion already has a plan. Your draft is retained." : nil
+                state.reloadPieces()
+                self.error = saved == nil ? (availabilityConflict ?? "The plan wasn’t saved. Check its current outfit and date, and explicitly keep both if that occasion already has a plan. Your draft is retained.") : nil
                 state.reloadPlanEntries()
             } catch { unknown = true; self.error = "The save result is unknown. Check the same operation before editing or starting another plan." }
         }
@@ -55,6 +57,13 @@ final class OutfitPlanEditorModel: Identifiable {
             guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
             try store.finishPlanDraft(draft, discarding: discarding)
             state.planEditor = nil; state.reloadPlanEntries()
+            if !discarding, let saved {
+                state.plannerDay = saved.day
+                if draft.baseEntry == nil {
+                    state.recentPlan = saved; state.planUndoDeadline = Date().addingTimeInterval(20)
+                    state.planUndoRequest = PlanEntryDeletionRequest(entry: saved); state.planUndoPending = false
+                }
+            }
             if openPlanner { state.selection = 2 }
         } catch { self.error = "This task couldn’t close. Your plan and draft are retained; retry." }
     }
@@ -62,27 +71,49 @@ final class OutfitPlanEditorModel: Identifiable {
 
 extension AppState {
     func reloadPlanEntries() {
-        do { planEntries = try store?.planEntries() ?? []; planError = nil }
+        do {
+            let entries = try store?.planEntries() ?? []
+            let definitions = try store?.planDefinitions() ?? []
+            planEntries = entries; planDefinitions = definitions; planError = nil
+        }
         catch { planError = "Your plans couldn’t be read. Existing data is retained; retry." }
     }
     func resumePlanDraft() {
-        guard planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil, entry.page == .main else { return }
+        guard planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil, entry.page == .main else { return }
         do {
             guard let draft = try store?.planDraft() else { return }
             planEditor = try OutfitPlanEditorModel(state: self, draft: draft)
         } catch { planError = "Your plan draft couldn’t be read. Keep the app data and retry." }
     }
-    func openPlan(outfitID: UUID? = nil, day: LocalPlanDay = LocalPlanDay()) {
-        guard planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
+    func openPlan(outfitID: UUID? = nil, day: LocalPlanDay = LocalPlanDay(), editing entry: OutfitPlanEntry? = nil, parentPlanID: UUID? = nil) {
+        guard planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             reloadOutfits(); reloadPlanEntries()
             if let retained = try store.planDraft() { planEditor = try OutfitPlanEditorModel(state: self, draft: retained); return }
-            let outfit = try outfitID.flatMap { try store.outfit(id: $0) }
-            if outfitID != nil && outfit == nil { throw PieceStore.StoreError.staleRevision }
-            let draft = OutfitPlanDraft(ownerID: try store.todayConfiguration().ownerID, outfit: outfit, day: day)
+            let selectedOutfitID = entry?.outfitID ?? outfitID
+            let outfit = try selectedOutfitID.flatMap { try store.outfit(id: $0) }
+            if selectedOutfitID != nil && outfit == nil { throw PieceStore.StoreError.staleRevision }
+            let draft: OutfitPlanDraft
+            if let entry { draft = OutfitPlanDraft(editing: entry, outfit: outfit) }
+            else { draft = OutfitPlanDraft(ownerID: try store.todayConfiguration().ownerID, outfit: outfit, day: day, planID: parentPlanID) }
             try store.savePlanDraft(draft)
             planEditor = try OutfitPlanEditorModel(state: self, draft: draft)
         } catch { collectionError = "A plan draft couldn’t open. Your existing outfit and plans haven’t changed." }
+    }
+}
+
+
+extension AppState {
+    func undoRecentPlan() {
+        guard let request = planUndoRequest, let deadline = planUndoDeadline, planUndoPending || deadline >= Date() else {
+            recentPlan = nil; planUndoRequest = nil; return
+        }
+        planUndoPending = true
+        do {
+            guard let store else { throw PieceStore.StoreError.corruptStore }
+            try store.deletePlanEntry(request)
+            recentPlan = nil; planUndoRequest = nil; planUndoDeadline = nil; planUndoPending = false; reloadPlanEntries()
+        } catch { planError = "Undo isn’t acknowledged. Retry the same Undo before changing this entry." }
     }
 }

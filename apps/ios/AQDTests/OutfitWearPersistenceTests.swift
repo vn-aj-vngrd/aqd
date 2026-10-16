@@ -76,6 +76,165 @@ struct OutfitWearPersistenceTests {
         #expect(try store.savedWear(for: draft) == saved)
     }
 
+    @Test func explicitWearLinksPlansAndSkipAndPlanDeletionPreserveActualFacts() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: directory)
+        let (outfit, piece) = try await seed(store)
+        let day = LocalPlanDay(year: 2026, month: 1, day: 1, timeZoneID: "Asia/Manila")
+        var authoring = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: outfit.ownerID, name: "Real plan", start: day, end: day))
+        authoring.plan.name = "Real plan"
+        authoring.slots[0].outfit = outfit
+        try store.savePlanAuthoringDraft(authoring)
+        let receipt = try store.savePlanAuthoring(authoring)
+        try store.finishPlanAuthoring(authoring)
+        let entry = try #require(receipt.entries.first)
+        #expect(try store.wearRecords().isEmpty)
+        var wear = OutfitWearDraft(ownerID: outfit.ownerID, outfitID: outfit.id, pieces: [piece], day: day)
+        wear.planEntry = entry
+        try store.saveWearDraft(wear)
+        let actual = try store.saveWear(wear)
+        try store.finishWearDraft(wear)
+        let linked = try #require(try store.planEntries().first)
+        #expect(linked.state == .worn && linked.wearRecordID == actual.id)
+        #expect(actual.planEntryID == entry.id)
+        #expect(throws: (any Error).self) { try store.deletePlanEntry(PlanEntryDeletionRequest(entry: linked)) }
+        #expect(try store.planEntries() == [linked])
+        let deletion = HistoryMutation(action: .deletePlan(receipt.plan, [linked]))
+        try store.applyHistoryMutation(deletion)
+        try store.applyHistoryMutation(deletion)
+        #expect(try store.planEntries().isEmpty)
+        #expect(try store.wearRecords() == [actual])
+        var other = OutfitPlanDraft(ownerID: outfit.ownerID, outfit: outfit, day: day)
+        other.occasion = "Evening"
+        try store.savePlanDraft(other)
+        let skippable = try store.savePlan(other)
+        try store.finishPlanDraft(other)
+        let skip = HistoryMutation(action: .skip(skippable))
+        try store.applyHistoryMutation(skip)
+        try store.applyHistoryMutation(skip)
+        #expect(try store.planEntries().first?.state == .skipped)
+        #expect(try store.wearRecords() == [actual])
+    }
+
+    @Test func correctionRechecksDuplicatesAndUndoRestoresEverySurvivingLinkExactlyOnce() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        var loseAck = false
+        let store = try PieceStore(directory: directory, afterOutfitSave: { if loseAck { throw CocoaError(.fileReadUnknown) } })
+        let (outfit, piece) = try await seed(store)
+        let day = LocalPlanDay(year: 2026, month: 1, day: 1, timeZoneID: "Asia/Manila")
+        var first: OutfitWearRecord?
+        for occasion in ["Morning", "Afternoon"] {
+            var plan = OutfitPlanDraft(ownerID: outfit.ownerID, outfit: outfit, day: day); plan.occasion = occasion
+            try store.savePlanDraft(plan); let entry = try store.savePlan(plan); try store.finishPlanDraft(plan)
+            var wear = OutfitWearDraft(ownerID: outfit.ownerID, outfitID: outfit.id, pieces: [piece], day: day)
+            wear.planEntry = entry
+            try store.saveWearDraft(wear)
+            if let first {
+                #expect(throws: WearValidationError.alreadyRecorded) { try store.saveWear(wear) }
+                #expect(try store.planEntries().first { $0.id == entry.id }?.state == .planned)
+                wear.acceptedDuplicateID = first.id; try store.saveWearDraft(wear)
+            }
+            first = try store.saveWear(wear); try store.finishWearDraft(wear)
+        }
+        let original = try #require(first)
+        #expect(try store.wearRecords().count == 1)
+        #expect(try store.planEntries().allSatisfy { $0.wearRecordID == original.id })
+        var correction = OutfitWearDraft(editing: original, currentPieces: [piece])
+        correction.day.day = 2
+        try store.saveWearDraft(correction)
+        loseAck = true
+        #expect(throws: (any Error).self) { try store.saveWear(correction) }
+        let corrected = try store.saveWear(correction)
+        #expect(corrected.id == original.id && corrected.revision == 2 && corrected.day.day == 2)
+        #expect(corrected.pieces == original.pieces)
+        #expect(try store.planEntries().allSatisfy { $0.state == .planned && $0.wearRecordID == nil })
+        try store.finishWearDraft(correction)
+        loseAck = false
+        let duplicate = OutfitWearDraft(ownerID: outfit.ownerID, pieces: [piece], day: day)
+        try store.saveWearDraft(duplicate); _ = try store.saveWear(duplicate); try store.finishWearDraft(duplicate)
+        var collision = OutfitWearDraft(editing: corrected, currentPieces: [piece]); collision.day = day
+        try store.saveWearDraft(collision)
+        #expect(throws: WearValidationError.alreadyRecorded) { try store.saveWear(collision) }
+        #expect(try store.wearRecords().count == 2)
+        try store.finishWearDraft(collision, discarding: true)
+        let undo = HistoryMutation(action: .undoWear(corrected))
+        loseAck = true
+        #expect(throws: (any Error).self) { try store.applyHistoryMutation(undo) }
+        try store.applyHistoryMutation(undo)
+        #expect(try store.wearRecords().count == 1)
+        #expect(try store.savedWear(for: correction) == corrected)
+        #expect(try store.wearRecords().allSatisfy { $0.id != corrected.id })
+    }
+
+    @Test func savedReceiptFinishesBeforeOpeningHistoryAndLinkedUndoSurvivesRestart() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: directory)
+        let (outfit, piece) = try await seed(store)
+        let state = AppState(store: store)
+        let day = LocalPlanDay(year: 2026, month: 1, day: 1, timeZoneID: "Asia/Manila")
+        var ids: [UUID] = []
+        var saved: OutfitWearRecord?
+        for occasion in ["First", "Second"] {
+            var draft = OutfitPlanDraft(ownerID: outfit.ownerID, outfit: outfit, day: day); draft.occasion = occasion
+            try store.savePlanDraft(draft); let entry = try store.savePlan(draft); try store.finishPlanDraft(draft); ids.append(entry.id)
+            state.openWear(outfitID: outfit.id, entry: entry)
+            let editor = try #require(state.wearEditor)
+            await editor.save(useExisting: saved != nil)
+            saved = try #require(editor.saved)
+            editor.finishOpeningHistory()
+            #expect(state.wearEditor == nil && state.profileHistory && state.selection == 4)
+            #expect(try store.wearDraft() == nil)
+        }
+        let actual = try #require(saved)
+        let reopened = try PieceStore(directory: directory)
+        #expect(try reopened.planEntries().allSatisfy { $0.wearRecordID == actual.id })
+        let request = HistoryMutation(action: .undoWear(actual))
+        try reopened.applyHistoryMutation(request); try reopened.applyHistoryMutation(request)
+        #expect(try reopened.wearRecords().isEmpty)
+        #expect(try reopened.planEntries().count == 2)
+        #expect(try reopened.planEntries().allSatisfy { ids.contains($0.id) && $0.state == .planned && $0.wearRecordID == nil })
+        #expect(PieceWearSummary(piece: piece, records: try reopened.wearRecords()).recorded == 0)
+        state.store = nil
+    }
+
+    @Test func v13MigrationPreservesWearSnapshotAndDoesNotInventPlanLinks() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let today = TodayConfiguration(ownerID: UUID())
+        let piece = WardrobePiece(id: UUID(), name: "Before migration", category: .tops, photoID: UUID())
+        let record = OutfitWearRecord(id: UUID(), ownerID: today.ownerID, day: LocalPlanDay(year: 2026, month: 1, day: 1, timeZoneID: "Asia/Manila"), outfitID: nil, pieces: [WearPieceSnapshot(piece)])
+        do {
+            let schema = Schema(versionedSchema: LocalSchemaV13.self)
+            let config = ModelConfiguration(schema: schema, url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
+            let container = try ModelContainer(for: schema, configurations: [config]); let context = ModelContext(container)
+            context.insert(StoredTodayConfiguration(today)); context.insert(try StoredLocalExperience(LocalExperience(enteredPrivateSpace: true)))
+            context.insert(try StoredOutfitWear(record)); try context.save()
+        }
+        try Data("AQD-piece-store:13".utf8).write(to: directory.appendingPathComponent("schema-version"))
+        let store = try PieceStore(directory: directory)
+        #expect(try store.wearRecords() == [record])
+        #expect(try store.planEntries().isEmpty)
+        let undo = HistoryMutation(action: .undoWear(record)); try store.applyHistoryMutation(undo)
+        #expect(try store.wearRecords().isEmpty)
+    }
+
+    @Test func timezoneOnlyCorrectionDetachesExistingPlanLinksWithoutAddingWear() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let (outfit, piece) = try await seed(store)
+        let day = LocalPlanDay(year: 2026, month: 1, day: 1, timeZoneID: "Asia/Manila")
+        let plan = OutfitPlanDraft(ownerID: outfit.ownerID, outfit: outfit, day: day)
+        try store.savePlanDraft(plan); let entry = try store.savePlan(plan); try store.finishPlanDraft(plan)
+        var draft = OutfitWearDraft(ownerID: outfit.ownerID, outfitID: outfit.id, pieces: [piece], day: day); draft.planEntry = entry
+        try store.saveWearDraft(draft); let saved = try store.saveWear(draft); try store.finishWearDraft(draft)
+        var correction = OutfitWearDraft(editing: saved, currentPieces: [piece]); correction.day.timeZoneID = "America/New_York"
+        try store.saveWearDraft(correction); let corrected = try store.saveWear(correction)
+        #expect(corrected.id == saved.id && corrected.day.key == saved.day.key && corrected.pieces == saved.pieces)
+        #expect(try store.wearRecords().count == 1)
+        #expect(try store.planEntries().first?.state == .planned)
+        #expect(try store.planEntries().first?.wearRecordID == nil)
+        #expect(try store.planEntries().first?.day == day)
+    }
+
     @Test func v6MigrationKeepsTheExistingPlanWithoutInventingWear() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

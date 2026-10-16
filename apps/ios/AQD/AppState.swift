@@ -39,8 +39,20 @@ final class AppState {
     var todayError: String?
     var photoCleanupError: String?
     var wearEditor: OutfitWearEditorModel?
+    var wearHistoryDay = LocalPlanDay()
+    var wearHistoryMode = PlannerCalendarMode.month
+    var wearHistoryCalendar = false
     var wearRecords: [OutfitWearRecord] = []
     var wearError: String?
+    var planDefinitions: [PlanDefinition] = []
+    var planAuthoringEditor: PlanAuthoringModel?
+    var plannerDay = LocalPlanDay()
+    var plannerMode = PlannerCalendarMode.week
+    var plannerPath: [PlannerRoute] = []
+    var recentPlan: OutfitPlanEntry?
+    var planUndoDeadline: Date?
+    var planUndoRequest: PlanEntryDeletionRequest?
+    var planUndoPending = false
     var planEditor: OutfitPlanEditorModel?
     var planEntries: [OutfitPlanEntry] = []
     var planError: String?
@@ -52,6 +64,8 @@ final class AppState {
     var outfitError: String?
     var styleEditor: StyleEditorModel?
     var profileSettings = false
+    var profileHistory = false
+    var profileInsights = false
     var entry = PrivateEntryState(alreadyEntered: true)
     var reloadEntryAfterStyle = false
 
@@ -70,6 +84,7 @@ final class AppState {
         reloadOutfits()
         resumeOutfitDraft()
         reloadPlanEntries()
+        resumePlanAuthoring()
         resumePlanDraft()
         reloadWear()
         resumeWearDraft()
@@ -163,6 +178,7 @@ final class AppState {
             reloadOutfits()
             resumeOutfitDraft()
             reloadPlanEntries()
+            resumePlanAuthoring()
             resumePlanDraft()
             reloadWear()
             resumeWearDraft()
@@ -211,6 +227,7 @@ final class AppState {
     }
 
     func openStyle(source: StylePreferenceSource) {
+        guard planAuthoringEditor == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             let experience = try store.localExperience()
@@ -294,6 +311,7 @@ final class AppState {
     }
 
     func addPiece() {
+        guard planAuthoringEditor == nil else { return }
         guard let store else { return }
         do {
             let recovered = try store.newPieceDraft()

@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
-  "sourceHead": "27718abe72c925f9469ff57e1bc04b29606ba895",
-  "sourceState": "Group #24/#23 feature slices and independent review corrections implemented and unit verified; final source hashes in docs/plan/evidence/issue-24-23/unit-receipt.json. Local review and unsigned Release pass. Remote gates pending; runtime acceptance deferred to #30.",
+  "sourceHead": "c9639dddef5d21833126f21c97f04dd19cd61d34",
+  "sourceState": "Group #25/#26 implements seven source slices and independent/Codex corrections at sourceHead. Core59/native152 and unsigned Release pass; source-bound receipt in docs/plan/evidence/issue-25-26. All rendered/E2E acceptance remains #30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -18,9 +18,9 @@
     "allRootIdsMatchRegisteredInventory": true
   },
   "counts": {
-    "source-partial": 98,
+    "source-partial": 123,
     "structural-reference": 11,
-    "missing": 121,
+    "missing": 96,
     "placeholder": 2
   },
   "verifiedCompleteScreenStates": 0,
@@ -155,7 +155,7 @@
     "05": {
       "coverage": "source-partial",
       "required": "Week/Month/date/agenda/plans/timezones/routines/trips/packing/conflicts",
-      "source": "Actual OutfitPlanEntry/draft/receipt, explicit outfit/unassigned/overlap review, stable local day/timezone and minimal Planner list/detail; full calendar/routines/trips remain #25."
+      "source": "Planner calendar/agenda, single entry edit/remove/Undo, atomic named plan/conflicts, shared timezone, three-calendar-month routine scopes, trip destination/activities/detail/date repair and persistent deduplicated packing. Source is unit verified; runtime acceptance remains #30."
     },
     "06": {
       "coverage": "source-partial",
@@ -445,8 +445,8 @@
       "referenceId": null,
       "registeredLabel": "05.02 \u00b7 L85 \u00b7 Planner \u00b7 Month",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -465,8 +465,8 @@
       "referenceId": null,
       "registeredLabel": "05.03 \u00b7 L82 \u00b7 Planner \u00b7 Empty date",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -505,8 +505,8 @@
       "referenceId": null,
       "registeredLabel": "06.00 \u00b7 L11 \u00b7 Record wear",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -525,8 +525,8 @@
       "referenceId": null,
       "registeredLabel": "06.05 \u00b7 L12 \u00b7 Wear history",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -655,8 +655,8 @@
       "referenceId": null,
       "registeredLabel": "06.04 \u00b7 L141 \u00b7 Undo wear \u00b7 Native overlay STATE",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -665,8 +665,8 @@
       "referenceId": null,
       "registeredLabel": "06.01 \u00b7 L142 \u00b7 Wear already recorded \u00b7 Native overlay STATE",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -705,8 +705,8 @@
       "referenceId": null,
       "registeredLabel": "06.07 \u00b7 L146 \u00b7 Wear history \u00b7 Empty",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -715,8 +715,8 @@
       "referenceId": null,
       "registeredLabel": "06.09 \u00b7 L147 \u00b7 Insights \u00b7 Insufficient history",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -925,8 +925,8 @@
       "referenceId": null,
       "registeredLabel": "05.11 \u00b7 L151 \u00b7 Timezone \u00b7 Shared dates",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1115,8 +1115,8 @@
       "referenceId": null,
       "registeredLabel": "05.04 \u00b7 L127 \u00b7 Add to Planner",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1135,8 +1135,8 @@
       "referenceId": null,
       "registeredLabel": "05.14 \u00b7 L129 \u00b7 Edit routine",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1145,8 +1145,8 @@
       "referenceId": null,
       "registeredLabel": "06.02 \u00b7 L130 \u00b7 Wear record",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1555,8 +1555,8 @@
       "referenceId": null,
       "registeredLabel": "05.12 \u00b7 L36 \u00b7 New routine",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1565,8 +1565,8 @@
       "referenceId": null,
       "registeredLabel": "05.01 \u00b7 L33 \u00b7 Planner \u00b7 Retained week",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1575,8 +1575,8 @@
       "referenceId": null,
       "registeredLabel": "05.13 \u00b7 L37 \u00b7 Office routine",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1595,8 +1595,8 @@
       "referenceId": null,
       "registeredLabel": "05.16 \u00b7 L38 \u00b7 Trip plan",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1605,8 +1605,8 @@
       "referenceId": null,
       "registeredLabel": "05.17 \u00b7 L39 \u00b7 Packing list",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1615,8 +1615,8 @@
       "referenceId": null,
       "registeredLabel": "05.18 \u00b7 L40 \u00b7 Review plan",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1625,8 +1625,8 @@
       "referenceId": null,
       "registeredLabel": "06.08 \u00b7 L41 \u00b7 Wear insights",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1635,8 +1635,8 @@
       "referenceId": null,
       "registeredLabel": "05.19 \u00b7 L42 \u00b7 Resolve a conflict",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1705,8 +1705,8 @@
       "referenceId": null,
       "registeredLabel": "06.06 \u00b7 L137 \u00b7 Wear calendar",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1715,8 +1715,8 @@
       "referenceId": null,
       "registeredLabel": "06.03 \u00b7 L136 \u00b7 Correct wear",
       "flowSection": "06",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1745,8 +1745,8 @@
       "referenceId": null,
       "registeredLabel": "05.10 \u00b7 L156 \u00b7 Remove plan entry \u00b7 Native overlay STATE",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1755,8 +1755,8 @@
       "referenceId": null,
       "registeredLabel": "05.15 \u00b7 L155 \u00b7 New event or trip",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1765,8 +1765,8 @@
       "referenceId": null,
       "registeredLabel": "05.07 \u00b7 L157 \u00b7 Choose one outfit \u00b7 Shared",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -2524,7 +2524,7 @@
       "docs/plan/issue-24.md",
       "docs/plan/issue-23.md"
     ],
-    "state": "Local gate complete, independent findings resolved/rechecked; remote gates pending",
+    "state": "Shipped in PR34, squash e71e1de, published v1.3.0; local unit receipt retains its recorded scope. Main CI/Release and current-head Codex completed with source-backed disposition of the search-filter suggestion.",
     "native": "Core52/native129 plus affected final five-case native refresh, zero failures; repository tooling51 and unsigned Release pass",
     "limits": "All E2E/integrated UI/accessibility/device/model qualification deferred to #30. No simulator or hosted native CI. No runtimeComplete claim.",
     "checkedOn": "2026-10-16",

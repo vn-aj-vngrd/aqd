@@ -16,9 +16,10 @@ public struct OutfitWearRecord: Identifiable, Codable, Equatable, Sendable {
     public let outfitID: UUID?
     public let pieces: [WearPieceSnapshot]
     public var revision: Int
+    public var planEntryID: UUID?
 
-    public init(id: UUID, ownerID: UUID, day: LocalPlanDay, outfitID: UUID?, pieces: [WearPieceSnapshot], revision: Int = 1) {
-        self.id = id; self.ownerID = ownerID; self.day = day; self.outfitID = outfitID; self.pieces = pieces; self.revision = revision
+    public init(id: UUID, ownerID: UUID, day: LocalPlanDay, outfitID: UUID?, pieces: [WearPieceSnapshot], revision: Int = 1, planEntryID: UUID? = nil) {
+        self.id = id; self.ownerID = ownerID; self.day = day; self.outfitID = outfitID; self.pieces = pieces; self.revision = revision; self.planEntryID = planEntryID
     }
     public func validated() throws {
         _ = try day.date()
@@ -38,19 +39,36 @@ public struct OutfitWearDraft: Identifiable, Codable, Equatable, Sendable {
     public var outfitID: UUID?
     public var pieceIDs: [UUID]
     public var reviewedRevisions: [UUID: Int]
+    public var baseRecord: OutfitWearRecord?
+    public var planEntry: OutfitPlanEntry?
     public var acceptedDuplicateID: UUID?
 
     public init(ownerID: UUID, outfitID: UUID? = nil, pieces: [WardrobePiece], day: LocalPlanDay = LocalPlanDay()) {
         id = UUID(); wearID = UUID(); operationID = UUID(); self.ownerID = ownerID; self.day = day; self.outfitID = outfitID
         pieceIDs = pieces.map(\.id); reviewedRevisions = Dictionary(uniqueKeysWithValues: pieces.map { ($0.id, $0.revision) })
     }
+    public init(editing record: OutfitWearRecord, currentPieces: [WardrobePiece]) {
+        id = UUID(); operationID = UUID(); wearID = record.id; ownerID = record.ownerID
+        day = record.day; outfitID = record.outfitID; pieceIDs = record.pieces.map(\.id)
+        reviewedRevisions = Dictionary(uniqueKeysWithValues: currentPieces.map { ($0.id, $0.revision) })
+        baseRecord = record
+    }
     public func validatedForSave(pieces: [WardrobePiece], now: Date = Date()) throws {
         _ = try day.date()
+        if let baseRecord {
+            try baseRecord.validated()
+            guard baseRecord.id == wearID, baseRecord.ownerID == ownerID, planEntry == nil else { throw WearValidationError.invalidRecord }
+        }
+        if let planEntry {
+            try planEntry.validated()
+            guard planEntry.ownerID == ownerID, planEntry.state == .planned || planEntry.state == .unassigned,
+                  planEntry.day == day else { throw WearValidationError.invalidRecord }
+        }
         guard !pieceIDs.isEmpty else { throw WearValidationError.piecesRequired }
         guard Set(pieceIDs).count == pieceIDs.count else { throw WearValidationError.invalidRecord }
         let zone = TimeZone(identifier: day.timeZoneID) ?? .current
         guard day.key <= LocalPlanDay(date: now, timeZone: zone).key else { throw WearValidationError.futureDay }
-        guard pieceIDs.allSatisfy({ id in pieces.contains { $0.id == id && reviewedRevisions[id] == $0.revision } }) else {
+        guard pieceIDs.allSatisfy({ id in baseRecord?.pieces.contains { $0.id == id } == true || pieces.contains { $0.id == id && reviewedRevisions[id] == $0.revision } }) else {
             throw WearValidationError.stalePieces
         }
     }

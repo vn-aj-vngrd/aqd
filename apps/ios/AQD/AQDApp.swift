@@ -70,6 +70,9 @@ private struct AppRootView: View {
         .sheet(item: $state.wearEditor) { model in
             OutfitWearEditorView(model: model).environment(state)
         }
+        .sheet(item: $state.planAuthoringEditor) { model in
+            PlanAuthoringView(model: model).environment(state)
+        }
         .sheet(item: $state.planEditor) { model in
             OutfitPlanEditorView(model: model).environment(state)
         }

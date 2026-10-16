@@ -35,10 +35,13 @@ struct LocalProfileView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
                             Button("Style") { state.openStyle(source: .profile) }
+                            Button("Wear insights") { state.profileInsights = true }
                             Button("Settings") { state.profileSettings = true }
                         } label: { Label("More", systemImage: "ellipsis") }
                     }
                 }
+                .navigationDestination(isPresented: $state.profileInsights) { LocalWearInsightsView() }
+                .navigationDestination(isPresented: $state.profileHistory) { LocalWearHistoryView() }
                 .navigationDestination(isPresented: $state.profileSettings) { LocalSettingsView() }
         }.tint(AppTheme.ink)
     }
