@@ -67,7 +67,7 @@ struct FitJournalGrid: View {
     var body: some View {
         Group {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Your fits").font(AppTypography.fieldLabel)
+                Text("Your fits").font(AppTypography.fieldLabel).padding(.horizontal, 20)
                 if let error = state.fitError {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry journal") { state.reloadFits() }.frame(minHeight: 44)
@@ -78,7 +78,7 @@ struct FitJournalGrid: View {
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
                         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12)).accessibilityIdentifier("profile.fits.empty")
                 } else {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3), spacing: 8) {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 2, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3), spacing: 2) {
                         ForEach(state.fitMemories) { memory in
                             NavigationLink { FitMemoryDetailView(id: memory.id) } label: {
                                 FitMemoryArtwork(memory: memory, thumbnail: true)
@@ -205,30 +205,60 @@ struct FitMemoryDetailView: View {
             VStack(alignment: .leading, spacing: 20) {
                 if let memory {
                     FitMemoryArtwork(memory: memory).frame(minHeight: 240, maxHeight: 360)
-                    Text(memory.day.key).font(AppTypography.section)
-                    Text(memory.day.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    Label("Private on this iPhone", systemImage: "lock").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                    if !memory.note.isEmpty { Text(memory.note).font(AppTypography.body) }
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(memory.day.displayDate).font(AppTypography.detailTitle)
+                        if !memory.note.isEmpty { Text(memory.note).font(AppTypography.body) }
+                        Text("A fit memory. Wear is recorded separately.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                        DisclosureGroup("Memory details") {
+                            Text(memory.day.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }.font(AppTypography.supporting)
+                    }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
                     if let snapshot = memory.outfit {
-                        Text(snapshot.name).font(AppTypography.fieldLabel)
-                        ForEach(snapshot.pieces, id: \.id) { Text("\($0.name) · \($0.category.rawValue.capitalized)").font(AppTypography.supporting) }
-                        if state.outfits.contains(where: { $0.id == snapshot.id }) {
-                            NavigationLink(value: ClosetRoute.outfit(snapshot.id)) { Text("Open linked outfit") }.frame(minHeight: 44)
-                        } else { Text("Linked outfit unavailable. This memory keeps its recorded snapshot.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+                        VStack(alignment: .leading, spacing: 16) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(snapshot.name).font(AppTypography.fieldLabel)
+                                Text("\(snapshot.pieces.count) pieces in this memory").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            }
+                            ForEach(snapshot.pieces, id: \.id) { piece in
+                                HStack(spacing: 12) {
+                                    if let saved = state.ownedPieces.first(where: { $0.id == piece.id }) {
+                                        PieceThumbnail(photoID: saved.photoID, recipe: saved.photoRecipe)
+                                            .frame(width: 56, height: 64).background(AppTheme.imageGround)
+                                    }
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(piece.name).font(AppTypography.supporting)
+                                        Text(piece.category.rawValue.capitalized).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                                    }.frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
+                            if !state.outfits.contains(where: { $0.id == snapshot.id }) {
+                                Text("Linked outfit unavailable. The recorded snapshot is kept here.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            }
+                        }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
                     }
-                    PrimaryAction(title: "Edit fit") { state.openFit(memory) }.disabled(request != nil)
-                    SecondaryAction(title: "Record wear") {
-                        state.recordWear(from: memory)
-                    }.disabled(request != nil)
-                    Text("A memory, not a wear record. Record wear only through the separate reviewed action.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 } else { AppEmptyState("Memory unavailable", systemImage: "photo") }
-                if let error { SemanticFeedback(role: .danger, message: error); if request != nil { Button("Check deletion result", action: delete).frame(minHeight: 44) } }
+                if let error { SemanticFeedback(role: .danger, message: error) }
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle("Fit memory").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
             .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
             .onAppear { state.reloadFits(); state.reloadOutfits() }
-            .toolbar { if let memory { ToolbarItem(placement: .topBarTrailing) {
-                Menu { Button("Delete memory", role: .destructive) { request = FitDeletionRequest(memory: memory); confirming = true } } label: { Label("More", systemImage: "ellipsis") }.disabled(request != nil)
+            .toolbar { if memory != nil || request != nil { ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    if request != nil {
+                        Button("Check deletion result", systemImage: "arrow.clockwise", action: delete)
+                    } else if let memory {
+                        Button("Edit fit", systemImage: "square.and.pencil") { state.openFit(memory) }
+                        Button("Record wear", systemImage: "checkmark.circle") { state.recordWear(from: memory) }
+                        if let snapshot = memory.outfit, state.outfits.contains(where: { $0.id == snapshot.id }) {
+                            NavigationLink(value: ClosetRoute.outfit(snapshot.id)) { Label("Open linked outfit", systemImage: "square.stack") }
+                        }
+                        Section {
+                            Button("Delete memory", systemImage: "trash", role: .destructive) { request = FitDeletionRequest(memory: memory); confirming = true }
+                        }
+                    }
+                } label: { Label("More", systemImage: "ellipsis") }
             } } }
             .alert("Delete this memory?", isPresented: $confirming) {
                 Button("Cancel", role: .cancel) { request = nil }

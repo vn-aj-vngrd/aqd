@@ -21,14 +21,15 @@ import Observation
     private var pending: (AgentConversation, UUID)?
     private var retention: Task<Void, Never>?
     private var deletion: (UUID, Int, UUID)?
-    init(store: PieceStore, qualification: AgentQualification? = AgentQualification.current,
+    init(store: PieceStore, qualification: AgentQualification? = AgentQualification.current, reconcileInterruptedAttempt: Bool = true,
          provider: @escaping @MainActor (String, Int) -> AsyncThrowingStream<String, any Error> = NativeAgentProvider.stream) throws {
         self.store = store; self.qualification = qualification; self.provider = provider
         conversation = AgentConversation(ownerID: try store.todayConfiguration().ownerID)
         reloadHistory()
         if let latest = history.first { conversation = latest }
         if conversation.messages.contains(where: \.isActive) {
-            conversation.interruptActiveAttempt(); _ = persist()
+            conversation.interruptActiveAttempt()
+            if reconcileInterruptedAttempt { _ = persist() }
         }
     }
     func reloadHistory() {

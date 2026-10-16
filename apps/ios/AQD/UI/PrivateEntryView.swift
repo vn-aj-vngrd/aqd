@@ -87,7 +87,7 @@ struct PrivateEntryView: View {
                     Image(systemName: "chevron.forward").font(.footnote).foregroundStyle(AppTheme.secondary)
                     roadmap("Plan a day", symbol: "calendar", active: false)
                 }.accessibilityElement(children: .ignore).accessibilityLabel("Add a piece, make a look, plan a day. Illustrative roadmap.")
-                Text("Start with a photo of one piece you love.\nYour closet is still empty—tour examples aren’t saved.")
+                Text("Start with a photo of one piece you love.\nThen combine your pieces into an outfit.")
                     .font(.subheadline).foregroundStyle(AppTheme.secondary)
                 ActionStack {
                     PrimaryAction(title: "Add piece") { state.enterMain(capture: true) }

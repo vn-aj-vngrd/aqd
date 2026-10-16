@@ -33,6 +33,7 @@ struct AgentConversationView: View {
     @Environment(AppState.self) private var state
     @Bindable var model: AgentModel
     let close: () -> Void
+    var automaticallyFocusComposer = true
     @State private var history = false
     @State private var context = false
     @State private var tools = false
@@ -156,7 +157,7 @@ struct AgentConversationView: View {
                 Text(message.contextSummary ?? "Context measurements unavailable")
                 Text("Generated text cannot change your records. Only an explicit review and saved receipt can do that.")
             }.navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { Button { details = nil } label: { Text("Done") }.accessibilityLabel("Done") } } } }
-            .onAppear { if model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
+            .onAppear { if automaticallyFocusComposer && model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
     }
     private var composer: some View {
         VStack(spacing: 12) {

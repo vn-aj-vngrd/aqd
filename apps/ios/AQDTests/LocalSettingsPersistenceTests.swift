@@ -4,6 +4,43 @@ import Testing
 @testable import AQD
 
 @Suite(.serialized) @MainActor struct LocalSettingsPersistenceTests {
+    @Test func tourReadsCurrentDataWithoutChangingNavigationDraftsOrInterruptedConversations() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: directory)
+        try store.saveEntryState(PrivateEntryState(alreadyEntered: true))
+        let state = AppState(store: store)
+        let owner = try store.todayConfiguration().ownerID
+        var identity = LocalIdentityDraft(ownerID: owner)
+        identity.name = "Current profile"; identity.caption = "Current caption"
+        try store.saveIdentityDraft(identity); _ = try store.saveIdentity(identity); try store.finishIdentityDraft(identity)
+        var retained = LocalIdentityDraft(ownerID: owner, base: try store.localIdentity())
+        retained.name = "Unfinished edit"; try store.saveIdentityDraft(retained)
+        var conversation = AgentConversation(ownerID: owner)
+        conversation.draft = "A retained request"; _ = try conversation.beginAttempt()
+        let savedConversation = try store.saveAgentConversation(conversation, operationID: UUID())
+        state.selection = 4; state.profileSettings = true; state.closetScope = "Themes"
+        state.closetSearchActive = true; state.closetSearchQuery = "Personal search"
+        state.beginTour(from: .settings)
+        let entry = try store.localExperience().entryState
+        let stamp = try store.mutationStamp()
+        let preview = state.makeTourReadState()
+        #expect(preview !== state && preview.store === store)
+        #expect(preview.localIdentity?.name == "Current profile")
+        #expect(preview.localIdentity?.caption == "Current caption")
+        #expect(preview.today == (try store.todayConfiguration()))
+        #expect(preview.profileSettings == false && preview.closetSearchActive == false && preview.closetScope == "Pieces")
+        #expect(preview.identityEditor == nil && preview.capture == nil && preview.styleEditor == nil)
+        #expect(preview.agentModel?.conversation.id == savedConversation.id)
+        #expect(preview.agentModel?.conversation.messages.contains(where: \.isActive) == false)
+        #expect(try store.agentConversations().first == savedConversation)
+        #expect(try store.identityDraft() == retained)
+        #expect(try store.mutationStamp() == stamp && store.localExperience().entryState == entry)
+        preview.selection = 1; preview.closetScope = "Outfits"
+        #expect(state.selection == 4 && state.profileSettings && state.closetScope == "Themes")
+        #expect(state.closetSearchActive && state.closetSearchQuery == "Personal search")
+        preview.store = nil; state.store = nil
+    }
+
     @Test(arguments: [false, true], [false, true]) func newAppearanceChoiceSurvivesPendingSaveReconciliation(lostAcknowledgment: Bool, recoverBeforeSecondChoice: Bool) throws {
         var before = false, after = false
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),

@@ -13,6 +13,7 @@ struct LocalProfileView: View {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 24) {
                                 identityHeader
+                                profileActions
                                 if let error = state.identityError {
                                     SemanticFeedback(role: .danger, message: error)
                                     Button("Retry profile") { state.reloadIdentity() }.frame(minHeight: 44)
@@ -32,27 +33,23 @@ struct LocalProfileView: View {
             ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    identityHeader
+                    identityHeader.padding(.horizontal, 20)
+                    profileActions.padding(.horizontal, 20)
                     FitJournalGrid()
                     if let error = state.identityError { SemanticFeedback(role: .danger, message: error); Button("Retry profile") { state.reloadIdentity() } }
-                }.padding(20)
+                }.padding(.top, 20).padding(.bottom, 20)
             }.onChange(of: state.fitAnchor) { _, id in if let id { proxy.scrollTo(id) } }
             }
                 }
-            }.background(AppTheme.canvas).navigationTitle("Profile").onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
+            }.background(AppTheme.surface).navigationTitle("Profile").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button { state.openFit() } label: { Label("Add fit", systemImage: "plus") }
                             .accessibilityIdentifier("profile.addFit")
                     }
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button { state.openIdentity() } label: { Label("Edit profile", systemImage: "square.and.pencil") }
-                            .accessibilityIdentifier("profile.edit")
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
                         Menu {
                             Button("Style") { state.openStyle(source: .profile) }
-                            Button("Wear insights") { state.profileInsights = true }
                             Button("Settings") { state.profileSettings = true }
                         } label: { Label("More", systemImage: "ellipsis") }
                     }
@@ -61,6 +58,24 @@ struct LocalProfileView: View {
                 .navigationDestination(isPresented: $state.profileHistory) { LocalWearHistoryView() }
                 .navigationDestination(isPresented: $state.profileSettings) { LocalSettingsView() }
         }.tint(AppTheme.ink)
+    }
+    private var profileActions: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 8) { editProfile; wearInsights }
+            VStack(spacing: 8) { editProfile; wearInsights }
+        }
+    }
+    private var editProfile: some View {
+        Button { state.openIdentity() } label: {
+            Text("Edit profile").font(AppTypography.fieldLabel).frame(maxWidth: .infinity, minHeight: 44)
+                .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 12))
+        }.buttonStyle(.plain).accessibilityIdentifier("profile.edit")
+    }
+    private var wearInsights: some View {
+        Button { state.profileInsights = true } label: {
+            Text("Wear insights").font(AppTypography.fieldLabel).frame(maxWidth: .infinity, minHeight: 44)
+                .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 12))
+        }.buttonStyle(.plain)
     }
     private var identityHeader: some View {
         Group {

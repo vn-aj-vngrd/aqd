@@ -12,6 +12,10 @@ import UIKit
         let controller = UITabBarController()
         coordinator.install(on: controller, roots: (0..<4).map { _ in AnyView(Color.clear) })
         #expect(controller.tabs.map(\.identifier) == ["aqd.today", "aqd.closet", "aqd.planner", "aqd.agent", "aqd.profile"])
+        #expect(controller.tabs.allSatisfy { $0.title.isEmpty })
+        #expect(controller.tabs.map(\.accessibilityLabel) == ["Today", "Closet", "Planner", "Agent", "Profile"])
+        #expect(controller.tabBar.items?.allSatisfy { $0.title == nil || $0.title == "" } == true)
+        #expect(controller.tabBar.items?.map(\.accessibilityLabel) == ["Today", "Closet", "Planner", "Agent", "Profile"])
         if #available(iOS 27.0, *) { #expect(controller.prominentTabIdentifier == "aqd.agent") }
         coordinator.selectRoot(4)
         #expect(controller.selectedTab?.identifier == "aqd.profile")

@@ -75,3 +75,5 @@ No device quality, latency, memory or energy evaluation has run for this slice. 
 `LocalDataSummaryView` reuses grouped icon/count rows across export, restore and erase reviews, with plural-aware labels and intrinsic accessible text sizing.
 
 `CenteredPageContent` reuses the scrollable centered-message rhythm for short informational Settings pages. Callers own `safeAreaInset`/`ActionFooter`; long review/forms keep their existing scroll layout. It adds no actions or lifecycle state.
+
+Owner icons-only refinement: NativeTabs uses empty visible UITab titles with explicit destination accessibility labels on native tabs/items. Public UIKit tab roles, selection, separate Agent task and Settings chrome behavior remain unchanged. PrivateTourView hosts the actual root implementations in a separately loaded read state; it does not resume drafts or invoke cleanup. Agent preview suppresses interrupted-attempt persistence and composer autofocus.

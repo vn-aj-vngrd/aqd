@@ -118,14 +118,19 @@ struct NativeTabs: UIViewControllerRepresentable {
                 return host
             }
             tabs = hosts.enumerated().map { index, host in
-                let tab = UITab(title: names[index], image: host.tabBarItem.image,
+                let tab = UITab(title: "", image: host.tabBarItem.image,
                                 identifier: "aqd.\(names[index].lowercased())") { _ in host }
+                tab.accessibilityLabel = names[index]
                 tab.accessibilityIdentifier = "root.tab.\(names[index].lowercased())"
                 tab.preferredPlacement = .fixed
                 if #available(iOS 26.1, *) { tab.selectedImage = host.tabBarItem.selectedImage }
                 return tab
             }
             controller.setTabs(tabs, animated: false)
+            for (index, item) in (controller.tabBar.items ?? []).enumerated() where names.indices.contains(index) {
+                item.title = nil
+                item.accessibilityLabel = names[index]
+            }
             if #available(iOS 27.0, *) { controller.prominentTabIdentifier = tabs[agentIndex].identifier }
             controller.selectedTab = tabs[originIndex]
         }
