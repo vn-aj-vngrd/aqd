@@ -35,8 +35,12 @@ final class AppState {
     var collectionRefreshID = UUID()
     var capture: CaptureModel?
     var collectionError: String?
+    var pieceReadError: String?
+    var weatherClient: WeatherClient?
     var today: TodayConfiguration?
+    var todayUndoAvailable = false
     var todayError: String?
+    var todayEditor: TodayEditorModel?
     var photoCleanupError: String?
     var wearEditor: OutfitWearEditorModel?
     var wearHistoryDay = LocalPlanDay()
@@ -63,6 +67,13 @@ final class AppState {
     var outfits: [Outfit] = []
     var outfitError: String?
     var styleEditor: StyleEditorModel?
+    var fitMemories: [FitMemory] = []
+    var fitError: String?
+    var fitEditor: FitEditorModel?
+    var fitAnchor: UUID?
+    var localIdentity: LocalProfileIdentity?
+    var identityError: String?
+    var identityEditor: LocalIdentityEditorModel?
     var profileSettings = false
     var profileHistory = false
     var profileInsights = false
@@ -76,10 +87,13 @@ final class AppState {
     /// Use an explicitly isolated store without opening the ordinary local closet.
     init(store: PieceStore) {
         self.store = store
+        weatherClient = WeatherClient(store: store)
         reloadPieces()
         reloadToday()
         retryPhotoCleanup()
         reloadEntry()
+        reloadIdentity()
+        resumeIdentity()
         resumeStyleDraft()
         reloadOutfits()
         resumeOutfitDraft()
@@ -88,8 +102,11 @@ final class AppState {
         resumePlanDraft()
         reloadWear()
         resumeWearDraft()
+        reloadFits()
+        resumeFit()
         reloadThemes()
         resumeThemeDraft()
+        resumeTodayDraft()
     }
 
     func openStore() {
@@ -170,10 +187,13 @@ final class AppState {
             }
             #endif
             openingError = nil
+            if let store { weatherClient = WeatherClient(store: store) }
             reloadPieces()
             reloadToday()
             retryPhotoCleanup()
             reloadEntry()
+        reloadIdentity()
+        resumeIdentity()
             resumeStyleDraft()
             reloadOutfits()
             resumeOutfitDraft()
@@ -182,8 +202,11 @@ final class AppState {
             resumePlanDraft()
             reloadWear()
             resumeWearDraft()
+        reloadFits()
+        resumeFit()
             reloadThemes()
             resumeThemeDraft()
+        resumeTodayDraft()
         } catch {
             store = nil
             openingError = "Your local closet couldn’t open. Existing data has not been replaced. Retry, or keep the app data for recovery."
@@ -227,7 +250,7 @@ final class AppState {
     }
 
     func openStyle(source: StylePreferenceSource) {
-        guard planAuthoringEditor == nil else { return }
+        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             let experience = try store.localExperience()
@@ -246,6 +269,7 @@ final class AppState {
     }
 
     private func resumeStyleDraft() {
+        guard todayEditor == nil, fitEditor == nil, identityEditor == nil else { return }
         do {
             if let experience = try store?.localExperience(), let draft = experience.styleDraft ?? experience.pendingStyleReceipt {
                 if draft.source != .onboarding {
@@ -264,11 +288,12 @@ final class AppState {
             let owned = try store.ownedPiecesForWear()
             pieces = owned.filter { !$0.isArchived }
             archivedPieces = owned.filter(\.isArchived)
-            collectionError = nil
+            collectionError = nil; pieceReadError = nil
             // Archived edits can change detail data without changing the active pieces array.
             collectionRefreshID = UUID()
         } catch {
             collectionError = "Your pieces couldn’t be read. The saved collection has not been cleared."
+            pieceReadError = collectionError
         }
     }
 
@@ -304,6 +329,7 @@ final class AppState {
         guard let store else { return }
         do {
             today = try store.todayConfiguration()
+            todayUndoAvailable = try store.todayUndo() != nil
             todayError = nil
         } catch {
             todayError = "Your saved Today layout couldn’t open. It has not been replaced with defaults. Retry or keep the app data for recovery."
@@ -311,7 +337,7 @@ final class AppState {
     }
 
     func addPiece() {
-        guard planAuthoringEditor == nil else { return }
+        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil else { return }
         guard let store else { return }
         do {
             let recovered = try store.newPieceDraft()
@@ -324,6 +350,7 @@ final class AppState {
     }
 
     func editPiece(_ piece: WardrobePiece) {
+        guard todayEditor == nil, fitEditor == nil, identityEditor == nil else { return }
         guard let store else { return }
         do {
             let recovered = try store.recoverableDraft(itemID: piece.id)
@@ -631,6 +658,58 @@ final class CaptureModel: Identifiable {
             importGate.cancel()
             if !draftSaveFailed { errorText = Self.photoEditError }
             return false
+        }
+    }
+}
+
+struct BackgroundPhotoInput: Sendable {
+    let draftID: UUID
+    let operationID: UUID
+    let sourceID: UUID
+    let originalID: UUID
+    let recipe: PhotoEditRecipe
+    let data: Data
+}
+extension CaptureModel {
+    var hasProcessedPhoto: Bool {
+        guard let id = draft.photoID else { return false }
+        return (try? state.store?.backgroundOriginalID(for: id)) != nil
+    }
+    func backgroundInput() throws -> BackgroundPhotoInput {
+        guard !isSaving, !isImporting, saved == nil, let source = draft.photoID, let store = state.store else { throw BackgroundPhotoError.staleSource }
+        let original = try store.backgroundOriginalID(for: source) ?? source
+        return BackgroundPhotoInput(draftID: draft.id, operationID: operationID, sourceID: source, originalID: original, recipe: draft.photoRecipe, data: try store.originalPhoto(id: original))
+    }
+    func backgroundSourceIsCurrent(_ input: BackgroundPhotoInput) -> Bool {
+        !isSaving && !isImporting && saved == nil && draft.id == input.draftID && operationID == input.operationID && draft.photoID == input.sourceID && draft.photoRecipe == input.recipe
+    }
+    func acceptBackground(_ prepared: PreparedPhoto?, input: BackgroundPhotoInput) -> Bool {
+        guard backgroundSourceIsCurrent(input), let store = state.store else { return false }
+        do {
+            let id: UUID
+            if let prepared { id = try store.acceptBackgroundPhoto(prepared, originalID: input.originalID) }
+            else { _ = try store.originalPhoto(id: input.originalID); id = input.originalID }
+            draft.photoID = id; draft.photoRecipe = .fitOriginal; operationID = UUID(); persistDraft()
+            return !draftSaveFailed
+        } catch { errorText = "The background result could not be applied. Your previous accepted photo is retained."; return false }
+    }
+    func resetThumbnailData() -> Data? {
+        guard let id = draft.photoID, let original = try? state.store?.backgroundOriginalID(for: id) else { return originalThumbnailData() }
+        return try? state.store?.thumbnailPhoto(id: original)
+    }
+    func applyPhotoReset(_ recipe: PhotoEditRecipe, sourceID: UUID, previousRecipe: PhotoEditRecipe) async -> Bool {
+        guard !isSaving, saved == nil, draft.photoID == sourceID, draft.photoRecipe == previousRecipe, let store = state.store else { return false }
+        guard let original = try? store.backgroundOriginalID(for: sourceID) else { return await applyPhotoEdit(recipe, sourceID: sourceID, previousRecipe: previousRecipe) }
+        cancelImport(); let request = importGate.begin(for: draft)
+        do {
+            let prepared = try await preparer.render(data: store.originalPhoto(id: original), sourcePhotoID: original, recipe: recipe)
+            guard !Task.isCancelled, importGate.canAccept(request, for: draft), draft.photoRecipe == previousRecipe else { return false }
+            try store.acceptPhotoEdit(prepared)
+            guard importGate.apply(photoID: original, request: request, to: &draft) else { return false }
+            draft.photoRecipe = recipe; operationID = UUID(); persistDraft(); return !draftSaveFailed
+        } catch {
+            guard importGate.canAccept(request, for: draft) else { return false }
+            importGate.cancel(); errorText = "The original could not be restored. Your accepted photo and framing are retained."; return false
         }
     }
 }

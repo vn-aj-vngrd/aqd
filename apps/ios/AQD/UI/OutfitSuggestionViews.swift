@@ -32,6 +32,7 @@ struct OutfitReadinessContent: View {
 
 struct OutfitSuggestionContent: View {
     @Bindable var model: OutfitEditorModel
+    @State private var weather = false
     @Environment(\.scenePhase) private var scenePhase
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -39,7 +40,7 @@ struct OutfitSuggestionContent: View {
                 .disabled(model.generating)
             LabeledField(title: "Mood", text: Binding(get: { model.draft.mood ?? "" }, set: { value in model.update { $0.mood = value } }))
                 .disabled(model.generating)
-            Text("Weather context · Off").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            DisclosureRow(title: "Weather context", value: model.draft.weather?.place.name ?? "Off") { weather = true }.disabled(model.generating || model.pending || model.unknown)
             Text(model.suggestionAvailability.message).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             if model.generating {
                 ProgressView("Preparing an on-device draft…")
@@ -58,6 +59,11 @@ struct OutfitSuggestionContent: View {
                 SecondaryAction(title: "Build manually") { model.update { $0.stage = .builder } }
             }
             if let error = model.error { SemanticFeedback(role: .danger, message: error) }
+        }
+        .sheet(isPresented: $weather) {
+            if let client = model.state.weatherClient {
+                WeatherContextView(client: client, initial: model.draft.weather) { selection in model.update { $0.weather = selection }; return model.draft.weather == selection && model.error == nil }
+            }
         }
         .onAppear { model.suggestionAvailability = OutfitSuggestions.availability() }
         .onChange(of: scenePhase) { _, phase in

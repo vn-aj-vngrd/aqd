@@ -23,6 +23,7 @@ struct AQDApp: App {
 }
 
 private struct AppRootView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @Bindable var state: AppState
 
     var body: some View {
@@ -56,6 +57,7 @@ private struct AppRootView: View {
             state.openStore()
         }
         .tint(AppTheme.actionText)
+        .onChange(of: scenePhase) { _, phase in if phase != .active { state.weatherClient?.suspend() } }
         .alert("Saved data unavailable", isPresented: Binding(
             get: { state.collectionError != nil },
             set: { if !$0 { state.collectionError = nil } }
@@ -64,6 +66,9 @@ private struct AppRootView: View {
         } message: {
             Text(state.collectionError ?? "Keep your existing app data for recovery.")
         }
+        .sheet(item: $state.todayEditor) { model in TodayEditorView(model: model).environment(state) }
+        .sheet(item: $state.fitEditor) { model in FitEditorView(model: model).environment(state) }
+        .sheet(item: $state.identityEditor) { model in LocalIdentityEditorView(model: model).environment(state) }
         .sheet(item: $state.themeEditor, onDismiss: { state.reloadThemes(); state.reloadOutfits() }) { model in
             ThemeEditorView(model: model).environment(state)
         }

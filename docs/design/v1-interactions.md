@@ -224,3 +224,15 @@ October16 PR35 Codex correction: timezone-only wear correction detaches links wh
 
 
 October16 PR35 scoped-authoring correction: This entry keeps shared definition fields fixed; retained earlier/completed entries constrain parent range/zone. Refresh reviewed entries explicitly replaces original slots from latest saved values and retains added-date identity, including current outfit snapshots. Single/bulk assignment review identifies date/outfit/unavailable pieces and requires another outfit or an explicit gap before Save. Actual Core59/native152 unit results do not establish rendered/E2E acceptance; #30 remains the owner.
+
+
+October16 issue28 S1: Profile More → Edit profile → optional local name/avatar draft. Clear name/Remove photo are provisional; Save acknowledges one owner/revision-bound result; unknown locks changes and reconciles. Photo preparation/cancel retains fields, stale imports cannot reattach removed media, and recovered identity tasks exclude competing editors. Media cleanup checks saved/current/base draft references. Unit verified only; all rendered/E2E acceptance #30.
+
+
+October16 issue28 S2: Profile More → Add fit → date/photo/outfit/private note → acknowledged source return. Snapshot-only memories remain editable after outfit deletion. Memory detail → Edit / confirmed Delete / explicit Record wear; the latter carries the saved date into duplicate-safe actual wear review and never runs implicitly. Profile scroll anchor belongs to its enclosing scroll view. Note-only/over-limit drafts remain visible but cannot save. Unit verified; all E2E #30.
+
+### Today implementation checkpoint, October16
+
+Issue22 slices S1/S2 replace the baseline cards with actual local records and same-period/source destinations. Customize opens the twelve-kind retained draft, nested Apply/cancel, native reorder and minimum-one refusal, independent Note/Photo content, provisional defaults/Undo and acknowledged atomic layout save/Undo. Missing pinned records remain unavailable; no date passage or card read creates wear. Unit receipts and exact scope are in [issue22](../plan/issue-22.md). Retained-card management/deletion continues in S3. These are source/unit results; all rendered, focus, accessibility and E2E acceptance remains issue30.
+
+Issue22 slices S3–S5 add reachable retained-card selection and reviewed deletion with active/draft refusal, disclosed Undo release and receipt reconciliation; capture’s original-preserving background review/reset/manual fallback; and one shared optional Weather task for Today/Outfit/Planner. Weather disclosure precedes city/location actions, Cancel preserves the caller, and parent Apply changes only the retained draft. Background-removal and numerical Weather activation remain gated until issue30 qualification. All rendered/E2E control and focus acceptance remains unverified.

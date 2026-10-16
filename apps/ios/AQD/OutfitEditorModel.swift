@@ -100,7 +100,7 @@ extension AppState {
     }
 
     func resumeOutfitDraft() {
-        guard planAuthoringEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil, entry.page == .main else { return }
+        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil, entry.page == .main else { return }
         do {
             guard let store, let draft = try store.outfitDraft() else { return }
             let model = OutfitEditorModel(state: self, draft: draft)
@@ -110,7 +110,7 @@ extension AppState {
     }
 
     func buildOutfit(editing outfit: Outfit? = nil, pieceID: UUID? = nil, firstOutfit: Bool = false, suggest: Bool = false, themeID: UUID? = nil) {
-        guard planAuthoringEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
+        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             if let existing = try store.outfitDraft() {

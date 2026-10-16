@@ -6,34 +6,29 @@ struct LocalProfileView: View {
     var body: some View {
         @Bindable var state = state
         NavigationStack {
+            ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     HStack(alignment: .center, spacing: 16) {
-                        Image(systemName: "person.crop.circle.fill")
-                            .resizable().scaledToFit().frame(width: 64, height: 64)
-                            .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                        LocalIdentityAvatar(photoID: state.localIdentity?.photoID, recipe: state.localIdentity?.photoRecipe ?? .fitOriginal).frame(width: 64, height: 64)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Your profile").font(.title.weight(.medium))
+                            Text(state.localIdentity?.name ?? "Your profile").font(.title.weight(.medium))
                             Text("Your private style and fit memories")
                                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         }
                     }.accessibilityIdentifier("profile.identity")
                     Label("Private on this iPhone", systemImage: "lock")
                         .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Your fits").font(AppTypography.section)
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("A little space for your style").font(AppTypography.detailTitle)
-                            Text("Your saved fit memories will appear here.")
-                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        }.frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
-                    }.accessibilityIdentifier("profile.fits.empty")
+                    FitJournalGrid()
+                    if let error = state.identityError { SemanticFeedback(role: .danger, message: error); Button("Retry profile") { state.reloadIdentity() } }
                 }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle("Profile")
+            }.onChange(of: state.fitAnchor) { _, id in if let id { proxy.scrollTo(id) } }
+            }.background(AppTheme.canvas).navigationTitle("Profile").onAppear { state.reloadIdentity(); state.reloadFits() }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
+                            Button("Add fit") { state.openFit() }
+                            Button("Edit profile") { state.openIdentity() }
                             Button("Style") { state.openStyle(source: .profile) }
                             Button("Wear insights") { state.profileInsights = true }
                             Button("Settings") { state.profileSettings = true }

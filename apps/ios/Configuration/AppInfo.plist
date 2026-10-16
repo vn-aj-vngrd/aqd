@@ -24,6 +24,8 @@
     <true/>
     <key>NSCameraUsageDescription</key>
     <string>AQD uses the camera only when you choose to photograph a wardrobe piece.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>AQD uses your approximate location only when you choose Use current location for optional Apple Weather. Choose a city instead to avoid location access.</string>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>

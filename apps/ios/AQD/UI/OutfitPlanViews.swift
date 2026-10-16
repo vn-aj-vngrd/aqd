@@ -6,6 +6,7 @@ struct OutfitPlanEditorView: View {
     @State private var discard = false
     @State private var choosing = false
     @State private var choosingZone = false
+    @State private var weather = false
 
     private var namedPlan: PlanDefinition? { model.state.planDefinitions.first { $0.id == model.draft.planID } }
     private var dateBounds: ClosedRange<Date> {
@@ -40,6 +41,7 @@ struct OutfitPlanEditorView: View {
                         if let plan = namedPlan {
                             Text("Part of \(plan.name). Edit the whole plan to change its date range or timezone.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         }
+                        DisclosureRow(title: "Weather context", value: model.draft.weather?.place.name ?? "Off") { weather = true }.disabled(model.pending || model.unknown)
                         LabeledField(title: "Occasion", text: Binding(get: { model.draft.occasion }, set: { value in
                             model.update { $0.occasion = value; $0.allowsOverlap = nil }
                         })).disabled(model.pending || model.unknown)
@@ -47,7 +49,9 @@ struct OutfitPlanEditorView: View {
                             .disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Timezone", value: model.draft.day.timeZoneID) { choosingZone = true }
                             .disabled(model.pending || model.unknown || namedPlan != nil)
-                        Text("Weather context · Off").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        if let context = model.draft.weather {
+                            Text("\(context.day.key) · \(context.place.timeZoneID)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }
                         if model.hasOverlap {
                             Text("Another plan uses this date and occasion. Existing assignments stay unchanged.")
                                 .foregroundStyle(AppTheme.secondary)
@@ -78,7 +82,12 @@ struct OutfitPlanEditorView: View {
                             .disabled(model.pending || model.unknown)
                     }
                 }
-                .navigationDestination(isPresented: $choosing) { PlanOutfitChooser(model: model) }
+                .sheet(isPresented: $weather) {
+                if let client = model.state.weatherClient {
+                    WeatherContextView(client: client, initial: model.draft.weather, day: model.draft.day) { selection in model.update { $0.weather = selection }; return model.draft.weather == selection && model.error == nil }
+                }
+            }
+            .navigationDestination(isPresented: $choosing) { PlanOutfitChooser(model: model) }
                 .navigationDestination(isPresented: $choosingZone) {
                     TimezoneChooser(current: model.draft.day.timeZoneID) { zone in
                         model.update { $0.day.timeZoneID = zone; $0.allowsOverlap = nil }

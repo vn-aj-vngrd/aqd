@@ -3,7 +3,8 @@ import SwiftUI
 
 struct LocalWearInsightsView: View {
     @Environment(AppState.self) private var state
-    @State private var month = LocalPlanDay()
+    @State private var month: LocalPlanDay
+    init(initialMonth: LocalPlanDay = LocalPlanDay()) { _month = State(initialValue: initialMonth) }
     @State private var summary: WearPeriodSummary?
     @State private var error: String?
     var body: some View {
