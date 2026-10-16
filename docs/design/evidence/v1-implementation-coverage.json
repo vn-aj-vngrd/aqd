@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-17",
   "tokenHash": "fdeb7346",
-  "sourceHead": "b5dc1c6d3827536f556913ef3472c4b9a7f39e6e",
-  "sourceState": "Planner creation refinement b5dc1c6d3827536f556913ef3472c4b9a7f39e6e: Close/title/one Next or Save; surfaced explicit unassigned draft selection, Edit details return from review. Core83/native251, Debug/unsigned Release and source reviews passed. Installed and launched; no computer use, runtime acceptance remains issue30.",
+  "sourceHead": "d6c05f43ac87fed2f8b612f9719be68ab29c87a8",
+  "sourceState": "Agent activation/date refinement d6c05f43ac87fed2f8b612f9719be68ab29c87a8: live readiness gated text Agent, hidden unsupported voice/photo options, native appearance propagation, inline Planner Date label. Core83/native253 at text activation input; final cosmetic Debug/unsigned Release and source reviews passed. Installed and launched; no computer use, runtime acceptance remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -2603,9 +2603,9 @@
     "receipt": "docs/plan/evidence/issue-27-29/README.md"
   },
   "ownerUIRefinementEvidence": {
-    "codeCommit": "b5dc1c6d3827536f556913ef3472c4b9a7f39e6e",
+    "codeCommit": "d6c05f43ac87fed2f8b612f9719be68ab29c87a8",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
-    "checks": "Core83/native251, Debug/unsigned Release, source reviews passed",
+    "checks": "Core83/native253 before final presentation refinements; final Debug/unsigned Release, source reviews passed",
     "runtimeComplete": false,
     "qualification": "Installed source; owner visual review pending, no computer use. Integrated acceptance remains issue30."
   },
