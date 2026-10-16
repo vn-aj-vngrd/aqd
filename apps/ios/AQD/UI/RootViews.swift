@@ -38,9 +38,18 @@ struct TodayView: View {
             }
             .background(AppTheme.canvas)
             .navigationTitle("").navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .topBarTrailing) {
-                Button { state.openWear() } label: { Label("Record wear", systemImage: "tshirt").labelStyle(.iconOnly) }
-                    .buttonBorderShape(.circle).accessibilityIdentifier("today.recordWear").tint(AppTheme.ink)
+            .toolbar { ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Button("Record wear", systemImage: "tshirt") { state.openWear() }
+                        .accessibilityIdentifier("today.recordWear")
+                    Button("Add fit", systemImage: "photo") {
+                        state.openFit()
+                        if state.fitEditor == nil, let error = state.fitError { state.collectionError = error }
+                    }
+                    Button("Plan an outfit", systemImage: "calendar") { state.openPlan(day: LocalPlanDay()) }
+                    Button("Build an outfit", systemImage: "square.stack") { state.buildOutfit() }
+                } label: { Label("Add to Today", systemImage: "plus") }
+                    .accessibilityIdentifier("today.add").tint(AppTheme.ink)
             } }
             .toolbar { ToolbarItem(placement: .topBarTrailing) {
                 Button { state.openTodayEditor() } label: { Image(systemName: "square.grid.2x2").font(.system(size: 17, weight: .regular)) }.accessibilityLabel("Customize Today").tint(AppTheme.ink)

@@ -397,3 +397,9 @@ Profile Add fit follows the same topBarLeading alignment; Options remains traili
 ### Owner Today heading rhythm — October17
 
 Place Today and its date in one scrolling header: semantic root title,8pt title/date gap,24pt section gap before the first widget. Use an inline empty navigation title to remove the system large-title gap, while retaining the toolbar and20pt side inset. Dynamic Type and header accessibility traits remain native. Presentation-only; final Debug/source review and ordinary install qualify this refinement, previous unit/Release inputs remain explicit.
+
+### Owner Today add menu — October17
+
+Replace the standalone Record wear toolbar icon with a leading native + menu: Record wear, Add fit, Plan an outfit for today, Build an outfit. Customize remains trailing. Each choice opens the existing retained-draft editor without saving data; menu dismissal is inert. Preserve today.recordWear on the menu action and add today.add on the menu trigger. Final Debug and source review qualify this presentation-only change; no new persistence seam or E2E run.
+
+Today Add fit forwards an opening failure to the existing global local-task error alert when no editor opens; its error would otherwise only be visible on Profile. No failure is presented as a saved fit. The existing draft/save path is unchanged.
