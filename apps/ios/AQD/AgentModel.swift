@@ -8,6 +8,7 @@ import Observation
     var history: [AgentConversation] = []
     var error: String?
     var availability = OutfitSuggestions.availability()
+    var weatherClient: WeatherClient?
     let qualification: AgentQualification?
     private let provider: @MainActor (String, Int) -> AsyncThrowingStream<String, any Error>
     private var generation: Task<Void, Never>?
@@ -51,8 +52,8 @@ import Observation
                 if conversation == value { conversation = acknowledged }
             }
             if let saved = history.first(where: { $0.id == conversation.id }),
-               saved.draft == conversation.draft, saved.context == conversation.context, saved.messages == conversation.messages { error = nil; return true }
-            if conversation.revision == 0 && conversation.draft.isEmpty && conversation.messages.isEmpty && conversation.context == AgentContext() { return true }
+               saved.draft == conversation.draft, saved.context == conversation.context, saved.messages == conversation.messages, saved.proposals == conversation.proposals { error = nil; return true }
+            if conversation.revision == 0 && conversation.draft.isEmpty && conversation.messages.isEmpty && (conversation.proposals ?? []).isEmpty && conversation.context == AgentContext() { return true }
             pending = (conversation, UUID())
             let result = try store.saveAgentConversation(conversation, operationID: pending!.1)
             pending = nil; conversation = result; reloadHistory(); return true
@@ -77,6 +78,72 @@ import Observation
             reloadHistory()
         } catch { self.error = "Deletion wasn’t confirmed. Retry checks the same conversation operation. Saved outfits and plans are unaffected." }
     }
+    func propose(_ action: AgentReviewedAction) {
+        guard !active, !hasPendingOperation else { return }
+        do {
+            var proposal = AgentActionProposal(action: action)
+            let outfitIDs: [UUID]
+            switch action { case .theme(let draft): outfitIDs = draft.outfitIDs; case .plan(let draft): outfitIDs = draft.slots.compactMap { $0.outfit?.id }; default: outfitIDs = [] }
+            let outfits = try store.outfits()
+            proposal.sources = try Set(outfitIDs).map { id in
+                guard let value = outfits.first(where: { $0.id == id }) else { throw PieceStore.StoreError.staleRevision }
+                return AgentSelectedRecord(id: id, kind: .outfit, revision: value.revision)
+            }
+            conversation.proposals = (conversation.proposals ?? []) + [proposal]; _ = persist()
+        } catch { self.error = "A selected record is unavailable. Review the draft again." }
+    }
+    func cancelProposal(_ id: UUID) {
+        guard let i = conversation.proposals?.firstIndex(where: { $0.id == id }), !hasPendingOperation else { return }
+        do { try conversation.proposals?[i].cancel(); _ = persist() }
+        catch { self.error = "This operation may already have committed. Check its result before continuing." }
+    }
+    func approveProposal(_ id: UUID, version: Int) {
+        guard !active, !hasPendingOperation, let i = conversation.proposals?.firstIndex(where: { $0.id == id }) else { return }
+        do {
+            try conversation.proposals?[i].approve(version: version)
+            guard persist(), let proposal = conversation.proposals?[i] else { return }
+            let receipt: AgentActionReceipt
+            switch proposal.action {
+            case .availability(let change):
+                let piece = try store.setAvailability(id: change.pieceID, value: change.value, expectedRevision: change.expectedRevision, operationID: change.operationID)
+                receipt = AgentActionReceipt(recordID: piece.id, kind: "piece")
+            case .theme(let draft):
+                if try store.savedTheme(for: draft) == nil { try validateSources(proposal); try store.saveThemeDraft(draft) }
+                let value = try store.saveTheme(draft)
+                if try store.themeDraft() == draft { try store.finishThemeDraft(draft) }
+                receipt = AgentActionReceipt(recordID: value.id, kind: "theme")
+            case .outfit(let draft):
+                if try store.savedOutfit(for: draft) == nil { try validateSources(proposal); try store.saveOutfitDraft(draft) }
+                let value = try store.saveOutfit(draft)
+                if try store.outfitDraft() == draft { try store.acknowledgeOutfitReceipt(draft) }
+                receipt = AgentActionReceipt(recordID: value.id, kind: "outfit")
+            case .plan(let draft):
+                if try store.savedPlanAuthoring(draft) == nil { try validateSources(proposal); try store.savePlanAuthoringDraft(draft) }
+                let value = try store.savePlanAuthoring(draft)
+                if try store.planAuthoringDraft() == draft { try store.finishPlanAuthoring(draft) }
+                receipt = AgentActionReceipt(recordID: value.plan.id, kind: "plan")
+            case .wear(let draft):
+                if try store.savedWear(for: draft) == nil { try store.saveWearDraft(draft) }
+                let value = try store.saveWear(draft)
+                if try store.wearDraft() == draft { try store.finishWearDraft(draft) }
+                receipt = AgentActionReceipt(recordID: value.id, kind: "wear")
+            }
+            conversation.proposals?[i].receipt = receipt; conversation.proposals?[i].status = .succeeded; _ = persist()
+        } catch {
+            switch error {
+            case is ThemeValidationError, is OutfitValidationError, is PlanValidationError, is PlanAuthoringError, is WearValidationError, PieceStore.StoreError.staleRevision:
+                conversation.proposals?[i].status = .proposed; _ = persist()
+            default: break
+            }
+            self.error = "The reviewed change wasn’t confirmed. Changed records require a new review. For an unconfirmed save, check the same operation before making another draft."
+        }
+    }
+    private func validateSources(_ proposal: AgentActionProposal) throws {
+        let outfits = try store.outfits()
+        for source in proposal.sources ?? [] {
+            guard source.kind == .outfit, outfits.contains(where: { $0.id == source.id && $0.revision == source.revision }) else { throw PieceStore.StoreError.staleRevision }
+        }
+    }
     func send(retrying messageID: UUID? = nil) {
         guard canGenerate, let qualification else { return }
         do {
@@ -97,6 +164,10 @@ import Observation
                 let records = try store.wearRecords().filter { record in record.day.key <= through.key && (context.scope != .selected || record.pieces.contains { ids.contains($0.id) }) }
                 prompt += "\nTrusted recorded wear through \(through.key): \(records.count) records across \(Set(records.map(\.day.key)).count) distinct dates. Plans are not wear."
             }
+            if let selected = context.weather, let client = weatherClient,
+               let snapshot = client.cached(selected), let reading = snapshot.reading(for: selected.day, now: Date(), qualified: client.qualified), reading.freshness(at: Date()) == .fresh {
+                prompt += "\nExplicit Apple Weather context: \(selected.place.name), \(selected.day.key), \(selected.day.timeZoneID). Provider \(reading.providerDate), fetched \(reading.fetchedAt). " + String(decoding: try JSONEncoder().encode(reading), as: UTF8.self)
+            } else { prompt += "\nWeather not checked or unavailable. Do not infer current weather." }
             // Keep every prior user instruction or request a new conversation. Never silently drop turns.
             prompt += "\nConversation:\n" + conversation.messages.filter { $0.role == .user || $0.status == .complete }.map { "\($0.role.rawValue): \($0.source)" }.joined(separator: "\n")
             if messageID == nil { prompt += "\nuser: " + conversation.draft }

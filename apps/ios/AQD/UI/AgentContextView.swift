@@ -6,6 +6,7 @@ struct AgentContextView: View {
     @Environment(AppState.self) private var state
     @Bindable var model: AgentModel
     @State private var draft: AgentContext
+    @State private var weather = false
     @State private var query = ""
     @State private var category = "Pieces"
     init(model: AgentModel) { self.model = model; _draft = State(initialValue: model.conversation.context) }
@@ -21,6 +22,8 @@ struct AgentContextView: View {
                     }
                     if draft.scope != .general { Toggle("Recorded wear history", isOn: $draft.includesWear) }
                     Toggle("Style", isOn: $draft.includesStyle)
+                    Button(draft.weather.map { "Weather · " + $0.place.name + " · " + $0.day.key } ?? "Weather · Off") { weather = true }
+                    Text("Only fresh matching weather you explicitly select can inform a new request. Saved or unavailable weather is not current fact.").font(.footnote).foregroundStyle(AppTheme.secondary)
                     Text("Only allowed saved answers are included. Body details also need their separate use permission. Photos and private notes are excluded.").font(.footnote).foregroundStyle(AppTheme.secondary)
                 }
                 if draft.scope == .selected {
@@ -50,7 +53,8 @@ struct AgentContextView: View {
                         if model.persist() { dismiss() }
                     } label: { Image(systemName: "checkmark").frame(width: 44, height: 44) }.accessibilityLabel("Done") }
                 }
-        }.tint(AppTheme.ink).interactiveDismissDisabled(model.hasPendingOperation)
+        }.sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, initial: draft.weather) { value in draft.weather = value; return true } } }
+        .tint(AppTheme.ink).interactiveDismissDisabled(model.hasPendingOperation)
     }
     private func matches(_ name: String) -> Bool { query.isEmpty || name.localizedStandardContains(query) }
     private func row(_ name: String, record: AgentSelectedRecord) -> some View {

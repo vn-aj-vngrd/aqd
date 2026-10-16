@@ -22,6 +22,10 @@
     <string>$(CURRENT_PROJECT_VERSION)</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>AQD uses the microphone only when you choose on-device voice input. Review the transcript before sending.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>AQD transcribes only a recording you start, using supported on-device recognition. No cloud transcription.</string>
     <key>NSCameraUsageDescription</key>
     <string>AQD uses the camera only when you choose to photograph a wardrobe piece.</string>
     <key>NSLocationWhenInUseUsageDescription</key>

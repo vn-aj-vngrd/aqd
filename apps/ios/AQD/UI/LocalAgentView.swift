@@ -27,6 +27,7 @@ struct LocalAgentView: View {
     private func open() {
         guard state.agentModel == nil, let store = state.store else { return }
         state.agentModel = try? AgentModel(store: store)
+        state.agentModel?.weatherClient = state.weatherClient
     }
 }
 
@@ -36,6 +37,9 @@ struct AgentConversationView: View {
     let close: () -> Void
     @State private var history = false
     @State private var context = false
+    @State private var tools = false
+    @State private var voice = false
+    @State private var imageHelp = false
     @State private var details: AgentMessage?
     @State private var copied: UUID?
     @State private var followsLatest = true
@@ -80,6 +84,14 @@ struct AgentConversationView: View {
                             }
                         }.id(message.id).frame(maxWidth: .infinity, alignment: message.role == .user ? .trailing : .leading)
                     }
+                    ForEach(model.conversation.proposals ?? []) { proposal in
+                        NavigationLink { AgentActionReviewView(model: model, id: proposal.id) } label: {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(proposal.action.title)
+                                Text(proposal.status == .succeeded ? "Saved receipt available" : proposal.status.rawValue.capitalized + " · Review required").font(.footnote).foregroundStyle(AppTheme.secondary)
+                            }.frame(minHeight: 44)
+                        }
+                    }
                     if !model.supportsGeneration {
                         AgentAvailabilityContent(availability: model.availability, recheck: model.recheckAvailability) { if model.persist() { state.selection = 1; close() } }
                         if !model.conversation.draft.isEmpty { Text("Your retained draft").font(AppTypography.section); Text(model.conversation.draft).textSelection(.enabled) }
@@ -97,9 +109,20 @@ struct AgentConversationView: View {
                         Button("New conversation") { model.newConversation() }.disabled(model.active)
                         Button("Conversations") { model.reloadHistory(); history = true }.disabled(model.active)
                         Button("Manage context") { context = true }
+                        Button("Local tools") { state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); tools = true }.disabled(model.active || model.hasPendingOperation)
+                        Button("Voice input") { voice = true }
+                        Button("Photo assistance") { imageHelp = true }
                     } label: { Label("More", systemImage: "ellipsis") }
                 }
             }.navigationDestination(isPresented: $history) { AgentHistoryView(model: model) { value in if value.revision > 0 { model.open(value.id) }; history = false } }
+            .sheet(isPresented: $tools) { AgentActionComposerView(model: model).environment(state) }
+            .sheet(isPresented: $voice) { AgentVoiceView(model: model) }
+            .sheet(isPresented: $imageHelp) { NavigationStack { VStack(alignment: .leading, spacing: 20) {
+                Text("Photo assistance isn’t enabled").font(AppTypography.section)
+                Text("You can describe your photo in a message, select existing closet pieces, or add a piece manually. Your text and selected context stay. Photos are never sent to a cloud model.")
+                SecondaryAction(title: "Select closet context") { imageHelp = false; context = true }
+                SecondaryAction(title: "Open Closet") { if model.persist() { imageHelp = false; state.selection = 1; close() } }
+            }.padding(20).navigationTitle("Photo assistance").toolbar { ToolbarItem(placement: .confirmationAction) { Button { imageHelp = false } label: { Image(systemName: "checkmark") }.accessibilityLabel("Done") } } } }
             .sheet(isPresented: $context) { AgentContextView(model: model).environment(state) }
             .sheet(item: $details) { message in NavigationStack { Form {
                 LabeledContent("Runtime", value: "On-device")
@@ -115,8 +138,14 @@ struct AgentConversationView: View {
         VStack(spacing: 12) {
             TextField("Ask about your closet…", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical).lineLimit(1...6).focused($focused)
             HStack {
+                Menu {
+                    Button("Select closet context") { context = true }
+                    Button("Photo assistance") { imageHelp = true }
+                    Button("Local tools") { tools = true }
+                } label: { Image(systemName: "plus").frame(width: 44, height: 44) }.accessibilityLabel("Attach or select context")
                 Button { context = true } label: { Label(model.conversation.context.scope == .general ? "General" : "Closet", systemImage: "tshirt") }.frame(minHeight: 44)
                 Spacer()
+                Button { voice = true } label: { Image(systemName: "mic").frame(width: 44, height: 44) }.accessibilityLabel("Voice input")
                 if model.active {
                     Button(action: model.stop) { Image(systemName: "stop.fill").frame(width: 44, height: 44) }.accessibilityLabel("Stop response")
                 } else {

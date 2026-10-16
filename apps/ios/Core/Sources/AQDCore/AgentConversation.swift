@@ -46,6 +46,7 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
     public var draft = ""
     public var context = AgentContext()
     public var messages: [AgentMessage] = []
+    public var proposals: [AgentActionProposal]?
     public var updatedAt = Date()
     public init(ownerID: UUID) { id = UUID(); self.ownerID = ownerID }
     public var title: String { messages.first(where: { $0.role == .user }).map { String($0.source.prefix(80)) } ?? "New conversation" }
@@ -80,6 +81,9 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
               messages.filter(\.isActive).count <= 1,
               Set(context.selected.map { "\($0.kind):\($0.id)" }).count == context.selected.count,
               context.selected.allSatisfy({ $0.revision > 0 }) else { throw PlanValidationError.invalidRecord }
+        let actions = proposals ?? []
+        guard Set(actions.map(\.id)).count == actions.count,
+              actions.allSatisfy({ $0.version == 1 && ($0.status == .succeeded) == ($0.receipt != nil) }) else { throw PlanValidationError.invalidRecord }
         for (i, message) in messages.enumerated() {
             guard message.role == (i.isMultiple(of: 2) ? .user : .assistant),
                   message.role == .assistant || message.status == .complete,

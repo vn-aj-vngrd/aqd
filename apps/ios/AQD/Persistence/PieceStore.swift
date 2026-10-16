@@ -2826,6 +2826,9 @@ extension PieceStore {
         let context = ModelContext(container), checksum = digest(try encode(value))
         if let receipt = try context.fetch(FetchDescriptor<StoredAgentOperation>()).first(where: { $0.id == operationID }) {
             guard receipt.conversationID == value.id, receipt.digest == checksum, let result = receipt.result else { throw StoreError.operationConflict }
+            if let acknowledgment = try? JSONDecoder().decode(AgentSaveAcknowledgment.self, from: result) {
+                var saved = value; saved.revision = acknowledgment.revision; saved.updatedAt = acknowledgment.updatedAt; return saved
+            }
             return try JSONDecoder().decode(AgentConversation.self, from: result)
         }
         guard !(try context.fetch(FetchDescriptor<StoredAgentOperation>())).contains(where: { $0.conversationID == value.id && $0.result == nil }) else { throw StoreError.deletedPiece }
@@ -2834,7 +2837,7 @@ extension PieceStore {
         var saved = value; saved.revision += 1; saved.updatedAt = Date()
         try beforeOutfitSave()
         if let stored { stored.payload = try encode(saved) } else { context.insert(try StoredAgentConversation(saved)) }
-        context.insert(StoredAgentOperation(id: operationID, conversationID: value.id, digest: checksum, result: try encode(saved)))
+        context.insert(StoredAgentOperation(id: operationID, conversationID: value.id, digest: checksum, result: try encode(AgentSaveAcknowledgment(revision: saved.revision, updatedAt: saved.updatedAt))))
         try commit(context); try afterOutfitSave(); return saved
     }
     func deleteAgentConversation(id: UUID, expectedRevision: Int, operationID: UUID) throws {
@@ -2845,10 +2848,16 @@ extension PieceStore {
         guard let stored = try context.fetch(FetchDescriptor<StoredAgentConversation>()).first(where: { $0.id == id }),
               try stored.value().revision == expectedRevision,
               try stored.value().ownerID == todayConfiguration().ownerID else { throw StoreError.staleRevision }
+        guard try !(stored.value().proposals ?? []).contains(where: { $0.status == .executing }) else { throw StoreError.operationConflict }
         try beforeOutfitSave(); context.delete(stored)
         // Superseded save acknowledgments no longer retain deleted conversation text.
         for receipt in try context.fetch(FetchDescriptor<StoredAgentOperation>()) where receipt.conversationID == id { context.delete(receipt) }
         context.insert(StoredAgentOperation(id: operationID, conversationID: id, digest: checksum, result: nil))
         try commit(context); try afterOutfitSave()
     }
+}
+
+private struct AgentSaveAcknowledgment: Codable {
+    let revision: Int
+    let updatedAt: Date
 }

@@ -5,6 +5,7 @@ import UIKit
 /// Remote images and HTML are never loaded. Links require a complete allowed URL.
 struct AgentMarkdownBody: View {
     let source: String
+    @Environment(\.dynamicTypeSize) private var textSize
     private struct Block: Identifiable { let id: Int; let text: String; let code: Bool; let language: String }
     private var blocks: [Block] {
         var result: [Block] = [], buffer: [String] = [], code = false, language = ""
@@ -24,6 +25,17 @@ struct AgentMarkdownBody: View {
                         HStack { Text(block.language.isEmpty ? "Code" : block.language).font(.footnote); Spacer(); Button("Copy code") { UIPasteboard.general.string = block.text }.frame(minHeight: 44) }
                         ScrollView(.horizontal) { Text(block.text).font(.body.monospaced()).textSelection(.enabled) }
                     }.padding(12).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                } else if let table = table(block.text) {
+                    if textSize.isAccessibilitySize {
+                        ForEach(Array(table.rows.enumerated()), id: \.offset) { _, row in
+                            VStack(alignment: .leading, spacing: 8) { ForEach(Array(row.enumerated()), id: \.offset) { index, cell in Text(table.headers[index] + ": " + cell).textSelection(.enabled) } }
+                        }
+                    } else {
+                        ScrollView(.horizontal) { Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 12) {
+                            GridRow { ForEach(Array(table.headers.enumerated()), id: \.offset) { _, header in Text(header).font(.headline).accessibilityAddTraits(.isHeader) } }
+                            ForEach(Array(table.rows.enumerated()), id: \.offset) { _, row in GridRow { ForEach(Array(row.enumerated()), id: \.offset) { index, cell in Text(attributed(cell)).textSelection(.enabled).accessibilityLabel(table.headers[index] + ": " + cell) } } }
+                        } }
+                    }
                 } else {
                     ForEach(Array(block.text.components(separatedBy: "\n").enumerated()), id: \.offset) { _, line in
                         lineView(line)
@@ -45,6 +57,15 @@ struct AgentMarkdownBody: View {
         } else if line.contains("|") {
             ScrollView(.horizontal) { Text(attributed(line)).font(.body.monospaced()).textSelection(.enabled) }
         } else { Text(attributed(line)).textSelection(.enabled) }
+    }
+    private func table(_ text: String) -> (headers: [String], rows: [[String]])? {
+        let lines = text.components(separatedBy: "\n")
+        func cells(_ line: String) -> [String] { line.trimmingCharacters(in: CharacterSet(charactersIn: "| ")).components(separatedBy: "|").map { $0.trimmingCharacters(in: .whitespaces) } }
+        guard lines.count >= 2, lines[0].contains("|"), lines[1].contains("-"),
+              lines[1].allSatisfy({ "|:- ".contains($0) }) else { return nil }
+        let headers = cells(lines[0]), rows = lines.dropFirst(2).map(cells)
+        guard !headers.isEmpty, cells(lines[1]).count == headers.count, rows.allSatisfy({ $0.count == headers.count }) else { return nil }
+        return (headers, rows)
     }
     private func attributed(_ line: String) -> AttributedString {
         var result = (try? AttributedString(markdown: line, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))) ?? AttributedString(line)
