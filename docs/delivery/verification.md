@@ -496,3 +496,12 @@ PR37 second review on `53a9fb4` found archive buffering and two pending-save rec
 
 
 PR37 third review at `41de30c` found deletion retry depending on a removed history row. Correction `ae22f54e15ae0ffc888eec504ed70af92707e866` reconciles the retained operation directly, preserves pending-operation errors during history reload/suspension, and exposes Retry independently of error text on both Agent/history views. Actual regressions reproduced each path before fixing. Final Core71/native198, comprising185 Swift Testing and13 XCTest, pass `/tmp/aqd-pr37-codex3-recovery-unit.log`; unsigned Release passes `/tmp/aqd-pr37-codex3-release.log`. Both independent rechecks are findings-free. Source-bound receipt updated; current-head CI/Codex/protected delivery remain. All E2E remains issue30.
+
+
+## PR37 fourth review correction
+
+PR37 fourth review at `afdcee3` found invalid-pointer restore deadlock and synchronous SQLite export work. Correction `819b5a5c19996a25b05ec37b9131f757a2629100` reconstructs a pointer only for a validated matching generation, preserves later edits, quarantines invalid/stale receipts and keeps another reviewed archive available without empty reseeding. Retained cleanup requires a new acknowledged replacement and protects the active generation. Existing damaged stores are fingerprinted incrementally independently of the64MiB archive budget, preserving mutation checks. Raw SQLite snapshots/integrity now run in detached cancellable workers, retaining store ownership and mutation validation.
+
+Original regressions failed in `/tmp/aqd-pr37-codex4-red.log`; the larger damaged-store regression failed in `/tmp/aqd-pr37-codex4-large-red.log`. The first complete correction run failed only a raw URL equality assertion; it now compares normalized paths like neighboring tests, retaining data/current-generation assertions. Final Core71/native203, comprising190 Swift Testing and13 XCTest, pass `/tmp/aqd-pr37-codex4-final-unit.log` on the confirmed physical iPhone. Both independent reviewers rechecked without remaining findings. All E2E and capability activation remain issue30. Current-head CI/Codex and protected delivery remain separate gates.
+
+Unsigned generic iOS Release PASSED `/tmp/aqd-pr37-codex4-release.log`. Agent-doc links and whitespace pass.
