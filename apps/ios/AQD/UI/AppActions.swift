@@ -8,6 +8,7 @@ struct PrimaryAction: View {
     let action: () -> Void
     @Environment(\.isEnabled) private var isEnabled
     private var usesAccent: Bool { isEnabled || isPending }
+    private var activeForeground: Color { role == .destructive ? AppTheme.onAccent : AppTheme.onPrimary }
 
     var body: some View {
         Button(role: role) {
@@ -16,7 +17,7 @@ struct PrimaryAction: View {
         } label: {
             HStack(spacing: AppSpacing.small) {
                 if isPending {
-                    ProgressView().tint(usesAccent ? AppTheme.onAccent : AppTheme.secondary).accessibilityHidden(true)
+                    ProgressView().tint(usesAccent ? activeForeground : AppTheme.secondary).accessibilityHidden(true)
                 }
                 if let systemImage {
                     Image(systemName: systemImage).accessibilityHidden(true)
@@ -28,8 +29,8 @@ struct PrimaryAction: View {
             .padding(.horizontal, AppSpacing.screen)
             .padding(.vertical, AppSpacing.medium)
             .frame(maxWidth: .infinity, minHeight: AppControlMetrics.actionHeight)
-            .foregroundStyle(usesAccent ? AppTheme.onAccent : AppTheme.secondary)
-            .background(usesAccent ? (role == .destructive ? AppTheme.dangerFill : AppTheme.accent) : AppTheme.divider, in: Capsule())
+            .foregroundStyle(usesAccent ? activeForeground : AppTheme.secondary)
+            .background(usesAccent ? (role == .destructive ? AppTheme.dangerFill : AppTheme.primaryFill) : AppTheme.divider, in: Capsule())
             .contentShape(Rectangle())
         }
         .buttonStyle(ContentActionStyle())

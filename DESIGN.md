@@ -8,7 +8,7 @@ Visual foundations for the intended app, not proof of implementation. [Status](d
 
 ## Direction
 
-Premium through restraint: clothing photography, precise alignment, quiet opaque semantic surfaces and native interaction. Cool neutrals/graphite in light appearance, neutral charcoal in dark; crisp blue for primary actions and selection. Brand character comes from content and proportion, not boxes or separators around every explanation. Use photographic pieces/looks, not childish flat garment illustrations. Landing may be expressive; roots prioritize their tasks.
+Premium through restraint: clothing photography, precise alignment, quiet opaque semantic surfaces and native interaction. Owner refinement October16 uses white and warm neutral surfaces, charcoal/light primary actions and restrained muted gold for selection and action text. Dark appearance keeps neutral charcoal surfaces with readable warm gold accents. Brand character comes from content and proportion, not boxes or separators around every explanation. Use photographic pieces/looks, not childish flat garment illustrations. Landing may be expressive; roots prioritize their tasks.
 
 Today · Closet · Planner · Agent · Profile are the shared destination identities. Detailed navigation and source returns belong to [V1 flow](docs/design/v1-flow.md) and [V2 flow](docs/design/v2-flow.md), not this foundation. The Today house glyph remains unchanged.
 
@@ -16,18 +16,21 @@ Today · Closet · Planner · Agent · Profile are the shared destination identi
 
 | Role / light Paper token | Light | Dark |
 | --- | --- | --- |
-| Canvas / `--color-canvas` | `#F5F5F7` | `#1C1C1E` |
-| Surface / `--color-surface` | `#FFFFFF` | `#2C2C2E` |
-| Primary text / `--color-ink` | `#292C30` | `#F2F2F7` |
-| Supporting text / `--color-secondary` | `#686C72` | `#B8B8BD` |
-| Divider / `--color-line` | `#E2E5E9` | `#48484A` |
-| Image ground / `--color-image-ground` | `#F0F0EE` | `#242426` |
-| Primary accent / `--color-accent` | `#006FEE` | `#338EF7` |
-| Action text / `--color-action-text` | `#005BC4` | `#66AAF9` |
-| On accent / `--color-on-accent` | `#FFFFFF` | `#1C1C1E` |
-| Soft selection / `--color-accent-soft` | `#E6F1FE` | `#142B47` |
-| Control boundary / `--color-control-border` | `#7B8088` | `#8E8E93` |
-| Regular glass / `--color-glass` | `rgb(255 255 255 / 88%)` | `rgb(44 44 46 / 94%)` |
+| Canvas / `--color-canvas` | `#F7F7F5` | `#1C1C1B` |
+| Surface / `--color-surface` | `#FFFFFF` | `#2B2B29` |
+| Primary text / `--color-ink` | `#242321` | `#F3F1EB` |
+| Supporting text / `--color-secondary` | `#6A6863` | `#BCB9B1` |
+| Divider / `--color-line` | `#E4E2DC` | `#4A4842` |
+| Image ground / `--color-image-ground` | `#F0EFEB` | `#242422` |
+| Selection accent / `--color-accent` | `#8C6A36` | `#D3B47C` |
+| Action text / `--color-action-text` | `#765829` | `#D9BD8A` |
+| On accent / `--color-on-accent` | `#FFFFFF` | `#1C1C1B` |
+| Primary fill / `--color-primary-fill` | `#292826` | `#F2F0EB` |
+| On primary / `--color-on-primary` | `#FFFFFF` | `#242321` |
+| Collection selection / `--color-segment-selection` | `#EBE7DF` | `#454036` |
+| Soft selection / `--color-accent-soft` | `#F1EADF` | `#383125` |
+| Control boundary / `--color-control-border` | `#807B72` | `#969187` |
+| Regular glass / `--color-glass` | `rgb(255 255 255 / 88%)` | `rgb(43 43 41 / 94%)` |
 | Prominent glass / `--color-glass-prominent` | `var(--color-accent)` | `var(--color-night-accent)` |
 | Glass edge / `--color-glass-edge` | `rgb(255 255 255 / 70%)` | `rgb(255 255 255 / 12%)` |
 | Segment track / `--color-segment-track` | `rgb(118 118 128 / 10%)` | `rgb(118 118 128 / 24%)` |
@@ -39,14 +42,14 @@ Today · Closet · Planner · Agent · Profile are the shared destination identi
 | Success surface / `--color-success-soft` | `#E8EFEA` | `#293B30` |
 | Warning / `--color-warning` | `#795B2E` | `#DCC7A2` |
 | Warning surface / `--color-warning-soft` | `#F3EEE4` | `#403728` |
-| Information / `--color-info` | `#005BC4` | `#66AAF9` |
-| Information surface / `--color-info-soft` | `#E6F1FE` | `#142B47` |
+| Information / `--color-info` | `#765829` | `#D9BD8A` |
+| Information surface / `--color-info-soft` | `#F1EADF` | `#383125` |
 
-Dark partners use `--color-night-*`; existing `--color-dark`, `--color-dark-surface`, `--color-dark-ink`, `--color-dark-secondary` alias night counterparts. Preserve all 25 paired roles and token usage descriptions even without dark phone duplicates. Native dark support remains required.
+Dark partners use `--color-night-*`; existing `--color-dark`, `--color-dark-surface`, `--color-dark-ink`, `--color-dark-secondary` alias night counterparts. Preserve the paired semantic roles and token usage descriptions even without dark phone duplicates. Native dark support remains required.
 
-Primary labels use white on light accent, dark ink on dark accent. Primary content buttons are solid without blur/shadow; secondary actions are plain regular-weight action-text without fill/border/blur/shadow. Soft-blue Back/View outfit capsules retain flat accent-soft treatment. Menus/disabled controls stay neutral. Selection also has check/fill/weight/label. Success means acknowledged completion, warning means risk/unknown requiring reconciliation, destructive intent uses red. Native alerts keep system semantics without injected icons. [Feedback](docs/design/components.md#app-owned-semantic-feedback) owns app-message variants; explanations remain unboxed, related actionable lists use opaque surfaces.
+Primary content labels use white on charcoal in light appearance and dark ink on a light fill in dark appearance. Gold selected content uses the separate on-accent pair. Primary content buttons are solid without blur/shadow; secondary actions are plain regular-weight action-text without fill/border/blur/shadow. Soft-neutral Back/View outfit capsules retain flat accent-soft treatment. Menus/disabled controls stay neutral. Selection also has check/fill/weight/label. Success means acknowledged completion, warning means risk/unknown requiring reconciliation, destructive intent uses red. Native alerts keep system semantics without injected icons. [Feedback](docs/design/components.md#app-owned-semantic-feedback) owns app-message variants; explanations remain unboxed, related actionable lists use opaque surfaces.
 
-Text targets 4.5:1 (3:1 large), meaningful control boundaries 3:1; color is never the sole cue. Recorded solid ratios: primary 4.66:1 light/5.15:1 dark, action text on soft fill 5.58:1, supporting text >4.5:1, boundaries 3.58:1/4.27:1, status foregrounds >4.5:1 on matching grounds. White/danger-fill 4.71:1; error/soft 4.83:1. These do not certify translucent content. Paper alpha/edge/shadow tokens are approximations; runtime materials own optics and accessibility adaptation.
+Text targets 4.5:1 (3:1 large), meaningful control boundaries 3:1; color is never the sole cue. Measured solid token ratios for the owner palette: primary labels14.73:1 light/13.79:1 dark, light gold/white4.96:1, action text/canvas6.12:1 light and9.42:1 dark, action text/soft selection5.50:1 light, supporting text/canvas5.19:1 light, dark gold/surface7.15:1. Destructive/error/success/warning roles retain their existing pairs. These do not certify translucent content. Paper alpha/edge/shadow tokens are approximations; runtime materials own optics and accessibility adaptation.
 
 ## Typography
 
@@ -107,3 +110,5 @@ Privacy/release guardrails remain inline: no implicit wear, publication, body-us
 ### Compact controls and flat forms — October 6, 2026
 
 Current cross-cutting controls are above; [capture](docs/design/capture-photo.md) owns photo/validation behavior. [Original refinement](docs/delivery/archive/design-foundations-2026-10-07.md#compact-controls-and-flat-forms--october-6-2026) preserves detailed historical wording. Other repair/provenance bodies from this foundation are retained in the [dated snapshot](docs/delivery/archive/design-foundations-2026-10-07.md), not routine implementation instructions.
+
+Owner glass selector refinement October16: Closet collection navigation uses one native regular-glass capsule with opaque neutral selected treatment,44-point buttons and announced selection. No glass is added to ordinary cards or native bottom tab chrome. Older OS/Reduce Transparency/Increase Contrast use a semantic-white opaque capsule; Increase Contrast strengthens its boundary and Reduce Motion disables the selected-pill transition. Large accessibility text retains the existing scrollable labelled controls. Native runtime/rendered material acceptance remains #30; Paper reference recoloring is not claimed by native-source updates.

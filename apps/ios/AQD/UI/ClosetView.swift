@@ -105,7 +105,7 @@ struct ClosetView: View {
                 }
             }.scrollIndicators(.hidden)
         } else {
-            ClosetScopeControl(selection: scopeSelection).frame(height: 36).frame(minHeight: 44)
+            ClosetScopeControl(selection: scopeSelection)
         }
     }
     private var themeFilterMenu: some ToolbarContent {
@@ -544,38 +544,41 @@ private struct ClosetSearchField: ViewModifier {
     }
 }
 
-private struct ClosetScopeControl: UIViewRepresentable {
+private struct ClosetScopeControl: View {
     @Binding var selection: String
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Namespace private var selectedSegment
     private let scopes = ClosetSearchScope.allCases.map(\.rawValue)
 
-    func makeCoordinator() -> Coordinator { Coordinator(selection: $selection, scopes: scopes) }
-    func makeUIView(context: Context) -> TouchSegmentControl {
-        let control = TouchSegmentControl(items: scopes)
-        control.accessibilityLabel = "Closet collection"
-        control.addTarget(context.coordinator, action: #selector(Coordinator.changed(_:)), for: .valueChanged)
-        return control
+    var body: some View {
+        Group {
+            if #available(iOS 26, *), !reduceTransparency, contrast != .increased {
+                segments.glassEffect(.regular, in: Capsule())
+            } else {
+                segments.background(AppTheme.surface, in: Capsule())
+                    .overlay(Capsule().stroke(contrast == .increased ? AppTheme.controlBoundary : AppTheme.divider, lineWidth: 1))
+            }
+        }.accessibilityElement(children: .contain).accessibilityLabel("Closet collection")
     }
-    func updateUIView(_ control: TouchSegmentControl, context: Context) {
-        context.coordinator.selection = $selection
-        control.selectedSegmentIndex = scopes.firstIndex(of: selection) ?? 0
-    }
-    func sizeThatFits(_ proposal: ProposedViewSize, uiView: TouchSegmentControl, context: Context) -> CGSize? {
-        CGSize(width: proposal.width ?? uiView.intrinsicContentSize.width, height: 36)
-    }
-    final class TouchSegmentControl: UISegmentedControl {
-        override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-            let extra = max(0, (44 - bounds.height) / 2)
-            return bounds.insetBy(dx: 0, dy: -extra).contains(point)
-        }
-    }
-    final class Coordinator: NSObject {
-        var selection: Binding<String>
-        let scopes: [String]
-        init(selection: Binding<String>, scopes: [String]) { self.selection = selection; self.scopes = scopes }
-        @objc func changed(_ sender: UISegmentedControl) {
-            guard scopes.indices.contains(sender.selectedSegmentIndex) else { return }
-            selection.wrappedValue = scopes[sender.selectedSegmentIndex]
-        }
+    private var segments: some View {
+        HStack(spacing: 0) {
+            ForEach(scopes, id: \.self) { scope in
+                Button { selection = scope } label: {
+                    Text(scope).font(AppTypography.supporting).fontWeight(selection == scope ? .semibold : .regular)
+                        .foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, minHeight: 44)
+                        .background {
+                            if selection == scope {
+                                Capsule().fill(AppTheme.segmentSelection)
+                                    .matchedGeometryEffect(id: "selected", in: selectedSegment)
+                            }
+                        }.contentShape(Capsule())
+                }.buttonStyle(.plain)
+                    .accessibilityAddTraits(selection == scope ? [.isSelected] : [])
+                    .accessibilityIdentifier("closet.scope.\(scope.lowercased())")
+            }
+        }.padding(4).animation(reduceMotion ? nil : .easeInOut(duration: 0.18), value: selection)
     }
 }
 

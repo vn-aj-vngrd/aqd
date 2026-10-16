@@ -2,17 +2,20 @@ import SwiftUI
 import UIKit
 
 enum AppTheme {
-    static let canvas = color(light: 0xF5F5F7, dark: 0x1C1C1E)
-    static let surface = color(light: 0xFFFFFF, dark: 0x2C2C2E)
-    static let ink = color(light: 0x292C30, dark: 0xF2F2F7)
-    static let secondary = color(light: 0x686C72, dark: 0xB8B8BD)
-    static let imageGround = color(light: 0xF0F0EE, dark: 0x242426)
-    static let accent = color(light: 0x006FEE, dark: 0x338EF7)
-    static let actionText = color(light: 0x005BC4, dark: 0x66AAF9)
-    static let onAccent = color(light: 0xFFFFFF, dark: 0x1C1C1E)
-    static let divider = color(light: 0xE2E5E9, dark: 0x48484A)
-    static let accentSoft = color(light: 0xE6F1FE, dark: 0x142B47)
-    static let controlBoundary = color(light: 0x7B8088, dark: 0x8E8E93)
+    static let canvas = color(light: 0xF7F7F5, dark: 0x1C1C1B)
+    static let surface = color(light: 0xFFFFFF, dark: 0x2B2B29)
+    static let ink = color(light: 0x242321, dark: 0xF3F1EB)
+    static let secondary = color(light: 0x6A6863, dark: 0xBCB9B1)
+    static let imageGround = color(light: 0xF0EFEB, dark: 0x242422)
+    static let accent = color(light: 0x8C6A36, dark: 0xD3B47C)
+    static let actionText = color(light: 0x765829, dark: 0xD9BD8A)
+    static let onAccent = color(light: 0xFFFFFF, dark: 0x1C1C1B)
+    static let primaryFill = color(light: 0x292826, dark: 0xF2F0EB)
+    static let onPrimary = color(light: 0xFFFFFF, dark: 0x242321)
+    static let segmentSelection = color(light: 0xEBE7DF, dark: 0x454036)
+    static let divider = color(light: 0xE4E2DC, dark: 0x4A4842)
+    static let accentSoft = color(light: 0xF1EADF, dark: 0x383125)
+    static let controlBoundary = color(light: 0x807B72, dark: 0x969187)
     static let error = color(light: 0xD4142A, dark: 0xFF6472)
     static let errorSurface = color(light: 0xFFF0F2, dark: 0x422027)
     static let dangerFill = color(light: 0xE02335, dark: 0xFF6472)
@@ -22,7 +25,7 @@ enum AppTheme {
     static let warningSurface = color(light: 0xF3EEE4, dark: 0x403728)
     static let information = actionText
     static let informationSurface = accentSoft
-    static let regularGlass = color(light: 0xFFFFFF, dark: 0x2C2C2E, lightAlpha: 0.88, darkAlpha: 0.94)
+    static let regularGlass = color(light: 0xFFFFFF, dark: 0x2B2B29, lightAlpha: 0.88, darkAlpha: 0.94)
     static let prominentGlass = accent
     static let glassEdge = color(light: 0xFFFFFF, dark: 0xFFFFFF, lightAlpha: 0.70, darkAlpha: 0.12)
     static let segmentTrack = color(light: 0x767680, dark: 0x767680, lightAlpha: 0.10, darkAlpha: 0.24)
