@@ -39,6 +39,10 @@ Saved receipts L27/A04 keep Open outfit/Plan primaries and move management into 
 
 Dismiss Menu before editor, Agent return or confirmation. Revalidate ownership, revision and return context. Clean Back/dismissal writes nothing and restores focus/scroll; dirty exit protects drafts; failure preserves prior records, unknown completion reconciles the existing operation. V1 Delete uses L140; V2 linked impact retains necessary ZMA-0 publication review before XSH-0, never a stacked Menu/alert or implicit publication. Added open references ZRD-0 (V1 L27), ZTD-0 (V2 A04), ZVD-0 (V2 W15) and ZXE-0 (V2 A20) are four reference roots, not canonical routes or extra confirmations. Native acceptance remains outstanding.
 
+## Owner update: native draft-discard alerts · October16
+
+Editor draft discard uses a compact native SwiftUI alert with “Keep editing” as Cancel and “Discard draft” as destructive. This supersedes the earlier routine-discard action-sheet references below for the shared editor confirmation. Remove the custom 320-point sheet. Keep scope copy and existing discard callbacks, unknown-write guards and failure recovery. The OS owns button appearance, layout and focus; no custom icons or material replica. Other deletion/source-choice presentations retain their existing contracts. Runtime visual qualification remains issue30.
+
 ## Confirmation states, not pushed screens
 
 October 6 owner-approved rule applies to both V1 and V2. A confirmation is an overlay on the actual originating screen, not a new navigation destination. Existing confirmation IDs remain useful Paper state references; do not implement them as extra pushed pages. Keep the selected record, draft, scroll and invoking control behind the native presentation. Reference fixtures never hard-code the runtime return route.

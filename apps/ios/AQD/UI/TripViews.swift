@@ -61,7 +61,7 @@ struct PlanDatesView: View {
             VStack(alignment: .leading, spacing: 20) {
                 if gapsOnly {
                     if let summary {
-                        if summary.gaps.isEmpty { ContentUnavailableView("Every date has an outfit", systemImage: "checkmark.circle") }
+                        if summary.gaps.isEmpty { AppEmptyState("Every date has an outfit", systemImage: "checkmark.circle") }
                         ForEach(summary.gaps) { gap in
                             if let entryID = gap.entryID {
                                 NavigationLink(value: PlannerRoute.entry(entryID)) { gapLabel(gap) }.buttonStyle(.plain)
@@ -74,7 +74,7 @@ struct PlanDatesView: View {
                     ForEach(entries) { entry in
                         NavigationLink(value: PlannerRoute.entry(entry.id)) { PlanAgendaRow(entry: entry, showDate: true) }.buttonStyle(.plain)
                     }
-                    if entries.isEmpty { ContentUnavailableView("No saved entries", systemImage: "calendar") }
+                    if entries.isEmpty { AppEmptyState("No saved entries", systemImage: "calendar") }
                     if let summary, !summary.gaps.isEmpty {
                         SecondaryAction(title: "Review unassigned dates") { state.plannerPath.append(.dates(id, true)) }
                     }
@@ -116,7 +116,7 @@ struct TripPackingView: View {
                 if let summary {
                     Text("\(summary.items.count) unique pieces from your assigned outfits. \(summary.gaps.count) dates or assignments need review.")
                         .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    if summary.items.isEmpty { ContentUnavailableView("No pieces to pack yet", systemImage: "suitcase", description: Text("Assign saved outfits to the trip’s dates to build this list.")) }
+                    if summary.items.isEmpty { AppEmptyState("No pieces to pack yet", systemImage: "suitcase", description: Text("Assign saved outfits to the trip’s dates to build this list.")) }
                     ForEach(summary.items) { item in
                         Button { check(item) } label: {
                             HStack(spacing: 12) {

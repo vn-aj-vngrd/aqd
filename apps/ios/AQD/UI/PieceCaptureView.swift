@@ -57,14 +57,12 @@ struct PieceCaptureView: View {
                     }
                 }
             }
-            .sheet(isPresented: $discardDecision) {
-                DraftDiscardSheet(title: "Discard this draft?", message: model.draftSaveFailed
+            .draftDiscardConfirmation(isPresented: $discardDecision, title: "Discard this draft?", message: model.draftSaveFailed
                                   ? "The latest changes couldn’t be kept. Discard removes only this piece draft, not saved pieces or original Photos."
                                   : "Discard removes only this recoverable edit and its unused AQD photo edits. Saved pieces and original Photos stay unchanged.") {
                     discardDecision = false
                     model.discard()
                 }
-            }
             .alert("Camera access is off", isPresented: $cameraDenied) {
                 Button("Open Settings") {
                     if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
@@ -85,7 +83,7 @@ struct PieceCaptureView: View {
                 Button("Keep draft", role: .cancel) {}
             }
         }
-        .tint(AppTheme.actionText)
+        .tint(AppTheme.ink)
         .interactiveDismissDisabled(model.isSaving || model.draftSaveFailed || model.saved != nil)
         .photosPicker(isPresented: $pickerPresented, selection: $selectedPhoto, matching: .images)
         .onChange(of: selectedPhoto) { _, item in
@@ -120,7 +118,7 @@ struct PieceCaptureView: View {
                     }
                 }
             }
-            .tint(AppTheme.actionText)
+            .tint(AppTheme.ink)
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }
@@ -176,11 +174,11 @@ struct PieceCaptureView: View {
                             HStack(spacing: AppSpacing.large) {
                                 Image(systemName: "photo")
                                     .font(.system(size: AppControlMetrics.disclosureLane))
-                                    .foregroundStyle(AppTheme.actionText)
+                                    .foregroundStyle(AppTheme.ink)
                                     .accessibilityHidden(true)
                                 Text(model.draft.photoID == nil ? "Add photo" : "Replace unavailable photo")
                                     .font(AppTypography.body)
-                                    .foregroundStyle(AppTheme.actionText)
+                                    .foregroundStyle(AppTheme.ink)
                                 Spacer(minLength: 0)
                                 Image(systemName: "chevron.forward")
                                     .font(.system(size: AppControlMetrics.disclosureLane))
@@ -209,14 +207,32 @@ struct PieceCaptureView: View {
                              editingFocus: $nameEditing)
                 VStack(alignment: .leading, spacing: AppSpacing.small) {
                     LabeledControl(title: "Category") {
-                        Picker("Category", selection: Binding(get: { model.draft.category },
-                                                              set: { model.update(\.category, value: $0) })) {
-                            Text("Choose category").foregroundStyle(AppTheme.secondary).tag(Optional<PieceCategory>.none)
-                            ForEach(PieceCategory.allCases, id: \.self) { category in
-                                Text(category.rawValue).tag(Optional(category))
+                        Menu {
+                            Picker("Category", selection: Binding(get: { model.draft.category },
+                                                                  set: { model.update(\.category, value: $0) })) {
+                                Text("Choose category").tag(Optional<PieceCategory>.none)
+                                ForEach(PieceCategory.allCases, id: \.self) { category in
+                                    Text(category.rawValue).tag(Optional(category))
+                                }
                             }
+                        } label: {
+                            HStack {
+                                Text(model.draft.category?.rawValue ?? "Choose category")
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Spacer(minLength: AppSpacing.small)
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.footnote.weight(.medium))
+                                    .foregroundStyle(AppTheme.secondary)
+                                    .accessibilityHidden(true)
+                            }
+                            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading)
+                            .contentShape(Rectangle())
                         }
-                        .pickerStyle(.menu).frame(maxWidth: .infinity, alignment: .leading)
+                        .menuIndicator(.hidden)
+                        .buttonStyle(.plain)
+                        .foregroundStyle(AppTheme.ink)
+                        .accessibilityLabel("Category")
+                        .accessibilityValue(model.draft.category?.rawValue ?? "Not selected")
                         .accessibilityIdentifier("capture.category")
                     }
                     // Paper JR5/JR6 is a plain supporting link, not a surfaced row.
@@ -225,7 +241,7 @@ struct PieceCaptureView: View {
                         showDetails = true
                     } label: {
                         Text("More details").font(AppTypography.supporting)
-                            .foregroundStyle(AppTheme.actionText)
+                            .foregroundStyle(AppTheme.ink)
                             .fixedSize(horizontal: false, vertical: true)
                             .padding(.top, AppSpacing.medium)
                             .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .topLeading)
@@ -313,7 +329,7 @@ struct PieceCaptureView: View {
                     .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 0)
             }
-            .foregroundStyle(AppTheme.actionText)
+            .foregroundStyle(AppTheme.ink)
             .padding(.horizontal, AppSpacing.large)
             .padding(.vertical, AppSpacing.small)
             .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)

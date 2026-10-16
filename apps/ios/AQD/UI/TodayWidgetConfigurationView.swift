@@ -27,9 +27,7 @@ struct TodayWidgetConfigurationView: View {
         }.tint(AppTheme.ink).interactiveDismissDisabled()
         .sheet(item: $themeTask, onDismiss: { model.state.reloadThemes() }) { task in
             ThemeEditorView(model: task, didSave: { theme in model.nested { $0.options?.pinnedID = theme.id }; model.state.reloadThemes() })
-        }.sheet(isPresented: $discard) {
-            DraftDiscardSheet(title: "Discard widget edits?", message: "Your previous Today draft is retained.") { model.cancelNested(); discard = false }
-        }
+        }.draftDiscardConfirmation(isPresented: $discard, title: "Discard widget edits?", message: "Your previous Today draft is retained.") { model.cancelNested(); discard = false }
     }
     @ViewBuilder private func configuration(_ instance: TodayWidgetInstance) -> some View {
         switch instance.kind {
@@ -112,7 +110,7 @@ struct TodayPersonalPhoto: View {
         if let id = card.photoID, let data = try? state.store?.photoRendition(id: id, recipe: card.photoRecipe), let image = UIImage(data: data) {
             Image(uiImage: image).resizable().scaledToFit().accessibilityLabel(card.title.isEmpty ? "Private Today photo" : card.title)
         } else {
-            ContentUnavailableView(card.photoID == nil ? "Choose your own photo" : "Saved photo unavailable", systemImage: "photo", description: Text("Replace or recover the AQD photo. Your title and caption are retained."))
+            AppEmptyState(card.photoID == nil ? "Choose your own photo" : "Saved photo unavailable", systemImage: "photo", description: Text("Replace or recover the AQD photo. Your title and caption are retained."))
         }
     }
 }

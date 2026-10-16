@@ -15,7 +15,7 @@ struct TimezoneChooser: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Selecting a zone changes this draft only. Its calendar dates stay the same.")
                     .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                if zones.isEmpty { ContentUnavailableView("No matching timezones", systemImage: "globe") }
+                if zones.isEmpty { AppEmptyState("No matching timezones", systemImage: "globe") }
                 LazyVStack(spacing: 0) {
                     ForEach(zones, id: \.self) { zone in
                         Button { if select(zone) { dismiss() } } label: {

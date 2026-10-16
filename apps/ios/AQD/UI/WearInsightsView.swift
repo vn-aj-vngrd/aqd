@@ -15,7 +15,7 @@ struct LocalWearInsightsView: View {
                 else if let summary {
                     Text("\(summary.start.key) – \(summary.end.key)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     if summary.occasions == 0 || summary.activeCount == 0 {
-                        ContentUnavailableView("Not enough recorded history", systemImage: "chart.bar", description: Text("Record a wear to see which pieces you reach for. Earlier estimates are excluded from this period."))
+                        AppEmptyState("Not enough recorded history", systemImage: "chart.bar", description: Text("Record a wear to see which pieces you reach for. Earlier estimates are excluded from this period."))
                         PrimaryAction(title: "Record a look") { state.openWear() }
                         SecondaryAction(title: "Open Closet") { state.selection = 1 }
                     }

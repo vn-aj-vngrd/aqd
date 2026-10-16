@@ -51,7 +51,7 @@ struct TodayEditorView: View {
                 .navigationDestination(isPresented: $reorder) { TodayReorderView(model: model) }
                 .sheet(isPresented: Binding(get: { model.draft.nested != nil }, set: { _ in })) { TodayWidgetConfigurationView(model: model) }
         }.tint(AppTheme.ink).interactiveDismissDisabled()
-            .sheet(isPresented: $discard) { DraftDiscardSheet(title: "Discard Today changes?", message: "Your saved layout, notes and photos stay unchanged.") { model.finish(discarding: true); if model.state.todayEditor == nil { discard = false } } }
+            .draftDiscardConfirmation(isPresented: $discard, title: "Discard Today changes?", message: "Your saved layout, notes and photos stay unchanged.") { model.finish(discarding: true); if model.state.todayEditor == nil { discard = false } }
             .alert("Restore the three default widgets?", isPresented: $restore) {
                 Button("Cancel", role: .cancel) { }
                 Button("Restore defaults") { model.update { $0.restoreDefaults() } }

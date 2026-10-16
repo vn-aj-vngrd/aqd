@@ -78,7 +78,7 @@ struct ThemeCollectionView: View {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry themes") { state.reloadThemes() }
                 } else if state.themes.isEmpty {
-                    ContentUnavailableView("Make a little collection", systemImage: "folder", description: Text("Keep outfits together by mood or occasion. A theme can start empty."))
+                    AppEmptyState("Make a little collection", systemImage: "folder", description: Text("Keep outfits together by mood or occasion. A theme can start empty."))
                     PrimaryAction(title: "Create theme") { state.openTheme() }
                 }
                 ForEach(state.themes) { ThemeCollectionCard(theme: $0) }
@@ -133,12 +133,12 @@ struct ThemeDetailView: View {
                         SemanticFeedback(role: .danger, message: error)
                         Button("Retry outfits") { state.reloadOutfits() }
                     } else if theme.outfitIDs.isEmpty {
-                        ContentUnavailableView("Room for your outfits", systemImage: "square.stack", description: Text("Add saved outfits to this theme. Your other themes stay independent."))
+                        AppEmptyState("Room for your outfits", systemImage: "square.stack", description: Text("Add saved outfits to this theme. Your other themes stay independent."))
                         PrimaryAction(title: "Add outfits") { state.openTheme(editing: theme, chooseOutfits: true) }
                     }
                     ForEach(state.outfits.filter { theme.outfitIDs.contains($0.id) }) { OutfitCollectionCard(outfit: $0) }
                 }.padding(20)
-            } else { ContentUnavailableView("Theme unavailable", systemImage: "folder", description: Text("The theme is no longer in this closet.")) }
+            } else { AppEmptyState("Theme unavailable", systemImage: "folder", description: Text("The theme is no longer in this closet.")) }
         }.background(AppTheme.canvas)
             .navigationTitle(state.themes.first { $0.id == id }?.name ?? "Theme").navigationBarTitleDisplayMode(.inline)
             .toolbar {

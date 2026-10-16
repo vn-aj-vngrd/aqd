@@ -95,12 +95,10 @@ struct OutfitPlanEditorView: View {
                     }
                 }
         }.interactiveDismissDisabled()
-            .sheet(isPresented: $discard) {
-                DraftDiscardSheet(title: "Discard plan draft?", message: "Your saved plans, outfits and wear history stay unchanged.") {
+            .draftDiscardConfirmation(isPresented: $discard, title: "Discard plan draft?", message: "Your saved plans, outfits and wear history stay unchanged.") {
                     model.finish(discarding: true)
                     if model.state.planEditor == nil { discard = false }
                 }
-            }
     }
 }
 
@@ -115,7 +113,7 @@ private struct PlanOutfitChooser: View {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry outfits") { model.state.reloadOutfits() }
                 } else if model.state.outfits.isEmpty {
-                    ContentUnavailableView("No saved outfits", systemImage: "square.stack",
+                    AppEmptyState("No saved outfits", systemImage: "square.stack",
                                            description: Text("Keep this date unassigned, or save an outfit in Closet first."))
                 }
                 ForEach(model.state.outfits.filter { query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }) { outfit in

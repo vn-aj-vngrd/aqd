@@ -111,11 +111,9 @@ struct ThemeEditorView: View {
                 if model.saved != nil { finishSaved() }
                 else if model.startsWithOutfits { choosingOutfits = true; model.startsWithOutfits = false }
             }
-            .sheet(isPresented: $discard) {
-                DraftDiscardSheet(title: "Discard theme draft?", message: "Your saved theme and outfits stay unchanged.") {
+            .draftDiscardConfirmation(isPresented: $discard, title: "Discard theme draft?", message: "Your saved theme and outfits stay unchanged.") {
                     if model.finish(discarding: true) { discard = false; dismiss() }
                 }
-            }
     }
     private func finishSaved() {
         guard let saved = model.saved, model.finish() else { return }

@@ -30,7 +30,7 @@ struct LocalPlannerView: View {
                     }
                     Text(state.plannerDay.key).font(AppTypography.section)
                     if entries.isEmpty && state.planError == nil {
-                        ContentUnavailableView("No plans for this day", systemImage: "calendar",
+                        AppEmptyState("No plans for this day", systemImage: "calendar",
                             description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear."))
                         PrimaryAction(title: "Plan an outfit") { state.openPlan(day: state.plannerDay) }
                     }
@@ -143,7 +143,7 @@ struct LocalPlanEntryView: View {
                     if entry.state == .planned || entry.state == .unassigned {
                         Button("Remove entry", role: .destructive) { removal = PlanEntryDeletionRequest(entry: entry); confirming = true }.frame(minHeight: 44)
                     }
-                } else { ContentUnavailableView("Plan unavailable", systemImage: "calendar") }
+                } else { AppEmptyState("Plan unavailable", systemImage: "calendar") }
                 if let error {
                     SemanticFeedback(role: .danger, message: error)
                     if removal != nil { Button("Retry reviewed removal", action: remove).frame(minHeight: 44) }

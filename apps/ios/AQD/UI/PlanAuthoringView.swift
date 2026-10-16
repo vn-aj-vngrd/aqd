@@ -67,18 +67,16 @@ struct PlanAuthoringView: View {
                 }
                 .navigationDestination(isPresented: Binding(get: { resolvingConflict != nil }, set: { if !$0 { resolvingConflict = nil } })) {
                     if let entry = model.conflicts.first(where: { $0.id == resolvingConflict }) { PlanConflictView(model: model, existing: entry) }
-                    else { ContentUnavailableView("Conflict changed", systemImage: "calendar", description: Text("Return to the plan review and inspect its current dates.")) }
+                    else { AppEmptyState("Conflict changed", systemImage: "calendar", description: Text("Return to the plan review and inspect its current dates.")) }
                 }
                 .navigationDestination(isPresented: Binding(get: { choosingSlot != nil }, set: { if !$0 { choosingSlot = nil } })) {
                     if let id = choosingSlot { PlanSlotOutfitChooser(model: model, slotID: id) }
                 }
         }.onAppear { model.state.reloadPieces(); model.state.reloadOutfits() }.interactiveDismissDisabled()
-            .sheet(isPresented: $discard) {
-                DraftDiscardSheet(title: "Discard plan draft?", message: "No dates are saved by discarding. Existing plans and history stay unchanged.") {
+            .draftDiscardConfirmation(isPresented: $discard, title: "Discard plan draft?", message: "No dates are saved by discarding. Existing plans and history stay unchanged.") {
                     model.finish(discarding: true)
                     if model.state.planAuthoringEditor == nil { discard = false }
                 }
-            }
     }
     private var fields: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -201,7 +199,7 @@ private struct PlanSlotOutfitChooser: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 SecondaryAction(title: "Leave unassigned") { choose(nil) }
-                if model.state.outfits.isEmpty { ContentUnavailableView("No saved outfits", systemImage: "square.stack", description: Text("Keep this date unassigned. You can build outfits in Closet.")) }
+                if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("Keep this date unassigned. You can build outfits in Closet.")) }
                 ForEach(model.state.outfits.filter { query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }) { outfit in
                     Button { choose(outfit) } label: {
                         VStack(alignment: .leading, spacing: 8) {
@@ -258,7 +256,7 @@ struct PlanDefinitionView: View {
                         if deletion != nil { Button("Retry reviewed deletion", action: deletePlan).frame(minHeight: 44) }
                     }
                     Text("Saved dates are intentions. Recorded wear and history are separate.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                } else { ContentUnavailableView("Plan unavailable", systemImage: "calendar") }
+                } else { AppEmptyState("Plan unavailable", systemImage: "calendar") }
                 if let error = state.planError { SemanticFeedback(role: .danger, message: error); Button("Retry plans") { state.reloadPlanEntries() } }
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle(plan?.name ?? "Plan").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)

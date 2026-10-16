@@ -13,7 +13,7 @@ struct ArchivedPiecesView: View {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry", action: refresh).frame(minHeight: 44)
                 } else if pieces.isEmpty {
-                    ContentUnavailableView(query.isEmpty ? "No archived pieces" : "No matching pieces", systemImage: "archivebox",
+                    AppEmptyState(query.isEmpty ? "No archived pieces" : "No matching pieces", systemImage: "archivebox",
                         description: Text("Archived pieces keep their outfits and history. Restore a piece from its options."))
                 } else { PieceCollectionGrid(pieces: pieces) }
             }.padding(20)

@@ -35,7 +35,7 @@ struct LocalWearHistoryView: View {
                     }
                     let shown = records.filter { !calendarShown || $0.day.key == state.wearHistoryDay.key }
                     if shown.isEmpty {
-                        ContentUnavailableView(records.isEmpty ? "Your history starts here" : "No wear recorded for this day", systemImage: "clock",
+                        AppEmptyState(records.isEmpty ? "Your history starts here" : "No wear recorded for this day", systemImage: "clock",
                             description: Text("Record what you actually wore. Plans never count as wear."))
                         PrimaryAction(title: "Record a look") { state.openWear(day: recordingDay) }
                         SecondaryAction(title: "Open Planner") { state.plannerDay = recordingDay; state.selection = 2 }

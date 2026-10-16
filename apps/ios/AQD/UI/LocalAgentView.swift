@@ -12,8 +12,8 @@ struct LocalAgentView: View {
                 AgentConversationView(model: model, close: close)
             } else {
                 ContentUnavailableView {
-                    Label("Conversations couldn’t open", systemImage: "exclamationmark.bubble")
-                } description: { Text("Your local records are retained.") } actions: {
+                    Label("Conversations couldn’t open", systemImage: "exclamationmark.bubble").font(.headline)
+                } description: { Text("Your local records are retained.").font(AppTypography.supporting) } actions: {
                     Button("Try again") { open() }
                     Button("Back", action: close)
                 }
@@ -207,7 +207,7 @@ struct AgentHistoryView: View {
                     if model.hasPendingOperation { model.retryPending() } else { model.reloadHistory() }
                 }
             }
-            if model.history.isEmpty { ContentUnavailableView("No conversations yet", systemImage: "bubble.left", description: Text("Conversations stay on this iPhone.")) }
+            if model.history.isEmpty { AppEmptyState("No conversations yet", systemImage: "bubble.left", description: Text("Conversations stay on this iPhone.")) }
             ForEach(model.history) { value in
                 Button { open(value) } label: { VStack(alignment: .leading, spacing: 4) { Text(value.title).foregroundStyle(AppTheme.ink); Text(value.updatedAt, style: .date).font(.footnote).foregroundStyle(AppTheme.secondary) } }
                     .disabled(model.hasPendingOperation)

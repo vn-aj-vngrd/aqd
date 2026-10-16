@@ -26,9 +26,15 @@ struct LocalProfileView: View {
             }.background(AppTheme.canvas).navigationTitle("Profile").onAppear { state.reloadIdentity(); state.reloadFits() }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
+                        Button { state.openFit() } label: { Label("Add fit", systemImage: "plus") }
+                            .accessibilityIdentifier("profile.addFit")
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { state.openIdentity() } label: { Label("Edit profile", systemImage: "square.and.pencil") }
+                            .accessibilityIdentifier("profile.edit")
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
                         Menu {
-                            Button("Add fit") { state.openFit() }
-                            Button("Edit profile") { state.openIdentity() }
                             Button("Style") { state.openStyle(source: .profile) }
                             Button("Wear insights") { state.profileInsights = true }
                             Button("Settings") { state.profileSettings = true }

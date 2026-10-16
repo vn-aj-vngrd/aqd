@@ -92,12 +92,10 @@ struct OutfitEditorView: View {
             }
         }
         .interactiveDismissDisabled()
-        .sheet(isPresented: $discard) {
-            DraftDiscardSheet(title: "Discard outfit draft?", message: "Your saved outfits and pieces stay unchanged.") {
+        .draftDiscardConfirmation(isPresented: $discard, title: "Discard outfit draft?", message: "Your saved outfits and pieces stay unchanged.") {
                 model.discard()
                 if model.state.outfitEditor == nil { discard = false }
             }
-        }
     }
 }
 
@@ -128,7 +126,7 @@ struct OutfitComposition: View {
     var body: some View {
         Group {
             if pieceIDs.isEmpty {
-                ContentUnavailableView("Choose your pieces", systemImage: "tshirt",
+                AppEmptyState("Choose your pieces", systemImage: "tshirt",
                                        description: Text("Build a look from your own closet."))
             } else {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 8) {
@@ -166,10 +164,10 @@ struct OutfitCollectionView: View {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry outfits") { state.reloadOutfits() }.frame(minHeight: 44)
                 } else if state.outfits.isEmpty {
-                    ContentUnavailableView("Your first outfit starts here", systemImage: "square.stack", description: Text("Combine pieces from your closet. Every outfit stays private."))
+                    AppEmptyState("Your first outfit starts here", systemImage: "square.stack", description: Text("Combine pieces from your closet. Every outfit stays private."))
                     PrimaryAction(title: "Build outfit") { state.buildOutfit() }
                 } else if outfits.isEmpty {
-                    ContentUnavailableView("No matching outfits", systemImage: "square.stack", description: Text("Clear the theme or Favorites filter to see your other looks."))
+                    AppEmptyState("No matching outfits", systemImage: "square.stack", description: Text("Clear the theme or Favorites filter to see your other looks."))
                     PrimaryAction(title: "Clear filters", action: clearFilters)
                 } else {
                     ForEach(outfits) { OutfitCollectionCard(outfit: $0) }
@@ -228,7 +226,7 @@ struct OutfitDetailView: View {
                     }
                 }.padding(20)
             } else {
-                ContentUnavailableView("Outfit unavailable", systemImage: "square.stack", description: Text("The outfit is no longer in your closet."))
+                AppEmptyState("Outfit unavailable", systemImage: "square.stack", description: Text("The outfit is no longer in your closet."))
                 if let pendingMutation {
                     PrimaryAction(title: "Check previous change") { apply(pendingMutation) }.padding(20)
                 }

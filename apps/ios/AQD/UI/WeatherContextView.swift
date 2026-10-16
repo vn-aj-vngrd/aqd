@@ -136,7 +136,7 @@ struct WeatherContextView: View {
         }
     }
 }
-private struct WeatherReadingView: View {
+struct WeatherReadingView: View {
     let reading: WeatherReading
     let now: Date
     var body: some View {

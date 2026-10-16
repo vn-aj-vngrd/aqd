@@ -37,7 +37,7 @@ struct OwnedPieceChooser: View {
                     }
                 }.scrollIndicators(.hidden)
                 if filteredPieces.isEmpty {
-                    ContentUnavailableView("No matching pieces", systemImage: "tshirt",
+                    AppEmptyState("No matching pieces", systemImage: "tshirt",
                                            description: Text("Clear the search or choose another category. Your selection stays here."))
                 }
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 16) {

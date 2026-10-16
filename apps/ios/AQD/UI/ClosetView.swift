@@ -29,7 +29,6 @@ struct ClosetView: View {
         NavigationStack(path: $state.closetPath) {
             VStack(spacing: 0) {
                 scopePicker.padding(.horizontal, 20).padding(.bottom, 12)
-                if scope == "Outfits" { outfitFilters.padding(.horizontal, 20).padding(.bottom, 8) }
                 if state.closetSearchActive {
                     ClosetSearchContent(model: searchModel, input: searchInput,
                                         clear: { state.closetSearchQuery = "" },
@@ -46,17 +45,19 @@ struct ClosetView: View {
             .toolbar {
                 if !state.closetSearchActive {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button { state.closetSearchActive = true } label: { Label("Search closet", systemImage: "magnifyingglass") }.tint(AppTheme.ink)
+                        Button { state.closetSearchActive = true } label: { Label("Search closet", systemImage: "magnifyingglass") }
+                            .tint(AppTheme.ink).accessibilityIdentifier("closet.search")
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button { addPresented = true } label: { Label("Add to closet", systemImage: "plus") }
                             .tint(AppTheme.ink).accessibilityIdentifier("closet.addPiece")
                     }
-                    if scope == "Pieces" { pieceFilterMenu }
                 }
+                if scope == "Pieces", !state.closetSearchActive { pieceFilterMenu }
+                if scope == "Outfits" { outfitFilterMenu }
             }
-            .searchable(text: $state.closetSearchQuery, isPresented: $state.closetSearchActive,
-                        placement: .navigationBarDrawer(displayMode: .always), prompt: "Search your \(scope.lowercased())")
+            .modifier(ClosetSearchField(query: $state.closetSearchQuery, active: $state.closetSearchActive,
+                                        prompt: "Search your \(scope.lowercased())"))
             .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
             .onAppear(perform: refresh)
             .onChange(of: state.closetSearchActive) { _, active in
@@ -105,19 +106,20 @@ struct ClosetView: View {
             }.pickerStyle(.segmented).frame(minHeight: 44)
         }
     }
-    private var outfitFilters: some View {
-        HStack(spacing: 12) {
-            Toggle("Favorites", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly)
-                .toggleStyle(.button).tint(AppTheme.actionText)
-            Picker("Theme", selection: state.closetSearchActive ? $searchThemeID : $themeID) {
-                Text("All themes").tag(Optional<UUID>.none)
-                ForEach(state.themes) { Text($0.name).tag(Optional($0.id)) }
-                if let selectedID = state.closetSearchActive ? searchThemeID : themeID,
-                   !state.themes.contains(where: { $0.id == selectedID }) {
-                    Text("Unavailable theme").tag(Optional(selectedID))
+    private var outfitFilterMenu: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                Toggle("Favorites", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly)
+                Picker("Theme", selection: state.closetSearchActive ? $searchThemeID : $themeID) {
+                    Text("All themes").tag(Optional<UUID>.none)
+                    ForEach(state.themes) { Text($0.name).tag(Optional($0.id)) }
+                    if let selectedID = state.closetSearchActive ? searchThemeID : themeID,
+                       !state.themes.contains(where: { $0.id == selectedID }) {
+                        Text("Unavailable theme").tag(Optional(selectedID))
+                    }
                 }
-            }.pickerStyle(.menu).tint(AppTheme.actionText)
-            Spacer(minLength: 0)
+            } label: { Label("Filter outfits", systemImage: "line.3.horizontal.decrease") }
+            .tint(AppTheme.ink)
         }
     }
     private var pieceFilterMenu: some ToolbarContent {
@@ -145,7 +147,7 @@ struct ClosetView: View {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry", action: refreshPieces).frame(minHeight: 44)
                 } else if results.isEmpty {
-                    ContentUnavailableView(archived ? "No archived pieces" : category == nil && availability == nil ? "Your closet starts here" : "No matching pieces", systemImage: "tshirt",
+                    AppEmptyState(archived ? "No archived pieces" : category == nil && availability == nil ? "Your closet starts here" : "No matching pieces", systemImage: "tshirt",
                                            description: Text(category == nil && availability == nil ? "Add a photo and a few details. Everything stays on this device." : "Try another category or clear the filters."))
                     if category == nil && availability == nil && !archived {
                         PrimaryAction(title: "Add piece") { state.addPiece() }
@@ -209,6 +211,7 @@ struct PieceThumbnail: View {
 private struct PieceOptionsButton: UIViewRepresentable {
     let isArchived: Bool
     let archiveDisabled: Bool
+    let edit: () -> Void
     let archive: () -> Void
     let delete: () -> Void
     let availability: () -> Void
@@ -219,6 +222,9 @@ private struct PieceOptionsButton: UIViewRepresentable {
 
     func makeUIView(context: Context) -> TargetButton {
         let button = TargetButton(type: .system)
+        if #available(iOS 26.0, *) {
+            button.configuration = .glass()
+        }
         button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 22), forImageIn: .normal)
         button.accessibilityLabel = "More piece options"
@@ -230,6 +236,8 @@ private struct PieceOptionsButton: UIViewRepresentable {
 
     func updateUIView(_ button: TargetButton, context: Context) {
         button.tintColor = UIColor(AppTheme.ink)
+        let editAction = UIAction(title: "Edit piece", image: UIImage(systemName: "square.and.pencil"),
+                                  attributes: archiveDisabled ? .disabled : []) { _ in edit() }
         let archiveAction = UIAction(title: isArchived ? "Restore" : "Archive",
                                      image: UIImage(systemName: isArchived ? "arrow.uturn.backward" : "archivebox"),
                                      attributes: archiveDisabled ? .disabled : []) { _ in archive() }
@@ -238,7 +246,7 @@ private struct PieceOptionsButton: UIViewRepresentable {
         let destructiveGroup = UIMenu(options: .displayInline, children: [deleteAction])
         let availabilityAction = UIAction(title: "Availability", image: UIImage(systemName: "checkmark.circle"),
                                           attributes: archiveDisabled ? .disabled : []) { _ in availability() }
-        button.menu = UIMenu(children: [availabilityAction, archiveAction, destructiveGroup])
+        button.menu = UIMenu(children: [editAction, availabilityAction, archiveAction, destructiveGroup])
     }
 
     func sizeThatFits(_ proposal: ProposedViewSize, uiView: TargetButton, context: Context) -> CGSize? {
@@ -259,6 +267,7 @@ struct PieceDetailView: View {
     @State private var reviewedArchive: WardrobePiece?
     @State private var availabilityPresented = false
     @State private var wear: PieceWearSummary?
+    @State private var photoPresented = false
 
     private var deleteInFlight: Bool { deleteDecision }
 
@@ -266,7 +275,14 @@ struct PieceDetailView: View {
         ScrollView {
             if let piece {
                 VStack(alignment: .leading, spacing: 24) {
-                    PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(maxWidth: .infinity).frame(height: 300)
+                    Button { photoPresented = true } label: {
+                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                            .frame(maxWidth: .infinity).frame(height: 300)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("View photo of \(piece.name) full screen")
+                    .accessibilityHint("Opens a zoomable photo viewer")
+                    .accessibilityIdentifier("piece.photo.fullScreen")
                     Text(piece.name).font(.title2.weight(.medium))
                     Text(piece.category.rawValue).foregroundStyle(AppTheme.secondary)
                     if !piece.details.color.isEmpty { detail("Color", piece.details.color) }
@@ -284,11 +300,6 @@ struct PieceDetailView: View {
                         detail("Last worn", wear.lastWorn?.key ?? "No recorded history")
                         NavigationLink("Wear history") { LocalWearHistoryView(pieceID: piece.id) }.frame(minHeight: 44)
                     }
-                    if !piece.isArchived && piece.availability == .available {
-                        PrimaryAction(title: "Style this") { state.buildOutfit(pieceID: piece.id, suggest: true) }
-                            .disabled(deleteInFlight)
-                    }
-                    SecondaryAction(title: "Edit piece") { state.editPiece(piece) }.disabled(deleteInFlight)
                     if !piece.details.notes.isEmpty { detail("Notes", piece.details.notes) }
                     if let estimate = piece.details.priorWearCount {
                         detail("Prior wear estimate", String(estimate))
@@ -304,20 +315,27 @@ struct PieceDetailView: View {
                     }
                 }.padding(20)
             } else {
-                ContentUnavailableView("Piece unavailable", systemImage: "tshirt", description: Text(error ?? "The record is no longer here."))
+                AppEmptyState("Piece unavailable", systemImage: "tshirt", description: Text(error ?? "The record is no longer here."))
             }
         }
         .background(AppTheme.canvas)
         .navigationTitle("Piece").navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if let piece {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { state.editPiece(piece) } label: { Label("Edit piece", systemImage: "square.and.pencil") }
-                        .tint(AppTheme.ink).accessibilityIdentifier("piece.edit")
+                if !piece.isArchived && piece.availability == .available {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { state.buildOutfit(pieceID: piece.id, suggest: true) } label: {
+                            Label("Style this", systemImage: "sparkles")
+                        }
+                        .tint(AppTheme.ink).accessibilityIdentifier("piece.style")
                         .disabled(deleteInFlight)
+                    }
                 }
                 optionsToolbar(for: piece)
             }
+        }
+        .fullScreenCover(isPresented: $photoPresented) {
+            if let piece { PiecePhotoViewer(piece: piece) }
         }
         .sheet(isPresented: $availabilityPresented) {
             if let piece { PieceAvailabilityView(piece: piece) }
@@ -353,7 +371,9 @@ struct PieceDetailView: View {
     }
 
     private func optionsButton(for piece: WardrobePiece) -> some View {
-        PieceOptionsButton(isArchived: piece.isArchived, archiveDisabled: deleteInFlight) {
+        PieceOptionsButton(isArchived: piece.isArchived, archiveDisabled: deleteInFlight, edit: {
+            state.editPiece(piece)
+        }) {
             if piece.isArchived {
                 setArchive(false, expectedRevision: piece.revision, operation: UUID())
             } else {
@@ -392,4 +412,88 @@ struct PieceDetailView: View {
         } catch { self.error = "The piece wasn’t changed. Reopen the latest record and retry." }
     }
 
+}
+
+/// Read-only full-resolution rendition, isolated from photo-editing draft state.
+private struct PiecePhotoViewer: View {
+    @Environment(AppState.self) private var state
+    @Environment(\.dismiss) private var dismiss
+    let piece: WardrobePiece
+    @State private var image: UIImage?
+    @State private var loaded = false
+    @State private var zoom: CGFloat = 1
+    @State private var startingZoom: CGFloat = 1
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if let image {
+                    GeometryReader { geometry in
+                        ScrollView([.horizontal, .vertical]) {
+                            Image(uiImage: image)
+                                .resizable().scaledToFit()
+                                .frame(width: geometry.size.width * zoom, height: geometry.size.height * zoom)
+                                .accessibilityLabel("Photo of \(piece.name)")
+                        }
+                        .scrollIndicators(.hidden)
+                        .simultaneousGesture(MagnifyGesture()
+                            .onChanged { zoom = min(5, max(1, startingZoom * $0.magnification)) }
+                            .onEnded { _ in startingZoom = zoom })
+                    }
+                } else if loaded {
+                    AppEmptyState("Photo unavailable", systemImage: "photo",
+                                  description: Text("The saved photo could not be read. Your piece is unchanged."))
+                } else {
+                    OperationProgress(title: "Opening photo…")
+                }
+            }
+            .background(AppTheme.canvas)
+            .navigationTitle(piece.name).navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if image != nil {
+                    ToolbarItemGroup(placement: .bottomBar) {
+                        Button { setZoom(zoom - 1) } label: { Label("Zoom out", systemImage: "minus.magnifyingglass") }
+                            .disabled(zoom <= 1)
+                        Spacer()
+                        Text(Double(zoom).formatted(.percent.precision(.fractionLength(0)))).font(AppTypography.metadata)
+                            .accessibilityLabel("Zoom \(Double(zoom).formatted(.percent.precision(.fractionLength(0))))")
+                        Spacer()
+                        Button { setZoom(zoom + 1) } label: { Label("Zoom in", systemImage: "plus.magnifyingglass") }
+                            .disabled(zoom >= 5)
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { dismiss() } label: { Label("Close photo", systemImage: "xmark") }
+                }
+            }
+        }
+        .tint(AppTheme.ink)
+        .task {
+            if let data = try? state.store?.photoRendition(id: piece.photoID, recipe: piece.photoRecipe) {
+                image = UIImage(data: data)
+            }
+            loaded = true
+        }
+    }
+
+    private func setZoom(_ value: CGFloat) {
+        zoom = min(5, max(1, value))
+        startingZoom = zoom
+    }
+}
+
+/// Search chrome exists only while the owner explicitly opens search.
+private struct ClosetSearchField: ViewModifier {
+    @Binding var query: String
+    @Binding var active: Bool
+    let prompt: String
+
+    @ViewBuilder func body(content: Content) -> some View {
+        if active {
+            content.searchable(text: $query, isPresented: $active,
+                               placement: .navigationBarDrawer(displayMode: .always), prompt: prompt)
+        } else {
+            content
+        }
+    }
 }

@@ -114,7 +114,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
                         Text("Fit keeps the entire photo. Cropping is your choice. Use photo changes only this draft; the original stays available for Reset.")
                             .font(.footnote).foregroundStyle(AppTheme.secondary)
                     } else {
-                        ContentUnavailableView("Photo unavailable", systemImage: "photo.badge.exclamationmark",
+                        AppEmptyState("Photo unavailable", systemImage: "photo.badge.exclamationmark",
                                                description: Text("Your fields and saved framing are retained. Return to the draft to replace or recover the photo."))
                     }
                     if let error = previewState.error { SemanticFeedback(role: .danger, message: error) }

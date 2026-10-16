@@ -80,12 +80,10 @@ struct OutfitWearEditorView: View {
                     }
                 }
         }.interactiveDismissDisabled()
-            .sheet(isPresented: $discard) {
-                DraftDiscardSheet(title: "Discard wear draft?", message: "No wear is recorded by discarding this draft. Your existing history stays unchanged.") {
+            .draftDiscardConfirmation(isPresented: $discard, title: "Discard wear draft?", message: "No wear is recorded by discarding this draft. Your existing history stays unchanged.") {
                     model.finish(discarding: true)
                     if model.state.wearEditor == nil { discard = false }
                 }
-            }
     }
     private func pieceName(_ id: UUID) -> String {
         if let snapshot = model.draft.baseRecord?.pieces.first(where: { $0.id == id }) { return snapshot.name }

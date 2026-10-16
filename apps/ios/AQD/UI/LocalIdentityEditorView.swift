@@ -51,10 +51,8 @@ struct LocalIdentityEditorView: View {
                     } label: { Image(systemName: model.saved == nil ? "xmark" : "checkmark") }
                         .accessibilityLabel(model.saved == nil ? "Cancel profile edits" : "Done").disabled(model.pending || model.unknown)
                 } }
-        }.interactiveDismissDisabled().sheet(isPresented: $discard) {
-            DraftDiscardSheet(title: "Discard profile changes?", message: "Your saved name and photo stay unchanged. Other local data is unaffected.") {
+        }.interactiveDismissDisabled().draftDiscardConfirmation(isPresented: $discard, title: "Discard profile changes?", message: "Your saved name and photo stay unchanged. Other local data is unaffected.") {
                 model.finish(discarding: true); if model.state.identityEditor == nil { discard = false }
             }
-        }
     }
 }

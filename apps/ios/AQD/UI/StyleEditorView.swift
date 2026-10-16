@@ -76,13 +76,11 @@ struct StyleEditorView: View {
                     }
                 }
             }
-            .sheet(isPresented: $confirmsDiscard) {
-                DraftDiscardSheet(title: "Discard this preference draft?",
+            .draftDiscardConfirmation(isPresented: $confirmsDiscard, title: "Discard this preference draft?",
                                   message: "Only this draft will be removed. Your saved preferences stay unchanged.") {
                     confirmsDiscard = false
                     model.discard()
                 }
-            }
             .interactiveDismissDisabled()
         }.tint(AppTheme.actionText)
     }

@@ -26,7 +26,7 @@ struct LocalWearDetailView: View {
                     }
                     Text("Correction changes this record without adding a wear. A changed day, timezone or item set returns linked intentions to Planned; it never moves your plan.")
                         .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                } else { ContentUnavailableView("Wear record unavailable", systemImage: "clock") }
+                } else { AppEmptyState("Wear record unavailable", systemImage: "clock") }
                 if let error {
                     SemanticFeedback(role: .danger, message: error)
                     if request != nil { Button("Check Undo result", action: undo).frame(minHeight: 44) }

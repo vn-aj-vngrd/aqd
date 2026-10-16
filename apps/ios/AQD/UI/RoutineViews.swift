@@ -45,7 +45,7 @@ struct RoutineOutfitChooser: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Choose outfits for a reviewed rotation. Selecting them doesn’t change saved dates.").foregroundStyle(AppTheme.secondary)
-                if model.state.outfits.isEmpty { ContentUnavailableView("No saved outfits", systemImage: "square.stack", description: Text("Build an outfit in Closet, or leave your routine dates unassigned.")) }
+                if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("Build an outfit in Closet, or leave your routine dates unassigned.")) }
                 ForEach(model.state.outfits.filter { selected.contains($0.id) || query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }) { outfit in
                     Button {
                         if selected.contains(outfit.id) { selected.removeAll { $0 == outfit.id } } else { selected.append(outfit.id) }

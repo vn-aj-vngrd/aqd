@@ -92,7 +92,7 @@ struct OutfitReplacementView: View {
                 Text("Replace only this piece. Your pinned pieces, outfit name and other selections stay in place.")
                     .foregroundStyle(AppTheme.secondary)
                 if replacements.isEmpty {
-                    ContentUnavailableView("No available replacement", systemImage: "tshirt", description: Text("Add another piece in this category, or keep your current selection."))
+                    AppEmptyState("No available replacement", systemImage: "tshirt", description: Text("Add another piece in this category, or keep your current selection."))
                 }
                 ForEach(replacements) { piece in
                     Button { selected = piece.id } label: {

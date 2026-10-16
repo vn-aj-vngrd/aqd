@@ -41,8 +41,8 @@ private struct AppRootView: View {
                     .accessibilityIdentifier("entry.splash")
             } else if let error = state.openingError {
                 ContentUnavailableView {
-                    Label("Your closet couldn’t open", systemImage: "externaldrive.badge.exclamationmark")
-                } description: { Text(error) } actions: {
+                    Label("Your closet couldn’t open", systemImage: "externaldrive.badge.exclamationmark").font(.headline)
+                } description: { Text(error).font(AppTypography.supporting) } actions: {
                     Button("Retry") { state.openStore() }
                     Button("Choose an archive") { state.openRestore() }
                 }

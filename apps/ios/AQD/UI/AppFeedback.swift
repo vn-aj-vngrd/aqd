@@ -83,3 +83,24 @@ struct OperationProgress: View {
         .accessibilityLabel(title)
     }
 }
+
+/// Shared compact typography with native unavailable-state layout and symbols.
+struct AppEmptyState: View {
+    let title: LocalizedStringKey
+    let systemImage: String
+    let description: Text?
+
+    init(_ title: LocalizedStringKey, systemImage: String, description: Text? = nil) {
+        self.title = title
+        self.systemImage = systemImage
+        self.description = description
+    }
+
+    var body: some View {
+        ContentUnavailableView {
+            Label { Text(title).font(.headline) } icon: { Image(systemName: systemImage) }
+        } description: {
+            if let description { description.font(AppTypography.supporting) }
+        }
+    }
+}

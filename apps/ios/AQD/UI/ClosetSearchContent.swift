@@ -21,10 +21,10 @@ struct ClosetSearchContent: View {
                     }
                     if input.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && model.error == nil {
                         if model.closetEmpty {
-                            ContentUnavailableView("Your closet starts here", systemImage: "tshirt", description: Text("Add a piece to find it here later."))
+                            AppEmptyState("Your closet starts here", systemImage: "tshirt", description: Text("Add a piece to find it here later."))
                             PrimaryAction(title: "Add a piece", action: addPiece)
                         } else {
-                            ContentUnavailableView("Search your closet", systemImage: "magnifyingglass", description: Text("Find your pieces, outfits and themes."))
+                            AppEmptyState("Search your closet", systemImage: "magnifyingglass", description: Text("Find your pieces, outfits and themes."))
                             PrimaryAction(title: "Browse closet", action: browse)
                         }
                     } else if model.loading && model.results == nil {
@@ -33,7 +33,7 @@ struct ClosetSearchContent: View {
                     } else if let results = model.results {
                         if model.loading { ProgressView("Updating results…").tint(AppTheme.actionText) }
                         if results.count == 0 && model.error == nil {
-                            ContentUnavailableView("No matches", systemImage: "magnifyingglass", description: Text("No \(input.scope.rawValue.lowercased()) match “\(input.query)”. Try another search or clear the filters."))
+                            AppEmptyState("No matches", systemImage: "magnifyingglass", description: Text("No \(input.scope.rawValue.lowercased()) match “\(input.query)”. Try another search or clear the filters."))
                             PrimaryAction(title: "Clear search", action: clear)
                             SecondaryAction(title: "Add a piece", action: addPiece)
                         } else {

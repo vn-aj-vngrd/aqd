@@ -98,7 +98,8 @@ struct NativeTabs: UIViewControllerRepresentable {
             let selectedSymbols = ["house.fill", "hanger", "calendar", "sparkle", "person.crop.circle.fill"]
             hosts = content.enumerated().map { index, root in
                 let host = UIHostingController(rootView: root)
-                let item = UITabBarItem(title: nil, image: UIImage(systemName: symbols[index]), tag: index)
+                let item = UITabBarItem(title: nil, image: UIImage(systemName: symbols[index],
+                    withConfiguration: UIImage.SymbolConfiguration(weight: .regular)), tag: index)
                 item.selectedImage = UIImage(systemName: selectedSymbols[index],
                                              withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
                 item.accessibilityLabel = names[index]

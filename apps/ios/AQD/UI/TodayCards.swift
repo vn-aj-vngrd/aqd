@@ -4,16 +4,31 @@ import SwiftUI
 struct TodayCard: View {
     let instance: TodayWidgetInstance
     @Environment(AppState.self) private var state
-    @State private var weather = false
     private var today: LocalPlanDay { LocalPlanDay() }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(instance.kind.title).font(AppTypography.section)
-            content
+            Label(instance.kind.title, systemImage: symbol)
+                .font(AppTypography.detailTitle).foregroundStyle(AppTheme.ink)
+            content.font(AppTypography.supporting)
         }.frame(maxWidth: .infinity, alignment: .leading).padding(16)
             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
             .accessibilityIdentifier("today.widget.\(instance.id.uuidString)")
-            .sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true } } }
+    }
+    private var symbol: String {
+        switch instance.kind {
+        case .todayLook: "tshirt"
+        case .weekInWear: "calendar"
+        case .closetInUse: "chart.bar"
+        case .upcomingPlans: "calendar.badge.clock"
+        case .wearAgain: "arrow.clockwise"
+        case .favoriteOutfits: "heart"
+        case .theme: "folder"
+        case .fitJournal: "photo.stack"
+        case .weatherContext: "cloud"
+        case .quickActions: "bolt"
+        case .personalNote: "note.text"
+        case .personalPhoto: "photo"
+        }
     }
     @ViewBuilder private var content: some View {
         switch instance.kind {
@@ -45,9 +60,7 @@ struct TodayCard: View {
                 Button(action.title) { perform(action) }.frame(minHeight: 44)
             }
         case .weatherContext:
-            if let client = state.weatherClient, let error = client.error { failure(error) { client.reload() } }
-            else { Text(state.weatherClient?.local?.enabled == true ? "Weather · \(state.weatherClient?.local?.place?.name ?? "Place unavailable")" : "Weather is off. Your plans work without it.").foregroundStyle(AppTheme.secondary) }
-            Button("Weather setup and details") { weather = true }.frame(minHeight: 44)
+            TodayWeatherSummary()
         case .personalNote, .personalPhoto:
             if let card = instance.options?.personal {
                 if !card.title.isEmpty { Text(card.title).font(AppTypography.section) }
@@ -98,7 +111,7 @@ struct TodayCard: View {
         else if let bounds = try? TodaySources.week(containing: instance.options?.period ?? today, through: today) {
             let records = state.wearRecords.filter { $0.day.key >= bounds.start.key && $0.day.key <= bounds.end.key }
             if state.wearRecords.isEmpty {
-                Text("Your week starts with a recorded look. Plans do not count as wear.").foregroundStyle(AppTheme.secondary)
+                Text("Record a look to start your week. Plans stay separate from wear.").foregroundStyle(AppTheme.secondary)
                 Button("Record a look") { state.openWear() }.frame(minHeight: 44)
             } else {
                 Text("\(Set(records.map(\.day.key)).count) days · \(Set(records.flatMap { $0.pieces.map(\.id) }).count) pieces")
@@ -116,7 +129,7 @@ struct TodayCard: View {
                 Text(value, format: .percent.precision(.fractionLength(0))).font(.largeTitle)
                 Text("\(summary.usedActiveCount) of \(summary.activeCount) active pieces recorded").foregroundStyle(AppTheme.secondary)
                 ProgressView(value: value).tint(AppTheme.actionText)
-            } else { Text("Record wear to see how much of your Closet you use. This completed month has insufficient history.").foregroundStyle(AppTheme.secondary) }
+            } else { Text("Your wear story starts here. Record your looks to discover which pieces you reach for.").foregroundStyle(AppTheme.secondary) }
             Text("\(summary.start.key) – \(summary.end.key)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             NavigationLink("View this month") { LocalWearInsightsView(initialMonth: month) }.frame(minHeight: 44)
         }
@@ -201,10 +214,70 @@ private struct TodayPersonalDetail: View {
                     SecondaryAction(title: "Edit card") { state.openTodayEditor(); state.todayEditor?.begin(instance) }
                     Text("Private on this iPhone").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 } else {
-                    ContentUnavailableView("This card is no longer on Today", systemImage: "square.stack", description: Text("Saved notes and photos remain available from the widget library."))
+                    AppEmptyState("This card is no longer on Today", systemImage: "square.stack", description: Text("Saved notes and photos remain available from the widget library."))
                     SecondaryAction(title: "Customize Today") { state.openTodayEditor() }
                 }
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle(instance?.kind.title ?? "Saved card").navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+/// Discoverable Weather setup and matching, attributed saved readings. The shared
+/// client still owns consent, qualification, freshness and all network requests.
+struct TodayWeatherSummary: View {
+    @Environment(AppState.self) private var state
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var setup = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if let client = state.weatherClient {
+                if let error = client.error {
+                    SemanticFeedback(role: .warning, message: error)
+                    Button("Retry weather preferences") { client.reload() }.frame(minHeight: 44)
+                } else if client.local?.enabled == true, let place = client.local?.place {
+                    Text(place.name).font(AppTypography.body)
+                    TimelineView(.periodic(from: .now, by: 60)) { context in
+                        let day = LocalPlanDay(date: context.date, timeZone: TimeZone(identifier: place.timeZoneID) ?? .current)
+                        let selection = WeatherSelection(place: place, day: day)
+                        if let snapshot = client.cached(selection, now: context.date),
+                           let reading = snapshot.reading(for: day, now: context.date, qualified: client.qualified),
+                           let attribution = snapshot.attribution,
+                           let mark = UIImage(data: colorScheme == .dark ? attribution.dark : attribution.light) {
+                            WeatherReadingView(reading: reading, now: context.date)
+                            Image(uiImage: mark).resizable().scaledToFit().frame(maxWidth: 160, maxHeight: 36)
+                                .accessibilityLabel("Apple Weather")
+                            Link("Data sources", destination: attribution.legalURL).frame(minHeight: 44)
+                        } else {
+                            Text(client.qualified ? "Open weather to refresh conditions for today." : "Live weather isn’t available in this build. Your saved city is retained.")
+                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }
+                    }
+                } else {
+                    Text("A little context for what to wear.").font(AppTypography.body)
+                    Text("Choose a city for optional Apple Weather. Your wardrobe stays private.")
+                        .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    if !client.qualified {
+                        Text("Live readings aren’t enabled in this build yet.")
+                            .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                    }
+                }
+                Button { setup = true } label: {
+                    HStack {
+                        Text(client.local?.enabled == true ? "Weather details" : "Set up weather")
+                        Spacer()
+                        Image(systemName: "chevron.forward").accessibilityHidden(true)
+                    }.frame(minHeight: 44).contentShape(Rectangle())
+                }.buttonStyle(.plain).foregroundStyle(AppTheme.ink)
+            } else {
+                Text("Weather preferences are unavailable. Your plans still work without weather.")
+                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }
+        }
+        .sheet(isPresented: $setup) {
+            if let client = state.weatherClient {
+                WeatherContextView(client: client, persistsPreference: true) { _ in true }
+            }
+        }
     }
 }

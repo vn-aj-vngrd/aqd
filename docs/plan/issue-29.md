@@ -143,3 +143,30 @@ Strict opening requires valid existing storage whenever generated copies exist; 
 All actual regressions reproduced in `/tmp/aqd-pr37-codex8-red.log`, `/tmp/aqd-pr37-codex8-empty-red.log`, `/tmp/aqd-pr37-codex8-recovery-red.log` and `/tmp/aqd-pr37-codex8-combined-red.log`. Intermediate unit runs are retained separately and do not qualify later source. Final Core73/native213, comprising200 Swift Testing and13 XCTest, PASSED `/tmp/aqd-pr37-codex8-complete-unit.log` on the confirmed physical iPhone. Regressions exercise missing/empty legacy paths; malformed control kinds; mutation/refresh of recovery metadata; original/valid-published/both-invalid recovery; model choose/commit; missing media and failed creation/removal retry. Both independent whole-path rechecks found no remaining concrete findings. All simulators stay shut down, no E2E ran and real capability activation remains issue30. New-head remote CI/Codex/protected merge/release remain separate gates.
 
 Unsigned iOS Release PASSED `/tmp/aqd-pr37-codex8-release.log`; agent-doc links and whitespace pass.
+
+## Owner UI follow-up slice
+
+Owner screenshots authorize shared compact empty-state typography, native centered draft-discard alerts, native glass on the UIKit-backed Piece More control, neutral capture/photo controls, full-width category selection with trailing chevrons, and direct Add fit/Edit profile toolbar actions beside Profile More. Keep existing save/discard recovery, category selection and destination behavior. Verify by native unit/build checks and independent source review; rendered acceptance stays issue30. This slice follows context-count correction `529bb93`, whose Core73/native213 unit run passed in `/tmp/aqd-pr37-codex9-unit.log`.
+
+Owner additionally requests one Closet search entry and a full-screen Piece photo option. Remove only the redundant toolbar Search action, preserving native searchable state. Tappable photos open their saved full-resolution rendition with bounded zoom, accessible controls, unavailable/loading states and Close; no editing or data mutation. Include these in the same UI follow-up slice.
+
+Latest owner steering supersedes the earlier search choice: retain only the toolbar Search launcher by default; attach the native field when active and remove on Cancel. Outfit filters move to the trailing toolbar menu, with separate search/browse filter bindings. Today gains visible Weather setup, contextual card icons/compact text and a minimal grid Customize icon. Numerical WeatherKit remains disabled until signed service/attribution qualification; no synthetic conditions or silent activation. Inactive tabs use regular symbol weight; selected tabs retain semibold and available filled variants.
+
+### UI request coverage and unit receipt
+
+| Owner request | Source outcome |
+| --- | --- |
+| Smaller empty labels | Shared native unavailable states use headline/subheadline; Profile journal matches |
+| Discard like native examples | Eleven editor callers use the shared native Cancel/destructive alert; existing callbacks and failure states retained |
+| Glass More | UIKit Piece menu uses iOS26+ native glass with deployment18 fallback |
+| Neutral capture/photo controls | Add/replace photo, source choices, Close and category use semantic ink |
+| Full-width category | Custom full-width Menu label has trailing chevrons, with native Picker selected state inside |
+| Profile three icons | Add fit, Edit profile, More; remaining destinations stay in More |
+| Piece actions | Style toolbar icon before More; Edit in More; duplicate body actions removed |
+| Full-screen photo | Tappable saved rendition, bounded pinch zoom, scroll pan, accessible zoom and Close; no media mutation |
+| Closet search, latest instruction | Toolbar Search launcher; field exists only while searching |
+| Outfit filtering | Favorites/Theme move to top-right Filter, preserving separate browse/search selections |
+| Today polish and Weather | Contextual compact headings, visible Weather setup and attributed matching-cache display; live qualification unchanged |
+| Minimal Customize and tab weights | Regular17 grid Customize; explicit regular inactive icons and semibold/filled selected variants |
+
+Final Core73/native213, comprising200 Swift Testing and13 XCTest, pass `/tmp/aqd-pr37-ui-icons-unit.log` on the confirmed physical iPhone17ProMax. Bounded independent Standards/Spec reviews found stale Profile instructions; those and the authoritative feature/design owners were corrected and rechecked. No remaining source findings. An intermediate viewer build rejected an ambiguous percent format; converting zoom to Double fixes it, and subsequent native builds/tests pass. All rendered qualification/E2E remains issue30.

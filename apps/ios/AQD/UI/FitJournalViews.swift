@@ -34,8 +34,8 @@ struct FitJournalGrid: View {
                     Button("Retry journal") { state.reloadFits() }.frame(minHeight: 44)
                 } else if state.fitMemories.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("A little space for your style").font(AppTypography.detailTitle)
-                        Text("Add a photo or outfit from More → Add fit. Memories stay private.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        Text("A little space for your style").font(.headline)
+                        Text("Use Add fit (+) above to keep a photo or outfit here. Memories stay private.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
                         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12)).accessibilityIdentifier("profile.fits.empty")
                 } else {
@@ -114,11 +114,9 @@ struct FitEditorView: View {
                     Button("Cancel", role: .cancel) {}
                     Button("Remove photo", role: .destructive) { model.removePhoto() }
                 } message: { Text("Changes this draft only until Save. Keep an outfit link or add another photo to save the fit. Original Photos are unchanged.") }
-        }.interactiveDismissDisabled().sheet(isPresented: $discard) {
-            DraftDiscardSheet(title: "Discard fit changes?", message: "Your saved memory and original Photos stay unchanged. No wear is recorded.") {
+        }.interactiveDismissDisabled().draftDiscardConfirmation(isPresented: $discard, title: "Discard fit changes?", message: "Your saved memory and original Photos stay unchanged. No wear is recorded.") {
                 model.finish(discarding: true); if model.state.fitEditor == nil { discard = false }
             }
-        }
     }
 }
 
@@ -129,7 +127,7 @@ private struct FitOutfitChooser: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                if model.state.outfits.isEmpty { ContentUnavailableView("No saved outfits", systemImage: "square.stack", description: Text("You can save this memory with a photo instead, or build an outfit in Closet.")) }
+                if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("You can save this memory with a photo instead, or build an outfit in Closet.")) }
                 ForEach(model.state.outfits.filter { query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }) { outfit in
                     Button { if model.link(outfit) { dismiss() } } label: {
                         VStack(alignment: .leading, spacing: 8) { OutfitComposition(pieceIDs: outfit.pieceIDs); Text(outfit.name).foregroundStyle(AppTheme.ink) }
@@ -171,7 +169,7 @@ struct FitMemoryDetailView: View {
                         state.recordWear(from: memory)
                     }.disabled(request != nil)
                     Text("A memory, not a wear record. Record wear only through the separate reviewed action.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                } else { ContentUnavailableView("Memory unavailable", systemImage: "photo") }
+                } else { AppEmptyState("Memory unavailable", systemImage: "photo") }
                 if let error { SemanticFeedback(role: .danger, message: error); if request != nil { Button("Check deletion result", action: delete).frame(minHeight: 44) } }
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle("Fit memory").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)

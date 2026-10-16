@@ -7,13 +7,21 @@ struct TodayView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    Text(Date.now, format: .dateTime.weekday(.abbreviated).day())
+                    Text(Date.now, format: .dateTime.weekday(.wide).month(.wide).day())
                         .font(.subheadline).foregroundStyle(AppTheme.secondary)
                     if let error = state.todayError {
                         SemanticFeedback(role: .danger, message: error)
                         Button("Retry Today") { state.reloadToday() }.frame(minHeight: 44)
                     }
                     if let configuration = state.today {
+                        if !configuration.instances.contains(where: { $0.kind == .weatherContext }) {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Label("Weather", systemImage: "cloud").font(AppTypography.detailTitle)
+                                TodayWeatherSummary()
+                            }
+                            .padding(20).frame(maxWidth: .infinity, alignment: .leading)
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
+                        }
                         ForEach(configuration.instances) { instance in
                             TimelineView(.periodic(from: .now, by: 60)) { _ in TodayCard(instance: instance) }
                         }
@@ -24,7 +32,7 @@ struct TodayView: View {
             .background(AppTheme.canvas)
             .navigationTitle("Today")
             .toolbar { ToolbarItem(placement: .topBarTrailing) {
-                Button { state.openTodayEditor() } label: { Image(systemName: "slider.horizontal.3").font(.system(size: 22)).frame(width: 44, height: 44) }.accessibilityLabel("Customize Today").tint(AppTheme.secondary)
+                Button { state.openTodayEditor() } label: { Image(systemName: "square.grid.2x2").font(.system(size: 17, weight: .regular)) }.accessibilityLabel("Customize Today").tint(AppTheme.secondary)
             } }
             .safeAreaInset(edge: .bottom) {
                 if state.todayUndoAvailable { Button("Undo layout change") { state.undoTodayLayout() }.frame(minHeight: 44).padding(.horizontal, 20).background(AppTheme.canvas) }
@@ -41,7 +49,7 @@ struct PendingLocalView: View {
     let symbol: String
     var body: some View {
         NavigationStack {
-            ContentUnavailableView("\(title) is being implemented", systemImage: symbol,
+            AppEmptyState("\(title) is being implemented", systemImage: symbol,
                                    description: Text("This source baseline is not complete V1. Your saved pieces remain private and usable in Closet."))
                 .background(AppTheme.canvas)
                 .navigationTitle(title)
