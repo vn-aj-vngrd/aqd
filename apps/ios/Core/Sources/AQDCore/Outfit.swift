@@ -54,6 +54,7 @@ public struct OutfitDraft: Identifiable, Codable, Equatable, Sendable {
     public var proposalSource: OutfitProposalSource?
     public var occasion: String?
     public var mood: String?
+    public var weather: WeatherSelection?
 
     public var trimmedName: String { name.trimmingCharacters(in: .whitespacesAndNewlines) }
 
@@ -91,6 +92,7 @@ public struct OutfitDraft: Identifiable, Codable, Equatable, Sendable {
     }
 
     public func validated() throws {
+        try weather?.validated()
         guard baseRevision >= 0, baseRevision < Int.max, Set(pieceIDs).count == pieceIDs.count,
               Set(themeIDs ?? []).count == (themeIDs ?? []).count,
               Set(pinnedPieceIDs ?? []).count == (pinnedPieceIDs ?? []).count else { throw OutfitValidationError.invalidRecord }

@@ -75,6 +75,7 @@ public struct OutfitPlanDraft: Identifiable, Codable, Equatable, Sendable {
     public var occasion: String
     public var outfit: Outfit?
     public var unassignedByChoice: Bool?
+    public var weather: WeatherSelection?
     public var allowsOverlap: Bool?
     public var baseEntry: OutfitPlanEntry?
     public var parentPlanID: UUID?
@@ -91,6 +92,7 @@ public struct OutfitPlanDraft: Identifiable, Codable, Equatable, Sendable {
     }
 
     public func validatedForSave(outfits: [Outfit]) throws {
+        try weather?.validated()
         _ = try day.date()
         guard parentPlanID == nil || parentPlanID == planID else { throw PlanValidationError.invalidRecord }
         if let baseEntry {

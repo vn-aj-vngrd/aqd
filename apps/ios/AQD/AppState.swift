@@ -35,6 +35,7 @@ final class AppState {
     var collectionRefreshID = UUID()
     var capture: CaptureModel?
     var collectionError: String?
+    var weatherClient: WeatherClient?
     var today: TodayConfiguration?
     var todayUndoAvailable = false
     var todayError: String?
@@ -85,6 +86,7 @@ final class AppState {
     /// Use an explicitly isolated store without opening the ordinary local closet.
     init(store: PieceStore) {
         self.store = store
+        weatherClient = WeatherClient(store: store)
         reloadPieces()
         reloadToday()
         retryPhotoCleanup()
@@ -184,6 +186,7 @@ final class AppState {
             }
             #endif
             openingError = nil
+            if let store { weatherClient = WeatherClient(store: store) }
             reloadPieces()
             reloadToday()
             retryPhotoCleanup()

@@ -4,6 +4,7 @@ import SwiftUI
 struct TodayCard: View {
     let instance: TodayWidgetInstance
     @Environment(AppState.self) private var state
+    @State private var weather = false
     private var today: LocalPlanDay { LocalPlanDay() }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -12,6 +13,7 @@ struct TodayCard: View {
         }.frame(maxWidth: .infinity, alignment: .leading).padding(16)
             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
             .accessibilityIdentifier("today.widget.\(instance.id.uuidString)")
+            .sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true } } }
     }
     @ViewBuilder private var content: some View {
         switch instance.kind {
@@ -43,7 +45,9 @@ struct TodayCard: View {
                 Button(action.title) { perform(action) }.frame(minHeight: 44)
             }
         case .weatherContext:
-            Text("Weather is off. Your plans work without it.").foregroundStyle(AppTheme.secondary)
+            if let client = state.weatherClient, let error = client.error { failure(error) { client.reload() } }
+            else { Text(state.weatherClient?.local?.enabled == true ? "Weather · \(state.weatherClient?.local?.place?.name ?? "Place unavailable")" : "Weather is off. Your plans work without it.").foregroundStyle(AppTheme.secondary) }
+            Button("Weather setup and details") { weather = true }.frame(minHeight: 44)
         case .personalNote, .personalPhoto:
             if let card = instance.options?.personal {
                 if !card.title.isEmpty { Text(card.title).font(AppTypography.section) }
