@@ -79,14 +79,14 @@ extension AppState {
         catch { planError = "Your plans couldn’t be read. Existing data is retained; retry." }
     }
     func resumePlanDraft() {
-        guard identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil, entry.page == .main else { return }
+        guard fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil, entry.page == .main else { return }
         do {
             guard let draft = try store?.planDraft() else { return }
             planEditor = try OutfitPlanEditorModel(state: self, draft: draft)
         } catch { planError = "Your plan draft couldn’t be read. Keep the app data and retry." }
     }
     func openPlan(outfitID: UUID? = nil, day: LocalPlanDay = LocalPlanDay(), editing entry: OutfitPlanEntry? = nil, parentPlanID: UUID? = nil) {
-        guard identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
+        guard fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             reloadOutfits(); reloadPlanEntries()

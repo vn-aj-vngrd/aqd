@@ -227,3 +227,6 @@ October16 PR35 scoped-authoring correction: This entry keeps shared definition f
 
 
 October16 issue28 S1: Profile More → Edit profile → optional local name/avatar draft. Clear name/Remove photo are provisional; Save acknowledges one owner/revision-bound result; unknown locks changes and reconciles. Photo preparation/cancel retains fields, stale imports cannot reattach removed media, and recovered identity tasks exclude competing editors. Media cleanup checks saved/current/base draft references. Unit verified only; all rendered/E2E acceptance #30.
+
+
+October16 issue28 S2: Profile More → Add fit → date/photo/outfit/private note → acknowledged source return. Snapshot-only memories remain editable after outfit deletion. Memory detail → Edit / confirmed Delete / explicit Record wear; the latter carries the saved date into duplicate-safe actual wear review and never runs implicitly. Profile scroll anchor belongs to its enclosing scroll view. Note-only/over-limit drafts remain visible but cannot save. Unit verified; all E2E #30.

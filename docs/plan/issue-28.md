@@ -13,13 +13,13 @@ Read Profile/journal feature, fit UI, capture/media and local identity contracts
 
 | Slice | Working outcome | Acceptance | State | Marker | SHA |
 | --- | --- | --- | --- | --- | --- |
-| S1 | Optional local identity and retained edit task with safe photo selection/removal and committed Profile header | Local identity, J1/J3/J5 | Implemented, unit verified | `AQD-Slice: #28/S1` | Pending |
-| S2 | Private dated fit journal CRUD, snapshot link/unlink, note validation, real detail/grid and independent wear route | J1–J5/P10 | Planned | `AQD-Slice: #28/S2` | Pending |
+| S1 | Optional local identity and retained edit task with safe photo selection/removal and committed Profile header | Local identity, J1/J3/J5 | Implemented, unit verified | `AQD-Slice: #28/S1` | `6a1700f` |
+| S2 | Private dated fit journal CRUD, snapshot link/unlink, note validation, real detail/grid and independent wear route | J1–J5/P10 | Implemented, unit verified | `AQD-Slice: #28/S2` | Pending |
 | S3 | Shared optional-photo lifecycle, editing/removal/cleanup and preserving migration/restart recovery across Profile/fit tasks | J3/J5, scoped J6/LOCAL-13–15 | Planned | `AQD-Slice: #28/S3` | Pending |
 
 ## Verification and resume
 
-Unit-only feature gate; integrated J7 and all E2E #30. Actual store fault/retry/reopen/migration and Core validation tests per slice, then final unsigned Release and independent Standards/Spec review. S1 implemented; continue S2 journal CRUD/snapshots and actual Profile grid/detail. Publish source-bound unit evidence and AC limits in the single PR.
+Unit-only feature gate; integrated J7 and all E2E #30. Actual store fault/retry/reopen/migration and Core validation tests per slice, then final unsigned Release and independent Standards/Spec review. S1/S2 implemented; continue S3 shared optional-photo editing and complete media/restart protection, then companion #22. Publish source-bound unit evidence and AC limits in the single PR.
 
 ## S1 identity receipt
 
@@ -28,3 +28,11 @@ Optional name/avatar editing uses a retained local task and immutable save ackno
 Schema V15 adds identity/draft/save records through a preserving V14 migration. Current identity and both current/base draft photo references protect media during ordinary and legacy cleanup discovery; completed receipts own no bytes. Actual shared-avatar tests retain source media across cancellation and removal while a wardrobe piece still owns it, then release it only after all owners are gone. Original Photos remain outside AQD control.
 
 Tracer failed compilation against absent APIs (`/tmp/aqd-28-s1-red.log`). Core59 and physical native153 (140 Swift Testing +13 XCTest) passed `/tmp/aqd-28-s1-unit.log`. Final focused4 identity cases passed `/tmp/aqd-28-s1-final.log`, adding actual photo ownership, populated V14 migration and competing recovered-task checks. Xcode27.0/27A266a, physical iPhone17ProMax/iOS27.0.1; owner readiness confirmed. Bounded Standards/Spec increment review covered owner/revision, receipt-first unknown retry, optional absence, late import cancellation, reference-safe cleanup and task ownership. Final grouped independent review/Release/CI/Codex remain; all E2E/rendered/device quality remains #30.
+
+## S2 journal receipt
+
+Profile’s one More menu now opens Add fit and Edit profile alongside Style/Wear insights/Settings. The journal shows actual chronological memory counts and responsive dated photo/composition thumbnails, with real detail, retained snapshot metadata, same-ID edit and confirmed scoped deletion. Date/timezone/note/photo/link edits are private drafts. Notes retain over-500-character input with validation; date-only/note-only cannot save. New links require current owned outfits; existing snapshots permit later date/note edits after source outfit edit/deletion. Save/unknown retry uses one immutable receipt and returns to the source with the new memory anchor. Acknowledged deletion never removes wardrobe/wear/plans or another memory’s photos.
+
+Record wear is a separate source-bound action using the saved fit date and existing duplicate-consent task. Photo-only/deleted-outfit memories open explicit piece review, without inferring garments. Repeated explicit wear uses one actual record; deleting the memory leaves actual wear unchanged.
+
+Schema V16 adds fit/draft/save/delete records and keeps identity, journal/current/base drafts in photo-reference cleanup. The missing-API tracer failed `/tmp/aqd-28-s2-red.log`; Core59/native157 (144 Swift Testing +13 XCTest) passed `/tmp/aqd-28-s2-unit.log`. Final2 affected journal cases pass `/tmp/aqd-28-s2-final.log`, adding the actual AppState fit-date → wear → existing-record consent route and a source-aware scroll owner. Actual temporary stores cover invalid/over-limit retention, unknown retry, deleted-source snapshots/reopen, same-ID correction and idempotent deletion without implicit wear. Bounded Standards/Spec increment review checked those contracts and single-task ownership. Shared photo editing/recipe/reference/migration checks continue in S3; all E2E/rendered quality remains #30.

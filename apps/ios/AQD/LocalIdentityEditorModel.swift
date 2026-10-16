@@ -75,7 +75,7 @@ extension AppState {
         catch { identityError = "Your saved profile could not be read. Keep your local data and retry." }
     }
     func openIdentity() {
-        guard identityEditor == nil, capture == nil, styleEditor == nil, outfitEditor == nil, planEditor == nil, planAuthoringEditor == nil, wearEditor == nil else { return }
+        guard fitEditor == nil, identityEditor == nil, capture == nil, styleEditor == nil, outfitEditor == nil, planEditor == nil, planAuthoringEditor == nil, wearEditor == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             let draft = try store.identityDraft() ?? LocalIdentityDraft(ownerID: store.todayConfiguration().ownerID, base: store.localIdentity())
