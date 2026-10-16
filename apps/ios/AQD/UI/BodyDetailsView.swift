@@ -24,7 +24,8 @@ struct BodyDetailsView: View {
                     })) {
                         Text("cm").tag(BodyPreferences.Units.cm)
                         Text("ft/in").tag(BodyPreferences.Units.feetInches)
-                    }.pickerStyle(.menu).tint(AppTheme.ink).frame(minWidth: 64, minHeight: 44)
+                    }.pickerStyle(.menu).tint(AppTheme.ink).fixedSize(horizontal: true, vertical: false)
+                        .frame(minWidth: 76, minHeight: 44).layoutPriority(1)
                         .disabled(!input.isValid).accessibilityIdentifier("style.height.units")
                 }.padding(.horizontal, 14).padding(.vertical, 5).frame(minHeight: 54)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))

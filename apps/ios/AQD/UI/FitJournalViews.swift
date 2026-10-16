@@ -10,7 +10,7 @@ struct FitMemoryArtwork: View {
             GeometryReader { geometry in
                 thumbnailContent(size: geometry.size)
                     .frame(width: geometry.size.width, height: geometry.size.height)
-                    .background(AppTheme.imageGround).clipped()
+                    .background(AppTheme.surface).clipped()
             }.aspectRatio(3 / 4, contentMode: .fit)
         } else {
             Group {
@@ -21,7 +21,7 @@ struct FitMemoryArtwork: View {
                 } else if let snapshot = memory.outfit {
                     OutfitComposition(pieceIDs: snapshot.pieces.map(\.id), pieceHeight: 160)
                 } else { Text("No fit content") }
-            }.frame(maxWidth: .infinity).background(AppTheme.imageGround)
+            }.frame(maxWidth: .infinity).background(AppTheme.surface)
         }
     }
     @ViewBuilder private func thumbnailContent(size: CGSize) -> some View {
@@ -38,13 +38,15 @@ struct FitMemoryArtwork: View {
                 ForEach(0..<rows, id: \.self) { row in
                     HStack(spacing: 4) {
                         ForEach(Array(pieces.dropFirst(row * 2).prefix(2)), id: \.id) { piece in
-                            if let saved = state.ownedPieces.first(where: { $0.id == piece.id }) {
-                                PieceThumbnail(photoID: saved.photoID, recipe: saved.photoRecipe)
-                                    .frame(width: cellWidth, height: cellHeight)
-                            } else {
-                                Image(systemName: "photo.badge.exclamationmark").foregroundStyle(AppTheme.secondary)
-                                    .frame(width: cellWidth, height: cellHeight)
+                            Group {
+                                if let saved = state.ownedPieces.first(where: { $0.id == piece.id }) {
+                                    PieceThumbnail(photoID: saved.photoID, recipe: saved.photoRecipe)
+                                } else {
+                                    Image(systemName: "photo.badge.exclamationmark").foregroundStyle(AppTheme.secondary)
+                                }
                             }
+                            .frame(width: cellWidth, height: cellHeight)
+                            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 4))
                         }
                     }
                 }

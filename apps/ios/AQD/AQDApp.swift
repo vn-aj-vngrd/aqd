@@ -37,7 +37,7 @@ private struct AppRootView: View {
             if state.isOpening {
                 AQDWordmark()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .foregroundStyle(AppTheme.ink).background(AppTheme.canvas)
+                    .foregroundStyle(AppTheme.ink).background(AppTheme.surface)
                     .accessibilityIdentifier("entry.splash")
             } else if let error = state.openingError {
                 EmptyStatePage(title: "Your closet couldn’t open", systemImage: "externaldrive.badge.exclamationmark", description: Text(error)) {

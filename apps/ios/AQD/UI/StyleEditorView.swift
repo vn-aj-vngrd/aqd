@@ -6,7 +6,7 @@ struct StyleEditorView: View {
     @State private var confirmsDiscard = false
     private var page: Int { model.draft.page }
     private let questions = ["What would you like help with?", "What do you dress for?", "What feels like you?", "How do you like clothes to fit?", "Body details, only if you want", "Colors and patterns you enjoy"]
-    private let hints = ["Choose up to two, or No preference. Your answers stay private.", "Choose any, or No preference. We won’t infer your schedule.", "Choose any styles you enjoy, or No preference.", "Choose any, or No preference. Suggestions are not a size or try-on guarantee.", "Add optional details, choose Not sure, or decline.", "Add preferences, or choose No preference. We won’t infer these from photos."]
+    private let hints = ["Choose up to two, or No preference. Your answers stay private.", "Choose any, or No preference. We won’t infer your schedule.", "Choose any styles you enjoy, or No preference.", "Choose any, or No preference. Suggestions are not a size or try-on guarantee.", "Add optional details, choose Not sure, or decline.", "Choose colors and patterns, or No preference. Your choices stay private."]
 
     var body: some View {
         NavigationStack {
@@ -140,13 +140,38 @@ struct StyleEditorView: View {
 
     private var colorDetails: some View {
         VStack(spacing: 16) {
-            LabeledField(title: "Preferred colors", text: colorBinding(\.preferredColors), prompt: "Add colors you like")
-            LabeledField(title: "Colors to avoid", text: colorBinding(\.avoidedColors), prompt: "Add colors to avoid")
-            LabeledField(title: "Preferred patterns", text: colorBinding(\.preferredPatterns), prompt: "Add patterns you like")
-            LabeledField(title: "Patterns to avoid", text: colorBinding(\.avoidedPatterns), prompt: "Add patterns to avoid")
-            Button("No color or pattern preference") {
+            VStack(spacing: 0) {
+                ForEach(StyleColorField.allCases, id: \.self) { field in
+                    NavigationLink {
+                        StyleColorSelectionView(model: model, field: field)
+                    } label: {
+                        HStack(spacing: 12) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(field.rawValue).foregroundStyle(AppTheme.ink)
+                                let value = model.draft.answers.colors[keyPath: field.keyPath]
+                                Text(value.isEmpty ? "Not selected" : value)
+                                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                            }
+                            Spacer(minLength: 0)
+                            Image(systemName: "chevron.forward").font(AppTypography.disclosure)
+                                .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                        }.padding(16).frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }.buttonStyle(.plain)
+                    if field != StyleColorField.allCases.last { Divider().padding(.leading, 16) }
+                }
+            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+            Button {
                 model.update { $0.answers.colors = ColorPreferences(); $0.answers.colors.declined = true }
-            }.frame(minHeight: 44).accessibilityValue(model.draft.answers.colors.declined ? "Selected" : "Not selected")
+            } label: {
+                HStack(spacing: 12) {
+                    Text("No color or pattern preference").foregroundStyle(AppTheme.ink)
+                    Spacer(minLength: 8)
+                    Image(systemName: model.draft.answers.colors.declined ? "checkmark.square.fill" : "square")
+                        .foregroundStyle(model.draft.answers.colors.declined ? AppTheme.accent : AppTheme.secondary).accessibilityHidden(true)
+                }.padding(16).frame(maxWidth: .infinity, minHeight: 56).contentShape(Rectangle())
+            }.buttonStyle(.plain).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                .accessibilityValue(model.draft.answers.colors.declined ? "Selected" : "Not selected")
         }.disabled(model.pending || model.unknown)
     }
 
@@ -181,7 +206,91 @@ struct StyleEditorView: View {
     private func answerBinding(_ key: WritableKeyPath<StylePreferences, String>) -> Binding<String> {
         Binding(get: { model.draft.answers[keyPath: key] }, set: { value in model.update { $0.answers[keyPath: key] = value } })
     }
-    private func colorBinding(_ key: WritableKeyPath<ColorPreferences, String>) -> Binding<String> {
-        Binding(get: { model.draft.answers.colors[keyPath: key] }, set: { value in model.update { $0.answers.colors[keyPath: key] = value; $0.answers.colors.declined = false } })
+}
+
+private enum StyleColorField: String, CaseIterable {
+    case preferredColors = "Preferred colors", avoidedColors = "Colors to avoid"
+    case preferredPatterns = "Preferred patterns", avoidedPatterns = "Patterns to avoid"
+    var keyPath: WritableKeyPath<ColorPreferences, String> {
+        switch self {
+        case .preferredColors: \.preferredColors
+        case .avoidedColors: \.avoidedColors
+        case .preferredPatterns: \.preferredPatterns
+        case .avoidedPatterns: \.avoidedPatterns
+        }
+    }
+    var options: [String] {
+        switch self {
+        case .preferredColors, .avoidedColors:
+            ["Black", "White", "Cream", "Beige", "Gray", "Brown", "Navy", "Blue", "Green", "Red", "Pink", "Purple", "Yellow", "Orange", "Gold", "Silver"]
+        case .preferredPatterns, .avoidedPatterns:
+            ["Solid", "Stripes", "Checks", "Plaid", "Florals", "Polka dots", "Animal print", "Geometric", "Abstract", "Graphic"]
+        }
+    }
+}
+
+private struct StyleColorSelectionView: View {
+    @Bindable var model: StyleEditorModel
+    let field: StyleColorField
+    @State private var addingCustom = false
+    @State private var custom = ""
+    private var value: String { model.draft.answers.colors[keyPath: field.keyPath] }
+    private var selected: [String] { ColorPreferences.selections(in: value) }
+    private var options: [String] {
+        field.options + selected.filter { item in
+            !field.options.contains { $0.caseInsensitiveCompare(item) == .orderedSame }
+        }.reduce(into: [String]()) { result, item in
+            if !result.contains(where: { $0.caseInsensitiveCompare(item) == .orderedSame }) { result.append(item) }
+        }
+    }
+    var body: some View {
+        List {
+            if let error = model.error {
+                Section {
+                    SemanticFeedback(role: model.unknown ? .warning : .danger, message: error)
+                    Button("Retry saving draft") { model.persist() }.disabled(model.pending || model.unknown)
+                }
+            }
+            Section {
+                ForEach(options, id: \.self) { option in
+                    let isSelected = selected.contains { $0.caseInsensitiveCompare(option) == .orderedSame }
+                    Button { toggle(option) } label: {
+                        HStack(spacing: 12) {
+                            Text(option).foregroundStyle(AppTheme.ink)
+                            Spacer(minLength: 8)
+                            Image(systemName: isSelected ? "checkmark.square.fill" : "square")
+                                .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.secondary).accessibilityHidden(true)
+                        }.frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
+                    }.buttonStyle(.plain).accessibilityValue(isSelected ? "Selected" : "Not selected")
+                        .disabled(model.pending || model.unknown)
+                }
+                Button { custom = ""; addingCustom = true } label: {
+                    Label("Add custom preference", systemImage: "plus").frame(minHeight: 44)
+                }.disabled(model.pending || model.unknown)
+            } footer: { Text("Choose any. Changes stay in your draft until you save preferences.") }
+        }.scrollContentBackground(.hidden).background(AppTheme.canvas)
+            .navigationTitle(field.rawValue).navigationBarTitleDisplayMode(.inline)
+            .alert("Add preference", isPresented: $addingCustom) {
+                TextField("Your preference", text: $custom)
+                Button("Add") {
+                    let items = ColorPreferences.selections(in: custom)
+                    model.update { draft in
+                        for item in items {
+                            let current = draft.answers.colors[keyPath: field.keyPath]
+                            if !ColorPreferences.selections(in: current).contains(where: { $0.caseInsensitiveCompare(item) == .orderedSame }) {
+                                draft.answers.colors[keyPath: field.keyPath] = ColorPreferences.toggling(item, in: current)
+                            }
+                        }
+                        draft.answers.colors.declined = false
+                    }
+                }.disabled(ColorPreferences.selections(in: custom).isEmpty || model.pending || model.unknown)
+                Button("Cancel", role: .cancel) {}
+            }
+    }
+    private func toggle(_ option: String) {
+        model.update {
+            $0.answers.colors[keyPath: field.keyPath] = ColorPreferences.toggling(option, in: value)
+            $0.answers.colors.declined = false
+        }
     }
 }

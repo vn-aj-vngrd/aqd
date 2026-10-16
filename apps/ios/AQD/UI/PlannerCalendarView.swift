@@ -11,6 +11,9 @@ struct PlannerCalendarView: View {
     var countLabel = "plans"
     @Environment(\.calendar) private var calendar
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
     @State private var chooseDate = false
     @State private var error: String?
     private var zone: TimeZone { TimeZone(identifier: day.timeZoneID) ?? .current }
@@ -24,13 +27,15 @@ struct PlannerCalendarView: View {
                         .font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
                 }.frame(minHeight: 44)
                 Spacer(minLength: 0)
-                Button(mode == .week ? "Month" : "Week") { mode = mode == .week ? .month : .week }
+                Button(mode == .week ? "Month" : "Week") {
+                    withAnimation(reduceMotion ? nil : AQDMotion.reflow) {
+                        mode = mode == .week ? .month : .week
+                    }
+                }
                     .frame(minWidth: 44, minHeight: 44).tint(AppTheme.actionText)
-                HStack(spacing: 0) {
-                    Button { move(-1) } label: { Image(systemName: "chevron.backward") }.frame(width: 44, height: 44)
-                        .accessibilityLabel(mode == .week ? "Previous week" : "Previous month")
-                    Button { move(1) } label: { Image(systemName: "chevron.forward") }.frame(width: 44, height: 44)
-                        .accessibilityLabel(mode == .week ? "Next week" : "Next month")
+                HStack(spacing: 8) {
+                    stepControl(-1)
+                    stepControl(1)
                 }
 
             }
@@ -40,7 +45,9 @@ struct PlannerCalendarView: View {
                     ScrollView(.horizontal) { weekDays }
                         .scrollIndicators(.hidden)
                 }.padding(8).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                    .transition(.opacity)
             } else {
+                VStack(spacing: 12) {
                 if !typeSize.isAccessibilitySize {
                     HStack(spacing: 0) {
                         ForEach(0..<7, id: \.self) { index in
@@ -52,6 +59,7 @@ struct PlannerCalendarView: View {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: typeSize.isAccessibilitySize ? 3 : 7), spacing: 8) {
                     ForEach(days, id: \.key) { dateCell($0, showWeekday: typeSize.isAccessibilitySize) }
                 }.padding(8).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                }.transition(.opacity)
             }
             if let error { SemanticFeedback(role: .danger, message: error) }
         }.tint(AppTheme.ink)
@@ -68,6 +76,27 @@ struct PlannerCalendarView: View {
                         } }
                 }
             }
+    }
+
+    @ViewBuilder private func stepControl(_ amount: Int) -> some View {
+        Group {
+            if #available(iOS 26.0, *), !reduceTransparency, contrast != .increased {
+                stepButton(amount).buttonStyle(.plain).glassEffect(.regular.interactive(), in: Circle())
+            } else {
+                stepButton(amount).buttonStyle(.plain)
+                    .background(AppTheme.surface, in: Circle())
+                    .overlay { Circle().stroke(contrast == .increased ? AppTheme.controlBoundary : AppTheme.divider, lineWidth: 1) }
+            }
+        }.frame(width: 44, height: 44)
+    }
+    private func stepButton(_ amount: Int) -> some View {
+        Button { move(amount) } label: {
+            Image(systemName: amount < 0 ? "chevron.backward" : "chevron.forward")
+                .frame(width: 44, height: 44).contentShape(Circle())
+        }
+            .accessibilityLabel(amount < 0
+                ? (mode == .week ? "Previous week" : "Previous month")
+                : (mode == .week ? "Next week" : "Next month"))
     }
 
     private var weekDays: some View {

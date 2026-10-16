@@ -42,6 +42,8 @@ struct LocalProfileView: View {
             }
                 }
             }.background(AppTheme.surface).navigationTitle("Profile").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
+                .toolbarBackground(AppTheme.surface, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button { state.openFit() } label: { Label("Add fit", systemImage: "plus") }
@@ -114,16 +116,16 @@ struct LocalProfileView: View {
     }
     private var profileStats: some View {
         HStack(alignment: .top, spacing: 12) {
-            profileStat("Fits", count: state.fitError == nil ? state.fitMemories.count : nil)
+            profileStat("Fits", count: state.fitError == nil ? state.fitMemories.count : nil, leading: true)
             profileStat("Outfits", count: state.outfitError == nil ? state.outfits.count : nil)
             profileStat("Pieces", count: state.pieceReadError == nil ? state.pieces.count : nil)
         }.frame(maxWidth: .infinity)
     }
-    private func profileStat(_ title: String, count: Int?) -> some View {
-        VStack(spacing: 4) {
+    private func profileStat(_ title: String, count: Int?, leading: Bool = false) -> some View {
+        VStack(alignment: leading ? .leading : .center, spacing: 4) {
             Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit()
             Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-        }.frame(maxWidth: .infinity).accessibilityElement(children: .ignore)
+        }.frame(maxWidth: .infinity, alignment: leading ? .leading : .center).accessibilityElement(children: .ignore)
             .accessibilityLabel(count.map { "\($0) \(title.lowercased())" } ?? "\(title) unavailable")
     }
 }

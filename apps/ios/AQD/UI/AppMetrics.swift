@@ -1,6 +1,11 @@
 import AQDCore
 import SwiftUI
 
+/// Bounded local layout changes from docs/design/motion.md.
+enum AQDMotion {
+    static let reflow = Animation.smooth(duration: 0.22, extraBounce: 0)
+}
+
 /// DESIGN.md space scale; semantic aliases keep intent readable at call sites.
 enum AppSpacing {
     static let xSmall: CGFloat = 4

@@ -122,6 +122,20 @@ public struct BodyPreferences: Codable, Equatable, Sendable {
 }
 
 public struct ColorPreferences: Codable, Equatable, Sendable {
+    /// Existing free-text answers remain valid; only explicit selection edits
+    /// normalize their comma separators. Custom words retain their spelling.
+    public static func selections(in value: String) -> [String] {
+        value.split(separator: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+    }
+    public static func toggling(_ option: String, in value: String) -> String {
+        let option = option.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !option.isEmpty else { return value }
+        var selected = selections(in: value)
+        if selected.contains(where: { $0.caseInsensitiveCompare(option) == .orderedSame }) {
+            selected.removeAll { $0.caseInsensitiveCompare(option) == .orderedSame }
+        } else { selected.append(option) }
+        return selected.joined(separator: ", ")
+    }
     public var preferredColors = ""
     public var avoidedColors = ""
     public var preferredPatterns = ""

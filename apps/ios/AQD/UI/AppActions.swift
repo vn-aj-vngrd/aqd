@@ -86,11 +86,17 @@ struct ActionFooter<Content: View>: View {
     }
 }
 
-/// The splash wordmark is the shared MVP logo; no separate brand symbol.
+/// Shared wordmark; the gold Q matches the packaged Home Screen icon.
 struct AQDWordmark: View {
     var body: some View {
-        Text("AQD").font(.system(size: 44)).tracking(-1.1)
-            .foregroundStyle(AppTheme.ink).accessibilityLabel("AQD")
+        Text(mark).font(.system(size: 44)).tracking(0.5)
+            .accessibilityLabel("AQD")
+    }
+    private var mark: AttributedString {
+        var text = AttributedString("AQD")
+        text.foregroundColor = AppTheme.ink
+        if let range = text.range(of: "Q") { text[range].foregroundColor = AppTheme.accent }
+        return text
     }
 }
 
