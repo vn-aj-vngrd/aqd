@@ -35,6 +35,10 @@ struct TodayView: View {
             .background(AppTheme.canvas)
             .navigationTitle("Today")
             .toolbar { ToolbarItem(placement: .topBarTrailing) {
+                Button { state.openWear() } label: { Label("Record wear", systemImage: "checkmark").labelStyle(.iconOnly) }
+                    .buttonBorderShape(.circle).accessibilityIdentifier("today.recordWear").tint(AppTheme.actionText)
+            } }
+            .toolbar { ToolbarItem(placement: .topBarTrailing) {
                 Button { state.openTodayEditor() } label: { Image(systemName: "square.grid.2x2").font(.system(size: 17, weight: .regular)) }.accessibilityLabel("Customize Today").tint(AppTheme.secondary)
             } }
             .safeAreaInset(edge: .bottom) {

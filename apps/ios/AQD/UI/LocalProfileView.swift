@@ -41,8 +41,8 @@ struct LocalProfileView: View {
             }.onChange(of: state.fitAnchor) { _, id in if let id { proxy.scrollTo(id) } }
             }
                 }
-            }.background(AppTheme.surface).navigationTitle("Profile").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
-                .toolbarBackground(AppTheme.surface, for: .navigationBar)
+            }.background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
+                .toolbarBackground(AppTheme.canvas, for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {

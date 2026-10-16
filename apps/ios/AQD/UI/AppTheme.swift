@@ -2,11 +2,11 @@ import SwiftUI
 import UIKit
 
 enum AppTheme {
-    static let canvas = color(light: 0xFFFFFF, dark: 0x1C1C1B)
+    static let canvas = color(light: 0xF7F7F5, dark: 0x1C1C1B)
     static let surface = color(light: 0xFFFFFF, dark: 0x2B2B29)
     static let ink = color(light: 0x242321, dark: 0xF3F1EB)
     static let secondary = color(light: 0x6A6863, dark: 0xBCB9B1)
-    static let imageGround = color(light: 0xF2EEE5, dark: 0x242422)
+    static let imageGround = color(light: 0xF5F4F1, dark: 0x242422)
     static let accent = color(light: 0x8C6A36, dark: 0xD3B47C)
     static let actionText = color(light: 0x765829, dark: 0xD9BD8A)
     static let onAccent = color(light: 0xFFFFFF, dark: 0x1C1C1B)
@@ -14,7 +14,7 @@ enum AppTheme {
     static let onPrimary = color(light: 0xFFFFFF, dark: 0x242321)
     static let segmentSelection = color(light: 0xEBE7DF, dark: 0x454036)
     static let divider = color(light: 0xE4E2DC, dark: 0x4A4842)
-    static let accentSoft = color(light: 0xF1EADF, dark: 0x383125)
+    static let accentSoft = color(light: 0xF5F2EC, dark: 0x383125)
     static let controlBoundary = color(light: 0x807B72, dark: 0x969187)
     static let error = color(light: 0xD4142A, dark: 0xFF6472)
     static let errorSurface = color(light: 0xFFF0F2, dark: 0x422027)

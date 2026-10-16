@@ -16,19 +16,19 @@ Today · Closet · Planner · Agent · Profile are the shared destination identi
 
 | Role / light Paper token | Light | Dark |
 | --- | --- | --- |
-| Canvas / `--color-canvas` | `#FFFFFF` | `#1C1C1B` |
+| Canvas / `--color-canvas` | `#F7F7F5` | `#1C1C1B` |
 | Surface / `--color-surface` | `#FFFFFF` | `#2B2B29` |
 | Primary text / `--color-ink` | `#242321` | `#F3F1EB` |
 | Supporting text / `--color-secondary` | `#6A6863` | `#BCB9B1` |
 | Divider / `--color-line` | `#E4E2DC` | `#4A4842` |
-| Image ground / `--color-image-ground` | `#F2EEE5` | `#242422` |
+| Image ground / `--color-image-ground` | `#F5F4F1` | `#242422` |
 | Selection accent / `--color-accent` | `#8C6A36` | `#D3B47C` |
 | Action text / `--color-action-text` | `#765829` | `#D9BD8A` |
 | On accent / `--color-on-accent` | `#FFFFFF` | `#1C1C1B` |
 | Primary fill / `--color-primary-fill` | `#292826` | `#F2F0EB` |
 | On primary / `--color-on-primary` | `#FFFFFF` | `#242321` |
 | Collection selection / `--color-segment-selection` | `#EBE7DF` | `#454036` |
-| Soft selection / `--color-accent-soft` | `#F1EADF` | `#383125` |
+| Soft selection / `--color-accent-soft` | `#F5F2EC` | `#383125` |
 | Control boundary / `--color-control-border` | `#807B72` | `#969187` |
 | Regular glass / `--color-glass` | `rgb(255 255 255 / 88%)` | `rgb(43 43 41 / 94%)` |
 | Prominent glass / `--color-glass-prominent` | `var(--color-accent)` | `var(--color-night-accent)` |
@@ -43,13 +43,13 @@ Today · Closet · Planner · Agent · Profile are the shared destination identi
 | Warning / `--color-warning` | `#795B2E` | `#DCC7A2` |
 | Warning surface / `--color-warning-soft` | `#F3EEE4` | `#403728` |
 | Information / `--color-info` | `#765829` | `#D9BD8A` |
-| Information surface / `--color-info-soft` | `#F1EADF` | `#383125` |
+| Information surface / `--color-info-soft` | `#F5F2EC` | `#383125` |
 
 Dark partners use `--color-night-*`; existing `--color-dark`, `--color-dark-surface`, `--color-dark-ink`, `--color-dark-secondary` alias night counterparts. Preserve the paired semantic roles and token usage descriptions even without dark phone duplicates. Native dark support remains required.
 
 Primary content labels use white on charcoal in light appearance and dark ink on a light fill in dark appearance. Gold selected content uses the separate on-accent pair. Primary content buttons are solid without blur/shadow; secondary actions are plain regular-weight action-text without fill/border/blur/shadow. Soft-neutral Back/View outfit capsules retain flat accent-soft treatment. Menus/disabled controls stay neutral. Selection also has check/fill/weight/label. Success means acknowledged completion, warning means risk/unknown requiring reconciliation, destructive intent uses red. Native alerts keep system semantics without injected icons. [Feedback](docs/design/components.md#app-owned-semantic-feedback) owns app-message variants; explanations remain unboxed, related actionable lists use opaque surfaces.
 
-Text targets 4.5:1 (3:1 large), meaningful control boundaries 3:1; color is never the sole cue. Measured solid token ratios for the owner palette: primary labels14.73:1 light/13.79:1 dark, light gold/white4.96:1, action text/canvas6.57:1 light and9.42:1 dark, action text/soft selection5.50:1 light, supporting text/canvas5.57:1 light, dark gold/surface7.15:1. Destructive/error/success/warning roles retain their existing pairs. These do not certify translucent content. Paper alpha/edge/shadow tokens are approximations; runtime materials own optics and accessibility adaptation.
+Text targets 4.5:1 (3:1 large), meaningful control boundaries 3:1; color is never the sole cue. Measured solid token ratios for the owner palette: primary labels14.73:1 light/13.79:1 dark, light gold/white4.96:1, action text/canvas6.12:1 light and9.42:1 dark, action text/soft selection5.88:1 light, supporting text/canvas5.19:1 light, dark gold/surface7.15:1. Destructive/error/success/warning roles retain their existing pairs. These do not certify translucent content. Paper alpha/edge/shadow tokens are approximations; runtime materials own optics and accessibility adaptation.
 
 ## Typography
 
@@ -113,6 +113,8 @@ Current cross-cutting controls are above; [capture](docs/design/capture-photo.md
 
 Owner glass selector refinement October16: Closet collection navigation uses one native regular-glass capsule with opaque neutral selected treatment,44-point buttons and announced selection. No glass is added to ordinary cards or native bottom tab chrome. Older OS/Reduce Transparency/Increase Contrast use a semantic-white opaque capsule; Increase Contrast strengthens its boundary and Reduce Motion disables the selected-pill transition. Large accessibility text retains the existing scrollable labelled controls. Native runtime/rendered material acceptance remains #30; Paper reference recoloring is not claimed by native-source updates.
 
-Owner Profile/splash refinement October16: fit compositions use semantic-white parents with warm-neutral imageGround cells behind individual garment cutouts; full-bleed fit photos keep their existing crop. Splash uses the white surface in light appearance and its paired dark surface, with charcoal/light A/D and gold Q. System launch named colors match those native roles; no additional loading animation or delay.
+Owner Profile/splash refinement October16: fit post cards use semantic-white outer containers with one continuous warm-neutral imageGround composition interior; full-bleed fit photos keep their existing crop. Splash uses the white surface in light appearance and its paired dark surface, with charcoal/light A/D and gold Q. System launch named colors match those native roles; no additional loading animation or delay.
 
-Owner clarified surfaces October17: all light page canvases are pure white, as are outer content/post cards. Their image/composition interiors use neutral gold #F2EEE5. Profile composition posts use one continuous inner well with white card padding, not individual colored piece tiles. Semantic dark partners remain unchanged. This supersedes the earlier off-white canvas and per-piece Profile inner backgrounds.
+Owner card surfaces October17: page canvases retain #F7F7F5. Outer content/post cards are white with a near-white warm image/composition interior (#F5F4F1). Profile posts use one continuous inner well with white card padding. Semantic dark partners remain unchanged.
+
+Owner correction October17: restore the existing #F7F7F5 light app canvas; Profile uses that same canvas, including its opaque navigation background. White belongs to the post/content card component. Card artwork interiors are softened to #F5F4F1, with soft selection #F5F2EC; actual gold selection/action ink stays unchanged. This supersedes the earlier broad pure-white page directive as interpreted during this iteration. Remove the visible Profile navigation label while retaining destination accessibility names.

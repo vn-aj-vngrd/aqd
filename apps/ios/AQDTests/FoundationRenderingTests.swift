@@ -22,11 +22,11 @@ final class FoundationRenderingTests: XCTestCase {
         let disabled = render(host.view)
         attach(disabled, "Primary disabled")
         // Sample the solid capsule away from the label, spinner and rounded edge.
-        // Independent DESIGN requirement: disabled controls stay neutral, not blue.
-        XCTAssertGreaterThan(try bluePixels(enabled), 100, "Enabled action must render accent")
-        XCTAssertLessThan(try bluePixels(disabled), 10, "Disabled primary must be neutral without caller-specific opacity")
-        XCTAssertGreaterThan(try matchingPixels(disabled, rgb: 0xE2E5E9), 100,
-                             "Paper169-0 uses opaque color-line, not translucent segment-track")
+        // Independent DESIGN requirement: disabled controls retain an opaque neutral fill.
+        XCTAssertGreaterThan(try matchingPixels(enabled, rgb: 0x292826), 100, "Enabled primary uses the approved charcoal fill")
+        XCTAssertLessThan(try matchingPixels(disabled, rgb: 0x292826), 10, "Disabled primary must use its neutral fill without caller opacity")
+        XCTAssertGreaterThan(try matchingPixels(disabled, rgb: 0xE4E2DC), 100,
+                             "Disabled controls use the approved opaque divider role")
     }
 
     func testLongActionsGrowAtLargestTextAndKeepFullWidthWhilePending() async throws {
@@ -172,7 +172,7 @@ final class FoundationRenderingTests: XCTestCase {
         try await Task.sleep(for: .milliseconds(100))
         let image = render(host.view)
         attach(image, "Native metadata dark largest text RTL")
-        XCTAssertGreaterThan(try matchingPixels(image, rgb: 0xB8B8BD), 100,
+        XCTAssertGreaterThan(try matchingPixels(image, rgb: 0xBCB9B1), 100,
                              "The rendered caption must contain the independent dark secondary ink")
         let label = try XCTUnwrap(nativeLabel(in: host.view, text: text))
         let requiredSize = label.sizeThatFits(CGSize(width: label.bounds.width, height: .greatestFiniteMagnitude))
@@ -206,9 +206,9 @@ final class FoundationRenderingTests: XCTestCase {
         var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
         XCTAssertTrue(label.textColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
             .getRed(&red, green: &green, blue: &blue, alpha: &alpha))
-        XCTAssertEqual(red, 184.0 / 255, accuracy: 0.002)
-        XCTAssertEqual(green, 184.0 / 255, accuracy: 0.002)
-        XCTAssertEqual(blue, 189.0 / 255, accuracy: 0.002)
+        XCTAssertEqual(red, 188.0 / 255, accuracy: 0.002)
+        XCTAssertEqual(green, 185.0 / 255, accuracy: 0.002)
+        XCTAssertEqual(blue, 177.0 / 255, accuracy: 0.002)
         XCTAssertEqual(alpha, 1, accuracy: 0.002)
 
         // Reconfigure the same hosted view through the public SwiftUI environment.
@@ -221,7 +221,7 @@ final class FoundationRenderingTests: XCTestCase {
             let updatedImage = render(host.view)
             let updatedLabel = try XCTUnwrap(nativeLabel(in: host.view, text: text))
             let style: UIUserInterfaceStyle = scheme == .dark ? .dark : .light
-            let expected: UInt32 = scheme == .dark ? 0xB8B8BD : 0x686C72
+            let expected: UInt32 = scheme == .dark ? 0xBCB9B1 : 0x6A6863
             let inkPixels = try matchingPixels(updatedImage, rgb: expected)
             var updatedRed: CGFloat = 0, updatedGreen: CGFloat = 0
             var updatedBlue: CGFloat = 0, updatedAlpha: CGFloat = 0
@@ -265,19 +265,22 @@ final class FoundationRenderingTests: XCTestCase {
 
     func testAllPaletteRolesMatchIndependentLightAndDarkDesignValues() {
         let roles: [(Color, UInt32, UInt32, CGFloat, CGFloat)] = [
-            (AppTheme.canvas, 0xF5F5F7, 0x1C1C1E, 1, 1),
-            (AppTheme.surface, 0xFFFFFF, 0x2C2C2E, 1, 1),
-            (AppTheme.ink, 0x292C30, 0xF2F2F7, 1, 1),
-            (AppTheme.secondary, 0x686C72, 0xB8B8BD, 1, 1),
-            (AppTheme.divider, 0xE2E5E9, 0x48484A, 1, 1),
-            (AppTheme.imageGround, 0xF0F0EE, 0x242426, 1, 1),
-            (AppTheme.accent, 0x006FEE, 0x338EF7, 1, 1),
-            (AppTheme.actionText, 0x005BC4, 0x66AAF9, 1, 1),
-            (AppTheme.onAccent, 0xFFFFFF, 0x1C1C1E, 1, 1),
-            (AppTheme.accentSoft, 0xE6F1FE, 0x142B47, 1, 1),
-            (AppTheme.controlBoundary, 0x7B8088, 0x8E8E93, 1, 1),
-            (AppTheme.regularGlass, 0xFFFFFF, 0x2C2C2E, 0.88, 0.94),
-            (AppTheme.prominentGlass, 0x006FEE, 0x338EF7, 1, 1),
+            (AppTheme.canvas, 0xF7F7F5, 0x1C1C1B, 1, 1),
+            (AppTheme.surface, 0xFFFFFF, 0x2B2B29, 1, 1),
+            (AppTheme.ink, 0x242321, 0xF3F1EB, 1, 1),
+            (AppTheme.secondary, 0x6A6863, 0xBCB9B1, 1, 1),
+            (AppTheme.divider, 0xE4E2DC, 0x4A4842, 1, 1),
+            (AppTheme.imageGround, 0xF5F4F1, 0x242422, 1, 1),
+            (AppTheme.accent, 0x8C6A36, 0xD3B47C, 1, 1),
+            (AppTheme.actionText, 0x765829, 0xD9BD8A, 1, 1),
+            (AppTheme.onAccent, 0xFFFFFF, 0x1C1C1B, 1, 1),
+            (AppTheme.primaryFill, 0x292826, 0xF2F0EB, 1, 1),
+            (AppTheme.onPrimary, 0xFFFFFF, 0x242321, 1, 1),
+            (AppTheme.segmentSelection, 0xEBE7DF, 0x454036, 1, 1),
+            (AppTheme.accentSoft, 0xF5F2EC, 0x383125, 1, 1),
+            (AppTheme.controlBoundary, 0x807B72, 0x969187, 1, 1),
+            (AppTheme.regularGlass, 0xFFFFFF, 0x2B2B29, 0.88, 0.94),
+            (AppTheme.prominentGlass, 0x8C6A36, 0xD3B47C, 1, 1),
             (AppTheme.glassEdge, 0xFFFFFF, 0xFFFFFF, 0.70, 0.12),
             (AppTheme.segmentTrack, 0x767680, 0x767680, 0.10, 0.24),
             (AppTheme.controlShadow, 0x141416, 0x000000, 0.08, 0.22),
@@ -288,8 +291,8 @@ final class FoundationRenderingTests: XCTestCase {
             (AppTheme.successSurface, 0xE8EFEA, 0x293B30, 1, 1),
             (AppTheme.warning, 0x795B2E, 0xDCC7A2, 1, 1),
             (AppTheme.warningSurface, 0xF3EEE4, 0x403728, 1, 1),
-            (AppTheme.information, 0x005BC4, 0x66AAF9, 1, 1),
-            (AppTheme.informationSurface, 0xE6F1FE, 0x142B47, 1, 1)
+            (AppTheme.information, 0x765829, 0xD9BD8A, 1, 1),
+            (AppTheme.informationSurface, 0xF5F2EC, 0x383125, 1, 1)
         ]
         for (index, role) in roles.enumerated() {
             for dark in [false, true] {
