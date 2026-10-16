@@ -128,36 +128,59 @@ struct ClosetView: View {
         }
     }
     private var collectionSummary: some View {
-        Text(collectionSummaryText).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-            .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 20)
-            .accessibilityIdentifier("closet.collection.summary")
+        let summary = collectionSummaryData
+        return VStack(alignment: .leading, spacing: 6) {
+            if typeSize.isAccessibilitySize {
+                Text(summary.title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
+                if !summary.order.isEmpty { Text(summary.order).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+            } else {
+                HStack(alignment: .firstTextBaseline, spacing: 12) {
+                    Text(summary.title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
+                    Spacer(minLength: 12)
+                    if !summary.order.isEmpty { Text(summary.order).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+                }
+            }
+            if !summary.detail.isEmpty {
+                Text(summary.detail).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 20)
+            .accessibilityElement(children: .combine).accessibilityIdentifier("closet.collection.summary")
     }
-    private var collectionSummaryText: String {
+    private var collectionSummaryData: (title: String, detail: String, order: String) {
         func count(_ value: Int, _ singular: String, _ plural: String) -> String { "\(value) \(value == 1 ? singular : plural)" }
         switch scope {
         case "Pieces":
-            guard error == nil else { return "Pieces unavailable" }
-            var labels = [count(results.count, "piece", "pieces")]
+            guard error == nil else { return ("Pieces unavailable", "", "") }
+            var labels = ["\(results.filter { $0.availability == .available }.count) ready to wear"]
+            let laundry = results.filter { $0.availability == .laundry }.count
+            let unavailable = results.filter { $0.availability == .unavailable }.count
+            if laundry > 0 { labels.append("\(laundry) in laundry") }
+            if unavailable > 0 { labels.append("\(unavailable) unavailable") }
             if let category { labels.append(category.rawValue) }
-            else { labels.append(count(Set(results.map(\.category)).count, "category", "categories")) }
-            if let availability { labels.append(availability == .laundry ? "In the laundry" : availability.rawValue.capitalized) }
-            return labels.joined(separator: " · ")
+            else {
+                let categories = Set(results.map(\.category))
+                if categories.count == 1, let category = categories.first { labels.append(category.rawValue) }
+                else { labels.append(count(categories.count, "category", "categories")) }
+            }
+            return (count(results.count, "piece", "pieces"), labels.joined(separator: " · "), sort.title)
         case "Outfits":
-            guard state.outfitError == nil && state.themeError == nil else { return "Outfits unavailable" }
+            guard state.outfitError == nil && state.themeError == nil else { return ("Outfits unavailable", "", "") }
             let outfits = state.outfits.filter { outfit in
                 (!favoritesOnly || outfit.isFavorite) && (themeID == nil || state.themes.contains { $0.id == themeID && $0.outfitIDs.contains(outfit.id) })
             }
-            var labels = [count(outfits.count, "outfit", "outfits"), favoritesOnly ? "Favorites" : count(outfits.filter(\.isFavorite).count, "favorite", "favorites")]
+            let ids = Set(outfits.map(\.id))
+            let memberships = state.themes.filter { $0.outfitIDs.contains { ids.contains($0) } }.count
+            var labels = [count(outfits.filter(\.isFavorite).count, "favorite", "favorites"), count(memberships, "theme", "themes")]
             if let themeID { labels.append(state.themes.first { $0.id == themeID }?.name ?? "Unavailable theme") }
-            return labels.joined(separator: " · ")
+            return (count(outfits.count, "outfit", "outfits"), labels.joined(separator: " · "), "Recently updated")
         default:
-            guard state.themeError == nil else { return "Themes unavailable" }
+            guard state.themeError == nil else { return ("Themes unavailable", "", "") }
             let themes = themeQuery.apply(to: state.themes)
-            var labels = [count(themes.count, "theme", "themes")]
-            if themeQuery.content == .all { labels.append("\(themes.filter { $0.outfitIDs.isEmpty }.count) empty") }
-            else { labels.append(themeQuery.content.rawValue) }
-            if themeQuery.sort != .nameAscending { labels.append(themeQuery.sort.rawValue) }
-            return labels.joined(separator: " · ")
+            let empty = themes.filter { $0.outfitIDs.isEmpty }.count
+            var labels = ["\(themes.count - empty) with outfits", "\(empty) empty"]
+            if themeQuery.content != .all { labels.append(themeQuery.content.rawValue) }
+            return (count(themes.count, "theme", "themes"), labels.joined(separator: " · "), themeQuery.sort.rawValue)
         }
     }
     private var outfitFilterMenu: some ToolbarContent {

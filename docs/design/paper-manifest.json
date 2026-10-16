@@ -80,7 +80,7 @@
     "localIdentity": {
       "contract": "../features/profile-account.md#local-identity-editing-v1-shared-private-v2",
       "callerReference": {"screenId":"L49","rootId":"LT9-0","role":"Existing private identity editor, not new drawn removal states"},
-      "controls": [{"controlId":"profile.identity.clearName","label":"Clear name","paperControlNodeId":null,"destination":"Optional name becomes absent in draft only"},{"controlId":"profile.identity.photoOptions","label":"Choose photo / Remove photo","paperControlNodeId":null,"destination":"Native source options; Remove only with saved/draft reference, neutral draft avatar and stale-import invalidation"}],
+      "controls": [{"controlId":"profile.identity.name","label":"Name field","paperControlNodeId":null,"destination":"Optional name becomes absent in draft only"},{"controlId":"profile.identity.photoOptions","label":"Choose photo / Remove photo","paperControlNodeId":null,"destination":"Native source options; Remove only with saved/draft reference, neutral draft avatar and stale-import invalidation"}],
       "return": "Cancel/discard restores saved identity and Profile focus/journal scroll; acknowledged Save alone commits; failure/unknown/restart and reference-safe cleanup follow the contract.",
       "drawn": false,
       "runtimeVerified": false

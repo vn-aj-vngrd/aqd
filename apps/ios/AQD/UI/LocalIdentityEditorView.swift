@@ -36,7 +36,6 @@ struct LocalIdentityEditorView: View {
                         if model.importing { ProgressView("Preparing photo"); Button("Cancel import") { model.cancelImport() }.frame(minHeight: 44) }
                         if model.draft.photoID != nil { SecondaryAction(title: "Edit photo") { editingPhoto = true }.disabled(model.locked || model.importing); Button("Remove photo", role: .destructive) { model.removePhoto() }.frame(minHeight: 44).disabled(model.locked) }
                         LabeledField(title: "Name", text: Binding(get: { model.draft.name }, set: { name in model.update { $0.name = name } })).disabled(model.locked)
-                        if !model.draft.name.isEmpty { Button("Clear name") { model.update { $0.name = "" } }.frame(minHeight: 44).disabled(model.locked) }
                         LabeledField(title: "Caption", text: Binding(get: { model.draft.caption ?? LocalProfileIdentity.defaultCaption },
                                      set: { value in model.update { $0.caption = value } }), multiline: true,
                                      validation: (model.draft.caption?.count ?? 0) > 160 ? "Use 160 characters or fewer." : nil)
