@@ -46,10 +46,12 @@ import Observation
         retention?.cancel()
         do {
             if let (value, operation) = pending {
+                let unchanged = conversation == value
                 let acknowledged = try store.saveAgentConversation(value, operationID: operation)
-                conversation.revision = acknowledged.revision; pending = nil
+                pending = nil
                 // Input may have changed while an earlier save was unconfirmed.
-                if conversation == value { conversation = acknowledged }
+                if unchanged { conversation = acknowledged; reloadHistory(); return true }
+                conversation.revision = acknowledged.revision
             }
             if let saved = history.first(where: { $0.id == conversation.id }),
                saved.draft == conversation.draft, saved.context == conversation.context, saved.messages == conversation.messages, saved.proposals == conversation.proposals { error = nil; return true }

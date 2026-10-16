@@ -5,6 +5,23 @@ import SwiftData
 import AQDCore
 
 @Suite(.serialized) @MainActor struct AgentConversationPersistenceTests {
+    @Test(arguments: [false, true]) func unchangedSaveRetryAcknowledgesExactlyOneRevision(lostAcknowledgment: Bool) throws {
+        var before = false, after = false, submissions = 0
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),
+            beforeOutfitSave: { submissions += 1; if before { throw CocoaError(.fileWriteNoPermission) } },
+            afterOutfitSave: { if after { throw CocoaError(.fileReadUnknown) } })
+        let model = try AgentModel(store: store)
+        model.updateDraft("Unchanged input")
+        before = !lostAcknowledgment; after = lostAcknowledgment
+        #expect(!model.persist())
+        before = false; after = false
+        let previous = submissions
+        #expect(model.persist())
+        #expect(model.conversation.revision == 1)
+        #expect(try store.agentConversations().first?.revision == 1)
+        #expect(submissions == previous + (lostAcknowledgment ? 0 : 1))
+        #expect(!model.hasPendingOperation)
+    }
     @Test func retainedTextAndUnknownSaveReconcileOneConversationThenDeleteOnlyThatHistory() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         var fail = false, unknown = false
