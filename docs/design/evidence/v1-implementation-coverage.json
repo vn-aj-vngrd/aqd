@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
-  "sourceHead": "bd5c9f6506ac53efa616efdc8572f1f2226aa3b5",
-  "sourceState": "Group #27/#29 source and owner UI refinements through bd5c9f6. Core77/native218 and unsigned Release pass. All rendered/E2E acceptance remains issue30.",
+  "sourceHead": "1125307370f91cb3261f4021a67480349e9425f1",
+  "sourceState": "Owner preview through 1125307: Settings source8b5a543 passed Core77/native221 and unsigned Release. Subsequent Profile/Planner/Closet cosmetic changes passed Debug and source review, installed and normally launched. All E2E/rendered acceptance remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -2615,5 +2615,12 @@
     "checks": "Core77/native218, Release and source rechecks pass.",
     "runtimeComplete": false,
     "scope": "Theme browse/search filters, Closet metadata and local Profile composition."
+  },
+  "settingsAndPopulatedPreviewEvidence": {
+    "codeCommit": "1125307370f91cb3261f4021a67480349e9425f1",
+    "unitReleaseSource": "8b5a543",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false,
+    "scope": "Explicit additive samples; Settings structure and full-screen local-data review; uniform Profile thumbnails; Planner alert; scrolling count/sort metadata."
   }
 }
