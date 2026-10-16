@@ -76,29 +76,7 @@ struct AgentConversationView: View {
                         }
                     }
                     ForEach(model.conversation.messages) { message in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(message.role == .user ? "You" : "Agent").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                            if message.role == .user { Text(message.source).textSelection(.enabled) }
-                            else {
-                                AgentMarkdownBody(source: message.source)
-                                if message.isActive {
-                                    HStack { ProgressView(); Text(message.status == .stopping ? "Stopping…" : (model.slow ? "Still working…" : (message.source.isEmpty ? "Preparing response…" : "Writing response…"))) }.accessibilityElement(children: .combine)
-                                } else {
-                                    Text(message.status == .complete ? "Response complete · Nothing saved" : "\(message.status.rawValue.capitalized) · Incomplete response · Nothing saved").font(.footnote).foregroundStyle(AppTheme.secondary)
-                                    if let reason = message.failureReason { Text(reason).font(.subheadline).foregroundStyle(AppTheme.secondary) }
-                                    HStack {
-                                        Button(copied == message.id ? "Copied" : "Copy") { copy(message, markdown: false) }.frame(minHeight: 44)
-                                        Menu {
-                                            Button("Copy Markdown") { copy(message, markdown: true) }
-                                            Button("Response details") { details = message }
-                                        } label: { Label("More", systemImage: "ellipsis").frame(minHeight: 44) }
-                                        if message.id == model.conversation.messages.last?.id && model.canGenerate {
-                                            Button("Try again") { model.send(retrying: message.id) }.frame(minHeight: 44)
-                                        }
-                                    }
-                                }
-                            }
-                        }.id(message.id).frame(maxWidth: .infinity, alignment: message.role == .user ? .trailing : .leading)
+                        messageRow(message).id(message.id)
                     }
                     ForEach(model.conversation.proposals ?? []) { proposal in
                         NavigationLink { AgentActionReviewView(model: model, id: proposal.id).secondaryPage() } label: {
@@ -116,7 +94,10 @@ struct AgentConversationView: View {
                     Color.clear.frame(height: 1).id("latest").onAppear { followsLatest = true }.onDisappear { followsLatest = false }
                 }.padding(20)
             }.onChange(of: model.conversation.messages.last?.source) { _, _ in if followsLatest { proxy.scrollTo("latest", anchor: .bottom) } }
-                .overlay(alignment: .bottomTrailing) { if !followsLatest { Button("Jump to latest") { followsLatest = true; proxy.scrollTo("latest", anchor: .bottom) }.frame(minHeight: 44).padding(12).background(AppTheme.surface, in: Capsule()).padding() } }
+                .overlay(alignment: .bottomTrailing) { if !followsLatest { Button { followsLatest = true; proxy.scrollTo("latest", anchor: .bottom) } label: {
+                    Image(systemName: "arrow.down").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+                        .background(AppTheme.surface, in: Circle())
+                }.accessibilityLabel("Jump to latest").padding(AppSpacing.large) } }
         }
             }
         }.background(AppTheme.canvas).navigationTitle("Agent").navigationBarTitleDisplayMode(.inline)
@@ -158,26 +139,94 @@ struct AgentConversationView: View {
             }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarSaveAction(title: "Done") { details = nil } } } } }
             .onAppear { if automaticallyFocusComposer && model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
     }
-    private var composer: some View {
-        VStack(spacing: 12) {
-            TextField("Ask about your closet…", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical).lineLimit(1...6).focused($focused)
-            HStack {
-                Menu {
-                    Button("Select closet context") { context = true }
-                    Button("Local tools") { tools = true }
-                } label: { Image(systemName: "plus").frame(width: 44, height: 44) }.accessibilityLabel("Attach or select context")
-                Button { context = true } label: { Label(model.conversation.context.scope == .general ? "General" : "Closet", systemImage: "tshirt") }.frame(minHeight: 44)
-                Spacer()
-                if AgentVoiceModel.qualified {
-                    Button { voice = true } label: { Image(systemName: "mic").frame(width: 44, height: 44) }.accessibilityLabel("Voice input")
-                }
-                if model.active {
-                    Button(action: model.stop) { Image(systemName: "stop.fill").frame(width: 44, height: 44) }.accessibilityLabel("Stop response")
+    @ViewBuilder private func messageRow(_ message: AgentMessage) -> some View {
+        if message.role == .user {
+            HStack(alignment: .top, spacing: 0) {
+                Spacer(minLength: AppControlMetrics.minimumTarget)
+                Text(message.source).textSelection(.enabled)
+                    .padding(.horizontal, AppSpacing.large).padding(.vertical, AppSpacing.medium)
+                    .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.composer))
+                    .accessibilityLabel("You: " + message.source)
+            }.frame(maxWidth: .infinity, alignment: .trailing)
+        } else {
+            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                AgentMarkdownBody(source: message.source)
+                if message.isActive {
+                    HStack(spacing: AppSpacing.small) {
+                        ProgressView()
+                        if message.status == .stopping { Text("Stopping…") }
+                        else if model.slow { Text("Still working…") }
+                    }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(message.status == .stopping ? "Stopping response" : "Generating response")
                 } else {
-                    Button { model.send() } label: { Image(systemName: "arrow.up").frame(width: 44, height: 44) }.accessibilityLabel("Send to Agent").disabled(!model.canGenerate || model.conversation.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    if message.status != .complete {
+                        Text("Incomplete response").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    }
+                    if let reason = message.failureReason { Text(reason).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+                    responseActions(message)
                 }
+            }.frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private func responseActions(_ message: AgentMessage) -> some View {
+        HStack(spacing: 0) {
+            Button { copy(message, markdown: false) } label: {
+                responseIcon(copied == message.id ? "checkmark" : "doc.on.doc")
+            }.accessibilityLabel(copied == message.id ? "Response copied" : "Copy response")
+            if message.id == model.conversation.messages.last?.id && model.canGenerate {
+                Button { model.send(retrying: message.id) } label: { responseIcon("arrow.clockwise") }
+                    .accessibilityLabel("Try response again")
             }
-        }.padding(16).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 28)).padding(.horizontal, 20).padding(.bottom, 8)
+            Menu {
+                AccessoryButton("Copy Markdown", systemImage: "doc.on.doc") { copy(message, markdown: true) }
+                AccessoryButton("Response details", systemImage: "info.circle") { details = message }
+            } label: { responseIcon("ellipsis") }.accessibilityLabel("Response options")
+        }.buttonStyle(.plain)
+    }
+
+    private func responseIcon(_ name: String) -> some View {
+        Image(systemName: name).font(AppTypography.supporting).foregroundStyle(AppTheme.controlIcon)
+            .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+            .contentShape(Rectangle())
+    }
+
+    private var canSend: Bool {
+        model.canGenerate && !model.conversation.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private var composer: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
+            TextField("Ask Agent…", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical)
+                .lineLimit(1...6).focused($focused).padding(.horizontal, AppSpacing.xSmall)
+                .accessibilityLabel("Message Agent")
+            HStack(spacing: AppSpacing.small) {
+                Menu {
+                    AccessoryButton("Context: " + (model.conversation.context.scope == .general ? "Without closet" : model.conversation.context.scope == .selected ? "Selected pieces" : "My closet"), systemImage: "tshirt") { context = true }
+                    AccessoryButton("Local tools", systemImage: "slider.horizontal.3") { tools = true }
+                        .disabled(model.active || model.hasPendingOperation)
+                } label: { Image(systemName: "plus").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }
+                    .accessibilityLabel("Context and tools")
+                Spacer(minLength: AppSpacing.small)
+                if AgentVoiceModel.qualified {
+                    Button { voice = true } label: { Image(systemName: "mic").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }.accessibilityLabel("Voice input")
+                }
+                Button { if model.active { model.stop() } else { model.send() } } label: {
+                    Image(systemName: model.active ? "stop.fill" : "arrow.up")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(model.active || canSend ? AppTheme.onPrimary : AppTheme.secondary)
+                        .frame(width: 32, height: 32)
+                        .background(model.active || canSend ? AppTheme.primaryFill : AppTheme.divider, in: Circle())
+                        .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+                        .contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityLabel(model.active ? "Stop response" : "Send to Agent")
+                    .disabled(!model.active && !canSend)
+            }
+        }.padding(AppSpacing.medium)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.composer))
+            .overlay(RoundedRectangle(cornerRadius: AppRadius.composer).stroke(AppTheme.divider, lineWidth: 1))
+            .padding(.horizontal, AppSpacing.large).padding(.bottom, AppSpacing.small)
     }
     private func copy(_ message: AgentMessage, markdown: Bool) {
         let value = markdown ? (message.status == .complete ? "" : "Incomplete response\n\n") + message.source : AgentMarkdownPolicy.plainText(message.source, incomplete: message.status != .complete)
