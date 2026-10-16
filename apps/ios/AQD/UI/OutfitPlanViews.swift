@@ -7,6 +7,18 @@ struct OutfitPlanEditorView: View {
     @State private var choosing = false
     @State private var choosingZone = false
 
+    private var namedPlan: PlanDefinition? { model.state.planDefinitions.first { $0.id == model.draft.planID } }
+    private var dateBounds: ClosedRange<Date> {
+        guard let plan = namedPlan else { return Date.distantPast...Date.distantFuture }
+        let zone = TimeZone(identifier: model.draft.day.timeZoneID) ?? .current
+        var calendar = Calendar(identifier: .gregorian); calendar.timeZone = zone
+        var start = plan.start, end = plan.end
+        start.timeZoneID = zone.identifier; end.timeZoneID = zone.identifier
+        guard let first = try? start.date(), let last = try? end.date(),
+              let upper = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: last)) else { return Date.distantPast...Date.distantFuture }
+        return calendar.startOfDay(for: first)...upper.addingTimeInterval(-1)
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -22,9 +34,12 @@ struct OutfitPlanEditorView: View {
                             DatePicker("Date", selection: Binding(get: { (try? model.draft.day.date()) ?? Date() }, set: { date in
                                 let zone = TimeZone(identifier: model.draft.day.timeZoneID) ?? .current
                                 model.update { $0.day = LocalPlanDay(date: date, timeZone: zone); $0.allowsOverlap = nil }
-                            }), displayedComponents: .date)
+                            }), in: dateBounds, displayedComponents: .date)
                             .environment(\.timeZone, TimeZone(identifier: model.draft.day.timeZoneID) ?? .current)
                         }.disabled(model.pending || model.unknown)
+                        if let plan = namedPlan {
+                            Text("Part of \(plan.name). Edit the whole plan to change its date range.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }
                         LabeledField(title: "Occasion", text: Binding(get: { model.draft.occasion }, set: { value in
                             model.update { $0.occasion = value; $0.allowsOverlap = nil }
                         })).disabled(model.pending || model.unknown)

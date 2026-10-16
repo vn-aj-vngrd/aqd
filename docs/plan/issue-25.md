@@ -16,8 +16,8 @@
 | --- | --- | --- | --- | --- | --- |
 | S1 | Week/Month/selected date, real agenda and date-prefilled Add; edit/move/remove/Undo same entry | P1/P3/P4, scoped LOCAL-04/05 | Committed | `AQD-Slice: #25/S1` | `a17d683` |
 | S2 | Named two-week plan authoring, reviewed assignments/gaps and atomic conflict decisions/recovery | P1/P3/P6 | Committed | `AQD-Slice: #25/S2` | `37b2f56` |
-| S3 | Three-calendar-month weekday routine authoring/detail/edit scopes with resolved saved entries | P2/P4/P6 | Committed | `AQD-Slice: #25/S3` | Pending |
-| S4 | Trip dates/destination/activities/detail and persistent deduplicated packing that retains checks | P5/P6, scoped P11/manual-offline | Planned | `AQD-Slice: #25/S4` | Pending |
+| S3 | Three-calendar-month weekday routine authoring/detail/edit scopes with resolved saved entries | P2/P4/P6 | Committed | `AQD-Slice: #25/S3` | `c6c4e3b` |
+| S4 | Trip dates/destination/activities/detail and persistent deduplicated packing that retains checks | P5/P6, scoped P11/manual-offline | Committed | `AQD-Slice: #25/S4` | Pending |
 
 ## Evidence and review
 
@@ -25,7 +25,7 @@ Each slice records actual unit/build results, failures, reviewed increment and i
 
 ## Resume
 
-S1–S3 are verified and committed. Next S4 completes trips, destination/activities and persistent deduplicated packing. Continue on the shared branch. No simulator or E2E.
+All four #25 feature slices are verified and committed. Continue companion #26/S1 linked wear/planned/worn/skipped states on the same branch; do not open separate PRs. Continue on the shared branch. No simulator or E2E.
 
 ## S1 calendar and entry management receipt
 
@@ -52,3 +52,13 @@ The actual scope chooser opens one entry through the existing editor, or this/fu
 Routine tracer first failed compilation against absent APIs. Core57 and physical native138 (125 Swift Testing plus13 XCTest) pass, zero failures, `/tmp/aqd-25-s3-unit.log`. Independent literal October–December2026 office weekdays resolves66 dates; Core covers completed-entry exclusion and multiple-occasion rebuilds. Native cases cover actual rule-draft→66 persisted dates with no wear, future-edit identity/earlier-intent preservation and unknown-save restart/retry. The final stale-refresh/presentation correction refreshes all13 Plan native cases successfully (`/tmp/aqd-25-s3-refresh-final.log`); unchanged native cases retain their full-run scope. Xcode27.0/27A266a and physical iPhone17ProMax/iOS27.0.1 are confirmed. All E2E/device quality acceptance remains #30.
 
 Bounded Standards/Spec self-review covered explicit recurrence/rotation, calendar-month boundaries, protected states/scope, current dependency snapshots, no silently lost proposed dates, truthful rule provenance and offline/manual continuation. Final grouped independent/remote gates remain.
+
+## S4 trip and packing receipt
+
+Plan an event or trip uses the same bounded date authoring and atomic review, with private optional destination/activities and explicit timezone. Destination text makes no location/weather request; Weather remains Off and the manual path requires no network/model. Trip detail opens actual shared date/entry and packing destinations. Packing deduplicates owned piece IDs, labels scheduled-use counts, keeps full-Fit photos and exposes actual missing/unassigned/unavailable/changed-assignment gaps. A deleted date can be repaired inside the same parent plan; single-entry saves/moves stay inside a named plan’s reviewed range.
+
+Packing checks have their own revision-bound immutable receipts. Assignment/outfit/piece-reference changes prune obsolete checked IDs inside the same transaction, retaining checks for surviving pieces. Removing/readding a piece does not resurrect an obsolete check; retrying a historical acknowledgment never rewinds current packing. V12→V13 preserves prior plan/date/draft/receipt records, adding only packing state/check models; no packing snapshot owns photo media.
+
+The Core packing tracer first failed compilation against absent APIs. Core58 and physical native143 (130 Swift Testing plus13 XCTest) pass, zero failures, `/tmp/aqd-25-s4-unit.log`. Public-seam cases cover dedup/use counts, unknown/denied checks, replacement/prune/restart/re-add, exact historical retry, same-parent gap repair and preserving populated V12 migration. The final range correction refreshes all18 Plan/Packing native cases (`/tmp/aqd-25-s4-range-final.log`), including new/moved out-of-range rejection and corresponding native date-picker bounds. Unchanged cases retain the full-run scope; all UI/E2E/device/model quality acceptance remains #30.
+
+Bounded Standards/Spec self-review covered named-range integrity, owner/ID/revision guards, packing check pruning at every actual assignment/reference mutation, no invented quantity/capacity/weather, manual city/timezone identity and recoverable faults. #26 will exercise actual wear linkage/Undo across these plan/routine/trip records. Final grouped independent/Release/remote gates remain.

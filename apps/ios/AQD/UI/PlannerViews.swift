@@ -63,6 +63,8 @@ struct LocalPlannerView: View {
                     switch route {
                     case .entry(let id): LocalPlanEntryView(id: id)
                     case .plan(let id): PlanDefinitionView(id: id)
+                    case .packing(let id): TripPackingView(id: id)
+                    case .dates(let id, let gaps): PlanDatesView(id: id, gapsOnly: gaps)
                     }
                 }
                 .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
@@ -75,6 +77,7 @@ struct LocalPlannerView: View {
                     if choice == .day { state.openPlan(day: state.plannerDay) }
                     else if choice == .dates { state.openPlanAuthoring(day: state.plannerDay) }
                     else if choice == .routine { state.openPlanAuthoring(day: state.plannerDay, routine: true) }
+                    else if choice == .trip { state.openPlanAuthoring(day: state.plannerDay, trip: true) }
                 }) {
                     PlannerAddSheet { pendingAdd = $0; addPresented = false }
                 }

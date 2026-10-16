@@ -1,7 +1,7 @@
 import AQDCore
 import SwiftUI
 
-enum PlannerAddChoice: String, CaseIterable { case day = "Plan one day", dates = "Plan several days", routine = "Create a routine" }
+enum PlannerAddChoice: String, CaseIterable { case day = "Plan one day", dates = "Plan several days", routine = "Create a routine", trip = "Plan an event or trip" }
 struct PlannerAddSheet: View {
     let select: (PlannerAddChoice) -> Void
     @Environment(\.dismiss) private var dismiss
@@ -46,7 +46,7 @@ struct PlanAuthoringView: View {
                         }
                     }
                 }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle(model.saved != nil ? "Plan saved" : model.draft.reviewing ? "Review plan" : model.draft.plan.routine != nil ? "New routine" : "New plan")
+            }.background(AppTheme.canvas).navigationTitle(model.saved != nil ? "Plan saved" : model.draft.reviewing ? "Review plan" : model.draft.plan.routine != nil ? "New routine" : model.draft.plan.trip != nil ? "New trip" : "New plan")
                 .navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
                 .toolbar { ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -84,6 +84,7 @@ struct PlanAuthoringView: View {
             dateField("Start date", start: true)
             dateField("End date", start: false)
             DisclosureRow(title: "Timezone", value: model.draft.plan.start.timeZoneID) { choosingZone = true }
+            if model.draft.plan.trip != nil { TripFields(model: model) }
             if model.draft.plan.routine != nil {
                 RoutineFields(model: model) { choosingPreferred = true }
             }
@@ -235,8 +236,11 @@ struct PlanDefinitionView: View {
                 if let plan {
                     Text("\(plan.start.key) – \(plan.end.key)").font(AppTypography.body)
                     Text(plan.start.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    ForEach(state.planEntries.filter { $0.planID == id }) { entry in
-                        NavigationLink(value: PlannerRoute.entry(entry.id)) { PlanAgendaRow(entry: entry, showDate: true) }.buttonStyle(.plain)
+                    if plan.trip != nil { TripDetailContent(plan: plan) }
+                    else {
+                        ForEach(state.planEntries.filter { $0.planID == id }) { entry in
+                            NavigationLink(value: PlannerRoute.entry(entry.id)) { PlanAgendaRow(entry: entry, showDate: true) }.buttonStyle(.plain)
+                        }
                     }
                     Text("Saved dates are intentions. Recorded wear and history are separate.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 } else { ContentUnavailableView("Plan unavailable", systemImage: "calendar") }

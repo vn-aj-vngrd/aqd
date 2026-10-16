@@ -83,7 +83,7 @@ extension AppState {
             planEditor = try OutfitPlanEditorModel(state: self, draft: draft)
         } catch { planError = "Your plan draft couldn’t be read. Keep the app data and retry." }
     }
-    func openPlan(outfitID: UUID? = nil, day: LocalPlanDay = LocalPlanDay(), editing entry: OutfitPlanEntry? = nil) {
+    func openPlan(outfitID: UUID? = nil, day: LocalPlanDay = LocalPlanDay(), editing entry: OutfitPlanEntry? = nil, parentPlanID: UUID? = nil) {
         guard planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
@@ -94,7 +94,7 @@ extension AppState {
             if selectedOutfitID != nil && outfit == nil { throw PieceStore.StoreError.staleRevision }
             let draft: OutfitPlanDraft
             if let entry { draft = OutfitPlanDraft(editing: entry, outfit: outfit) }
-            else { draft = OutfitPlanDraft(ownerID: try store.todayConfiguration().ownerID, outfit: outfit, day: day) }
+            else { draft = OutfitPlanDraft(ownerID: try store.todayConfiguration().ownerID, outfit: outfit, day: day, planID: parentPlanID) }
             try store.savePlanDraft(draft)
             planEditor = try OutfitPlanEditorModel(state: self, draft: draft)
         } catch { collectionError = "A plan draft couldn’t open. Your existing outfit and plans haven’t changed." }

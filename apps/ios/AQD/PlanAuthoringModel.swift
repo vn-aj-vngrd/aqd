@@ -121,7 +121,7 @@ extension AppState {
             planAuthoringEditor = try PlanAuthoringModel(state: self, draft: draft)
         } catch { planError = "Your multi-day plan draft couldn’t open. Keep the app data and retry." }
     }
-    func openPlanAuthoring(day: LocalPlanDay, routine: Bool = false) {
+    func openPlanAuthoring(day: LocalPlanDay, routine: Bool = false, trip: Bool = false) {
         guard planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil,
               styleEditor == nil, capture == nil else { return }
         do {
@@ -130,14 +130,14 @@ extension AppState {
             if let retained = try store.planAuthoringDraft() { draft = retained }
             else {
                 var end = day
-                if routine {
+                if routine || trip {
                     var calendar = Calendar(identifier: .gregorian)
                     let zone = TimeZone(identifier: day.timeZoneID) ?? .current; calendar.timeZone = zone
                     guard let date = calendar.date(byAdding: .day, value: 13, to: try day.date()) else { throw PlanValidationError.invalidDay }
                     end = LocalPlanDay(date: date, timeZone: zone)
                 }
                 draft = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: store.todayConfiguration().ownerID, start: day, end: end,
-                    routine: routine ? RoutineConfiguration() : nil))
+                    routine: routine ? RoutineConfiguration() : nil, trip: trip ? TripConfiguration() : nil))
                 try store.savePlanAuthoringDraft(draft)
             }
             reloadPlanEntries(); reloadOutfits()

@@ -24,4 +24,4 @@ Each slice records actual unit/build results, failures, reviewed increment and i
 
 ## Resume
 
-Plans persisted before product edits. Start #25/S1 using existing Plan task and minimal Planner. No additional planning interview is needed.
+Companion #25 S1–S4 is implemented and unit verified on this shared branch. Continue #26/S1 explicit plan-linked wear, duplicate consent and skipped states. The physical iPhone remains the only native destination; all E2E stays #30.

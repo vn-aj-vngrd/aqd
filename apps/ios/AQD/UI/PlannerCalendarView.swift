@@ -2,7 +2,7 @@ import AQDCore
 import SwiftUI
 
 /// Shared calendar state belongs to AppState, so source returns retain date/view.
-enum PlannerRoute: Hashable { case entry(UUID), plan(UUID) }
+enum PlannerRoute: Hashable { case entry(UUID), plan(UUID), packing(UUID), dates(UUID, Bool) }
 
 struct PlannerCalendarView: View {
     @Binding var day: LocalPlanDay

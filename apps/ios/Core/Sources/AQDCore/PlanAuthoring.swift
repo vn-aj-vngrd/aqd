@@ -26,9 +26,10 @@ public struct PlanDefinition: Identifiable, Codable, Equatable, Sendable {
     public var end: LocalPlanDay
     public var revision: Int
     public var routine: RoutineConfiguration?
+    public var trip: TripConfiguration?
 
-    public init(id: UUID = UUID(), ownerID: UUID, name: String = "", start: LocalPlanDay, end: LocalPlanDay, revision: Int = 1, routine: RoutineConfiguration? = nil) {
-        self.id = id; self.ownerID = ownerID; self.name = name; self.start = start; self.end = end; self.revision = revision; self.routine = routine
+    public init(id: UUID = UUID(), ownerID: UUID, name: String = "", start: LocalPlanDay, end: LocalPlanDay, revision: Int = 1, routine: RoutineConfiguration? = nil, trip: TripConfiguration? = nil) {
+        self.id = id; self.ownerID = ownerID; self.name = name; self.start = start; self.end = end; self.revision = revision; self.routine = routine; self.trip = trip
     }
     public func days() throws -> [LocalPlanDay] {
         let first = try start.date(), last = try end.date()
@@ -52,6 +53,8 @@ public struct PlanDefinition: Identifiable, Codable, Equatable, Sendable {
         return result
     }
     public func validated() throws {
+        guard routine == nil || trip == nil else { throw PlanAuthoringError.invalidSlots }
+        try trip?.validated()
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, name.count <= 80 else { throw PlanAuthoringError.nameRequired }
         guard revision > 0, revision < Int.max else { throw PlanAuthoringError.invalidSlots }
         guard try !days().isEmpty else { throw PlanAuthoringError.invalidRange }
@@ -92,6 +95,7 @@ public struct PlanAuthoringDraft: Identifiable, Codable, Equatable, Sendable {
     public var editScope: RoutineEditScope?
     public var anchorEntryID: UUID?
     public var usesRules: Bool?
+    public var tripActivitiesText: String?
 
     public init(plan: PlanDefinition) throws {
         id = UUID(); operationID = UUID(); self.plan = plan

@@ -250,8 +250,13 @@ enum LocalSchemaV12: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV11.models + [StoredPlanDefinition.self, StoredPlanAuthoringDraft.self, StoredPlanAuthoringSave.self] }
 }
 
+enum LocalSchemaV13: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(13, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV12.models + [StoredPackingState.self, StoredPackingCheck.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
@@ -263,7 +268,8 @@ enum LocalMigrationPlan: SchemaMigrationPlan {
          .lightweight(fromVersion: LocalSchemaV8.self, toVersion: LocalSchemaV9.self),
          .lightweight(fromVersion: LocalSchemaV9.self, toVersion: LocalSchemaV10.self),
          .lightweight(fromVersion: LocalSchemaV10.self, toVersion: LocalSchemaV11.self),
-         .lightweight(fromVersion: LocalSchemaV11.self, toVersion: LocalSchemaV12.self)]
+         .lightweight(fromVersion: LocalSchemaV11.self, toVersion: LocalSchemaV12.self),
+         .lightweight(fromVersion: LocalSchemaV12.self, toVersion: LocalSchemaV13.self)]
     }
 }
 
@@ -309,13 +315,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:12".utf8)
-        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8), Data("AQD-piece-store:6".utf8), Data("AQD-piece-store:7".utf8), Data("AQD-piece-store:8".utf8), Data("AQD-piece-store:9".utf8), Data("AQD-piece-store:10".utf8), Data("AQD-piece-store:11".utf8)]
+        let version = Data("AQD-piece-store:13".utf8)
+        let previousVersions = [Data("AQD-piece-store:1".utf8), Data("AQD-piece-store:2".utf8), Data("AQD-piece-store:3".utf8), Data("AQD-piece-store:4".utf8), Data("AQD-piece-store:5".utf8), Data("AQD-piece-store:6".utf8), Data("AQD-piece-store:7".utf8), Data("AQD-piece-store:8".utf8), Data("AQD-piece-store:9".utf8), Data("AQD-piece-store:10".utf8), Data("AQD-piece-store:11".utf8), Data("AQD-piece-store:12".utf8)]
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV12.self)
+        let schema = Schema(versionedSchema: LocalSchemaV13.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -477,7 +483,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
+            let candidates = [(schema, 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -503,7 +509,11 @@ final class PieceStore {
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 12) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 13) throws -> Bool {
+        if storeVersion >= 13 {
+            guard try context.fetchCount(FetchDescriptor<StoredPackingState>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredPackingCheck>()) == 0 else { throw StoreError.unsupportedStore }
+        }
         if storeVersion >= 12 {
             guard try context.fetchCount(FetchDescriptor<StoredPlanDefinition>()) == 0,
                   try context.fetchCount(FetchDescriptor<StoredPlanAuthoringDraft>()) == 0,
@@ -1097,6 +1107,7 @@ final class PieceStore {
         let acknowledgment = StoredPieceDeletion(operationID: operationID, itemID: id, expectedRevision: expectedRevision,
                                                  pendingPhotoIDs: candidates.sorted { $0.uuidString < $1.uuidString })
         context.insert(acknowledgment)
+        try prunePackingChecks(in: context)
         try commit(context)
         try finishCleanup(acknowledgment, context: context)
     }
@@ -1524,6 +1535,7 @@ extension PieceStore {
             }
         }
         context.insert(try StoredOutfitSave(draft: draft, saved: saved))
+        try prunePackingChecks(in: context)
         try beforeOutfitSave()
         try commit(context)
         try afterOutfitSave()
@@ -1663,6 +1675,12 @@ extension PieceStore {
         if let saved = try savedPlan(for: draft) { return saved }
         guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
         try draft.validatedForSave(outfits: outfits())
+        let namedPlan = try planDefinitions().first { $0.id == draft.planID }
+        if draft.parentPlanID != nil && namedPlan == nil { throw StoreError.staleRevision }
+        if let namedPlan {
+            guard namedPlan.ownerID == draft.ownerID, draft.day.key >= namedPlan.start.key,
+                  draft.day.key <= namedPlan.end.key else { throw PlanValidationError.invalidDay }
+        }
         let overlaps = try planEntries().contains {
             $0.id != draft.entryID && $0.day == draft.day && $0.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == draft.occasion.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         }
@@ -1686,6 +1704,7 @@ extension PieceStore {
             context.insert(try StoredOutfitPlanEntry(saved))
         }
         context.insert(try StoredOutfitPlanSave(draft: draft, saved: saved))
+        try prunePackingChecks(in: context)
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()
         return saved
     }
@@ -1859,6 +1878,7 @@ extension PieceStore {
             result = .deleted(request.outfit.id)
         }
         context.insert(try StoredOutfitMutation(request: request, result: result))
+        try prunePackingChecks(in: context)
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()
         return result
     }
@@ -2032,6 +2052,7 @@ extension PieceStore {
         let entry = try record.value()
         guard entry.ownerID == (try todayConfiguration().ownerID), entry.revision == request.expectedRevision else { throw StoreError.staleRevision }
         context.delete(record); context.insert(try StoredPlanEntryDeletion(request))
+        try prunePackingChecks(in: context)
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()
     }
 }
@@ -2124,6 +2145,7 @@ extension PieceStore {
         }
         let result = PlanAuthoringReceipt(plan: savedPlan, entries: entries)
         context.insert(try StoredPlanAuthoringSave(draft: draft, saved: result))
+        try prunePackingChecks(in: context)
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()
         return result
     }
@@ -2135,5 +2157,65 @@ extension PieceStore {
         let records = try context.fetch(FetchDescriptor<StoredPlanAuthoringDraft>())
         guard records.count == 1, let record = records.first, try record.value() == draft else { throw StoreError.staleDraft }
         context.delete(record); try commit(context)
+    }
+}
+
+
+extension PieceStore {
+    func packingState(planID: UUID) throws -> PackingState {
+        guard try planDefinitions().contains(where: { $0.id == planID && $0.trip != nil }) else { throw StoreError.staleRevision }
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredPackingState>()).filter { $0.id == planID }
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        return try records.first?.value() ?? PackingState(planID: planID)
+    }
+    func packingSummary(planID: UUID) throws -> TripPackingSummary {
+        guard let plan = try planDefinitions().first(where: { $0.id == planID }) else { throw StoreError.staleRevision }
+        return try TripPackingSummary(plan: plan, entries: planEntries(), outfits: outfits(), pieces: ownedPiecesForWear(), checkedIDs: packingState(planID: planID).checkedIDs)
+    }
+    func setPackingCheck(_ request: PackingCheckRequest) throws -> PackingState {
+        guard request.expectedRevision >= 0, request.expectedRevision < Int.max - 1 else { throw StoreError.invalidRecord }
+        let context = ModelContext(container)
+        if let proof = try context.fetch(FetchDescriptor<StoredPackingCheck>()).first(where: { $0.id == request.operationID }) {
+            guard try JSONDecoder().decode(PackingCheckRequest.self, from: proof.request) == request else { throw StoreError.operationConflict }
+            let value = try JSONDecoder().decode(PackingState.self, from: proof.result)
+            guard value.planID == request.planID, value.revision == request.expectedRevision + 1,
+                  value.checkedIDs.contains(request.pieceID) == request.checked else { throw StoreError.invalidRecord }
+            return value
+        }
+        guard allowsSave else { throw StoreError.corruptStore }
+        let summary = try packingSummary(planID: request.planID)
+        guard summary.items.contains(where: { $0.id == request.pieceID }) else { throw StoreError.staleRevision }
+        var state = try packingState(planID: request.planID)
+        guard state.revision == request.expectedRevision else { throw StoreError.staleRevision }
+        state.checkedIDs.formIntersection(summary.items.map(\.id))
+        if request.checked { state.checkedIDs.insert(request.pieceID) } else { state.checkedIDs.remove(request.pieceID) }
+        state.revision += 1
+        if let record = try context.fetch(FetchDescriptor<StoredPackingState>()).first(where: { $0.id == request.planID }) { record.payload = try encode(state) }
+        else { context.insert(try StoredPackingState(state)) }
+        context.insert(try StoredPackingCheck(request: request, result: state))
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+        return state
+    }
+    private func prunePackingChecks(in context: ModelContext) throws {
+        let records = try context.fetch(FetchDescriptor<StoredPackingState>())
+        guard !records.isEmpty else { return }
+        let definitions = try context.fetch(FetchDescriptor<StoredPlanDefinition>()).map { try $0.value() }
+        let owner = try todayConfiguration().ownerID
+        guard definitions.allSatisfy({ $0.ownerID == owner }) else { throw StoreError.invalidRecord }
+        let entries = try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()).map { try $0.value() }
+        let outfits = try context.fetch(FetchDescriptor<StoredOutfit>()).map { try $0.value() }
+        let pieces = try context.fetch(FetchDescriptor<StoredPiece>()).map { try $0.value() }
+        guard entries.allSatisfy({ $0.ownerID == owner }), outfits.allSatisfy({ $0.ownerID == owner }) else { throw StoreError.invalidRecord }
+        for record in records {
+            var state = try record.value()
+            guard let plan = definitions.first(where: { $0.id == state.planID }), plan.trip != nil else { throw StoreError.invalidRecord }
+            let summary = try TripPackingSummary(plan: plan, entries: entries, outfits: outfits, pieces: pieces, checkedIDs: state.checkedIDs)
+            let retained = state.checkedIDs.intersection(summary.items.map(\.id))
+            if retained != state.checkedIDs {
+                state.checkedIDs = retained; state.revision += 1
+                guard state.revision < Int.max else { throw StoreError.invalidRecord }
+                record.payload = try encode(state)
+            }
+        }
     }
 }
