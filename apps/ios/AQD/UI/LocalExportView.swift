@@ -42,7 +42,7 @@ private struct LocalExportContent: View {
                 PrimaryAction(title: "Try again", action: model.start)
             case .ready:
                 Text("Your archive is ready.").font(AppTypography.section)
-                if let summary = model.summary { Text(summary.description) }
+                if let summary = model.summary { LocalDataSummaryView(summary: summary) }
                 if let data = model.data { Text(ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .file)).font(.footnote) }
                 PrimaryAction(title: "Save to Files") { files = true }
                 SecondaryAction(title: "Prepare a new archive", action: model.start)

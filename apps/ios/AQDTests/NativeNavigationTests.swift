@@ -16,7 +16,11 @@ import UIKit
         coordinator.selectRoot(4)
         #expect(controller.selectedTab?.identifier == "aqd.profile")
         let profile = controller.selectedTab?.viewController
+        coordinator.setRootChromeHidden(true)
+        #expect(controller.isTabBarHidden)
         coordinator.selectRoot(4)
+        coordinator.setRootChromeHidden(false)
+        #expect(!controller.isTabBarHidden)
         #expect(controller.selectedTab?.viewController === profile)
         // Agent is an intercepted task, never an accidentally selected blank root.
         #expect(!coordinator.tabBarController(controller, shouldSelectTab: controller.tabs[3]))
@@ -25,6 +29,19 @@ import UIKit
         #expect(controller.selectedTab?.identifier == "aqd.profile")
         coordinator.tabBarController(controller, didSelectTab: controller.tabs[1], previousTab: controller.tabs[4])
         #expect(selected == 1)
+    }
+
+    @Test func leavingSettingsForClosetRestoresChromeWithoutDroppingSettingsReturn() {
+        let state = AppState(deferOpening: true)
+        state.selection = 4; state.profileSettings = true
+        #expect(state.isSettingsVisible)
+        // Agent's Open Closet keeps the retained Profile stack but changes roots.
+        state.selection = 1
+        #expect(!state.isSettingsVisible && state.profileSettings)
+        state.selection = 4
+        #expect(state.isSettingsVisible)
+        state.profileSettings = false
+        #expect(!state.isSettingsVisible)
     }
 
     @Test func readableDayDoesNotShiftAcrossExtremeTimezones() {

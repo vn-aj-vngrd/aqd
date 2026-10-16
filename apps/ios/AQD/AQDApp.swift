@@ -52,7 +52,7 @@ private struct AppRootView: View {
                            closet: { rootContent(ClosetView()) },
                            planner: { rootContent(LocalPlannerView()) },
                            profile: { rootContent(LocalProfileView()) },
-                           agent: { close in rootContent(LocalAgentView(close: close)) }, agentLaunchID: state.agentLaunchID)
+                           agent: { close in rootContent(LocalAgentView(close: close)) }, agentLaunchID: state.agentLaunchID, isTabBarHidden: state.isSettingsVisible)
                     .id(ObjectIdentifier(state)).ignoresSafeArea()
             }
         }
@@ -92,7 +92,7 @@ private struct AppRootView: View {
         } message: {
             Text(state.collectionError ?? "Keep your existing app data for recovery.")
         }
-        .sheet(item: $state.restoreModel, onDismiss: {
+        .fullScreenCover(item: $state.restoreModel, onDismiss: {
             if let pending = pendingInstallation { pendingInstallation = nil; onInstall(pending.0, pending.1, pending.2) }
         }) { model in
             if model.kind == .erase {

@@ -127,7 +127,7 @@ struct AgentConversationView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left").frame(width: 44, height: 44) }.accessibilityLabel("Back").disabled(model.active) }
+                ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Back").disabled(model.active) }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button("New conversation") { model.newConversation() }.disabled(model.active)
@@ -272,7 +272,7 @@ struct AgentHistoryView: View {
                     .swipeActions { Button("Delete", role: .destructive) { selected = value } }
             }
         }.navigationTitle("Conversations")
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { model.newConversation(); open(model.conversation) } label: { Image(systemName: "square.and.pencil").frame(width: 44, height: 44) }.accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation) } }
+            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { model.newConversation(); open(model.conversation) } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation) } }
             .alert("Delete this conversation?", isPresented: Binding(get: { selected != nil }, set: { if !$0 { selected = nil } })) {
                 Button("Cancel", role: .cancel) { selected = nil }
                 Button("Delete conversation", role: .destructive) { if let selected { model.delete(selected) }; selected = nil }

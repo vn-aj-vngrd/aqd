@@ -9,13 +9,13 @@ Foundation #20 extends the existing capture app, not a component-gallery destina
 | `AppTheme` | 25 paired semantic color roles; native appearance inheritance | Existing roots, capture, details and photo editor |
 | `AppMetrics` | Spacing, radii, control minima, scalable typography and recorded-timezone date labels | Shared controls and visible plan dates |
 | `AppEmptyState`, `EmptyStatePage` | Centered native message with semantic typography; page actions use bottom safe-area footer, inline card notices opt out of viewport filling | Collection/search, Profile, Planner, wear and recovery empties |
-| `PrimaryAction`, `SecondaryAction` | Solid primary/plain secondary; wrapping, neutral disabled state, one pending spinner and duplicate-activation refusal | Capture/save/receipt, photo editor, details and Agent manual return |
+| `PrimaryAction`, `SecondaryAction` | Solid primary/plain secondary; optional native destructive role and danger fill, wrapping, neutral disabled state, one pending spinner and duplicate-activation refusal | Capture/save/receipt, photo editor, details and Agent manual return |
 | `ActionStack`, `ActionFooter` | 12-point action gap and native safe-area content footer | Existing capture/editor/detail tasks; no viewport or keyboard offsets |
 | `LabeledControl`, `LabeledField` | Persistent label, opaque native input, associated validation/helper, Increase Contrast boundary; optional feature-owned editing focus | Name/metadata/notes; native Category and Availability Pickers |
 | `MetadataText` | Native footnote/secondary typography, wrapping, Dynamic Type, dark/RTL and single static-text exposure | Capture Photo caption and photo-source explanation |
 | `DisclosureRow`, `SurfaceGroup` | Reference-backed54pt disclosure geometry; container-owned separators only between rows | Photo-source group consumes `SurfaceGroup`; `DisclosureRow` is ready for section-owned rows, not imposed on the plain More details link |
 | `SemanticFeedback`, `OperationProgress` | Explicit app-owned state, decorative symbol, one meaningful accessibility label/native spinner | Missing-photo/name validation, import/editor progress, acknowledged receipt, Today read failure |
-| `NativeTabs` | Public nil-title native tab items, stable root hosts, source-preserving full-screen Agent | Today / Closet / Planner / Agent / Profile |
+| `NativeTabs` | Public native tab items, stable root hosts, prominent source-preserving full-screen Agent and Settings-scoped chrome visibility | Today / Closet / Planner / Agent / Profile |
 
 TextFields receive their spoken persistent name directly; the input shell must not overwrite a Picker's native selected-value label. Feedback severity is supplied by the caller, never guessed from error prose. Existing mixed failure/conflict/unknown-write channels keep their exact recovery text. Success appears only after a real acknowledgment. `AppAppearance` is a presentation utility; section09 owns persistence and Settings controls.
 
@@ -71,3 +71,5 @@ Before enabling a capability in its owning section:
 - **Privacy/cost:** V1 has no cloud-model fallback, AQD backend call or default wardrobe/photo/chat telemetry. Weather has its separate consent/attribution/request budgets. Generated prose never authorizes a write; reviewed version-bound validation and one durable receipt remain mandatory.
 
 No device quality, latency, memory or energy evaluation has run for this slice. These are release gates and a reusable evaluation recipe, not performance results.
+
+`LocalDataSummaryView` reuses grouped icon/count rows across export, restore and erase reviews, with plural-aware labels and intrinsic accessible text sizing.

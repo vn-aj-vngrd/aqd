@@ -47,7 +47,7 @@ struct AgentContextView: View {
                 }
             }.navigationTitle("Agent context").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .cancellationAction) { Button { if !model.hasPendingOperation { dismiss() } } label: { Image(systemName: "xmark").frame(width: 44, height: 44) }.accessibilityLabel("Cancel") }
+                    ToolbarItem(placement: .cancellationAction) { Button { if !model.hasPendingOperation { dismiss() } } label: { Image(systemName: "xmark") }.accessibilityLabel("Cancel") }
                     ToolbarItem(placement: .confirmationAction) { Button {
                         model.conversation.context = draft
                         if model.persist() { dismiss() }

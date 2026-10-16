@@ -7,39 +7,100 @@ struct LocalSettingsView: View {
     @State private var weather = false
     var body: some View {
         List {
+            Section("Personalize") {
+                NavigationLink { LocalStyleSettingsView() } label: { SettingsRow(title: "Style preferences", symbol: "slider.horizontal.3") }
+                NavigationLink { LocalAppearanceSettingsView() } label: {
+                    SettingsRow(title: "Appearance", symbol: "circle.lefthalf.filled", value: appearanceTitle)
+                }
+                Button { weather = true } label: {
+                    SettingsRow(title: "Weather", symbol: "cloud.sun", value: state.weatherClient?.local?.enabled == true ? state.weatherClient?.local?.place?.name ?? "Place unavailable" : "Off", disclosure: true)
+                }
+            }.listRowBackground(AppTheme.surface)
+            Section("Assistance & help") {
+                NavigationLink { LocalAssistanceSettingsView() } label: { SettingsRow(title: "On-device Agent", symbol: "sparkle") }
+                NavigationLink { LocalPrivacySettingsView() } label: { SettingsRow(title: "Help & privacy", symbol: "hand.raised") }
+                Button { state.beginTour(from: .settings) } label: { SettingsRow(title: "App tour", symbol: "play.rectangle", disclosure: true) }
+            }.listRowBackground(AppTheme.surface)
             Section {
-                Text("Your closet is on this iPhone.").font(.title2)
-                Text("No account or automatic cloud backup. Device loss or deleting AQD can lose these records.").foregroundStyle(AppTheme.secondary)
+                NavigationLink { LocalExportView() } label: { SettingsRow(title: "Export closet", symbol: "square.and.arrow.up") }
+                Button { state.openRestore() } label: { SettingsRow(title: "Restore closet", symbol: "arrow.counterclockwise", disclosure: true) }
+                Button(role: .destructive) { state.openErase() } label: { SettingsRow(title: "Erase closet", symbol: "trash", disclosure: true, destructive: true) }
+            } header: { Text("Your data") } footer: {
+                Text("Stored on this iPhone with no account or automatic cloud backup. Export a copy to protect against device loss or deleting AQD.")
+            }.listRowBackground(AppTheme.surface)
+        }
+        .listStyle(.insetGrouped).navigationTitle("Settings").navigationBarTitleDisplayMode(.inline)
+        .scrollContentBackground(.hidden).background(AppTheme.canvas).tint(AppTheme.ink)
+        .onAppear { state.reloadSettings() }
+        .sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true } } }
+    }
+    private var appearanceTitle: String { state.appearance == .system ? "Automatic" : state.appearance.rawValue.capitalized }
+}
+
+private struct SettingsRow: View {
+    let title: String
+    let symbol: String
+    var value: String? = nil
+    var disclosure = false
+    var destructive = false
+    @Environment(\.dynamicTypeSize) private var typeSize
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: symbol).font(.system(size: 19, weight: .regular)).frame(width: 24)
+                .foregroundStyle(destructive ? AppTheme.error : AppTheme.secondary).accessibilityHidden(true)
+            if typeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title).foregroundStyle(destructive ? AppTheme.error : AppTheme.ink)
+                    if let value { Text(value).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+                }
+                Spacer(minLength: 0)
+            } else {
+                Text(title).foregroundStyle(destructive ? AppTheme.error : AppTheme.ink)
+                Spacer(minLength: 8)
+                if let value { Text(value).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.trailing) }
             }
-            Section("Local data") {
-                NavigationLink("Export closet") { LocalExportView() }
-                Button("Restore closet") { state.openRestore() }
-                Button("Erase this closet", role: .destructive) { state.openErase() }
-            }
-            Section("Personal settings") {
-                NavigationLink("Style") { LocalStyleSettingsView() }
-                NavigationLink { LocalAppearanceSettingsView() } label: { HStack { Text("Appearance"); Spacer(); Text(state.appearance.rawValue.capitalized).foregroundStyle(AppTheme.secondary) } }
-                NavigationLink("On-device assistance") { LocalAssistanceSettingsView() }
-                NavigationLink("Help and privacy") { LocalPrivacySettingsView() }
-                Button("Take the tour") { state.beginTour(from: .settings) }
-                Button { weather = true } label: { HStack { Text("Weather"); Spacer(); Text(state.weatherClient?.local?.enabled == true ? state.weatherClient?.local?.place?.name ?? "Place unavailable" : "Off").foregroundStyle(AppTheme.secondary) } }
-            }
-        }.navigationTitle("Settings").navigationBarTitleDisplayMode(.inline).scrollContentBackground(.hidden).background(AppTheme.canvas)
-            .onAppear { state.reloadSettings() }
-            .sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true } } }
+            if disclosure { Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).accessibilityHidden(true) }
+        }.font(AppTypography.body).frame(minHeight: 44).contentShape(Rectangle())
     }
 }
+
 struct LocalAppearanceSettingsView: View {
     @Environment(AppState.self) private var state
+    private var selected: LocalAppearance { state.settings?.appearance ?? .system }
     var body: some View {
         List {
-            Text("System follows your device; Light or Dark stays fixed.").foregroundStyle(AppTheme.secondary)
-            if let error = state.settingsError { Text(error).foregroundStyle(AppTheme.error); Button("Retry appearance save") { state.retryAppearanceSave() } }
-            ForEach(LocalAppearance.allCases, id: \.self) { value in
-                Button { state.saveAppearance(value) } label: { HStack { Text(value.rawValue.capitalized).foregroundStyle(AppTheme.ink); Spacer(); if state.settings?.appearance == value || (state.settings == nil && value == .system) { Image(systemName: "checkmark").foregroundStyle(AppTheme.actionText) } }.frame(minHeight: 44) }
-                    .accessibilityValue(state.settings?.appearance == value ? "Selected" : "Not selected")
+            Section {
+                ForEach(LocalAppearance.allCases, id: \.self) { value in
+                    Button { state.saveAppearance(value) } label: {
+                        HStack(spacing: 14) {
+                            Image(systemName: symbol(value)).font(.system(size: 21, weight: .regular)).frame(width: 26)
+                                .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(title(value)).font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                                Text(subtitle(value)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            }.frame(maxWidth: .infinity, alignment: .leading)
+                            if selected == value { Image(systemName: "checkmark").font(AppTypography.disclosure).foregroundStyle(AppTheme.actionText).accessibilityHidden(true) }
+                        }.frame(minHeight: 52).contentShape(Rectangle())
+                    }.accessibilityValue(selected == value ? "Selected" : "Not selected")
+                        .accessibilityAddTraits(selected == value ? [.isSelected] : [])
+                }
+            } footer: { Text("Automatic follows the appearance set on your iPhone.") }
+                .listRowBackground(AppTheme.surface)
+            if let error = state.settingsError {
+                Section {
+                    SemanticFeedback(role: .danger, message: error)
+                    Button("Retry appearance save") { state.retryAppearanceSave() }.tint(AppTheme.actionText)
+                }.listRowBackground(AppTheme.surface)
             }
-        }.navigationTitle("Appearance").navigationBarTitleDisplayMode(.inline)
+        }.listStyle(.insetGrouped).scrollContentBackground(.hidden).background(AppTheme.canvas)
+            .navigationTitle("Appearance").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
+    }
+    private func title(_ value: LocalAppearance) -> String { value == .system ? "Automatic" : value.rawValue.capitalized }
+    private func subtitle(_ value: LocalAppearance) -> String {
+        switch value { case .system: "Match your iPhone"; case .light: "Always use light appearance"; case .dark: "Always use dark appearance" }
+    }
+    private func symbol(_ value: LocalAppearance) -> String {
+        switch value { case .system: "circle.lefthalf.filled"; case .light: "sun.max"; case .dark: "moon" }
     }
 }
 struct LocalStyleSettingsView: View {

@@ -86,6 +86,7 @@ final class AppState {
     var agentLaunchID: UUID?
     var appearance: AppAppearance { AppAppearance(rawValue: settings?.appearance.rawValue ?? "system") ?? .system }
     var profileSettings = false
+    var isSettingsVisible: Bool { selection == 4 && profileSettings }
     var profileHistory = false
     var profileInsights = false
     var entry = PrivateEntryState(alreadyEntered: true)

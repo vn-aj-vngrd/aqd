@@ -4,12 +4,13 @@ struct PrimaryAction: View {
     let title: String
     var isPending = false
     var systemImage: String? = nil
+    var role: ButtonRole? = nil
     let action: () -> Void
     @Environment(\.isEnabled) private var isEnabled
     private var usesAccent: Bool { isEnabled || isPending }
 
     var body: some View {
-        Button {
+        Button(role: role) {
             guard isEnabled && !isPending else { return }
             action()
         } label: {
@@ -28,7 +29,7 @@ struct PrimaryAction: View {
             .padding(.vertical, AppSpacing.medium)
             .frame(maxWidth: .infinity, minHeight: AppControlMetrics.actionHeight)
             .foregroundStyle(usesAccent ? AppTheme.onAccent : AppTheme.secondary)
-            .background(usesAccent ? AppTheme.accent : AppTheme.divider, in: Capsule())
+            .background(usesAccent ? (role == .destructive ? AppTheme.dangerFill : AppTheme.accent) : AppTheme.divider, in: Capsule())
             .contentShape(Rectangle())
         }
         .buttonStyle(ContentActionStyle())

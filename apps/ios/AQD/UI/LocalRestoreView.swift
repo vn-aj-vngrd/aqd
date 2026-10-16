@@ -28,7 +28,7 @@ struct LocalRestoreView: View {
                     Text("Keep AQD open. Your previous closet is retained while the validated copy becomes active.")
                 case .complete:
                     Text("Your closet is restored.").font(AppTypography.section)
-                    if let value = model.review { Text(value.incomingSummary.description) }
+                    if let value = model.review { LocalDataSummaryView(summary: value.incomingSummary) }
                     Text("The archive replaced your previous local data. Previous AQD files are queued for safe cleanup after the old store closes.").foregroundStyle(AppTheme.secondary)
                     PrimaryAction(title: "Open Closet") { install(destination: 1) }
                     SecondaryAction(title: "Open Today") { install(destination: 0) }
@@ -52,7 +52,7 @@ struct LocalRestoreView: View {
                 }
             }.padding(20) }.background(AppTheme.canvas).navigationTitle("Restore closet").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { if model.phase != .complete {
-                    Button { if model.cancel() { onCancel() } } label: { Image(systemName: "xmark").frame(width: 44, height: 44) }.accessibilityLabel("Cancel").disabled(model.phase == .committing)
+                    Button { if model.cancel() { onCancel() } } label: { Image(systemName: "xmark") }.buttonBorderShape(.circle).accessibilityLabel("Cancel").disabled(model.phase == .committing)
                 } } }
                 .alert("Replace this iPhone’s closet?", isPresented: $confirmation) {
                     Button("Cancel", role: .cancel) {}
@@ -62,15 +62,15 @@ struct LocalRestoreView: View {
                     switch result { case .success(let url): model.choose(url)
                     case .failure(let error): if (error as? CocoaError)?.code != .userCancelled { model.error = "The file couldn’t be opened. Your closet has not changed."; model.phase = .failed } }
                 }
-        }.tint(AppTheme.ink).interactiveDismissDisabled(model.phase != .choose && model.phase != .newer && model.review != nil || model.phase == .validating || model.phase == .committing)
+        }.tint(AppTheme.ink).onAppear { if model.phase == .review { model.refresh() } }.interactiveDismissDisabled(model.phase != .choose && model.phase != .newer && model.review != nil || model.phase == .validating || model.phase == .committing)
     }
     @ViewBuilder private var review: some View {
         if let value = model.review {
             Text(model.sourceName ?? "Validated closet archive").font(AppTypography.section)
-            Text(value.incomingSummary.description)
+            LocalDataSummaryView(summary: value.incomingSummary)
             if let version = value.migratedFrom { Text("This archive was migrated from local schema \(version). IDs and records are preserved.").font(.footnote).foregroundStyle(AppTheme.secondary) }
             Text("Replaces current local data").font(.headline)
-            if let original = value.originalSummary { Text(original.description) }
+            if let original = value.originalSummary { LocalDataSummaryView(summary: original) }
             else { Text("Current data could not be fully validated. Existing files are retained until replacement is confirmed.") }
             Text("The replacement includes identity, preferences, Today content, conversations and drafts. It is not a merge. Export your current closet first if you want to retain it.").foregroundStyle(AppTheme.secondary)
         }

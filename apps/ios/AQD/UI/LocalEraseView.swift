@@ -6,7 +6,6 @@ struct LocalEraseView: View {
     let onInstall: (PieceStore, LocalDataCoordinator, Int) -> Void
     @State private var phrase = ""
     @State private var confirm = false
-    @State private var export = false
     var body: some View {
         NavigationStack {
             ScrollView { VStack(alignment: .leading, spacing: 20) {
@@ -14,14 +13,27 @@ struct LocalEraseView: View {
                 case .choose, .validating:
                     ProgressView("Preparing local erase review…")
                 case .review:
-                    Text("Remove this closet?").font(.title2)
-                    if let summary = model.review?.originalSummary { Text(summary.description) }
+                    Label("Erase this closet", systemImage: "trash").font(AppTypography.section)
+                    Text("Remove AQD’s local data from this iPhone.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    if let summary = model.review?.originalSummary { LocalDataSummaryView(summary: summary) }
                     else { Text("Current data could not be fully validated. Erase replaces all AQD local data on this iPhone.") }
-                    Text("Erases wardrobe, themes, plans, wear history, identity, preferences, private memories, Today content, conversations, drafts, Undo and AQD photos/derived files.")
+                    Text("Also removes your local profile, preferences, Today layout and content, Undo history, and AQD-owned photo copies.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     Text("Original images in Photos and archives you exported are not deleted. There is no account or cloud copy to restore automatically.").font(.subheadline).foregroundStyle(AppTheme.secondary)
-                    SecondaryAction(title: "Export first") { export = true }
-                    TextField("Type ERASE to confirm", text: $phrase).textInputAutocapitalization(.characters).autocorrectionDisabled().padding(14).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                    Button("Erase this closet", role: .destructive) { confirm = true }.frame(maxWidth: .infinity, minHeight: 50).buttonStyle(.borderedProminent).tint(AppTheme.dangerFill).disabled(phrase != "ERASE")
+                    NavigationLink { LocalExportView().navigationTitle("Export before erase") } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "square.and.arrow.up").accessibilityHidden(true)
+                            Text("Export a copy first")
+                            Spacer(minLength: 12)
+                            Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
+                        }.font(AppTypography.supporting).foregroundStyle(AppTheme.actionText).frame(minHeight: 44)
+                    }
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Type ERASE to continue").font(AppTypography.fieldLabel)
+                        TextField("ERASE", text: $phrase).textInputAutocapitalization(.characters).autocorrectionDisabled()
+                            .font(AppTypography.body).padding(14).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                            .accessibilityLabel("Type ERASE to confirm")
+                        Text("This action can’t be undone.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                    }
                 case .committing:
                     ProgressView("Erasing local records…")
                     Text("Keep AQD open. Record acknowledgment and AQD file cleanup are tracked separately.")
@@ -40,15 +52,22 @@ struct LocalEraseView: View {
                     PrimaryAction(title: "Check same operation", action: model.checkOutcome)
                 }
             }.padding(20) }.background(AppTheme.canvas).navigationTitle("Erase local closet").navigationBarTitleDisplayMode(.inline)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    if model.phase == .review {
+                        ActionFooter {
+                            PrimaryAction(title: "Erase closet", systemImage: "trash", role: .destructive) { confirm = true }
+                                .disabled(phrase != "ERASE")
+                        }
+                    }
+                }
                 .toolbar { ToolbarItem(placement: .cancellationAction) { if model.phase != .complete {
-                    Button { if model.cancel() { onCancel() } } label: { Image(systemName: "xmark").frame(width: 44, height: 44) }.accessibilityLabel("Cancel").disabled(model.phase == .committing)
+                    Button { if model.cancel() { onCancel() } } label: { Image(systemName: "xmark") }.buttonBorderShape(.circle).accessibilityLabel("Cancel").disabled(model.phase == .committing)
                 } } }
                 .alert("Erase this local closet?", isPresented: $confirm) {
                     Button("Cancel", role: .cancel) {}
                     Button("Erase closet", role: .destructive) { model.commit(confirmation: phrase) }
                 } message: { Text("Permanently replaces all local AQD records and schedules AQD-only file cleanup. Original Photos and exported archives stay. No automatic recovery.") }
-                .sheet(isPresented: $export) { NavigationStack { LocalExportView().navigationTitle("Export before erase").toolbar { ToolbarItem(placement: .confirmationAction) { Button { export = false } label: { Text("Done") }.accessibilityLabel("Done") } } } }
-        }.tint(AppTheme.ink).onAppear { model.prepareErase() }
+        }.tint(AppTheme.ink).onAppear { if model.phase == .review { model.refresh() } else { model.prepareErase() } }
             .onChange(of: model.review?.version) { _, _ in phrase = "" }
             .interactiveDismissDisabled(model.review != nil || model.phase == .committing || model.phase == .validating)
     }

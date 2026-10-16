@@ -17,6 +17,7 @@ struct NativeTabs: UIViewControllerRepresentable {
     let agent: AgentBuilder
     var agentLaunchID: UUID?
     var isReadOnlyPreview = false
+    var isTabBarHidden = false
 
     func makeCoordinator() -> Coordinator {
         Coordinator(agent: agent, selection: $selection)
@@ -43,6 +44,7 @@ struct NativeTabs: UIViewControllerRepresentable {
             on: controller,
             roots: [today(), closet(), planner(), profile()]
         )
+        context.coordinator.setRootChromeHidden(isTabBarHidden)
         return controller
     }
 
@@ -50,6 +52,7 @@ struct NativeTabs: UIViewControllerRepresentable {
         // Never rebuild root controllers/stacks in response to a parent update.
         context.coordinator.agent = agent
         context.coordinator.selection = $selection
+        context.coordinator.setRootChromeHidden(isTabBarHidden)
         context.coordinator.selectRoot(selection)
         context.coordinator.requestAgent(agentLaunchID)
     }
@@ -125,6 +128,11 @@ struct NativeTabs: UIViewControllerRepresentable {
             controller.setTabs(tabs, animated: false)
             if #available(iOS 27.0, *) { controller.prominentTabIdentifier = tabs[agentIndex].identifier }
             controller.selectedTab = tabs[originIndex]
+        }
+
+        func setRootChromeHidden(_ hidden: Bool) {
+            guard let controller, controller.isTabBarHidden != hidden else { return }
+            controller.setTabBarHidden(hidden, animated: controller.viewIfLoaded?.window != nil)
         }
 
         /// Rasterize the chosen public SF Symbol into a template so UIKit cannot
