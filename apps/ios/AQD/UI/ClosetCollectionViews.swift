@@ -61,6 +61,7 @@ struct ThemeCollectionView: View {
     var query = ThemeCollectionQuery()
     var clearFilters: () -> Void = {}
     private var themes: [OutfitTheme] { query.apply(to: state.themes) }
+    var summary: ClosetCollectionSummary? = nil
     var body: some View {
         Group {
             if state.themeError == nil && themes.isEmpty {
@@ -72,6 +73,7 @@ struct ThemeCollectionView: View {
             } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {
+                        if let summary { summary }
                         if let error = state.themeError {
                             SemanticFeedback(role: .danger, message: error)
                             Button("Retry themes") { state.reloadThemes() }

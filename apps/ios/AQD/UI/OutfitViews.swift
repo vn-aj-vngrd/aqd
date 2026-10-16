@@ -164,6 +164,7 @@ struct OutfitCollectionView: View {
             (!favoritesOnly || outfit.isFavorite) && (themeID == nil || state.themes.contains { $0.id == themeID && $0.outfitIDs.contains(outfit.id) })
         }
     }
+    var summary: ClosetCollectionSummary? = nil
     var body: some View {
         Group {
             if state.outfitError == nil && outfits.isEmpty {
@@ -179,6 +180,7 @@ struct OutfitCollectionView: View {
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 24) {
+                        if let summary { summary }
                         if let error = state.outfitError {
                             SemanticFeedback(role: .danger, message: error)
                             Button("Retry outfits") { state.reloadOutfits() }.frame(minHeight: 44)

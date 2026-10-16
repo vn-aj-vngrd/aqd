@@ -31,7 +31,6 @@ struct ClosetView: View {
         NavigationStack(path: $state.closetPath) {
             VStack(spacing: 0) {
                 scopePicker.padding(.horizontal, 20).padding(.bottom, 12)
-                if !state.closetSearchActive { collectionSummary }
                 if state.closetSearchActive {
                     ClosetSearchContent(model: searchModel, input: searchInput,
                                         clear: { state.closetSearchQuery = "" },
@@ -41,8 +40,8 @@ struct ClosetView: View {
                 } else if scope == "Pieces" {
                     pieceCollection
                 } else if scope == "Outfits" {
-                    OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID) { favoritesOnly = false; themeID = nil }
-                } else { ThemeCollectionView(query: themeQuery) { themeQuery = ThemeCollectionQuery() } }
+                    OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID, clearFilters: { favoritesOnly = false; themeID = nil }, summary: collectionSummary)
+                } else { ThemeCollectionView(query: themeQuery, clearFilters: { themeQuery = ThemeCollectionQuery() }, summary: collectionSummary) }
             }
             .background(AppTheme.canvas)
             .navigationTitle("Closet")
@@ -127,21 +126,9 @@ struct ClosetView: View {
             .accessibilityValue((state.closetSearchActive ? searchThemeQuery : themeQuery).content.rawValue)
         }
     }
-    private var collectionSummary: some View {
+    private var collectionSummary: ClosetCollectionSummary {
         let summary = collectionSummaryData
-        return VStack(alignment: .leading, spacing: 6) {
-            if typeSize.isAccessibilitySize {
-                Text(summary.title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
-                if !summary.order.isEmpty { Text(summary.order).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
-            } else {
-                HStack(alignment: .firstTextBaseline, spacing: 12) {
-                    Text(summary.title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
-                    Spacer(minLength: 12)
-                    if !summary.order.isEmpty { Text(summary.order).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
-                }
-            }
-        }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 20)
-            .accessibilityElement(children: .combine).accessibilityIdentifier("closet.collection.summary")
+        return ClosetCollectionSummary(title: summary.title, order: summary.order)
     }
     private var collectionSummaryData: (title: String, order: String) {
         func count(_ value: Int, _ singular: String, _ plural: String) -> String { "\(value) \(value == 1 ? singular : plural)" }
@@ -208,6 +195,7 @@ struct ClosetView: View {
         } else {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
+                collectionSummary
                 if let error {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry", action: refreshPieces).frame(minHeight: 44)
@@ -588,5 +576,26 @@ private struct ClosetScopeControl: UIViewRepresentable {
             guard scopes.indices.contains(sender.selectedSegmentIndex) else { return }
             selection.wrappedValue = scopes[sender.selectedSegmentIndex]
         }
+    }
+}
+
+struct ClosetCollectionSummary: View {
+    let title: String
+    let order: String
+    @Environment(\.dynamicTypeSize) private var typeSize
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            if typeSize.isAccessibilitySize {
+                Text(title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
+                if !order.isEmpty { Text(order).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+            } else {
+                HStack(alignment: .firstTextBaseline, spacing: 12) {
+                    Text(title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
+                    Spacer(minLength: 12)
+                    if !order.isEmpty { Text(order).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+                }
+            }
+        }.frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine).accessibilityIdentifier("closet.collection.summary")
     }
 }
