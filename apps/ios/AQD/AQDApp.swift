@@ -89,6 +89,21 @@ private struct AppRootView: View {
                 }
                 state.isOpening = false
             }
+            if process.arguments.contains("--aqd-refresh-sample-contexts"), !process.arguments.contains("--aqd-ui-testing"), let store = state.store {
+                state.isOpening = true
+                do {
+                    let directory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                    _ = try await PreviewSampleContent.refreshContexts(store: store, outputDirectory: directory)
+                    state.reloadPlanEntries(); state.reloadFits(); state.reloadToday(); state.selection = 2
+                } catch {
+                    if let directory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) {
+                        try? LocalArchiveIO.write(Data(String(reflecting: error).utf8), to: directory.appendingPathComponent("AQD-sample-contexts-error.txt"))
+                    }
+                    state.collectionError = "Sample descriptions could not finish refreshing. Your records are retained; a local backup is kept if updates began."
+                }
+                state.isOpening = false
+            }
+
             #endif
             for _ in 0..<10 {
                 if state.dataCoordinator?.isWaitingForPreviousStore != true && !LocalArchiveService.hasInFlightWork { break }

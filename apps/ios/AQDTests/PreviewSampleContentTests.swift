@@ -6,6 +6,75 @@ import Testing
 
 @Suite(.serialized) @MainActor
 struct PreviewSampleContentTests {
+    @Test func realisticContextsPreserveEditedAndRetainedSamplesAndRepeatWithoutWrites() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: root.appendingPathComponent("store"))
+        let output = root.appendingPathComponent("receipts")
+        _ = try await PreviewSampleContent.populate(store: store, outputDirectory: output, legacyDescriptions: true)
+        let oldPlans = try store.planEntries(), oldFits = try store.fitMemories()
+        let editedPlanBase = try #require(oldPlans.first { $0.id == PreviewSampleContent.id(302) })
+        var editedPlan = OutfitPlanDraft(editing: editedPlanBase, outfit: try store.outfits().first { $0.id == editedPlanBase.outfitID })
+        editedPlan.occasion = "My own appointment"
+        try store.savePlanDraft(editedPlan); _ = try store.savePlan(editedPlan); try store.finishPlanDraft(editedPlan)
+        let editedFitBase = try #require(oldFits.first { $0.id == PreviewSampleContent.id(402) })
+        var editedFit = FitDraft(ownerID: editedFitBase.ownerID, base: editedFitBase); editedFit.value.note = "My own memory"
+        try store.saveFitDraft(editedFit); _ = try store.saveFit(editedFit); try store.finishFitDraft(editedFit)
+        let pendingPlanBase = try #require(oldPlans.first { $0.id == PreviewSampleContent.id(301) })
+        let pendingPlan = OutfitPlanDraft(editing: pendingPlanBase, outfit: try store.outfits().first { $0.id == pendingPlanBase.outfitID })
+        try store.savePlanDraft(pendingPlan)
+        let pendingFitBase = try #require(oldFits.first { $0.id == PreviewSampleContent.id(401) })
+        let pendingFit = FitDraft(ownerID: pendingFitBase.ownerID, base: pendingFitBase); try store.saveFitDraft(pendingFit)
+        let pieces = try store.pieces(), outfits = try store.outfits(), plans = try store.planEntries(), fits = try store.fitMemories()
+        let result = try await PreviewSampleContent.refreshContexts(store: store, outputDirectory: output)
+        #expect(result.updatedPlans.count == 5 && result.updatedFits.count == 6)
+        #expect(try store.pieces() == pieces && store.outfits() == outfits && store.wearRecords().isEmpty)
+        #expect(try store.planDraft() == pendingPlan && store.fitDraft() == pendingFit)
+        for value in try store.planEntries() {
+            let prior = try #require(plans.first { $0.id == value.id })
+            if result.updatedPlans.contains(value.id) {
+                var expected = prior; expected.occasion = value.occasion; expected.revision += 1
+                #expect(value == expected && !value.occasion.hasPrefix("Sample"))
+            } else { #expect(value == prior) }
+        }
+        for value in try store.fitMemories() {
+            let prior = try #require(fits.first { $0.id == value.id })
+            if result.updatedFits.contains(value.id) {
+                var expected = prior; expected.note = value.note; expected.revision += 1
+                #expect(value == expected && value.note.contains("Sample preview"))
+            } else { #expect(value == prior) }
+        }
+        let backup = output.appendingPathComponent(try #require(result.backup))
+        #expect(try FileManager.default.attributesOfItem(atPath: backup.path)[.protectionKey] as? FileProtectionType == .complete)
+        let stamp = try store.mutationStamp()
+        let repeatResult = try await PreviewSampleContent.refreshContexts(store: store, outputDirectory: output)
+        #expect(repeatResult.updatedPlans.isEmpty && repeatResult.updatedFits.isEmpty && repeatResult.backup == nil)
+        #expect(try store.mutationStamp() == stamp)
+    }
+    @Test func contextRefreshFailureLeavesAllRecordsUnchanged() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        var fail = false
+        let store = try PieceStore(directory: root.appendingPathComponent("store"), beforeOutfitSave: { if fail { throw CocoaError(.fileWriteNoPermission) } })
+        let output = root.appendingPathComponent("receipts")
+        _ = try await PreviewSampleContent.populate(store: store, outputDirectory: output, legacyDescriptions: true)
+        let plans = try store.planEntries(), fits = try store.fitMemories(), stamp = try store.mutationStamp()
+        fail = true
+        await #expect(throws: (any Error).self) { try await PreviewSampleContent.refreshContexts(store: store, outputDirectory: output) }
+        #expect(try store.planEntries() == plans && store.fitMemories() == fits && store.mutationStamp() == stamp)
+    }
+    @Test func contextRefreshReconcilesLostAcknowledgmentAndFreshSamplesNeedNoUpgrade() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        var lose = false
+        let store = try PieceStore(directory: root.appendingPathComponent("store"), afterOutfitSave: { if lose { throw CocoaError(.fileReadUnknown) } })
+        let output = root.appendingPathComponent("receipts")
+        _ = try await PreviewSampleContent.populate(store: store, outputDirectory: output, legacyDescriptions: true)
+        lose = true
+        let result = try await PreviewSampleContent.refreshContexts(store: store, outputDirectory: output)
+        #expect(result.updatedPlans.count == 7 && result.updatedFits.count == 8)
+        let second = try PieceStore(directory: root.appendingPathComponent("fresh"))
+        _ = try await PreviewSampleContent.populate(store: second, outputDirectory: root.appendingPathComponent("fresh-receipts"))
+        let fresh = try await PreviewSampleContent.refreshContexts(store: second, outputDirectory: root.appendingPathComponent("fresh-receipts"))
+        #expect(fresh.updatedPlans.isEmpty && fresh.updatedFits.isEmpty && fresh.backup == nil)
+    }
     @Test func samplesAddAtomicallyAndRepeatWithoutChangingIdentityDraftsOrWear() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let store = try PieceStore(directory: root.appendingPathComponent("store"))

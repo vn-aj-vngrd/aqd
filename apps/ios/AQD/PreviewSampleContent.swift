@@ -18,6 +18,27 @@ import UIKit
         let ids: [String: [UUID]]
         let backup: String?
     }
+    struct ContextReceipt: Codable, Equatable {
+        let updatedPlans: [UUID]
+        let updatedFits: [UUID]
+        let skippedPlans: [UUID]
+        let skippedFits: [UUID]
+        let backup: String?
+    }
+    static let planContexts = ["Team planning", "Coffee and errands", "Sunday market", "Client meeting", "Lunch by the waterfront", "Dinner with friends", "Project catch-up"]
+    static let legacyFitNote = "Sample fit memory for preview only. This does not represent your photo or recorded wear."
+    static let fitNotes = [
+        "Sample preview · A blue coat adds a little color to a city walk. Illustrative photo, not recorded wear.",
+        "Sample preview · Burgundy layers and sunglasses for an afternoon outside. Illustrative photo, not recorded wear.",
+        "Sample preview · Cream and tan with sneakers for a relaxed weekend. Not recorded wear.",
+        "Sample preview · Navy layers, a cotton shirt and loafers for a cooler morning. Not recorded wear.",
+        "Sample preview · A blue shirt with sand linen trousers for a long lunch. Not recorded wear.",
+        "Sample preview · A cream dress and navy coat for dinner. Not recorded wear.",
+        "Sample preview · Charcoal trousers, a cotton shirt and loafers for the studio. Not recorded wear.",
+        "Sample preview · Denim and ivory sneakers for coffee and errands. Not recorded wear."]
+    static func legacyPlanOccasion(_ index: Int) -> String {
+        "Sample · " + ["Office day", "Coffee run", "Weekend ease", "City layers", "Linen afternoon", "Evening out"][index % 6]
+    }
     enum Failure: Error { case partialSamples, missingArtwork, changedStore, invalidGraph }
     static func id(_ number: Int) -> UUID {
         // Closed constants below are the only callers; this namespace is reserved for samples.
@@ -42,7 +63,7 @@ import UIKit
                 "plans": try store.planEntries().map(\.id).filter { expected["plans", default: []].contains($0) },
                 "fits": try store.fitMemories().map(\.id).filter { expected["fits", default: []].contains($0) }]
     }
-    static func populate(store: PieceStore, outputDirectory: URL, now: Date = Date(), timeZone: TimeZone = .current) async throws -> Receipt {
+    static func populate(store: PieceStore, outputDirectory: URL, now: Date = Date(), timeZone: TimeZone = .current, legacyDescriptions: Bool = false) async throws -> Receipt {
         try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
         let receiptURL = outputDirectory.appendingPathComponent("AQD-preview-samples.json")
         let existing = try existingIDs(in: store)
@@ -94,7 +115,7 @@ import UIKit
             guard let date = calendar.date(byAdding: .day, value: index, to: now) else { throw Failure.invalidGraph }
             let outfit = bundle.outfits[index % bundle.outfits.count]
             bundle.plans.append(OutfitPlanEntry(id: id(301 + index), planID: id(501 + index), ownerID: owner,
-                day: LocalPlanDay(date: date, timeZone: timeZone), occasion: "Sample · \(looks[index % looks.count].0)",
+                day: LocalPlanDay(date: date, timeZone: timeZone), occasion: legacyDescriptions ? legacyPlanOccasion(index) : planContexts[index],
                 outfitID: outfit.id, outfitRevision: outfit.revision, state: .planned))
         }
         let offsets = [0, -1, -2, -4, -6, -8, -10, -12]
@@ -102,7 +123,7 @@ import UIKit
             guard let date = calendar.date(byAdding: .day, value: offsets[index], to: now) else { throw Failure.invalidGraph }
             var memory = FitMemory(id: id(401 + index), ownerID: owner)
             memory.day = LocalPlanDay(date: date, timeZone: timeZone)
-            memory.note = "Sample fit memory for preview only. This does not represent your photo or recorded wear."
+            memory.note = legacyDescriptions ? legacyFitNote : fitNotes[index]
             memory.outfit = try FitOutfitSnapshot(outfit: bundle.outfits[index % bundle.outfits.count], pieces: bundle.pieces)
             if index < 2 {
                 let name = index == 0 ? "tour-fit-blue-coat" : "tour-fit-street"
@@ -174,6 +195,50 @@ import UIKit
         let receipt = MediaReceipt(updated: replacements.map { $0.piece.id },
             skipped: allSamples.map(\.id).filter { id in !replacements.contains { $0.piece.id == id } }, transparent: transparent, backup: backupName)
         try write(try JSONEncoder().encode(receipt), to: outputDirectory.appendingPathComponent("AQD-transparent-samples.json"))
+        return receipt
+    }
+    /// Explicit upgrade of untouched old sample descriptions; never normal startup.
+    static func refreshContexts(store: PieceStore, outputDirectory: URL) async throws -> ContextReceipt {
+        try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
+        let plans = try store.planEntries(), fits = try store.fitMemories(), outfits = try store.outfits()
+        let planDraft = try store.planDraft(), authoring = try store.planAuthoringDraft(), fitDraft = try store.fitDraft()
+        var planChanges: [(before: OutfitPlanEntry, after: OutfitPlanEntry)] = []
+        var fitChanges: [(before: FitMemory, after: FitMemory)] = []
+        for (index, context) in planContexts.enumerated() {
+            guard let entry = plans.first(where: { $0.id == id(301 + index) }), entry.revision == 1,
+                  entry.occasion == legacyPlanOccasion(index), entry.state == .planned, !entry.requiresReview,
+                  outfits.contains(where: { $0.id == entry.outfitID && $0.revision == entry.outfitRevision }),
+                  planDraft?.entryID != entry.id, planDraft?.planID != entry.planID,
+                  authoring?.plan.id != entry.planID,
+                  !(authoring?.baseEntries?.contains(where: { $0.id == entry.id }) ?? false),
+                  !(authoring?.slots.contains(where: { $0.id == entry.id }) ?? false) else { continue }
+            var result = entry; result.occasion = context; result.revision += 1
+            planChanges.append((entry, result))
+        }
+        for (index, note) in fitNotes.enumerated() {
+            guard let fit = fits.first(where: { $0.id == id(401 + index) }), fit.revision == 1, fit.note == legacyFitNote,
+                  fitDraft?.value.id != fit.id, fitDraft?.base?.id != fit.id else { continue }
+            var result = fit; result.note = note; result.revision += 1
+            fitChanges.append((fit, result))
+        }
+        var backupName: String?
+        if !planChanges.isEmpty || !fitChanges.isEmpty {
+            let stamp = try store.mutationStamp()
+            let backup = try await LocalArchiveService.create(store: store)
+            guard try store.mutationStamp() == stamp else { throw Failure.changedStore }
+            let name = "AQD-before-sample-contexts-\(UUID().uuidString).aqdarchive"
+            try write(backup.data, to: outputDirectory.appendingPathComponent(name)); backupName = name
+            do { try store.replacePreviewSampleContexts(plans: planChanges, fits: fitChanges) }
+            catch {
+                let currentPlans = try store.planEntries(), currentFits = try store.fitMemories()
+                guard planChanges.allSatisfy({ change in currentPlans.contains(change.after) }),
+                      fitChanges.allSatisfy({ change in currentFits.contains(change.after) }) else { throw error }
+            }
+        }
+        let receipt = ContextReceipt(updatedPlans: planChanges.map { $0.before.id }, updatedFits: fitChanges.map { $0.before.id },
+            skippedPlans: plans.map(\.id).filter { sampleIDs["plans", default: []].contains($0) && !planChanges.map({ $0.before.id }).contains($0) },
+            skippedFits: fits.map(\.id).filter { sampleIDs["fits", default: []].contains($0) && !fitChanges.map({ $0.before.id }).contains($0) }, backup: backupName)
+        try write(try JSONEncoder().encode(receipt), to: outputDirectory.appendingPathComponent("AQD-sample-contexts.json"))
         return receipt
     }
     private static func write(_ data: Data, to url: URL) throws {

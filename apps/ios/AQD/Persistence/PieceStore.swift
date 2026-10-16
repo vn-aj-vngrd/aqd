@@ -3004,6 +3004,35 @@ extension PieceStore {
 
 #if DEBUG
 extension PieceStore {
+    /// Compare-and-swap the exact legacy seed text, never any user-edited fields.
+    func replacePreviewSampleContexts(plans: [(before: OutfitPlanEntry, after: OutfitPlanEntry)], fits: [(before: FitMemory, after: FitMemory)]) throws {
+        guard allowsSave, Set(plans.map { $0.before.id }).count == plans.count,
+              Set(fits.map { $0.before.id }).count == fits.count else { throw StoreError.invalidRecord }
+        let owner = try todayConfiguration().ownerID
+        let context = ModelContext(container)
+        for change in plans {
+            let before = change.before, id = before.id
+            guard let index = (0..<7).first(where: { PreviewSampleContent.id(301 + $0) == id }),
+                  before.ownerID == owner, before.revision == 1, before.occasion == PreviewSampleContent.legacyPlanOccasion(index),
+                  before.state == .planned, !before.requiresReview,
+                  let record = try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>(predicate: #Predicate { $0.id == id })).first,
+                  try record.value() == before else { throw StoreError.staleRevision }
+            var expected = before; expected.occasion = PreviewSampleContent.planContexts[index]; expected.revision += 1
+            guard expected == change.after else { throw StoreError.invalidRecord }
+            try expected.validated(); record.payload = try JSONEncoder().encode(expected)
+        }
+        for change in fits {
+            let before = change.before, id = before.id
+            guard let index = (0..<8).first(where: { PreviewSampleContent.id(401 + $0) == id }),
+                  before.ownerID == owner, before.revision == 1, before.note == PreviewSampleContent.legacyFitNote,
+                  let record = try context.fetch(FetchDescriptor<StoredFitMemory>(predicate: #Predicate { $0.id == id })).first,
+                  try record.value() == before else { throw StoreError.staleRevision }
+            var expected = before; expected.note = PreviewSampleContent.fitNotes[index]; expected.revision += 1
+            guard expected == change.after else { throw StoreError.invalidRecord }
+            try expected.validated(); record.payload = try JSONEncoder().encode(expected)
+        }
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+    }
     func replacePreviewSamplePhotos(_ replacements: [(piece: WardrobePiece, photoID: UUID)]) throws {
         guard allowsSave, Set(replacements.map { $0.piece.id }).count == replacements.count else { throw StoreError.invalidRecord }
         let context = ModelContext(container)
