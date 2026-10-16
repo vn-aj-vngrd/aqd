@@ -69,6 +69,19 @@ struct OutfitPersistenceTests {
         #expect(try store.outfitDraft() == accepted)
     }
 
+    @Test func collectionSortUsesVisibleNamesAndStableUpdatedOrder() {
+        let owner = UUID(), piece = UUID()
+        let old = Date(timeIntervalSince1970: 1), recent = Date(timeIntervalSince1970: 2)
+        let a = Outfit(id: UUID(), ownerID: owner, name: "Alpha", pieceIDs: [piece], updatedAt: old)
+        let z = Outfit(id: UUID(), ownerID: owner, name: "Zulu", pieceIDs: [piece], updatedAt: recent)
+        let sample = Outfit(id: UUID(uuidString: "A0D51000-0000-4000-8000-000000000101")!, ownerID: owner, name: "Sample · Coffee run", pieceIDs: [piece], updatedAt: old)
+        #expect(OutfitCollectionSort.nameAscending.apply([z, sample, a]).map(\.id) == [a.id, sample.id, z.id])
+        #expect(OutfitCollectionSort.nameDescending.apply([a, sample, z]).map(\.id) == [z.id, sample.id, a.id])
+        #expect(OutfitCollectionSort.recentlyUpdated.apply([a, sample, z]).first?.id == z.id)
+        let first = OutfitCollectionSort.recentlyUpdated.apply([a, sample, z])
+        #expect(OutfitCollectionSort.recentlyUpdated.apply([sample, z, a]) == first)
+    }
+
     @Test func manualOutfitSaveRetryReopenEditAndDiscardKeepStableIdentity() async throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         var store: PieceStore? = try PieceStore(directory: directory)

@@ -110,7 +110,7 @@ struct AppEmptyState: View {
         ContentUnavailableView {
             Label { Text(title).font(.headline) } icon: { Image(systemName: systemImage) }
         } description: {
-            if let description { description.font(AppTypography.supporting) }
+            if let description { description.font(AppTypography.supporting).padding(.top, AppSpacing.small) }
         }
     }
 }

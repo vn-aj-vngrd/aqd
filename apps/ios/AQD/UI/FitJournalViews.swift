@@ -73,7 +73,7 @@ struct FitJournalGrid: View {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry journal") { state.reloadFits() }.frame(minHeight: 44)
                 } else if state.fitMemories.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: AppSpacing.medium) {
                         Text("A little space for your style").font(.headline)
                         Text("Use Add fit (+) above to keep a photo or outfit here. Memories stay private.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(20)

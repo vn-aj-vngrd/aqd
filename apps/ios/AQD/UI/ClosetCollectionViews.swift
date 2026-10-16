@@ -69,7 +69,7 @@ struct ThemeCollectionView: View {
                 }
             } else {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: AppSpacing.large) {
                         if let summary { summary }
                         if let error = state.themeError {
                             SemanticFeedback(role: .danger, message: error)

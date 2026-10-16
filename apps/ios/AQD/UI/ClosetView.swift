@@ -8,6 +8,7 @@ struct ClosetView: View {
     @State private var archived = false
     @State private var availability: PieceAvailability?
     @State private var sort = PieceSort.name
+    @State private var outfitSort = OutfitCollectionSort.recentlyUpdated
     @State private var results: [WardrobePiece] = []
     @State private var error: String?
     @State private var favoritesOnly = false
@@ -38,7 +39,7 @@ struct ClosetView: View {
                 } else if scope == "Pieces" {
                     pieceCollection
                 } else if scope == "Outfits" {
-                    OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID, clearFilters: { favoritesOnly = false; themeID = nil }, summary: collectionSummary)
+                    OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID, sort: outfitSort, clearFilters: { favoritesOnly = false; themeID = nil }, summary: collectionSummary)
                 } else { ThemeCollectionView(query: themeQuery, clearFilters: { themeQuery = ThemeCollectionQuery() }, summary: collectionSummary) }
             }
             .padding(.top, AppSpacing.large)
@@ -79,6 +80,10 @@ struct ClosetView: View {
                 }
             }
             .onChange(of: category) { refreshPieces() }
+            .onChange(of: state.pieceCategories) { _, categories in
+                if let selected = category, !categories.contains(where: { $0.id == selected }) { category = nil }
+                else { refreshPieces() }
+            }
             .onChange(of: archived) { refreshPieces() }
             .onChange(of: availability) { refreshPieces() }
             .onChange(of: sort) { refreshPieces() }
@@ -119,10 +124,6 @@ struct ClosetView: View {
                         ForEach(ThemeCollectionQuery.Sort.allCases, id: \.self) { Text($0.rawValue).tag($0) }
                     }
                 }
-                Button("Clear filters") {
-                    if state.closetSearchActive { searchThemeQuery = ThemeCollectionQuery() }
-                    else { themeQuery = ThemeCollectionQuery() }
-                }
             } label: { Label("Filter and sort themes", systemImage: "line.3.horizontal.decrease") }
             .tint(AppTheme.ink).accessibilityIdentifier("closet.themes.filter")
             .accessibilityValue((state.closetSearchActive ? searchThemeQuery : themeQuery).content.rawValue)
@@ -130,7 +131,7 @@ struct ClosetView: View {
     }
     private var collectionSummary: ClosetCollectionSummary {
         let summary = collectionSummaryData
-        return ClosetCollectionSummary(title: summary.title, order: summary.order, pieceSort: scope == "Pieces" ? $sort : nil, themeSort: scope == "Themes" ? $themeQuery.sort : nil)
+        return ClosetCollectionSummary(title: summary.title, order: summary.order, pieceSort: scope == "Pieces" ? $sort : nil, themeSort: scope == "Themes" ? $themeQuery.sort : nil, outfitSort: scope == "Outfits" ? $outfitSort : nil)
     }
     private var collectionSummaryData: (title: String, order: String) {
         func count(_ value: Int, _ singular: String, _ plural: String) -> String { "\(value) \(value == 1 ? singular : plural)" }
@@ -143,7 +144,7 @@ struct ClosetView: View {
             let outfits = state.outfits.filter { outfit in
                 (!favoritesOnly || outfit.isFavorite) && (themeID == nil || state.themes.contains { $0.id == themeID && $0.outfitIDs.contains(outfit.id) })
             }
-            return (count(outfits.count, "outfit", "outfits"), "Recently updated")
+            return (count(outfits.count, "outfit", "outfits"), outfitSort.rawValue)
         default:
             guard state.themeError == nil else { return ("Themes unavailable", "") }
             return (count(themeQuery.apply(to: state.themes).count, "theme", "themes"), themeQuery.sort.rawValue)
@@ -192,7 +193,7 @@ struct ClosetView: View {
             }
         } else {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: AppSpacing.large) {
                 collectionSummary
                 if let error {
                     SemanticFeedback(role: .danger, message: error)
@@ -592,6 +593,7 @@ struct ClosetCollectionSummary: View {
     let order: String
     var pieceSort: Binding<PieceSort>? = nil
     var themeSort: Binding<ThemeCollectionQuery.Sort>? = nil
+    var outfitSort: Binding<OutfitCollectionSort>? = nil
     @Environment(\.dynamicTypeSize) private var typeSize
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -609,13 +611,16 @@ struct ClosetCollectionSummary: View {
             .accessibilityElement(children: .contain).accessibilityIdentifier("closet.collection.summary")
     }
     @ViewBuilder private var sortControl: some View {
-        if pieceSort != nil || themeSort != nil {
+        if pieceSort != nil || themeSort != nil || outfitSort != nil {
             Menu {
                 if let pieceSort {
                     Picker("Sort pieces", selection: pieceSort) { ForEach(PieceSort.allCases, id: \.self) { Text($0.title).tag($0) } }
                 }
                 if let themeSort {
                     Picker("Sort themes", selection: themeSort) { ForEach(ThemeCollectionQuery.Sort.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+                }
+                if let outfitSort {
+                    Picker("Sort outfits", selection: outfitSort) { ForEach(OutfitCollectionSort.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
                 }
             } label: {
                 HStack(spacing: 5) { Text(order); Image(systemName: "arrow.up").accessibilityHidden(true) }

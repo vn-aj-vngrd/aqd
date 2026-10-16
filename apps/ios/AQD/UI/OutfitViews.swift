@@ -130,15 +130,30 @@ struct OutfitComposition: View {
     }
 }
 
+enum OutfitCollectionSort: String, CaseIterable {
+    case recentlyUpdated = "Recently updated", nameAscending = "Name A–Z", nameDescending = "Name Z–A"
+    func apply(_ outfits: [Outfit]) -> [Outfit] {
+        outfits.sorted { first, second in
+            if self == .recentlyUpdated {
+                return first.updatedAt == second.updatedAt ? first.id.uuidString < second.id.uuidString : first.updatedAt > second.updatedAt
+            }
+            let order = first.displayName.localizedStandardCompare(second.displayName)
+            if order == .orderedSame { return first.id.uuidString < second.id.uuidString }
+            return self == .nameAscending ? order == .orderedAscending : order == .orderedDescending
+        }
+    }
+}
+
 struct OutfitCollectionView: View {
     @Environment(AppState.self) private var state
     var favoritesOnly = false
     var themeID: UUID?
+    var sort = OutfitCollectionSort.recentlyUpdated
     let clearFilters: () -> Void
     private var outfits: [Outfit] {
-        state.outfits.filter { outfit in
+        sort.apply(state.outfits.filter { outfit in
             (!favoritesOnly || outfit.isFavorite) && (themeID == nil || state.themes.contains { $0.id == themeID && $0.outfitIDs.contains(outfit.id) })
-        }
+        })
     }
     var summary: ClosetCollectionSummary? = nil
     var body: some View {
@@ -155,7 +170,7 @@ struct OutfitCollectionView: View {
                 }
             } else {
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 24) {
+                    LazyVStack(alignment: .leading, spacing: AppSpacing.large) {
                         if let summary { summary }
                         if let error = state.outfitError {
                             SemanticFeedback(role: .danger, message: error)

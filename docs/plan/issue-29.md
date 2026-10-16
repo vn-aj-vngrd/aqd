@@ -460,3 +460,13 @@ Planner calendar view is a neutral Menu/Picker with up/down chevrons showing cur
 Move Archived pieces from Closet filters to Settings → Your data. Settings registers the existing ClosetRoute destinations so archive cards still open the existing Piece details and restoration returns through the same settings stack. No archive data is moved or changed.
 
 The owner observed two branded startup screens. Remove the in-app AQD splash wordmark entirely; the system LaunchScreen remains the only branded splash. While the store opens, the app uses the same white LaunchCanvas with an accessible loading label, then the existing0.22s reduced-motion-aware fade hands off immediately. No minimum-duration timer, second logo or app-wide palette change. This supersedes the earlier0.32s runtime wordmark animation; Welcome's wardrobe animation remains.
+
+### Owner collection rhythm and Outfit sorting — October17
+
+All three Closet scopes use the same44pt count/sort row and16pt row-to-card/card section spacing. Outfits gains Recently updated / Name A–Z / Name Z–A with stable ID tie-breaking and visible-name sorting, using the same native order-label menu as Pieces/Themes. Filters and source-scroll state remain; sorting does not rewrite records. Remove Clear filters from the Theme filter menu only; All themes remains the reset choice, while result-empty recovery actions remain. A dedicated sorting regression covers visible seed names, ascending/descending and deterministic recent ordering.
+
+### Owner shared empty-state rhythm — October17
+
+Add8pt top spacing to the description slot inside the native ContentUnavailableView shared by AppEmptyState/EmptyStatePage. This keeps native symbol/title semantics, scroll/safe-area behavior and action footers while separating title and supporting copy across all consumers. Match the hand-authored empty Profile journal title/copy at12pt. Photo-capture empty prompts already use12pt title/copy spacing; keep them. Cosmetic verification is final Debug/source review without mirrored implementation tests.
+
+Exact-logo launch refinement: LaunchMark is a byte-for-byte copy of the current AppIcon.png, displayed natively at144pt on white in the system storyboard. No recreated text or second runtime logo. Updated the existing native launch renderer's obsolete label/font expectations to require centered144pt image artwork,1024px source and white resolved canvas in both appearances; retained actual rendering attachments. Empty-state typography gets shared8pt additional title/copy separation.
