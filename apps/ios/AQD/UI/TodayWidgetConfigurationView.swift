@@ -76,6 +76,7 @@ struct TodayWidgetConfigurationView: View {
         }
     }
     @ViewBuilder private func personal(_ instance: TodayWidgetInstance) -> some View {
+        NavigationLink("Saved notes and photos") { SavedTodayCardsView(model: model) }.frame(minHeight: 44)
         if let card = instance.options?.personal {
             LabeledField(title: "Title, optional", text: Binding(get: { card.title }, set: { title in model.nested { $0.options?.personal?.title = title } }))
             if instance.kind == .personalPhoto {

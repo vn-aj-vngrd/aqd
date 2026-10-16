@@ -36,6 +36,7 @@ final class AppState {
     var capture: CaptureModel?
     var collectionError: String?
     var today: TodayConfiguration?
+    var todayUndoAvailable = false
     var todayError: String?
     var todayEditor: TodayEditorModel?
     var photoCleanupError: String?
@@ -323,6 +324,7 @@ final class AppState {
         guard let store else { return }
         do {
             today = try store.todayConfiguration()
+            todayUndoAvailable = try store.todayUndo() != nil
             todayError = nil
         } catch {
             todayError = "Your saved Today layout couldn’t open. It has not been replaced with defaults. Retry or keep the app data for recovery."

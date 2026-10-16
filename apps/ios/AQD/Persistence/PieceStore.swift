@@ -275,8 +275,13 @@ enum LocalSchemaV17: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV16.models + [StoredTodayLayout.self, StoredTodayDraft.self, StoredTodaySave.self, StoredTodayUndo.self, StoredTodayPersonalCard.self] }
 }
 
+enum LocalSchemaV18: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(18, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV17.models + [StoredTodayCardDeletion.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self, LocalSchemaV15.self, LocalSchemaV16.self, LocalSchemaV17.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self, LocalSchemaV15.self, LocalSchemaV16.self, LocalSchemaV17.self, LocalSchemaV18.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
@@ -293,7 +298,8 @@ enum LocalMigrationPlan: SchemaMigrationPlan {
          .lightweight(fromVersion: LocalSchemaV13.self, toVersion: LocalSchemaV14.self),
          .lightweight(fromVersion: LocalSchemaV14.self, toVersion: LocalSchemaV15.self),
          .lightweight(fromVersion: LocalSchemaV15.self, toVersion: LocalSchemaV16.self),
-         .lightweight(fromVersion: LocalSchemaV16.self, toVersion: LocalSchemaV17.self)]
+         .lightweight(fromVersion: LocalSchemaV16.self, toVersion: LocalSchemaV17.self),
+         .lightweight(fromVersion: LocalSchemaV17.self, toVersion: LocalSchemaV18.self)]
     }
 }
 
@@ -339,13 +345,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:17".utf8)
-        let previousVersions = (1..<17).map { Data("AQD-piece-store:\($0)".utf8) }
+        let version = Data("AQD-piece-store:18".utf8)
+        let previousVersions = (1..<18).map { Data("AQD-piece-store:\($0)".utf8) }
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV17.self)
+        let schema = Schema(versionedSchema: LocalSchemaV18.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -404,7 +410,8 @@ final class PieceStore {
         guard layouts.count <= 1 else { throw StoreError.corruptStore }
         if layouts.isEmpty {
             let marker = hasVersion ? try Data(contentsOf: versionURL) : nil
-            guard allowsSave, marker != version else { throw StoreError.corruptStore }
+            let predatesFullToday = marker.map { old in (1..<17).contains { old == Data("AQD-piece-store:\($0)".utf8) } } ?? true
+            guard allowsSave, predatesFullToday else { throw StoreError.corruptStore }
             let legacy = try layoutContext.fetch(FetchDescriptor<StoredTodayConfiguration>())
             guard legacy.count == 1, let source = legacy.first else { throw StoreError.corruptStore }
             layoutContext.insert(try StoredTodayLayout(source.value())); try commit(layoutContext)
@@ -518,7 +525,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, 17), (Schema(versionedSchema: LocalSchemaV16.self), 16), (Schema(versionedSchema: LocalSchemaV15.self), 15), (Schema(versionedSchema: LocalSchemaV14.self), 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
+            let candidates = [(schema, 18), (Schema(versionedSchema: LocalSchemaV17.self), 17), (Schema(versionedSchema: LocalSchemaV16.self), 16), (Schema(versionedSchema: LocalSchemaV15.self), 15), (Schema(versionedSchema: LocalSchemaV14.self), 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -544,7 +551,10 @@ final class PieceStore {
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 17) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 18) throws -> Bool {
+        if storeVersion >= 18 {
+            guard try context.fetchCount(FetchDescriptor<StoredTodayCardDeletion>()) == 0 else { throw StoreError.unsupportedStore }
+        }
         if storeVersion >= 17 {
             guard try context.fetchCount(FetchDescriptor<StoredTodayDraft>()) == 0,
                   try context.fetchCount(FetchDescriptor<StoredTodaySave>()) == 0,
@@ -2637,5 +2647,68 @@ extension PieceStore {
             cards += [draft.nested?.options?.personal, draft.nestedBase?.options?.personal].compactMap { $0 }
         }
         return cards.compactMap { card in card.photoID.map { ($0, card.photoRecipe) } }
+    }
+}
+
+extension PieceStore {
+    func todayCardUsage(_ id: UUID) throws -> TodayCardUsage {
+        func contains(_ configuration: TodayConfiguration) -> Bool { configuration.instances.contains { $0.options?.personal?.id == id } }
+        let draft = try todayDraft()
+        let inDraft = draft.map { value in
+            contains(value.base) || contains(value.value) || value.defaultsUndo.map(contains) == true
+                || value.nested?.options?.personal?.id == id || value.nestedBase?.options?.personal?.id == id
+        } ?? false
+        return TodayCardUsage(active: contains(try todayConfiguration()), draft: inDraft, undo: try todayUndo().map { contains($0.previous) } ?? false)
+    }
+    func reviewTodayCardDeletion(_ card: TodayPersonalCard) throws -> TodayCardDeletion {
+        guard try pendingTodayCardDeletion() == nil, try todayPersonalCards().contains(card) else { throw StoreError.staleRevision }
+        let usage = try todayCardUsage(card.id)
+        guard !usage.active, !usage.draft else { throw StoreError.operationConflict }
+        if let draft = try todayDraft(), try savedTodayLayout(draft) != nil { throw StoreError.operationConflict }
+        return TodayCardDeletion(card: card, undo: usage.undo ? try todayUndo() : nil)
+    }
+    func pendingTodayCardDeletion() throws -> TodayCardDeletion? {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredTodayCardDeletion>()).filter { !$0.acknowledged }
+        guard records.count <= 1 else { throw StoreError.invalidRecord }
+        let value = try records.first?.value()
+        if let value { guard value.card.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord } }
+        return value
+    }
+    func todayCardDeletionApplied(_ request: TodayCardDeletion) throws -> Bool {
+        let records = try ModelContext(container).fetch(FetchDescriptor<StoredTodayCardDeletion>()).filter { $0.id == request.operationID }
+        guard let record = records.first else { return false }
+        guard records.count == 1, try record.value() == request else { throw StoreError.operationConflict }; return record.applied
+    }
+    func deleteTodayCard(_ request: TodayCardDeletion) throws {
+        if try todayCardDeletionApplied(request) { return }
+        guard allowsSave, request.card.ownerID == (try todayConfiguration().ownerID), try todayPersonalCards().contains(request.card) else { throw StoreError.staleRevision }
+        let usage = try todayCardUsage(request.card.id), undo = try todayUndo()
+        let releasesUndo = undo.map { $0.previous.instances.contains { $0.options?.personal?.id == request.card.id } } ?? false
+        guard !usage.active, !usage.draft, releasesUndo == (request.undo != nil),
+              request.undo == nil || undo == request.undo else { throw StoreError.operationConflict }
+        if let draft = try todayDraft(), try savedTodayLayout(draft) != nil { throw StoreError.operationConflict }
+        let context = ModelContext(container)
+        let tasks = try context.fetch(FetchDescriptor<StoredTodayCardDeletion>())
+        guard !tasks.contains(where: { $0.id == request.operationID && $0.acknowledged && !$0.applied }) else { throw StoreError.operationConflict }
+        let pending = tasks.filter { !$0.acknowledged }
+        guard pending.count <= 1, pending.first.map({ $0.id == request.operationID }) ?? true else { throw StoreError.operationConflict }
+        let task: StoredTodayCardDeletion
+        if let retained = pending.first { guard try retained.value() == request else { throw StoreError.operationConflict }; task = retained }
+        else { task = try StoredTodayCardDeletion(request); context.insert(task); try commit(context) }
+        guard let card = try context.fetch(FetchDescriptor<StoredTodayPersonalCard>()).first(where: { $0.id == request.card.id }), try card.value() == request.card else { throw StoreError.staleRevision }
+        if request.undo != nil {
+            for undo in try context.fetch(FetchDescriptor<StoredTodayUndo>()) {
+                try queueTodayPhotos(undo.value().previous.instances.compactMap { $0.options?.personal }, context: context); context.delete(undo)
+            }
+        }
+        try queueTodayPhotos([request.card], context: context)
+        context.delete(card); task.applied = true
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+    }
+    func finishTodayCardDeletion(_ request: TodayCardDeletion, cancelling: Bool = false) throws {
+        let context = ModelContext(container)
+        guard let task = try context.fetch(FetchDescriptor<StoredTodayCardDeletion>()).first(where: { $0.id == request.operationID }), try task.value() == request,
+              task.applied || cancelling else { throw StoreError.operationConflict }
+        task.acknowledged = true; try commit(context)
     }
 }
