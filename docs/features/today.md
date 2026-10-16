@@ -95,3 +95,5 @@ Native acceptance must cover largest Dynamic Type, VoiceOver names/order/positio
 - TODAY-05: drag plus non-drag reorder/focus/announcements, minimum-one refusal and provisional restore/Undo without record loss.
 - TODAY-06: offline/manual/privacy, per-kind state matrix, day/timezone/late-result safety and no implicit wear/AI/publication/weather consent.
 - TODAY-07: reviewed archive/restore/erase and reachable retained-personal-card review/delete, explicit Cancel, active/draft reference refusal, disclosed Undo release, acknowledged/failure/unknown/restart behavior, original retention/reference-safe cleanup, capability/accessibility/appearance and representative performance on a separately authorized native build.
+
+Customize editor presentation: reorder widgets directly in the native list, with Move up/down menu alternatives. Configure by tapping a row; duplicate/remove remain scoped row actions. Add widget stays in the bottom footer, with Restore defaults/Undo under Layout options. All changes remain draft-only until existing Save acknowledgment, with retained content and cancellation rules unchanged.

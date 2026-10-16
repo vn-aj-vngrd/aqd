@@ -11,36 +11,54 @@ struct TodayEditorView: View {
     @Bindable var model: TodayEditorModel
     @State private var discard = false
     @State private var library = false
-    @State private var reorder = false
     @State private var restore = false
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 12) {
+            List {
+                Section {
                     ForEach(Array(model.draft.value.instances.enumerated()), id: \.element.id) { index, instance in
                         HStack(spacing: 12) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(instance.kind.title).font(AppTypography.body)
-                                Text(summary(instance)).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                            }.frame(maxWidth: .infinity, alignment: .leading)
-                            Menu {
-                                Button("Configure", systemImage: "slider.horizontal.3") { model.begin(instance) }
-                                Button("Duplicate", systemImage: "plus.square.on.square") { model.update { $0.value.instances.insert(instance.independentCopy(), at: index + 1) } }
-                                Button("Move up", systemImage: "arrow.up") { model.move(instance.id, by: -1) }.disabled(index == 0)
-                                Button("Move down", systemImage: "arrow.down") { model.move(instance.id, by: 1) }.disabled(index == model.draft.value.instances.count - 1)
-                                Button("Remove", systemImage: "minus.circle") { model.update { try $0.remove(instance.id) } }
-                            } label: { Label("Options for \(instance.kind.title), position \(index + 1) of \(model.draft.value.instances.count)", systemImage: "ellipsis").labelStyle(.iconOnly).frame(width: 44, height: 44) }.disabled(model.locked)
-                        }.padding(14).frame(minHeight: 52).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).id(instance.id)
+                            Button { model.begin(instance) } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(instance.kind.title).font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                                    Text(summary(instance)).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                                }.frame(maxWidth: .infinity, alignment: .leading).frame(minHeight: 52)
+                                    .contentShape(Rectangle())
+                            }.buttonStyle(.borderless).disabled(model.locked)
+                                .accessibilityHint("Configure widget")
+                            widgetOptions(instance, index: index)
+                        }.listRowBackground(AppTheme.surface).moveDisabled(model.locked)
+                            .accessibilityValue("Position \(index + 1) of \(model.draft.value.instances.count)")
+                    }.onMove { offsets, destination in
+                        model.update { $0.value.instances.move(fromOffsets: offsets, toOffset: destination) }
                     }
-                    SecondaryAction(title: "Add widget") { library = true }.disabled(model.locked)
-                    DisclosureRow(title: "Reorder widgets", value: "") { reorder = true }.disabled(model.locked)
-                    DisclosureRow(title: "Restore defaults", value: "") { restore = true }.disabled(model.locked)
-                    if model.draft.defaultsUndo != nil { Button("Undo restore defaults") { model.update { $0.undoDefaults() } }.frame(minHeight: 44).disabled(model.locked) }
-                    if let error = model.error { SemanticFeedback(role: .danger, message: error) }
-
-                    Text("Changes stay on this iPhone. Removing a widget keeps its saved note or photo.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)
+                } header: {
+                    Text("\(model.draft.value.instances.count) widgets")
+                } footer: {
+                    Text("Drag the handles to change the order. Tap a widget to configure it. Removing a widget keeps its saved note or photo.")
+                }
+                if let error = model.error {
+                    Section { SemanticFeedback(role: .danger, message: error) }.listRowBackground(AppTheme.surface)
+                }
+            }.listStyle(.insetGrouped).scrollContentBackground(.hidden)
+                .environment(\.editMode, .constant(.active))
+                .background(AppTheme.canvas).navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    ActionFooter {
+                        ActionStack {
+                            PrimaryAction(title: "Add widget", systemImage: "plus") { library = true }.disabled(model.locked)
+                            Menu {
+                                Button("Restore defaults", systemImage: "arrow.counterclockwise") { restore = true }
+                                if model.draft.defaultsUndo != nil {
+                                    Button("Undo restore defaults", systemImage: "arrow.uturn.backward") { model.update { $0.undoDefaults() } }
+                                }
+                            } label: {
+                                Label("Layout options", systemImage: "ellipsis").font(AppTypography.body)
+                                    .frame(maxWidth: .infinity, minHeight: 44)
+                            }.foregroundStyle(AppTheme.actionText).disabled(model.locked)
+                        }
+                    }
+                }
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 if model.saved == nil { confirmation }
             } }
@@ -55,14 +73,25 @@ struct TodayEditorView: View {
                         Button(kind.title) { model.begin(TodayWidgetInstance(kind: kind)); library = false }.frame(minHeight: 44)
                     }.navigationTitle("Add widget").tint(AppTheme.ink)
                 }
-                .navigationDestination(isPresented: $reorder) { TodayReorderView(model: model) }
                 .sheet(isPresented: Binding(get: { model.draft.nested != nil }, set: { _ in })) { TodayWidgetConfigurationView(model: model) }
         }.tint(AppTheme.ink).interactiveDismissDisabled()
             .draftDiscardConfirmation(isPresented: $discard, title: "Discard Today changes?", message: "Your saved layout, notes and photos stay unchanged.") { model.finish(discarding: true); if model.state.todayEditor == nil { discard = false } }
             .alert("Restore the three default widgets?", isPresented: $restore) {
                 Button("Cancel", role: .cancel) { }
                 Button("Restore defaults") { model.update { $0.restoreDefaults() } }
-            } message: { Text("Today’s look, Your week in wear and Closet in use will replace the draft placements. Saved notes and photos remain available. Undo is available before Done.") }
+            } message: { Text("Today’s look, Your week in wear and Closet in use will replace the draft placements. Saved notes and photos remain available. Undo is available before Save.") }
+    }
+    private func widgetOptions(_ instance: TodayWidgetInstance, index: Int) -> some View {
+        Menu {
+            Button("Configure", systemImage: "slider.horizontal.3") { model.begin(instance) }
+            Button("Duplicate", systemImage: "plus.square.on.square") { model.update { $0.value.instances.insert(instance.independentCopy(), at: index + 1) } }
+            Button("Move up", systemImage: "arrow.up") { model.move(instance.id, by: -1) }.disabled(index == 0)
+            Button("Move down", systemImage: "arrow.down") { model.move(instance.id, by: 1) }.disabled(index == model.draft.value.instances.count - 1)
+            Button("Remove", systemImage: "minus.circle") { model.update { try $0.remove(instance.id) } }
+        } label: {
+            Label("Options for \(instance.kind.title), position \(index + 1) of \(model.draft.value.instances.count)", systemImage: "ellipsis")
+                .labelStyle(.iconOnly).frame(width: 44, height: 44).contentShape(Rectangle())
+        }.disabled(model.locked)
     }
     private func summary(_ instance: TodayWidgetInstance) -> String {
         if let card = instance.options?.personal { return card.title.isEmpty ? instance.kind.title : card.title }
@@ -76,21 +105,5 @@ struct TodayEditorView: View {
         case .quickActions: return "\((instance.options?.actions ?? TodayAction.defaults).count) actions"
         default: return "Configure"
         }
-    }
-}
-private struct TodayReorderView: View {
-    @Bindable var model: TodayEditorModel
-    @Environment(\.dismiss) private var dismiss
-    var body: some View {
-        List {
-            ForEach(Array(model.draft.value.instances.enumerated()), id: \.element.id) { index, instance in
-                HStack {
-                    Text(instance.kind.title).frame(maxWidth: .infinity, alignment: .leading)
-                    Button { model.move(instance.id, by: -1) } label: { Image(systemName: "arrow.up") }.accessibilityLabel("Move \(instance.kind.title) up").disabled(index == 0).frame(minWidth: 44, minHeight: 44)
-                    Button { model.move(instance.id, by: 1) } label: { Image(systemName: "arrow.down") }.accessibilityLabel("Move \(instance.kind.title) down").disabled(index == model.draft.value.instances.count - 1).frame(minWidth: 44, minHeight: 44)
-                }.accessibilityValue("Position \(index + 1) of \(model.draft.value.instances.count)").buttonStyle(.borderless)
-            }.onMove { offsets, destination in model.update { $0.value.instances.move(fromOffsets: offsets, toOffset: destination) } }
-        }.environment(\.editMode, .constant(.active)).navigationTitle("Reorder widgets")
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { dismiss() } label: { Text("Done") }.accessibilityLabel("Done reordering") } }
     }
 }
