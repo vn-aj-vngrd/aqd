@@ -17,8 +17,14 @@ struct WardrobeCategorySettingsView: View {
                             Spacer()
                             Text("\(state.ownedPieces.filter { state.category(for: $0)?.id == category.id }.count) pieces")
                                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        }.frame(minHeight: 44)
-                    }
+                        }.frame(minHeight: AppControlMetrics.minimumTarget)
+                            .padding(.horizontal, AppSpacing.medium)
+                            .padding(.vertical, AppSpacing.xSmall)
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                            .contentShape(RoundedRectangle(cornerRadius: AppRadius.field))
+                    }.buttonStyle(.plain)
+                        .listRowBackground(Color.clear).listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: 0, bottom: AppSpacing.xSmall, trailing: 0))
                 }.onMove { source, destination in
                     var updated = categories; updated.move(fromOffsets: source, toOffset: destination)
                     _ = save(updated)
@@ -28,7 +34,7 @@ struct WardrobeCategorySettingsView: View {
                 }
             } footer: {
                 Text("Choose a category when adding a piece. Removing a category keeps its pieces under their original type. Keep at least one category.")
-            }.listRowBackground(AppTheme.surface)
+            }
             if let error { Section { SemanticFeedback(role: .danger, message: error) }.listRowBackground(AppTheme.surface) }
         }.listStyle(.insetGrouped).scrollContentBackground(.hidden).background(AppTheme.canvas)
             .navigationTitle("Categories").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
