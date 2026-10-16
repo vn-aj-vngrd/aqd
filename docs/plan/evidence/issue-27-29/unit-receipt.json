@@ -5,7 +5,7 @@
   ],
   "branch": "van/issue-27/agent-and-local-controls",
   "baseline": "1a5b44ecf06536d6bb1dae0551348f44a9747d5b",
-  "sourceHead": "5a8d8ff8623ad86528fc8ae5c61855bebebfacfb",
+  "sourceHead": "4212dfee6d80fdfa1da24cedc6e692a91be42444",
   "checkedOn": "2026-10-16",
   "environment": {
     "destination": "Physical iPhone17ProMax",
@@ -21,8 +21,8 @@
       "failures": 0
     },
     "native": {
-      "passed": 206,
-      "swiftTesting": 193,
+      "passed": 213,
+      "swiftTesting": 200,
       "swiftTestingSuites": 30,
       "xctest": 13,
       "failures": 0
@@ -81,6 +81,11 @@
         "reviewedHead": "5063ea77a8b88d7d7dc4f7d1e2b2acca7db65425",
         "findings": 2,
         "status": "Complete Style context includes colors/patterns with separate body consent; oversized closet/context requires explicit bounded selection without arbitrary truncation. Both regressions reproduced; Core73/native206 pass and both independent rechecks findings-free. New-head review remains required."
+      },
+      "codex8": {
+        "reviewedHead": "3537d2e8b0fb404e56129b97ced02f6b3612487e",
+        "findings": 1,
+        "status": "Lost-pointer seeding fixed with independently audited adjacent corruption/publication/preparation recovery states. All actual regressions reproduced; final Core73/native213 pass and both whole-path rechecks have no remaining concrete findings. Current-head remote review remains required."
       }
     },
     "interruptedNativeRun": {
@@ -107,7 +112,8 @@
       ],
       "result": "FAILED",
       "reason": "Generated-original variants reproduced staleReview during second prepareRestore due to URL representation equality. Normalized source path comparison fixes the defect; full final rerun passes."
-    }
+    },
+    "opaqueRecoveryLimit": "Unreadable metadata and untracked generation files remain protected; cleanup keeps its receipt and warning. Retry alone cannot establish ownership of uncertain files."
   },
   "localLogs": [
     {
@@ -344,6 +350,56 @@
       "name": "aqd-pr37-codex7-docs.log",
       "sha256": "7c16d5dffebed7e569b60f27c4bac4607ecb5cee539e7c73509401c482177867",
       "published": false
+    },
+    {
+      "name": "aqd-pr37-codex8-red.log",
+      "sha256": "330d49da803c232cb6cb9ce0e0755367c3f7ab59cf74baf57abfbcbe6478d173",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex8-unit.log",
+      "sha256": "5eeecfb8abaadbad1c7cb14f00cb29c78437720a8e939918e1b0ca41caa9f97f",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex8-empty-red.log",
+      "sha256": "2bbe47eb70600488689ad2b95a2d4540278460b199c1e5c89693f1ec4db4e644",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex8-final-unit.log",
+      "sha256": "431c6792bb5e3e2cf8e12fd58a4d547312770da870c6b19f7cb2503aba8ebcc4",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex8-recovery-red.log",
+      "sha256": "8a8af4a2446600e4ec4f99b2d511096bab4567ea867edafdd454cb995d96f61d",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex8-recovery-unit.log",
+      "sha256": "6bac02e6429e442b100def447d306de2b06a5eea70270d70e9bb43b30b628dce",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex8-combined-red.log",
+      "sha256": "a0cf624235b425fd62fe7bfba2d582319e8ec60f0258b0dcafde09fd0dd6b839",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex8-complete-unit.log",
+      "sha256": "3ff350ff91d0d3060f87aee968d70e47b7be8945aff7b30e1e277fe3842d93bd",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex8-release.log",
+      "sha256": "55a8e2440682116bf799e81d4ffd1d0f0c2d0e4d8d03d016a95d54a881386c4e",
+      "published": false
+    },
+    {
+      "name": "aqd-pr37-codex8-docs.log",
+      "sha256": "7c16d5dffebed7e569b60f27c4bac4607ecb5cee539e7c73509401c482177867",
+      "published": false
     }
   ],
   "sourceFiles": {
@@ -353,7 +409,7 @@
     "apps/ios/AQD/AppState.swift": "8abcd49a95bd51350a8065200dd7cd6f3a115aaffe63876009da04d8df5584d4",
     "apps/ios/AQD/LocalArchive.swift": "332dc47cce947c93a915e2b754cef676b581ff666d1d3043cb5fbe1e864784f9",
     "apps/ios/AQD/LocalArchiveService.swift": "6dc0ad28f7c485f766a5def30282ef544118b0d874d471063fb213cc4713e80e",
-    "apps/ios/AQD/LocalDataCoordinator.swift": "4b7b8e02b36c74fc12dfe5c7ccbccd4caed993846eccda275bc6baeaa7df5809",
+    "apps/ios/AQD/LocalDataCoordinator.swift": "94293100c3f18ea1eb88fcb4a0f0692ac73589c3f2bf215d8d024a751c2c59cb",
     "apps/ios/AQD/LocalExportModel.swift": "0bf83ae03fece8bd0f1f5f7b6b2398358377ac7345aa383458e2d148dbdc9842",
     "apps/ios/AQD/LocalRestoreModel.swift": "ed9b59974814d0ce06a94fb7c147f581c35199bc88954532b386dd1d16db9fcf",
     "apps/ios/AQD/NativeAgentProvider.swift": "3cdb669b3bb16a3ed3b335201c3e3f11aa0b88a7e638a07d152a25c0d2cf6641",
@@ -380,7 +436,7 @@
     "apps/ios/AQDTests/LocalArchiveTests.swift": "9ea99a361e24664ba3eb5e73f26f2455f47bb6883f784c5f9eb435cf29ac0e81",
     "apps/ios/AQDTests/LocalDataFixture.swift": "ebb5568e1d84c662b65daec12394446cd5c7ac1de8f8711dd78d5121a680d625",
     "apps/ios/AQDTests/LocalEraseTests.swift": "9e3447fda46b2293932079ac585c9978dee94013970cae17552dd89379d5c756",
-    "apps/ios/AQDTests/LocalReplacementTests.swift": "bfa3dbfc5319beaf2f5b15afe697a3a63818675962017b431b2de51d7f6c37ea",
+    "apps/ios/AQDTests/LocalReplacementTests.swift": "7271ac80fabbed879e7754b91b7bd6c594efa4faf0ee6aa06bdbffaec1ee0fcb",
     "apps/ios/AQDTests/LocalSettingsPersistenceTests.swift": "fdd147136c5451970c474d1d508a8d1f59d5b07e767e170d4dfbfd3da5bbeeb4",
     "apps/ios/AQDTests/OutfitPersistenceTests.swift": "28f0f1f8bc76cd803a88ef154fd13e8e7e95738e845bf69e9f858aa56ec4d832",
     "apps/ios/AQDTests/PersonalEditorRecoveryTests.swift": "8236bc5e2e52de074b0e33405b83735eae05e9294ee3dab01dcb75774d4e2430",
