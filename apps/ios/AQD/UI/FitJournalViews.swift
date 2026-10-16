@@ -81,8 +81,7 @@ struct FitJournalGrid: View {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3), spacing: 8) {
                         ForEach(state.fitMemories) { memory in
                             NavigationLink { FitMemoryDetailView(id: memory.id) } label: {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    FitMemoryArtwork(memory: memory, thumbnail: true)
+                                FitMemoryArtwork(memory: memory, thumbnail: true)
                                         .clipShape(RoundedRectangle(cornerRadius: 4))
                                         .overlay(alignment: .topTrailing) {
                                             if memory.photoID == nil {
@@ -91,8 +90,6 @@ struct FitJournalGrid: View {
                                                     .background(AppTheme.surface, in: Circle()).padding(5).accessibilityHidden(true)
                                             }
                                         }
-                                    Text(journalDate(memory.day)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).lineLimit(2)
-                                }
                             }.buttonStyle(.plain).id(memory.id)
                                 .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.name ?? "unlinked"), \(memory.note)")
                         }
@@ -100,10 +97,6 @@ struct FitJournalGrid: View {
                 }
             }
         }
-    }
-    private func journalDate(_ day: LocalPlanDay) -> String {
-        guard let date = try? day.date(), let zone = TimeZone(identifier: day.timeZoneID) else { return day.key }
-        return date.formatted(Date.FormatStyle(date: .abbreviated, time: .omitted, timeZone: zone))
     }
 
 }

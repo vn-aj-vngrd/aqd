@@ -301,3 +301,5 @@ Closet metadata scroll refinement: count/current sort belongs to each collection
 Profile header ordering refinement: name and caption sit above the counters beside the avatar. At accessibility sizes, avatar, name/caption and counters stack vertically in that order; avatar editing and error-aware real counts are unchanged.
 
 Closet card surfaces: Pieces, Outfits and Themes use semantic-white outer surfaces with warm-gray imageGround inside artwork areas. Card labels remain within the outer surface and the full card navigates to its existing record. Semantic dark equivalents follow AppTheme.
+
+Latest Profile grid refinement: image-only tiles omit visible date captions. Saved dates remain in detail/editing and accessible tile labels, with journal order unchanged. This supersedes earlier dated grid caption guidance.
