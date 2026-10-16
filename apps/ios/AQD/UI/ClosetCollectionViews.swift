@@ -52,6 +52,7 @@ struct CollectionArtwork: View {
     @Environment(AppState.self) private var state
     let pieceIDs: [UUID]
     var badge: String? = nil
+    var height: CGFloat = 134
     private var shown: [UUID] { Array(pieceIDs.prefix(4)) }
     var body: some View {
         GeometryReader { geometry in
@@ -75,7 +76,7 @@ struct CollectionArtwork: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity).accessibilityLabel("Empty theme")
             }
         }
-        .frame(height: 134).clipped()
+        .frame(height: height).clipped()
         .overlay(alignment: .bottomTrailing) {
             if let text = badge ?? (pieceIDs.count > 4 ? "+\(pieceIDs.count - 4) more" : nil) {
                 Text(text).font(AppTypography.metadata).lineLimit(1).truncationMode(.tail)

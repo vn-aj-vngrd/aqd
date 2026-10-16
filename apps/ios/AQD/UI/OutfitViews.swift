@@ -6,6 +6,7 @@ struct OutfitEditorView: View {
     @State private var choosing = false
     @State private var discard = false
     @State private var choosingThemes = false
+    @FocusState private var nameEditing: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var locked: Bool { model.pending || model.unknown || model.generating }
     var body: some View {
@@ -21,16 +22,20 @@ struct OutfitEditorView: View {
                         PrimaryAction(title: "Open outfit") { model.finish(openOutfit: true) }
                         SecondaryAction(title: "Plan this look") { model.planSavedOutfit() }
                     } else {
-                        Button { choosing = true } label: {
+                        Button { nameEditing = false; choosing = true } label: {
                             VStack(alignment: .leading, spacing: AppSpacing.medium) {
                                 HStack {
                                     Text("Your outfit").font(AppTypography.fieldLabel)
                                     Spacer()
                                     Text("\(model.draft.pieceIDs.count) pieces").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                                 }
-                                OutfitComposition(pieceIDs: model.draft.pieceIDs, pieceHeight: 130)
-                                    .frame(minHeight: 180)
-                                    .animation(reduceMotion ? nil : AQDMotion.reflow, value: model.draft.pieceIDs)
+                                Group {
+                                    if model.draft.pieceIDs.isEmpty {
+                                        OutfitComposition(pieceIDs: []).frame(minHeight: 180)
+                                    } else {
+                                        CollectionArtwork(pieceIDs: model.draft.pieceIDs, height: 220)
+                                    }
+                                }.animation(reduceMotion ? nil : AQDMotion.reflow, value: model.draft.pieceIDs)
                                 HStack {
                                     Label(model.draft.pieceIDs.isEmpty ? "Choose pieces" : "Change pieces", systemImage: "plus")
                                     Spacer()
@@ -40,18 +45,16 @@ struct OutfitEditorView: View {
                                 .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                         }.buttonStyle(.plain).disabled(locked).accessibilityIdentifier("outfit.choosePieces")
                         LabeledField(title: "Outfit name", text: Binding(get: { model.draft.displayName }, set: { value in model.update { $0.name = value } }),
-                                     prompt: "e.g. An easy afternoon", accessibilityID: "outfit.displayName").disabled(locked)
-                        DisclosureRow(title: "Themes", value: model.draft.themeIDs?.isEmpty == false ? "\(model.draft.themeIDs?.count ?? 0) selected" : "None selected") { choosingThemes = true }
+                                     prompt: "e.g. An easy afternoon", accessibilityID: "outfit.name", editingFocus: $nameEditing).submitLabel(.done).onSubmit { nameEditing = false }.disabled(locked)
+                        DisclosureRow(title: "Themes", value: model.draft.themeIDs?.isEmpty == false ? "\(model.draft.themeIDs?.count ?? 0) selected" : "None selected") { nameEditing = false; choosingThemes = true }
                             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field)).disabled(locked)
                         if model.needsPieceReview {
                             SemanticFeedback(role: .warning, message: "Pieces changed. Open Change pieces to review the current records before saving.")
                         }
-                        Text("Choose any pieces you like. You can change them whenever you want.")
-                            .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(AppSpacing.screen)
-            }.background(AppTheme.canvas)
+            }.scrollDismissesKeyboard(.interactively).background(AppTheme.canvas)
                 .navigationTitle(model.saved != nil ? "Outfit saved" : model.draft.baseRevision == 0 ? "Build outfit" : "Edit outfit")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {

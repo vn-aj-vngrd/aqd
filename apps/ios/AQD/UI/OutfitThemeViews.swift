@@ -88,6 +88,7 @@ struct ThemeEditorView: View {
     @Environment(AppState.self) private var state
     @State private var discard = false
     @State private var choosingOutfits = false
+    @FocusState private var nameEditing: Bool
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -101,15 +102,14 @@ struct ThemeEditorView: View {
                         Text("Your outfits can belong to more than one theme.").foregroundStyle(AppTheme.secondary)
 
                     } else {
-                        LabeledField(title: "Name", text: Binding(get: { model.draft.displayName }, set: { name in model.update { $0.name = name } })).disabled(model.pending || model.unknown)
+                        LabeledField(title: "Name", text: Binding(get: { model.draft.displayName }, set: { name in model.update { $0.name = name } }), editingFocus: $nameEditing).submitLabel(.done).onSubmit { nameEditing = false }.disabled(model.pending || model.unknown)
                         LabeledField(title: "Description", text: Binding(get: { model.draft.displayDescription }, set: { value in model.update { $0.description = value } }), multiline: true).disabled(model.pending || model.unknown)
-                        DisclosureRow(title: "Outfits", value: model.draft.outfitIDs.isEmpty ? "None selected" : "\(model.draft.outfitIDs.count) selected") { choosingOutfits = true }.disabled(model.pending || model.unknown)
-                        Text("An outfit can belong to more than one theme.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        DisclosureRow(title: "Outfits", value: model.draft.outfitIDs.isEmpty ? "None selected" : "\(model.draft.outfitIDs.count) selected") { nameEditing = false; choosingOutfits = true }.disabled(model.pending || model.unknown)
 
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(20)
-            }.background(AppTheme.canvas)
+            }.scrollDismissesKeyboard(.interactively).background(AppTheme.canvas)
                 .navigationTitle(model.draft.baseRevision == 0 ? "Create theme" : "Edit theme").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 if model.saved == nil { confirmation }
@@ -168,16 +168,18 @@ private struct ThemeOutfitChooser: View {
                     Button {
                         if selected.contains(outfit.id) { selected.remove(outfit.id) } else { selected.insert(outfit.id) }
                     } label: {
-                        HStack {
-                            Text(outfit.displayName).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
+                        HStack(spacing: 12) {
+                            CollectionArtwork(pieceIDs: outfit.pieceIDs, height: 56).frame(width: 56)
+                                .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 8)).accessibilityHidden(true)
+                            Text(outfit.displayName).lineLimit(1).truncationMode(.tail).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
                             Image(systemName: selected.contains(outfit.id) ? "checkmark.circle.fill" : "circle")
-                        }.frame(minHeight: 54).padding(.horizontal, 14)
+                        }.frame(minHeight: 72).padding(.horizontal, 14)
                             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                     }.buttonStyle(.plain).accessibilityValue(selected.contains(outfit.id) ? "Selected" : "Not selected")
                 }
 
             }.padding(20)
-        }.background(AppTheme.canvas)
+        }.scrollDismissesKeyboard(.interactively).sensoryFeedback(.selection, trigger: selected).background(AppTheme.canvas)
             .navigationTitle("Choose outfits").navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden()
             .toolbar { ToolbarItem(placement: .cancellationAction) {

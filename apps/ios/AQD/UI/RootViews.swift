@@ -47,7 +47,7 @@ struct TodayView: View {
                 Button { state.openTodayEditor() } label: { Image(systemName: "square.grid.2x2").font(.system(size: 17, weight: .regular)) }.accessibilityLabel("Customize Today").tint(AppTheme.ink)
             } }
             .safeAreaInset(edge: .bottom) {
-                if state.todayUndoAvailable { Button("Undo layout change") { state.undoTodayLayout() }.frame(minHeight: 44).padding(.horizontal, 20).background(AppTheme.canvas) }
+                if state.todayUndoAvailable { Button("Undo layout change") { state.undoTodayLayout() }.frame(maxWidth: .infinity, minHeight: 44).padding(.horizontal, 20).background(AppTheme.canvas) }
             }
             .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
             .onAppear { state.reloadToday(); state.reloadPlanEntries(); state.reloadWear(); state.reloadOutfits(); state.reloadPieces(); state.reloadFits(); state.reloadThemes() }

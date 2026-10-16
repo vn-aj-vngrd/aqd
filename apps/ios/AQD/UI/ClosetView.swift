@@ -116,15 +116,15 @@ struct ClosetView: View {
     private var themeFilterMenu: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
-                Section("Contents") {
-                    Picker("Contents", selection: state.closetSearchActive ? $searchThemeQuery.content : $themeQuery.content) {
-                        ForEach(ThemeCollectionQuery.Content.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                Section("Filter by Contents") {
+                    ForEach(ThemeCollectionQuery.Content.allCases, id: \.self) { value in
+                        filterOption(value.rawValue, value: value, selection: state.closetSearchActive ? $searchThemeQuery.content : $themeQuery.content)
                     }
                 }
                 if state.closetSearchActive {
-                    Section("Sort") {
-                        Picker("Sort themes", selection: $searchThemeQuery.sort) {
-                            ForEach(ThemeCollectionQuery.Sort.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    Section("Sort by") {
+                        ForEach(ThemeCollectionQuery.Sort.allCases, id: \.self) { value in
+                            filterOption(value.rawValue, value: value, selection: $searchThemeQuery.sort)
                         }
                     }
                 }
@@ -132,6 +132,12 @@ struct ClosetView: View {
             .tint(AppTheme.ink).accessibilityIdentifier("closet.themes.filter")
             .accessibilityValue((state.closetSearchActive ? searchThemeQuery : themeQuery).content.rawValue)
         }
+    }
+    private func filterOption<Value: Equatable>(_ title: String, value: Value, selection: Binding<Value>) -> some View {
+        Button { selection.wrappedValue = value } label: {
+            if selection.wrappedValue == value { Label(title, systemImage: "checkmark") }
+            else { Text(title) }
+        }.accessibilityAddTraits(selection.wrappedValue == value ? [.isSelected] : [])
     }
     private var collectionSummary: ClosetCollectionSummary {
         let summary = collectionSummaryData
@@ -157,17 +163,17 @@ struct ClosetView: View {
     private var outfitFilterMenu: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
-                Section("Favorites") {
+                Section("Filter by Favorites") {
                     Toggle("Favorites only", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly)
                 }
-                Section("Theme") {
-                    Picker("Theme", selection: state.closetSearchActive ? $searchThemeID : $themeID) {
-                        Text("All themes").tag(Optional<UUID>.none)
-                        ForEach(state.themes) { Text($0.displayName).tag(Optional($0.id)) }
-                        if let selectedID = state.closetSearchActive ? searchThemeID : themeID,
-                           !state.themes.contains(where: { $0.id == selectedID }) {
-                            Text("Unavailable theme").tag(Optional(selectedID))
-                        }
+                Section("Filter by Theme") {
+                    filterOption("All themes", value: Optional<UUID>.none, selection: state.closetSearchActive ? $searchThemeID : $themeID)
+                    ForEach(state.themes) { theme in
+                        filterOption(theme.displayName, value: Optional(theme.id), selection: state.closetSearchActive ? $searchThemeID : $themeID)
+                    }
+                    if let selectedID = state.closetSearchActive ? searchThemeID : themeID,
+                       !state.themes.contains(where: { $0.id == selectedID }) {
+                        filterOption("Unavailable theme", value: Optional(selectedID), selection: state.closetSearchActive ? $searchThemeID : $themeID)
                     }
                 }
             } label: { Label("Filter outfits", systemImage: "line.3.horizontal.decrease") }
@@ -177,16 +183,16 @@ struct ClosetView: View {
     private var pieceFilterMenu: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
-                Section("Category") {
-                    Picker("Category", selection: $category) {
-                        Text("All categories").tag(Optional<String>.none)
-                        ForEach(state.pieceCategories) { Text($0.name).tag(Optional($0.id)) }
+                Section("Filter by Category") {
+                    filterOption("All categories", value: Optional<String>.none, selection: $category)
+                    ForEach(state.pieceCategories) { value in
+                        filterOption(value.name, value: Optional(value.id), selection: $category)
                     }
                 }
-                Section("Availability") {
-                    Picker("Availability", selection: $availability) {
-                        Text("All availability").tag(Optional<PieceAvailability>.none)
-                        ForEach([PieceAvailability.available, .unavailable, .laundry], id: \.self) { Text($0.rawValue.capitalized).tag(Optional($0)) }
+                Section("Filter by Status") {
+                    filterOption("All statuses", value: Optional<PieceAvailability>.none, selection: $availability)
+                    ForEach([PieceAvailability.available, .unavailable, .laundry], id: \.self) { value in
+                        filterOption(value.rawValue.capitalized, value: Optional(value), selection: $availability)
                     }
                 }
             } label: { Label("Filter pieces", systemImage: "line.3.horizontal.decrease") }.tint(AppTheme.ink)

@@ -59,20 +59,17 @@ struct OwnedPieceChooser: View {
                                 if !pinnedIDs.contains(piece.id) { selected.removeAll { $0 == piece.id } }
                             } else { selected.append(piece.id) }
                         } label: {
-                            VStack(alignment: .leading, spacing: 8) {
+                            ClosetCard(title: piece.displayName, detail: [state.categoryName(for: piece), piece.details.color].filter { !$0.isEmpty }.joined(separator: " · ")) {
                                 PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
-                                    .frame(height: 134)
+                                    .frame(maxWidth: .infinity).frame(height: 134).clipped()
                                     .overlay(alignment: .topTrailing) {
                                         if isSelected {
                                             Image(systemName: "checkmark.circle.fill").font(.title3)
                                                 .symbolRenderingMode(.palette).foregroundStyle(AppTheme.onAccent, AppTheme.accent)
-                                                .padding(8)
+                                                .padding(6)
                                         }
                                     }
-                                Text(piece.displayName).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
-                                Text([state.categoryName(for: piece), piece.details.color].filter { !$0.isEmpty }.joined(separator: " · "))
-                                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                            }.frame(maxWidth: .infinity, alignment: .leading)
+                            }
                         }.buttonStyle(.plain)
                             .accessibilityLabel(piece.displayName)
                             .accessibilityValue(pinnedIDs.contains(piece.id) ? "Pinned and selected" : isSelected ? "Selected" : "Not selected")
@@ -89,6 +86,8 @@ struct OwnedPieceChooser: View {
 
             }.padding(20)
         }
+        .scrollDismissesKeyboard(.interactively)
+        .sensoryFeedback(.selection, trigger: selected)
         .background(AppTheme.canvas)
         .navigationTitle("Choose pieces").navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden()

@@ -119,12 +119,12 @@ struct PieceCaptureView: View {
                 LabeledField(title: "Name", text: Binding(get: { model.draft.displayName },
                                                          set: { model.update(\.name, value: $0) }),
                              prompt: "e.g. Cotton shirt", validation: nameValidation, accessibilityID: "capture.field.name",
-                             editingFocus: $nameEditing)
+                             editingFocus: $nameEditing).submitLabel(.done).onSubmit { nameEditing = false }
                 VStack(spacing: 0) {
                     HStack(spacing: 12) {
                         Menu {
                             ForEach(model.categories) { category in
-                                Button { model.selectCategory(category) } label: {
+                                Button { nameEditing = false; model.selectCategory(category) } label: {
                                     if model.categorySelectionID == category.id {
                                         Label(category.name, systemImage: "checkmark")
                                     } else { Text(category.name) }
