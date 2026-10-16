@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
-  "sourceHead": "e71e1ded830db3ae2568c547af2de846aeaf0b60",
-  "sourceState": "Group #25/#26 implements all seven source slices, including reviewed corrections. Core59/native148 pass; final release/remote gates recorded in issue plans. All rendered/E2E acceptance deferred to #30.",
+  "sourceHead": "0de6077a7fcf989cff0d0f1fc9b9ac95b706e1ee",
+  "sourceState": "Group #25/#26 implements seven source slices and independent/Codex corrections at sourceHead. Core59/native149 pass; source-bound receipt in docs/plan/evidence/issue-25-26. All rendered/E2E acceptance remains #30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,

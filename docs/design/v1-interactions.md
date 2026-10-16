@@ -218,3 +218,6 @@ L152–L154/L166–L169 define six preference questions plus Review, with unnumb
 The [verification policy](../delivery/implementation-plan.md#verification-policy--owner-approved-october15) retains the broad matrix in #30. Each feature must already execute focused E2E and inspect/publish rendered proof of its own UI ACs. Implement control behavior and update this inventory during each feature; retained failures and genuinely deferred qualification remain explicit.
 
 For every row above, open from each listed source, complete once, cancel once, return with Back, then test the applicable empty/error path. Check draft retention, exact record identity, duplicate prevention, keyboard/focus return, largest text, dark appearance and Reduce Motion. Every newly introduced control must update this ledger and the manifest in the same change. Static Paper inspection does not establish native animation, persistence, OS presentation or accessibility correctness.
+
+
+October16 PR35 Codex correction: timezone-only wear correction detaches links while preserving the intended day/zone on existing plans. Profile More → Wear insights → same-period source history is the canonical root entry; saved-wear receipt still finishes before explicitly opening history. No duplicate Profile body controls. Core59/native149 pass; rendered/E2E acceptance stays #30.
