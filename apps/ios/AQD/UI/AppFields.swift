@@ -1,3 +1,4 @@
+import AQDCore
 import SwiftUI
 import UIKit
 
@@ -56,23 +57,27 @@ struct LabeledField: View {
     @Binding var text: String
     var prompt: String? = nil
     var multiline = false
+    var characterLimit: Int? = nil
     var helper: String? = nil
     var validation: String? = nil
     var accessibilityID: String = ""
     var editingFocus: FocusState<Bool>.Binding? = nil
 
     var body: some View {
-        LabeledControl(title: title, helper: helper, validation: validation) {
-            if let editingFocus {
-                editor.focused(editingFocus)
-            } else {
-                editor
+        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+            LabeledControl(title: title, helper: helper, validation: validation) {
+                if let editingFocus {
+                    editor.focused(editingFocus)
+                } else {
+                    editor
+                }
             }
+            if multiline { TextAreaCounter(text: text, limit: characterLimit ?? TextAreaLimits.note) }
         }
     }
 
     private var editor: some View {
-        TextField(title, text: $text,
+        TextField(title, text: multiline ? $text.limited(to: characterLimit ?? TextAreaLimits.note) : $text,
                   prompt: Text(prompt ?? title).foregroundStyle(AppTheme.secondary),
                   axis: multiline ? .vertical : .horizontal)
             .lineLimit(multiline ? 3...8 : 1...1)
@@ -152,5 +157,24 @@ struct MenuSelectionLabel: View {
         .font(AppTypography.body).foregroundStyle(AppTheme.ink)
         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
         .contentShape(Rectangle())
+    }
+}
+
+extension Binding where Value == String {
+    func limited(to limit: Int) -> Binding<String> {
+        Binding(get: { wrappedValue }, set: { proposed in
+            wrappedValue = TextAreaLimits.editedText(proposed, current: wrappedValue, limit: limit)
+        })
+    }
+}
+
+struct TextAreaCounter: View {
+    let text: String
+    let limit: Int
+    var body: some View {
+        Text("\(text.count) / \(limit)").font(AppTypography.metadata)
+            .foregroundStyle(text.count > limit ? AppTheme.error : AppTheme.secondary)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .accessibilityLabel("\(text.count) of \(limit) characters")
     }
 }

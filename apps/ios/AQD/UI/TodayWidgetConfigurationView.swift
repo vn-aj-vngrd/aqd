@@ -99,8 +99,10 @@ struct TodayWidgetConfigurationView: View {
                 if card.photoID != nil { SecondaryAction(title: "Edit photo") { editPhoto = true }.disabled(model.importing); Button("Remove photo") { model.cancelImport(); model.nested { $0.options?.personal?.photoID = nil; $0.options?.personal?.photoRecipe = .fitOriginal } }.frame(minHeight: 44) }
             }
             Text(instance.kind == .personalNote ? "Note" : "Caption, optional").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-            TextEditor(text: Binding(get: { card.text }, set: { text in model.nested { $0.options?.personal?.text = text } }))
+            TextEditor(text: Binding(get: { card.text }, set: { text in model.nested { $0.options?.personal?.text = text } })
+                .limited(to: instance.kind == .personalNote ? TextAreaLimits.note : TextAreaLimits.caption))
                 .frame(minHeight: 180).padding(14).scrollContentBackground(.hidden).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).accessibilityLabel(instance.kind == .personalNote ? "Full private note" : "Photo caption")
+            TextAreaCounter(text: card.text, limit: instance.kind == .personalNote ? TextAreaLimits.note : TextAreaLimits.caption)
             if instance.kind == .personalNote, card.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { Text("A note needs some text.").foregroundStyle(AppTheme.error) }
             Button(instance.kind == .personalNote ? "Clear note" : "Clear caption") { model.nested { $0.options?.personal?.text = "" } }.frame(minHeight: 44)
             Text("Done updates your Today draft. Save in Customize Today keeps it.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)

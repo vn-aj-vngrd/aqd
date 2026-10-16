@@ -131,11 +131,9 @@ struct FitEditorView: View {
 
                     } else {
                         mediaContent
-                        LabeledControl(title: "Private note") {
-                            TextField("What would you like to remember?", text: Binding(get: { model.draft.value.displayNote }, set: { value in model.update { $0.note = value } }), axis: .vertical)
-                                .lineLimit(4...12).font(AppTypography.body).disabled(model.locked)
-                        }
-                        Text("\(model.draft.value.note.count) / 500").font(AppTypography.metadata).foregroundStyle(model.draft.value.note.count > 500 ? AppTheme.error : AppTheme.secondary).frame(maxWidth: .infinity, alignment: .trailing)
+                        LabeledField(title: "Private note", text: Binding(get: { model.draft.value.displayNote }, set: { value in model.update { $0.note = value } }),
+                                     prompt: "What would you like to remember?", multiline: true, characterLimit: TextAreaLimits.fitNote)
+                            .disabled(model.locked)
                         if model.draft.value.note.count > 500 { SemanticFeedback(role: .danger, message: "Keep the note within 500 characters. Your full text is retained.") }
                         dateDetails
                         Label("Private memory · Wear is recorded separately", systemImage: "lock")

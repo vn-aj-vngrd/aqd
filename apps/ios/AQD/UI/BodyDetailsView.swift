@@ -172,10 +172,8 @@ private struct BodyShapePickerView: View {
                 Text("Use words that feel right. This stays private.").font(.subheadline).foregroundStyle(AppTheme.secondary)
                 LabeledField(title: "Your description", text: Binding(get: { picker.customText }, set: { value in
                     model.update { $0.bodyShapePicker?.customText = value }
-                }), prompt: "Describe in your own words", multiline: true,
+                }), prompt: "Describe in your own words", multiline: true, characterLimit: TextAreaLimits.caption,
                              accessibilityID: "style.body.description", editingFocus: $descriptionEditing)
-                Text("\(picker.customText.count) / 160").font(.footnote).foregroundStyle(AppTheme.secondary)
-                    .frame(maxWidth: .infinity, alignment: .trailing).accessibilityIdentifier("style.body.count")
                 if picker.customText.count > 160 {
                     SemanticFeedback(role: .danger, message: "Remove \(picker.customText.count - 160) character\(picker.customText.count == 161 ? "" : "s") to continue.")
                         .accessibilityIdentifier("style.body.description.error")
