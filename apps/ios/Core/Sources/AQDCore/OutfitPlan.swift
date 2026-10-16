@@ -74,14 +74,26 @@ public struct OutfitPlanDraft: Identifiable, Codable, Equatable, Sendable {
     public var outfit: Outfit?
     public var unassignedByChoice: Bool?
     public var allowsOverlap: Bool?
+    public var baseEntry: OutfitPlanEntry?
 
     public init(ownerID: UUID, outfit: Outfit? = nil, day: LocalPlanDay = LocalPlanDay()) {
         id = UUID(); entryID = UUID(); planID = UUID(); operationID = UUID()
         self.ownerID = ownerID; self.outfit = outfit; self.day = day; occasion = ""
     }
 
+    public init(editing entry: OutfitPlanEntry, outfit: Outfit?) {
+        id = UUID(); operationID = UUID(); entryID = entry.id; planID = entry.planID; ownerID = entry.ownerID
+        day = entry.day; occasion = entry.occasion; self.outfit = outfit; baseEntry = entry
+        unassignedByChoice = entry.outfitID == nil
+    }
+
     public func validatedForSave(outfits: [Outfit]) throws {
         _ = try day.date()
+        if let baseEntry {
+            try baseEntry.validated()
+            guard baseEntry.id == entryID, baseEntry.planID == planID, baseEntry.ownerID == ownerID,
+                  baseEntry.state == .planned || baseEntry.state == .unassigned else { throw PlanValidationError.invalidRecord }
+        }
         guard occasion.count <= 80 else { throw PlanValidationError.invalidRecord }
         guard outfit != nil || unassignedByChoice == true else { throw PlanValidationError.invalidOutfit }
         if let outfit {

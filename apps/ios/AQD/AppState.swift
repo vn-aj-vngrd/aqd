@@ -41,6 +41,13 @@ final class AppState {
     var wearEditor: OutfitWearEditorModel?
     var wearRecords: [OutfitWearRecord] = []
     var wearError: String?
+    var plannerDay = LocalPlanDay()
+    var plannerMode = PlannerCalendarMode.week
+    var plannerPath: [PlannerRoute] = []
+    var recentPlan: OutfitPlanEntry?
+    var planUndoDeadline: Date?
+    var planUndoRequest: PlanEntryDeletionRequest?
+    var planUndoPending = false
     var planEditor: OutfitPlanEditorModel?
     var planEntries: [OutfitPlanEntry] = []
     var planError: String?

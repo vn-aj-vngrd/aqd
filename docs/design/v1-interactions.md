@@ -1,5 +1,10 @@
 # V1 interaction and state coverage
 
+## Issues #25 + #26 Planner S1, October16
+
+Week/Month/previous/next/date picker/Today update retained Planner date/view state. Calendar marks/counts and agenda use actual saved entries. Add preselects the displayed day; shared timezone selection changes only the retained draft without shifting calendar values. Entry Edit preserves identity/other dates; Remove retains outfits/history. Save acknowledges one write; Undo removes only that saved entry and remains reconcilable after its normal window if interrupted. Outfit composition edits flag affected future assignments; past intent/wear stays intact. Routines/trips/bulk and linked wear/history follow in the same group. Native unit checks are in [issue25](../plan/issue-25.md); all rendered/E2E acceptance stays #30.
+
+
 October16 implementation receipt: #24/#23 supplies the real Closet collections/Add/scoped search, piece metadata/availability/archive/Undo/restore/reviewed deletion, outfit builder/pins/choosers/rules/review/save/detail/favorite/delete, theme creation/multiple memberships/edit/delete and shared explicit Plan/Wear tasks. Saved outfit links select the exact identity; new themes open actual detail, edits retain their caller and nested theme selection remains provisional. Recorded wear and prior estimates remain distinct. Native units verify persistence/retry/cascade/source coordination; every UI/runtime acceptance claim remains Deferred to #30 under the owner-approved unit-only feature policy. Existing E2E contextual-Add selectors must be reconciled there.
 
 

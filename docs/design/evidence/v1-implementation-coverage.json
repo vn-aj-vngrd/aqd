@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-16",
   "tokenHash": "fdeb7346",
-  "sourceHead": "27718abe72c925f9469ff57e1bc04b29606ba895",
-  "sourceState": "Group #24/#23 feature slices and independent review corrections implemented and unit verified; final source hashes in docs/plan/evidence/issue-24-23/unit-receipt.json. Local review and unsigned Release pass. Remote gates pending; runtime acceptance deferred to #30.",
+  "sourceHead": "e71e1ded830db3ae2568c547af2de846aeaf0b60",
+  "sourceState": "PR34/v1.3.0 shipped. Group #25/#26 S1 extends the baseline with real calendar and entry management, verified in issue25 receipt; remaining group source is pending. All UI/E2E acceptance deferred to #30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -18,9 +18,9 @@
     "allRootIdsMatchRegisteredInventory": true
   },
   "counts": {
-    "source-partial": 98,
+    "source-partial": 104,
     "structural-reference": 11,
-    "missing": 121,
+    "missing": 115,
     "placeholder": 2
   },
   "verifiedCompleteScreenStates": 0,
@@ -155,7 +155,7 @@
     "05": {
       "coverage": "source-partial",
       "required": "Week/Month/date/agenda/plans/timezones/routines/trips/packing/conflicts",
-      "source": "Actual OutfitPlanEntry/draft/receipt, explicit outfit/unassigned/overlap review, stable local day/timezone and minimal Planner list/detail; full calendar/routines/trips remain #25."
+      "source": "PlannerCalendarView/PlannerViews, real Week/Month/date/agenda, identity-preserving edit/move/remove/Save Undo and shared draft timezone; named bulk/routines/trips pending #25 S2\u2013S4."
     },
     "06": {
       "coverage": "source-partial",
@@ -445,8 +445,8 @@
       "referenceId": null,
       "registeredLabel": "05.02 \u00b7 L85 \u00b7 Planner \u00b7 Month",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -465,8 +465,8 @@
       "referenceId": null,
       "registeredLabel": "05.03 \u00b7 L82 \u00b7 Planner \u00b7 Empty date",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -925,8 +925,8 @@
       "referenceId": null,
       "registeredLabel": "05.11 \u00b7 L151 \u00b7 Timezone \u00b7 Shared dates",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1565,8 +1565,8 @@
       "referenceId": null,
       "registeredLabel": "05.01 \u00b7 L33 \u00b7 Planner \u00b7 Retained week",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1745,8 +1745,8 @@
       "referenceId": null,
       "registeredLabel": "05.10 \u00b7 L156 \u00b7 Remove plan entry \u00b7 Native overlay STATE",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -1765,8 +1765,8 @@
       "referenceId": null,
       "registeredLabel": "05.07 \u00b7 L157 \u00b7 Choose one outfit \u00b7 Shared",
       "flowSection": "05",
-      "functionalCoverage": "missing",
-      "screenAcceptance": "not-verified",
+      "functionalCoverage": "source-partial",
+      "screenAcceptance": "deferred-to-issue-30",
       "runtimeComplete": false
     },
     {
@@ -2524,7 +2524,7 @@
       "docs/plan/issue-24.md",
       "docs/plan/issue-23.md"
     ],
-    "state": "Local gate complete, independent findings resolved/rechecked; remote gates pending",
+    "state": "Shipped in PR34, squash e71e1de, published v1.3.0; local unit receipt retains its recorded scope. Main CI/Release and current-head Codex completed with source-backed disposition of the search-filter suggestion.",
     "native": "Core52/native129 plus affected final five-case native refresh, zero failures; repository tooling51 and unsigned Release pass",
     "limits": "All E2E/integrated UI/accessibility/device/model qualification deferred to #30. No simulator or hosted native CI. No runtimeComplete claim.",
     "checkedOn": "2026-10-16",

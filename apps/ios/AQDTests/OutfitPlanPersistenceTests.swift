@@ -110,4 +110,111 @@ struct OutfitPlanPersistenceTests {
         #expect(try store.themes() == [theme])
         #expect(try store.outfit(id: outfit.id) == outfit)
     }
+    @Test func movingEntryRetainsIdentityOtherAssignmentsAndExactRetry() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: directory)
+        let outfit = try await seedOutfit(store)
+        var saved: [OutfitPlanEntry] = []
+        for day in [1, 2] {
+            let draft = OutfitPlanDraft(ownerID: outfit.ownerID, outfit: outfit,
+                day: LocalPlanDay(year: 2026, month: 11, day: day, timeZoneID: "America/New_York"))
+            try store.savePlanDraft(draft); saved.append(try store.savePlan(draft)); try store.finishPlanDraft(draft)
+        }
+        var edit = OutfitPlanDraft(editing: saved[0], outfit: outfit)
+        edit.day.day = 3; edit.occasion = "Moved afternoon"
+        try store.savePlanDraft(edit)
+        let updated = try store.savePlan(edit)
+        #expect(try store.savePlan(edit) == updated)
+        try store.finishPlanDraft(edit)
+        let reopened = try PieceStore(directory: directory)
+        #expect(updated.id == saved[0].id)
+        #expect(updated.planID == saved[0].planID)
+        #expect(updated.day.key == "2026-11-03")
+        #expect(updated.day.timeZoneID == "America/New_York")
+        #expect(updated.revision == 2)
+        #expect(try reopened.planEntries().contains(saved[1]))
+        #expect(try reopened.planEntries().count == 2)
+        let stale = OutfitPlanDraft(editing: saved[0], outfit: outfit)
+        try reopened.savePlanDraft(stale)
+        #expect(throws: PieceStore.StoreError.staleRevision) { try reopened.savePlan(stale) }
+        #expect(try reopened.planEntries().contains(updated))
+    }
+
+    @Test func removalAndSaveUndoTouchOnlyReviewedEntryAndReconcileUnknownWrite() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        var deny = false, loseAck = false
+        let store = try PieceStore(directory: directory,
+            beforeOutfitSave: { if deny { throw CocoaError(.fileWriteNoPermission) } },
+            afterOutfitSave: { if loseAck { throw CocoaError(.fileReadUnknown) } })
+        let outfit = try await seedOutfit(store)
+        let state = AppState(store: store)
+        let day = LocalPlanDay(year: 2026, month: 11, day: 1, timeZoneID: "Asia/Manila")
+        state.plannerDay = day; state.plannerMode = .month
+        state.openPlan(outfitID: outfit.id, day: day)
+        let editor = try #require(state.planEditor)
+        await editor.save(); let saved = try #require(editor.saved)
+        editor.finish(openPlanner: true)
+        #expect(state.plannerDay == day)
+        #expect(state.plannerMode == .month)
+        #expect(state.recentPlan == saved)
+        let request = try #require(state.planUndoRequest)
+        deny = true
+        #expect(throws: (any Error).self) { try store.deletePlanEntry(request) }
+        #expect(try store.planEntries() == [saved])
+        deny = false; loseAck = true
+        state.undoRecentPlan()
+        #expect(state.planUndoPending)
+        #expect(state.recentPlan == saved)
+        state.planUndoDeadline = .distantPast
+        state.undoRecentPlan()
+        #expect(!state.planUndoPending)
+        #expect(state.planError == nil)
+        #expect(state.recentPlan == nil)
+        #expect(try store.planEntries().isEmpty)
+        #expect(try store.outfit(id: outfit.id) == outfit)
+        #expect(try store.wearRecords().isEmpty)
+        state.store = nil
+    }
+
+    @Test func v10MigrationRetainsCalendarIntentBeforeEntryMutation() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let today = TodayConfiguration(ownerID: UUID())
+        let entry = OutfitPlanEntry(id: UUID(), planID: UUID(), ownerID: today.ownerID,
+            day: LocalPlanDay(year: 2026, month: 11, day: 1, timeZoneID: "America/New_York"), occasion: "Retain gap",
+            outfitID: nil, outfitRevision: nil, state: .unassigned)
+        do {
+            let schema = Schema(versionedSchema: LocalSchemaV10.self)
+            let config = ModelConfiguration(schema: schema, url: directory.appendingPathComponent("wardrobe.store"), cloudKitDatabase: .none)
+            let container = try ModelContainer(for: schema, configurations: [config])
+            let context = ModelContext(container)
+            context.insert(StoredTodayConfiguration(today)); context.insert(try StoredLocalExperience(LocalExperience(enteredPrivateSpace: true)))
+            context.insert(try StoredOutfitPlanEntry(entry)); try context.save()
+        }
+        try Data("AQD-piece-store:10".utf8).write(to: directory.appendingPathComponent("schema-version"))
+        let store = try PieceStore(directory: directory)
+        #expect(try store.planEntries() == [entry])
+        let request = PlanEntryDeletionRequest(entry: entry)
+        try store.deletePlanEntry(request); try store.deletePlanEntry(request)
+        #expect(try store.planEntries().isEmpty)
+        #expect(try store.wearRecords().isEmpty)
+    }
+    @Test func outfitEditFlagsFutureAssignmentsWithoutRewritingPastIntent() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let outfit = try await seedOutfit(store)
+        for year in [2000, 2099] {
+            let draft = OutfitPlanDraft(ownerID: outfit.ownerID, outfit: outfit,
+                day: LocalPlanDay(year: year, month: 1, day: 1, timeZoneID: "Asia/Manila"))
+            try store.savePlanDraft(draft); _ = try store.savePlan(draft); try store.finishPlanDraft(draft)
+        }
+        let before = try store.planEntries()
+        var edit = OutfitDraft(editing: outfit); edit.name = "Updated composition"
+        try store.saveOutfitDraft(edit); _ = try store.saveOutfit(edit); try store.acknowledgeOutfitReceipt(edit)
+        let entries = try store.planEntries()
+        #expect(entries.first == before.first)
+        #expect(entries.last?.requiresReview == true)
+        #expect(entries.last?.outfitID == outfit.id)
+        #expect(entries.last?.day.key == "2099-01-01")
+        #expect(try store.wearRecords().isEmpty)
+    }
 }
