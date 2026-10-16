@@ -121,13 +121,7 @@ private struct AppRootView: View {
         .fullScreenCover(isPresented: $welcomePreview) {
             WelcomeView(previewDismiss: { welcomePreview = false })
                 .environment(state).background(AppTheme.canvas)
-                .overlay(alignment: .topTrailing) {
-                    Button { welcomePreview = false } label: {
-                        Image(systemName: "xmark").frame(width: 44, height: 44)
-                            .background(.regularMaterial, in: Circle())
-                    }.buttonStyle(.plain).tint(AppTheme.ink)
-                        .accessibilityLabel("Close welcome preview").padding(.trailing, 20)
-                }
+
         }
         #endif
         .tint(AppTheme.actionText)

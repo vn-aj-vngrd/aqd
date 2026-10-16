@@ -10,6 +10,40 @@ import UIKit
 @Suite(.serialized)
 @MainActor
 struct PiecePersistenceTests {
+    @Test func captureCloseDetectsChangedAndRecoveredEditsWithoutTreatingSavedContentAsDirty() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let source = try await preparedPhoto()
+        let store = try PieceStore(directory: directory)
+        let state = AppState(store: store)
+        _ = try store.acceptPhoto(source)
+        let piece = try store.savePiece(PieceDraft(name: "Original", category: .tops, photoID: source.id), operationID: UUID())
+        state.addPiece()
+        let blank = try #require(state.capture)
+        #expect(!blank.hasUnsavedChanges)
+        blank.update(\.name, value: "New piece")
+        #expect(blank.hasUnsavedChanges)
+        blank.update(\.name, value: "")
+        #expect(!blank.hasUnsavedChanges)
+        blank.discard()
+        state.editPiece(piece)
+        let editing = try #require(state.capture)
+        let original = editing.draft
+        #expect(!editing.hasUnsavedChanges)
+        editing.update(\.name, value: "Changed")
+        #expect(editing.hasUnsavedChanges)
+        editing.leave()
+        state.editPiece(piece)
+        let recovered = try #require(state.capture)
+        #expect(recovered.hasUnsavedChanges)
+        recovered.update(\.name, value: original.name)
+        #expect(!recovered.hasUnsavedChanges)
+        recovered.update(\.details, value: PieceDetails(color: "Gold"))
+        #expect(recovered.hasUnsavedChanges)
+        recovered.discard()
+        #expect(try store.piece(id: piece.id) == piece)
+        #expect(try store.recoverableDraft(itemID: piece.id) == nil)
+    }
+
     // Stage A native runner observed runtime RED before the recovery handler.
     // Actual record acknowledgment followed by denied unlink, not fake error state.
     @Test func acknowledgedDeletionWithDeniedPhotoCleanupRefreshesCollectionAndPublishesRecovery() async throws {

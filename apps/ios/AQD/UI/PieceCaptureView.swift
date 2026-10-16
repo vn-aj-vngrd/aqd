@@ -55,17 +55,7 @@ struct PieceCaptureView: View {
                         .tint(AppTheme.ink)
                         .disabled(model.isSaving)
                 }
-                if model.saved == nil && hasDraftContent {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Menu {
-                            Button("Discard draft", role: .destructive) { discardDecision = true }
-                                .accessibilityIdentifier("capture.discard")
-                        } label: { Label("More capture options", systemImage: "ellipsis") }
-                        .tint(AppTheme.ink)
-                        .disabled(model.isSaving || model.isImporting)
-                        .accessibilityIdentifier("capture.options")
-                    }
-                }
+
             }
             .draftDiscardConfirmation(isPresented: $discardDecision, title: "Discard this draft?", message: model.draftSaveFailed
                                   ? "The latest changes couldn’t be kept. Discard removes only this piece draft, not saved pieces or original Photos."
@@ -94,7 +84,7 @@ struct PieceCaptureView: View {
             }
         }
         .tint(AppTheme.ink)
-        .interactiveDismissDisabled(model.isSaving || model.draftSaveFailed || model.saved != nil)
+        .interactiveDismissDisabled(model.isSaving || model.hasUnsavedChanges || model.saved != nil)
         .photosPicker(isPresented: $pickerPresented, selection: $selectedPhoto, matching: .images)
         .onChange(of: selectedPhoto) { _, item in
             guard let item else { return }
@@ -301,14 +291,13 @@ struct PieceCaptureView: View {
         }
     }
 
-    private var hasDraftContent: Bool {
-        model.draft.baseRevision != nil || model.draft.photoID != nil || !model.draft.name.isEmpty
-            || model.draft.category != nil || model.draft.details != PieceDetails()
-            || model.draft.availability != .available || model.draftSaveFailed
-    }
-
     private func leave() {
-        model.leave()
-        if model.draftSaveFailed { discardDecision = true }
+        if model.saved == nil && model.hasUnsavedChanges {
+            model.cancelImport()
+            discardDecision = true
+        } else {
+            model.leave()
+            if model.draftSaveFailed { discardDecision = true }
+        }
     }
 }

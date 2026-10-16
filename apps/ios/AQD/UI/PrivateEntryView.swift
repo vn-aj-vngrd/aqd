@@ -109,6 +109,7 @@ struct WelcomeView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
     @State private var pose: WelcomeWardrobe.Pose = .settled
+    @State private var previewArrived = false
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -140,18 +141,21 @@ struct WelcomeView: View {
         }
         .task(id: scenePhase) {
             guard scenePhase == .active else { settle(); return }
-            guard previewDismiss == nil else { settle(); return }
-            let firstArrival = state.markWelcomeArrival()
+            let firstArrival: Bool
+            if previewDismiss != nil {
+                firstArrival = !previewArrived
+                previewArrived = true
+            } else { firstArrival = state.markWelcomeArrival() }
             guard firstArrival, !reduceMotion else { settle(); return }
             pose = .gathered
             do {
                 await Task.yield()
                 try Task.checkCancellation()
                 guard !reduceMotion else { settle(); return }
-                withAnimation(.easeOut(duration: 0.52)) { pose = .forming }
+                withAnimation(.spring(duration: 0.52, bounce: 0.12)) { pose = .forming }
                 try await Task.sleep(for: .milliseconds(520))
                 try Task.checkCancellation()
-                withAnimation(.easeOut(duration: 0.68)) { pose = .settled }
+                withAnimation(.spring(duration: 0.68, bounce: 0.08)) { pose = .settled }
                 try await Task.sleep(for: .milliseconds(680))
             } catch { settle() }
         }

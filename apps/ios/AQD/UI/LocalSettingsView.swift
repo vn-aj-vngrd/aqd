@@ -111,12 +111,15 @@ struct LocalStyleSettingsView: View {
             if let answers {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        ForEach(0..<6, id: \.self) { index in
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(StylePreferences.titles[index]).font(AppTypography.fieldLabel)
-                                Text(answers.summary(at: index)).foregroundStyle(AppTheme.secondary)
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(0..<6, id: \.self) { index in
+                                VStack(alignment: .leading, spacing: AppSpacing.small) {
+                                    Text(StylePreferences.titles[index]).font(AppTypography.fieldLabel)
+                                    Text(answers.summary(at: index)).foregroundStyle(AppTheme.secondary)
+                                }.frame(maxWidth: .infinity, alignment: .leading).padding(AppSpacing.screen)
+                                if index < 5 { Divider().padding(.horizontal, AppSpacing.screen) }
                             }
-                        }
+                        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                         stylePrivacy
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
                 }
@@ -129,9 +132,10 @@ struct LocalStyleSettingsView: View {
                 }
             }
         }.background(AppTheme.canvas).navigationTitle("Style").navigationBarTitleDisplayMode(.inline)
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                ActionFooter { PrimaryAction(title: "Edit preferences") { state.openStyle(source: .settings) } }
-            }
+            .toolbar { ToolbarItem(placement: .topBarTrailing) {
+                Button("Edit") { state.openStyle(source: .settings) }
+                    .tint(AppTheme.ink).accessibilityLabel("Edit preferences")
+            } }
             .onAppear { answers = try? state.store?.localExperience().style?.answers }
             .onChange(of: state.styleEditor?.id) { _, editorID in
                 if editorID == nil { answers = try? state.store?.localExperience().style?.answers }

@@ -480,6 +480,18 @@ final class CaptureModel: Identifiable {
     private static let photoImportError = "That photo couldn’t be prepared. Your fields and previous photo are unchanged. Choose another photo or keep the draft."
     private static let photoEditError = "These photo edits couldn’t be prepared. Your previous photo and framing are unchanged. Try again or keep the original."
 
+    var hasUnsavedChanges: Bool {
+        guard saved == nil else { return false }
+        if isImporting || draftSaveFailed { return true }
+        if let revision = draft.baseRevision {
+            guard let piece = try? state.store?.piece(id: draft.itemID), piece.revision == revision else { return true }
+            return draft.name != piece.name || draft.category != piece.category || draft.photoID != piece.photoID
+                || draft.photoRecipe != piece.photoRecipe || draft.details != piece.details || draft.availability != piece.availability
+        }
+        return draft.photoID != nil || !draft.name.isEmpty || draft.category != nil
+            || draft.details != PieceDetails() || draft.availability != .available || draft.photoRecipe != .fitOriginal
+    }
+
     var isImporting: Bool { importGate.pending != nil }
     var canSave: Bool { saved == nil && (try? draft.validated()) != nil && !isSaving && !isImporting && !draftSaveFailed }
     var receiptIsHistorical: Bool {
