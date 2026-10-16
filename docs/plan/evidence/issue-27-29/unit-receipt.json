@@ -688,6 +688,86 @@
       "name": "aqd-root-header-spacing-launch.json",
       "sha256": "f5ac2adc87b897cb740feb11ad7b62ae1c63b5c95d6ef33cb581ef453c46b24f",
       "published": false
+    },
+    {
+      "name": "aqd-owner-final-unit.log",
+      "sha256": "1c516a6b4e2ea85e14020e449d39b41c99fb7f7c2f44c10fc8bdace465bd5e4b",
+      "published": false
+    },
+    {
+      "name": "aqd-category-links-final-unit.log",
+      "sha256": "adf44c5ba1a0326bc63bf871d4f214950e20562cdde61744858436f5047e1e81",
+      "published": false
+    },
+    {
+      "name": "aqd-widgets-preview-final-unit.log",
+      "sha256": "eaf52c59f0ae50afd6e509896ebb3fb0f3d63ba84b7a79267ad6e674a4adb23b",
+      "published": false
+    },
+    {
+      "name": "aqd-owner-refinement-repository.log",
+      "sha256": "258969fe451866d11a507ce40e4559a3e085b08d0e5ad9a617a9dcb6bac17a18",
+      "published": false
+    },
+    {
+      "name": "aqd-owner-final-debug.log",
+      "sha256": "5283a78cf4d2954f2d57f9c5ee4f2af31e255b5a6d02c791298cfd0f999bc64b",
+      "published": false
+    },
+    {
+      "name": "aqd-final-agent-docs.log",
+      "sha256": "2deee5e67a778123df1067548d755f94c82979642f42707d34cae22cb8d621d0",
+      "published": false
+    },
+    {
+      "name": "aqd-owner-widgets-install.json",
+      "sha256": "8ad7a719fa414e47c9c3a8a038352f005ab7ce20ee00e0c339ba23083e3df2de",
+      "published": false
+    },
+    {
+      "name": "aqd-owner-widgets-normal-launch.json",
+      "sha256": "034f5390a984efe9b900f9c035261703b8e63cec83a331528c0224d3aa8c2213",
+      "published": false
+    },
+    {
+      "name": "aqd-owner-widgets-preview-launch.json",
+      "sha256": "9f181adf8401d8e846aeb7d610948785d98eb982249afce8b78cead646fe593d",
+      "published": false
+    },
+    {
+      "name": "aqd-widget-seed-reuse-final-unit.log",
+      "sha256": "2b2bc0f176755037739f03f2ca2c2ca0ec37318e099e83617d063742bacf76fb",
+      "published": false
+    },
+    {
+      "name": "aqd-all-widgets-seed-unit.log",
+      "sha256": "cf2f373e23b7c60b43a8c2d0adb7a67e45041037a400b2f53b011daf7a2c218c",
+      "published": false
+    },
+    {
+      "name": "aqd-owner-complete-debug.log",
+      "sha256": "133248b1097b42c32d76d9a1e766856885ab6efea04bc239687103929cde4dd3",
+      "published": false
+    },
+    {
+      "name": "aqd-owner-ready-install.json",
+      "sha256": "29241ba19e96c2ba182bc6507c71056c3728f7acd0d426d91a6380fea80c106d",
+      "published": false
+    },
+    {
+      "name": "aqd-owner-ready-seed-launch.json",
+      "sha256": "740900212f7e6567997081e0aa618e39da3b75230eed787e4aa158db74012c44",
+      "published": false
+    },
+    {
+      "name": "aqd-owner-ready-normal-launch.json",
+      "sha256": "cdfcee746acd6caa42be68875b5fa5b7c4280862d73cc18af3605c331eeba304",
+      "published": false
+    },
+    {
+      "name": "aqd-owner-ready-widgets-receipt.json",
+      "sha256": "37103ff07475af99f3752493ec7a81657892880334be51b886ad2247b6f66091",
+      "published": false
     }
   ],
   "sourceFiles": {
@@ -799,17 +879,17 @@
     "No native distribution. Current-head CI/Codex and merged-SHA release remain separate gates."
   ],
   "localOwnerPreview": {
-    "sourceHead": "cdb401f199bb686f490bc6e5f37aa17960a3732d",
-    "executableSHA256": "0255183b878aa8e59303688e009dd1ed9f39fb5732fb66d745ad1fe50dc2c21d",
+    "sourceHead": "b837719994c66d5cd68d3ae68810de160d7ae2d2",
+    "executableSHA256": "81b3a06500573807c614e790bfdc16cfdd9227039728f03d638bd40c503d12bf",
     "destination": "Physical iPhone17ProMax",
-    "build": "Debug BUILD SUCCEEDED /tmp/aqd-root-header-spacing-debug.log",
-    "install": "success",
-    "normalLaunch": "success",
+    "build": "Debug BUILD SUCCEEDED /tmp/aqd-visibility-eye-weather-debug.log; behavior units at f76d141",
+    "install": "success /tmp/aqd-visibility-install.json",
+    "normalLaunch": "success /tmp/aqd-visibility-launch.json",
     "launchArguments": [],
     "dataReset": false,
     "seedCommand": false,
     "published": false,
-    "renderedAcceptance": "Not run; remains issue30",
+    "renderedAcceptance": "Bounded installed checks confirmed Weather setup notice, eye controls, unchanged close, and equal Profile columns. Integrated acceptance remains issue30.",
     "priorExplicitSamplePopulation": {
       "sourceHead": "e24549e",
       "added": {
@@ -824,28 +904,87 @@
       "preservedExistingData": true
     },
     "sourceFiles": {
-      "apps/ios/AQD/UI/AppTheme.swift": "ba4b30ad0af3f8fbd0b18e231b13addee60209c812c976c2315f9dd8ddded0b1",
+      "apps/ios/AQD/AQDApp.swift": "7ac3fe315e450c2960f6707a4e6580649ce20d912027ff861c822b9f4b6256c7",
+      "apps/ios/AQD/AppState.swift": "6e96827b2c23df5b900fe3fb54b2c096e8eaad97f0845639028919b33aecde72",
+      "apps/ios/AQD/FitEditorModel.swift": "dea1e5148412ca9113527743c5a601207494dd34ec0bb43c852eb302d069eecf",
+      "apps/ios/AQD/LocalIdentityEditorModel.swift": "ff1423e405b7e7c8ea64e49d11354aeff6fd94ed48297f213c735ff0fbf57e66",
+      "apps/ios/AQD/OutfitEditorModel.swift": "8b3655e1199ace698f14556df7eabf02ae1f68a1fd4fea43da61ab8925bdf227",
+      "apps/ios/AQD/OutfitPlanEditorModel.swift": "8ee0063659aee152703f51a443ca5ca10f5f794481dea5d071f13daadb72194f",
+      "apps/ios/AQD/OutfitWearEditorModel.swift": "af5543231793d7b8b0c4279a77294524b4ef3d8f462601c8a2017922415389c2",
+      "apps/ios/AQD/Persistence/PieceStore.swift": "9815c36744a803ab59dd966b8ba2d7d58c7847a4070af7aaa8e880e5a716c93b",
+      "apps/ios/AQD/Persistence/StoredLocalExperience.swift": "417322e921907a515bd85f80d6c82393295a7f7ee6badcae1a0e18ae9e2d1c16",
+      "apps/ios/AQD/PlanAuthoringModel.swift": "4c7fbf243b080240d65f25fba451748331084e3df9b7d8768b24f35a746f2805",
+      "apps/ios/AQD/PreviewSampleContent.swift": "4b2712994446a370d2651fd9fdc6bacbf76739a99fb63b6ece6b5169c80049c6",
+      "apps/ios/AQD/Resources/LaunchColors.xcassets/LaunchMark.imageset/Contents.json": "d2697d181dc4c793a1910a1cff41677f34ba4dd11cbffc1d54cda5250f38c642",
+      "apps/ios/AQD/Resources/LaunchColors.xcassets/LaunchMark.imageset/LaunchMark.png": "647adec3b6161ecc65db72907b67e16b19878a0486c6dd77020e15ef9d57fa12",
+      "apps/ios/AQD/Resources/LaunchScreen.storyboard": "e2e0697eef4a28140a6cd36d0bfc5655f040c7c8f38ee7eebe20fa016312b08a",
+      "apps/ios/AQD/StyleEditorModel.swift": "4c6a0b08e2f01d2ea40f64792fc66f5ca3a4de70474b85ea3e361c41778233c4",
+      "apps/ios/AQD/ThemeEditorModel.swift": "070733555829003ad96819079bd135052271fd4d0e99670e64462195e5e0b666",
+      "apps/ios/AQD/TodayEditorModel.swift": "5b99a194f037c54fa90e858427edfe891e9dbbbef5f3a23039b91c5bfc0b36b8",
+      "apps/ios/AQD/UI/AgentActionViews.swift": "a2c4a416beb076c4d553d39a0b5a8a619b6b33aaacc1cee22beed5bda3d851d4",
+      "apps/ios/AQD/UI/AgentContextView.swift": "f016b20b54b796d31c88e3e3d5a56b11a8b5184747a45905b58a17e68c7c30d7",
       "apps/ios/AQD/UI/AppActions.swift": "21552d43f8d02e935925341375ee3776c2897eb1e8659a47bddaf548ef607545",
-      "apps/ios/AQD/UI/ClosetView.swift": "f3da1f8907fe7696186536c70abbb74f1fec1a79044f1380a5171b41e2c206b6",
-      "apps/ios/AQD/UI/LocalProfileView.swift": "105e3ac71fe79169ef9c66f8b46a8f1eb8deff6201f45af6aa2f6bee70d4cde3",
+      "apps/ios/AQD/UI/AppFeedback.swift": "4640f9cc15c4b5ba225445a3bc487fc5b359804acfabdceb5f1d59f3ca83c8cd",
       "apps/ios/AQD/UI/AppMetrics.swift": "85b8d1171aa6347dcdd16411d7355a4a17332c6dc9bb6b1d1a9626b050586980",
-      "apps/ios/AQD/UI/FitJournalViews.swift": "b1edb95990d5c2f08fb24c94524855fc768422c82b42dac639d25be554a087e1",
-      "apps/ios/AQD/UI/PlannerCalendarView.swift": "d426ac7a8556d0ca359f2c1d6e73314aff898067a283af4507cabdc3759d7ae0",
-      "apps/ios/AQD/UI/StyleEditorView.swift": "2105c6ed209e07c36bea4fba0b9448e635a6a57dc73d6e39118605e9f4daada6",
+      "apps/ios/AQD/UI/AppTheme.swift": "ba4b30ad0af3f8fbd0b18e231b13addee60209c812c976c2315f9dd8ddded0b1",
       "apps/ios/AQD/UI/BodyDetailsView.swift": "053f4bd351cfca614ff37280c8375775aab350fa96fc20bb935c8f9ba4af7b4d",
-      "apps/ios/AQD/UI/PlanAuthoringView.swift": "0785059cb7c0e15cc61f2a81b7088f349211ee7fa70851604871eb228ef2a173",
-      "apps/ios/AQD/UI/OutfitViews.swift": "caca73ce5d8f603d321b58db5c922a5a4be66f6ac67a20b22a98a8a9dc9ea50d",
-      "apps/ios/AQD/UI/OutfitSuggestionViews.swift": "be1b3fc23281572e525d1fcbae7a5a97cd3a05a5d856ab2fc654afe96d843baf",
-      "apps/ios/AQD/UI/TodayEditorView.swift": "1b3394ff8f06c8ebfbef72115e34443b063364e59b8092cd3a0691953f7a5c89",
-      "apps/ios/AQD/UI/AgentActionViews.swift": "69f870ccbdc54ef4a77ddb8fe1ad107de276d540ee96e401af9956b30c9b828a",
+      "apps/ios/AQD/UI/ClosetCollectionViews.swift": "18bf5e812aaf998909483eb0f067992b0c18efe8ec313847d86ad19495eb20cb",
+      "apps/ios/AQD/UI/ClosetView.swift": "de7aae518ae883ca19671919b02ca77a52487bb65908260a0292d838b700f480",
+      "apps/ios/AQD/UI/FitJournalViews.swift": "950aef40a929d9b44b4ef34f7778ef586ec2bd493e22e0881918667b01415a27",
+      "apps/ios/AQD/UI/LocalIdentityEditorView.swift": "6a714340d958334fe34b87139a4dc529324acac8a9684d85fd8bbe39acdbc19f",
+      "apps/ios/AQD/UI/LocalProfileView.swift": "c01a2c17bd6a73fcda078fa154756579b6607e13d1f2fe7d52b7792b5cc1e366",
+      "apps/ios/AQD/UI/LocalSettingsView.swift": "3bd33761e4fe97b629d2eca0876142e8dbc65137fb317564374e2dd58712bbe9",
+      "apps/ios/AQD/UI/NativeChoiceSheet.swift": "e7289c13972bd8e1208b84f1d9c53622ea6f0f57c0d538c0971b0a1e2863e2c8",
       "apps/ios/AQD/UI/NativeTabs.swift": "cafb2f5a61088af0b71032a026630ad1e2070d67ef36ea281f78d68f1a3a29df",
-      "apps/ios/AQD/UI/RootViews.swift": "19d5a2404c88719c9680bfbbd39f9e9d8f1e927bbbb9b8ba5e378ddb972b31fd",
-      "apps/ios/AQD/UI/PieceCaptureView.swift": "d60f1827859eca3a4ec3da6682b4ebc7b8e2e7ac0b6243c62dad4a45ceae7b8e"
+      "apps/ios/AQD/UI/OutfitPlanViews.swift": "1dcb44db0d9e5db82218a34b9f29cd13e88784b4de70fb87f6648879e3c1ecab",
+      "apps/ios/AQD/UI/OutfitSuggestionViews.swift": "cb23899b6321710e9f70a8bdc31492158570ced700775679f1417984f93ca79a",
+      "apps/ios/AQD/UI/OutfitThemeViews.swift": "d5b58a7aaec1c32762885f9c43f9d8b41494e97f4b09cd6b091f86f18c82c3d0",
+      "apps/ios/AQD/UI/OutfitViews.swift": "1e9a5b3a9c5cb4b57b7a3db348dba54e7563743e19af6bcd871f07faf2f15c46",
+      "apps/ios/AQD/UI/OutfitWearViews.swift": "0c38acf20c818560aff3cce490fcfc37870c97d4c872e6b65c54569c7ef08cd9",
+      "apps/ios/AQD/UI/OwnedPieceChooser.swift": "7593b702fa76bceb48a7374683640d398b5f3be4c16b39c360c627fefd3ee549",
+      "apps/ios/AQD/UI/PieceCaptureView.swift": "ed248567c98c07c7180ec3c71c1cb7abebe19badb935f1b72ebd295a4a138c4f",
+      "apps/ios/AQD/UI/PieceDeletionView.swift": "40d27d90dd146e7eab83557862951caa52b434bc50bb289d830dd4132e819487",
+      "apps/ios/AQD/UI/PlanAuthoringView.swift": "de48e12d4a1c68ff0345f67953f004eb9b2fd97f00077eff8db279586603f995",
+      "apps/ios/AQD/UI/PlannerCalendarView.swift": "ba69a5a08feaf4fb35932f3704b1daef460c9a414f34d94d7dc9ddf50b2729c9",
+      "apps/ios/AQD/UI/PlannerViews.swift": "bde4640a43ba935dad42481975244a0ef1d8a293e9bc52803d372055b94341d0",
+      "apps/ios/AQD/UI/PrivateEntryView.swift": "b6d5072c1f60e9ff6959669032f1bd54f15cca675b0b25ab88138c65b46252a4",
+      "apps/ios/AQD/UI/RootViews.swift": "97a474c42590083156be82c7cd1566d75245d75b852625a95cfe7ecee1a831ed",
+      "apps/ios/AQD/UI/RoutineViews.swift": "81c4a74cb6b3ddf4d25ffa420f7284fb6a14cba99cd72ae9531703dc78ac26b9",
+      "apps/ios/AQD/UI/SavedTodayCardsView.swift": "19632387edd6d9acb82f4ec2572f88420449425615679dd4162dd8ed56ad2991",
+      "apps/ios/AQD/UI/SharedPhotoSourceButton.swift": "bfd855b9432c19ec92447f9ef7c7b7591a29cc5d33428de86b47bdd7bc2e029a",
+      "apps/ios/AQD/UI/StyleEditorView.swift": "e9b21fd77bc2635742aca7c71609751603ade0f5195191dfff11c4cad55479aa",
+      "apps/ios/AQD/UI/TodayCards.swift": "34c2fbda9c76ea7b36d7f7c9afda04df68a7d0bfa65c7d1e4265e09c338d3ff8",
+      "apps/ios/AQD/UI/TodayEditorView.swift": "6178be38c4e2523d70683f1347348acad7750f359227e436fbd8b21495d04352",
+      "apps/ios/AQD/UI/TodayWidgetConfigurationView.swift": "3684de4a7459eb0e9c74c889871e1952358f049c00b6dab351cf249d9c95abc9",
+      "apps/ios/AQD/UI/TripViews.swift": "35e31287f968ebff452695d9988f016f836fe037e9c06da7b1d9783d4ad7cb0d",
+      "apps/ios/AQD/UI/WardrobeCategorySettingsView.swift": "d2a048731784cf4043c2dcc1684f2bf834f7eb568bb82faa462c3c3bbc98f953",
+      "apps/ios/AQD/UI/WardrobeDisplayName.swift": "e329552eb892db76b9420de602c7a826d7065736fb491a88321b79c53ad1b354",
+      "apps/ios/AQD/UI/WearDetailView.swift": "d804a4bf45cd26e2439473bceafd47102d232e62d6d23d80878abc5382912fbc",
+      "apps/ios/AQD/UI/WearHistoryView.swift": "a21ae2b6e56dc7a4a67bde6548cd2ab647a4806d40088bf618ac225df561c14e",
+      "apps/ios/AQD/UI/WearInsightsView.swift": "0d133ab9aa5bcba937a9b7bd7575d9619a3535930076111eff34ed4f6b363daa",
+      "apps/ios/AQD/UI/WelcomeGarments.swift": "7774d9c269f6ff93c7ec847dea382ba9b565ea3d86d7eff7bc117a265a452753",
+      "apps/ios/AQDTests/EntryRenderingTests.swift": "21a598d273e2dbdb0bd4cf0daba7118470d28175162e920f0ead20603fa26633",
+      "apps/ios/AQDTests/OutfitPersistenceTests.swift": "b2de403b297b6c3dbfabf59d0deb51b0977338c12fb3a8845251441fe85600fd",
+      "apps/ios/AQDTests/PiecePersistenceTests.swift": "550c922db9af05e2fefeb50412000c7111f3c4a7d857e4ba7bdfa8fe83963b5d",
+      "apps/ios/AQDTests/PreviewSampleContentTests.swift": "4fe7775e3a46e41a179710b3d7fee2164ed2c9715e9bde00f9d83ebefbc7f0cc",
+      "apps/ios/AQDTests/TodayLayoutPersistenceTests.swift": "8de7aa6848ea040097fff913806b53b704749e40d3f0bdbe83b45def4cbefa98",
+      "apps/ios/AQDTests/WardrobeCategoryPersistenceTests.swift": "247fd721eb9ba796ab44ee9240b304e96c6f4815c781ae8b863b3fd65f9cb042",
+      "apps/ios/Core/Sources/AQDCore/FitJournal.swift": "73b8dc50a1c4e32493031e682fc895f0885fe605414afa5920c222720ea3117b",
+      "apps/ios/Core/Sources/AQDCore/OutfitPlan.swift": "34fcf8f99a27d8319fabeed41ee2330a55d7788686fe5a25932fbcf23152b126",
+      "apps/ios/Core/Sources/AQDCore/OutfitWear.swift": "b4e5cc04bafa1f0c94138a6fe824611a1af0a9f87893ba5bb363ee80ad4782ed",
+      "apps/ios/Core/Sources/AQDCore/PieceDetails.swift": "81ef0ea8a5a7f5f0da33a106ab44836e2259a1456e9f08af8293cd912d55d743",
+      "apps/ios/Core/Sources/AQDCore/PlanAuthoring.swift": "0e80d45c374103bdd253dd5de9ab76074820dc0d50750879d592cd8f81ae633f",
+      "apps/ios/Core/Sources/AQDCore/WearInsights.swift": "0d9b3f9b0824ba7bca0caa8b43df4949c6ecfa96d81c26cdeba7feefa0a58311",
+      "apps/ios/Core/Tests/AQDCoreTests/OutfitPlanTests.swift": "fbb347917c6f0c81e5eba9d272b58555fea65bfd895c11315a1170af5763b8dd",
+      "apps/ios/Core/Tests/AQDCoreTests/WardrobeCategoryTests.swift": "80d62959130cc7edf662e53672770bdb9df0dac77be981c3ac6951e16615e0db",
+      "apps/ios/Core/Tests/AQDCoreTests/WearInsightsTests.swift": "e850bdf39bad47c292611ac8547bb2e5df27d17525bca4f04b442c424289a48d"
     },
-    "installReceipt": "/tmp/aqd-root-header-spacing-install.json",
-    "launchReceipt": "/tmp/aqd-root-header-spacing-launch.json"
+    "installReceipt": "/tmp/aqd-owner-ready-install.json",
+    "launchReceipt": "/tmp/aqd-owner-ready-normal-launch.json",
+    "currentVisibleMode": "Ordinary Home using the actual saved twelve-widget layout",
+    "seedScope": "Explicit owner request: append missing Home widget kinds only; no wardrobe reseed or reset"
   },
-  "verificationScope": "Original Core77/native227 and transparency safety remain bound to c85254f. Additional Core78 selection checks bind to158c8c3. Latest creator/Profile/Planner/Style/splash cosmetic preview ba72e6b passed Debug/Release and source reviews, installed and ordinary-launched. No new native/E2E/rendered acceptance claimed.",
+  "verificationScope": "Latest source includes all owner refinements through eye controls and Weather setup discovery, native check gutter and equal Profile columns; Core/native units, Debug, unsigned Release, source reviews, successful install and normal launch. Earlier actual all-widget seed preserved. Full rendered/E2E acceptance remains issue30.",
   "sampleMediaRefresh": {
     "sourceHead": "c85254f840dcd1bd9ddf34c87e75e64c703f33ff",
     "updated": 12,
@@ -881,18 +1020,135 @@
     "repeated": false
   },
   "finalOwnerRefinement": {
-    "sourceHead": "cdb401f199bb686f490bc6e5f37aa17960a3732d",
+    "sourceHead": "b837719994c66d5cd68d3ae68810de160d7ae2d2",
     "canvas": "F7F7F5, Profile follows shared canvas; white outer post cards",
     "innerGround": "F5F4F1",
-    "profile": "glass shortcuts, aligned counts/bio, no title, spaced grid without decorative badge",
+    "profile": "Fits/Outfits/Pieces use three equal-width centered columns; existing design retained",
     "planner": "month heading above leading mode control, separate selected/today decoration, no root title",
-    "creation": "media-first Add piece/Fit, top-right text progression, anchored add menus",
+    "creation": "Bounded virtual composer, matching piece-selection cards, Theme outfit thumbnails, native selection feedback, keyboard handoffs and no extra explanatory labels",
     "today": "8pt title/date gap,24pt widget separation; leading add menu and trailing Customize",
     "sampleContexts": "7 plans and8 fits refreshed once with protected backup; no wear records created",
-    "releaseBoundary": "9641bfd; later toolbar placement/Today header/menu Debug and source-review only",
+    "releaseBoundary": "Unsigned Release BUILD SUCCEEDED; no distribution",
     "e2eRun": false,
     "runtimeComplete": false,
     "rootSpacing": "All four roots use16pt from toolbar content boundary; both Profile states",
-    "pieceDetail": "Surface photo frame, identity/details card and separate wear/history card; existing canvas/inner well and data/actions retained"
+    "pieceDetail": "Surface photo frame, identity/details card and separate wear/history card; existing canvas/inner well and data/actions retained",
+    "collections": "Shared two-column/AX one-column frame,134pt bounded artwork, single-line title/metadata, four-piece previews and remaining count",
+    "categories": "Persistent editable categories; Settings/Profile More/Add/Edit piece share manager",
+    "draftClose": "Theme/Plan/Wear/Style and existing Piece/Outfit/Fit/Profile/Today safeguards use actual changes, with recovered baselines and uncertainty guards",
+    "widgets": "All twelve default visible; minimal eye/eye.slash visibility buttons, configure title and reorder; hidden settings/media retained; no Add/restore/helper/Undo banner",
+    "weather": "Compact optional setup/details notice, rich content only in configured weather widget",
+    "seedLabels": "Reserved-seed presentation cleanup across selectors/receipts/details; no live-store reseed or ordinary-name stripping",
+    "splash": "Exact app-logo artwork in system launch storyboard, no second runtime wordmark",
+    "insights": "Real selected-month metrics and daily Swift Charts, history toolbar icon, glass month arrows",
+    "filters": "Category/Status/Theme/Contents section titles, untitled Favorites toggle and native leading check gutter"
+  },
+  "latestOwnerQualification": {
+    "sourceHead": "b837719994c66d5cd68d3ae68810de160d7ae2d2",
+    "checkedOn": "2026-10-17",
+    "core": {
+      "passed": 81,
+      "suites": 25,
+      "failures": 0
+    },
+    "native": {
+      "passed": 245,
+      "swiftTesting": 232,
+      "swiftTestingSuites": 33,
+      "xctest": 13,
+      "failures": 0
+    },
+    "unitLog": "/tmp/aqd-visibility-final-unit.log",
+    "repository": {
+      "passed": 51,
+      "log": "/tmp/aqd-owner-refinement-repository.log"
+    },
+    "sourceReviews": {
+      "standards": "No remaining actionable findings",
+      "spec": "No remaining actionable findings",
+      "scope": "Final visibility/defaults, media retention, legacy revert correction, native filter gutter and equal profile columns; both axes clear",
+      "execution": "Source only"
+    },
+    "release": "Unsigned Release BUILD SUCCEEDED /tmp/aqd-visibility-release.log; all six debug commands absent",
+    "runtimeAcceptance": "Integrated E2E and rendered/gesture matrix remain issue30; bounded installed-screen spot checks recorded separately",
+    "scopes": [
+      "Global unchanged-close protection and reverted-value comparison",
+      "Manual outfit builder and persistent user-managed categories",
+      "Categories via Settings, Profile More and Add/Edit piece",
+      "Truthful charted wear insights and neutral calendar mode",
+      "Exact single native logo launch and shared empty-state spacing",
+      "Bounded equal collection cards, single-line text, availability status badges and natural seed labels",
+      "Full-width widget configuration, missing-kind additions and saved-card collision guard",
+      "Native filter group headings and Profile menu icons",
+      "Compact Weather notice and actual saved all-widget Home setup",
+      "Exact visible 'Filter by' headings with direct native options",
+      "Creation polish without new explanatory labels; shared previews/cards, keyboard handoffs and native feedback",
+      "Explicit protected actual widget seeding and existing personal-card reuse",
+      "All-kind visibility switches/defaults, hidden media retention and legacy toggle reversion",
+      "No Home Undo banner; untitled Favorites/native check gutter; equal Profile columns"
+    ],
+    "unitSourceHead": "f76d141399d5ae42b95406d5911c902ee8b8645f",
+    "cosmeticFollowUp": "Eye control and Weather discovery conditional: Debug build and both source reviews at final source; behavioral units at f76d141"
+  },
+  "savedHomeWidgetSetup": {
+    "sourceHead": "35b662b103121b9a181b67ef36507ee3d0d7b06d",
+    "receipt": "/tmp/aqd-owner-ready-widgets-receipt.json",
+    "launchReceipt": "/tmp/aqd-owner-ready-seed-launch.json",
+    "launchArguments": [
+      "--aqd-add-all-widgets"
+    ],
+    "added": 9,
+    "saved": 12,
+    "configurationRevision": 4,
+    "addedKinds": [
+      "upcomingPlans",
+      "wearAgain",
+      "favoriteOutfits",
+      "theme",
+      "fitJournal",
+      "weatherContext",
+      "quickActions",
+      "personalNote",
+      "personalPhoto"
+    ],
+    "backup": "AQD-before-all-widgets-1796A1FD-287B-4F34-B807-851619EE5B7E.aqdarchive",
+    "originalThreePreserved": true,
+    "existingPersonalCardIDsReused": true,
+    "normalRelaunchReceipt": "/tmp/aqd-owner-ready-normal-launch.json",
+    "normalLaunchArguments": [],
+    "temporaryPreviewRemoved": true,
+    "wardrobeReseed": false,
+    "wearWrite": false,
+    "installedSpotCheck": "Normal Home and twelve-kind Customize Today list observed after relaunch; missing-kind Add hidden; unchanged Close dismissed immediately. No full widget-state acceptance."
+  },
+  "latestVisibilityReceipt": {
+    "sourceHead": "b837719994c66d5cd68d3ae68810de160d7ae2d2",
+    "unitSourceHead": "f76d141399d5ae42b95406d5911c902ee8b8645f",
+    "core": 81,
+    "native": 245,
+    "debug": "Passed",
+    "release": "Passed unsigned",
+    "debugCommandsAbsent": [
+      "--aqd-add-preview-samples",
+      "--aqd-refresh-transparent-samples",
+      "--aqd-refresh-sample-contexts",
+      "--aqd-preview-welcome",
+      "--aqd-preview-all-widgets",
+      "--aqd-add-all-widgets"
+    ],
+    "sourceReviews": "Standards clear; Spec legacy revert finding fixed and rechecked",
+    "install": "success",
+    "launchArguments": [],
+    "mediaReset": false,
+    "seedRepeated": false,
+    "renderedCheck": "Bounded installed checks confirmed Weather setup notice, eye controls, unchanged close, and equal Profile columns. Integrated acceptance remains issue30.",
+    "logs": {
+      "/tmp/aqd-visibility-final-unit.log": "2759af28d5c8a421dd180b0e14e8ddd89e0eead9588f33dad1ce16cc78081b6d",
+      "/tmp/aqd-visibility-release.log": "4e71ee24d885fc93f024e573320e57a255a53bc6f280b26cfd8fe5ed3c7b2ebe",
+      "/tmp/aqd-visibility-install.json": "4141f06024fbe00d7be6665cbee7fc7f738e5ca55b9d2c49730d450d8fefc7c5",
+      "/tmp/aqd-visibility-launch.json": "ae7ec930cfbdd0fd8a12d586b725550031ac5e6b4f121b163e9b54acfc5959e2",
+      "/tmp/aqd-visibility-agent-docs.log": "2deee5e67a778123df1067548d755f94c82979642f42707d34cae22cb8d621d0",
+      "/tmp/aqd-visibility-eye-weather-debug.log": "7d33bf9e70df0414fadee93c90a508945e429f88e66c3a0d275fde9ef63e468e"
+    }
   }
 }

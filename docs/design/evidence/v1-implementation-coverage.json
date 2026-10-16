@@ -4,8 +4,8 @@
   "pageName": "01 \u00b7 V1",
   "checkedOn": "2026-10-17",
   "tokenHash": "fdeb7346",
-  "sourceHead": "cdb401f199bb686f490bc6e5f37aa17960a3732d",
-  "sourceState": "Owner preview e833d5d: shared F7F7F5 canvas, white post parents/soft F5F4F1 inner wells, Profile glass shortcuts and spaced badge-free grid; no Profile/Closet/Planner titles; Planner heading/mode/selection spacing; Today grouped heading/date and leading add menu; native add menus and iOS26 scroll minimization. Core78/native230 and unsigned Release bind9641bfd; later toolbar placement/Today header/menu pass Debug and independent source reviews. Ordinary physical install/launch passes. E2E, scroll/tap runtime and rendered acceptance remain issue30. Final cosmetic follow-up cdb401f: Piece surface cards and16pt root-toolbar spacing for all four roots, including emptyProfile. FinalDebug/source reviews/ordinary install and launch pass; prior unit/Release inputs remain9641bfd. No new rendered acceptance.",
+  "sourceHead": "35b662b103121b9a181b67ef36507ee3d0d7b06d",
+  "sourceState": "Owner refinement 35b662b103121b9a181b67ef36507ee3d0d7b06d: actual saved twelve-widget Home, protected explicit setup and personal-card reuse; full-width/missing-only customization; compact Weather notice; shared Categories routes; bounded cards/status/truncation; creation keyboard/selection polish; visible native Filter by headings; unchanged-close guards; real analytics and exact single-logo launch. Core81/native243 and Debug pass; repository51 and source reviews pass. Ordinary physical install/launch and bounded Home/list/menu spot checks observed. Final unsigned Release pending. Integrated E2E/rendered/gesture acceptance remains issue30.",
   "ownerRequirement": "Every V1 screen/state and its controls must be implemented and functional. Baseline tests, static design completion and navigable placeholders are not full V1 acceptance.",
   "liveCensus": {
     "rootCount": 232,
@@ -2603,11 +2603,11 @@
     "receipt": "docs/plan/evidence/issue-27-29/README.md"
   },
   "ownerUIRefinementEvidence": {
-    "codeCommit": "d1032c46945b0e1007d91e4411ed859cbb05c0f2",
+    "codeCommit": "b837719994c66d5cd68d3ae68810de160d7ae2d2",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
-    "checks": "Core75/native217, Release and Tooling51 pass; independent source rechecks clean.",
+    "checks": "Core81/native245, Debug, unsigned Release and both source reviews passed; repository51 historical, docs check current",
     "runtimeComplete": false,
-    "qualification": "Installed local preview is for owner review, not rendered/E2E acceptance."
+    "qualification": "Installed final source; bounded checks confirmed Weather notice, eye controls, unchanged close and equal Profile columns. Full rendered/E2E acceptance remains issue30."
   },
   "closetProfileRefinementEvidence": {
     "codeCommit": "bd5c9f6506ac53efa616efdc8572f1f2226aa3b5",
