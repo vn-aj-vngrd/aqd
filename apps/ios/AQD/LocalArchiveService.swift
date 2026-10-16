@@ -12,9 +12,24 @@ struct ValidatedLocalArchive {
     let migratedFrom: Int?
 }
 @MainActor enum LocalArchiveService {
+    private static var inFlight: Set<URL> = []
+    private static var stagedStores: [URL: WeakLocalStore] = [:]
+    static var hasInFlightWork: Bool { !inFlight.isEmpty }
+    static func cleanupTemporaryArchives() throws -> Bool {
+        var complete = true
+        let root = FileManager.default.temporaryDirectory
+        let pattern = "^AQD-(archive|restore|bootstrap)-[0-9A-Fa-f-]{36}$"
+        for url in try FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: nil) where url.lastPathComponent.range(of: pattern, options: .regularExpression) != nil {
+            if inFlight.contains(url) || stagedStores[url]?.value != nil { complete = false; continue }
+            guard try FileManager.default.attributesOfItem(atPath: url.path)[.type] as? FileAttributeType == .typeDirectory else { throw LocalArchiveError.unsafePath }
+            try FileManager.default.removeItem(at: url)
+        }
+        stagedStores = stagedStores.filter { $0.value.value != nil }
+        return complete
+    }
     static func create(store: PieceStore) async throws -> Data {
-        let seed = try store.archiveSeed()
-        defer { try? FileManager.default.removeItem(at: seed.directory) }
+        let seed = try store.archiveSeed(); inFlight.insert(seed.directory)
+        defer { inFlight.remove(seed.directory); try? FileManager.default.removeItem(at: seed.directory) }
         let copying = Task.detached(priority: .utility) {
             var remaining = LocalArchivePackage.maximumBytes
             for source in seed.media {
@@ -51,6 +66,7 @@ struct ValidatedLocalArchive {
     }
     static func stage(_ package: LocalArchivePackage, directory proposedDirectory: URL? = nil) async throws -> ValidatedLocalArchive {
         let directory = proposedDirectory ?? FileManager.default.temporaryDirectory.appendingPathComponent("AQD-restore-\(UUID().uuidString)", isDirectory: true)
+        inFlight.insert(directory); defer { inFlight.remove(directory) }
         do {
             try LocalArchiveIO.protectedDirectory(directory); try LocalArchiveIO.protectedDirectory(directory.appendingPathComponent("media"))
             let writing = Task.detached(priority: .utility) {
@@ -68,6 +84,7 @@ struct ValidatedLocalArchive {
             let store = try PieceStore(directory: directory)
             let summary = try store.validateArchiveContents()
             guard summary == package.header.summary else { throw LocalArchiveError.invalid }
+            stagedStores[directory] = WeakLocalStore(store)
             return ValidatedLocalArchive(directory: directory, store: store, summary: summary,
                 migratedFrom: package.header.databaseSchema < LocalArchivePackage.schema ? package.header.databaseSchema : nil)
         } catch { try? FileManager.default.removeItem(at: directory); throw error }

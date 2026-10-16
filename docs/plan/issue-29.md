@@ -14,8 +14,8 @@ Use existing public Core validators and actual PieceStore/model save/read/reopen
 | --- | --- | --- | --- | --- | --- | --- |
 | S1 | Persistent appearance, capability/help/privacy, Style/tour/weather settings | PREF, LOCAL10/15/16 | Actual settings save/reopen/recovery | Committed | `AQD-Slice: #29/S1` | `67bb29a` |
 | S2 | Complete sensitive local archive export and native Files states | LOCAL06, J6/TODAY07/PREF | All-domain archive integrity/count/size/media round-trip | Committed | `AQD-Slice: #29/S2` | `444e45c` |
-| S3 | Staged validated reviewed replacement and recovery entry | LOCAL07, J6/TODAY07/PREF | Invalid/newer/cancel/failure/unknown/restart preservation | Committed | `AQD-Slice: #29/S3` | Pending |
-| S4 | Exact typed global erase and acknowledged records versus pending AQD cleanup | LOCAL08, J6/TODAY07 | All-domain erase/restart/failure and outside-file preservation | Planned | `AQD-Slice: #29/S4` | Pending |
+| S3 | Staged validated reviewed replacement and recovery entry | LOCAL07, J6/TODAY07/PREF | Invalid/newer/cancel/failure/unknown/restart preservation | Committed | `AQD-Slice: #29/S3` | `a02a8d5` |
+| S4 | Exact typed global erase and acknowledged records versus pending AQD cleanup | LOCAL08, J6/TODAY07 | All-domain erase/restart/failure and outside-file preservation | Committed | `AQD-Slice: #29/S4` | Pending |
 
 ## Acceptance and evidence
 
@@ -52,3 +52,9 @@ Restore selects a native Files document, validates a separate protected generati
 A protected installation-local pointer publishes the validated generation atomically; an open SQLite database is never moved or repointed. Legacy storage is resolved in place until an explicit replacement. A durable review/operation record distinguishes preparing, reviewed, published, acknowledged and failed recovery. Retry reads the published operation first and never rewinds later edits. Missing active store files are corruption, not permission to seed an empty store. An unacknowledged installed copy that cannot reopen recovers the validated original, retaining the failed candidate until explicit cancellation. Previous store/file cleanup stays separately visible and cannot run while the previous store owner is alive or current records cannot be validated.
 
 Missing coordinator APIs failed `/tmp/aqd-29-s3-red.log`. Five focused archive/replacement cases pass `/tmp/aqd-29-s3-native.log`; after adding missing-store rollback, full Core70/native191, comprising178 Swift Testing plus13 XCTest, pass `/tmp/aqd-29-s3-unit.log` on the physical iPhone17ProMax/iOS27.0.1. Tests cover cancel, versioned stale-review refusal, pre-switch failure, lost acknowledgment/restart, all-domain preservation, no rewind of later edits and recovering a missing unacknowledged installed DB without empty reseeding. Native Files/presentation/accessibility and all E2E remain issue30. Bounded Standards/Spec review covered stable paths, source/candidate stamps, publication/acknowledgment ordering, initial/corrupt recovery routes and source-preserving exits. S4 closes erase and final cleanup checks before full independent review.
+
+## S4 receipt
+
+Erase creates a separate empty local generation, shows the current all-domain impact, offers Export first and requires exact typed ERASE plus a destructive confirmation. The acknowledged new owner has no prior wardrobe, memories, preferences, conversations, drafts or Undo. Original Photos and external archive copies remain untouched. File cleanup is separately tracked, waits for old store and archive owners, validates active data before removal and retains retry receipts on failure. Recovery from an unreadable installed copy can retain its previous operation before selecting another validated archive.
+
+The physical iPhone unit `LocalEraseTests` passed in `/tmp/aqd-29-s4-native.log`, covering populated erase, case-sensitive confirmation, old-store leases, denied cleanup, retry and preservation of an external original/export sentinel. The bounded review covered publication-before-acknowledgment, same-operation recovery and AQD-only cleanup. No E2E ran. Final combined units and independent review follow.

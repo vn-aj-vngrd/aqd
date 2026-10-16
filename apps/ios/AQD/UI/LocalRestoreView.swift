@@ -35,7 +35,7 @@ struct LocalRestoreView: View {
                     Text("Restore couldn’t finish").font(AppTypography.section)
                     if let error = model.error { Text(error).foregroundStyle(AppTheme.error) }
                     if model.review != nil {
-                        PrimaryAction(title: "Try the reviewed operation again", action: model.commit)
+                        PrimaryAction(title: "Try the reviewed operation again", action: { model.commit() })
                         SecondaryAction(title: "Review current replacement again", action: model.refresh)
                     }
                     SecondaryAction(title: "Choose another archive") { files = true }
@@ -47,6 +47,7 @@ struct LocalRestoreView: View {
                     Text("Check the restore outcome").font(AppTypography.section)
                     Text(model.error ?? "Your operation needs reconciliation before another replacement.")
                     PrimaryAction(title: "Check same operation", action: model.checkOutcome)
+                    if model.source == nil { SecondaryAction(title: "Choose another archive for recovery") { files = true } }
                 }
             }.padding(20) }.background(AppTheme.canvas).navigationTitle("Restore closet").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { if model.phase != .complete {
@@ -54,7 +55,7 @@ struct LocalRestoreView: View {
                 } } }
                 .alert("Replace this iPhone’s closet?", isPresented: $confirmation) {
                     Button("Cancel", role: .cancel) {}
-                    Button("Replace closet", role: .destructive, action: model.commit)
+                    Button("Replace closet", role: .destructive, action: { model.commit() })
                 } message: { Text("Installs only this validated archive and replaces current AQD records, photos, history, Profile, conversations and drafts. Original Photos and exported copies stay.") }
                 .fileImporter(isPresented: $files, allowedContentTypes: [.aqdArchive, .data]) { result in
                     switch result { case .success(let url): model.choose(url)

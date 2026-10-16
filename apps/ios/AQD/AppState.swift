@@ -750,12 +750,16 @@ extension AppState {
         guard restoreModel == nil, let dataCoordinator else { return }
         restoreModel = LocalRestoreModel(coordinator: dataCoordinator, source: store)
     }
+    func openErase() {
+        guard restoreModel == nil, let dataCoordinator else { return }
+        restoreModel = LocalRestoreModel(coordinator: dataCoordinator, source: store, kind: .erase)
+    }
     func retryLocalDataCleanup() {
         do {
             guard let coordinator = dataCoordinator, let pending = try coordinator.pendingReview() else { localDataCleanupError = nil; return }
             if try coordinator.isInstalled(pending.operationID) {
                 guard let store else { localDataCleanupError = "Current data needs recovery. Previous AQD files are retained; choose a validated archive before cleanup."; return }
-                _ = try store.validateArchiveContents()
+                guard !coordinator.isWaitingForPreviousStore else { localDataCleanupError = "Local records are active. Previous AQD files are awaiting the old store to close."; return }
                 if pending.phase != .acknowledged { try coordinator.acknowledge(pending.operationID) }
                 localDataCleanupError = try coordinator.cleanupRetired() ? nil : "Local records are active. Previous AQD files are still awaiting safe cleanup."
             } else { localDataCleanupError = "A validated local-data review is retained. Continue it from Settings → Restore, or cancel it there." }

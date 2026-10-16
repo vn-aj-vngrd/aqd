@@ -6,6 +6,8 @@ import Observation
     let id = UUID()
     let coordinator: LocalDataCoordinator
     let source: PieceStore?
+    let requestedKind: LocalDataChange
+    var kind: LocalDataChange { review?.kind ?? requestedKind }
     var phase = Phase.choose
     var review: LocalDataReview?
     var installed: PieceStore?
@@ -13,8 +15,8 @@ import Observation
     var sourceName: String?
     private var task: Task<Void, Never>?
     private var token = UUID()
-    init(coordinator: LocalDataCoordinator, source: PieceStore?) {
-        self.coordinator = coordinator; self.source = source
+    init(coordinator: LocalDataCoordinator, source: PieceStore?, kind: LocalDataChange = .restore) {
+        self.coordinator = coordinator; self.source = source; requestedKind = kind
         do {
             try coordinator.recover()
             if let pending = try coordinator.pendingReview() {
@@ -28,8 +30,13 @@ import Observation
     func choose(_ url: URL) {
         guard phase != .committing else { return }
         if let review {
-            guard (try? coordinator.isInstalled(review.operationID)) == false else { phase = .unknown; return }
-            guard cancelReview() else { return }
+            if (try? coordinator.isInstalled(review.operationID)) == true, source == nil {
+                do { try coordinator.retainInstalledOperationForRecovery(review.operationID); self.review = nil }
+                catch { self.error = "The retained recovery receipt couldn’t be preserved. Keep the current files and retry."; phase = .unknown; return }
+            } else {
+                guard (try? coordinator.isInstalled(review.operationID)) == false else { phase = .unknown; return }
+                guard cancelReview() else { return }
+            }
         }
         let token = UUID(); self.token = token; phase = .validating; error = nil; sourceName = url.lastPathComponent
         task = Task {
@@ -49,12 +56,20 @@ import Observation
             }
         }
     }
-    func commit() {
+    func prepareErase() {
+        guard kind == .erase, phase == .choose else { return }
+        phase = .validating; error = nil
+        task = Task {
+            do { await Task.yield(); try Task.checkCancellation(); review = try await coordinator.prepareErase(source: source); phase = .review }
+            catch { self.error = "Erase review couldn’t be prepared. Your local data has not changed."; phase = .failed }
+        }
+    }
+    func commit(confirmation: String? = nil) {
         guard let review, phase == .review || phase == .failed || phase == .unknown else { return }
         phase = .committing; error = nil
         task = Task {
             await Task.yield()
-            do { try finish(coordinator.commit(review, source: source)) }
+            do { try finish(coordinator.commit(review, source: source, confirmation: confirmation)) }
             catch {
                 let published = try? coordinator.isInstalled(review.operationID)
                 phase = published == false ? .failed : .unknown

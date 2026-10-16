@@ -61,10 +61,10 @@ private struct AppRootView: View {
         .task(id: ObjectIdentifier(state)) {
             if state.isOpening { await Task.yield(); state.openStore() }
             for _ in 0..<10 {
-                state.retryLocalDataCleanup()
-                if state.localDataCleanupError == nil { break }
+                if state.dataCoordinator?.isWaitingForPreviousStore != true && !LocalArchiveService.hasInFlightWork { break }
                 try? await Task.sleep(for: .milliseconds(30))
             }
+            state.retryLocalDataCleanup()
         }
         .tint(AppTheme.actionText)
         .onChange(of: scenePhase) { _, phase in if phase != .active { state.weatherClient?.suspend() } }
@@ -79,9 +79,15 @@ private struct AppRootView: View {
         .sheet(item: $state.restoreModel, onDismiss: {
             if let pending = pendingInstallation { pendingInstallation = nil; onInstall(pending.0, pending.1, pending.2) }
         }) { model in
-            LocalRestoreView(model: model, onCancel: { state.restoreModel = nil }, onInstall: { store, coordinator, destination in
-                pendingInstallation = (store, coordinator, destination); state.restoreModel = nil
-            })
+            if model.kind == .erase {
+                LocalEraseView(model: model, onCancel: { state.restoreModel = nil }, onInstall: { store, coordinator, destination in
+                    pendingInstallation = (store, coordinator, destination); state.restoreModel = nil
+                }).environment(state)
+            } else {
+                LocalRestoreView(model: model, onCancel: { state.restoreModel = nil }, onInstall: { store, coordinator, destination in
+                    pendingInstallation = (store, coordinator, destination); state.restoreModel = nil
+                })
+            }
         }
         .sheet(item: $state.todayEditor) { model in TodayEditorView(model: model).environment(state) }
         .sheet(item: $state.fitEditor) { model in FitEditorView(model: model).environment(state) }

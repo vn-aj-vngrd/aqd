@@ -14,6 +14,7 @@ struct LocalSettingsView: View {
             Section("Local data") {
                 NavigationLink("Export closet") { LocalExportView() }
                 Button("Restore closet") { state.openRestore() }
+                Button("Erase this closet", role: .destructive) { state.openErase() }
             }
             Section("Personal settings") {
                 NavigationLink("Style") { LocalStyleSettingsView() }
