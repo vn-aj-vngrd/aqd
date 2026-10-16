@@ -1,26 +1,6 @@
 import AQDCore
 import SwiftUI
 
-enum PlannerAddChoice: String, CaseIterable { case day = "Plan one day", dates = "Plan several days", routine = "Create a routine", trip = "Plan an event or trip" }
-struct PlannerAddSheet: View {
-    let select: (PlannerAddChoice) -> Void
-    var body: some View {
-        NativeChoiceSheet(title: "Add to Planner") {
-            ForEach(PlannerAddChoice.allCases, id: \.self) { choice in
-                NativeChoiceRow(title: choice.rawValue, symbol: symbol(choice)) { select(choice) }
-            }
-        }
-    }
-    private func symbol(_ choice: PlannerAddChoice) -> String {
-        switch choice {
-        case .day: "calendar"
-        case .dates: "calendar.badge.plus"
-        case .routine: "repeat"
-        case .trip: "suitcase"
-        }
-    }
-}
-
 struct PlanAuthoringView: View {
     private var confirmation: some View {
         ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) { Task { await model.save() } }

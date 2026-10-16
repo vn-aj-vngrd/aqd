@@ -3,8 +3,6 @@ import SwiftUI
 
 struct LocalPlannerView: View {
     @Environment(AppState.self) private var state
-    @State private var addPresented = false
-    @State private var pendingAdd: PlannerAddChoice?
     private var entries: [OutfitPlanEntry] { state.planEntries.filter { $0.day.key == state.plannerDay.key } }
     private var selectedDateLabel: String {
         guard let date = try? state.plannerDay.date(),
@@ -83,18 +81,15 @@ struct LocalPlannerView: View {
                 }
                 .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
                 .toolbar { ToolbarItem(placement: .topBarTrailing) {
-                    Button { addPresented = true } label: { Label("Add to Planner", systemImage: "plus") }.tint(AppTheme.ink)
+                    Menu {
+                        Button("Plan one day", systemImage: "calendar") { state.openPlan(day: state.plannerDay) }
+                        Button("Plan several days", systemImage: "calendar.badge.plus") { state.openPlanAuthoring(day: state.plannerDay) }
+                        Button("Create a routine", systemImage: "repeat") { state.openPlanAuthoring(day: state.plannerDay, routine: true) }
+                        Button("Plan an event or trip", systemImage: "suitcase") { state.openPlanAuthoring(day: state.plannerDay, trip: true) }
+                    } label: { Label("Add to Planner", systemImage: "plus") }.tint(AppTheme.ink)
                 } }
                 .onAppear { state.reloadPlanEntries(); state.reloadOutfits() }
-                .sheet(isPresented: $addPresented, onDismiss: {
-                    let choice = pendingAdd; pendingAdd = nil
-                    if choice == .day { state.openPlan(day: state.plannerDay) }
-                    else if choice == .dates { state.openPlanAuthoring(day: state.plannerDay) }
-                    else if choice == .routine { state.openPlanAuthoring(day: state.plannerDay, routine: true) }
-                    else if choice == .trip { state.openPlanAuthoring(day: state.plannerDay, trip: true) }
-                }) {
-                    PlannerAddSheet { pendingAdd = $0; addPresented = false }
-                }
+
         }.tint(AppTheme.ink)
     }
 }

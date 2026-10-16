@@ -10,8 +10,6 @@ struct ClosetView: View {
     @State private var sort = PieceSort.name
     @State private var results: [WardrobePiece] = []
     @State private var error: String?
-    @State private var addPresented = false
-    @State private var pendingAdd: ClosetAddAction?
     @State private var favoritesOnly = false
     @State private var themeID: UUID?
     @State private var searchFavoritesOnly = false
@@ -52,7 +50,11 @@ struct ClosetView: View {
                             .tint(AppTheme.ink).accessibilityIdentifier("closet.search")
                     }
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button { addPresented = true } label: { Label("Add to closet", systemImage: "plus") }
+                        Menu {
+                            Button("Add a piece", systemImage: "tshirt") { state.addPiece() }
+                            Button("Build an outfit", systemImage: "square.stack") { state.buildOutfit() }
+                            Button("Create a theme", systemImage: "folder") { state.openTheme() }
+                        } label: { Label("Add to closet", systemImage: "plus") }
                             .tint(AppTheme.ink).accessibilityIdentifier("closet.addPiece")
                     }
                 }
@@ -80,9 +82,6 @@ struct ClosetView: View {
             .onChange(of: availability) { refreshPieces() }
             .onChange(of: sort) { refreshPieces() }
             .onChange(of: state.collectionRefreshID) { refreshPieces() }
-            .sheet(isPresented: $addPresented, onDismiss: performAdd) {
-                ClosetAddSheet { action in pendingAdd = action; addPresented = false }
-            }
         }.tint(state.closetSearchActive ? AppTheme.actionText : AppTheme.ink)
     }
 
@@ -220,10 +219,7 @@ struct ClosetView: View {
             results = try store.pieces(category: category, archived: archived, availability: availability, sort: sort); error = nil
         } catch { self.error = "Your saved collection couldn’t be read. Its data is retained; retry." }
     }
-    private func performAdd() {
-        let action = pendingAdd; pendingAdd = nil
-        switch action { case .piece: state.addPiece(); case .outfit: state.buildOutfit(); case .theme: state.openTheme(); case nil: break }
-    }
+
 }
 
 struct PieceThumbnail: View {

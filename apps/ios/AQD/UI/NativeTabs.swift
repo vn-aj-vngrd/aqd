@@ -27,6 +27,9 @@ struct NativeTabs: UIViewControllerRepresentable {
         let controller = UITabBarController()
         controller.mode = .tabBar
         controller.tabBar.itemPositioning = .fill
+        if #available(iOS 26.0, *) {
+            controller.tabBarMinimizeBehavior = isReadOnlyPreview ? .never : .onScrollDown
+        }
         // UIKit owns chrome/geometry; Paper owns the semantic symbol tints.
         // Set the bridge explicitly instead of relying on SwiftUI tint inheritance.
         controller.tabBar.tintColor = UIColor(AppTheme.accent)

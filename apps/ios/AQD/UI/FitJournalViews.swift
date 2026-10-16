@@ -67,7 +67,7 @@ struct FitJournalGrid: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     var body: some View {
         Group {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 12) {
                 Text("Your fits").font(AppTypography.fieldLabel).padding(.horizontal, 20)
                 if let error = state.fitError {
                     SemanticFeedback(role: .danger, message: error)
@@ -79,24 +79,17 @@ struct FitJournalGrid: View {
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
                         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12)).accessibilityIdentifier("profile.fits.empty")
                 } else {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 2, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3), spacing: 2) {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3), spacing: 8) {
                         ForEach(state.fitMemories) { memory in
                             NavigationLink { FitMemoryDetailView(id: memory.id) } label: {
                                 FitMemoryArtwork(memory: memory, thumbnail: true)
                                         .clipShape(RoundedRectangle(cornerRadius: 6))
-                                        .padding(6)
+                                        .padding(4)
                                         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
-                                        .overlay(alignment: .topTrailing) {
-                                            if memory.photoID == nil {
-                                                Image(systemName: "square.stack").font(.system(size: 11, weight: .medium))
-                                                    .foregroundStyle(AppTheme.ink).padding(5)
-                                                    .background(AppTheme.surface, in: Circle()).padding(5).accessibilityHidden(true)
-                                            }
-                                        }
                             }.buttonStyle(.plain).id(memory.id)
                                 .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.name ?? "unlinked"), \(memory.note)")
                         }
-                    }
+                    }.padding(.horizontal, 20)
                 }
             }
         }

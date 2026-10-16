@@ -35,11 +35,11 @@ struct TodayView: View {
             .background(AppTheme.canvas)
             .navigationTitle("Today")
             .toolbar { ToolbarItem(placement: .topBarTrailing) {
-                Button { state.openWear() } label: { Label("Record wear", systemImage: "checkmark").labelStyle(.iconOnly) }
-                    .buttonBorderShape(.circle).accessibilityIdentifier("today.recordWear").tint(AppTheme.actionText)
+                Button { state.openWear() } label: { Label("Record wear", systemImage: "tshirt").labelStyle(.iconOnly) }
+                    .buttonBorderShape(.circle).accessibilityIdentifier("today.recordWear").tint(AppTheme.ink)
             } }
             .toolbar { ToolbarItem(placement: .topBarTrailing) {
-                Button { state.openTodayEditor() } label: { Image(systemName: "square.grid.2x2").font(.system(size: 17, weight: .regular)) }.accessibilityLabel("Customize Today").tint(AppTheme.secondary)
+                Button { state.openTodayEditor() } label: { Image(systemName: "square.grid.2x2").font(.system(size: 17, weight: .regular)) }.accessibilityLabel("Customize Today").tint(AppTheme.ink)
             } }
             .safeAreaInset(edge: .bottom) {
                 if state.todayUndoAvailable { Button("Undo layout change") { state.undoTodayLayout() }.frame(minHeight: 44).padding(.horizontal, 20).background(AppTheme.canvas) }

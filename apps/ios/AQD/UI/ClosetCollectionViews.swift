@@ -29,21 +29,6 @@ struct PieceCollectionGrid: View {
     }
 }
 
-enum ClosetAddAction: String, CaseIterable { case piece = "Add a piece", outfit = "Build an outfit", theme = "Create a theme" }
-struct ClosetAddSheet: View {
-    let select: (ClosetAddAction) -> Void
-    var body: some View {
-        NativeChoiceSheet(title: "Add to closet") {
-            ForEach(ClosetAddAction.allCases, id: \.self) { action in
-                NativeChoiceRow(title: action.rawValue,
-                                symbol: action == .piece ? "tshirt" : action == .outfit ? "square.stack" : "folder") {
-                    select(action)
-                }
-            }
-        }
-    }
-}
-
 struct OutfitCollectionCard: View {
     @Environment(AppState.self) private var state
     let outfit: Outfit
