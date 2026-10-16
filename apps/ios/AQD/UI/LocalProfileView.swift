@@ -133,17 +133,17 @@ struct LocalProfileView: View {
             .accessibilityIdentifier("profile.avatar.edit")
     }
     private var profileStats: some View {
-        HStack(alignment: .top, spacing: 12) {
-            profileStat("Fits", count: state.fitError == nil ? state.fitMemories.count : nil, leading: true)
+        HStack(alignment: .top, spacing: 0) {
+            profileStat("Fits", count: state.fitError == nil ? state.fitMemories.count : nil)
             profileStat("Outfits", count: state.outfitError == nil ? state.outfits.count : nil)
             profileStat("Pieces", count: state.pieceReadError == nil ? state.pieces.count : nil)
         }.frame(maxWidth: .infinity)
     }
-    private func profileStat(_ title: String, count: Int?, leading: Bool = false) -> some View {
-        VStack(alignment: leading ? .leading : .center, spacing: 4) {
+    private func profileStat(_ title: String, count: Int?) -> some View {
+        VStack(alignment: .center, spacing: 4) {
             Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit()
             Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-        }.frame(maxWidth: .infinity, alignment: leading ? .leading : .center).accessibilityElement(children: .ignore)
+        }.frame(maxWidth: .infinity, alignment: .center).accessibilityElement(children: .ignore)
             .accessibilityLabel(count.map { "\($0) \(title.lowercased())" } ?? "\(title) unavailable")
     }
 }

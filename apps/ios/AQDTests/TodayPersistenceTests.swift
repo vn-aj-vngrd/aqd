@@ -10,8 +10,8 @@ struct TodayPersistenceTests {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         var store: PieceStore? = try PieceStore(directory: directory)
         let first = try #require(store).todayConfiguration()
-        #expect(first.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse])
-        #expect(Set(first.instances.map(\.id)).count == 3)
+        #expect(first.instances.map(\.kind) == TodayWidgetKind.allCases)
+        #expect(Set(first.instances.map(\.id)).count == 12)
         #expect(try #require(store).todayConfiguration() == first)
         store = nil
         let readOnly = try PieceStore(directory: directory, allowsSave: false)

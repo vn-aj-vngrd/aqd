@@ -30,6 +30,23 @@ import Observation
             self.error = "Keep at least one widget. Add another before removing this one."
         } catch { draft = changed; self.error = "These edits could not be retained. Keep this screen open and retry. Your saved layout is unchanged."; draftFailed = true }
     }
+    private let stockInstances = TodayWidgetKind.allCases.map { TodayWidgetInstance(kind: $0, isVisible: false) }
+    var catalog: [TodayWidgetInstance] {
+        draft.value.instances + stockInstances.filter { stock in !draft.value.instances.contains { $0.kind == stock.kind } }
+    }
+    func setVisibility(_ id: UUID, visible: Bool) {
+        guard !locked, draft.nested == nil, var instance = catalog.first(where: { $0.id == id }) else { return }
+        if let original = draft.base.instances.first(where: { $0.id == id }), original.isVisible == visible {
+            instance.isHidden = original.isHidden
+        } else { instance.isHidden = visible ? nil : true }
+        update { draft in
+            if !visible, !draft.base.instances.contains(where: { $0.id == id }),
+               instance.options == nil, stockInstances.contains(where: { $0.id == id }) {
+                draft.value.instances.removeAll { $0.id == id }
+            } else if let index = draft.value.instances.firstIndex(where: { $0.id == id }) { draft.value.instances[index] = instance }
+            else { draft.value.instances.append(instance) }
+        }
+    }
     var availableKinds: [TodayWidgetKind] {
         TodayWidgetKind.allCases.filter { kind in !draft.value.instances.contains { $0.kind == kind } }
     }

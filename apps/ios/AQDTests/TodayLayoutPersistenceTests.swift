@@ -7,6 +7,44 @@ import UIKit
 
 @Suite(.serialized) @MainActor
 struct TodayLayoutPersistenceTests {
+    @Test func visibilityIsDraftOnlyReversibleAndSurvivesSaveWithoutDroppingSettings() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let state = AppState(store: store), base = try store.todayConfiguration()
+        #expect(base.instances.count == 12 && base.instances.allSatisfy(\.isVisible))
+        state.openTodayEditor(); let model = try #require(state.todayEditor)
+        let instance = try #require(model.catalog.first)
+        model.setVisibility(instance.id, visible: false)
+        #expect(model.draft.hasChanges)
+        #expect(try store.todayConfiguration() == base)
+        model.setVisibility(instance.id, visible: true)
+        #expect(!model.draft.hasChanges)
+        model.setVisibility(instance.id, visible: false)
+        await model.save()
+        #expect(state.todayEditor == nil)
+        let reopened = try PieceStore(directory: store.localDirectory)
+        let saved = try reopened.todayConfiguration()
+        #expect(saved.instances.count == 12)
+        #expect(saved.instances.first?.id == instance.id)
+        #expect(saved.instances.first?.isVisible == false)
+        #expect(saved.instances.first?.options == instance.options)
+        #expect(try reopened.wearRecords().isEmpty)
+        let decoded = try JSONDecoder().decode(TodayConfiguration.self, from: JSONEncoder().encode(saved))
+        #expect(decoded == saved)
+    }
+
+    @Test func legacyMissingWidgetVisibilityCanBeRevertedWithoutChanges() throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        var base = try store.todayConfiguration()
+        base.instances = Array(base.instances.prefix(3))
+        let model = TodayEditorModel(state: AppState(store: store), draft: TodayLayoutDraft(base: base))
+        let missing = try #require(model.catalog.first { $0.kind == .quickActions })
+        model.setVisibility(missing.id, visible: true)
+        #expect(model.draft.hasChanges)
+        model.setVisibility(missing.id, visible: false)
+        #expect(!model.draft.hasChanges)
+        #expect(model.draft.value == base)
+    }
+
     @Test func addOffersOnlyMissingKindsAndRemovingMakesThemAvailableAgain() throws {
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         let state = AppState(store: store)
@@ -16,6 +54,8 @@ struct TodayLayoutPersistenceTests {
         let before = model.draft
         model.beginNew(.todayLook)
         #expect(model.draft == before)
+        let originalQuick = try #require(model.draft.value.instances.first { $0.kind == .quickActions })
+        model.update { try $0.remove(originalQuick.id) }
         model.beginNew(.quickActions)
         try #require(model.canApply)
         model.applyNested()
@@ -39,7 +79,7 @@ struct TodayLayoutPersistenceTests {
         model.begin(legacy)
         #expect(model.canApply)
         model.cancelNested()
-        #expect(try store.todayConfiguration().instances.count == 3)
+        #expect(try store.todayConfiguration().instances.count == 12)
     }
 
     @Test func everyWidgetCanConfigureReorderDuplicateRestoreAndSaveWithoutChangingWear() async throws {
@@ -87,7 +127,7 @@ struct TodayLayoutPersistenceTests {
         model.update { try $0.remove(note.id) }
         let beforeDefaults = model.draft.value.instances
         model.update { $0.restoreDefaults() }
-        #expect(model.draft.value.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse])
+        #expect(model.draft.value.instances.map(\.kind) == TodayWidgetKind.allCases)
         model.update { $0.undoDefaults() }
         #expect(model.draft.value.instances == beforeDefaults)
         model.begin(try #require(model.draft.value.instances.first))
@@ -99,6 +139,17 @@ struct TodayLayoutPersistenceTests {
         #expect(try reopened.todayConfiguration().instances == beforeDefaults)
         #expect(try reopened.wearRecords().isEmpty)
         #expect(try reopened.todayPersonalCards().contains { $0.photoID == photo.id })
+        let personalBefore = try reopened.todayPersonalCards()
+        let photoWidget = try #require(try reopened.todayConfiguration().instances.first { $0.kind == .personalPhoto })
+        let nextState = AppState(store: reopened); nextState.openTodayEditor()
+        let visibility = try #require(nextState.todayEditor)
+        visibility.setVisibility(photoWidget.id, visible: false)
+        await visibility.save()
+        #expect(nextState.todayEditor == nil)
+        #expect(try reopened.todayConfiguration().instances.first { $0.id == photoWidget.id }?.isVisible == false)
+        #expect(try reopened.todayPersonalCards() == personalBefore)
+        let retainedPhoto = try reopened.photoRendition(id: photo.id, recipe: .fitOriginal)
+        #expect(!retainedPhoto.isEmpty)
     }
 
     @Test func noteLayoutIsAtomicUnknownRetryAndRestartKeepIndependentContentAndUndo() throws {
@@ -125,7 +176,7 @@ struct TodayLayoutPersistenceTests {
         #expect(try reopened.todayConfiguration() == result)
         #expect(try reopened.todayUndo()?.previous == base)
         var defaults = TodayLayoutDraft(base: result); defaults.restoreDefaults()
-        #expect(defaults.value.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse])
+        #expect(defaults.value.instances.map(\.kind) == TodayWidgetKind.allCases)
         defaults.undoDefaults()
         #expect(defaults.value.instances == result.instances)
         defaults.restoreDefaults(); try reopened.saveTodayDraft(defaults)
@@ -144,23 +195,23 @@ struct TodayLayoutPersistenceTests {
         #expect(state.todayEditor == nil)
         #expect(try store.todayConfiguration() == base)
         state.openTodayEditor(); let model = try #require(state.todayEditor)
-        model.begin(TodayWidgetInstance(kind: .personalNote))
+        model.begin(try #require(model.draft.value.instances.first { $0.kind == .personalNote }))
         let fullText = String(repeating: "A complete private note. ", count: 1000)
         model.nested { $0.options?.personal?.text = fullText }
         #expect(model.canApply)
         #expect(try store.todayConfiguration() == base)
         model.cancelNested()
         #expect(model.draft.value == base)
-        model.begin(TodayWidgetInstance(kind: .personalNote)); model.nested { $0.options?.personal?.text = fullText }; model.applyNested()
+        model.begin(try #require(model.draft.value.instances.first { $0.kind == .personalNote })); model.nested { $0.options?.personal?.text = fullText }; model.applyNested()
         #expect(try store.todayConfiguration() == base)
-        let original = try #require(model.draft.value.instances.last)
+        let original = try #require(model.draft.value.instances.first { $0.kind == .personalNote })
         let copy = original.independentCopy()
         #expect(copy.id != original.id)
         #expect(copy.options?.personal?.id != original.options?.personal?.id)
         #expect(copy.options?.personal?.text == fullText)
         deny = true; await model.save()
         #expect(model.saved == nil && model.error != nil)
-        #expect(model.draft.value.instances.last?.options?.personal?.text == fullText)
+        #expect(model.draft.value.instances.first { $0.kind == .personalNote }?.options?.personal?.text == fullText)
         #expect(try store.todayConfiguration() == base)
         deny = false; await model.save()
         #expect(state.todayEditor == nil)
@@ -190,8 +241,8 @@ struct TodayLayoutPersistenceTests {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString), store = try PieceStore(directory: directory)
         let state = AppState(store: store)
         state.openTodayEditor(); let first = try #require(state.todayEditor)
-        first.begin(TodayWidgetInstance(kind: .personalNote)); first.nested { $0.options?.personal?.text = "Original note" }; first.applyNested(); await first.save()
-        let oldSnapshot = try #require(state.today?.instances.last)
+        first.begin(try #require(first.draft.value.instances.first { $0.kind == .personalNote })); first.nested { $0.options?.personal?.text = "Original note" }; first.applyNested(); await first.save()
+        let oldSnapshot = try #require(state.today?.instances.first { $0.kind == .personalNote })
         state.openTodayEditor(); let edit = try #require(state.todayEditor)
         edit.begin(oldSnapshot); edit.nested { $0.options?.personal?.text = "Acknowledged new note" }; edit.applyNested(); await edit.save()
         state.openTodayEditor(); let reopened = try #require(state.todayEditor)

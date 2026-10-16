@@ -684,7 +684,7 @@ final class PieceStore {
         guard records.count == 1, let record = records.first else { throw StoreError.unsupportedStore }
         let today = try record.value()
         guard today.revision == 1,
-              today.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse] else {
+              (today.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse] || today.instances.map(\.kind) == TodayWidgetKind.allCases) else {
             throw StoreError.unsupportedStore
         }
         return false
@@ -2648,8 +2648,8 @@ extension PieceStore {
         let result = try draft.result(), context = ModelContext(container)
         let existing = try todayPersonalCards()
         for instance in result.instances {
-            try instance.validatedContent(ownerID: result.ownerID)
-            if let pin = instance.options?.pinnedID,
+            try instance.validatedContent(ownerID: result.ownerID, requireContent: instance.options != nil)
+            if instance.isVisible, let pin = instance.options?.pinnedID,
                draft.base.instances.first(where: { $0.id == instance.id })?.options?.pinnedID != pin {
                 let available: Bool
                 switch instance.kind {

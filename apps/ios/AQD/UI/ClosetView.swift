@@ -134,10 +134,9 @@ struct ClosetView: View {
         }
     }
     private func filterOption<Value: Equatable>(_ title: String, value: Value, selection: Binding<Value>) -> some View {
-        Button { selection.wrappedValue = value } label: {
-            if selection.wrappedValue == value { Label(title, systemImage: "checkmark") }
-            else { Text(title) }
-        }.accessibilityAddTraits(selection.wrappedValue == value ? [.isSelected] : [])
+        Toggle(title, isOn: Binding(get: { selection.wrappedValue == value }, set: { checked in
+            if checked { selection.wrappedValue = value }
+        }))
     }
     private var collectionSummary: ClosetCollectionSummary {
         let summary = collectionSummaryData
@@ -163,7 +162,7 @@ struct ClosetView: View {
     private var outfitFilterMenu: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
-                Section("Filter by Favorites") {
+                Section {
                     Toggle("Favorites only", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly)
                 }
                 Section("Filter by Theme") {

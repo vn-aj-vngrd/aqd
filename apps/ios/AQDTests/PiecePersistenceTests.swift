@@ -608,8 +608,8 @@ struct PiecePersistenceTests {
         #expect(try !#require(recovered).localExperience().enteredPrivateSpace)
         if todayWasCommitted { #expect(first == today) }
         #expect(first.revision == 1)
-        #expect(first.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse])
-        #expect(Set(first.instances.map(\.id)).count == 3)
+        #expect(first.instances.map(\.kind) == TodayWidgetKind.allCases)
+        #expect(Set(first.instances.map(\.id)).count == 12)
         #expect(try #require(recovered).pieces().isEmpty)
         #expect(try #require(recovered).latestDraft() == nil)
         #expect(try !#require(recovered).hasPendingPhotoCleanup())

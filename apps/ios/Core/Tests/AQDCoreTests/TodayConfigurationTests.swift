@@ -5,9 +5,13 @@ import Testing
 struct TodayConfigurationTests {
     @Test func firstUseHasExactlyTheStockOrderAndIndependentIdentities() throws {
         let layout = TodayConfiguration(ownerID: UUID())
-        #expect(layout.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse])
-        #expect(Set(layout.instances.map(\.id)).count == 3)
+        #expect(layout.instances.map(\.kind) == TodayWidgetKind.allCases)
+        #expect(Set(layout.instances.map(\.id)).count == 12)
+        #expect(layout.instances.allSatisfy { $0.isVisible })
         try layout.validated()
+        var draft = TodayLayoutDraft(base: layout)
+        draft.value.instances[0].isHidden = true
+        #expect(try draft.result().instances[0].isVisible == false)
     }
 
     @Test func existingLayoutRoundTripsWithoutReseedingOrChangingIDs() throws {
