@@ -405,3 +405,7 @@ Replace the standalone Record wear toolbar icon with a leading native + menu: Re
 Today Add fit forwards an opening failure to the existing global local-task error alert when no editor opens; its error would otherwise only be visible on Profile. No failure is presented as a saved fit. The existing draft/save path is unchanged.
 
 Final owner preview source `e833d5d13c1bf1e83d0c52a3fd12880949919f6a`: `/tmp/aqd-final-today-add-debug.log` BUILD SUCCEEDED, both independent source reviews clear; installed and ordinarily launched on the physical iPhone17ProMax with no arguments. Final install/launch receipts are `/tmp/aqd-final-today-add-install.json` and `/tmp/aqd-final-today-add-launch.json`. Core78/native230 and unsigned Release qualified9641bfd; later placement/heading/menu changes are Debug/source-review-qualified. No sample command repeated, no reset/restore/record-wear action, no E2E/rendered acceptance.
+
+### Owner Piece detail surface consistency — October17
+
+Use the existing Fit-memory card treatment for Piece detail: white semantic surface parents on the shared canvas,20pt card insets and16pt corners. Separate piece identity/details from recorded-wear/history; keep estimates explicitly labelled and visible independently of wear-summary availability. Photo keeps the existing neutral inner artwork well with a12pt surface frame. Preserve all values, archive/undo/errors, photo viewer and toolbar actions. Cosmetic/layout scope: final Debug, source reviews and ordinary physical install; no new data/test seam or E2E run.

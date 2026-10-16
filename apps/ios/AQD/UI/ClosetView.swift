@@ -320,34 +320,53 @@ struct PieceDetailView: View {
                     Button { photoPresented = true } label: {
                         PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                             .frame(maxWidth: .infinity).frame(height: 300)
+                            .clipShape(RoundedRectangle(cornerRadius: AppRadius.photo))
+                            .padding(AppSpacing.medium)
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("View photo of \(piece.name) full screen")
                     .accessibilityHint("Opens a zoomable photo viewer")
                     .accessibilityIdentifier("piece.photo.fullScreen")
-                    Text(piece.name).font(.title2.weight(.medium))
-                    Text(piece.category.rawValue).foregroundStyle(AppTheme.secondary)
-                    if !piece.details.color.isEmpty { detail("Color", piece.details.color) }
-                    if !piece.details.brand.isEmpty { detail("Brand", piece.details.brand) }
-                    if !piece.details.size.isEmpty { detail("Size", piece.details.size) }
-                    if !piece.details.fit.isEmpty { detail("Fit", piece.details.fit) }
-                    if !piece.details.material.isEmpty { detail("Material", piece.details.material) }
-                    if !piece.details.season.isEmpty { detail("Season", piece.details.season) }
-                    if !piece.details.condition.isEmpty { detail("Condition", piece.details.condition) }
-                    if !piece.details.ownershipAge.isEmpty { detail("Ownership", piece.details.ownershipAge) }
-                    if !piece.details.tags.isEmpty { detail("Tags", piece.details.tags.joined(separator: ", ")) }
-                    detail("Availability", piece.availability == .laundry ? "In the laundry" : piece.availability.rawValue.capitalized)
+                    VStack(alignment: .leading, spacing: AppSpacing.large) {
+                        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                            Text(piece.name).font(AppTypography.section)
+                            Text(piece.category.rawValue).foregroundStyle(AppTheme.secondary)
+                        }
+                        if !piece.details.color.isEmpty { detail("Color", piece.details.color) }
+                        if !piece.details.brand.isEmpty { detail("Brand", piece.details.brand) }
+                        if !piece.details.size.isEmpty { detail("Size", piece.details.size) }
+                        if !piece.details.fit.isEmpty { detail("Fit", piece.details.fit) }
+                        if !piece.details.material.isEmpty { detail("Material", piece.details.material) }
+                        if !piece.details.season.isEmpty { detail("Season", piece.details.season) }
+                        if !piece.details.condition.isEmpty { detail("Condition", piece.details.condition) }
+                        if !piece.details.ownershipAge.isEmpty { detail("Ownership", piece.details.ownershipAge) }
+                        if !piece.details.tags.isEmpty { detail("Tags", piece.details.tags.joined(separator: ", ")) }
+                        detail("Availability", piece.availability == .laundry ? "In the laundry" : piece.availability.rawValue.capitalized)
+                        if !piece.details.notes.isEmpty { detail("Notes", piece.details.notes) }
+                        if let estimate = piece.details.priorWearCount {
+                            detail("Prior wear estimate", String(estimate))
+                            Text("This is an estimate, not recorded wear.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                        }
+                        if piece.isArchived { Text("Archived").font(AppTypography.supporting) }
+                    }
+                    .padding(AppSpacing.screen).frame(maxWidth: .infinity, alignment: .leading)
+                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                     if let wear {
-                        detail("Recorded wears", String(wear.recorded))
-                        detail("Last worn", wear.lastWorn?.key ?? "No recorded history")
-                        NavigationLink("Wear history") { LocalWearHistoryView(pieceID: piece.id) }.frame(minHeight: 44)
+                        VStack(alignment: .leading, spacing: AppSpacing.large) {
+                            detail("Recorded wears", String(wear.recorded))
+                            detail("Last worn", wear.lastWorn?.key ?? "No recorded history")
+                            NavigationLink { LocalWearHistoryView(pieceID: piece.id) } label: {
+                                HStack {
+                                    Text("Wear history")
+                                    Spacer()
+                                    Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
+                                }.frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+                            }.foregroundStyle(AppTheme.ink)
+                        }
+                        .padding(AppSpacing.screen).frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                     }
-                    if !piece.details.notes.isEmpty { detail("Notes", piece.details.notes) }
-                    if let estimate = piece.details.priorWearCount {
-                        detail("Prior wear estimate", String(estimate))
-                        Text("This is an estimate, not recorded wear.").font(.footnote).foregroundStyle(AppTheme.secondary)
-                    }
-                    if piece.isArchived { Text("Archived").font(.subheadline) }
                     if let revision = undoArchiveRevision {
                         Button("Undo archive") { setArchive(false, expectedRevision: revision, operation: UUID()) }
                             .frame(minHeight: 44).disabled(deleteInFlight)
