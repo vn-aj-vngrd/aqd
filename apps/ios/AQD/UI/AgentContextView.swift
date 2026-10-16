@@ -45,7 +45,7 @@ struct AgentContextView: View {
                         if state.pieces.isEmpty && state.outfits.isEmpty && state.themes.isEmpty { Text("Your closet is empty. Add a piece or choose Without closet.") }
                     }
                 }
-            }.navigationTitle("Agent context").navigationBarTitleDisplayMode(.inline)
+            }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Agent context").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button { if !model.hasPendingOperation { dismiss() } } label: { Image(systemName: "xmark") }.accessibilityLabel("Cancel") }
                     ToolbarItem(placement: .confirmationAction) { Button {

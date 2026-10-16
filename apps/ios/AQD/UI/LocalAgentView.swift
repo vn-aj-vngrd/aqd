@@ -156,7 +156,7 @@ struct AgentConversationView: View {
                 LabeledContent("First text", value: message.firstTextSeconds.map { String(format: "%.1f s", $0) } ?? "Unavailable")
                 Text(message.contextSummary ?? "Context measurements unavailable")
                 Text("Generated text cannot change your records. Only an explicit review and saved receipt can do that.")
-            }.navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { Button { details = nil } label: { Text("Done") }.accessibilityLabel("Done") } } } }
+            }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { Button { details = nil } label: { Text("Done") }.accessibilityLabel("Done") } } } }
             .onAppear { if automaticallyFocusComposer && model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
     }
     private var composer: some View {
@@ -270,7 +270,7 @@ struct AgentHistoryView: View {
                     .contextMenu { Button("Delete conversation", role: .destructive) { selected = value } }
                     .swipeActions { Button("Delete", role: .destructive) { selected = value } }
             }
-        }.navigationTitle("Conversations")
+        }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Conversations")
             .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { model.newConversation(); open(model.conversation) } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation) } }
             .alert("Delete this conversation?", isPresented: Binding(get: { selected != nil }, set: { if !$0 { selected = nil } })) {
                 Button("Cancel", role: .cancel) { selected = nil }

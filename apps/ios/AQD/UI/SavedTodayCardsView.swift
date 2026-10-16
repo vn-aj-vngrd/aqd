@@ -46,7 +46,7 @@ struct SavedTodayCardsView: View {
                         } label: { Label("More for \(label(card))", systemImage: "ellipsis").labelStyle(.iconOnly).frame(width: 44, height: 44) }.disabled(pending || request != nil || model.locked)
                     }.id(card.id).accessibilityFocused($focused, equals: card.id)
                 }
-            }.navigationTitle("Saved notes and photos").navigationBarTitleDisplayMode(.inline)
+            }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Saved notes and photos").navigationBarTitleDisplayMode(.inline)
                 .onAppear { reload(); if let selection { reader.scrollTo(selection); focused = selection } }
                 .alert("Delete this saved \(request?.card.kind == .personalPhoto ? "photo" : "note")?", isPresented: $confirming) {
                     Button("Cancel", role: .cancel) { request = nil; focused = selection }

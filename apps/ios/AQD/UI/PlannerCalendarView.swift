@@ -21,18 +21,21 @@ struct PlannerCalendarView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            Button { chooseDate = true } label: {
+                Text(formatted((try? day.date()) ?? Date(), style: .dateTime.month(.wide).year()))
+                    .font(AppTypography.section).foregroundStyle(AppTheme.ink)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                    .contentShape(Rectangle())
+            }.buttonStyle(.plain).accessibilityHint("Choose a date")
             HStack(spacing: 8) {
-                Button { chooseDate = true } label: {
-                    Text(formatted((try? day.date()) ?? Date(), style: .dateTime.month(.wide).year()))
-                        .font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
-                }.frame(minHeight: 44)
-                Spacer(minLength: 0)
                 Button(mode == .week ? "Month" : "Week") {
                     withAnimation(reduceMotion ? nil : AQDMotion.reflow) {
                         mode = mode == .week ? .month : .week
                     }
                 }
                     .frame(minWidth: 44, minHeight: 44).tint(AppTheme.actionText)
+                Spacer(minLength: 0)
                 HStack(spacing: 8) {
                     stepControl(-1)
                     stepControl(1)

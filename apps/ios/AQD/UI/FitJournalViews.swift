@@ -10,7 +10,7 @@ struct FitMemoryArtwork: View {
             GeometryReader { geometry in
                 thumbnailContent(size: geometry.size)
                     .frame(width: geometry.size.width, height: geometry.size.height)
-                    .background(AppTheme.surface).clipped()
+                    .background(AppTheme.imageGround).clipped()
             }.aspectRatio(3 / 4, contentMode: .fit)
         } else {
             Group {
@@ -46,7 +46,6 @@ struct FitMemoryArtwork: View {
                                 }
                             }
                             .frame(width: cellWidth, height: cellHeight)
-                            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 4))
                         }
                     }
                 }
@@ -84,7 +83,9 @@ struct FitJournalGrid: View {
                         ForEach(state.fitMemories) { memory in
                             NavigationLink { FitMemoryDetailView(id: memory.id) } label: {
                                 FitMemoryArtwork(memory: memory, thumbnail: true)
-                                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                                        .padding(6)
+                                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
                                         .overlay(alignment: .topTrailing) {
                                             if memory.photoID == nil {
                                                 Image(systemName: "square.stack").font(.system(size: 11, weight: .medium))

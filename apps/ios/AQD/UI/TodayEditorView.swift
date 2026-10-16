@@ -33,9 +33,21 @@ struct TodayEditorView: View {
                         model.update { $0.value.instances.move(fromOffsets: offsets, toOffset: destination) }
                     }
                 } header: {
-                    Text("\(model.draft.value.instances.count) widgets")
+                    HStack(spacing: 8) {
+                        Text("\(model.draft.value.instances.count) widgets").font(AppTypography.fieldLabel)
+                        Spacer(minLength: 0)
+                        Menu {
+                            Button("Restore defaults", systemImage: "arrow.counterclockwise") { restore = true }
+                            if model.draft.defaultsUndo != nil {
+                                Button("Undo restore defaults", systemImage: "arrow.uturn.backward") { model.update { $0.undoDefaults() } }
+                            }
+                        } label: { Label("Layout options", systemImage: "ellipsis").labelStyle(.iconOnly).frame(width: 44, height: 44) }
+                            .disabled(model.locked)
+                        Button("Add") { library = true }.frame(minWidth: 44, minHeight: 44)
+                            .disabled(model.locked).accessibilityLabel("Add widget")
+                    }.textCase(nil).tint(AppTheme.actionText)
                 } footer: {
-                    Text("Drag the handles to change the order. Tap a widget to configure it. Removing a widget keeps its saved note or photo.")
+                    Text("Drag to reorder. Tap a widget to edit. Removing widgets keeps saved notes and photos.")
                 }
                 if let error = model.error {
                     Section { SemanticFeedback(role: .danger, message: error) }.listRowBackground(AppTheme.surface)
@@ -43,23 +55,6 @@ struct TodayEditorView: View {
             }.listStyle(.insetGrouped).scrollContentBackground(.hidden)
                 .environment(\.editMode, .constant(.active))
                 .background(AppTheme.canvas).navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    if model.saved == nil {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            ToolbarSaveAction(title: "Add") { library = true }.disabled(model.locked)
-                                .accessibilityLabel("Add widget")
-                        }
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Menu {
-                                Button("Restore defaults", systemImage: "arrow.counterclockwise") { restore = true }
-                                if model.draft.defaultsUndo != nil {
-                                    Button("Undo restore defaults", systemImage: "arrow.uturn.backward") { model.update { $0.undoDefaults() } }
-                                }
-                            } label: { Label("Layout options", systemImage: "ellipsis") }
-                                .disabled(model.locked)
-                        }
-                    }
-                }
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 if model.saved == nil { confirmation }
             } }
@@ -72,7 +67,8 @@ struct TodayEditorView: View {
                 .navigationDestination(isPresented: $library) {
                     List(TodayWidgetKind.allCases, id: \.self) { kind in
                         Button(kind.title) { model.begin(TodayWidgetInstance(kind: kind)); library = false }.frame(minHeight: 44)
-                    }.navigationTitle("Add widget").tint(AppTheme.ink)
+                    }.scrollContentBackground(.hidden).background(AppTheme.canvas)
+                        .navigationTitle("Add widget").tint(AppTheme.ink)
                 }
                 .sheet(isPresented: Binding(get: { model.draft.nested != nil }, set: { _ in })) { TodayWidgetConfigurationView(model: model) }
         }.tint(AppTheme.ink).interactiveDismissDisabled()

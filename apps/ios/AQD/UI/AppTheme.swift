@@ -2,11 +2,11 @@ import SwiftUI
 import UIKit
 
 enum AppTheme {
-    static let canvas = color(light: 0xF7F7F5, dark: 0x1C1C1B)
+    static let canvas = color(light: 0xFFFFFF, dark: 0x1C1C1B)
     static let surface = color(light: 0xFFFFFF, dark: 0x2B2B29)
     static let ink = color(light: 0x242321, dark: 0xF3F1EB)
     static let secondary = color(light: 0x6A6863, dark: 0xBCB9B1)
-    static let imageGround = color(light: 0xF0EFEB, dark: 0x242422)
+    static let imageGround = color(light: 0xF2EEE5, dark: 0x242422)
     static let accent = color(light: 0x8C6A36, dark: 0xD3B47C)
     static let actionText = color(light: 0x765829, dark: 0xD9BD8A)
     static let onAccent = color(light: 0xFFFFFF, dark: 0x1C1C1B)
