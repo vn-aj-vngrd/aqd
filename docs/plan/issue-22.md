@@ -15,8 +15,8 @@ Read Today’s twelve-kind feature/configuration/media contract, TW01–TW20/cat
 | --- | --- | --- | --- | --- | --- |
 | S1 | Real Today cards and contextual destinations for plans/wear/insights/favorites/theme/journal/actions | TODAY-01/02/06 | Implemented, unit verified | `AQD-Slice: #22/S1` | `f964d3c` |
 | S2 | Twelve kind-specific configurations, independent note/photo snapshots, atomic layout task/reorder/minimum-one/defaults/Undo/restart | TODAY-02–05 | Implemented, unit verified | `AQD-Slice: #22/S2` | `8ca33b1` |
-| S3 | Reachable retained-personal-content management, reviewed delete/reference refusals/Undo/media recovery | TODAY-03/04/07 | Implemented, unit verified | `AQD-Slice: #22/S3` | Pending |
-| S4 | Capture/photo controls, cancellable local background-removal proposal/review/fallback and pinned first-outfit completion | Affected W, LOCAL-02/04 | Planned | `AQD-Slice: #22/S4` | Pending |
+| S3 | Reachable retained-personal-content management, reviewed delete/reference refusals/Undo/media recovery | TODAY-03/04/07 | Implemented, unit verified | `AQD-Slice: #22/S3` | `33896d8` |
+| S4 | Capture/photo controls, cancellable local background-removal proposal/review/fallback and pinned first-outfit completion | Affected W, LOCAL-02/04 | Implemented, unit verified | `AQD-Slice: #22/S4` | Pending |
 | S5 | Shared off/consent/place/date/loading/saved/unavailable/late-response weather and Today/Outfit/Planner callers | Scoped LOCAL-16/manual | Planned | `AQD-Slice: #22/S5` | Pending |
 
 ## Verification and resume
@@ -44,3 +44,13 @@ Note/Photo configuration exposes Saved notes and photos even after every persona
 Schema V18 adds durable deletion tasks/receipts. The same operation survives confirmed failure, unknown acknowledgment and restart; acknowledged/cancelled tasks cannot become a second deletion. Media cleanup runs only against released actual references. A source shared by independent photo cards remains until the final owner releases it. The V17 layout-required marker is preserved: an already-Today-capable schema missing its full layout is corruption, rather than permission to reseed.
 
 The missing-API tracer failed `/tmp/aqd-22-s3-red.log`. Core62 and physical native164, comprising151 Swift Testing and13 XCTest, pass `/tmp/aqd-22-s3-unit.log`. Two actual-store regressions prove active/draft refusals, disclosed Undo release, unknown/reopen/exact-operation deletion and independent-photo last-owner cleanup without implicit wear. Bounded increment review covered deletion identity/revision/ownership, readable failed/unknown tasks, cancel/no-write review, observable Undo and reference-safe original ownership. All E2E/rendered/focus/media quality acceptance remains #30.
+
+## S4 capture and optional background removal receipt
+
+The accepted-photo Change menu opens the shared native processing/review/manual-crop task. The Vision implementation performs one local foreground-instance request at a time, unions all returned instances, preserves the full source extent on neutral ground and produces a proposed metadata-minimized photo. Request/draft/operation/source/recipe identity is checked before preview and again before applying; Cancel abandons the job without promising immediate compute termination. Original/Removed, enlarged inspection, retry and crop fallback never save a piece. Existing first-piece category-derived guidance and pinned outfit creation remain unchanged and covered by their existing tests.
+
+Background removal is **not activated** until issue30 qualifies garment quality, latency and memory. Its current entry truthfully offers the unavailable/manual path. API availability and green unit tests are not that qualification; no Vision garment result or performance is claimed here.
+
+Schema V19 records the derived-to-original media edge. Live piece/personal/draft/Undo references protect both sources. Reset in the shared framing editor can return a processed capture to its original, then apply new manual framing; it changes only the parent draft until Save. Superseded derived bytes release safely while shared originals remain. New media edges must be included in issue29 archive/restore/erase ownership.
+
+The missing-API tracer failed `/tmp/aqd-22-s4-red.log`. Core62 and physical native165, comprising152 Swift Testing and13 XCTest, pass `/tmp/aqd-22-s4-unit.log`. Final2 focused cases pass `/tmp/aqd-22-s4-final.log`, adding stale-proposal refusal with no staged media and last-owner draft cleanup. The first stale fixture staged an unowned photo before AppState’s normal staging cleanup and was corrected to use the actual running-app import order. Bounded increment review traced original reachability, recipe Reset, source/operation checks, cancellation, full-extent preparation and gated activation. All E2E/rendered/garment/model/device performance remains #30.

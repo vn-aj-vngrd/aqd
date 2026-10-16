@@ -15,6 +15,8 @@ struct PieceCaptureView: View {
     @State private var cameraData: Data?
     @State private var showDetails = false
     @State private var showPhotoEditor = false
+    @State private var showBackgroundRemoval = false
+    @State private var backgroundCropRequested = false
     @State private var discardDecision = false
     @State private var cameraDenied = false
     @State private var cameraRestricted = false
@@ -134,6 +136,9 @@ struct PieceCaptureView: View {
                 .ignoresSafeArea()
         }
         .sheet(isPresented: $showDetails) { PieceDetailsView(model: model) }
+        .sheet(isPresented: $showBackgroundRemoval, onDismiss: {
+            if backgroundCropRequested { backgroundCropRequested = false; showPhotoEditor = true }
+        }) { BackgroundRemovalView(capture: model) { backgroundCropRequested = true; showBackgroundRemoval = false } }
         .sheet(isPresented: $showPhotoEditor) { PhotoEditorView(model: model) }
         .onDisappear { model.cancelImport() }
     }
@@ -149,6 +154,7 @@ struct PieceCaptureView: View {
                             Menu("Change") {
                                 Button("Choose from Photos", systemImage: "photo.on.rectangle") { pickerPresented = true }
                                 Button("Take photo", systemImage: "camera") { requestCamera() }
+                                Button("Remove background", systemImage: "person.crop.rectangle") { showBackgroundRemoval = true }.disabled(model.isImporting || model.isSaving)
                                 Button("Remove photo", systemImage: "trash", role: .destructive) { model.removePhoto() }
                             }
                             .frame(minWidth: 44, minHeight: 44)

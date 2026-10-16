@@ -7,8 +7,11 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
     @Environment(\.dismiss) private var dismiss
     private let sourceID: UUID?
     private let previousRecipe: PhotoEditRecipe
-    private let previewImage: UIImage?
-    private let previewData: Data?
+    private let acceptedPreviewData: Data?
+    private let originalResetPreviewData: Data?
+    @State private var resetsOriginal = false
+    private var previewData: Data? { resetsOriginal ? originalResetPreviewData : acceptedPreviewData }
+    private var previewImage: UIImage? { previewData.flatMap { UIImage(data: $0) } }
     private let originalWidth: Int
     private let originalHeight: Int
     @State private var quarterTurns: Int
@@ -31,8 +34,8 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
         sourceID = model.editingPhotoID
         let recipe = model.editingPhotoRecipe
         previousRecipe = recipe
-        previewData = model.originalThumbnailData()
-        previewImage = previewData.flatMap { UIImage(data: $0) }
+        acceptedPreviewData = model.originalThumbnailData()
+        originalResetPreviewData = model.resetThumbnailData()
         let source = model.originalPhotoData().flatMap { CGImageSourceCreateWithData($0 as CFData, nil) }
         let properties = source.flatMap { CGImageSourceCopyPropertiesAtIndex($0, 0, nil) as? [CFString: Any] }
         let width = (properties?[kCGImagePropertyPixelWidth] as? NSNumber)?.intValue ?? 0
@@ -54,6 +57,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
     }
 
     private var dirty: Bool {
+        if resetsOriginal && model.hasProcessedPhoto { return true }
         guard let recipe else { return true }
         guard recipe.quarterTurns == previousRecipe.quarterTurns else { return true }
         switch (recipe.crop, previousRecipe.crop) {
@@ -87,6 +91,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
                             }.frame(minHeight: 44)
                             Spacer()
                             Button("Reset") {
+                                resetsOriginal = true
                                 quarterTurns = 0; portrait = false; zoom = 1; positionX = 0.5; positionY = 0.5
                                 previewState.requestRetry()
                             }
@@ -213,7 +218,9 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
               previewState.canUsePhoto(quarterTurns: quarterTurns, applying: applying) else { return }
         applying = true
         applicationTask = Task { @MainActor in
-            let accepted = await model.applyPhotoEdit(recipe, sourceID: sourceID, previousRecipe: previousRecipe)
+            let accepted: Bool
+            if resetsOriginal { accepted = await model.applyPhotoReset(recipe, sourceID: sourceID, previousRecipe: previousRecipe) }
+            else { accepted = await model.applyPhotoEdit(recipe, sourceID: sourceID, previousRecipe: previousRecipe) }
             guard !Task.isCancelled else { return }
             applying = false
             if accepted { dismiss() }

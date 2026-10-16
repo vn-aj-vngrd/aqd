@@ -656,3 +656,55 @@ final class CaptureModel: Identifiable {
         }
     }
 }
+
+struct BackgroundPhotoInput: Sendable {
+    let draftID: UUID
+    let operationID: UUID
+    let sourceID: UUID
+    let originalID: UUID
+    let recipe: PhotoEditRecipe
+    let data: Data
+}
+extension CaptureModel {
+    var hasProcessedPhoto: Bool {
+        guard let id = draft.photoID else { return false }
+        return (try? state.store?.backgroundOriginalID(for: id)) != nil
+    }
+    func backgroundInput() throws -> BackgroundPhotoInput {
+        guard !isSaving, !isImporting, saved == nil, let source = draft.photoID, let store = state.store else { throw BackgroundPhotoError.staleSource }
+        let original = try store.backgroundOriginalID(for: source) ?? source
+        return BackgroundPhotoInput(draftID: draft.id, operationID: operationID, sourceID: source, originalID: original, recipe: draft.photoRecipe, data: try store.originalPhoto(id: original))
+    }
+    func backgroundSourceIsCurrent(_ input: BackgroundPhotoInput) -> Bool {
+        !isSaving && !isImporting && saved == nil && draft.id == input.draftID && operationID == input.operationID && draft.photoID == input.sourceID && draft.photoRecipe == input.recipe
+    }
+    func acceptBackground(_ prepared: PreparedPhoto?, input: BackgroundPhotoInput) -> Bool {
+        guard backgroundSourceIsCurrent(input), let store = state.store else { return false }
+        do {
+            let id: UUID
+            if let prepared { id = try store.acceptBackgroundPhoto(prepared, originalID: input.originalID) }
+            else { _ = try store.originalPhoto(id: input.originalID); id = input.originalID }
+            draft.photoID = id; draft.photoRecipe = .fitOriginal; operationID = UUID(); persistDraft()
+            return !draftSaveFailed
+        } catch { errorText = "The background result could not be applied. Your previous accepted photo is retained."; return false }
+    }
+    func resetThumbnailData() -> Data? {
+        guard let id = draft.photoID, let original = try? state.store?.backgroundOriginalID(for: id) else { return originalThumbnailData() }
+        return try? state.store?.thumbnailPhoto(id: original)
+    }
+    func applyPhotoReset(_ recipe: PhotoEditRecipe, sourceID: UUID, previousRecipe: PhotoEditRecipe) async -> Bool {
+        guard !isSaving, saved == nil, draft.photoID == sourceID, draft.photoRecipe == previousRecipe, let store = state.store else { return false }
+        guard let original = try? store.backgroundOriginalID(for: sourceID) else { return await applyPhotoEdit(recipe, sourceID: sourceID, previousRecipe: previousRecipe) }
+        cancelImport(); let request = importGate.begin(for: draft)
+        do {
+            let prepared = try await preparer.render(data: store.originalPhoto(id: original), sourcePhotoID: original, recipe: recipe)
+            guard !Task.isCancelled, importGate.canAccept(request, for: draft), draft.photoRecipe == previousRecipe else { return false }
+            try store.acceptPhotoEdit(prepared)
+            guard importGate.apply(photoID: original, request: request, to: &draft) else { return false }
+            draft.photoRecipe = recipe; operationID = UUID(); persistDraft(); return !draftSaveFailed
+        } catch {
+            guard importGate.canAccept(request, for: draft) else { return false }
+            importGate.cancel(); errorText = "The original could not be restored. Your accepted photo and framing are retained."; return false
+        }
+    }
+}

@@ -280,8 +280,13 @@ enum LocalSchemaV18: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV17.models + [StoredTodayCardDeletion.self] }
 }
 
+enum LocalSchemaV19: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(19, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV18.models + [StoredPhotoSource.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self, LocalSchemaV15.self, LocalSchemaV16.self, LocalSchemaV17.self, LocalSchemaV18.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self, LocalSchemaV15.self, LocalSchemaV16.self, LocalSchemaV17.self, LocalSchemaV18.self, LocalSchemaV19.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
@@ -299,7 +304,8 @@ enum LocalMigrationPlan: SchemaMigrationPlan {
          .lightweight(fromVersion: LocalSchemaV14.self, toVersion: LocalSchemaV15.self),
          .lightweight(fromVersion: LocalSchemaV15.self, toVersion: LocalSchemaV16.self),
          .lightweight(fromVersion: LocalSchemaV16.self, toVersion: LocalSchemaV17.self),
-         .lightweight(fromVersion: LocalSchemaV17.self, toVersion: LocalSchemaV18.self)]
+         .lightweight(fromVersion: LocalSchemaV17.self, toVersion: LocalSchemaV18.self),
+         .lightweight(fromVersion: LocalSchemaV18.self, toVersion: LocalSchemaV19.self)]
     }
 }
 
@@ -345,13 +351,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:18".utf8)
-        let previousVersions = (1..<18).map { Data("AQD-piece-store:\($0)".utf8) }
+        let version = Data("AQD-piece-store:19".utf8)
+        let previousVersions = (1..<19).map { Data("AQD-piece-store:\($0)".utf8) }
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV18.self)
+        let schema = Schema(versionedSchema: LocalSchemaV19.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -525,7 +531,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, 18), (Schema(versionedSchema: LocalSchemaV17.self), 17), (Schema(versionedSchema: LocalSchemaV16.self), 16), (Schema(versionedSchema: LocalSchemaV15.self), 15), (Schema(versionedSchema: LocalSchemaV14.self), 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
+            let candidates = [(schema, 19), (Schema(versionedSchema: LocalSchemaV18.self), 18), (Schema(versionedSchema: LocalSchemaV17.self), 17), (Schema(versionedSchema: LocalSchemaV16.self), 16), (Schema(versionedSchema: LocalSchemaV15.self), 15), (Schema(versionedSchema: LocalSchemaV14.self), 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -551,7 +557,10 @@ final class PieceStore {
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 18) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 19) throws -> Bool {
+        if storeVersion >= 19 {
+            guard try context.fetchCount(FetchDescriptor<StoredPhotoSource>()) == 0 else { throw StoreError.unsupportedStore }
+        }
         if storeVersion >= 18 {
             guard try context.fetchCount(FetchDescriptor<StoredTodayCardDeletion>()) == 0 else { throw StoreError.unsupportedStore }
         }
@@ -1193,11 +1202,12 @@ final class PieceStore {
     }
 
     private func queueCleanup(photoID: UUID, recipeDigest: String? = nil, context: ModelContext) throws {
-        let existing = try context.fetch(FetchDescriptor<StoredPhotoCleanup>(predicate: #Predicate { $0.id == photoID })).first
-        let candidate = existing ?? StoredPhotoCleanup(photoID: photoID)
-        if existing == nil { context.insert(candidate) }
-        if let recipeDigest, !candidate.recipeDigests.contains(recipeDigest) {
-            candidate.recipeDigests.append(recipeDigest)
+        let sources = try photoSources(in: context)
+        for candidateID in [photoID] + [sources[photoID]].compactMap({ $0 }) {
+            let existing = try context.fetch(FetchDescriptor<StoredPhotoCleanup>()).first { $0.id == candidateID }
+            let candidate = existing ?? StoredPhotoCleanup(photoID: candidateID)
+            if existing == nil { context.insert(candidate) }
+            if candidateID == photoID, let recipeDigest, !candidate.recipeDigests.contains(recipeDigest) { candidate.recipeDigests.append(recipeDigest) }
         }
     }
 
@@ -1240,7 +1250,7 @@ final class PieceStore {
         // Probe only the two exact Fit paths for validated live source identities.
         let fitDigest = try PhotoPreparer.recipeDigest(.fitOriginal)
         let identityPhotos = try personalPhotoReferences(in: context)
-        let livePhotoIDs = Set(pieces.map(\.photoID) + drafts.compactMap(\.photoID) + identityPhotos)
+        let livePhotoIDs = try photoReferences(pieces.map(\.photoID) + drafts.compactMap(\.photoID) + identityPhotos, context: context)
         for photoID in livePhotoIDs.sorted(by: { $0.uuidString < $1.uuidString }) {
             let fitFiles = try ["rendition", "thumbnail"].map {
                 try editURL(id: photoID, recipe: .fitOriginal, kind: $0)
@@ -1340,7 +1350,7 @@ final class PieceStore {
         _ = try decodedReceipts(context)
         let personalOwners = try personalPhotoOwners(in: context)
         let identityPhotos = personalOwners.map { $0.id }
-        let references = Set(pieces.map(\.photoID) + drafts.compactMap(\.photoID) + identityPhotos)
+        let references = try photoReferences(pieces.map(\.photoID) + drafts.compactMap(\.photoID) + identityPhotos, context: context)
         // A failed editor can leave an unused rendition even when its source is saved.
         // Only exact durably staged recipes may be pruned from a shared source.
         guard stagedRecipeDigests.allSatisfy({ $0.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil }) else {
@@ -1366,6 +1376,7 @@ final class PieceStore {
                 where file.lastPathComponent.range(of: pattern, options: .regularExpression) != nil {
                 try removeOwnedMediaFile(file)
             }
+            for source in try context.fetch(FetchDescriptor<StoredPhotoSource>()).filter({ $0.id == photoID }) { context.delete(source) }
             // Keep the photo record until all files are known absent. If any step fails,
             // the durable candidate list still permits a same-operation retry after reopen.
             for photo in try context.fetch(FetchDescriptor<StoredPhoto>(predicate: #Predicate { $0.id == photoID })) {
@@ -2710,5 +2721,33 @@ extension PieceStore {
         guard let task = try context.fetch(FetchDescriptor<StoredTodayCardDeletion>()).first(where: { $0.id == request.operationID }), try task.value() == request,
               task.applied || cancelling else { throw StoreError.operationConflict }
         task.acknowledged = true; try commit(context)
+    }
+}
+
+extension PieceStore {
+    private func photoSources(in context: ModelContext) throws -> [UUID: UUID] {
+        var sources: [UUID: UUID] = [:]
+        for value in try context.fetch(FetchDescriptor<StoredPhotoSource>()) {
+            guard value.id != value.originalID, sources.updateValue(value.originalID, forKey: value.id) == nil else { throw StoreError.invalidRecord }
+        }
+        guard sources.values.allSatisfy({ sources[$0] == nil }) else { throw StoreError.invalidRecord }
+        return sources
+    }
+    private func photoReferences(_ ids: [UUID], context: ModelContext) throws -> Set<UUID> {
+        let sources = try photoSources(in: context)
+        return Set(ids + ids.compactMap { sources[$0] })
+    }
+    func backgroundOriginalID(for id: UUID) throws -> UUID? { try photoSources(in: ModelContext(container))[id] }
+    func acceptBackgroundPhoto(_ prepared: PreparedPhoto, originalID: UUID) throws -> UUID {
+        let context = ModelContext(container), sources = try photoSources(in: context)
+        guard allowsSave, prepared.id != originalID, sources[originalID] == nil else { throw StoreError.invalidRecord }
+        guard let original = try context.fetch(FetchDescriptor<StoredPhoto>()).first(where: { $0.id == originalID }),
+              original.pixelWidth == prepared.pixelWidth, original.pixelHeight == prepared.pixelHeight else { throw StoreError.invalidRecord }
+        _ = try originalPhoto(id: originalID)
+        let id = try acceptPhoto(prepared)
+        if let existing = sources[id] { guard existing == originalID else { throw StoreError.operationConflict } }
+        else { context.insert(StoredPhotoSource(id: id, originalID: originalID)) }
+        try queueCleanup(photoID: id, context: context); try commit(context)
+        return id
     }
 }

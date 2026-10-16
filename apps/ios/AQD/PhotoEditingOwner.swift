@@ -7,10 +7,21 @@ import Observation
     var editingPhotoID: UUID? { get }
     var editingPhotoRecipe: PhotoEditRecipe { get }
     var errorText: String? { get }
+    var hasProcessedPhoto: Bool { get }
+    func resetThumbnailData() -> Data?
+    func applyPhotoReset(_ recipe: PhotoEditRecipe, sourceID: UUID, previousRecipe: PhotoEditRecipe) async -> Bool
     func originalPhotoData() -> Data?
     func originalThumbnailData() -> Data?
     func applyPhotoEdit(_ recipe: PhotoEditRecipe, sourceID: UUID, previousRecipe: PhotoEditRecipe) async -> Bool
     func cancelImport()
+}
+
+extension PhotoEditingOwner {
+    var hasProcessedPhoto: Bool { false }
+    func resetThumbnailData() -> Data? { originalThumbnailData() }
+    func applyPhotoReset(_ recipe: PhotoEditRecipe, sourceID: UUID, previousRecipe: PhotoEditRecipe) async -> Bool {
+        await applyPhotoEdit(recipe, sourceID: sourceID, previousRecipe: previousRecipe)
+    }
 }
 
 extension CaptureModel: PhotoEditingOwner {
