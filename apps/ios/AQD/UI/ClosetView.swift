@@ -31,16 +31,12 @@ struct ClosetView: View {
             VStack(spacing: 0) {
                 scopePicker.padding(.horizontal, 20).padding(.bottom, 12)
                 if state.closetSearchActive {
-                    ClosetSearchContent(model: searchModel, input: searchInput,
-                                        clear: { state.closetSearchQuery = "" },
-                                        browse: { state.closetSearchActive = false },
-                                        addPiece: { state.addPiece() },
-                                        clearFilters: scope == "Themes" && searchThemeQuery.content != .all ? { searchThemeQuery = ThemeCollectionQuery() } : nil)
+                    ClosetSearchContent(model: searchModel, input: searchInput)
                 } else if scope == "Pieces" {
                     pieceCollection
                 } else if scope == "Outfits" {
-                    OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID, sort: outfitSort, clearFilters: { favoritesOnly = false; themeID = nil }, summary: collectionSummary)
-                } else { ThemeCollectionView(query: themeQuery, clearFilters: { themeQuery = ThemeCollectionQuery() }, summary: collectionSummary) }
+                    OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID, sort: outfitSort, summary: collectionSummary)
+                } else { ThemeCollectionView(query: themeQuery, summary: collectionSummary) }
             }
             .padding(.top, AppSpacing.large)
             .background(AppTheme.canvas)
@@ -201,13 +197,7 @@ struct ClosetView: View {
         if error == nil && results.isEmpty {
             EmptyStatePage(title: archived ? "No archived pieces" : category == nil && availability == nil ? "Your closet starts here" : "No matching pieces",
                            systemImage: "tshirt",
-                           description: Text(category == nil && availability == nil ? "Add a photo and a few details. Everything stays on this device." : "Try another category or clear the filters.")) {
-                if category == nil && availability == nil && !archived {
-                    PrimaryAction(title: "Add piece") { state.addPiece() }
-                } else {
-                    PrimaryAction(title: "Clear filters") { category = nil; availability = nil; archived = false }
-                }
-            }
+                           description: Text(category == nil && availability == nil ? "Add a photo and a few details. Everything stays on this device." : "Try another category or clear the filters."))
         } else {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.large) {
@@ -373,7 +363,7 @@ struct PieceDetailView: View {
                         VStack(alignment: .leading, spacing: AppSpacing.large) {
                             detail("Recorded wears", String(wear.recorded))
                             detail("Last worn", wear.lastWorn?.key ?? "No recorded history")
-                            NavigationLink { LocalWearHistoryView(pieceID: piece.id) } label: {
+                            NavigationLink { LocalWearHistoryView(pieceID: piece.id).secondaryPage() } label: {
                                 HStack {
                                     Text("Wear history")
                                     Spacer()

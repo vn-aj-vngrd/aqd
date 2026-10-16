@@ -31,9 +31,7 @@ struct LocalProfileView: View {
                                 .padding(.top, AppSpacing.large).padding(.bottom, AppSpacing.screen)
                         }
                     }
-                    .safeAreaInset(edge: .bottom, spacing: 0) {
-                        ActionFooter { PrimaryAction(title: "Add fit") { state.openFit() } }
-                    }.accessibilityIdentifier("profile.fits.empty")
+.accessibilityIdentifier("profile.fits.empty")
                 } else {
             ScrollViewReader { proxy in
             ScrollView {
@@ -62,10 +60,10 @@ struct LocalProfileView: View {
                         } label: { Label("More", systemImage: "ellipsis") }
                     }
                 }
-                .navigationDestination(isPresented: $state.profileInsights) { LocalWearInsightsView() }
-                .navigationDestination(isPresented: $state.profileHistory) { LocalWearHistoryView() }
-                .navigationDestination(isPresented: $categories) { WardrobeCategorySettingsView() }
-                .navigationDestination(isPresented: $state.profileSettings) { LocalSettingsView() }
+                .navigationDestination(isPresented: $state.profileInsights) { LocalWearInsightsView().secondaryPage() }
+                .navigationDestination(isPresented: $state.profileHistory) { LocalWearHistoryView().secondaryPage() }
+                .navigationDestination(isPresented: $categories) { WardrobeCategorySettingsView().secondaryPage() }
+                .navigationDestination(isPresented: $state.profileSettings) { LocalSettingsView().secondaryPage() }
         }.tint(AppTheme.ink)
     }
     private var profileActions: some View {

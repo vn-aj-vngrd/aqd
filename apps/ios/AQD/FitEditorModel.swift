@@ -12,6 +12,7 @@ final class FitEditorModel: Identifiable {
     var unknown = false
     var error: String?
     var importing = false
+    var completedPhotoImportID: UUID?
     var importID = UUID()
     private var importTask: Task<Void, Never>?
     init(state: AppState, draft: FitDraft) throws {
@@ -49,6 +50,7 @@ final class FitEditorModel: Identifiable {
                 guard let store = self.state.store else { throw PieceStore.StoreError.corruptStore }
                 _ = try store.acceptPhoto(photo)
                 self.update { $0.photoID = photo.id; $0.photoRecipe = .fitOriginal }; self.importing = false
+                if self.error == nil { self.completedPhotoImportID = photo.id }
             } catch {
                 guard let self, self.importID == token else { return }
                 self.importing = false; self.error = "The photo could not be prepared. Your previous photo, link and note are retained. Choose another or retry."

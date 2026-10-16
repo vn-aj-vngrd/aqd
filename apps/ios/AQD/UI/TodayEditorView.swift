@@ -4,6 +4,7 @@ import SwiftUI
 struct TodayEditorView: View {
     @Bindable var model: TodayEditorModel
     @State private var discard = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     var body: some View {
         NavigationStack {
             List {
@@ -31,7 +32,10 @@ struct TodayEditorView: View {
                                 .accessibilityAction(named: "Move up") { model.moveInCatalog(instance.id, to: index - 1) }
                                 .accessibilityAction(named: "Move down") { model.moveInCatalog(instance.id, to: index + 1) }
                                 .allowsHitTesting(!model.locked)
-                        }.listRowBackground(AppTheme.surface)
+                        }.padding(.horizontal, 12).padding(.vertical, 4)
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                            .listRowBackground(Color.clear).listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                             .accessibilityValue("Position \(index + 1) of \(model.catalog.count)")
                             .dropDestination(for: String.self) { values, _ in
                                 guard values.count == 1, let raw = values.first, let id = UUID(uuidString: raw),
@@ -45,6 +49,7 @@ struct TodayEditorView: View {
             }.listStyle(.insetGrouped).scrollContentBackground(.hidden)
                 .contentMargins(.top, AppSpacing.large, for: .scrollContent)
                 .background(AppTheme.canvas)
+                .animation(reduceMotion ? nil : AQDMotion.reflow, value: model.catalog.map(\.id))
                 .navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {

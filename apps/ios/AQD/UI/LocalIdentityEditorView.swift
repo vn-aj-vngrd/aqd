@@ -28,13 +28,19 @@ struct LocalIdentityEditorView: View {
     @State private var editingPhoto = false
     var body: some View {
         NavigationStack {
-            ScrollView {
+            ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 20) {
-                    LocalIdentityAvatar(photoID: model.draft.photoID, recipe: model.draft.photoRecipe ?? .fitOriginal).frame(width: 96, height: 96).frame(maxWidth: .infinity)
+                    LocalIdentityAvatar(photoID: model.draft.photoID, recipe: model.draft.photoRecipe ?? .fitOriginal).frame(width: 96, height: 96)
+                        .overlay(alignment: .bottomTrailing) {
+                            if model.saved == nil {
+                                SharedPhotoSourceButton(title: "Profile photo", selectionToken: model.importID, locked: model.locked || model.importing,
+                                    iconOnly: true, onEdit: model.draft.photoID == nil ? nil : { editingPhoto = true },
+                                    onRemove: model.draft.photoID == nil ? nil : { model.removePhoto() }, onData: model.importPhoto)
+                                    .offset(x: 12, y: 8)
+                            }
+                        }.frame(maxWidth: .infinity).padding(.bottom, 8)
                     if model.saved == nil {
-                        SharedPhotoSourceButton(title: "Choose photo", selectionToken: model.importID, locked: model.locked, onData: model.importPhoto)
                         if model.importing { ProgressView("Preparing photo"); Button("Cancel import") { model.cancelImport() }.frame(minHeight: 44) }
-                        if model.draft.photoID != nil { SecondaryAction(title: "Edit photo") { editingPhoto = true }.disabled(model.locked || model.importing); Button("Remove photo", role: .destructive) { model.removePhoto() }.frame(minHeight: 44).disabled(model.locked) }
                         LabeledField(title: "Name", text: Binding(get: { model.draft.name }, set: { name in model.update { $0.name = name } })).disabled(model.locked)
                         LabeledField(title: "Caption", text: Binding(get: { model.draft.caption ?? LocalProfileIdentity.defaultCaption },
                                      set: { value in model.update { $0.caption = value } }), multiline: true, characterLimit: TextAreaLimits.caption,
@@ -52,7 +58,8 @@ struct LocalIdentityEditorView: View {
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 if model.saved == nil { confirmation }
             } }.tint(AppTheme.ink)
-                .navigationDestination(isPresented: $editingPhoto) { PhotoEditorView(model: model) }
+                .editImportedPhoto(model, importing: model.importing, locked: model.locked, presented: $editingPhoto)
+                .navigationDestination(isPresented: $editingPhoto) { PhotoEditorView(model: model).secondaryPage() }
                 .toolbar { ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                     Button {
                         if model.saved != nil { model.finish() }

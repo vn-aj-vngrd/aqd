@@ -88,6 +88,13 @@ final class AppState {
     var appearance: AppAppearance { AppAppearance(rawValue: settings?.appearance.rawValue ?? "system") ?? .system }
     var profileSettings = false
     var isSettingsVisible: Bool { selection == 4 && profileSettings }
+    var secondaryPageOwners: [UUID: Int] = [:]
+    var isRootTabBarHidden: Bool {
+        secondaryPageOwners.values.contains(selection)
+            || (selection == 1 && !closetPath.isEmpty)
+            || (selection == 2 && !plannerPath.isEmpty)
+            || (selection == 4 && (profileSettings || profileInsights || profileHistory))
+    }
     var profileHistory = false
     var profileInsights = false
     var entry = PrivateEntryState(alreadyEntered: true)
@@ -481,6 +488,7 @@ final class CaptureModel: Identifiable {
     var draft: PieceDraft
     var operationID: UUID
     var importGate = PhotoImportGate()
+    var completedPhotoImportID: UUID?
     var errorText: String?
     var draftSaveFailed = false
     var isSaving = false
@@ -584,6 +592,7 @@ final class CaptureModel: Identifiable {
                 guard importGate.apply(photoID: photoID, request: request, to: &draft) else { return }
                 operationID = UUID()
                 persistDraft()
+                if !draftSaveFailed { completedPhotoImportID = photoID }
             } catch {
                 guard importGate.canAccept(request, for: draft) else { return }
                 importGate.cancel()

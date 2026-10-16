@@ -43,7 +43,8 @@ private struct AppRootView: View {
                     .accessibilityLabel("Opening your closet").accessibilityIdentifier("entry.splash")
                     .transition(.opacity)
             } else if let error = state.openingError {
-                EmptyStatePage(title: "Your closet couldn’t open", systemImage: "externaldrive.badge.exclamationmark", description: Text(error)) {
+                CenteredPageContent {
+                    AppEmptyState("Your closet couldn’t open", systemImage: "externaldrive.badge.exclamationmark", description: Text(error), fillsAvailableSpace: false)
                     PrimaryAction(title: "Retry") { state.openStore() }
                     SecondaryAction(title: "Choose an archive") { state.openRestore() }
                 }
@@ -55,7 +56,7 @@ private struct AppRootView: View {
                            closet: { rootContent(ClosetView()) },
                            planner: { rootContent(LocalPlannerView()) },
                            profile: { rootContent(LocalProfileView()) },
-                           agent: { close in rootContent(LocalAgentView(close: close)) }, agentLaunchID: state.agentLaunchID, isTabBarHidden: state.isSettingsVisible)
+                           agent: { close in rootContent(LocalAgentView(close: close)) }, agentLaunchID: state.agentLaunchID, isTabBarHidden: state.isRootTabBarHidden)
                     .id(ObjectIdentifier(state)).ignoresSafeArea()
             }
         }

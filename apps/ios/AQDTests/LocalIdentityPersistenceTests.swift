@@ -7,6 +7,43 @@ import SwiftData
 
 @Suite(.serialized) @MainActor
 struct LocalIdentityPersistenceTests {
+    @Test func successfulImportAloneSignalsPhotoReview() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let state = AppState(store: store)
+        state.openIdentity()
+        let model = try #require(state.identityEditor)
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 24, height: 32)).image { context in UIColor.blue.setFill(); context.fill(CGRect(x: 0, y: 0, width: 24, height: 32)) }
+        model.importPhoto(try #require(image.jpegData(compressionQuality: 0.9)))
+        let deadline = Date().addingTimeInterval(10)
+        while model.importing && Date() < deadline { try await Task.sleep(for: .milliseconds(10)) }
+        try #require(!model.importing)
+        let accepted = try #require(model.draft.photoID)
+        #expect(model.completedPhotoImportID == accepted)
+        model.removePhoto()
+        #expect(model.completedPhotoImportID == accepted)
+        model.importPhoto(Data([1, 2, 3]))
+        while model.importing && Date() < deadline { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(!model.importing && model.error != nil && model.draft.photoID == nil)
+        #expect(model.completedPhotoImportID == accepted)
+    }
+    @Test func secondaryChromeTracksOnlyTheCurrentRootAndReturnsAfterBack() throws {
+        let state = AppState(store: try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)))
+        state.selection = 1; state.closetPath = [.piece(UUID())]
+        #expect(state.isRootTabBarHidden)
+        state.selection = 0
+        #expect(!state.isRootTabBarHidden)
+        let page = UUID(); state.secondaryPageOwners[page] = 4
+        state.selection = 4
+        #expect(state.isRootTabBarHidden)
+        state.secondaryPageOwners.removeValue(forKey: page)
+        #expect(!state.isRootTabBarHidden)
+        state.profileSettings = true
+        #expect(state.isRootTabBarHidden)
+        state.profileSettings = false
+        #expect(!state.isRootTabBarHidden)
+        state.selection = 1; state.closetPath = []
+        #expect(!state.isRootTabBarHidden)
+    }
     @Test func captionPersistsReopensClearsAndCancelledEditsRetainSavedValue() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let store = try PieceStore(directory: directory)

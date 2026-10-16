@@ -18,9 +18,7 @@ struct LocalPlannerView: View {
                 Text(selectedDateLabel).font(AppTypography.body).foregroundStyle(AppTheme.secondary).padding(.horizontal, 20)
                 if state.planError == nil && entries.isEmpty && state.planDefinitions.isEmpty {
                     EmptyStatePage(title: "No plans for this day", systemImage: "calendar",
-                                   description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear.")) {
-                        PrimaryAction(title: "Plan an outfit") { state.openPlan(day: state.plannerDay) }
-                    }
+                                   description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear."))
                 } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
@@ -93,11 +91,6 @@ struct LocalPlannerView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
-            }
-            .safeAreaInset(edge: .bottom) {
-                if entries.isEmpty && state.planError == nil {
-                    ActionFooter { PrimaryAction(title: "Plan an outfit") { state.openPlan(day: state.plannerDay) } }
-                }
             }
                 }
             }.padding(.top, AppSpacing.large).background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline)

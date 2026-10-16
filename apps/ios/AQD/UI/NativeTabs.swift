@@ -242,3 +242,16 @@ private final class AgentHostingController: UIHostingController<AnyView> {
         }
     }
 }
+
+private struct SecondaryPageChrome: ViewModifier {
+    @Environment(AppState.self) private var state
+    @State private var token = UUID()
+    func body(content: Content) -> some View {
+        content.toolbar(.hidden, for: .tabBar)
+            .onAppear { state.secondaryPageOwners[token] = state.selection }
+            .onDisappear { state.secondaryPageOwners.removeValue(forKey: token) }
+    }
+}
+extension View {
+    func secondaryPage() -> some View { modifier(SecondaryPageChrome()) }
+}

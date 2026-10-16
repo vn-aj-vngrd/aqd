@@ -82,7 +82,7 @@ struct FitJournalGrid: View {
                 } else {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3), spacing: 8) {
                         ForEach(state.fitMemories) { memory in
-                            NavigationLink { FitMemoryDetailView(id: memory.id) } label: {
+                            NavigationLink { FitMemoryDetailView(id: memory.id).secondaryPage() } label: {
                                 FitMemoryArtwork(memory: memory, thumbnail: true)
                                         .clipShape(RoundedRectangle(cornerRadius: 6))
                                         .padding(4)
@@ -104,7 +104,7 @@ struct FitJournalGrid: View {
                 }
             }
         }.navigationDestination(isPresented: Binding(get: { openedMemoryID != nil }, set: { if !$0 { openedMemoryID = nil } })) {
-            if let id = openedMemoryID { FitMemoryDetailView(id: id) }
+            if let id = openedMemoryID { FitMemoryDetailView(id: id).secondaryPage() }
         }
     }
 
@@ -153,7 +153,8 @@ struct FitEditorView: View {
                         else { discard = true }
                     } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }.accessibilityLabel(model.saved == nil ? "Cancel fit" : "Done").disabled(model.pending || model.unknown)
                 } }
-                .navigationDestination(isPresented: $editingPhoto) { PhotoEditorView(model: model) }
+                .editImportedPhoto(model, importing: model.importing, locked: model.locked, presented: $editingPhoto)
+                .navigationDestination(isPresented: $editingPhoto) { PhotoEditorView(model: model).secondaryPage() }
                 .navigationDestination(isPresented: $choosingOutfit) { FitOutfitChooser(model: model) }
                 .navigationDestination(isPresented: $timezone) {
                     TimezoneChooser(current: model.draft.value.day.timeZoneID) { zone in model.update { $0.day.timeZoneID = zone }; return model.error == nil }
@@ -184,23 +185,14 @@ struct FitEditorView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }.buttonStyle(.plain).disabled(model.locked)
                 .accessibilityLabel(model.draft.value.photoID == nil ? "Add fit photo" : "Change fit photo")
-            SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add photo" : "Change photo", selectionToken: model.importID, locked: model.locked, presentation: $photoSources, onData: model.importPhoto)
+            SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add photo" : "Change photo", selectionToken: model.importID, locked: model.locked, presentation: $photoSources,
+                onEdit: model.draft.value.photoID == nil ? nil : { editingPhoto = true },
+                onRemove: model.draft.value.photoID == nil ? nil : { removePhoto = true }, onData: model.importPhoto)
             if model.importing {
                 HStack {
                     ProgressView("Preparing photo")
                     Spacer()
                     Button("Cancel import") { model.cancelImport() }.frame(minHeight: 44)
-                }
-            }
-            if model.draft.value.photoID != nil {
-                HStack {
-                    Text("Photo options").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    Spacer()
-                    Menu {
-                        AccessoryButton("Edit photo", systemImage: "crop") { editingPhoto = true }.disabled(model.importing)
-                        Button("Remove photo", systemImage: "trash", role: .destructive) { removePhoto = true }
-                    } label: { Label("Photo options", systemImage: "ellipsis").labelStyle(.iconOnly).frame(width: 44, height: 44) }
-                        .disabled(model.locked)
                 }
             }
             DisclosureRow(title: "Outfit", value: model.draft.value.outfit?.displayName ?? "Link an outfit") { choosingOutfit = true }.disabled(model.locked)
@@ -211,7 +203,7 @@ struct FitEditorView: View {
     }
     private var dateDetails: some View {
         VStack(spacing: 0) {
-            DatePicker("Date", selection: Binding(get: { (try? model.draft.value.day.date()) ?? Date() }, set: { date in
+            ThemedDatePicker("Date", selection: Binding(get: { (try? model.draft.value.day.date()) ?? Date() }, set: { date in
                 let zone = TimeZone(identifier: model.draft.value.day.timeZoneID) ?? .current
                 model.update { $0.day = LocalPlanDay(date: date, timeZone: zone) }
             }), displayedComponents: .date)

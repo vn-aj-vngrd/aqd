@@ -5,12 +5,16 @@ import UIKit
 struct LocalSettingsView: View {
     @Environment(AppState.self) private var state
     @State private var weather = false
+    #if DEBUG
+    @State private var previewWelcome = false
+    @State private var previewSplash = false
+    #endif
     var body: some View {
         List {
             Section("Personalize") {
-                NavigationLink { WardrobeCategorySettingsView() } label: { SettingsRow(title: "Categories", symbol: "square.grid.2x2") }
-                NavigationLink { LocalStyleSettingsView() } label: { SettingsRow(title: "Style preferences", symbol: "slider.horizontal.3") }
-                NavigationLink { LocalAppearanceSettingsView() } label: {
+                NavigationLink { WardrobeCategorySettingsView().secondaryPage() } label: { SettingsRow(title: "Categories", symbol: "square.grid.2x2") }
+                NavigationLink { LocalStyleSettingsView().secondaryPage() } label: { SettingsRow(title: "Style preferences", symbol: "slider.horizontal.3") }
+                NavigationLink { LocalAppearanceSettingsView().secondaryPage() } label: {
                     SettingsRow(title: "Appearance", symbol: "circle.lefthalf.filled", value: appearanceTitle)
                 }
                 Button { weather = true } label: {
@@ -18,24 +22,37 @@ struct LocalSettingsView: View {
                 }
             }.listRowBackground(AppTheme.surface)
             Section("Assistance & help") {
-                NavigationLink { LocalAssistanceSettingsView() } label: { SettingsRow(title: "On-device Agent", symbol: "sparkle") }
-                NavigationLink { LocalPrivacySettingsView() } label: { SettingsRow(title: "Help & privacy", symbol: "hand.raised") }
+                NavigationLink { LocalAssistanceSettingsView().secondaryPage() } label: { SettingsRow(title: "About Agent", symbol: "sparkle") }
+                NavigationLink { LocalPrivacySettingsView().secondaryPage() } label: { SettingsRow(title: "Help & privacy", symbol: "hand.raised") }
                 Button { state.beginTour(from: .settings) } label: { SettingsRow(title: "App tour", symbol: "play.rectangle", disclosure: true) }
             }.listRowBackground(AppTheme.surface)
             Section {
-                NavigationLink { ArchivedPiecesView() } label: { SettingsRow(title: "Archived pieces", symbol: "archivebox") }
-                NavigationLink { LocalExportView() } label: { SettingsRow(title: "Export closet", symbol: "square.and.arrow.up") }
+                NavigationLink { ArchivedPiecesView().secondaryPage() } label: { SettingsRow(title: "Archived pieces", symbol: "archivebox") }
+                NavigationLink { LocalExportView().secondaryPage() } label: { SettingsRow(title: "Export closet", symbol: "square.and.arrow.up") }
                 Button { state.openRestore() } label: { SettingsRow(title: "Restore closet", symbol: "arrow.counterclockwise", disclosure: true) }
                 Button(role: .destructive) { state.openErase() } label: { SettingsRow(title: "Erase closet", symbol: "trash", disclosure: true, destructive: true) }
             } header: { Text("Your data") } footer: {
                 Text("Stored on this iPhone with no account or automatic cloud backup. Export a copy to protect against device loss or deleting AQD.")
             }.listRowBackground(AppTheme.surface)
+            #if DEBUG
+            Section {
+                Button { previewWelcome = true } label: { SettingsRow(title: "Preview welcome screen", symbol: "hand.wave", disclosure: true) }
+                    .accessibilityIdentifier("aqd.development.welcome")
+                Button { previewSplash = true } label: { SettingsRow(title: "Preview splash screen", symbol: "arrow.clockwise", disclosure: true) }
+                    .accessibilityIdentifier("aqd.development.splash")
+            } header: { Text("Development") } footer: { Text("Previews preserve your setup. Close and reopen AQD to test the system launch screen.") }
+                .listRowBackground(AppTheme.surface)
+            #endif
         }
         .listStyle(.insetGrouped).navigationTitle("Settings").navigationBarTitleDisplayMode(.inline)
         .scrollContentBackground(.hidden).background(AppTheme.canvas).tint(AppTheme.ink)
         .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
         .onAppear { state.reloadSettings() }
         .sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true } } }
+        #if DEBUG
+        .fullScreenCover(isPresented: $previewWelcome) { WelcomeView(previewDismiss: { previewWelcome = false }).background(AppTheme.canvas) }
+        .fullScreenCover(isPresented: $previewSplash) { DevelopmentSplashPreview() }
+        #endif
     }
     private var appearanceTitle: String { state.appearance == .system ? "Automatic" : state.appearance.rawValue.capitalized }
 }
@@ -166,7 +183,7 @@ struct LocalAssistanceSettingsView: View {
                 Label("No cloud model", systemImage: "iphone")
             }.font(AppTypography.supporting).frame(maxWidth: .infinity, alignment: .leading)
                 .padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-        }.background(AppTheme.canvas).navigationTitle("On-device assistance").navigationBarTitleDisplayMode(.inline)
+        }.background(AppTheme.canvas).navigationTitle("About Agent").navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 ActionFooter {
                     ActionStack {
@@ -196,3 +213,17 @@ struct LocalPrivacySettingsView: View {
             }
     }
 }
+
+#if DEBUG
+private struct DevelopmentSplashPreview: View {
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        ZStack {
+            Color("LaunchCanvas").ignoresSafeArea()
+            Image("LaunchMark").resizable().scaledToFit().frame(width: 144, height: 144).accessibilityLabel("AQD")
+        }.task {
+            do { try await Task.sleep(for: .seconds(1.2)); dismiss() } catch { }
+        }
+    }
+}
+#endif

@@ -32,7 +32,7 @@ struct PieceCaptureView: View {
     @AccessibilityFocusState private var photoFocused: Bool
     @FocusState private var nameEditing: Bool
 
-    private enum PhotoSource: Hashable { case photos, camera }
+    private enum PhotoSource: Hashable { case photos, camera, edit, backgroundRemoval, remove }
 
     var body: some View {
         NavigationStack {
@@ -44,7 +44,7 @@ struct PieceCaptureView: View {
                 }
             }
             .background(AppTheme.canvas)
-            .navigationDestination(isPresented: $manageCategories) { WardrobeCategorySettingsView() }
+            .navigationDestination(isPresented: $manageCategories) { WardrobeCategorySettingsView().secondaryPage() }
             .navigationTitle(model.saved == nil ? (model.draft.baseRevision == nil ? "Add piece" : "Edit piece") : "Piece saved")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
@@ -108,6 +108,7 @@ struct PieceCaptureView: View {
         .sheet(isPresented: $showBackgroundRemoval, onDismiss: {
             if backgroundCropRequested { backgroundCropRequested = false; showPhotoEditor = true }
         }) { BackgroundRemovalView(capture: model) { backgroundCropRequested = true; showBackgroundRemoval = false } }
+        .editImportedPhoto(model, importing: model.isImporting, locked: model.isSaving, presented: $showPhotoEditor)
         .sheet(isPresented: $showPhotoEditor) { PhotoEditorView(model: model) }
         .onDisappear { model.cancelImport() }
     }
@@ -193,13 +194,16 @@ struct PieceCaptureView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }.buttonStyle(.plain).disabled(model.isImporting || model.isSaving)
                 .accessibilityLabel(model.draft.photoID == nil ? "Add piece photo" : "Change piece photo")
-            DisclosureRow(title: model.draft.photoID == nil ? "Add photo" : image == nil ? "Replace unavailable photo" : "Change photo", value: "Photos or camera") {
+            DisclosureRow(title: model.draft.photoID == nil ? "Add photo" : image == nil ? "Replace unavailable photo" : "Change photo", value: "") {
                 nameEditing = false
                 sourceSheet = true
             }.disabled(model.isImporting || model.isSaving)
                 .popover(isPresented: $sourceSheet, arrowEdge: .top) {
                     PhotoSourcePopover(photos: { pendingSource = .photos; sourceSheet = false },
-                                       camera: { pendingSource = .camera; sourceSheet = false })
+                                       camera: { pendingSource = .camera; sourceSheet = false },
+                                       edit: image == nil ? nil : { pendingSource = .edit; sourceSheet = false },
+                                       removeBackground: model.draft.photoID == nil ? nil : { pendingSource = .backgroundRemoval; sourceSheet = false },
+                                       remove: model.draft.photoID == nil ? nil : { pendingSource = .remove; sourceSheet = false })
                         .onDisappear(perform: presentPendingSource)
                 }
                 .accessibilityIdentifier("capture.addPhoto").accessibilityFocused($photoFocused)
@@ -208,21 +212,6 @@ struct PieceCaptureView: View {
                     OperationProgress(title: "Preparing photo…")
                     Spacer()
                     Button("Cancel") { model.cancelImport() }.frame(minHeight: 44)
-                }
-            }
-            if model.draft.photoID != nil {
-                HStack {
-                    Text("Photo options").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    Spacer()
-                    Menu {
-                        if image != nil {
-                            AccessoryButton("Edit photo", systemImage: "crop") { showPhotoEditor = true }
-                                .accessibilityIdentifier("capture.editPhoto")
-                        }
-                        AccessoryButton("Remove background", systemImage: "person.crop.rectangle") { showBackgroundRemoval = true }
-                        Button("Remove photo", systemImage: "trash", role: .destructive) { model.removePhoto() }
-                    } label: { Label("Photo options", systemImage: "ellipsis").labelStyle(.iconOnly).frame(width: 44, height: 44) }
-                        .disabled(model.isImporting || model.isSaving)
                 }
             }
         }.padding(12).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
@@ -270,6 +259,9 @@ struct PieceCaptureView: View {
         switch pendingSource {
         case .photos: pickerPresented = true
         case .camera: requestCamera()
+        case .edit: showPhotoEditor = true
+        case .backgroundRemoval: showBackgroundRemoval = true
+        case .remove: model.removePhoto()
         case nil: photoFocused = true
         }
     }

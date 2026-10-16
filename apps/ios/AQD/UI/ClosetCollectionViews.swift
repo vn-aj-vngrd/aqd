@@ -148,17 +148,13 @@ struct ThemeCollectionView: View {
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
     var query = ThemeCollectionQuery()
-    var clearFilters: () -> Void = {}
     private var themes: [OutfitTheme] { query.apply(to: state.themes) }
     var summary: ClosetCollectionSummary? = nil
     var body: some View {
         Group {
             if state.themeError == nil && themes.isEmpty {
                 EmptyStatePage(title: state.themes.isEmpty ? "Make a little collection" : "No matching themes", systemImage: "folder",
-                               description: Text(state.themes.isEmpty ? "Keep outfits together by mood or occasion. A theme can start empty." : "Try another content filter to see your other themes.")) {
-                    if state.themes.isEmpty { PrimaryAction(title: "Create theme") { state.openTheme() } }
-                    else { PrimaryAction(title: "Clear filters", action: clearFilters) }
-                }
+                               description: Text(state.themes.isEmpty ? "Keep outfits together by mood or occasion. A theme can start empty." : "Try another content filter to see your other themes."))
             } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppSpacing.large) {

@@ -13,6 +13,7 @@ final class LocalIdentityEditorModel: Identifiable {
     var unknown = false
     var importID = UUID()
     var importing = false
+    var completedPhotoImportID: UUID?
     private var importTask: Task<Void, Never>?
     init(state: AppState, draft: LocalIdentityDraft) throws {
         self.state = state; self.draft = draft; id = draft.id
@@ -40,6 +41,7 @@ final class LocalIdentityEditorModel: Identifiable {
                 guard let store = self.state.store else { throw PieceStore.StoreError.corruptStore }
                 _ = try store.acceptPhoto(photo)
                 self.update { $0.photoID = photo.id; $0.photoRecipe = nil }; self.importing = false
+                if self.error == nil { self.completedPhotoImportID = photo.id }
             } catch {
                 guard let self, self.importID == token else { return }
                 self.importing = false; self.error = "The photo could not be prepared. Your previous photo and name are retained; choose another or retry."

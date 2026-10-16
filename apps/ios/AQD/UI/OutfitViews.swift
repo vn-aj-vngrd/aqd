@@ -153,7 +153,6 @@ struct OutfitCollectionView: View {
     var favoritesOnly = false
     var themeID: UUID?
     var sort = OutfitCollectionSort.recentlyUpdated
-    let clearFilters: () -> Void
     private var outfits: [Outfit] {
         sort.apply(state.outfits.filter { outfit in
             (!favoritesOnly || outfit.isFavorite) && (themeID == nil || state.themes.contains { $0.id == themeID && $0.outfitIDs.contains(outfit.id) })
@@ -165,13 +164,7 @@ struct OutfitCollectionView: View {
             if state.outfitError == nil && outfits.isEmpty {
                 EmptyStatePage(title: state.outfits.isEmpty ? "Your first outfit starts here" : "No matching outfits",
                                systemImage: "square.stack",
-                               description: Text(state.outfits.isEmpty ? "Combine pieces from your closet. Every outfit stays private." : "Clear the theme or Favorites filter to see your other looks.")) {
-                    if state.outfits.isEmpty {
-                        PrimaryAction(title: "Build outfit") { state.buildOutfit() }
-                    } else {
-                        PrimaryAction(title: "Clear filters", action: clearFilters)
-                    }
-                }
+                               description: Text(state.outfits.isEmpty ? "Combine pieces from your closet. Every outfit stays private." : "Clear the theme or Favorites filter to see your other looks."))
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: AppSpacing.large) {
@@ -199,7 +192,7 @@ struct ClosetDestination: View {
         case .outfit(let id): OutfitDetailView(id: id)
         case .theme(let id): ThemeDetailView(id: id)
         case .archivedPieces: ArchivedPiecesView()
-        } }.tint(AppTheme.ink)
+        } }.tint(AppTheme.ink).secondaryPage()
     }
 }
 

@@ -36,15 +36,12 @@ struct LocalWearHistoryView: View {
                 Button("Retry history") { state.reloadWear() }.frame(minHeight: 44)
             } else if shown.isEmpty {
                 EmptyStatePage(title: records.isEmpty ? "Your history starts here" : "No wear recorded for this day",
-                               systemImage: "clock", description: Text("Record what you actually wore. Plans never count as wear.")) {
-                    PrimaryAction(title: "Record a look") { state.openWear(day: recordingDay) }
-                    SecondaryAction(title: "Open Planner") { state.plannerDay = recordingDay; state.selection = 2 }
-                }
+                               systemImage: "clock", description: Text("Record what you actually wore. Plans never count as wear."))
             } else {
                 ScrollView {
                     VStack(spacing: 20) {
                         ForEach(shown) { record in
-                            NavigationLink { LocalWearDetailView(id: record.id) } label: { WearAgendaRow(record: record) }.buttonStyle(.plain)
+                            NavigationLink { LocalWearDetailView(id: record.id).secondaryPage() } label: { WearAgendaRow(record: record) }.buttonStyle(.plain)
                         }
                         if !calendarShown { PrimaryAction(title: "Record a look") { state.openWear(day: recordingDay) } }
                     }.padding(20)

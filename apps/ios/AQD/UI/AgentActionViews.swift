@@ -34,8 +34,8 @@ struct AgentActionComposerView: View {
                     } }
                 }
                 if kind == "Availability" { Picker("Availability", selection: $availability) { ForEach(PieceAvailability.allCases, id: \.self) { Text($0.rawValue.capitalized).tag($0) } } }
-                if kind == "Plan" || kind == "Wear" { DatePicker(kind == "Plan" ? "First date" : "Recorded date", selection: $first, displayedComponents: .date) }
-                if kind == "Plan" { DatePicker("Last date", selection: $last, displayedComponents: .date); Toggle("Leave dates without an outfit intentionally unassigned", isOn: $unassigned) }
+                if kind == "Plan" || kind == "Wear" { ThemedDatePicker(kind == "Plan" ? "First date" : "Recorded date", selection: $first, displayedComponents: .date) }
+                if kind == "Plan" { ThemedDatePicker("Last date", selection: $last, displayedComponents: .date); Toggle("Leave dates without an outfit intentionally unassigned", isOn: $unassigned) }
                 if let error { Text(error).foregroundStyle(AppTheme.error) }
             }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Local tools").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarForwardAction(title: "Review") { prepare() } } }

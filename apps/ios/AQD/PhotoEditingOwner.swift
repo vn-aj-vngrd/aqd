@@ -5,6 +5,7 @@ import Observation
 /// Existing framing controls operate on an explicit owner’s photo draft.
 @MainActor protocol PhotoEditingOwner: AnyObject, Observable {
     var editingPhotoID: UUID? { get }
+    var completedPhotoImportID: UUID? { get }
     var editingPhotoRecipe: PhotoEditRecipe { get }
     var errorText: String? { get }
     var hasProcessedPhoto: Bool { get }

@@ -96,7 +96,7 @@ struct PlanAuthoringView: View {
         }.disabled(locked)
     }
     private func dateField(_ title: String, start: Bool) -> some View {
-        DatePicker(title, selection: Binding(get: { (try? (start ? model.draft.plan.start : model.draft.plan.end).date()) ?? Date() }, set: { value in
+        ThemedDatePicker(title, selection: Binding(get: { (try? (start ? model.draft.plan.start : model.draft.plan.end).date()) ?? Date() }, set: { value in
                 let zone = TimeZone(identifier: model.draft.plan.start.timeZoneID) ?? .current
                 model.dates { if start { $0.start = LocalPlanDay(date: value, timeZone: zone) } else { $0.end = LocalPlanDay(date: value, timeZone: zone) } }
             }), displayedComponents: .date).environment(\.timeZone, TimeZone(identifier: model.draft.plan.start.timeZoneID) ?? .current)

@@ -30,7 +30,8 @@ struct TodayWidgetConfigurationView: View {
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 if instance != nil { confirmation }
             } }
-                .navigationDestination(isPresented: $editPhoto) { PhotoEditorView(model: model) }
+                .editImportedPhoto(model, importing: model.importing, locked: model.locked, presented: $editPhoto)
+                .navigationDestination(isPresented: $editPhoto) { PhotoEditorView(model: model).secondaryPage() }
                 .toolbar { ToolbarItem(placement: .topBarLeading) {
                     Button {
                         if model.draft.nested == model.draft.nestedBase { model.cancelNested() } else { discard = true }
@@ -48,7 +49,7 @@ struct TodayWidgetConfigurationView: View {
         case .weekInWear, .closetInUse:
             Toggle(instance.kind == .weekInWear ? "Follow this week" : "Latest completed month", isOn: Binding(get: { instance.options?.period == nil }, set: { follow in model.nested { $0.options?.period = follow ? nil : (instance.kind == .weekInWear ? LocalPlanDay() : try? TodaySources.completedMonth(before: LocalPlanDay())) } }))
             if let period = instance.options?.period {
-                DatePicker(instance.kind == .weekInWear ? "Week containing" : "Completed month", selection: Binding(get: { (try? period.date()) ?? Date() }, set: { date in model.nested { $0.options?.period = LocalPlanDay(date: date) } }), in: ...Date(), displayedComponents: .date)
+                ThemedDatePicker(instance.kind == .weekInWear ? "Week containing" : "Completed month", selection: Binding(get: { (try? period.date()) ?? Date() }, set: { date in model.nested { $0.options?.period = LocalPlanDay(date: date) } }), in: ...Date(), displayedComponents: .date)
             }
             Text(instance.kind == .closetInUse ? "Only completed months can be selected. Plans and earlier estimates are excluded." : "Only recorded wear in this week counts. Plans and earlier estimates are excluded.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
         case .upcomingPlans:
@@ -94,9 +95,10 @@ struct TodayWidgetConfigurationView: View {
             LabeledField(title: "Title, optional", text: Binding(get: { card.title }, set: { title in model.nested { $0.options?.personal?.title = title } }))
             if instance.kind == .personalPhoto {
                 TodayPersonalPhoto(card: card).frame(minHeight: 160, maxHeight: 260)
-                SharedPhotoSourceButton(title: card.photoID == nil ? "Choose photo" : "Replace photo", selectionToken: model.importID, locked: model.locked, onData: model.importPhoto)
+                SharedPhotoSourceButton(title: card.photoID == nil ? "Choose photo" : "Replace photo", selectionToken: model.importID, locked: model.locked || model.importing,
+                    onEdit: card.photoID == nil ? nil : { editPhoto = true },
+                    onRemove: card.photoID == nil ? nil : { model.cancelImport(); model.nested { $0.options?.personal?.photoID = nil; $0.options?.personal?.photoRecipe = .fitOriginal } }, onData: model.importPhoto)
                 if model.importing { ProgressView("Preparing photo"); Button("Cancel import") { model.cancelImport() }.frame(minHeight: 44) }
-                if card.photoID != nil { SecondaryAction(title: "Edit photo") { editPhoto = true }.disabled(model.importing); Button("Remove photo") { model.cancelImport(); model.nested { $0.options?.personal?.photoID = nil; $0.options?.personal?.photoRecipe = .fitOriginal } }.frame(minHeight: 44) }
             }
             Text(instance.kind == .personalNote ? "Note" : "Caption, optional").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             TextEditor(text: Binding(get: { card.text }, set: { text in model.nested { $0.options?.personal?.text = text } })

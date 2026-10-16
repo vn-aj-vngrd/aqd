@@ -83,7 +83,7 @@ struct LocalWearInsightsView: View {
         }.background(AppTheme.canvas)
             .navigationTitle("Wear insights").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
             .toolbar { ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink { LocalWearHistoryView(periodStart: summary?.start, periodEnd: summary?.end) } label: {
+                NavigationLink { LocalWearHistoryView(periodStart: summary?.start, periodEnd: summary?.end).secondaryPage() } label: {
                     Image(systemName: "clock.arrow.circlepath")
                 }.accessibilityLabel("Wear history").disabled(summary == nil)
             } }

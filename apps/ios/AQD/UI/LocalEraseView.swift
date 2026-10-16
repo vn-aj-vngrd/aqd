@@ -19,7 +19,7 @@ struct LocalEraseView: View {
                     else { Text("Current data could not be fully validated. Erase replaces all AQD local data on this iPhone.") }
                     Text("Also removes your local profile, preferences, Today layout and content, Undo history, and AQD-owned photo copies.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     Text("Original images in Photos and archives you exported are not deleted. There is no account or cloud copy to restore automatically.").font(.subheadline).foregroundStyle(AppTheme.secondary)
-                    NavigationLink { LocalExportView().navigationTitle("Export before erase") } label: {
+                    NavigationLink { LocalExportView().navigationTitle("Export before erase").secondaryPage() } label: {
                         HStack(spacing: 10) {
                             Image(systemName: "square.and.arrow.up").accessibilityHidden(true)
                             Text("Export a copy first")

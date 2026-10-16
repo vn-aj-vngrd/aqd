@@ -57,7 +57,7 @@ struct TodayCard: View {
                 } else if let outfit = memory.outfit {
                     CollectionArtwork(pieceIDs: outfit.pieces.map(\.id))
                 }
-                NavigationLink { FitMemoryDetailView(id: memory.id) } label: { TodayCardActionLabel(title: memory.day.key) }.frame(minHeight: 44)
+                NavigationLink { FitMemoryDetailView(id: memory.id).secondaryPage() } label: { TodayCardActionLabel(title: memory.day.key) }.frame(minHeight: 44)
             } else if instance.options?.pinnedID != nil { configure("The selected memory is unavailable.") }
             else {
                 Text("Keep a private memory of a fit. This does not record wear.").foregroundStyle(AppTheme.secondary)
@@ -114,7 +114,7 @@ struct TodayCard: View {
                         Button { state.openWear(outfitID: outfit.id, day: entry.day, entry: entry) } label: { TodayCardActionLabel(title: "Record wear") }
                     }
                 } else { Text("This occasion has no available outfit.").foregroundStyle(AppTheme.secondary) }
-                NavigationLink { LocalPlanEntryView(id: entry.id) } label: { TodayCardActionLabel(title: "Review plan") }.frame(minHeight: 44)
+                NavigationLink { LocalPlanEntryView(id: entry.id).secondaryPage() } label: { TodayCardActionLabel(title: "Review plan") }.frame(minHeight: 44)
             }
         }
     }
@@ -130,7 +130,7 @@ struct TodayCard: View {
                 Text("\(Set(records.map(\.day.key)).count) days · \(Set(records.flatMap { $0.pieces.map(\.id) }).count) pieces")
                 if records.isEmpty { Text("No wear recorded in this week yet.").foregroundStyle(AppTheme.secondary) }
                 Text("\(bounds.start.displayDate) – \(bounds.end.displayDate)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                NavigationLink { LocalWearHistoryView(periodStart: bounds.start, periodEnd: bounds.end) } label: { TodayCardActionLabel(title: "View this week") }.frame(minHeight: 44)
+                NavigationLink { LocalWearHistoryView(periodStart: bounds.start, periodEnd: bounds.end).secondaryPage() } label: { TodayCardActionLabel(title: "View this week") }.frame(minHeight: 44)
             }
         }
     }
@@ -144,7 +144,7 @@ struct TodayCard: View {
                 ProgressView(value: value).tint(AppTheme.ink)
             } else { Text("Your wear story starts here. Record your looks to discover which pieces you reach for.").foregroundStyle(AppTheme.secondary) }
             Text("\(summary.start.displayDate) – \(summary.end.displayDate)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-            NavigationLink { LocalWearInsightsView(initialMonth: month) } label: { TodayCardActionLabel(title: "View this month") }.frame(minHeight: 44)
+            NavigationLink { LocalWearInsightsView(initialMonth: month).secondaryPage() } label: { TodayCardActionLabel(title: "View this month") }.frame(minHeight: 44)
         }
     }
     @ViewBuilder private var upcoming: some View {
@@ -157,7 +157,7 @@ struct TodayCard: View {
                 Button { state.openPlanAuthoring(day: today) } label: { TodayCardActionLabel(title: "Plan your week") }.frame(minHeight: 44)
             }
             ForEach(visible) { entry in
-                NavigationLink { LocalPlanEntryView(id: entry.id) } label: { PlanAgendaRow(entry: entry, showDate: true) }.buttonStyle(.plain)
+                NavigationLink { LocalPlanEntryView(id: entry.id).secondaryPage() } label: { PlanAgendaRow(entry: entry, showDate: true) }.buttonStyle(.plain)
             }
         }
     }
@@ -274,9 +274,7 @@ private struct TodayPersonalDetail: View {
         Group {
             if instance?.options?.personal == nil {
                 EmptyStatePage(title: "This card is no longer on Today", systemImage: "square.stack",
-                               description: Text("Saved notes and photos remain available from the widget library.")) {
-                    PrimaryAction(title: "Customize Today") { state.openTodayEditor() }
-                }
+                               description: Text("Saved notes and photos remain available from the widget library."))
             } else {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -308,7 +306,6 @@ struct TodayWeatherNotice: View {
                             Text(client.error != nil ? "Review weather settings" : "Set up optional weather")
                                 .font(AppTypography.supporting).fixedSize(horizontal: false, vertical: true)
                             Spacer(minLength: 0)
-                            Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
                         }.foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                             .padding(.leading, 14).padding(.vertical, 8).contentShape(Rectangle())
                     }.buttonStyle(.plain).accessibilityHint("Apple Weather preferences. Your wardrobe stays private.")
@@ -319,6 +316,10 @@ struct TodayWeatherNotice: View {
                         Image(systemName: "xmark").font(.system(size: 13)).foregroundStyle(AppTheme.controlIcon)
                             .frame(width: 44, height: 44).contentShape(Rectangle())
                     }.tint(AppTheme.ink).accessibilityLabel("Dismiss weather reminder")
+                    Button { setup = true } label: {
+                        Image(systemName: "chevron.forward").font(AppTypography.disclosure)
+                            .foregroundStyle(AppTheme.ink).frame(width: 44, height: 44).contentShape(Rectangle())
+                    }.buttonStyle(.plain).accessibilityLabel("Open Weather setup")
                 }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                 if let error = client.setupNoticeError { SemanticFeedback(role: .danger, message: error) }
             }.sheet(isPresented: $setup) {

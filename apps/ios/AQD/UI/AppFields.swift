@@ -178,3 +178,45 @@ struct TextAreaCounter: View {
             .accessibilityLabel("\(text.count) of \(limit) characters")
     }
 }
+
+/// A theme-owned date chip presenting the native calendar, preserving caller timezone.
+struct ThemedDatePicker: View {
+    let title: String
+    @Binding var selection: Date
+    var lowerBound = Date.distantPast
+    var upperBound = Date.distantFuture
+    var showsTitle = true
+    @Environment(\.timeZone) private var timeZone
+    @Environment(\.locale) private var locale
+    @State private var presented = false
+    init(_ title: String, selection: Binding<Date>, displayedComponents: DatePickerComponents = .date, showsTitle: Bool = true) {
+        self.title = title; _selection = selection; self.showsTitle = showsTitle
+    }
+    init(_ title: String, selection: Binding<Date>, in range: PartialRangeThrough<Date>, displayedComponents: DatePickerComponents = .date, showsTitle: Bool = true) {
+        self.title = title; _selection = selection; upperBound = range.upperBound; self.showsTitle = showsTitle
+    }
+    init(_ title: String, selection: Binding<Date>, in range: ClosedRange<Date>, displayedComponents: DatePickerComponents = .date, showsTitle: Bool = true) {
+        self.title = title; _selection = selection; lowerBound = range.lowerBound; upperBound = range.upperBound; self.showsTitle = showsTitle
+    }
+    var body: some View {
+        HStack {
+            if showsTitle { Text(title) }
+            Spacer(minLength: 12)
+            Button { presented = true } label: {
+                Text(dateLabel).padding(.horizontal, 12).padding(.vertical, 6)
+                    .background(AppTheme.imageGround, in: Capsule()).frame(minHeight: 44).contentShape(Rectangle())
+            }.buttonStyle(.plain).accessibilityLabel(title).accessibilityValue(dateLabel)
+                .popover(isPresented: $presented) {
+                    DatePicker(title, selection: $selection, in: lowerBound...upperBound, displayedComponents: .date)
+                        .datePickerStyle(.graphical).labelsHidden().tint(AppTheme.ink)
+                        .padding(16).frame(width: 320).background(AppTheme.surface)
+                        .presentationCompactAdaptation(.popover)
+                }
+        }.foregroundStyle(AppTheme.ink)
+    }
+    private var dateLabel: String {
+        let formatter = DateFormatter()
+        formatter.locale = locale; formatter.timeZone = timeZone; formatter.dateStyle = .medium
+        return formatter.string(from: selection)
+    }
+}

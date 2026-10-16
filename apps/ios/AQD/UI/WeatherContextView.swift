@@ -65,7 +65,7 @@ struct WeatherContextView: View {
                     }.listRowBackground(AppTheme.surface)
                 }
                 Section {
-                    DatePicker("Weather date", selection: Binding(get: { (try? day.date()) ?? Date() }, set: { date in
+                    ThemedDatePicker("Weather date", selection: Binding(get: { (try? day.date()) ?? Date() }, set: { date in
                         cancelFetch(); day = LocalPlanDay(date: date, timeZone: TimeZone(identifier: day.timeZoneID) ?? .current)
                     }), displayedComponents: .date).environment(\.timeZone, TimeZone(identifier: day.timeZoneID) ?? .current).disabled(saving || unknown)
                 }.listRowBackground(AppTheme.surface)

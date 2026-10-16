@@ -4,6 +4,8 @@ import SwiftUI
 struct StyleEditorView: View {
     @Bindable var model: StyleEditorModel
     @State private var confirmsDiscard = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var savedArrived = false
     private var page: Int { model.draft.page }
     private let questions = ["What would you like help with?", "What do you dress for?", "What feels like you?", "How do you like clothes to fit?", "Body details, only if you want", "Colors and patterns you enjoy"]
     private let hints = ["Choose up to two, or No preference. Your answers stay private.", "Choose any, or No preference. We won’t infer your schedule.", "Choose any styles you enjoy, or No preference.", "Choose any, or No preference. Suggestions are not a size or try-on guarantee.", "Add optional details, choose Not sure, or decline.", "Choose colors and patterns, or No preference. Your choices stay private."]
@@ -20,6 +22,9 @@ struct StyleEditorView: View {
                     }
                     if model.saved != nil {
                         savedContent
+                            .opacity(savedArrived ? 1 : 0)
+                            .offset(y: savedArrived || reduceMotion ? 0 : 12)
+                            .task { withAnimation(reduceMotion ? nil : .smooth(duration: 0.35)) { savedArrived = true } }
                     } else {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Step \(page + 1) of 7").font(.subheadline).foregroundStyle(AppTheme.secondary)
@@ -38,7 +43,7 @@ struct StyleEditorView: View {
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
             }
             .background(AppTheme.canvas)
-            .navigationTitle(model.saved == nil ? StylePreferences.titles[page] : "Style")
+            .navigationTitle(model.saved == nil ? StylePreferences.titles[page] : "")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.visible, for: .navigationBar)
             .toolbar {
@@ -102,9 +107,9 @@ struct StyleEditorView: View {
         }
     }
     private var savedContent: some View {
-        VStack(alignment: .leading, spacing: 32) {
+        VStack(alignment: .leading, spacing: AppSpacing.section) {
             AQDWordmark()
-            EntryIllustration(kind: .ready).padding(.top, 16)
+            EntryIllustration(kind: .ready)
             VStack(alignment: .leading, spacing: 16) {
                 Label("Preferences saved", systemImage: "checkmark.circle")
                     .font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
@@ -152,7 +157,7 @@ struct StyleEditorView: View {
             VStack(spacing: 0) {
                 ForEach(StyleColorField.allCases, id: \.self) { field in
                     NavigationLink {
-                        StyleColorSelectionView(model: model, field: field)
+                        StyleColorSelectionView(model: model, field: field).secondaryPage()
                     } label: {
                         HStack(spacing: 12) {
                             VStack(alignment: .leading, spacing: 4) {

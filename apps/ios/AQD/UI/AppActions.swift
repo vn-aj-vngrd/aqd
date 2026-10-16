@@ -127,7 +127,7 @@ struct ToolbarForwardAction: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) {
-            Image(systemName: "chevron.forward").frame(minWidth: 44, minHeight: 44)
+            Image(systemName: "chevron.forward")
         }.tint(AppTheme.ink).accessibilityLabel(title)
     }
 }

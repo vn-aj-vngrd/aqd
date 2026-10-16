@@ -4,10 +4,6 @@ import SwiftUI
 struct ClosetSearchContent: View {
     let model: ClosetSearchModel?
     let input: ClosetSearchInput
-    let clear: () -> Void
-    let browse: () -> Void
-    let addPiece: () -> Void
-    var clearFilters: (() -> Void)? = nil
     @State private var pieceAnchor: UUID?
     @State private var outfitAnchor: UUID?
     @State private var themeAnchor: UUID?
@@ -18,21 +14,10 @@ struct ClosetSearchContent: View {
                 if model.error == nil && input.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     EmptyStatePage(title: model.closetEmpty ? "Your closet starts here" : "Search your closet",
                                    systemImage: model.closetEmpty ? "tshirt" : "magnifyingglass",
-                                   description: Text(model.closetEmpty ? "Add a piece to find it here later." : "Find your pieces, outfits and themes.")) {
-                        if model.closetEmpty { PrimaryAction(title: "Add a piece", action: addPiece) }
-                        else { PrimaryAction(title: "Browse closet", action: browse) }
-                    }
+                                   description: Text(model.closetEmpty ? "Add a piece to find it here later." : "Find your pieces, outfits and themes."))
                 } else if model.error == nil && !model.loading && model.results?.count == 0 {
                     EmptyStatePage(title: "No matches", systemImage: "magnifyingglass",
-                                   description: Text("No \(input.scope.rawValue.lowercased()) match “\(input.query)”. Try another search or clear the filters.")) {
-                        if let clearFilters {
-                            PrimaryAction(title: "Clear filters", action: clearFilters)
-                            SecondaryAction(title: "Clear search", action: clear)
-                        } else {
-                            PrimaryAction(title: "Clear search", action: clear)
-                            SecondaryAction(title: "Add a piece", action: addPiece)
-                        }
-                    }
+                                   description: Text("No \(input.scope.rawValue.lowercased()) match “\(input.query)”. Try another search or clear the filters."))
                 } else {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 20) {

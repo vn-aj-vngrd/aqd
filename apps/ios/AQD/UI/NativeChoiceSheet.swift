@@ -58,14 +58,19 @@ struct NativeChoiceRow: View {
 struct PhotoSourcePopover: View {
     let photos: () -> Void
     let camera: () -> Void
+    var edit: (() -> Void)? = nil
+    var removeBackground: (() -> Void)? = nil
+    var remove: (() -> Void)? = nil
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Button(action: photos) { AccessoryLabel("Choose from Photos", systemImage: "photo.on.rectangle").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading) }
             Divider()
             Button(action: camera) { AccessoryLabel("Take photo", systemImage: "camera").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading) }
-            Text("Selected photos are copied into AQD on this device. iCloud Photos may download your selection. Originals stay in Photos.")
-                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).padding(.top, 12)
+            if let edit { Divider(); Button(action: edit) { AccessoryLabel("Edit photo", systemImage: "crop").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) } }
+            if let removeBackground { Divider(); Button(action: removeBackground) { AccessoryLabel("Remove background", systemImage: "person.crop.rectangle").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) } }
+            if let remove { Divider(); Button(role: .destructive, action: remove) { Text("Remove photo").foregroundStyle(AppTheme.error).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) } }
         }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).padding(16).frame(width: 280)
             .presentationCompactAdaptation(.popover)
+            .accessibilityHint("Selected photos are copied into AQD on this device. Originals stay in Photos.")
     }
 }

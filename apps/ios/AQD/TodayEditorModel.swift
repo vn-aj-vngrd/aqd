@@ -11,6 +11,7 @@ import Observation
     var saved: TodayConfiguration?
     var draftFailed = false
     var importing = false
+    var completedPhotoImportID: UUID?
     var importID = UUID()
     @ObservationIgnored private var importTask: Task<Void, Never>?
     nonisolated let id: UUID
@@ -153,6 +154,7 @@ import Observation
                 guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
                 _ = try store.acceptPhoto(prepared); importing = false
                 nested { $0.options?.personal?.photoID = prepared.id; $0.options?.personal?.photoRecipe = .fitOriginal }
+                if error == nil { completedPhotoImportID = prepared.id }
             } catch { if token == importID { importing = false; self.error = "The photo could not be prepared. Your previous photo and caption are retained." } }
         }
     }

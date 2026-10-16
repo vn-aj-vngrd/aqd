@@ -1,13 +1,11 @@
 import SwiftUI
 
-/// A page empty state centers its message in the remaining safe area. Actions
-/// stay at the bottom; long accessibility text scrolls without covering them.
-struct EmptyStatePage<Actions: View>: View {
+/// Informational empty content, centered and scrollable without an action footer.
+struct EmptyStatePage: View {
     let title: LocalizedStringKey
     let systemImage: String
     var description: Text? = nil
     var detail: String? = nil
-    @ViewBuilder let actions: () -> Actions
 
     var body: some View {
         GeometryReader { geometry in
@@ -23,9 +21,6 @@ struct EmptyStatePage<Actions: View>: View {
                     }
                 }.frame(maxWidth: .infinity, minHeight: geometry.size.height)
             }
-        }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            ActionFooter { ActionStack(content: actions) }
         }
     }
 }
