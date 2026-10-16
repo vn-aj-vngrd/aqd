@@ -29,6 +29,14 @@ struct PreviewSampleContentTests {
         let repeated = try await PreviewSampleContent.addAllWidgets(store: reopened, outputDirectory: output)
         #expect(repeated.addedKinds.isEmpty && repeated.backup == nil)
         #expect(try reopened.mutationStamp() == stamp)
+        let originalPersonal = try reopened.todayPersonalCards()
+        var restored = TodayLayoutDraft(base: saved)
+        restored.value.instances = base.instances
+        try reopened.saveTodayDraft(restored)
+        _ = try reopened.saveTodayLayout(restored); try reopened.finishTodayDraft(restored)
+        _ = try await PreviewSampleContent.addAllWidgets(store: reopened, outputDirectory: output)
+        #expect(try reopened.todayPersonalCards() == originalPersonal)
+        #expect(try reopened.todayConfiguration().instances.count == 12)
     }
 
     @Test func realisticContextsPreserveEditedAndRetainedSamplesAndRepeatWithoutWrites() async throws {

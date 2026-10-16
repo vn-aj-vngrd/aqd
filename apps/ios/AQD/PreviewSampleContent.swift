@@ -22,10 +22,12 @@ import UIKit
         }
         guard try store.todayDraft() == nil else { throw Failure.changedStore }
         let themes = try store.themes(), memories = try store.fitMemories()
+        let personal = try store.todayPersonalCards()
+        let savedPhoto = personal.first { $0.kind == .personalPhoto }
         let memory = memories.first { $0.photoID != nil }
         let piece = try store.pieces().first
-        let photoID = memory?.photoID ?? piece?.photoID
-        let recipe = memory?.photoRecipe ?? piece?.photoRecipe ?? .fitOriginal
+        let photoID = savedPhoto?.photoID ?? memory?.photoID ?? piece?.photoID
+        let recipe = savedPhoto?.photoRecipe ?? memory?.photoRecipe ?? piece?.photoRecipe ?? .fitOriginal
         if missing.contains(.theme), themes.isEmpty { throw Failure.missingArtwork }
         if missing.contains(.personalPhoto), photoID == nil { throw Failure.missingArtwork }
         var draft = TodayLayoutDraft(base: base)
@@ -34,9 +36,9 @@ import UIKit
             switch kind {
             case .theme: options.pinnedID = themes.first?.id
             case .personalNote:
-                options.personal = TodayPersonalCard(ownerID: base.ownerID, kind: kind, title: "A thought for today", text: "Try a favorite piece in a new way.")
+                options.personal = personal.first(where: { $0.kind == kind }) ?? TodayPersonalCard(ownerID: base.ownerID, kind: kind, title: "A thought for today", text: "Try a favorite piece in a new way.")
             case .personalPhoto:
-                options.personal = TodayPersonalCard(ownerID: base.ownerID, kind: kind, title: "A little inspiration", text: "A favorite look for the week.", photoID: photoID, photoRecipe: recipe)
+                options.personal = personal.first(where: { $0.kind == kind }) ?? TodayPersonalCard(ownerID: base.ownerID, kind: kind, title: "A little inspiration", text: "A favorite look for the week.", photoID: photoID, photoRecipe: recipe)
             default: break
             }
             draft.value.instances.append(TodayWidgetInstance(kind: kind, options: options))
