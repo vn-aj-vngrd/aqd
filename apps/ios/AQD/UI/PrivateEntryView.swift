@@ -103,7 +103,8 @@ struct PrivateEntryView: View {
 
 }
 
-private struct WelcomeView: View {
+struct WelcomeView: View {
+    var previewDismiss: (() -> Void)? = nil
     @Environment(AppState.self) private var state
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
@@ -113,15 +114,25 @@ private struct WelcomeView: View {
             VStack(alignment: .leading, spacing: 24) {
                 AQDWordmark()
                 WelcomeWardrobe(pose: pose)
-                Text("More from what you already own.").font(.largeTitle).tracking(-0.8)
-                Text("Keep your pieces together. Make looks you’ll wear.").foregroundStyle(AppTheme.secondary)
+                VStack(alignment: .leading, spacing: AppSpacing.medium) {
+                    Text(welcomeHeadline).font(.largeTitle.weight(.medium)).tracking(-0.8)
+                        .accessibilityAddTraits(.isHeader)
+                    Text("Keep your pieces together. Make looks you’ll wear.")
+                        .font(AppTypography.body).foregroundStyle(AppTheme.secondary)
+                }
             }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
         }
         .safeAreaInset(edge: .bottom) {
             ActionFooter {
                 ActionStack {
-                    PrimaryAction(title: "Start my closet") { state.updateEntry { $0.page = .introduction } }
-                    SecondaryAction(title: "Take a quick tour") { state.beginTour(from: .welcome) }
+                    PrimaryAction(title: "Start my closet") {
+                        if let previewDismiss { previewDismiss() }
+                        else { state.updateEntry { $0.page = .introduction } }
+                    }
+                    SecondaryAction(title: "Take a quick tour") {
+                        if let previewDismiss { previewDismiss() }
+                        else { state.beginTour(from: .welcome) }
+                    }
                     Text("Private on this iPhone. No account needed.").font(.footnote).foregroundStyle(AppTheme.secondary)
                         .frame(maxWidth: .infinity).multilineTextAlignment(.center)
                 }
@@ -129,6 +140,7 @@ private struct WelcomeView: View {
         }
         .task(id: scenePhase) {
             guard scenePhase == .active else { settle(); return }
+            guard previewDismiss == nil else { settle(); return }
             let firstArrival = state.markWelcomeArrival()
             guard firstArrival, !reduceMotion else { settle(); return }
             pose = .gathered
@@ -145,6 +157,12 @@ private struct WelcomeView: View {
         }
         .onChange(of: reduceMotion) { _, reduced in if reduced { settle() } }
         .onDisappear { settle() }
+    }
+    private var welcomeHeadline: AttributedString {
+        var text = AttributedString("More from what you already own.")
+        text.foregroundColor = AppTheme.ink
+        if let range = text.range(of: "already own.") { text[range].foregroundColor = AppTheme.actionText }
+        return text
     }
     private func settle() {
         var transaction = Transaction()

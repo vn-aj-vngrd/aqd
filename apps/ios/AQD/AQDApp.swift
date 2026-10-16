@@ -31,6 +31,9 @@ private struct AppRootView: View {
     @Bindable var state: AppState
     let onInstall: (PieceStore, LocalDataCoordinator, Int) -> Void
     @State private var pendingInstallation: (PieceStore, LocalDataCoordinator, Int)?
+    #if DEBUG
+    @State private var welcomePreview = false
+    #endif
 
     var body: some View {
         Group {
@@ -60,6 +63,9 @@ private struct AppRootView: View {
             if state.isOpening { await Task.yield(); state.openStore() }
             #if DEBUG
             let process = ProcessInfo.processInfo
+            if process.arguments.contains("--aqd-preview-welcome"), !process.arguments.contains("--aqd-ui-testing") {
+                welcomePreview = true
+            }
             if process.arguments.contains("--aqd-add-preview-samples"), !process.arguments.contains("--aqd-ui-testing"), let store = state.store {
                 state.isOpening = true
                 do {
@@ -111,6 +117,19 @@ private struct AppRootView: View {
             }
             state.retryLocalDataCleanup()
         }
+        #if DEBUG
+        .fullScreenCover(isPresented: $welcomePreview) {
+            WelcomeView(previewDismiss: { welcomePreview = false })
+                .environment(state).background(AppTheme.canvas)
+                .overlay(alignment: .topTrailing) {
+                    Button { welcomePreview = false } label: {
+                        Image(systemName: "xmark").frame(width: 44, height: 44)
+                            .background(.regularMaterial, in: Circle())
+                    }.buttonStyle(.plain).tint(AppTheme.ink)
+                        .accessibilityLabel("Close welcome preview").padding(.trailing, 20)
+                }
+        }
+        #endif
         .tint(AppTheme.actionText)
         .onChange(of: scenePhase) { _, phase in if phase != .active { state.weatherClient?.suspend() } }
         .alert("Saved data unavailable", isPresented: Binding(

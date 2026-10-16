@@ -43,6 +43,13 @@ struct WelcomeWardrobe: View {
                         let position = position(piece, forming: layout.formingPositions[index])
                         if let image = WelcomeGarments.images[piece.id] {
                             Image(uiImage: image).resizable().scaledToFit()
+                                .overlay {
+                                    if ["knit", "dress", "bag", "belt"].contains(piece.id) {
+                                        // Welcome-only champagne finish; saved garment media remains untouched.
+                                        Image(uiImage: image).renderingMode(.template).resizable().scaledToFit()
+                                            .foregroundStyle(AppTheme.accent.opacity(0.12))
+                                    }
+                                }
                                 .frame(width: piece.w * scale, height: piece.h * scale)
                                 .rotationEffect(.degrees(position.2))
                                 .scaleEffect(pose == .gathered ? 0.96 : 1)
