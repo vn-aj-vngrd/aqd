@@ -6,6 +6,31 @@ import Testing
 
 @Suite(.serialized) @MainActor
 struct PreviewSampleContentTests {
+    @Test func allWidgetsAreActuallySavedWithBackupAndRepeatWithoutChangingOtherRecords() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: directory.appendingPathComponent("store"))
+        let output = directory.appendingPathComponent("receipts")
+        _ = try await PreviewSampleContent.populate(store: store, outputDirectory: output)
+        let base = try store.todayConfiguration(), pieces = try store.pieces(), outfits = try store.outfits(), fits = try store.fitMemories()
+        let result = try await PreviewSampleContent.addAllWidgets(store: store, outputDirectory: output)
+        #expect(result.addedKinds.count == 9)
+        let reopened = try PieceStore(directory: store.localDirectory)
+        let saved = try reopened.todayConfiguration()
+        #expect(saved == result.configuration)
+        #expect(Array(saved.instances.prefix(3)) == base.instances)
+        #expect(Set(saved.instances.map(\.kind)) == Set(TodayWidgetKind.allCases))
+        #expect(try reopened.todayPersonalCards().count == 2)
+        #expect(try reopened.pieces() == pieces && reopened.outfits() == outfits && reopened.fitMemories() == fits)
+        #expect(try reopened.wearRecords().isEmpty)
+        #expect(try reopened.todayDraft() == nil)
+        let backup = output.appendingPathComponent(try #require(result.backup))
+        #expect(try FileManager.default.attributesOfItem(atPath: backup.path)[.protectionKey] as? FileProtectionType == .complete)
+        let stamp = try reopened.mutationStamp()
+        let repeated = try await PreviewSampleContent.addAllWidgets(store: reopened, outputDirectory: output)
+        #expect(repeated.addedKinds.isEmpty && repeated.backup == nil)
+        #expect(try reopened.mutationStamp() == stamp)
+    }
+
     @Test func realisticContextsPreserveEditedAndRetainedSamplesAndRepeatWithoutWrites() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let store = try PieceStore(directory: root.appendingPathComponent("store"))

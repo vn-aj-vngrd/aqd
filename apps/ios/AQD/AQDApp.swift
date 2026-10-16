@@ -67,6 +67,20 @@ private struct AppRootView: View {
             if process.arguments.contains("--aqd-preview-welcome"), !process.arguments.contains("--aqd-ui-testing") {
                 welcomePreview = true
             }
+            if process.arguments.contains("--aqd-add-all-widgets"), !process.arguments.contains("--aqd-ui-testing"), let store = state.store {
+                state.isOpening = true
+                do {
+                    let directory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                    _ = try await PreviewSampleContent.addAllWidgets(store: store, outputDirectory: directory)
+                    state.reloadToday(); state.reloadThemes(); state.reloadFits(); state.selection = 0
+                } catch {
+                    if let directory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) {
+                        try? LocalArchiveIO.write(Data(String(reflecting: error).utf8), to: directory.appendingPathComponent("AQD-all-widgets-error.txt"))
+                    }
+                    state.todayError = "Widgets could not all be added. Your existing layout and any draft are retained; a local backup is kept if saving began."
+                }
+                state.isOpening = false
+            }
             if process.arguments.contains("--aqd-add-preview-samples"), !process.arguments.contains("--aqd-ui-testing"), let store = state.store {
                 state.isOpening = true
                 do {

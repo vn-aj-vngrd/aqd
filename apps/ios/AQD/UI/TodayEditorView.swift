@@ -50,6 +50,7 @@ struct TodayEditorView: View {
                     Section { SemanticFeedback(role: .danger, message: error) }.listRowBackground(AppTheme.surface)
                 }
             }.listStyle(.insetGrouped).listSectionSpacing(12).scrollContentBackground(.hidden)
+                .contentMargins(.top, AppSpacing.large, for: .scrollContent)
                 .environment(\.editMode, .constant(.active))
                 .background(AppTheme.canvas).navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {

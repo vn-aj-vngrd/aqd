@@ -40,16 +40,6 @@ struct TodayLayoutPersistenceTests {
         #expect(model.canApply)
         model.cancelNested()
         #expect(try store.todayConfiguration().instances.count == 3)
-#if DEBUG
-        let stamp = try store.mutationStamp(), saved = try store.todayConfiguration()
-        let preview = PreviewSampleContent.widgetPreview(state: state, base: saved)
-        #expect(preview.map(\.kind) == TodayWidgetKind.allCases)
-        #expect(preview.map(\.id) == PreviewSampleContent.widgetPreview(state: state, base: saved).map(\.id))
-        #expect(try store.mutationStamp() == stamp)
-        #expect(try store.todayConfiguration() == saved)
-        #expect(try store.todayPersonalCards().isEmpty)
-        #expect(try store.wearRecords().isEmpty)
-#endif
     }
 
     @Test func everyWidgetCanConfigureReorderDuplicateRestoreAndSaveWithoutChangingWear() async throws {

@@ -3,22 +3,6 @@ import SwiftUI
 
 struct TodayView: View {
     @Environment(AppState.self) private var state
-#if DEBUG
-    @State private var previewsWidgets = ProcessInfo.processInfo.arguments.contains("--aqd-preview-all-widgets")
-#endif
-    private var previewing: Bool {
-#if DEBUG
-        previewsWidgets
-#else
-        false
-#endif
-    }
-    private var visibleInstances: [TodayWidgetInstance]? {
-#if DEBUG
-        if previewsWidgets, let base = state.today { return PreviewSampleContent.widgetPreview(state: state, base: base) }
-#endif
-        return state.today?.instances
-    }
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -32,22 +16,12 @@ struct TodayView: View {
                         SemanticFeedback(role: .danger, message: error)
                         Button("Retry Today") { state.reloadToday() }.frame(minHeight: 44)
                     }
-#if DEBUG
-                    if previewsWidgets {
-                        HStack {
-                            Text("All widgets · Preview").font(AppTypography.supporting)
-                            Spacer()
-                            Button("Done") { previewsWidgets = false }.frame(minHeight: 44)
-                        }
-                        Text("Your saved Home layout is unchanged.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                    }
-#endif
-                    if let instances = visibleInstances {
+                    if let instances = state.today?.instances {
                         if !instances.contains(where: { $0.kind == .weatherContext }) {
                             TodayWeatherNotice()
                         }
                         ForEach(instances) { instance in
-                            TimelineView(.periodic(from: .now, by: 60)) { _ in TodayCard(instance: instance, isPreview: previewing) }
+                            TimelineView(.periodic(from: .now, by: 60)) { _ in TodayCard(instance: instance) }
                         }
                     }
 

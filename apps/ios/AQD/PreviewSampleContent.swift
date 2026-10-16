@@ -5,24 +5,59 @@ import UIKit
 
 /// Explicit owner preview only. No normal launch, tour or Release path calls this.
 @MainActor enum PreviewSampleContent {
-    static func widgetPreview(state: AppState, base: TodayConfiguration) -> [TodayWidgetInstance] {
-        TodayWidgetKind.allCases.enumerated().map { index, kind in
-            if let existing = base.instances.first(where: { $0.kind == kind }) { return existing }
-            let instanceID = id(901 + index)
+    struct WidgetReceipt: Codable {
+        let addedKinds: [TodayWidgetKind]
+        let configuration: TodayConfiguration
+        let backup: String?
+    }
+    static func addAllWidgets(store: PieceStore, outputDirectory: URL) async throws -> WidgetReceipt {
+        try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
+        let receiptURL = outputDirectory.appendingPathComponent("AQD-all-widgets.json")
+        let base = try store.todayConfiguration()
+        let missing = TodayWidgetKind.allCases.filter { kind in !base.instances.contains { $0.kind == kind } }
+        if missing.isEmpty {
+            let receipt = WidgetReceipt(addedKinds: [], configuration: base, backup: nil)
+            if !FileManager.default.fileExists(atPath: receiptURL.path) { try write(try JSONEncoder().encode(receipt), to: receiptURL) }
+            return receipt
+        }
+        guard try store.todayDraft() == nil else { throw Failure.changedStore }
+        let themes = try store.themes(), memories = try store.fitMemories()
+        let memory = memories.first { $0.photoID != nil }
+        let piece = try store.pieces().first
+        let photoID = memory?.photoID ?? piece?.photoID
+        let recipe = memory?.photoRecipe ?? piece?.photoRecipe ?? .fitOriginal
+        if missing.contains(.theme), themes.isEmpty { throw Failure.missingArtwork }
+        if missing.contains(.personalPhoto), photoID == nil { throw Failure.missingArtwork }
+        var draft = TodayLayoutDraft(base: base)
+        for kind in missing {
             var options = TodayWidgetOptions()
             switch kind {
-            case .theme: options.pinnedID = state.themes.first?.id
+            case .theme: options.pinnedID = themes.first?.id
             case .personalNote:
-                options.personal = TodayPersonalCard(id: id(951 + index), ownerID: base.ownerID, kind: kind,
-                    text: "Preview note. A place for a thought about what you want to wear.")
+                options.personal = TodayPersonalCard(ownerID: base.ownerID, kind: kind, title: "A thought for today", text: "Try a favorite piece in a new way.")
             case .personalPhoto:
-                let memory = state.fitMemories.first(where: { $0.photoID != nil })
-                options.personal = TodayPersonalCard(id: id(951 + index), ownerID: base.ownerID, kind: kind,
-                    text: "Preview photo from your fit journal.", photoID: memory?.photoID, photoRecipe: memory?.photoRecipe ?? .fitOriginal)
+                options.personal = TodayPersonalCard(ownerID: base.ownerID, kind: kind, title: "A little inspiration", text: "A favorite look for the week.", photoID: photoID, photoRecipe: recipe)
             default: break
             }
-            return TodayWidgetInstance(id: instanceID, kind: kind, options: options)
+            draft.value.instances.append(TodayWidgetInstance(kind: kind, options: options))
         }
+        let stamp = try store.mutationStamp()
+        let archive = try await LocalArchiveService.create(store: store)
+        guard try store.mutationStamp() == stamp else { throw Failure.changedStore }
+        let backup = "AQD-before-all-widgets-\(UUID().uuidString).aqdarchive"
+        try write(archive.data, to: outputDirectory.appendingPathComponent(backup))
+        guard try store.mutationStamp() == stamp else { throw Failure.changedStore }
+        try store.saveTodayDraft(draft)
+        let result: TodayConfiguration
+        do { result = try store.saveTodayLayout(draft) }
+        catch {
+            guard let acknowledged = try store.savedTodayLayout(draft) else { throw error }
+            result = acknowledged
+        }
+        try store.finishTodayDraft(draft)
+        let receipt = WidgetReceipt(addedKinds: missing, configuration: result, backup: backup)
+        try write(try JSONEncoder().encode(receipt), to: receiptURL)
+        return receipt
     }
 
     struct Bundle {

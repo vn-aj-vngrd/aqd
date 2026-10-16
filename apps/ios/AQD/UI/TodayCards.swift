@@ -3,7 +3,6 @@ import SwiftUI
 
 struct TodayCard: View {
     let instance: TodayWidgetInstance
-    var isPreview = false
     @Environment(AppState.self) private var state
     private var today: LocalPlanDay { LocalPlanDay() }
     var body: some View {
@@ -75,7 +74,7 @@ struct TodayCard: View {
                 if !card.title.isEmpty { Text(card.title).font(AppTypography.section) }
                 if card.kind == .personalPhoto { TodayPersonalPhoto(card: card).frame(maxHeight: 260) }
                 Text(card.text).lineLimit(4).foregroundStyle(AppTheme.ink)
-                NavigationLink { TodayPersonalDetail(instanceID: instance.id, previewInstance: isPreview ? instance : nil) } label: { TodayCardActionLabel(title: "Read more") }.frame(minHeight: 44)
+                NavigationLink { TodayPersonalDetail(instanceID: instance.id) } label: { TodayCardActionLabel(title: "Read more") }.frame(minHeight: 44)
             } else { configure("Choose your own private content.") }
         }
     }
@@ -256,13 +255,7 @@ struct TodayCard: View {
     private func configure(_ message: String) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(message).foregroundStyle(AppTheme.secondary)
-            Button {
-                state.openTodayEditor()
-                if isPreview {
-                    if let existing = state.todayEditor?.draft.value.instances.first(where: { $0.kind == instance.kind }) { state.todayEditor?.begin(existing) }
-                    else { state.todayEditor?.beginNew(instance.kind) }
-                } else { state.todayEditor?.begin(instance) }
-            } label: { TodayCardActionLabel(title: "Configure widget") }.frame(minHeight: 44)
+            Button { state.openTodayEditor(); state.todayEditor?.begin(instance)            } label: { TodayCardActionLabel(title: "Configure widget") }.frame(minHeight: 44)
         }
     }
     private func failure(_ message: String, retry: @escaping () -> Void) -> some View {
@@ -275,9 +268,8 @@ struct TodayCard: View {
 
 private struct TodayPersonalDetail: View {
     let instanceID: UUID
-    var previewInstance: TodayWidgetInstance? = nil
     @Environment(AppState.self) private var state
-    private var instance: TodayWidgetInstance? { state.today?.instances.first { $0.id == instanceID } ?? previewInstance }
+    private var instance: TodayWidgetInstance? { state.today?.instances.first { $0.id == instanceID } }
     var body: some View {
         Group {
             if instance?.options?.personal == nil {
@@ -292,9 +284,7 @@ private struct TodayPersonalDetail: View {
                     if !card.title.isEmpty { Text(card.title).font(AppTypography.section) }
                     if card.kind == .personalPhoto { TodayPersonalPhoto(card: card).frame(minHeight: 200) }
                     Text(card.text).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
-                    if previewInstance == nil {
-                        SecondaryAction(title: "Edit card") { state.openTodayEditor(); state.todayEditor?.begin(instance) }
-                    }
+                    SecondaryAction(title: "Edit card") { state.openTodayEditor(); state.todayEditor?.begin(instance) }
                     Text("Private on this iPhone").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }
             }.padding(20)
