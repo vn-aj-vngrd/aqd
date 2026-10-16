@@ -75,6 +75,35 @@ import Testing
         let restored = try coordinator.commit(refreshed, source: nil)
         #expect(try restored.store.validateArchiveContents() == package.header.summary)
     }
+    @Test(arguments: [false, true], [false, true]) func invalidUnacknowledgedCandidateAndPointerRecoverValidatedOriginal(generatedSource: Bool, corruptPointer: Bool) async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        var source = try PieceStore(directory: root)
+        let coordinator = LocalDataCoordinator(legacyRoot: root)
+        if generatedSource {
+            let initial = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source).data)
+            let request = try await coordinator.prepareRestore(initial, source: source)
+            source = try coordinator.commit(request, source: source).store
+            try coordinator.acknowledge(request.operationID)
+            #expect(try coordinator.cleanupRetired())
+        }
+        var chat = AgentConversation(ownerID: try source.todayConfiguration().ownerID); chat.draft = "Original survives broken pointer"
+        _ = try source.saveAgentConversation(chat, operationID: UUID())
+        let package = try LocalArchivePackage.decode(await LocalArchiveService.create(store: source).data)
+        #expect(try source.localDirectory.standardizedFileURL.path == coordinator.currentDirectory().standardizedFileURL.path)
+        let request = try await coordinator.prepareRestore(package, source: source)
+        var installed: LocalDataInstallation? = try coordinator.commit(request, source: source)
+        #expect(installed?.review.phase == .installed); installed = nil
+        try FileManager.default.removeItem(at: coordinator.generationDirectory(request.operationID))
+        let pointer = coordinator.controlDirectory.appendingPathComponent("active.json")
+        if corruptPointer { try Data("damaged pointer".utf8).write(to: pointer) } else { try FileManager.default.removeItem(at: pointer) }
+        let restarted = LocalDataCoordinator(legacyRoot: root)
+        try restarted.recover()
+        #expect(try restarted.currentDirectory().standardizedFileURL.path == source.localDirectory.standardizedFileURL.path)
+        #expect(try PieceStore(directory: restarted.currentDirectory()).agentConversations().first?.draft == chat.draft)
+        #expect(try restarted.pendingReview()?.phase == .failed)
+        try restarted.cancel(request.operationID)
+        #expect(try restarted.pendingReview() == nil)
+    }
     @Test func cancellingAValidatedReplacementKeepsTheCurrentCloset() async throws {
         let source = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         var chat = AgentConversation(ownerID: try source.todayConfiguration().ownerID); chat.draft = "Keep this"

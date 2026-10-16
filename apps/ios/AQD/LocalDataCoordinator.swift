@@ -85,7 +85,7 @@ struct LocalDataInstallation {
     private func sourceToken(_ source: PieceStore?) throws -> LocalDataSourceToken {
         let pointer = try pointer(), current = try resolveDirectory(allowIncomplete: source == nil)
         if let source {
-            guard source.localDirectory.standardizedFileURL == current else { throw LocalDataError.staleReview }
+            guard source.localDirectory.standardizedFileURL.path == current.standardizedFileURL.path else { throw LocalDataError.staleReview }
             return LocalDataSourceToken(generation: pointer?.generation, ownerID: try source.todayConfiguration().ownerID,
                 stamp: try source.mutationStamp(), unreadableFingerprint: nil)
         }
@@ -169,6 +169,24 @@ struct LocalDataInstallation {
         try LocalArchiveIO.write(JSONEncoder().encode(review), to: controlDirectory.appendingPathComponent("retired-\(review.operationID.uuidString).json"))
         try FileManager.default.removeItem(at: reviewURL)
     }
+    /// Only an unacknowledged replacement may roll back to its retained, validated original.
+    private func recoverOriginal(_ review: LocalDataReview) throws -> Bool {
+        guard review.phase != .acknowledged else { return false }
+        let original = review.source.generation.map(generationDirectory) ?? legacyRoot
+        do {
+            try checkDirectory(original)
+            for name in ["wardrobe.store", "schema-version"] {
+                guard try FileManager.default.attributesOfItem(atPath: original.appendingPathComponent(name).path)[.type] as? FileAttributeType == .typeRegular else { throw LocalDataError.invalidPointer }
+            }
+            let summary = try PieceStore(directory: original).validateArchiveContents()
+            if let ownerID = review.source.ownerID, summary.ownerID != ownerID { return false }
+        } catch { return false }
+        if let generation = review.source.generation {
+            try LocalArchiveIO.write(JSONEncoder().encode(Pointer(generation: generation, operationID: generation)), to: pointerURL)
+        } else if exists(pointerURL) { try FileManager.default.removeItem(at: pointerURL) }
+        var failed = review; failed.phase = .failed; try write(failed)
+        return true
+    }
     private func repairPointer(_ review: LocalDataReview) throws {
         let directory = generationDirectory(review.operationID)
         var valid = false
@@ -180,6 +198,7 @@ struct LocalDataInstallation {
             let store = try PieceStore(directory: directory)
             valid = try store.validateArchiveContents().ownerID == review.incomingSummary.ownerID
         } catch { valid = false }
+        if !valid, try recoverOriginal(review) { return }
         try LocalArchiveIO.write(JSONEncoder().encode(Pointer(generation: review.operationID, operationID: review.operationID)), to: pointerURL)
         if !valid {
             var retained = review; retained.phase = .failed
@@ -245,15 +264,7 @@ struct LocalDataInstallation {
                 let installed = try PieceStore(directory: currentDirectory()); _ = try installed.validateArchiveContents()
                 review.phase = .installed; try write(review)
             } catch {
-                // No acknowledgment was issued. Retain the failed candidate and recover the validated original.
-                let original = review.source.generation.map(generationDirectory) ?? legacyRoot
-                for name in ["wardrobe.store", "schema-version"] {
-                    guard try FileManager.default.attributesOfItem(atPath: original.appendingPathComponent(name).path)[.type] as? FileAttributeType == .typeRegular else { throw LocalDataError.invalidPointer }
-                }
-                _ = try PieceStore(directory: original).validateArchiveContents()
-                if let generation = review.source.generation { try LocalArchiveIO.write(JSONEncoder().encode(Pointer(generation: generation, operationID: generation)), to: pointerURL) }
-                else { try FileManager.default.removeItem(at: pointerURL) }
-                review.phase = .failed; try write(review)
+                guard try recoverOriginal(review) else { throw LocalDataError.invalidPointer }
             }
         } else if review.phase == .preparing { try cancel(review.operationID) }
         else if review.phase == .installed || review.phase == .acknowledged {
