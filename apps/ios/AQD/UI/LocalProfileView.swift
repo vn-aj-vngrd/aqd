@@ -47,7 +47,7 @@ struct LocalProfileView: View {
                 .toolbarBackground(AppTheme.canvas, for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
                 .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItem(placement: .topBarLeading) {
                         Button { state.openFit() } label: { Label("Add fit", systemImage: "plus") }
                             .accessibilityIdentifier("profile.addFit")
                     }

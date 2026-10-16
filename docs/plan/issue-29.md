@@ -387,3 +387,9 @@ Owner Profile grid refinement: remove decorative composition/stack indicators fr
 - Include the preceding Profile grid refinement: 20pt side inset, 8pt grid gaps, 4pt white card inset, no decorative composition badge. No canvas or data changes.
 
 Owner follow-up: cancelled the Instagram/multiple-photo expansion before implementation; retain the existing single-photo/composition data format and current grid design. Both independent source reviews found no actionable Standards or Spec issues in the grid/toolbar/menu/minimization increment. Final physical unit run `/tmp/aqd-final-toolbar-grid-unit.log` passed Core78 and native230 (217 Swift Testing +13 XCTest), including existing navigation and rendering regressions. No E2E or rendered acceptance run.
+
+### Owner add-button alignment — October17
+
+Move Closet and Planner add menus to native topBarLeading placement. Closet Search and Filter remain topBarTrailing. Retain the same menus, identifiers, routes and neutral ink. This changes placement only; preserve the previous unit evidence at9641bfd and qualify the final source with a Debug build and ordinary physical preview install.
+
+Profile Add fit follows the same topBarLeading alignment; Options remains trailing. Unsigned Release `/tmp/aqd-final-toolbar-grid-release.log` passed9641bfd before this placement-only follow-up. No multiple-photo or Instagram redesign was implemented.

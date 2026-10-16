@@ -49,7 +49,7 @@ struct ClosetView: View {
                         Button { state.closetSearchActive = true } label: { Label("Search closet", systemImage: "magnifyingglass") }
                             .tint(AppTheme.ink).accessibilityIdentifier("closet.search")
                     }
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItem(placement: .topBarLeading) {
                         Menu {
                             Button("Add a piece", systemImage: "tshirt") { state.addPiece() }
                             Button("Build an outfit", systemImage: "square.stack") { state.buildOutfit() }

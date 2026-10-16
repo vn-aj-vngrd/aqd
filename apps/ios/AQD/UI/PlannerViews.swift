@@ -80,7 +80,7 @@ struct LocalPlannerView: View {
                     }
                 }
                 .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
-                .toolbar { ToolbarItem(placement: .topBarTrailing) {
+                .toolbar { ToolbarItem(placement: .topBarLeading) {
                     Menu {
                         Button("Plan one day", systemImage: "calendar") { state.openPlan(day: state.plannerDay) }
                         Button("Plan several days", systemImage: "calendar.badge.plus") { state.openPlanAuthoring(day: state.plannerDay) }
