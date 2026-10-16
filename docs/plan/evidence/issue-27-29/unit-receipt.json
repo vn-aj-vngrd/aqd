@@ -182,10 +182,10 @@
       "scope": "Native menu routes, neutral toolbar icons, grid spacing and native tab minimization source. Existing units; no E2E or rendered scroll proof."
     },
     "finalSourceReview": {
-      "sourceHead": "e833d5d13c1bf1e83d0c52a3fd12880949919f6a",
+      "sourceHead": "cdb401f199bb686f490bc6e5f37aa17960a3732d",
       "standards": "No actionable findings",
       "spec": "No actionable findings",
-      "scope": "Final menu, toolbar placement and Today heading increments; read-only independent reviews. No E2E/rendered acceptance."
+      "scope": "Independent Standards/Spec reviews of Piece detail surface grouping and root top-spacing increments; no actionable findings. Cosmetic source review; no E2E or rendered acceptance."
     }
   },
   "localLogs": [
@@ -668,6 +668,26 @@
       "name": "aqd-sample-context-refresh-receipt.json",
       "sha256": "316d4e6bdf6d83b4191d6c10be443acee027fd82b7d886caa9a61aae6a43f713",
       "published": false
+    },
+    {
+      "name": "aqd-piece-detail-surface-debug.log",
+      "sha256": "6c8d88f80fe18ecaf8bce81d88ce5c6529ce388c529e3057f6eeebec5e4241dc",
+      "published": false
+    },
+    {
+      "name": "aqd-root-header-spacing-debug.log",
+      "sha256": "ab7971b03985b88815bcc271aee3b8dcf4a49770a59f575d2f3151e5a12ff0a9",
+      "published": false
+    },
+    {
+      "name": "aqd-root-header-spacing-install.json",
+      "sha256": "7f62f61d463338430c3aa76dfc56d78971a1a86bc43e3977faee3c8fe64d1216",
+      "published": false
+    },
+    {
+      "name": "aqd-root-header-spacing-launch.json",
+      "sha256": "f5ac2adc87b897cb740feb11ad7b62ae1c63b5c95d6ef33cb581ef453c46b24f",
+      "published": false
     }
   ],
   "sourceFiles": {
@@ -779,10 +799,10 @@
     "No native distribution. Current-head CI/Codex and merged-SHA release remain separate gates."
   ],
   "localOwnerPreview": {
-    "sourceHead": "e833d5d13c1bf1e83d0c52a3fd12880949919f6a",
-    "executableSHA256": "70cb23341dacc7a8424b962579ec9104b64f5999194c0e3f4804c70d44359bac",
+    "sourceHead": "cdb401f199bb686f490bc6e5f37aa17960a3732d",
+    "executableSHA256": "0255183b878aa8e59303688e009dd1ed9f39fb5732fb66d745ad1fe50dc2c21d",
     "destination": "Physical iPhone17ProMax",
-    "build": "Debug BUILD SUCCEEDED /tmp/aqd-final-today-add-debug.log",
+    "build": "Debug BUILD SUCCEEDED /tmp/aqd-root-header-spacing-debug.log",
     "install": "success",
     "normalLaunch": "success",
     "launchArguments": [],
@@ -806,8 +826,8 @@
     "sourceFiles": {
       "apps/ios/AQD/UI/AppTheme.swift": "ba4b30ad0af3f8fbd0b18e231b13addee60209c812c976c2315f9dd8ddded0b1",
       "apps/ios/AQD/UI/AppActions.swift": "21552d43f8d02e935925341375ee3776c2897eb1e8659a47bddaf548ef607545",
-      "apps/ios/AQD/UI/ClosetView.swift": "0fd188a1c3de497cb88ab6521dbcaeb12659de345d03747ef31084c80852963c",
-      "apps/ios/AQD/UI/LocalProfileView.swift": "d521df353d05e9b17441407c95ae37819669d98b7d26c33d924cd23ba5952a81",
+      "apps/ios/AQD/UI/ClosetView.swift": "f3da1f8907fe7696186536c70abbb74f1fec1a79044f1380a5171b41e2c206b6",
+      "apps/ios/AQD/UI/LocalProfileView.swift": "105e3ac71fe79169ef9c66f8b46a8f1eb8deff6201f45af6aa2f6bee70d4cde3",
       "apps/ios/AQD/UI/AppMetrics.swift": "85b8d1171aa6347dcdd16411d7355a4a17332c6dc9bb6b1d1a9626b050586980",
       "apps/ios/AQD/UI/FitJournalViews.swift": "b1edb95990d5c2f08fb24c94524855fc768422c82b42dac639d25be554a087e1",
       "apps/ios/AQD/UI/PlannerCalendarView.swift": "d426ac7a8556d0ca359f2c1d6e73314aff898067a283af4507cabdc3759d7ae0",
@@ -819,11 +839,11 @@
       "apps/ios/AQD/UI/TodayEditorView.swift": "1b3394ff8f06c8ebfbef72115e34443b063364e59b8092cd3a0691953f7a5c89",
       "apps/ios/AQD/UI/AgentActionViews.swift": "69f870ccbdc54ef4a77ddb8fe1ad107de276d540ee96e401af9956b30c9b828a",
       "apps/ios/AQD/UI/NativeTabs.swift": "cafb2f5a61088af0b71032a026630ad1e2070d67ef36ea281f78d68f1a3a29df",
-      "apps/ios/AQD/UI/RootViews.swift": "d5b30cf99aa614fcca81f57fc8cc4d63bc0367a75198dec38aeffd52f4cc33e0",
+      "apps/ios/AQD/UI/RootViews.swift": "19d5a2404c88719c9680bfbbd39f9e9d8f1e927bbbb9b8ba5e378ddb972b31fd",
       "apps/ios/AQD/UI/PieceCaptureView.swift": "d60f1827859eca3a4ec3da6682b4ebc7b8e2e7ac0b6243c62dad4a45ceae7b8e"
     },
-    "installReceipt": "/tmp/aqd-final-today-add-install.json",
-    "launchReceipt": "/tmp/aqd-final-today-add-launch.json"
+    "installReceipt": "/tmp/aqd-root-header-spacing-install.json",
+    "launchReceipt": "/tmp/aqd-root-header-spacing-launch.json"
   },
   "verificationScope": "Original Core77/native227 and transparency safety remain bound to c85254f. Additional Core78 selection checks bind to158c8c3. Latest creator/Profile/Planner/Style/splash cosmetic preview ba72e6b passed Debug/Release and source reviews, installed and ordinary-launched. No new native/E2E/rendered acceptance claimed.",
   "sampleMediaRefresh": {
@@ -861,7 +881,7 @@
     "repeated": false
   },
   "finalOwnerRefinement": {
-    "sourceHead": "e833d5d13c1bf1e83d0c52a3fd12880949919f6a",
+    "sourceHead": "cdb401f199bb686f490bc6e5f37aa17960a3732d",
     "canvas": "F7F7F5, Profile follows shared canvas; white outer post cards",
     "innerGround": "F5F4F1",
     "profile": "glass shortcuts, aligned counts/bio, no title, spaced grid without decorative badge",
@@ -871,6 +891,8 @@
     "sampleContexts": "7 plans and8 fits refreshed once with protected backup; no wear records created",
     "releaseBoundary": "9641bfd; later toolbar placement/Today header/menu Debug and source-review only",
     "e2eRun": false,
-    "runtimeComplete": false
+    "runtimeComplete": false,
+    "rootSpacing": "All four roots use16pt from toolbar content boundary; both Profile states",
+    "pieceDetail": "Surface photo frame, identity/details card and separate wear/history card; existing canvas/inner well and data/actions retained"
   }
 }
