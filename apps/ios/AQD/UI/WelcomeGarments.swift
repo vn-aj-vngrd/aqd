@@ -2,7 +2,8 @@ import ImageIO
 import SwiftUI
 import UIKit
 
-/// One packaged atlas decode; cached crops are illustrative, never stored photos.
+/// One packaged atlas decode for illustrative UI. Only the explicit Debug
+/// sample-population command may copy these crops into labelled sample records.
 @MainActor enum WelcomeGarments {
     struct Piece: Decodable, Identifiable {
         let id: String

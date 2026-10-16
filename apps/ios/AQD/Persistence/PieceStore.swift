@@ -3001,3 +3001,61 @@ extension PieceStore {
         throw LocalArchiveError.newer
     }
 }
+
+#if DEBUG
+extension PieceStore {
+    /// Owner-requested sample population. All graph records commit together;
+    /// existing records/drafts and actual wear remain unchanged.
+    func insertPreviewSamples(_ samples: PreviewSampleContent.Bundle) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let owner = try todayConfiguration().ownerID
+        let existing = try PreviewSampleContent.existingIDs(in: self)
+        guard existing.values.allSatisfy(\.isEmpty) else { throw StoreError.operationConflict }
+        let pieceIDs = Set(samples.pieces.map(\.id))
+        let availableIDs = Set(samples.pieces.filter { $0.availability == .available }.map(\.id))
+        let outfitIDs = Set(samples.outfits.map(\.id))
+        guard pieceIDs.count == samples.pieces.count, outfitIDs.count == samples.outfits.count,
+              pieceIDs == Set(PreviewSampleContent.sampleIDs["pieces", default: []]),
+              outfitIDs == Set(PreviewSampleContent.sampleIDs["outfits", default: []]),
+              Set(samples.themes.map(\.id)) == Set(PreviewSampleContent.sampleIDs["themes", default: []]),
+              Set(samples.plans.map(\.id)) == Set(PreviewSampleContent.sampleIDs["plans", default: []]),
+              Set(samples.fits.map(\.id)) == Set(PreviewSampleContent.sampleIDs["fits", default: []]) else { throw StoreError.invalidRecord }
+        for piece in samples.pieces {
+            try PieceDraft(name: piece.name, category: piece.category, photoID: piece.photoID, details: piece.details).validated()
+            try piece.photoRecipe.validated()
+            _ = try photoRendition(id: piece.photoID, recipe: piece.photoRecipe)
+        }
+        for outfit in samples.outfits {
+            try outfit.validated()
+            guard outfit.ownerID == owner, Set(outfit.pieceIDs).isSubset(of: availableIDs) else { throw StoreError.invalidRecord }
+        }
+        var names = Set(try themes().map { OutfitTheme.nameKey($0.name) })
+        for theme in samples.themes {
+            try theme.validated()
+            guard theme.ownerID == owner, Set(theme.outfitIDs).isSubset(of: outfitIDs),
+                  names.insert(OutfitTheme.nameKey(theme.name)).inserted else { throw StoreError.invalidRecord }
+        }
+        let existingPlans = try planEntries()
+        for plan in samples.plans {
+            try plan.validated()
+            guard plan.ownerID == owner, plan.state == .planned,
+                  samples.outfits.contains(where: { $0.id == plan.outfitID && $0.revision == plan.outfitRevision }),
+                  !existingPlans.contains(where: { $0.day == plan.day && $0.occasion == plan.occasion }) else { throw StoreError.invalidRecord }
+        }
+        for fit in samples.fits {
+            try fit.validated()
+            guard fit.ownerID == owner, let snapshot = fit.outfit,
+                  let outfit = samples.outfits.first(where: { $0.id == snapshot.id }),
+                  try FitOutfitSnapshot(outfit: outfit, pieces: samples.pieces) == snapshot else { throw StoreError.invalidRecord }
+            if let photo = fit.photoID { _ = try photoRendition(id: photo, recipe: fit.photoRecipe) }
+        }
+        let context = ModelContext(container)
+        for value in samples.pieces { context.insert(StoredPiece(value)) }
+        for value in samples.outfits { context.insert(try StoredOutfit(value)) }
+        for value in samples.themes { context.insert(try StoredOutfitTheme(value)) }
+        for value in samples.plans { context.insert(try StoredOutfitPlanEntry(value)) }
+        for value in samples.fits { context.insert(try StoredFitMemory(value)) }
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+    }
+}
+#endif

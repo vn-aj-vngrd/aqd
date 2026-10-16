@@ -58,6 +58,24 @@ private struct AppRootView: View {
         }
         .task(id: ObjectIdentifier(state)) {
             if state.isOpening { await Task.yield(); state.openStore() }
+            #if DEBUG
+            let process = ProcessInfo.processInfo
+            if process.arguments.contains("--aqd-add-preview-samples"), !process.arguments.contains("--aqd-ui-testing"), let store = state.store {
+                state.isOpening = true
+                do {
+                    let directory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                    _ = try await PreviewSampleContent.populate(store: store, outputDirectory: directory)
+                    state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); state.reloadFits(); state.reloadToday()
+                    state.selection = 1; state.closetScope = "Pieces"
+                } catch {
+                    if let directory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) {
+                        try? LocalArchiveIO.write(Data(String(reflecting: error).utf8), to: directory.appendingPathComponent("AQD-preview-samples-error.txt"))
+                    }
+                    state.collectionError = "Sample setup could not finish. Your existing records have not been replaced. A local backup is retained if setup reached that step."
+                }
+                state.isOpening = false
+            }
+            #endif
             for _ in 0..<10 {
                 if state.dataCoordinator?.isWaitingForPreviousStore != true && !LocalArchiveService.hasInFlightWork { break }
                 try? await Task.sleep(for: .milliseconds(30))

@@ -3,3 +3,5 @@
 These images match the approved Paper Section01 Profile tour. The two photographs are JPEGs returned by Paper's image-fill connector from the approved source fills. The four outfit images are unchanged copies from the existing journal handoff. [Provenance](provenance.json) records source identities and output hashes.
 
 `TourArtwork` loads these packaged files for the preview only. They never become pieces, photos, fit memories or preferences in the local store. Actual Profile records belong to its feature section; onboarding examples establish no user's wardrobe history.
+
+Owner-authorized October16 exception: the explicit Debug-only `--aqd-add-preview-samples` command may copy the two photographs into clearly noted sample fit memories in the current app, after saving a local archive. This is deliberate sample population, not normal onboarding/tour behavior or evidence of the owner’s wardrobe/wear. No Release or ordinary-launch path seeds records.

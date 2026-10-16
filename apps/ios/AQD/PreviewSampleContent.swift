@@ -1,0 +1,126 @@
+#if DEBUG
+import AQDCore
+import Foundation
+import UIKit
+
+/// Explicit owner preview only. No normal launch, tour or Release path calls this.
+@MainActor enum PreviewSampleContent {
+    struct Bundle {
+        var pieces: [WardrobePiece] = []
+        var outfits: [Outfit] = []
+        var themes: [OutfitTheme] = []
+        var plans: [OutfitPlanEntry] = []
+        var fits: [FitMemory] = []
+    }
+    struct Receipt: Codable, Equatable {
+        let version: Int
+        let added: [String: Int]
+        let ids: [String: [UUID]]
+        let backup: String?
+    }
+    enum Failure: Error { case partialSamples, missingArtwork, changedStore, invalidGraph }
+    static func id(_ number: Int) -> UUID {
+        // Closed constants below are the only callers; this namespace is reserved for samples.
+        UUID(uuidString: "A0D51000-0000-4000-8000-" + String(format: "%012d", number))!
+    }
+    static var sampleIDs: [String: [UUID]] {
+        ["pieces": (1...12).map(id), "outfits": (101...106).map(id), "themes": (201...204).map(id),
+         "plans": (301...307).map(id), "fits": (401...408).map(id)]
+    }
+    static func existingIDs(in store: PieceStore) throws -> [String: [UUID]] {
+        let expected = sampleIDs
+        return ["pieces": try (store.pieces() + store.pieces(archived: true)).map(\.id).filter { expected["pieces", default: []].contains($0) },
+                "outfits": try store.outfits().map(\.id).filter { expected["outfits", default: []].contains($0) },
+                "themes": try store.themes().map(\.id).filter { expected["themes", default: []].contains($0) },
+                "plans": try store.planEntries().map(\.id).filter { expected["plans", default: []].contains($0) },
+                "fits": try store.fitMemories().map(\.id).filter { expected["fits", default: []].contains($0) }]
+    }
+    static func populate(store: PieceStore, outputDirectory: URL, now: Date = Date(), timeZone: TimeZone = .current) async throws -> Receipt {
+        try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
+        let receiptURL = outputDirectory.appendingPathComponent("AQD-preview-samples.json")
+        let existing = try existingIDs(in: store)
+        if existing.values.contains(where: { !$0.isEmpty }) {
+            guard sampleIDs.allSatisfy({ Set(existing[$0.key, default: []]) == Set($0.value) }) else { throw Failure.partialSamples }
+            // Preserve any edits/deletions deliberately made after the original population.
+            if let data = try? Data(contentsOf: receiptURL), let receipt = try? JSONDecoder().decode(Receipt.self, from: data), receipt.ids == sampleIDs { return receipt }
+            let receipt = Receipt(version: 1, added: sampleIDs.mapValues(\.count), ids: sampleIDs, backup: nil)
+            try write(try JSONEncoder().encode(receipt), to: receiptURL); return receipt
+        }
+        let backupName = "AQD-before-samples-\(UUID().uuidString).aqdarchive"
+        let backup = try await LocalArchiveService.create(store: store)
+        try write(backup.data, to: outputDirectory.appendingPathComponent(backupName))
+        var stamp = try store.mutationStamp()
+        let preparer = PhotoPreparer()
+        func photo(_ data: Data) async throws -> UUID {
+            let prepared = try await preparer.prepare(data: data)
+            guard try store.mutationStamp() == stamp else { throw Failure.changedStore }
+            let photoID = try store.acceptPhoto(prepared)
+            stamp = try store.mutationStamp()
+            return photoID
+        }
+        var bundle = Bundle()
+        let specs: [(String, String, PieceCategory, String)] = [
+            ("shirt", "Blue cotton shirt", .tops, "Blue"), ("knit", "Ivory ribbed knit", .tops, "Ivory"),
+            ("coat", "Navy trench coat", .layers, "Navy"), ("overshirt", "Olive overshirt", .layers, "Olive"),
+            ("trousers", "Tailored trousers", .bottoms, "Charcoal"), ("linen", "Linen trousers", .bottoms, "Sand"),
+            ("dress", "Cream midi dress", .dresses, "Cream"), ("jeans", "Indigo jeans", .bottoms, "Indigo"),
+            ("loafers", "Oxblood loafers", .shoes, "Oxblood"), ("sneakers", "Ivory sneakers", .shoes, "Ivory"),
+            ("bag", "Tan crossbody", .accessories, "Tan"), ("belt", "Black belt", .accessories, "Black")]
+        for (index, spec) in specs.enumerated() {
+            guard let data = WelcomeGarments.images[spec.0]?.pngData() else { throw Failure.missingArtwork }
+            let photoID = try await photo(data)
+            let piece = WardrobePiece(id: id(index + 1), name: "Sample · \(spec.1)", category: spec.2, photoID: photoID,
+                details: PieceDetails(color: spec.3, notes: "Sample preview artwork. This is not a personal wardrobe upload."),
+                availability: index == 1 ? .laundry : index == 3 ? .unavailable : .available,
+                createdAt: now.addingTimeInterval(Double(-index) * 86400), updatedAt: now)
+            bundle.pieces.append(piece)
+        }
+        let owner = try store.todayConfiguration().ownerID
+        let looks: [(String, [Int])] = [("Office day", [1, 5, 9, 12]), ("Coffee run", [1, 8, 10, 11]),
+            ("Weekend ease", [7, 10, 11]), ("City layers", [3, 1, 5, 9]),
+            ("Linen afternoon", [1, 6, 9, 12]), ("Evening out", [7, 3, 9])]
+        for (index, look) in looks.enumerated() {
+            bundle.outfits.append(Outfit(id: id(101 + index), ownerID: owner, name: "Sample · \(look.0)",
+                pieceIDs: look.1.map(id), mood: "Sample preview", occasion: look.0, isFavorite: index < 3,
+                createdAt: now, updatedAt: now.addingTimeInterval(Double(-index) * 60)))
+        }
+        let themes: [(String, [Int])] = [("Weekday", [101, 104]), ("Off duty", [102, 103, 105]), ("Evening", [106, 104]), ("Ideas to collect", [])]
+        for (index, theme) in themes.enumerated() {
+            bundle.themes.append(OutfitTheme(id: id(201 + index), ownerID: owner, name: "Sample · \(theme.0)",
+                description: "Sample collection for previewing the app.", outfitIDs: theme.1.map(id)))
+        }
+        var calendar = Calendar(identifier: .gregorian); calendar.timeZone = timeZone
+        for index in 0..<7 {
+            guard let date = calendar.date(byAdding: .day, value: index, to: now) else { throw Failure.invalidGraph }
+            let outfit = bundle.outfits[index % bundle.outfits.count]
+            bundle.plans.append(OutfitPlanEntry(id: id(301 + index), planID: id(501 + index), ownerID: owner,
+                day: LocalPlanDay(date: date, timeZone: timeZone), occasion: "Sample · \(looks[index % looks.count].0)",
+                outfitID: outfit.id, outfitRevision: outfit.revision, state: .planned))
+        }
+        let offsets = [0, -1, -2, -4, -6, -8, -10, -12]
+        for index in 0..<8 {
+            guard let date = calendar.date(byAdding: .day, value: offsets[index], to: now) else { throw Failure.invalidGraph }
+            var memory = FitMemory(id: id(401 + index), ownerID: owner)
+            memory.day = LocalPlanDay(date: date, timeZone: timeZone)
+            memory.note = "Sample fit memory for preview only. This does not represent your photo or recorded wear."
+            memory.outfit = try FitOutfitSnapshot(outfit: bundle.outfits[index % bundle.outfits.count], pieces: bundle.pieces)
+            if index < 2 {
+                let name = index == 0 ? "tour-fit-blue-coat" : "tour-fit-street"
+                guard let url = Foundation.Bundle.main.url(forResource: name, withExtension: "jpg") else { throw Failure.missingArtwork }
+                memory.photoID = try await photo(Data(contentsOf: url))
+            }
+            bundle.fits.append(memory)
+        }
+        guard try store.mutationStamp() == stamp else { throw Failure.changedStore }
+        try store.insertPreviewSamples(bundle)
+        let persisted = try existingIDs(in: store)
+        guard sampleIDs.allSatisfy({ Set(persisted[$0.key, default: []]) == Set($0.value) }) else { throw Failure.invalidGraph }
+        let receipt = Receipt(version: 1, added: sampleIDs.mapValues(\.count), ids: sampleIDs, backup: backupName)
+        try write(try JSONEncoder().encode(receipt), to: receiptURL)
+        return receipt
+    }
+    private static func write(_ data: Data, to url: URL) throws {
+        try LocalArchiveIO.write(data, to: url)
+    }
+}
+#endif

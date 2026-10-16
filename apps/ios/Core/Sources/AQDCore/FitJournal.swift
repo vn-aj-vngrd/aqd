@@ -30,8 +30,8 @@ public struct FitMemory: Identifiable, Codable, Equatable, Sendable {
     public var outfit: FitOutfitSnapshot?
     public var note: String
     public var revision: Int
-    public init(ownerID: UUID) {
-        id = UUID(); self.ownerID = ownerID; day = LocalPlanDay(); photoRecipe = .fitOriginal; note = ""; revision = 1
+    public init(id: UUID = UUID(), ownerID: UUID) {
+        self.id = id; self.ownerID = ownerID; day = LocalPlanDay(); photoRecipe = .fitOriginal; note = ""; revision = 1
     }
     public func validated(requireContent: Bool = true) throws {
         _ = try day.date(); try photoRecipe.validated()
