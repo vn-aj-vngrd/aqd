@@ -290,6 +290,31 @@ private struct TodayPersonalDetail: View {
     }
 }
 
+/// A setup/details notice, separate from the configurable weather widget.
+struct TodayWeatherNotice: View {
+    @Environment(AppState.self) private var state
+    @State private var setup = false
+    var body: some View {
+        if let client = state.weatherClient {
+            Button { setup = true } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "cloud.sun").font(.system(size: 20)).accessibilityHidden(true)
+                    Text(client.error != nil ? "Review weather settings" : client.local?.enabled == true ? "Weather · \(client.local?.place?.name ?? "Details")" : "Set up optional weather")
+                        .font(AppTypography.supporting).fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
+                }.foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                    .padding(.horizontal, 14).padding(.vertical, 8)
+                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                    .contentShape(RoundedRectangle(cornerRadius: AppRadius.field))
+            }.buttonStyle(.plain).accessibilityHint("Apple Weather preferences. Your wardrobe stays private.")
+                .sheet(isPresented: $setup) {
+                    WeatherContextView(client: client, persistsPreference: true) { _ in true }
+                }
+        }
+    }
+}
+
 /// Discoverable Weather setup and matching, attributed saved readings. The shared
 /// client still owns consent, qualification, freshness and all network requests.
 struct TodayWeatherSummary: View {
