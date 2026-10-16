@@ -53,3 +53,9 @@ Missing action APIs failed `/tmp/aqd-27-s3-red.log`. An actual proposal-only los
 ## S2 terminal-state review correction
 
 A focused Core regression reproduced empty responses being marked complete and stale failure copy surviving retry (`/tmp/aqd-agent-final-red.log`). Completion now requires received nonblank text and retry clears the previous failure. Background suspension retains an interrupted attempt rather than claiming a user Stop; explicit Stop still acknowledges cancellation. Stored optional Weather selections use their shared validator. Full Core71/native193, comprising180 Swift Testing and13 XCTest, pass `/tmp/aqd-27-29-final-unit.log` on the confirmed physical iPhone17ProMax/iOS27.0.1. The native regression includes an empty provider and suspension before any chunk, rejecting late text and preserving interruption on reopen. No E2E ran.
+
+## Full independent review correction
+
+Standards found two recovery/current-state defects across the group; Spec found the same erase retry defect plus a conversation deletion deadlock. A refused deletion now releases its pending latch for confirmed conflict/stale refusals, preserving uncertain deletion identity. This permits the original unconfirmed domain action to reconcile. The new regression additionally reproduced repeated approval resetting a terminal proposal; approval now rejects wrong versions and terminal states before mutation. Succeeded/cancelled outcomes remain unchanged across repeated approval and reopen.
+
+Actual failures: `/tmp/aqd-27-29-review-red.log` and `/tmp/aqd-27-29-review-unit.log`. Final Core71/native194, comprising181 Swift Testing and13 XCTest, pass `/tmp/aqd-27-29-review-final-unit.log`. Both independent reviewers rechecked all corrections and direct consumers, with no remaining findings. All E2E remains issue30; current-head Codex review is a separate required gate.

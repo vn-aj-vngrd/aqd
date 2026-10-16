@@ -76,6 +76,13 @@ import Observation
             self.deletion = nil
             if conversation.id == value.id { pending = nil; retention?.cancel(); conversation = AgentConversation(ownerID: value.ownerID) }
             reloadHistory()
+        } catch PieceStore.StoreError.operationConflict {
+            deletion = nil
+            error = "Deletion was refused. Check any unconfirmed reviewed change before deleting this conversation."
+        } catch PieceStore.StoreError.staleRevision {
+            deletion = nil
+            reloadHistory()
+            error = "The conversation changed. Reopen its current version before deleting."
         } catch { self.error = "Deletion wasn’t confirmed. Retry checks the same conversation operation. Saved outfits and plans are unaffected." }
     }
     func propose(_ action: AgentReviewedAction) {
@@ -98,7 +105,9 @@ import Observation
         catch { self.error = "This operation may already have committed. Check its result before continuing." }
     }
     func approveProposal(_ id: UUID, version: Int) {
-        guard !active, !hasPendingOperation, let i = conversation.proposals?.firstIndex(where: { $0.id == id }) else { return }
+        guard !active, !hasPendingOperation, let i = conversation.proposals?.firstIndex(where: { $0.id == id }),
+              let proposal = conversation.proposals?[i], proposal.version == version,
+              proposal.status == .proposed || proposal.status == .executing else { return }
         do {
             try conversation.proposals?[i].approve(version: version)
             guard persist(), let proposal = conversation.proposals?[i] else { return }
