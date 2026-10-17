@@ -106,7 +106,10 @@ struct AgentConversationView: View {
                     }
                     Color.clear.frame(height: 1).id("latest").onAppear { followsLatest = true }.onDisappear { followsLatest = false }
                 }.padding(20).disabled(voice)
-            }.onChange(of: model.conversation.messages.last?.source) { _, _ in if followsLatest { proxy.scrollTo("latest", anchor: .bottom) } }
+            }.defaultScrollAnchor(.bottom, for: .initialOffset)
+                .id(model.conversation.id)
+                .onAppear { followsLatest = true; proxy.scrollTo("latest", anchor: .bottom) }
+                .onChange(of: model.conversation.messages.last?.source) { _, _ in if followsLatest { proxy.scrollTo("latest", anchor: .bottom) } }
                 .overlay(alignment: .bottomTrailing) { if !followsLatest { Button { followsLatest = true; proxy.scrollTo("latest", anchor: .bottom) } label: {
                     Image(systemName: "arrow.down").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
                         .background(AppTheme.surface, in: Circle())
