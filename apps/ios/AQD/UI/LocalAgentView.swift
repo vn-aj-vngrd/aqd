@@ -28,6 +28,7 @@ struct LocalAgentView: View {
         guard state.agentModel == nil, let store = state.store else { return }
         state.agentModel = try? AgentModel(store: store)
         state.agentModel?.weatherClient = state.weatherClient
+        state.agentModel?.controls = state.agentControlsModel
     }
 }
 
@@ -40,8 +41,11 @@ struct AgentConversationView: View {
     @State private var deletingConversation: AgentConversation?
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
-    @State private var context = false
-    @State private var tools = false
+    @State private var attachments = false
+    @State private var attachmentSource: AgentAttachmentSource = .photos
+    @State private var aiSettings = false
+    @State private var feedbackEditing: AgentFeedback?
+    @State private var feedbackLibrary: AgentFeedbackLibrary?
     @State private var voice = false
     @State private var readAloud = AgentReadAloud()
     @Environment(\.scenePhase) private var scenePhase
@@ -125,13 +129,13 @@ struct AgentConversationView: View {
                             .accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation || voice)
                     }
                 }
-                if model.supportsGeneration || !model.history.isEmpty {
+                if model.supportsGeneration || !model.history.isEmpty || state.store != nil {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
                             if !model.history.isEmpty {
                                 Section {
                                     AccessoryButton("Conversations", systemImage: "arrow.right") { model.reloadHistory(); history = true }
-                                        .disabled(model.active || model.hasPendingOperation)
+                                        .disabled(model.hasPendingOperation)
                                 }
                             }
                             if model.conversation.revision > 0 {
@@ -148,18 +152,29 @@ struct AgentConversationView: View {
                                         .disabled(model.active || model.hasPendingOperation)
                                 }
                             }
-                            if model.supportsGeneration {
-                                Section("Tools") {
-                                    AccessoryButton("Manage context", systemImage: "tshirt") { context = true }
-                                    AccessoryButton("Local tools", systemImage: "slider.horizontal.3") { state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); tools = true }.disabled(model.active || model.hasPendingOperation)
-                                }
+                            Section {
+                                AccessoryButton("AI settings", systemImage: "sparkles") { readAloud.stop(); aiSettings = true }
+                                    .disabled(model.active || model.hasPendingOperation)
                             }
                         } label: { Label("More", systemImage: "ellipsis") }.disabled(voice)
                     }
                 }
             }.navigationDestination(isPresented: $history) { AgentHistoryView(model: model) { value in if value.revision > 0 { model.open(value.id) }; history = false } }
-            .sheet(isPresented: $tools) { AgentActionComposerView(model: model).environment(state).appAppearance(state.appearance) }
-            .sheet(isPresented: $context) { AgentContextView(model: model).environment(state).appAppearance(state.appearance) }
+            .sheet(isPresented: $attachments) {
+                NavigationStack { AgentAttachmentView(model: model, source: attachmentSource) }.environment(state).appAppearance(state.appearance)
+            }
+            .sheet(isPresented: $aiSettings) {
+                NavigationStack { AgentSettingsView().toolbar { ToolbarItem(placement: .cancellationAction) {
+                    Button { aiSettings = false } label: { Image(systemName: "xmark") }.accessibilityLabel("Close AI settings")
+                        .disabled(model.hasPendingOperation || state.agentControlsModel?.hasPending == true)
+                } } }.environment(state).appAppearance(state.appearance)
+                    .interactiveDismissDisabled(model.hasPendingOperation || state.agentControlsModel?.hasPending == true)
+            }
+            .sheet(item: $feedbackEditing) { value in
+                if let feedbackLibrary {
+                    NavigationStack { AgentFeedbackEditor(library: feedbackLibrary, feedback: value) }.environment(state).appAppearance(state.appearance)
+                }
+            }
             .sheet(item: $details) { message in NavigationStack { Form {
                 Group {
                 LabeledContent("Runtime", value: "On-device")
@@ -167,6 +182,17 @@ struct AgentConversationView: View {
                 LabeledContent("Response time", value: message.elapsedSeconds.map { String(format: "%.1f s", $0) } ?? "Unavailable")
                 LabeledContent("First text", value: message.firstTextSeconds.map { String(format: "%.1f s", $0) } ?? "Unavailable")
                 Text(message.contextSummary ?? "Context measurements unavailable")
+                if let diagnostics = message.diagnostics {
+                    LabeledContent("Records included", value: String(diagnostics.included))
+                    LabeledContent("Records not included", value: String(diagnostics.omitted))
+                    if !diagnostics.unavailable.isEmpty { Text("Unavailable: " + diagnostics.unavailable.map(\.title).joined(separator: ", ")) }
+                    if let failure = diagnostics.failure { LabeledContent("Result", value: failure.title) }
+                    DisclosureGroup("Diagnostics") {
+                        LabeledContent("Prompt version", value: diagnostics.promptVersion)
+                        LabeledContent("Retrieval version", value: diagnostics.retrievalVersion)
+                        LabeledContent("Input characters", value: String(diagnostics.inputCharacters))
+                    }
+                }
                 Text("Generated text cannot change your records. Only an explicit review and saved receipt can do that.")
                 }.listRowBackground(AppTheme.surface)
             }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarSaveAction(title: "Done") { details = nil } } } }.appAppearance(state.appearance) }
@@ -264,6 +290,14 @@ struct AgentConversationView: View {
             Button { copy(message, markdown: false) } label: {
                 responseIcon(copied == message.id ? "checkmark" : "square.on.square")
             }.accessibilityLabel(copied == message.id ? "Response copied" : "Copy response").disabled(!hasText)
+            Button { rate(message, rating: .helpful) } label: {
+                responseIcon(reaction(message)?.rating == .helpful ? "hand.thumbsup.fill" : "hand.thumbsup")
+            }.accessibilityLabel("Helpful response").accessibilityValue(reaction(message)?.rating == .helpful ? "Selected" : "Not selected")
+                .disabled(!hasText || model.active || model.hasPendingOperation)
+            Button { rate(message, rating: .notHelpful) } label: {
+                responseIcon(reaction(message)?.rating == .notHelpful ? "hand.thumbsdown.fill" : "hand.thumbsdown")
+            }.accessibilityLabel("Not helpful").accessibilityValue(reaction(message)?.rating == .notHelpful ? "Selected" : "Not selected")
+                .disabled(!hasText || model.active || model.hasPendingOperation)
             Button { readAloud.toggle(message) } label: {
                 responseIcon(reading ? "stop.circle" : "speaker.wave.2")
             }.accessibilityLabel(reading ? "Stop reading" : "Read aloud").disabled(!hasText)
@@ -276,10 +310,37 @@ struct AgentConversationView: View {
                     if message.id == model.conversation.messages.last?.id {
                         AccessoryButton("Try again", systemImage: "arrow.clockwise") { readAloud.stop(); model.send(retrying: message.id) }.disabled(!model.canGenerate)
                     }
+                    AccessoryButton("Report a problem", systemImage: "flag") { editFeedback(message, report: true) }
+                        .disabled(model.active || model.hasPendingOperation)
                     AccessoryButton("Response details", systemImage: "info.circle") { readAloud.stop(); details = message }
                 }
             } label: { responseIcon("ellipsis") }.accessibilityLabel("Response options")
         }.buttonStyle(.plain).padding(.leading, -AppSpacing.medium)
+    }
+
+    private func reaction(_ message: AgentMessage) -> AgentFeedback? {
+        message.feedback?.first { $0.attemptID == message.attemptID }
+    }
+    private func feedbackValue(_ message: AgentMessage) -> AgentFeedback {
+        reaction(message) ?? AgentFeedback(conversationID: model.conversation.id, messageID: message.id, attemptID: message.attemptID, diagnostics: message.diagnostics)
+    }
+    private func rate(_ message: AgentMessage, rating: AgentFeedbackRating) {
+        var value = feedbackValue(message)
+        if value.rating == rating {
+            if !value.isReport && value.comment.isEmpty && value.reasons.isEmpty { _ = model.saveFeedback(value, removing: true); return }
+            value.rating = nil
+        } else { value.rating = rating }
+        value.updatedAt = Date()
+        if model.saveFeedback(value), rating == .notHelpful, value.rating != nil { editFeedback(message, report: false) }
+    }
+    private func editFeedback(_ message: AgentMessage, report: Bool) {
+        do {
+            readAloud.stop()
+            let library = try AgentFeedbackLibrary(agent: model, controls: state.agentControlsModel)
+            var value = feedbackValue(model.conversation.messages.first { $0.id == message.id } ?? message)
+            if report { value.isReport = true }
+            feedbackLibrary = library; feedbackEditing = value
+        } catch { model.error = "Feedback couldn’t load. Your response is retained. Try again." }
     }
 
     private func responseIcon(_ name: String) -> some View {
@@ -302,11 +363,13 @@ struct AgentConversationView: View {
                 .accessibilityLabel("Message Agent")
             HStack(spacing: AppSpacing.small) {
                 Menu {
-                    AccessoryButton("Context: " + (model.conversation.context.scope == .general ? "Without closet" : model.conversation.context.scope == .selected ? "Selected pieces" : "My closet"), systemImage: "tshirt") { context = true }
-                    AccessoryButton("Local tools", systemImage: "slider.horizontal.3") { tools = true }
-                        .disabled(model.active || model.hasPendingOperation)
+                    ForEach(AgentAttachmentSource.allCases) { source in
+                        AccessoryButton(source.rawValue, systemImage: source.icon) {
+                            readAloud.stop(); focused = false; attachmentSource = source; attachments = true
+                        }
+                    }
                 } label: { Image(systemName: "plus").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }
-                    .accessibilityLabel("Context and tools")
+                    .accessibilityLabel("Add camera, photo or file").disabled(!model.canGenerate)
                 Spacer(minLength: AppSpacing.small)
                 if AgentVoiceModel.isSupported {
                     Button { readAloud.stop(); focused = false; voice = true } label: { Image(systemName: "mic").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }.accessibilityLabel("Voice input").disabled(model.active || model.hasPendingOperation)
@@ -385,7 +448,16 @@ struct AgentHistoryView: View {
     let open: (AgentConversation) -> Void
     @State private var selected: AgentConversation?
     @State private var filter: AgentHistoryFilter = .active
-    private var conversations: [AgentConversation] { filter.conversations(in: model.history) }
+    private var conversations: [AgentConversation] { filter.conversations(in: model.history.map { $0.id == model.conversation.id ? model.conversation : $0 }) }
+    @ViewBuilder private func status(_ value: AgentConversation) -> some View {
+        switch AgentHistoryPresentation.status(value) {
+        case .loading: ProgressView().controlSize(.mini).frame(width: 12).accessibilityLabel("Responding")
+        case .complete: Circle().fill(Color.blue).frame(width: 7, height: 7).frame(width: 12).accessibilityLabel("Response complete")
+        case .incomplete: Image(systemName: "exclamationmark.circle").font(.footnote).foregroundStyle(AppTheme.error).frame(width: 12).accessibilityLabel("Response incomplete")
+        case .draft: Image(systemName: AppSymbols.edit).font(.footnote).foregroundStyle(AppTheme.controlIcon).frame(width: 12).accessibilityLabel("Draft")
+        case .empty: Color.clear.frame(width: 12, height: 7).accessibilityHidden(true)
+        }
+    }
     var body: some View {
         List {
             if let error = model.error { Text(error).foregroundStyle(AppTheme.error) }
@@ -402,15 +474,20 @@ struct AgentHistoryView: View {
             if filter != .active { Text(filter.rawValue).font(.subheadline).foregroundStyle(AppTheme.secondary).listRowBackground(Color.clear) }
             ForEach(conversations) { value in
                 Button { open(value) } label: {
-                    HStack(spacing: AppSpacing.medium) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(value.title).foregroundStyle(AppTheme.ink)
-                            Text(value.updatedAt, style: .date).font(.footnote).foregroundStyle(AppTheme.secondary)
+                    HStack(spacing: AppSpacing.small) {
+                        status(value)
+                        Text(value.title).font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                            .lineLimit(1).truncationMode(.tail).frame(maxWidth: .infinity, alignment: .leading)
+                        if value.isPinned { Image(systemName: "pin.fill").font(.footnote).foregroundStyle(AppTheme.controlIcon).accessibilityLabel("Pinned") }
+                        if value.isArchived { Image(systemName: "archivebox").font(.footnote).foregroundStyle(AppTheme.controlIcon).accessibilityLabel("Archived") }
+                        TimelineView(.periodic(from: .now, by: 60)) { timeline in
+                            Text(AgentHistoryPresentation.time(value.updatedAt, relativeTo: timeline.date))
+                                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).fixedSize()
                         }
-                        Spacer(minLength: 8)
-                        if value.isArchived { Image(systemName: "archivebox").foregroundStyle(AppTheme.controlIcon).accessibilityLabel("Archived") }
-                        if value.isPinned { Image(systemName: "pin.fill").foregroundStyle(AppTheme.controlIcon).accessibilityLabel("Pinned") }
-                    }
+                        Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                    }.padding(.horizontal, AppSpacing.large).padding(.vertical, AppSpacing.medium)
+                        .frame(minHeight: 60).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+
                 }
                     .disabled(model.hasPendingOperation)
                     .contextMenu {
@@ -420,17 +497,21 @@ struct AgentHistoryView: View {
                         Button(role: .destructive) { selected = value } label: { AccessoryLabel("Delete", systemImage: "trash", destructive: true) }.disabled(model.active || model.hasPendingOperation)
                     } preview: {
                         VStack(alignment: .leading, spacing: AppSpacing.medium) {
-                            Text(value.title).font(AppTypography.section)
-                            Text(value.messages.last?.source ?? "No messages yet").font(AppTypography.supporting).lineLimit(6)
+                            Text(value.title).font(AppTypography.section).lineLimit(2)
+                            AgentMarkdownBody(source: AgentMarkdownPolicy.conversationalText(value.messages.last?.source ?? "No messages yet"))
+                                .font(AppTypography.supporting).frame(maxHeight: 180, alignment: .top).clipped()
                         }.padding(AppSpacing.screen).frame(width: 280, alignment: .leading).background(AppTheme.surface)
                     }
+                    .listRowBackground(Color.clear).listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets(top: 4, leading: AppSpacing.screen, bottom: 4, trailing: AppSpacing.screen))
                     .swipeActions(allowsFullSwipe: false) {
                         Button("Delete", role: .destructive) { selected = value }
                         Button(value.isArchived ? "Restore" : "Archive", systemImage: "archivebox") { model.setOrganization(value, archived: !value.isArchived) }.tint(AppTheme.secondary)
                     }.disabled(model.active || model.hasPendingOperation)
             }
-        }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Conversations")
+        }.listStyle(.plain).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Conversations")
             .toolbar {
+                ToolbarItem(placement: .topBarTrailing) { Button { model.newConversation(); open(model.conversation) } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation) }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Picker("Show conversations", selection: $filter) {
@@ -439,7 +520,7 @@ struct AgentHistoryView: View {
                     } label: { Image(systemName: filter == .active ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle.fill") }
                         .accessibilityLabel("Filter conversations").accessibilityValue(filter.rawValue)
                 }
-                ToolbarItem(placement: .topBarTrailing) { Button { model.newConversation(); open(model.conversation) } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation) }
+
             }
             .alert("Delete this conversation?", isPresented: Binding(get: { selected != nil }, set: { if !$0 { selected = nil } })) {
                 Button("Cancel", role: .cancel) { selected = nil }

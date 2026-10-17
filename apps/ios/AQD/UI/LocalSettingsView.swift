@@ -24,6 +24,8 @@ struct LocalSettingsView: View {
             }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
                 .listRowBackground(AppTheme.surface)
             Section("Assistance & help") {
+                NavigationLink { AgentSettingsView().secondaryPage() } label: { SettingsRow(title: "AI settings", symbol: "sparkles") }
+                NavigationLink { AgentFeedbackView().secondaryPage() } label: { SettingsRow(title: "Feedback", symbol: "bubble.left") }
                 NavigationLink { LocalAssistanceSettingsView().secondaryPage() } label: { SettingsRow(title: "About Agent", symbol: "sparkle") }
                 NavigationLink { LocalPrivacySettingsView().secondaryPage() } label: { SettingsRow(title: "Help & privacy", symbol: "hand.raised") }
                 Button { state.beginTour(from: .settings) } label: { SettingsRow(title: "App tour", symbol: "play.rectangle", disclosure: true) }
