@@ -30,7 +30,7 @@ Add piece follows the [modal pattern](../../DESIGN.md#add-and-edit-modal-pattern
 
 ## Browse and lifecycle
 
-Pieces are filtered by always-visible chip rows: Category (All and each category, the same control as the outfit picker) above Status (All, Available, Unavailable, Laundry, Archived). Pieces also support metadata search and sort by recently added, name, most or least worn. They combine, and clear restores everything. Search is scoped to Pieces, Outfits and Themes, owner-only, offline, with per-tab state kept.
+Pieces are filtered by a Category chip row (All and each category, the same control as the outfit picker) and a Status filter menu (All, Available, Unavailable, Laundry, Archived) whose icon fills while a status filter is active. Pieces also support metadata search and sort by recently added, name, most or least worn. They combine, and clear restores everything. Search is scoped to Pieces, Outfits and Themes, owner-only, offline, with per-tab state kept.
 
 - **Edit** keeps the ID; a failed write changes neither the stored nor the visible record.
 - **Archive** keeps outfits and history and marks affected future plans unavailable. Restore never erases history.

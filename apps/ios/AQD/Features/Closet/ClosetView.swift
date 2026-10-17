@@ -57,6 +57,7 @@ struct ClosetView: View {
                             .tint(AppTheme.ink).accessibilityIdentifier("closet.addPiece")
                     }
                 }
+                if scope == "Pieces", !state.closetSearchActive { pieceFilterMenu }
                 if scope == "Outfits" { outfitFilterMenu }
                 if scope == "Themes" { themeFilterMenu }
             }
@@ -175,17 +176,25 @@ struct ClosetView: View {
             .tint(AppTheme.ink)
         }
     }
-    /// Status is a visible, always-on filter: All, Available, Unavailable, Laundry or Archived.
-    private var statusChips: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: AppSpacing.small) {
-                AppChip(title: "All", isSelected: !archived && availability == nil) { archived = false; availability = nil }
-                ForEach([PieceAvailability.available, .unavailable, .laundry], id: \.self) { value in
-                    AppChip(title: value.rawValue.capitalized, isSelected: !archived && availability == value) { archived = false; availability = value }
+    /// Status filter: All, Available, Unavailable, Laundry or Archived. Category lives in the chip row.
+    private var pieceFilterMenu: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                Section("Filter by Status") {
+                    statusOption("All statuses", selected: !archived && availability == nil) { archived = false; availability = nil }
+                    ForEach([PieceAvailability.available, .unavailable, .laundry], id: \.self) { value in
+                        statusOption(value.rawValue.capitalized, selected: !archived && availability == value) { archived = false; availability = value }
+                    }
+                    statusOption("Archived", selected: archived) { archived = true; availability = nil }
                 }
-                AppChip(title: "Archived", isSelected: archived) { archived = true; availability = nil }
-            }.padding(.horizontal, 20)
-        }.scrollIndicators(.hidden)
+            } label: {
+                Label("Filter pieces", systemImage: archived || availability != nil ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease")
+            }.tint(AppTheme.ink).accessibilityValue(archived ? "Archived" : availability.map { $0.rawValue.capitalized } ?? "All statuses")
+        }
+    }
+
+    private func statusOption(_ title: String, selected: Bool, action: @escaping () -> Void) -> some View {
+        Toggle(title, isOn: Binding(get: { selected }, set: { checked in if checked { action() } }))
     }
 
     /// Category chips, the same control as the outfit picker's.
@@ -202,8 +211,7 @@ struct ClosetView: View {
 
     private var pieceCollection: some View {
         VStack(spacing: 0) {
-            categoryChips
-            statusChips.padding(.bottom, AppSpacing.small)
+            categoryChips.padding(.bottom, AppSpacing.small)
             pieceResults
         }
     }
