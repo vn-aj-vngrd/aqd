@@ -10,116 +10,142 @@ enum AgentAttachmentSource: String, CaseIterable, Identifiable {
     var icon: String { switch self { case .camera: "camera"; case .photos: "photo"; case .files: "paperclip" } }
 }
 
-struct AgentAttachmentView: View {
+/// Native pickers return directly to the composer rather than an intermediate form.
+struct AgentAttachmentPicker: ViewModifier {
     @Bindable var model: AgentModel
-    let source: AgentAttachmentSource
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.scenePhase) private var scenePhase
-    @State private var didChoose = false
+    @Bindable var importer: AgentAttachmentImporter
+    @Binding var source: AgentAttachmentSource?
+    @Binding var presented: Bool
     @State private var photos = false
     @State private var files = false
     @State private var camera = false
-    @State private var photo: PhotosPickerItem?
+    @State private var items: [PhotosPickerItem] = []
+    @State private var importedItems: [PhotosPickerItem] = []
     @State private var cameraData: Data?
-    @State private var text = ""
-    @State private var result: AgentAttachmentReader.Result?
-    @State private var error: String?
-    @State private var loading = false
-    @State private var task: Task<Void, Never>?
-    @State private var timeout: Task<Void, Never>?
-    @State private var token = UUID()
-    @State private var appended = false
-    @State private var retrySave = false
-    var body: some View {
-        Form {
-            if loading {
-                Section { HStack { ProgressView(); Text("Preparing attachment…") }; Button("Cancel processing") { cancel() } }
-            } else if let result {
-                Section {
-                    Label(result.name, systemImage: source.icon).lineLimit(2)
-                    Text(result.method).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    if result.partial { Text("Partial attachment. Only the first readable section is included.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
-                    TextEditor(text: $text).frame(minHeight: 180).disabled(appended).accessibilityLabel("Attachment text to include")
-                    Text("\(text.count) / \(AgentAttachmentPolicy.maximumCharacters)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                } header: { Text("Review before adding") } footer: { Text("Only this text is added to your message. The original file or photo is not saved in chat. Nothing is sent automatically.") }
-            } else if error == nil {
-                Section { Text("Choose an attachment to prepare a local text reference.").foregroundStyle(AppTheme.secondary) }
-            }
-            if let error { Section { SemanticFeedback(role: .danger, message: error) } }
-            if !loading && !appended { Section { Button("Choose \(source.rawValue.lowercased())", action: choose) } }
-            if retrySave { Section { Button("Retry draft save") { if model.persist() { retrySave = false; dismiss() } else { error = model.error } } } }
-        }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Add attachment").navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button { cancel(); dismiss() } label: { Image(systemName: "xmark") }.accessibilityLabel("Close attachment").disabled(retrySave) }
-                ToolbarItem(placement: .confirmationAction) { ToolbarSaveAction(title: "Add") { add() }.disabled(loading || result == nil || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || text.count > AgentAttachmentPolicy.maximumCharacters || appended || !model.canGenerate) }
-            }.interactiveDismissDisabled(retrySave)
-            .photosPicker(isPresented: $photos, selection: $photo, matching: .images)
-            .onChange(of: photo) { _, item in
-                guard let item else { return }
-                start {
-                    guard let data = try await item.loadTransferable(type: Data.self) else { throw AgentAttachmentReader.Failure.unreadable }
-                    return try await AgentAttachmentReader.perform { try await AgentAttachmentReader.read(data: data, name: "Selected photo", image: true) }
+    @State private var permission: Task<Void, Never>?
+    func body(content: Content) -> some View {
+        content
+            .onChange(of: source) { _, value in
+                guard let value else { return }; source = nil; presented = true
+                switch value {
+                case .photos: importedItems = []; items = []; photos = true
+                case .files: files = true
+                case .camera: openCamera()
                 }
             }
-            .fileImporter(isPresented: $files, allowedContentTypes: [.image, .pdf, .plainText, UTType(filenameExtension: "md") ?? .plainText]) { selection in
+            .photosPicker(isPresented: $photos, selection: $items, maxSelectionCount: max(1, AgentAttachment.maximumCount - importer.count), selectionBehavior: .ordered, matching: .images)
+            .onChange(of: items) { _, _ in if !photos { importPhotos() } }
+            .onChange(of: photos) { _, shown in if !shown { presented = files || camera; importPhotos() } }
+            .onChange(of: files) { _, shown in if !shown { presented = photos || camera } }
+            .fileImporter(isPresented: $files, allowedContentTypes: [.image, .pdf, .plainText, UTType(filenameExtension: "md") ?? .plainText], allowsMultipleSelection: true) { selection in
                 switch selection {
-                case .success(let url):
-                    start {
-                        try await AgentAttachmentReader.perform {
+                case .success(let urls):
+                    for url in urls {
+                        importer.add(name: url.lastPathComponent) {
                             let accessed = url.startAccessingSecurityScopedResource(); defer { if accessed { url.stopAccessingSecurityScopedResource() } }
                             let values = try url.resourceValues(forKeys: [.fileSizeKey, .contentTypeKey])
                             guard (values.fileSize ?? 0) <= 20 * 1024 * 1024 else { throw AgentAttachmentReader.Failure.tooLarge }
                             let type = values.contentType
                             guard type?.conforms(to: .image) == true || type?.conforms(to: .pdf) == true || type?.conforms(to: .text) == true || url.pathExtension.lowercased() == "md" else { throw AgentAttachmentReader.Failure.unsupported }
-                            return try await AgentAttachmentReader.read(data: Data(contentsOf: url, options: .mappedIfSafe), name: url.lastPathComponent, image: type?.conforms(to: .image) == true, pdf: type?.conforms(to: .pdf) == true)
+                            return try await AgentAttachmentReader.prepare(data: Data(contentsOf: url, options: .mappedIfSafe), name: url.lastPathComponent, image: type?.conforms(to: .image) == true, pdf: type?.conforms(to: .pdf) == true)
                         }
                     }
-                case .failure(let failure): if (failure as NSError).code != NSUserCancelledError { error = "The file couldn’t open. Try choosing it again." }
+                case .failure(let error): if (error as NSError).code != NSUserCancelledError { model.error = "The file couldn’t open. Your message and attachments are retained. Choose again." }
                 }
             }
             .fullScreenCover(isPresented: $camera, onDismiss: {
+                presented = false
                 guard let data = cameraData else { return }; cameraData = nil
-                start { try await AgentAttachmentReader.perform { try await AgentAttachmentReader.read(data: data, name: "Camera photo", image: true) } }
+                importer.add(name: "Camera photo") { try await AgentAttachmentReader.prepare(data: data, name: "Camera photo", image: true) }
             }) { NativeCamera(onPhoto: { cameraData = $0; camera = false }, onCancel: { camera = false }).ignoresSafeArea() }
-            .task { if !didChoose { didChoose = true; choose() } }.onDisappear { cancel() }
-            .onChange(of: scenePhase) { _, phase in if phase == .background { cancel(); error = "Attachment preparation paused. Your draft is unchanged. Choose the attachment again." } }
+            .onDisappear { permission?.cancel() }
     }
-    private func choose() {
-        error = nil
-        switch source {
-        case .photos: photo = nil; photos = true
-        case .files: files = true
-        case .camera:
-            guard UIImagePickerController.isSourceTypeAvailable(.camera) else { error = "Camera is unavailable on this device. Use Photos or Files instead."; return }
-            task = Task { @MainActor in
-                let granted = await AVCaptureDevice.requestAccess(for: .video)
-                guard !Task.isCancelled else { return }
-                if granted { camera = true } else { error = "Allow Camera for AQD in iPhone Settings, or choose Photos or Files." }
+    private func importPhotos() {
+        for value in items where !importedItems.contains(value) {
+            importedItems.append(value)
+            importer.add(name: "Photo") {
+                guard let data = try await value.loadTransferable(type: Data.self) else { throw AgentAttachmentReader.Failure.unreadable }
+                return try await AgentAttachmentReader.prepare(data: data, name: "Photo", image: true)
             }
         }
     }
-    private func start(_ operation: @escaping @Sendable () async throws -> AgentAttachmentReader.Result) {
-        cancel(); loading = true; error = nil; result = nil; let current = token
-        task = Task { @MainActor in
-            do {
-                let value = try await operation()
-                guard !Task.isCancelled, token == current else { return }
-                result = value; text = value.text; loading = false; timeout?.cancel()
-            } catch { guard !Task.isCancelled, token == current else { return }; loading = false; self.error = (error as? LocalizedError)?.errorDescription ?? "Attachment processing failed. Your draft is unchanged. Try again."; timeout?.cancel() }
-        }
-        timeout = Task { @MainActor in
-            try? await Task.sleep(for: .seconds(60)); guard !Task.isCancelled, token == current, loading else { return }
-            cancel(); error = AgentAttachmentReader.Failure.timeout.errorDescription
+    private func openCamera() {
+        guard UIImagePickerController.isSourceTypeAvailable(.camera) else { presented = false; model.error = "Camera is unavailable. Choose Photos or Files instead."; return }
+        permission?.cancel()
+        permission = Task { @MainActor in
+            let granted = await AVCaptureDevice.requestAccess(for: .video)
+            guard !Task.isCancelled else { return }
+            if granted { camera = true } else { presented = false; model.error = "Allow Camera for AQD in iPhone Settings, or choose Photos or Files." }
         }
     }
-    private func cancel() { token = UUID(); task?.cancel(); task = nil; timeout?.cancel(); timeout = nil; loading = false }
-    private func add() {
-        guard let result, !appended, model.canGenerate else { return }
-        do {
-            let addition = try AgentAttachmentPolicy.draftText(name: result.name, method: result.method, text: text)
-            let original = model.conversation.draft
-            model.updateDraft(original + (original.isEmpty ? "" : "\n\n") + addition); appended = true
-            if model.persist() { dismiss() } else { retrySave = true; error = model.error }
-        } catch { self.error = "Review the attachment text before adding it." }
+}
+
+struct AgentAttachmentStrip: View {
+    let attachments: [AgentAttachment]
+    var pending: [AgentAttachmentImporter.Pending] = []
+    var remove: ((UUID) -> Void)?
+    var cancelImport: ((UUID) -> Void)?
+    var locked = false
+    @Environment(AppState.self) private var state
+    @Environment(\.dynamicTypeSize) private var textSize
+    private var tileSize: CGFloat { textSize.isAccessibilitySize ? 140 : 104 }
+    @State private var selected: AgentAttachment?
+    @State private var importError: String?
+    var body: some View {
+        ScrollView(.horizontal) {
+            HStack(alignment: .top, spacing: AppSpacing.small) {
+                ForEach(attachments) { attachment in
+                    tile(name: attachment.name, id: attachment.id, action: { selected = attachment }, remove: remove) {
+                        if let data = attachment.preview, let image = UIImage(data: data) {
+                            Image(uiImage: image).resizable().scaledToFill().frame(width: tileSize, height: tileSize).clipped()
+                        } else {
+                            VStack(spacing: AppSpacing.small) {
+                                if !textSize.isAccessibilitySize { Image(systemName: "doc.text").font(.title2).foregroundStyle(AppTheme.controlIcon) }
+                                Text(attachment.name).font(AppTypography.metadata).foregroundStyle(AppTheme.ink).lineLimit(2).multilineTextAlignment(.center)
+                            }.padding(AppSpacing.small).frame(width: tileSize, height: tileSize)
+                        }
+                    }
+                }
+                ForEach(pending) { item in
+                    tile(name: item.name, id: item.id, action: { importError = item.error }, remove: cancelImport, removalLocked: false) {
+                        VStack(spacing: AppSpacing.small) {
+                            if item.error != nil { Image(systemName: "exclamationmark.circle").foregroundStyle(AppTheme.error); Text("Couldn’t load").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+                            else { AgentWorkingIndicator(title: "Loading…") }
+                        }.frame(width: tileSize, height: tileSize)
+                    }.accessibilityLabel(item.error ?? "Loading \(item.name)")
+                }
+            }.padding(.vertical, AppSpacing.xSmall)
+        }.alert("Attachment couldn’t load", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
+            Button("OK", role: .cancel) { importError = nil }
+        } message: { Text(importError ?? "Remove this attachment and choose again.") }
+            .scrollIndicators(.hidden).defaultScrollAnchor(remove == nil ? .trailing : .leading)
+            .sheet(item: $selected) { attachment in
+                NavigationStack {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: AppSpacing.large) {
+                            if let data = attachment.preview, let image = UIImage(data: data) { Image(uiImage: image).resizable().scaledToFit().frame(maxHeight: 420) }
+                            Text(attachment.method).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                            if attachment.partial { Text("Partial text excerpt. The full document is not included.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+                            if !attachment.text.isEmpty { Text(attachment.text).textSelection(.enabled) }
+                            Text(attachment.kind == .image ? "A resized image is stored privately with this chat. Original full-resolution files aren’t retained." : "This chat stores the prepared text excerpt, not the original file.")
+                                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                        }.padding(AppSpacing.screen)
+                    }.background(AppTheme.canvas).navigationTitle(attachment.name).navigationBarTitleDisplayMode(.inline)
+                        .toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarSaveAction(title: "Done") { selected = nil } } }
+                }.appAppearance(state.appearance)
+            }
+    }
+    private func tile<Content: View>(name: String, id: UUID, action: @escaping () -> Void, remove: ((UUID) -> Void)?, removalLocked: Bool? = nil, @ViewBuilder content: () -> Content) -> some View {
+        Button(action: action) { content().background(AppTheme.imageGround).clipShape(RoundedRectangle(cornerRadius: AppRadius.field)) }
+            .buttonStyle(.plain).accessibilityLabel("Open \(name)")
+            .overlay(alignment: .topTrailing) {
+                if let remove {
+                    Button { remove(id) } label: {
+                        Image(systemName: "xmark").font(.system(size: 11, weight: .semibold)).foregroundStyle(.white)
+                            .frame(width: 22, height: 22).background(.black.opacity(0.65), in: Circle())
+                            .frame(width: 44, height: 44)
+                    }.buttonStyle(.plain).accessibilityLabel("Remove \(name)").disabled(removalLocked ?? locked)
+                }
+            }
     }
 }

@@ -42,8 +42,9 @@ struct AgentConversationView: View {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorSchemeContrast) private var contrast
-    @State private var attachments = false
-    @State private var attachmentSource: AgentAttachmentSource = .photos
+    @State private var attachmentSource: AgentAttachmentSource?
+    @State private var attachmentPickerPresented = false
+    @State private var attachmentImporter: AgentAttachmentImporter
     @State private var aiSettings = false
     @State private var feedbackEditing: AgentFeedback?
     @State private var feedbackLibrary: AgentFeedbackLibrary?
@@ -55,6 +56,10 @@ struct AgentConversationView: View {
     @State private var followsLatest = true
     @State private var didFocus = false
     @FocusState private var focused: Bool
+    init(model: AgentModel, close: @escaping () -> Void, automaticallyFocusComposer: Bool = true) {
+        self.model = model; self.close = close; self.automaticallyFocusComposer = automaticallyFocusComposer
+        _attachmentImporter = State(initialValue: AgentAttachmentImporter(model: model))
+    }
     private var emptyUnavailable: Bool {
         !model.supportsGeneration && model.conversation.messages.isEmpty && (model.conversation.proposals ?? []).isEmpty
     }
@@ -65,6 +70,9 @@ struct AgentConversationView: View {
                     if let error = model.error { SemanticFeedback(role: .danger, message: error).padding(20) }
                     if model.hasPendingOperation || model.error != nil {
                         Button("Retry operation") { model.retryPending() }.frame(minHeight: 44)
+                    }
+                    if let attachments = model.conversation.draftAttachments, !attachments.isEmpty {
+                        AgentAttachmentStrip(attachments: attachments, remove: model.removeAttachment, locked: model.hasPendingOperation).padding(.horizontal, AppSpacing.screen)
                     }
                     AgentAvailabilityContent(availability: model.availability, recheck: model.recheckAvailability,
                                              fillsPage: true, retainedDraft: model.conversation.draft)
@@ -126,11 +134,11 @@ struct AgentConversationView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Back").disabled(model.active || voice) }
+                ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Back").disabled(model.active || voice || model.attachmentImportCount > 0) }
                 if model.supportsGeneration {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button { model.newConversation(); focused = true } label: { Image(systemName: "square.and.pencil") }
-                            .accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation || voice)
+                            .accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation || voice || model.attachmentImportCount > 0)
                     }
                 }
                 if model.supportsGeneration || !model.history.isEmpty || state.store != nil {
@@ -160,13 +168,11 @@ struct AgentConversationView: View {
                                 AccessoryButton("AI settings", systemImage: "sparkles") { readAloud.stop(); aiSettings = true }
                                     .disabled(model.active || model.hasPendingOperation)
                             }
-                        } label: { Label("More", systemImage: "ellipsis") }.disabled(voice)
+                        } label: { Label("More", systemImage: "ellipsis") }.disabled(voice || model.attachmentImportCount > 0)
                     }
                 }
             }.navigationDestination(isPresented: $history) { AgentHistoryView(model: model) { value in if value.revision > 0 { model.open(value.id) }; history = false } }
-            .sheet(isPresented: $attachments) {
-                NavigationStack { AgentAttachmentView(model: model, source: attachmentSource) }.environment(state).appAppearance(state.appearance)
-            }
+            .modifier(AgentAttachmentPicker(model: model, importer: attachmentImporter, source: $attachmentSource, presented: $attachmentPickerPresented))
             .sheet(isPresented: $aiSettings) {
                 NavigationStack { AgentSettingsView().toolbar { ToolbarItem(placement: .cancellationAction) {
                     Button { aiSettings = false } label: { Image(systemName: "xmark") }.accessibilityLabel("Close AI settings")
@@ -206,8 +212,8 @@ struct AgentConversationView: View {
                     if let value = deletingConversation { model.delete(value) }; deletingConversation = nil
                 }
             } message: { Text("Deletes its messages and draft on this iPhone. Saved pieces, outfits and plans stay.") }
-            .onDisappear { readAloud.stop() }
-            .onChange(of: scenePhase) { _, phase in if phase != .active { readAloud.stop() } }
+            .onDisappear { readAloud.stop(); if !attachmentPickerPresented { attachmentImporter.cancel() } }
+            .onChange(of: scenePhase) { _, phase in if phase != .active { readAloud.stop() }; if phase == .background { attachmentImporter.cancel() } }
             .onChange(of: model.conversation.id) { _, _ in readAloud.stop() }
             .onChange(of: model.active) { _, active in if active { readAloud.stop() } }
             .onChange(of: voice) { _, recording in if recording { readAloud.stop() } }
@@ -257,10 +263,15 @@ struct AgentConversationView: View {
         if message.role == .user {
             HStack(alignment: .top, spacing: 0) {
                 Spacer(minLength: AppControlMetrics.minimumTarget)
-                Text(message.source).textSelection(.enabled)
-                    .padding(.horizontal, AppSpacing.large).padding(.vertical, AppSpacing.medium)
-                    .background(AppTheme.messageBubble, in: RoundedRectangle(cornerRadius: AppRadius.composer))
-                    .accessibilityLabel("You: " + message.source)
+                VStack(alignment: .trailing, spacing: AppSpacing.small) {
+                    if let attachments = message.attachments, !attachments.isEmpty { AgentAttachmentStrip(attachments: attachments) }
+                    if !message.source.isEmpty {
+                        Text(message.source).textSelection(.enabled)
+                            .padding(.horizontal, AppSpacing.large).padding(.vertical, AppSpacing.medium)
+                            .background(AppTheme.messageBubble, in: RoundedRectangle(cornerRadius: AppRadius.composer))
+                            .accessibilityLabel("You: " + message.source)
+                    }
+                }
             }.frame(maxWidth: .infinity, alignment: .trailing)
         } else {
             VStack(alignment: .leading, spacing: AppSpacing.small) {
@@ -350,7 +361,7 @@ struct AgentConversationView: View {
     }
 
     private var canSend: Bool {
-        model.canGenerate && !model.conversation.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        model.canGenerate && (!model.conversation.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !(model.conversation.draftAttachments ?? []).isEmpty)
     }
 
     private var composer: some View {
@@ -358,6 +369,10 @@ struct AgentConversationView: View {
             if voice {
                 AgentVoiceView(model: model, isPresented: $voice)
             } else {
+            if !(model.conversation.draftAttachments ?? []).isEmpty || !attachmentImporter.pending.isEmpty {
+                AgentAttachmentStrip(attachments: model.conversation.draftAttachments ?? [], pending: attachmentImporter.pending,
+                                     remove: model.removeAttachment, cancelImport: attachmentImporter.remove, locked: model.active || model.hasPendingOperation)
+            }
             TextField("Ask Agent…", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical)
                 .lineLimit(1...6).focused($focused).padding(.horizontal, AppSpacing.xSmall)
                 .accessibilityLabel("Message Agent")
@@ -365,14 +380,14 @@ struct AgentConversationView: View {
                 Menu {
                     ForEach(AgentAttachmentSource.allCases) { source in
                         AccessoryButton(source.rawValue, systemImage: source.icon) {
-                            readAloud.stop(); focused = false; attachmentSource = source; attachments = true
+                            readAloud.stop(); focused = false; attachmentSource = source
                         }
                     }
                 } label: { Image(systemName: "plus").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }
-                    .accessibilityLabel("Add camera, photo or file").disabled(!model.canGenerate)
+                    .accessibilityLabel("Add camera, photo or file").disabled(!model.supportsGeneration || model.active || model.hasPendingOperation || attachmentImporter.count >= AgentAttachment.maximumCount || state.agentControlsModel?.hasPending == true)
                 Spacer(minLength: AppSpacing.small)
                 if AgentVoiceModel.isSupported {
-                    Button { readAloud.stop(); focused = false; voice = true } label: { Image(systemName: "mic").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }.accessibilityLabel("Voice input").disabled(model.active || model.hasPendingOperation)
+                    Button { readAloud.stop(); focused = false; voice = true } label: { Image(systemName: "mic").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }.accessibilityLabel("Voice input").disabled(model.active || model.hasPendingOperation || model.attachmentImportCount > 0)
                 }
                 Button { if model.active { model.stop() } else { model.send() } } label: {
                     Image(systemName: model.active ? "stop.fill" : "arrow.up")

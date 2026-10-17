@@ -45,7 +45,7 @@ private struct AgentSettingsForm: View {
                 .listRowBackground(AppTheme.surface)
             Section {
                 ForEach([AgentDataSource.wear, .journal, .today, .planner, .pastChats, .feedback], id: \.self) { source in sourceToggle(source) }
-            } header: { Text("History & feedback") } footer: { Text("Wear insights use recorded wear, not plans or fit photos. Past chats supply user topics, not verified facts from earlier AI replies. Ratings do not train Apple’s model.") }
+            } header: { Text("History & feedback") } footer: { Text("Wear insights use recorded wear, not plans or fit photos. Past chats supply user topics and attachment excerpts, not verified facts from earlier AI replies. Ratings do not train Apple’s model.") }
                 .listRowBackground(AppTheme.surface)
             Section {
                 sourceToggle(.weather)
