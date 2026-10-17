@@ -24,10 +24,7 @@ struct LocalPlannerView: View {
     }
     private var counts: [String: Int] { markers.mapValues(\.total) }
     private var isToday: Bool { state.plannerDay.key == today.key }
-    private var selectedDateLabel: String {
-        guard let date = try? state.plannerDay.date() else { return state.plannerDay.displayDate }
-        return date.formatted(Date.FormatStyle(timeZone: zone).weekday(.wide).month(.wide).day())
-    }
+    private var selectedDateLabel: String { state.plannerDay.display(.full) }
     private var daySummary: String {
         guard let marker = markers[state.plannerDay.key], !marker.isEmpty else { return "Nothing planned" }
         let parts = [(marker.planned, "planned"), (marker.gaps, "to choose"), (marker.worn, "worn"), (marker.skipped, "skipped")]
@@ -209,7 +206,7 @@ struct LocalPlannerView: View {
     private func planRow(_ plan: PlanDefinition) -> some View {
         let summary = summaries[plan.id]
         let kind = summary?.kind ?? .plan
-        let range = plan.start.key == plan.end.key ? plan.start.displayDate : "\(plan.start.displayDate) – \(plan.end.displayDate)"
+        let range = LocalPlanDay.displayRange(plan.start, plan.end)
         let kindLabel = kind == .trip ? "Trip" : kind == .routine ? "Routine" : nil
         var status: [String] = []
         if let summary {

@@ -72,10 +72,8 @@ extension View {
     }
 }
 
-/// Calendar-day UI formatting retains the day and timezone recorded with a plan.
+/// Calendar-day UI text comes from `LocalPlanDay.display(_:)` in Core so every screen reads the same way.
 extension LocalPlanDay {
-    var displayDate: String {
-        guard let date = try? date(), let zone = TimeZone(identifier: timeZoneID) else { return key }
-        return date.formatted(Date.FormatStyle(date: .complete, time: .omitted, timeZone: zone))
-    }
+    /// "Fri, Oct 16": the default for rows and metadata.
+    var displayDate: String { display(.standard) }
 }

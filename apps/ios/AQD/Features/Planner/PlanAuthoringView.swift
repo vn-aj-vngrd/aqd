@@ -76,7 +76,7 @@ struct PlanAuthoringView: View {
         let plan = model.draft.plan
         let symbol = plan.trip != nil ? "suitcase" : plan.routine != nil ? "repeat" : "calendar"
         let count = (try? plan.days().count) ?? 0
-        let range = plan.start.key == plan.end.key ? plan.start.displayDate : "\(plan.start.displayDate) – \(plan.end.displayDate)"
+        let range = LocalPlanDay.displayRange(plan.start, plan.end)
         return VStack(spacing: 8) {
             Image(systemName: symbol).font(.system(size: 28)).accessibilityHidden(true)
             Text(plan.name.isEmpty ? "Name your plan" : plan.name).font(AppTypography.section).lineLimit(2).multilineTextAlignment(.center)
@@ -139,7 +139,7 @@ struct PlanAuthoringView: View {
                 model.update(invalidateConflicts: false) { $0.reviewing = false }
             }.disabled(locked)
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(model.draft.plan.start.displayDate) – \(model.draft.plan.end.displayDate)")
+                Text("\(LocalPlanDay.displayRange(model.draft.plan.start, model.draft.plan.end))")
                 Text(model.draft.plan.start.timeZoneID)
             }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             if let scope = model.draft.editScope {
@@ -238,7 +238,7 @@ struct PlanDefinitionView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 if let plan {
-                    Text("\(plan.start.displayDate) – \(plan.end.displayDate)").font(AppTypography.body)
+                    Text("\(LocalPlanDay.displayRange(plan.start, plan.end))").font(AppTypography.body)
                     Text(plan.start.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     if plan.trip != nil { TripDetailContent(plan: plan) }
                     else {

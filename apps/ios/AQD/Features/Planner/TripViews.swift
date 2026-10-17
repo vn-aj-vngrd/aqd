@@ -112,7 +112,7 @@ struct TripPackingView: View {
                 if let plan = state.planDefinitions.first(where: { $0.id == id }) {
                     Text(plan.name).font(AppTypography.section)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("\(plan.start.displayDate) – \(plan.end.displayDate)")
+                        Text("\(LocalPlanDay.displayRange(plan.start, plan.end))")
                         Text(plan.start.timeZoneID)
                     }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }

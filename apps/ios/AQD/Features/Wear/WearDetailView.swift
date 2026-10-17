@@ -13,7 +13,7 @@ struct LocalWearDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 if let record {
-                    Text(record.day.key).font(AppTypography.section)
+                    Text(record.day.display(.full)).font(AppTypography.section)
                     HStack {
                         Text("\(record.pieces.count) pieces")
                         Spacer(minLength: 12)

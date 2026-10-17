@@ -211,7 +211,7 @@ struct AgentConversationView: View {
             .sheet(item: $details) { message in NavigationStack { Form {
                 Group {
                 LabeledContent("Runtime", value: "On-device")
-                LabeledContent("Received", value: message.createdAt.formatted())
+                LabeledContent("Received", value: message.createdAt.displayTimestamp())
                 LabeledContent("Response time", value: message.elapsedSeconds.map { String(format: "%.1f s", $0) } ?? "Unavailable")
                 LabeledContent("First text", value: message.firstTextSeconds.map { String(format: "%.1f s", $0) } ?? "Unavailable")
                 Text(message.contextSummary ?? "Context measurements unavailable")

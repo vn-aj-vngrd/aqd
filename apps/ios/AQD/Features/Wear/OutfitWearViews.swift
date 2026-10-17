@@ -22,7 +22,7 @@ struct OutfitWearEditorView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     if let saved = model.saved {
                         Text(model.draft.baseRecord == nil ? "Wear recorded" : "Correction saved").font(AppTypography.section)
-                        Text(saved.day.key).font(AppTypography.body)
+                        Text(saved.day.displayDate).font(AppTypography.body)
                         ForEach(saved.pieces, id: \.id) { Text($0.displayName) }
                         SecondaryAction(title: "Open wear history") { model.finishOpeningHistory() }
 
@@ -52,7 +52,7 @@ struct OutfitWearEditorView: View {
                         DisclosureRow(title: "Timezone", value: model.draft.day.timeZoneID) { timezone = true }
                             .disabled(model.pending || model.unknown)
                         if let duplicate = model.duplicate {
-                            Text("These pieces are already recorded on \(duplicate.day.key). Use that record to keep wear counted once.")
+                            Text("These pieces are already recorded on \(duplicate.day.displayDate). Use that record to keep wear counted once.")
                                 .foregroundStyle(AppTheme.secondary)
                             NavigationLink("View wear record") { LocalWearDetailView(id: duplicate.id) }.frame(minHeight: 44)
                             Text("Change the date or pieces above to record a different wear.").font(AppTypography.supporting)

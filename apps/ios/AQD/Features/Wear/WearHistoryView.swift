@@ -21,7 +21,7 @@ struct LocalWearHistoryView: View {
         @Bindable var state = state
         VStack(alignment: .leading, spacing: 16) {
             if let start = periodStart, let end = periodEnd {
-                Text("\(start.displayDate) – \(end.displayDate)").font(AppTypography.supporting)
+                Text("\(LocalPlanDay.displayRange(start, end))").font(AppTypography.supporting)
                     .foregroundStyle(AppTheme.secondary).padding(.horizontal, 20)
             }
             if calendarShown {
@@ -69,12 +69,12 @@ struct WearAgendaRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(record.pieces.map(\.displayName).joined(separator: ", ")).font(AppTypography.body).foregroundStyle(AppTheme.ink)
                 HStack {
-                    Text(record.day.key)
+                    Text(record.day.displayDate)
                     Spacer(minLength: 12)
                     Text("\(record.pieces.count) pieces")
                 }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("\(record.day.key), \(record.pieces.count) pieces, recorded")
+                    .accessibilityLabel("\(record.day.display(.full)), \(record.pieces.count) pieces, recorded")
             }.frame(maxWidth: .infinity, alignment: .leading)
             Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).frame(width: 22).accessibilityHidden(true)
         }.padding(14).frame(minHeight: 108).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))

@@ -472,14 +472,14 @@ struct OutfitPlanPersistenceTests {
         let single = try #require(state.planEditor)
         #expect(!single.canSave)
         await single.save()
-        #expect(single.error?.contains("Shirt") == true && single.error?.contains(day.key) == true)
+        #expect(single.error?.contains("Shirt") == true && single.error?.contains(day.displayDate) == true)
         single.finish(discarding: true)
         state.openPlanAuthoring(day: day)
         let bulk = try #require(state.planAuthoringEditor)
         bulk.update { $0.plan.name = "Unavailable"; $0.slots[0].outfit = outfit }
         #expect(!bulk.canSave)
         await bulk.save()
-        #expect(bulk.error?.contains("Weekend") == true && bulk.error?.contains(day.key) == true)
+        #expect(bulk.error?.contains("Weekend") == true && bulk.error?.contains(day.displayDate) == true)
         #expect(try store.planEntries().isEmpty)
         state.store = nil
     }

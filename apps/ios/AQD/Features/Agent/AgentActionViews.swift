@@ -86,7 +86,7 @@ struct AgentActionReviewView: View {
                     preview(proposal.action)
                     if let error = model.error { Text(error).foregroundStyle(AppTheme.error); Button("Check conversation save") { model.retryPending() }.frame(minHeight: 44) }
                     if let receipt = proposal.receipt, proposal.status == .succeeded {
-                        Text("Saved receipt · \(receipt.acknowledgedAt.formatted())").font(.footnote)
+                        Text("Saved receipt, \(receipt.acknowledgedAt.displayTimestamp())").font(.footnote)
                         if receipt.kind == "outfit" { NavigationLink("Open outfit", value: ClosetRoute.outfit(receipt.recordID)) }
                         else if receipt.kind == "theme" { NavigationLink("Open theme", value: ClosetRoute.theme(receipt.recordID)) }
                         else if receipt.kind == "piece" { NavigationLink("Open piece", value: ClosetRoute.piece(receipt.recordID)) }
@@ -125,8 +125,8 @@ struct AgentActionReviewView: View {
         case .outfit(let draft): Text(draft.displayName).font(.headline); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }
         case .plan(let draft):
             Text(draft.plan.name).font(.headline)
-            ForEach(draft.slots) { slot in VStack(alignment: .leading) { Text(slot.day.key + " · " + slot.day.timeZoneID); Text(slot.outfit?.displayName ?? "Intentionally unassigned") } }
-        case .wear(let draft): Text(draft.day.key + " · " + draft.day.timeZoneID); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }; Text("Records actual wear. This is separate from a plan or fit memory.")
+            ForEach(draft.slots) { slot in VStack(alignment: .leading) { Text(slot.day.displayDate); Text(slot.day.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary); Text(slot.outfit?.displayName ?? "Intentionally unassigned") } }
+        case .wear(let draft): Text(draft.day.displayDate); Text(draft.day.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }; Text("Records actual wear. This is separate from a plan or fit memory.")
         case .availability(let change): Text(change.pieceName).font(.headline); Text("Availability → " + change.value.rawValue.capitalized); Text("Affected future plans will require review; actual wear stays.")
         }
     }

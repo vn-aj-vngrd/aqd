@@ -130,7 +130,7 @@ struct FitJournalGrid: View {
                                         .frame(height: 360).clipped()
                                 }.environment(state)
                             }
-                            .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.displayName ?? "unlinked"), \(memory.displayNote)")
+                            .accessibilityLabel("\(memory.day.display(.full)), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.displayName ?? "unlinked"), \(memory.displayNote)")
                     }
                     }
                 }
@@ -309,8 +309,7 @@ struct FitEditorView: View {
         }
     }
     private var dateSummary: String {
-        let day = model.draft.value.day
-        return day.key == LocalPlanDay(timeZone: TimeZone(identifier: day.timeZoneID) ?? .current).key ? "Today" : day.displayDate
+        model.draft.value.day.display(.relative)
     }
     /// The date rarely changes, and the timezone almost never: both stay one tap away instead of crowding the capture.
     private var dateDetails: some View {
@@ -370,7 +369,7 @@ struct FitMemoryDetailView: View {
                 if let memory {
                     FitMemoryArtwork(memory: memory).frame(minHeight: 240, maxHeight: 360)
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(memory.day.displayDate).font(AppTypography.detailTitle)
+                        Text(memory.day.display(.full)).font(AppTypography.detailTitle)
                         if !memory.note.isEmpty { Text(memory.displayNote).font(AppTypography.body) }
                         Text("A fit memory. Wear is recorded separately.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                         DisclosureGroup("Memory details") {

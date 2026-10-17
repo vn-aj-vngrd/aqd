@@ -23,7 +23,7 @@ struct AgentContextView: View {
                     }
                     if draft.scope != .general { Toggle("Recorded wear history", isOn: $draft.includesWear) }
                     Toggle("Style", isOn: $draft.includesStyle)
-                    Button(draft.weather.map { "Weather · " + $0.place.name + " · " + $0.day.key } ?? "Weather · Off") { weather = true }
+                    Button(draft.weather.map { "Weather, " + $0.place.name + ", " + $0.day.displayDate } ?? "Weather off") { weather = true }
                     Text("Only fresh matching weather you explicitly select can inform a new request. Saved or unavailable weather is not current fact.").font(.footnote).foregroundStyle(AppTheme.secondary)
                     Text("Only allowed saved answers are included. Body details also need their separate use permission. Photos and private notes are excluded.").font(.footnote).foregroundStyle(AppTheme.secondary)
                 }

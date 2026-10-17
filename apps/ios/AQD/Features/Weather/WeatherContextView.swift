@@ -247,7 +247,11 @@ struct WeatherReadingView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(reading.freshness(at: now) == .saved ? "Saved weather" : "Forecast for your day").font(AppTypography.section)
-            Text(reading.day.key + " · " + reading.day.timeZoneID).font(AppTypography.supporting)
+            HStack {
+                Text(reading.day.displayDate)
+                Spacer(minLength: 12)
+                Text(reading.day.timeZoneID).foregroundStyle(AppTheme.secondary)
+            }.font(AppTypography.supporting)
             Label(reading.condition, systemImage: reading.symbol)
             if let temperature = reading.temperatureCelsius, let date = reading.currentDate,
                let zone = TimeZone(identifier: reading.day.timeZoneID), LocalPlanDay(date: date, timeZone: zone) == reading.day {
@@ -255,7 +259,7 @@ struct WeatherReadingView: View {
             }
             Text("Low \(Measurement(value: reading.lowCelsius, unit: UnitTemperature.celsius).formatted(.measurement(width: .abbreviated, usage: .weather))) · High \(Measurement(value: reading.highCelsius, unit: UnitTemperature.celsius).formatted(.measurement(width: .abbreviated, usage: .weather)))")
             if let chance = reading.precipitationChance { Text("Rain chance \(chance.formatted(.percent))") }
-            Text("Updated \(reading.fetchedAt.formatted())").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            Text("Updated \(reading.fetchedAt.displayTimestamp())").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
         }
     }
 }

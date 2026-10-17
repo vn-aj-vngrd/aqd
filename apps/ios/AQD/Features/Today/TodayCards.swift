@@ -86,7 +86,7 @@ struct TodayCard: View {
                 } else if let outfit = memory.outfit {
                     CollectionArtwork(pieceIDs: outfit.pieces.map(\.id))
                 }
-                NavigationLink { FitMemoryDetailView(id: memory.id).secondaryPage() } label: { TodayCardActionLabel(title: memory.day.key) }.frame(minHeight: 44)
+                NavigationLink { FitMemoryDetailView(id: memory.id).secondaryPage() } label: { TodayCardActionLabel(title: memory.day.display(.relative)) }.frame(minHeight: 44)
             } else if instance.options?.pinnedID != nil { configure("The selected memory is unavailable.") }
             else {
                 Text("Keep a private memory of a fit. This does not record wear.").foregroundStyle(AppTheme.secondary)
@@ -502,10 +502,7 @@ private struct TodayAgendaRow: View {
         switch TodayPresentation.relativeDay(entry.day, to: today) {
         case .today: return "Today"
         case .tomorrow: return "Tomorrow"
-        case .yesterday, .other:
-            guard let date = try? entry.day.date() else { return entry.day.key }
-            return date.formatted(Date.FormatStyle(timeZone: TimeZone(identifier: entry.day.timeZoneID) ?? .current)
-                .weekday(.abbreviated).month(.abbreviated).day())
+        case .yesterday, .other: return entry.day.display(.standard)
         }
     }
     private var needsReview: Bool { entry.requiresReview || (outfit != nil && outfit?.revision != entry.outfitRevision) }
@@ -536,8 +533,5 @@ private struct TodayCardActionLabel: View {
 
 private extension LocalPlanDay {
     /// "Oct 18" in the day's own time zone.
-    var shortDay: String {
-        guard let value = try? date() else { return key }
-        return value.formatted(Date.FormatStyle(timeZone: TimeZone(identifier: timeZoneID) ?? .current).month(.abbreviated).day())
-    }
+    var shortDay: String { display(.compact) }
 }

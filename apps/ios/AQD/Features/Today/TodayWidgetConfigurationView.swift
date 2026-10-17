@@ -55,7 +55,7 @@ struct TodayWidgetConfigurationView: View {
             Picker("Window", selection: Binding(get: { instance.options?.upcomingDays ?? 7 }, set: { days in model.nested { $0.options?.upcomingDays = days } })) { Text("Next seven days").tag(7); Text("Next fourteen days").tag(14) }
             sourcePicker(instance, title: "Plan", choices: model.state.planDefinitions.map { ($0.id, $0.name) }, defaultTitle: "Follow upcoming plans")
         case .todayLook:
-            sourcePicker(instance, title: "Plan entry", choices: model.state.planEntries.map { ($0.id, "\($0.day.key), \($0.occasion.isEmpty ? "Occasion" : $0.occasion)") }, defaultTitle: "Follow Today")
+            sourcePicker(instance, title: "Plan entry", choices: model.state.planEntries.map { ($0.id, "\($0.day.displayDate), \($0.occasion.isEmpty ? "Occasion" : $0.occasion)") }, defaultTitle: "Follow Today")
         case .wearAgain:
             sourcePicker(instance, title: "Piece", choices: model.state.pieces.filter { $0.availability == .available }.map { ($0.id, $0.displayName) }, defaultTitle: "Least recently recorded")
         case .favoriteOutfits:
@@ -71,7 +71,7 @@ struct TodayWidgetConfigurationView: View {
                 } catch { model.error = "The theme task could not open. Your Today draft is retained." }
             }.frame(minHeight: 44)
         case .fitJournal:
-            sourcePicker(instance, title: "Memory", choices: model.state.fitMemories.map { ($0.id, $0.day.key) }, defaultTitle: "Latest memory")
+            sourcePicker(instance, title: "Memory", choices: model.state.fitMemories.map { ($0.id, $0.day.displayDate) }, defaultTitle: "Latest memory")
         case .weatherContext:
             Text("This widget opens Weather setup or details. Adding it does not enable weather or location.").foregroundStyle(AppTheme.secondary)
         }
