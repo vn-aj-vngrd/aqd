@@ -2003,5 +2003,48 @@
       "apps/ios/AQD/UI/LocalRestoreView.swift": "45ef9e0de10ece324a815213bee4518fb3f0acb74855554115f77b038faf20c7",
       "apps/ios/AQD/UI/LocalSettingsView.swift": "07075295d7be315091a1917ded919ffe58b511e000f4a57dcf070e818526c8cb"
     }
+  },
+  "sharedConfirmationsAndRecovery": {
+    "codeCommit": "dfce4f36d9d07828b91f87202a0a06d416a65a72",
+    "debugBuild": "/tmp/aqd-custom-confirmations-debug.log",
+    "debugResult": "TEST BUILD SUCCEEDED",
+    "releaseBuild": "/tmp/aqd-custom-confirmations-release.log",
+    "releaseResult": "BUILD SUCCEEDED (unsigned)",
+    "install": "/tmp/aqd-custom-confirmations-install.json",
+    "installResult": "success",
+    "appLaunched": false,
+    "nativeTestsExecuted": false,
+    "dataOperationExecuted": false,
+    "runtimeComplete": false,
+    "review": "Single-agent Standards/Spec source review. Custom over-full-screen presentation preserves editor lifecycle and reviewed optional targets. Native runtime, keyboard, VoiceOver and light/dark visual acceptance remain unverified. Existing root recovery E2E scenarios require Settings routing under #30.",
+    "sourceSHA256": {
+      "apps/ios/AQD/AQDApp.swift": "4c37b33dcf091c65d1945ef7f5af0f7a7a2f5ce25e3b7070cdab009f688defc1",
+      "apps/ios/AQD/UI/AgentAttachmentView.swift": "f6f578400c3c0633de3225e6e45c110cbfa95c44cf659cfef92c7b0927b105d9",
+      "apps/ios/AQD/UI/AgentFeedbackView.swift": "44af92c9cb8c3aa1167b6e81718b8512a9d22a5b07bfcf8b0ea2f230200d9aa5",
+      "apps/ios/AQD/UI/ClosetCollectionViews.swift": "5312b8718fa466d9f2362ab5a23d9d80b8c847c02a77f0d7955cc1a7399363e5",
+      "apps/ios/AQD/UI/ClosetView.swift": "a92602c51b12011db60c0e6adcb62f2d5021cf228500af9d1970a7dd4b300dfa",
+      "apps/ios/AQD/UI/DraftDiscardSheet.swift": "84b7f90825463acd986080329b353058853c8a9af0dc0302585478fde6a8d811",
+      "apps/ios/AQD/UI/FitJournalViews.swift": "8e4f2ed9a1d9d95377ec7c062a3cd54b1eb99220b8339bae72b7fa76018c3b99",
+      "apps/ios/AQD/UI/LocalAgentView.swift": "d2f6dfde7da78f7f730450f8ed20f12b72b9a2bf4ba6251fb440af3794f16eee",
+      "apps/ios/AQD/UI/LocalEraseView.swift": "220b208b549676cc79aca92a32afd0f4b875387f3f987006811054502b7ee3b6",
+      "apps/ios/AQD/UI/LocalRestoreView.swift": "688de623918e986099082b25eabd6febed18b00e0fc82862531be99254d7efc9",
+      "apps/ios/AQD/UI/LocalSettingsView.swift": "6ad2f40dd8638aa831cefe9fd5bfbbf9699e9ba6ff4be7cd76b8c39d396e3b08",
+      "apps/ios/AQD/UI/OutfitViews.swift": "67fc172b8820494d67d089651455e8fe9e14168ae16caff8b31eb496aa24dcef",
+      "apps/ios/AQD/UI/PhotoEditorView.swift": "d31565a96b9694a38c8a2d952578660d537bcd9225765a4ea702cee2f79d0478",
+      "apps/ios/AQD/UI/PieceCaptureView.swift": "45b49e5844cdd715e22e572460b54ad0be95d3ad6bb30e26f77439b11ea23e72",
+      "apps/ios/AQD/UI/PieceDeletionView.swift": "4da7009343f7f9fe94629b688444a07e6890c90783287e85b85d3f0932a25049",
+      "apps/ios/AQD/UI/PieceDetailsView.swift": "08b23007eab761a6facb99724e1889a248458fd021e4a8e102c8fc7012623b08",
+      "apps/ios/AQD/UI/PlanAuthoringView.swift": "eda7cf77990da9f093e7c30feb467076bd87cd1610d159023eb626b280acdfcc",
+      "apps/ios/AQD/UI/PlannerViews.swift": "93a84bb04f08de88e2b9812ddaa5b01740d89caa754b9d8c60f554b0818d79f1",
+      "apps/ios/AQD/UI/SavedTodayCardsView.swift": "42ef57273819b333095332a465eb92dd264505f7dd00209b6d5874c65669b7ed",
+      "apps/ios/AQD/UI/StyleEditorView.swift": "629be99c4569f5c664a6d2c5d86f8b02081e82ea0ab417b11c9354b7020e0b58",
+      "apps/ios/AQD/UI/WearDetailView.swift": "f93b564a0aadebe095e2d1e44dce13ac497eed301805ff564de921d5a6f433f3",
+      "apps/ios/AQDTests/PiecePersistenceTests.swift": "60e0f7c1553984c904f65f740542b2e2377a0ba026054d0f05386e9618ac2535"
+    },
+    "evidenceSHA256": {
+      "/tmp/aqd-custom-confirmations-debug.log": "08cf23b6239e2600f5a53637363f4773fe0db93b48ae0ec3e6c9310435265c88",
+      "/tmp/aqd-custom-confirmations-release.log": "68f3fef7eada42d917067b41a21d162186fd9dfc5cfa16066d0f1fce6aaa6da4",
+      "/tmp/aqd-custom-confirmations-install.json": "c3b53c15720cf293ebd2bca12913b0c6afbee2dd043bba3491026a04624803af"
+    }
   }
 }
