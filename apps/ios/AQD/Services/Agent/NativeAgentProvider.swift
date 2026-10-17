@@ -69,7 +69,7 @@ enum AgentProviderError: Error {
     static func stream(prompt: String, responseTokens: Int) -> AsyncThrowingStream<String, any Error> {
         streamAttached(prompt: prompt, responseTokens: responseTokens, attachments: [])
     }
-    static func streamAttached(prompt: String, responseTokens: Int, attachments: [AgentAttachment], enablesTools: Bool = false, lookup: (@MainActor @Sendable (String) throws -> String)? = nil, prepareChange: (@MainActor @Sendable (AgentMutationRequest) throws -> String)? = nil) -> AsyncThrowingStream<String, any Error> {
+    static func streamAttached(prompt: String, responseTokens: Int, attachments: [AgentAttachment], tools selection: AgentToolSelection? = nil) -> AsyncThrowingStream<String, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task { @MainActor in
                 do {
@@ -86,16 +86,19 @@ enum AgentProviderError: Error {
                         } else if !attachments.isEmpty {
                             prepared = Prompt(prompt + "\nThis runtime cannot inspect image pixels. Only recognized text is available; disclose that limitation when relevant.")
                         }
-                        var tools: [any Tool] = []
-                        if enablesTools, let lookup, let prepareChange {
-                            tools = [AgentLookupTool(lookup: lookup), AgentMutationTool(prepare: prepareChange)]
-                        }
+                        var tools: [any Tool] = selection.map { AgentToolbox.makeTools($0.ids, handlers: $0.handlers) } ?? []
                         if #available(iOS 26.4, *) {
                             let model = SystemLanguageModel.default
                             let input = try await model.tokenCount(for: prepared)
                             let system = try await model.tokenCount(for: Instructions(instructions))
-                            let toolTokens = tools.isEmpty ? 0 : try await model.tokenCount(for: tools)
-                            guard fits(input: input, system: system, tools: toolTokens, response: responseTokens, contextSize: model.contextSize) else { throw AgentProviderError.contextLimit }
+                            if let selection {
+                                // Offer as many of the routed tools as fit, most relevant first.
+                                let kept = try await AgentToolbox.fit(selection.ids, measure: { ids in
+                                    ids.isEmpty ? 0 : try await model.tokenCount(for: AgentToolbox.makeTools(ids, handlers: selection.handlers))
+                                }, fits: { fits(input: input, system: system, tools: $0, response: responseTokens, contextSize: model.contextSize) })
+                                tools = AgentToolbox.makeTools(kept, handlers: selection.handlers)
+                            }
+                            guard fits(input: input, system: system, tools: tools.isEmpty ? 0 : try await model.tokenCount(for: tools), response: responseTokens, contextSize: model.contextSize) else { throw AgentProviderError.contextLimit }
                         }
                         let session = LanguageModelSession(tools: tools, instructions: instructions)
                         for try await response in session.streamResponse(to: prepared, options: GenerationOptions(maximumResponseTokens: responseTokens)) {
