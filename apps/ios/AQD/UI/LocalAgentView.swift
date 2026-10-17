@@ -266,13 +266,9 @@ struct AgentConversationView: View {
             VStack(alignment: .leading, spacing: AppSpacing.small) {
                 AgentMarkdownBody(source: AgentMarkdownPolicy.conversationalText(message.source))
                 if message.isActive {
-                    HStack(spacing: AppSpacing.small) {
-                        ProgressView()
-                        if message.status == .stopping { Text("Stopping…") }
-                        else if model.slow { Text("Still working…") }
-                    }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        .accessibilityElement(children: .combine)
-                        .accessibilityLabel(message.status == .stopping ? "Stopping response" : "Generating response")
+                    AgentWorkingIndicator(
+                        title: message.status == .stopping ? "Stopping…" : model.slow ? "Still working…" : message.source.isEmpty ? "Thinking…" : "Writing…",
+                        animates: message.status != .stopping)
                 } else {
                     if message.status != .complete {
                         Text("Incomplete response").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
