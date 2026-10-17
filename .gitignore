@@ -27,3 +27,6 @@ node_modules/
 
 # Local Pi agent state
 /.pi/
+
+# Claude Code local state
+.claude/settings.local.json
