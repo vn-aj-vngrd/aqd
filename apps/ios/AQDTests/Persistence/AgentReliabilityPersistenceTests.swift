@@ -116,6 +116,7 @@ import AQDCore
         let proposal = try #require(model.conversation.proposals?.first)
         model.approveProposal(proposal.id, version: 1)
         #expect(try store.localIdentity() == nil) // A running model cannot approve its own tool output.
+        try model.conversation.append("I prepared a review for you.", attemptID: attempt)
         try model.conversation.complete(attemptID: attempt); try #require(model.persist())
         model.approveProposal(proposal.id, version: 1)
         model.approveProposal(proposal.id, version: 1)
@@ -135,6 +136,7 @@ import AQDCore
     @Test func staleProfileAndManualDraftAreNeverOverwritten() throws {
         let (store, model, attempt) = try activeModel()
         _ = try model.prepareToolChange(.init(kind: .updateProfile, caption: "Agent bio"), conversationID: model.conversation.id, attemptID: attempt)
+        try model.conversation.append("I prepared a review for you.", attemptID: attempt)
         try model.conversation.complete(attemptID: attempt); try #require(model.persist())
         var manual = LocalIdentityDraft(ownerID: model.conversation.ownerID); manual.name = "Manual name"
         try store.saveIdentityDraft(manual)
@@ -170,6 +172,7 @@ import AQDCore
         _ = try store.saveLocalSettings(LocalSettingsRequest(base: store.localSettings(), agentPreferences: preferences))
         let hidden = try model.lookupToolRecords("Van profile", conversationID: model.conversation.id, attemptID: attempt)
         #expect(!hidden.contains("Van") && !hidden.contains(model.conversation.ownerID.uuidString))
+        try model.conversation.append("I prepared a review for you.", attemptID: attempt)
         try model.conversation.complete(attemptID: attempt); try #require(model.persist())
         let proposal = try #require(model.conversation.proposals?.first)
         model.approveProposal(proposal.id, version: 1)

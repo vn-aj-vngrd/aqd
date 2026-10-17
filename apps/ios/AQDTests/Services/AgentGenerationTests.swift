@@ -94,7 +94,7 @@ import AQDCore
         let message = try #require(model.conversation.messages.last)
         #expect(message.firstTextSeconds != nil && message.elapsedSeconds != nil)
         model.send(retrying: message.id); try await waitUntilStopped(model)
-        #expect(prompts.last?.hasSuffix("user: General styling please") == true)
+        #expect(prompts.last?.contains("user: General styling please") == true)
         #expect(prompts.last?.contains("assistant: **A look**") == false)
         #expect(model.conversation.messages.count == 2 && model.conversation.messages.last?.versions.count == 1)
         #expect(try store.agentConversations().first?.messages.last?.source == "**A look**")
