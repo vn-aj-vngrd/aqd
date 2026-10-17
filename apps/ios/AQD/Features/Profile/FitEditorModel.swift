@@ -82,7 +82,7 @@ extension AppState {
         catch { fitError = "Your fit journal could not be read. Keep your local data and retry." }
     }
     func openFit(_ memory: FitMemory? = nil) {
-        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, capture == nil, styleEditor == nil, outfitEditor == nil, themeEditor == nil, planEditor == nil, planAuthoringEditor == nil, wearEditor == nil else { return }
+        guard !hasActiveEditor else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             let draft: FitDraft

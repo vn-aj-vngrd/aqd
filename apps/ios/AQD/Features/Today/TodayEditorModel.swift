@@ -184,7 +184,7 @@ extension AppState {
         catch { todayError = "Your Today task could not be recovered. Keep the app data." }
     }
     func openTodayEditor() {
-        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, capture == nil, outfitEditor == nil, planEditor == nil, wearEditor == nil, planAuthoringEditor == nil, styleEditor == nil, themeEditor == nil else { return }
+        guard !hasActiveEditor else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             let draft: TodayLayoutDraft

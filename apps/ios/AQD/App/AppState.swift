@@ -24,7 +24,8 @@ final class AppState {
     var closetThemeAnchor: UUID?
     var themes: [OutfitTheme] = []
     var themeError: String?
-    var themeEditor: ThemeEditorModel?
+    /// The single open task editor (capture, outfit, theme, plan, wear, style, fit, identity or Today).
+    var activeEditor: ActiveEditor?
     var store: PieceStore?
     func requireStore() throws -> PieceStore {
         guard let store else { throw PieceStore.StoreError.corruptStore }
@@ -42,7 +43,6 @@ final class AppState {
     var ownedPieces: [WardrobePiece] { pieces + archivedPieces }
     var pendingOutfitEditID: UUID?
     var collectionRefreshID = UUID()
-    var capture: CaptureModel?
     var collectionError: String?
     var pieceReadError: String?
     var agentModel: AgentModel?
@@ -51,16 +51,13 @@ final class AppState {
     var today: TodayConfiguration?
     var todayUndoAvailable = false
     var todayError: String?
-    var todayEditor: TodayEditorModel?
     var photoCleanupError: String?
-    var wearEditor: OutfitWearEditorModel?
     var wearHistoryDay = LocalPlanDay()
     var wearHistoryMode = PlannerCalendarMode.month
     var wearHistoryCalendar = false
     var wearRecords: [OutfitWearRecord] = []
     var wearError: String?
     var planDefinitions: [PlanDefinition] = []
-    var planAuthoringEditor: PlanAuthoringModel?
     var plannerDay = LocalPlanDay()
     var plannerMode = PlannerCalendarMode.week
     var plannerPath: [PlannerRoute] = []
@@ -68,23 +65,18 @@ final class AppState {
     var planUndoDeadline: Date?
     var planUndoRequest: PlanEntryDeletionRequest?
     var planUndoPending = false
-    var planEditor: OutfitPlanEditorModel?
     var planEntries: [OutfitPlanEntry] = []
     var planError: String?
     var pendingPlanOutfitID: UUID?
-    var outfitEditor: OutfitEditorModel?
     var pendingOutfitCaptureCategory: PieceCategory?
     var pendingFirstOutfitPieceID: UUID?
     var outfits: [Outfit] = []
     var outfitError: String?
-    var styleEditor: StyleEditorModel?
     var fitMemories: [FitMemory] = []
     var fitError: String?
-    var fitEditor: FitEditorModel?
     var fitAnchor: UUID?
     var localIdentity: LocalProfileIdentity?
     var identityError: String?
-    var identityEditor: LocalIdentityEditorModel?
     var settings: LocalSettings?
     var settingsError: String?
     private var pendingSettings: LocalSettingsRequest?
@@ -281,7 +273,7 @@ final class AppState {
     }
 
     func openStyle(source: StylePreferenceSource) {
-        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil else { return }
+        guard !hasActiveEditor else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             let experience = try store.localExperience()
@@ -300,7 +292,7 @@ final class AppState {
     }
 
     private func resumeStyleDraft() {
-        guard todayEditor == nil, fitEditor == nil, identityEditor == nil else { return }
+        guard !hasActiveEditor else { return }
         do {
             if let experience = try store?.localExperience(), let draft = experience.styleDraft ?? experience.pendingStyleReceipt {
                 if draft.source != .onboarding {
@@ -380,7 +372,7 @@ final class AppState {
     }
 
     func addPiece() {
-        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil else { return }
+        guard !hasActiveEditor else { return }
         guard let store else { return }
         do {
             let recovered = try store.newPieceDraft()
@@ -393,7 +385,7 @@ final class AppState {
     }
 
     func editPiece(_ piece: WardrobePiece) {
-        guard todayEditor == nil, fitEditor == nil, identityEditor == nil else { return }
+        guard !hasActiveEditor else { return }
         guard let store else { return }
         do {
             let recovered = try store.recoverableDraft(itemID: piece.id)

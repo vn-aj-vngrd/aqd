@@ -118,16 +118,14 @@ final class PlanAuthoringModel: Identifiable {
 
 extension AppState {
     func resumePlanAuthoring() {
-        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil,
-              styleEditor == nil, capture == nil, entry.page == .main else { return }
+        guard !hasActiveEditor, entry.page == .main else { return }
         do {
             guard let draft = try store?.planAuthoringDraft() else { return }
             planAuthoringEditor = try PlanAuthoringModel(state: self, draft: draft)
         } catch { planError = "Your multi-day plan draft couldn’t open. Keep the app data and retry." }
     }
     func openPlanAuthoring(day: LocalPlanDay, routine: Bool = false, trip: Bool = false) {
-        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil,
-              styleEditor == nil, capture == nil else { return }
+        guard !hasActiveEditor else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             let draft: PlanAuthoringDraft
@@ -152,7 +150,7 @@ extension AppState {
 
 extension AppState {
     func editPlanDefinition(_ plan: PlanDefinition, scope: RoutineEditScope, anchorEntryID: UUID?) {
-        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, planEditor == nil, outfitEditor == nil, wearEditor == nil, styleEditor == nil, capture == nil else { return }
+        guard !hasActiveEditor else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             if let retained = try store.planAuthoringDraft() {

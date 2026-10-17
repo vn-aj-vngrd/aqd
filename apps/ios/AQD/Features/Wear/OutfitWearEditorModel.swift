@@ -67,14 +67,14 @@ extension AppState {
         catch { wearError = "Your wear history couldn’t be read. Keep your existing data and retry." }
     }
     func resumeWearDraft() {
-        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, wearEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil, entry.page == .main else { return }
+        guard !hasActiveEditor, entry.page == .main else { return }
         do {
             guard let draft = try store?.wearDraft() else { return }
             wearEditor = try OutfitWearEditorModel(state: self, draft: draft)
         } catch { wearError = "Your wear draft couldn’t be read. Keep the app data for recovery." }
     }
     func openWear(outfitID: UUID? = nil, day: LocalPlanDay = LocalPlanDay(), entry: OutfitPlanEntry? = nil, correcting: OutfitWearRecord? = nil) {
-        guard todayEditor == nil, fitEditor == nil, identityEditor == nil, planAuthoringEditor == nil, wearEditor == nil, planEditor == nil, outfitEditor == nil, styleEditor == nil, capture == nil else { return }
+        guard !hasActiveEditor else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             if let retained = try store.wearDraft() { wearEditor = try OutfitWearEditorModel(state: self, draft: retained); return }

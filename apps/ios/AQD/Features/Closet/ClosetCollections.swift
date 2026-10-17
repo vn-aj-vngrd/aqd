@@ -7,7 +7,7 @@ extension AppState {
         catch { themeError = "Your themes couldn’t be read. Existing data is retained; retry." }
     }
     func openTheme(editing theme: OutfitTheme? = nil, chooseOutfits: Bool = false) {
-        guard todayEditor == nil, planAuthoringEditor == nil, themeEditor == nil, outfitEditor == nil, planEditor == nil, wearEditor == nil, capture == nil, styleEditor == nil else { return }
+        guard !hasActiveEditor else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             let retained = try store.themeDraft()
@@ -23,7 +23,7 @@ extension AppState {
         } catch { collectionError = "A theme draft couldn’t open. Your existing themes and outfits haven’t changed." }
     }
     func resumeThemeDraft() {
-        guard todayEditor == nil, planAuthoringEditor == nil, themeEditor == nil, outfitEditor == nil, planEditor == nil, wearEditor == nil, styleEditor == nil, capture == nil, entry.page == .main else { return }
+        guard !hasActiveEditor, entry.page == .main else { return }
         do {
             guard let store, let draft = try store.themeDraft() else { return }
             themeEditor = try ThemeEditorModel(store: store, draft: draft)
