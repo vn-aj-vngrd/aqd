@@ -2700,5 +2700,10 @@
     "codeCommit": "46c7c5737b3e8670e739ecf549df253bd6a1ef59",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false
+  },
+  "todayRowBackground": {
+    "codeCommit": "8ca3a0d8f8544122a5e05c3334c4f0c33135538f",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false
   }
 }

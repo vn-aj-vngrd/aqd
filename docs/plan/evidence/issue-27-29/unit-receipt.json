@@ -1857,5 +1857,16 @@
       "/tmp/aqd-agent-mutations-release.log": "d972c49f6e3a4fe4672e31244be8d1b6bcf115b41787bb6e2e5f2e46b24fae22",
       "/tmp/aqd-agent-mutations-install.json": "dd69371ea82a37bba751b7a2983d0d1b184eb6c74441ccacf9fb4bd6b19bbca3"
     }
+  },
+  "todayRowBackground": {
+    "codeCommit": "8ca3a0d8f8544122a5e05c3334c4f0c33135538f",
+    "debugBuild": "/tmp/aqd-today-row-background-debug.log",
+    "debugResult": "BUILD SUCCEEDED",
+    "install": "/tmp/aqd-today-row-background-install.json",
+    "installResult": "success",
+    "appLaunched": false,
+    "nativeTestsExecuted": false,
+    "runtimeComplete": false,
+    "sourceSHA256": "a6601a195c710e581eeee2d651e6abc95c459f23feb79dd15c8143632d05509b"
   }
 }
