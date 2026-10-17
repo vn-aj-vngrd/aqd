@@ -87,7 +87,7 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
         messages[i].versions.append(AgentResponseVersion(source: messages[i].source, status: messages[i].status))
         messages[i].source = ""; messages[i].status = .waiting; messages[i].attemptID = attempt
         messages[i].firstTextSeconds = nil; messages[i].elapsedSeconds = nil
-        messages[i].failureReason = nil
+        messages[i].failureReason = nil; messages[i].diagnostics = nil
         return attempt
     }
     public func validated() throws {

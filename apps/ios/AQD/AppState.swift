@@ -42,6 +42,7 @@ final class AppState {
     var collectionError: String?
     var pieceReadError: String?
     var agentModel: AgentModel?
+    var agentControlsModel: AgentControlsModel?
     var weatherClient: WeatherClient?
     var today: TodayConfiguration?
     var todayUndoAvailable = false
@@ -836,7 +837,7 @@ extension AppState {
         } catch { localDataCleanupError = "Local records are retained. Previous AQD files could not be removed; retry local data cleanup." }
     }
     func detachForDataReplacement() {
-        agentModel?.suspend(); agentModel = nil
+        agentModel?.suspend(); agentModel = nil; agentControlsModel = nil
         weatherClient?.suspend(); weatherClient = nil
         capture = nil; outfitEditor = nil; themeEditor = nil; wearEditor = nil; planEditor = nil; planAuthoringEditor = nil
         styleEditor = nil; fitEditor = nil; identityEditor = nil; todayEditor = nil; restoreModel = nil

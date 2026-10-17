@@ -12,7 +12,11 @@ import SwiftData
     @Attribute(.unique) var id: UUID
     var request: Data
     var result: Data
-    init(_ request: LocalSettingsRequest, result: LocalSettings) throws { id = request.operationID; self.request = try JSONEncoder().encode(request); self.result = try JSONEncoder().encode(result) }
+    init(_ request: LocalSettingsRequest, result: LocalSettings, fingerprint: String? = nil) throws {
+        id = request.operationID
+        self.request = try fingerprint.map { Data(("sha256:" + $0).utf8) } ?? JSONEncoder().encode(request)
+        self.result = try JSONEncoder().encode(result)
+    }
 }
 /// Changes only inside the same acknowledged transaction, for stale replacement review checks.
 @Model final class StoredLocalMutation {

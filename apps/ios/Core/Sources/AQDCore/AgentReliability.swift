@@ -1,11 +1,11 @@
 import Foundation
 
 public enum AgentDataSource: String, Codable, CaseIterable, Sendable {
-    case pieces, outfits, themes, planner, wear, journal, style, profile, pastChats, feedback, notes, weather
+    case pieces, outfits, themes, planner, wear, journal, today, style, profile, pastChats, feedback, notes, weather
     public var title: String {
         switch self {
         case .pieces: "Pieces"; case .outfits: "Outfits"; case .themes: "Themes"; case .planner: "Plans"
-        case .wear: "Wear history & insights"; case .journal: "Fit journal"; case .style: "Style preferences"
+        case .today: "Today cards"; case .wear: "Wear history & insights"; case .journal: "Fit journal"; case .style: "Style preferences"
         case .profile: "Profile"; case .pastChats: "Past chat topics"; case .feedback: "Saved feedback"
         case .notes: "Private notes"; case .weather: "Weather"
         }
@@ -77,17 +77,17 @@ public struct AgentFeedback: Identifiable, Codable, Equatable, Sendable {
         id = UUID(); self.rating = rating; self.isReport = isReport; self.conversationID = conversationID
         self.messageID = messageID; self.attemptID = attemptID; self.diagnostics = diagnostics; createdAt = Date(); updatedAt = createdAt
     }
-    public var title: String { isReport ? "Report" : rating == .helpful ? "Helpful response" : "Not helpful" }
+    public var title: String { isReport ? "Report" : rating == .helpful ? "Helpful response" : rating == .notHelpful ? "Not helpful" : "Feedback" }
     public func validated() throws {
         guard comment.count <= 1000, (userText?.count ?? 0) <= 1000, (responseText?.count ?? 0) <= 2000,
               includesConversation || (userText == nil && responseText == nil),
               (conversationID == nil) == (messageID == nil), (messageID == nil) == (attemptID == nil),
-              Set(reasons).count == reasons.count, rating != nil || isReport || !comment.isEmpty,
+              Set(reasons).count == reasons.count, rating != nil || isReport || !comment.isEmpty || !reasons.isEmpty,
               createdAt.timeIntervalSince1970.isFinite, updatedAt >= createdAt else { throw PlanValidationError.invalidRecord }
         try diagnostics?.validated()
     }
     public func report(includingConversation: Bool) -> AgentFeedbackReport {
-        AgentFeedbackReport(feedbackID: id, rating: rating, isReport: isReport, reasons: reasons, comment: comment,
+        AgentFeedbackReport(feedbackID: id, createdAt: createdAt, updatedAt: updatedAt, rating: rating, isReport: isReport, reasons: reasons, comment: comment,
             attemptID: attemptID, diagnostics: diagnostics,
             userText: includingConversation && includesConversation ? userText : nil,
             responseText: includingConversation && includesConversation ? responseText : nil)
@@ -97,6 +97,8 @@ public struct AgentFeedback: Identifiable, Codable, Equatable, Sendable {
 public struct AgentFeedbackReport: Encodable, Equatable, Sendable {
     public let schemaVersion = 1
     public let feedbackID: UUID
+    public let createdAt: Date
+    public let updatedAt: Date
     public let rating: AgentFeedbackRating?
     public let isReport: Bool
     public let reasons: [AgentFeedbackReason]
@@ -112,8 +114,9 @@ public struct AgentKnowledgeRecord: Identifiable, Equatable, Sendable {
     public let text: String
     public let eligibleForSuggestions: Bool
     public let priority: Double
-    public init(id: UUID = UUID(), source: AgentDataSource, text: String, eligibleForSuggestions: Bool = true, priority: Double = 0) {
-        self.id = id; self.source = source; self.text = text; self.eligibleForSuggestions = eligibleForSuggestions; self.priority = priority
+    public let containsPrivateNotes: Bool
+    public init(id: UUID = UUID(), source: AgentDataSource, text: String, eligibleForSuggestions: Bool = true, priority: Double = 0, containsPrivateNotes: Bool = false) {
+        self.id = id; self.source = source; self.text = text; self.eligibleForSuggestions = eligibleForSuggestions; self.priority = priority; self.containsPrivateNotes = containsPrivateNotes
     }
 }
 public struct AgentRetrievalResult: Equatable, Sendable {
@@ -132,7 +135,7 @@ public enum AgentRetrieval {
     }
     public static func select(query: String, records: [AgentKnowledgeRecord], facts: [String], maximumCharacters: Int, maximumRecords: Int) throws -> AgentRetrievalResult {
         guard maximumCharacters >= 256, maximumRecords > 0, records.allSatisfy({ $0.priority.isFinite }), Set(records.map { $0.source.rawValue + ":" + $0.id.uuidString }).count == records.count else { throw PlanValidationError.invalidRecord }
-        let queryTerms = Set(terms(query)), lower = query.lowercased()
+        let queryTerms = Array(Set(terms(query).prefix(48))).sorted(), lower = query.lowercased()
         let historical = ["archiv", "laundry", "unavailable", "history", "wore", "count", "how many", "show", "list", "own", "have"].contains { lower.contains($0) }
         let candidates = records.filter { historical || $0.eligibleForSuggestions }
         let documents = candidates.map { terms($0.text) }
@@ -145,7 +148,7 @@ public enum AgentRetrieval {
             switch source {
             case .pieces, .outfits: words = ["wear", "outfit", "look", "piece", "shirt", "shoe", "dress"]
             case .themes: words = ["theme", "collection"]
-            case .planner: words = ["plan", "week", "trip", "travel", "tomorrow", "schedule"]
+            case .planner, .today: words = ["today", "plan", "week", "trip", "travel", "tomorrow", "schedule"]
             case .wear: words = ["wore", "worn", "unworn", "history", "insight", "often", "least", "most"]
             case .journal: words = ["fit", "journal", "photo", "memory"]
             case .style: words = ["prefer", "style", "color", "comfort"]
@@ -171,11 +174,26 @@ public enum AgentRetrieval {
             if left.0.id != right.0.id { return left.0.id.uuidString < right.0.id.uuidString }
             return left.0.source.rawValue < right.0.source.rawValue
         }
-        struct Item: Encodable { let source: String; let data: String }
+        struct Item: Encodable { let source: String; let data: String; let availableForSuggestions: Bool; let containsPrivateNotes: Bool }
         struct Payload: Encodable { let facts: [String]; let included: Int; let omitted: Int; let records: [Item] }
         let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        func excerpt(_ text: String) -> String {
+            guard text.count > 600 else { return text }
+            let relevantTerms = queryTerms.sorted {
+                let left = documentFrequencies[$0, default: 0], right = documentFrequencies[$1, default: 0]
+                return left == right ? $0 < $1 : left < right
+            }
+            for term in relevantTerms {
+                if let match = text.range(of: term, options: [.caseInsensitive, .diacriticInsensitive]), text.distance(from: text.startIndex, to: match.lowerBound) > 250 {
+                    let start = text.index(match.lowerBound, offsetBy: -60, limitedBy: text.startIndex) ?? text.startIndex
+                    let end = text.index(start, offsetBy: 340, limitedBy: text.endIndex) ?? text.endIndex
+                    return String(text.prefix(160)) + " … " + String(text[start..<end]) + " [partial record]"
+                }
+            }
+            return String(text.prefix(580)) + " [partial record]"
+        }
         func render(_ selected: [AgentKnowledgeRecord]) throws -> String {
-            let items = selected.map { record in Item(source: record.source.rawValue, data: String(record.text.prefix(600)) + (record.text.count > 600 ? " [partial record]" : "")) }
+            let items = selected.map { record in Item(source: record.source.rawValue, data: excerpt(record.text), availableForSuggestions: record.eligibleForSuggestions, containsPrivateNotes: record.containsPrivateNotes) }
             return String(decoding: try encoder.encode(Payload(facts: facts, included: selected.count, omitted: records.count - selected.count, records: items)), as: UTF8.self)
         }
         var selected: [AgentKnowledgeRecord] = []
@@ -185,12 +203,16 @@ public enum AgentRetrieval {
         for source in AgentDataSource.allCases {
             if let match = ranked.first(where: { $0.0.source == source }) { representatives.append(match) }
         }
-        representatives.sort { left, right in left.1 == right.1 ? left.0.id.uuidString < right.0.id.uuidString : left.1 > right.1 }
+        representatives.sort { left, right in
+            if left.1 != right.1 { return left.1 > right.1 }
+            if left.0.id != right.0.id { return left.0.id.uuidString < right.0.id.uuidString }
+            return left.0.source.rawValue < right.0.source.rawValue
+        }
         let representativeRecords = representatives.map { $0.0 }
         for record in representativeRecords + ranked.map({ $0.0 }) where !selected.contains(where: { $0.id == record.id && $0.source == record.source }) {
             guard selected.count < maximumRecords else { break }
             if try render(selected + [record]).count <= maximumCharacters { selected.append(record) }
         }
-        return AgentRetrievalResult(text: try render(selected), recordIDs: selected.map(\.id), sources: AgentDataSource.allCases.filter { source in selected.contains { $0.source == source } }, included: selected.count, omitted: records.count - selected.count)
+        return AgentRetrievalResult(text: try render(selected), recordIDs: selected.map(\.id), sources: AgentDataSource.allCases.filter { source in selected.contains { $0.source == source || (source == .notes && $0.containsPrivateNotes) } }, included: selected.count, omitted: records.count - selected.count)
     }
 }

@@ -44,7 +44,21 @@ import AQDCore
         #expect(prompt.contains("PRIVATE_BODY_CONTEXT") == (includeStyle && allowBody))
         #expect(model.conversation.messages.last?.status == .complete)
     }
-    @Test func oversizedClosetRetainsTheRequestUntilExplicitBoundedSelection() async throws {
+    @Test func automaticGroundingSelectsWithinBudgetWithoutRejectingLargerClosets() async throws {
+        let fixture = try await LocalDataFixture(), store = fixture.store
+        _ = try store.savePiece(PieceDraft(name: "SECOND_BLUE_SHIRT", category: .tops, photoID: fixture.processed.id), operationID: UUID())
+        let limits = AgentQualification(maximumPieces: 1, maximumPromptCharacters: 20000, responseTokens: 128, slowSeconds: 0.2, timeoutSeconds: 2)
+        var prompts: [String] = []
+        let model = try AgentModel(store: store, qualification: limits) { text, _ in
+            prompts.append(text); return AsyncThrowingStream { $0.yield("Try a shirt."); $0.finish() }
+        }
+        model.availability = .awaitingQualification; model.updateDraft("What blue shirt can I wear?"); model.send(); try await waitUntilStopped(model)
+        #expect(prompts.count == 1)
+        #expect(model.conversation.messages.last?.status == .complete)
+        #expect(model.conversation.messages.last?.diagnostics?.included == 1)
+        #expect((model.conversation.messages.last?.diagnostics?.omitted ?? 0) > 0)
+    }
+    @Test func legacyRestrictedClosetRetainsTheRequestUntilExplicitBoundedSelection() async throws {
         let fixture = try await LocalDataFixture(), store = fixture.store
         let other = try store.savePiece(PieceDraft(name: "EXCLUDED_OTHER_PIECE", category: .tops, photoID: fixture.processed.id), operationID: UUID())
         let limits = AgentQualification(maximumPieces: 1, maximumPromptCharacters: 20000, responseTokens: 128, slowSeconds: 0.2, timeoutSeconds: 2)
@@ -53,6 +67,7 @@ import AQDCore
             prompts.append(text); return AsyncThrowingStream { $0.yield("One reviewed piece"); $0.finish() }
         }
         model.availability = .awaitingQualification; model.updateDraft("What can I wear?")
+        model.conversation.context.automatic = false
         model.send()
         #expect(prompts.isEmpty && model.conversation.messages.isEmpty && model.conversation.draft == "What can I wear?")
         #expect(model.error?.contains("Choose Selected pieces") == true)

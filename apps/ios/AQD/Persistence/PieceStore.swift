@@ -2927,7 +2927,11 @@ extension PieceStore {
     @discardableResult func saveLocalSettings(_ request: LocalSettingsRequest) throws -> LocalSettings {
         let context = ModelContext(container)
         if let receipt = try context.fetch(FetchDescriptor<StoredSettingsSave>()).first(where: { $0.id == request.operationID }) {
-            guard try JSONDecoder().decode(LocalSettingsRequest.self, from: receipt.request) == request else { throw StoreError.operationConflict }
+            if let fingerprint = String(data: receipt.request, encoding: .utf8), fingerprint.hasPrefix("sha256:") {
+                guard fingerprint == "sha256:" + digest(try encode(request)) else { throw StoreError.operationConflict }
+            } else {
+                guard try JSONDecoder().decode(LocalSettingsRequest.self, from: receipt.request) == request else { throw StoreError.operationConflict }
+            }
             return try JSONDecoder().decode(LocalSettings.self, from: receipt.result)
         }
         guard request.base == (try localSettings()) else { throw StoreError.staleRevision }
@@ -2935,7 +2939,20 @@ extension PieceStore {
         try beforeOutfitSave()
         if let record = try context.fetch(FetchDescriptor<StoredLocalSettings>()).first { record.payload = try encode(value) }
         else { context.insert(try StoredLocalSettings(value)) }
-        context.insert(try StoredSettingsSave(request, result: value)); try commit(context); try afterOutfitSave(); return value
+        let removed = Set((request.base.feedback ?? []).map(\.id)).subtracting((value.feedback ?? []).map(\.id))
+        if !removed.isEmpty {
+            for receipt in try context.fetch(FetchDescriptor<StoredSettingsSave>()) {
+                var prior = try JSONDecoder().decode(LocalSettings.self, from: receipt.result)
+                if !(Set((prior.feedback ?? []).map(\.id)).intersection(removed)).isEmpty {
+                    prior.feedback?.removeAll { removed.contains($0.id) }
+                    receipt.result = try encode(prior)
+                    if let oldRequest = try? JSONDecoder().decode(LocalSettingsRequest.self, from: receipt.request) {
+                        receipt.request = Data(("sha256:" + digest(try encode(oldRequest))).utf8)
+                    }
+                }
+            }
+        }
+        context.insert(try StoredSettingsSave(request, result: value, fingerprint: digest(try encode(request)))); try commit(context); try afterOutfitSave(); return value
     }
 }
 

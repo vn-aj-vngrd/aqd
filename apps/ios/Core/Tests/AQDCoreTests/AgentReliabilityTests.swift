@@ -29,6 +29,32 @@ struct AgentReliabilityTests {
         var excessive = value; excessive.comment = String(repeating: "a", count: 1001)
         #expect(throws: (any Error).self) { try excessive.validated() }
     }
+    @Test func latePrivateNoteMatchesAreRetrievedWithoutDroppingAvailabilityOrSourceFlags() throws {
+        let sharedID = UUID()
+        let record = AgentKnowledgeRecord(id: sharedID, source: .pieces, text: "Shirt metadata " + String(repeating: "ordinary ", count: 150) + "TAIL_MARKER wool sensitivity", containsPrivateNotes: true)
+        let profile = AgentKnowledgeRecord(id: sharedID, source: .profile, text: "Profile caption")
+        let result = try AgentRetrieval.select(query: "TAIL_MARKER sensitivity", records: [record, profile], facts: [], maximumCharacters: 1500, maximumRecords: 4)
+        #expect(result.text.contains("TAIL_MARKER") && result.text.contains("partial record"))
+        #expect(result.text.contains("availableForSuggestions") && result.sources.contains(.notes))
+        #expect(result.included == 2 && result.text.count <= 1500)
+    }
+    @Test func retryClearsAttemptDiagnosticsButRetainsFeedbackForTheOriginalVersion() throws {
+        var conversation = AgentConversation(ownerID: UUID()); conversation.draft = "A look"
+        let original = try conversation.beginAttempt(); try conversation.append("An answer", attemptID: original); try conversation.complete(attemptID: original)
+        let index = conversation.messages.count - 1, messageID = conversation.messages[index].id
+        conversation.messages[index].diagnostics = AgentResponseDiagnostics(included: 1, omitted: 2, inputCharacters: 600, sources: [.pieces])
+        conversation.messages[index].feedback = [AgentFeedback(rating: .notHelpful, conversationID: conversation.id, messageID: messageID, attemptID: original)]
+        let next = try conversation.retry(messageID: messageID)
+        #expect(next != original && conversation.messages[index].diagnostics == nil)
+        #expect(conversation.messages[index].feedback?.first?.attemptID == original)
+        try conversation.validated()
+    }
+    @Test func oldConversationContextDoesNotSilentlyGainAutomaticAccess() throws {
+        var object = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(AgentContext())) as? [String: Any])
+        object.removeValue(forKey: "automatic")
+        let legacy = try JSONDecoder().decode(AgentContext.self, from: JSONSerialization.data(withJSONObject: object))
+        #expect(legacy.automatic == nil && AgentContext().automatic == true)
+    }
     @Test func aiSettingsRetainAppearanceAndLegacySettingsDecode() throws {
         let base = LocalSettings(ownerID: UUID())
         var preferences = AgentPreferences(); preferences.set(.notes, enabled: false)
