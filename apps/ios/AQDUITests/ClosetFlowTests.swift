@@ -67,6 +67,7 @@ final class ClosetFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["closet.bulk.laundry"].waitForExistence(timeout: 5), "selection bar appears")
         XCTAssertFalse(app.buttons["closet.bulk.laundry"].isEnabled, "nothing chosen yet")
         shot("Select mode")
+        XCTAssertEqual(card("Black belt").value as? String, "Not selected", "cards are selectable in select mode: \(card("Black belt").debugDescription)")
         card("Black belt").tap()
         shot("After first tap")
         XCTAssertTrue(app.staticTexts["1 selected"].waitForExistence(timeout: 5), "the tap chooses the piece instead of opening it")

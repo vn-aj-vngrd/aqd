@@ -54,7 +54,9 @@ private final class PieceGuideOverlay: UIView {
         caption.font = .preferredFont(forTextStyle: .footnote)
         caption.textColor = .white
         caption.textAlignment = .center
-        caption.isAccessibilityElement = false
+        caption.numberOfLines = 2
+        caption.adjustsFontForContentSizeCategory = true
+        caption.isAccessibilityElement = true
         addSubview(caption)
     }
 
@@ -64,7 +66,8 @@ private final class PieceGuideOverlay: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        caption.frame = CGRect(x: 20, y: area.minY + 8, width: bounds.width - 40, height: 20)
+        let width = bounds.width - 40
+        caption.frame = CGRect(x: 20, y: area.minY + 8, width: width, height: caption.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude)).height)
         setNeedsDisplay()
     }
 

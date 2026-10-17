@@ -9,50 +9,47 @@ struct PieceCollectionGrid: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 2), alignment: .leading, spacing: 16) {
-            ForEach(pieces) { piece in
-                if let selection { selectableCard(piece, selection: selection) } else {
-                NavigationLink(value: ClosetRoute.piece(piece.id)) {
-                    ClosetCard(title: piece.displayName, detail: [state.categoryName(for: piece), piece.details.color,
-                        piece.isArchived ? "Archived" : ""]
-                        .filter { !$0.isEmpty }.joined(separator: " · ")) {
-                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
-                            .frame(maxWidth: .infinity).frame(height: 134).clipped()
-                            .overlay(alignment: .topTrailing) { PieceAvailabilityBadge(piece: piece) }
-                    }
-                }.buttonStyle(.plain).id(piece.id).accessibilityIdentifier("piece.card.\(piece.displayName)")
-                    .contextMenu {
-                        NavigationLink(value: ClosetRoute.piece(piece.id)) { AccessoryLabel("Open piece", systemImage: "arrow.up.forward.square") }
-                        AccessoryButton("Edit piece", systemImage: AppSymbols.edit) { state.editPiece(piece) }
-                        AccessoryButton("Style this", systemImage: "square.stack") { state.buildOutfit(pieceID: piece.id) }
-                            .disabled(piece.isArchived || piece.availability != .available)
-                        if !piece.isArchived {
-                            AccessoryButton(piece.availability == .laundry ? "Back from laundry" : "Move to laundry",
-                                            systemImage: piece.availability == .laundry ? "checkmark.circle" : "washer") { state.toggleLaundry(piece) }
-                        }
-                    } preview: {
-                        CollectionContextPreview(title: piece.displayName, detail: state.categoryName(for: piece)) {
-                            PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
-                                .frame(height: 300).clipped()
-                        }.environment(state)
-                    }
-                }
-            }
+            ForEach(pieces) { piece in card(piece) }
         }.scrollTargetLayout()
     }
 
-    private func selectableCard(_ piece: WardrobePiece, selection: Binding<Set<UUID>>) -> some View {
-        let chosen = selection.wrappedValue.contains(piece.id)
+    /// One card for both modes so the grid never swaps views: a tap opens the piece, or chooses it while selecting.
+    private func card(_ piece: WardrobePiece) -> some View {
+        let chosen = selection?.wrappedValue.contains(piece.id) == true
         return Button {
-            if chosen { selection.wrappedValue.remove(piece.id) } else { selection.wrappedValue.insert(piece.id) }
+            if let selection {
+                if chosen { selection.wrappedValue.remove(piece.id) } else { selection.wrappedValue.insert(piece.id) }
+            } else {
+                state.closetPath.append(.piece(piece.id))
+            }
         } label: {
-            ClosetCard(title: piece.displayName, detail: state.categoryName(for: piece)) {
+            ClosetCard(title: piece.displayName, detail: [state.categoryName(for: piece), piece.details.color,
+                piece.isArchived ? "Archived" : ""]
+                .filter { !$0.isEmpty }.joined(separator: " · ")) {
                 PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                     .frame(maxWidth: .infinity).frame(height: 134).clipped()
-                    .overlay(alignment: .topLeading) { PieceAvailabilityBadge(piece: piece) }
+                    .overlay(alignment: selection == nil ? .topTrailing : .topLeading) { PieceAvailabilityBadge(piece: piece) }
             }.selectionIndicator(chosen, cornerRadius: 16)
         }.buttonStyle(.plain).id(piece.id).accessibilityIdentifier("piece.card.\(piece.displayName)")
-            .accessibilityLabel(piece.displayName).accessibilityValue(chosen ? "Selected" : "Not selected")
+            .accessibilityValue(selection == nil ? "" : chosen ? "Selected" : "Not selected")
             .accessibilityAddTraits(chosen ? .isSelected : [])
+            .contextMenu {
+                if selection == nil {
+                    Button { state.closetPath.append(.piece(piece.id)) } label: { AccessoryLabel("Open piece", systemImage: "arrow.up.forward.square") }
+                    AccessoryButton("Edit piece", systemImage: AppSymbols.edit) { state.editPiece(piece) }
+                    AccessoryButton("Style this", systemImage: "square.stack") { state.buildOutfit(pieceID: piece.id) }
+                        .disabled(piece.isArchived || piece.availability != .available)
+                    if !piece.isArchived {
+                        AccessoryButton(piece.availability == .laundry ? "Back from laundry" : "Move to laundry",
+                                        systemImage: piece.availability == .laundry ? "checkmark.circle" : "washer") { state.toggleLaundry(piece) }
+                    }
+                }
+            } preview: {
+                CollectionContextPreview(title: piece.displayName, detail: state.categoryName(for: piece)) {
+                    PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                        .frame(height: 300).clipped()
+                }.environment(state)
+            }
     }
 }
 

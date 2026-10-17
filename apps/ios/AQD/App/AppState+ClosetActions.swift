@@ -79,7 +79,10 @@ extension AppState {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             if let existing = try store.outfitDraft() {
                 if try store.savedOutfit(for: existing) != nil { try store.acknowledgeOutfitReceipt(existing) }
-                else { buildOutfit(); return }
+                else {
+                    outfitError = "Finish or discard your unfinished outfit before copying another."
+                    return
+                }
             }
             var draft = OutfitDraft(ownerID: try store.todayConfiguration().ownerID)
             draft.name = String("\(outfit.displayName) copy".prefix(80))
@@ -104,9 +107,15 @@ extension AppState {
             }
             var draft = ThemeDraft(editing: theme)
             draft.outfitIDs.removeAll { $0 == outfit.id }
-            try store.saveThemeDraft(draft)
-            _ = try store.saveTheme(draft)
-            try store.finishThemeDraft(draft)
+            do {
+                try store.saveThemeDraft(draft)
+                _ = try store.saveTheme(draft)
+                try store.finishThemeDraft(draft)
+            } catch {
+                // A failed change must not leave a phantom unfinished theme behind.
+                if (try? store.savedTheme(for: draft)) == nil { try? store.finishThemeDraft(draft, discarding: true) }
+                throw error
+            }
             reloadThemes()
             return true
         } catch {

@@ -111,4 +111,27 @@ import Testing
         #expect(state.themeError != nil)
         #expect(state.themes.first?.outfitIDs == theme.outfitIDs, "nothing changed")
     }
+
+    @Test func aBulkChangeKeepsTheWritesThatSucceededWhenOneIsStale() async throws {
+        let (state, fixture) = try await loaded()
+        let second = try fixture.store.savePiece(PieceDraft(name: "Second tee", category: .tops, photoID: fixture.processed.id, photoRecipe: fixture.piece.photoRecipe), operationID: UUID())
+        state.reloadPieces()
+        _ = state.toggleLaundry(fixture.piece)
+        let result = state.setAvailability(.unavailable, for: [fixture.piece, second])
+        #expect(result == AppState.BulkResult(changed: 1, failed: 1))
+        #expect(try fixture.store.piece(id: second.id)?.availability == .unavailable, "the fresh piece changed")
+        #expect(try fixture.store.piece(id: fixture.piece.id)?.availability == .laundry, "the stale piece was left as the newer write set it")
+        #expect(state.collectionError != nil)
+    }
+
+    @Test func duplicatingWhileAnotherOutfitDraftIsOpenSaysSoInsteadOfSwitching() async throws {
+        let (state, fixture) = try await loaded()
+        var draft = OutfitDraft(ownerID: fixture.outfit.ownerID)
+        draft.name = "Unfinished"
+        try fixture.store.saveOutfitDraft(draft)
+        state.duplicateOutfit(fixture.outfit)
+        #expect(state.outfitEditor == nil)
+        #expect(state.outfitError != nil)
+        #expect(try fixture.store.outfitDraft()?.name == "Unfinished", "the unfinished draft is untouched")
+    }
 }

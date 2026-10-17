@@ -261,7 +261,7 @@ struct ClosetView: View {
     private func finishBulk(_ result: AppState.BulkResult) {
         if result.failed == 0 { selecting = false }
         refreshPieces()
-        if result.changed > 0 { UINotificationFeedbackGenerator().notificationOccurred(.success) }
+        if result.changed > 0 { UINotificationFeedbackGenerator().notificationOccurred(result.failed == 0 ? .success : .warning) }
     }
 
     @ViewBuilder private var pieceResults: some View {
