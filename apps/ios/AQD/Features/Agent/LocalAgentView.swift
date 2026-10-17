@@ -21,7 +21,7 @@ struct LocalAgentView: View {
         }.appAppearance(state.appearance).background(AppTheme.canvas.ignoresSafeArea()).tint(AppTheme.ink).task { open() }.onDisappear { state.agentModel?.suspend() }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active { state.agentModel?.recheckAvailability() }
-                else { state.agentModel?.suspend() }
+                else if phase == .background { state.agentModel?.suspend() }
             }
     }
     private func open() {

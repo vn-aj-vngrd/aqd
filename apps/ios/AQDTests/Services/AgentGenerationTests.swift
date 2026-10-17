@@ -100,6 +100,37 @@ import AQDCore
         #expect(try store.agentConversations().first?.messages.last?.source == "**A look**")
         #expect(try store.pieces().isEmpty && store.planEntries().isEmpty)
     }
+    @Test func streamingThrottlesSavesToFirstTextThenOncePerSecondThenFinal() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let model = try AgentModel(store: store, qualification: qualification) { _, _ in
+            AsyncThrowingStream { continuation in
+                var text = ""
+                for _ in 0..<200 { text += "word "; continuation.yield(text) }
+                continuation.finish()
+            }
+        }
+        model.availability = .awaitingQualification; model.updateDraft("General styling please"); model.conversation.context.scope = .general
+        model.send()
+        var revisions = Set<Int>()
+        for _ in 0..<400 where model.active { revisions.insert(model.conversation.revision); try await Task.sleep(for: .milliseconds(1)) }
+        try await waitUntilStopped(model)
+        let saved = try #require(try store.agentConversations().first)
+        #expect(saved.messages.last?.status == .complete && saved.messages.last?.source.split(separator: " ").count == 200)
+        // Start-of-attempt save, first text, final save: one stream burst adds at most 3 intermediate revisions.
+        #expect(saved.revision <= 4)
+    }
+    @Test func budgetRejectsOversizeAndAcceptsFittingRequests() {
+        #expect(NativeAgentProvider.fits(input: 1000, system: 400, tools: 900, response: 768, contextSize: 4096))
+        #expect(!NativeAgentProvider.fits(input: 2500, system: 400, tools: 900, response: 768, contextSize: 4096))
+        #expect(!NativeAgentProvider.fits(input: 1000, system: 400, tools: 2000, response: 768, contextSize: 4096))
+        #expect(NativeAgentProvider.fits(input: 1000, system: 400, tools: 0, response: 768, contextSize: 4096))
+    }
+    @Test func providerErrorsHaveClearMessages() {
+        for error in [AgentProviderError.contextLimit, .guardrail, .unsupportedLanguage, .unavailable] {
+            #expect(!error.message.contains("could not finish"))
+        }
+        #expect(Set([AgentProviderError.contextLimit, .guardrail, .unsupportedLanguage, .unavailable].map(\.message)).count == 4)
+    }
     @Test func stopAcknowledgesCancellationAndRefusesLateProviderText() async throws {
         let pair = AsyncThrowingStream<String, any Error>.makeStream()
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
