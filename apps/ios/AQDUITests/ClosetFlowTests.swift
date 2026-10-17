@@ -1,0 +1,149 @@
+import XCTest
+
+/// The Closet on a real phone: seeded preview closet in a UUID-isolated store, no Photos fixture.
+/// Sample data: 12 pieces (Ivory ribbed knit is in the laundry, Olive overshirt unavailable),
+/// 6 outfits (Office day, Coffee run, …) and 4 themes (Weekday, Off duty, Evening, Ideas to collect).
+@MainActor
+final class ClosetFlowTests: XCTestCase {
+    private var app: XCUIApplication!
+
+    override func setUp() async throws {
+        try await super.setUp()
+        continueAfterFailure = false
+        app = XCUIApplication()
+        app.launchArguments = ["--aqd-ui-testing"]
+        app.launchEnvironment["AQD_TEST_STORE_ID"] = UUID().uuidString
+        app.launchEnvironment["AQD_TEST_RETURNING_ENTRY"] = "1"
+        app.launchEnvironment["AQD_TEST_SEED_SAMPLES"] = "1"
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15))
+        app.tabBars.buttons["Closet"].tap()
+        XCTAssertTrue(app.buttons["closet.scope.pieces"].waitForExistence(timeout: 10))
+    }
+
+    override func tearDown() async throws {
+        if testRun?.failureCount ?? 0 > 0 {
+            let shot = XCTAttachment(screenshot: app.screenshot()); shot.lifetime = .keepAlways
+            shot.name = "Failure — \(name)"; add(shot)
+        }
+        app.terminate()
+        try await super.tearDown()
+    }
+
+    /// Cards carry `piece.card.<name>`, `outfit.card.<name>` or `theme.card.<name>`; the first match wins per screen.
+    private func card(_ name: String) -> XCUIElement {
+        app.buttons.matching(NSPredicate(format: "identifier ENDSWITH %@", ".card.\(name)")).firstMatch
+    }
+    /// Context-menu rows are matched by their visible title once the long press finishes.
+    private func menuItem(_ title: String) -> XCUIElement {
+        let item = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", title)).firstMatch
+        XCTAssertTrue(item.waitForExistence(timeout: 5), "menu item \(title)")
+        return item
+    }
+    private func shot(_ name: String) {
+        let attachment = XCTAttachment(screenshot: app.screenshot()); attachment.lifetime = .keepAlways
+        attachment.name = name; add(attachment)
+    }
+
+    func testPiecesShowCategoryChipsAndStatusFilter() {
+        XCTAssertTrue(app.staticTexts["12 pieces"].waitForExistence(timeout: 10))
+        shot("Pieces")
+        app.buttons["Shirts"].tap()
+        XCTAssertTrue(app.staticTexts["2 pieces"].waitForExistence(timeout: 5), "Shirts has two sample pieces")
+        shot("Shirts chip")
+        app.buttons["All"].tap()
+        XCTAssertTrue(app.staticTexts["12 pieces"].waitForExistence(timeout: 5))
+
+        app.buttons["Filter pieces"].tap()
+        menuItem("Laundry").tap()
+        XCTAssertTrue(app.staticTexts["1 piece"].waitForExistence(timeout: 5))
+        XCTAssertTrue(card("Ivory ribbed knit").exists)
+        shot("Laundry filter")
+        XCTAssertEqual(app.buttons["Filter pieces"].value as? String, "Laundry")
+    }
+
+    func testBulkSelectMovesPiecesToLaundryAndBack() {
+        XCTAssertTrue(app.staticTexts["12 pieces"].waitForExistence(timeout: 10))
+        app.buttons["closet.select"].tap()
+        XCTAssertTrue(app.buttons["closet.bulk.laundry"].waitForExistence(timeout: 5), "selection bar appears")
+        XCTAssertFalse(app.buttons["closet.bulk.laundry"].isEnabled, "nothing chosen yet")
+        shot("Select mode")
+        card("Black belt").tap()
+        card("Blue cotton shirt").tap()
+        XCTAssertTrue(app.staticTexts["2 selected"].waitForExistence(timeout: 5))
+        shot("Selecting")
+        app.buttons["closet.bulk.laundry"].tap()
+        XCTAssertTrue(app.buttons["closet.select"].waitForExistence(timeout: 5), "selection mode ends after a clean change")
+
+        app.buttons["Filter pieces"].tap(); menuItem("Laundry").tap()
+        XCTAssertTrue(app.staticTexts["3 pieces"].waitForExistence(timeout: 5), "knit plus the two just moved")
+
+        app.buttons["closet.select"].tap()
+        card("Blue cotton shirt").tap()
+        app.buttons["closet.bulk.available"].tap()
+        XCTAssertTrue(app.staticTexts["2 pieces"].waitForExistence(timeout: 5))
+        XCTAssertFalse(card("Blue cotton shirt").exists)
+    }
+
+    func testCardMenuMovesAPieceToLaundry() {
+        let shirt = card("Blue cotton shirt")
+        XCTAssertTrue(shirt.waitForExistence(timeout: 10))
+        shirt.press(forDuration: 1.2)
+        menuItem("Move to laundry").tap()
+        app.buttons["Filter pieces"].tap(); menuItem("Laundry").tap()
+        XCTAssertTrue(card("Blue cotton shirt").waitForExistence(timeout: 5))
+        card("Blue cotton shirt").press(forDuration: 1.2)
+        XCTAssertTrue(menuItem("Back from laundry").exists)
+        menuItem("Back from laundry").tap()
+        XCTAssertFalse(card("Blue cotton shirt").waitForExistence(timeout: 3), "it leaves the Laundry filter")
+    }
+
+    func testPieceDetailLeadsWithStatusAndStyleThis() {
+        card("Ivory ribbed knit").tap()
+        XCTAssertTrue(app.buttons["Availability: In the laundry"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["Style this"].isEnabled, "a piece in the laundry can't be styled")
+        shot("Piece detail in laundry")
+        app.navigationBars.buttons.firstMatch.tap()
+        card("Blue cotton shirt").tap()
+        XCTAssertTrue(app.buttons["Style this"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Style this"].isEnabled)
+        XCTAssertTrue(app.buttons["Style this"].isHittable, "visible without scrolling")
+    }
+
+    func testOutfitDuplicateOpensABuilderCopyAndFavoriteToggles() {
+        app.buttons["closet.scope.outfits"].tap()
+        let office = card("Office day")
+        XCTAssertTrue(office.waitForExistence(timeout: 10))
+        shot("Outfits")
+        office.press(forDuration: 1.2)
+        menuItem("Duplicate").tap()
+        let name = app.textFields["outfit.name"]
+        XCTAssertTrue(name.waitForExistence(timeout: 5))
+        XCTAssertEqual(name.value as? String, "Office day copy")
+        shot("Duplicated outfit")
+        app.buttons["Cancel outfit"].tap()
+        if app.buttons["Discard"].waitForExistence(timeout: 3) { app.buttons["Discard"].tap() }
+        XCTAssertTrue(app.buttons["closet.scope.outfits"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["6 outfits"].exists, "nothing was saved")
+    }
+
+    func testRemovingAnOutfitFromAThemeKeepsTheOutfit() {
+        app.buttons["closet.scope.themes"].tap()
+        card("Weekday").tap()
+        XCTAssertTrue(card("Office day").waitForExistence(timeout: 5))
+        card("Office day").press(forDuration: 1.2)
+        menuItem("Remove from Weekday").tap()
+        XCTAssertFalse(card("Office day").waitForExistence(timeout: 3))
+        app.navigationBars.buttons.firstMatch.tap()
+        app.buttons["closet.scope.outfits"].tap()
+        XCTAssertTrue(card("Office day").waitForExistence(timeout: 5), "the outfit itself stays")
+    }
+
+    func testAddPieceOffersDirectPhotoSources() {
+        app.buttons["closet.addPiece"].tap()
+        menuItem("Add a piece").tap()
+        XCTAssertTrue(app.buttons["Take photo"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Photos"].exists)
+        shot("Add piece")
+    }
+}

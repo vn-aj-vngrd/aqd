@@ -68,6 +68,13 @@ private struct AppRootView: View {
             if process.arguments.contains("--aqd-preview-welcome"), !process.arguments.contains("--aqd-ui-testing") {
                 welcomePreview = true
             }
+            // UI tests only: fill the UUID-isolated test store with the bundled preview closet.
+            if process.arguments.contains("--aqd-ui-testing"), process.environment["AQD_TEST_SEED_SAMPLES"] == "1", let store = state.store {
+                let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+                if (try? await PreviewSampleContent.populate(store: store, outputDirectory: directory)) != nil {
+                    state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries()
+                }
+            }
             if process.arguments.contains("--aqd-add-all-widgets"), !process.arguments.contains("--aqd-ui-testing"), let store = state.store {
                 state.isOpening = true
                 do {

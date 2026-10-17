@@ -19,7 +19,7 @@ struct PieceCollectionGrid: View {
                             .frame(maxWidth: .infinity).frame(height: 134).clipped()
                             .overlay(alignment: .topTrailing) { PieceAvailabilityBadge(piece: piece) }
                     }
-                }.buttonStyle(.plain).id(piece.id)
+                }.buttonStyle(.plain).id(piece.id).accessibilityIdentifier("piece.card.\(piece.displayName)")
                     .contextMenu {
                         NavigationLink(value: ClosetRoute.piece(piece.id)) { AccessoryLabel("Open piece", systemImage: "arrow.up.forward.square") }
                         AccessoryButton("Edit piece", systemImage: AppSymbols.edit) { state.editPiece(piece) }
@@ -50,7 +50,7 @@ struct PieceCollectionGrid: View {
                     .frame(maxWidth: .infinity).frame(height: 134).clipped()
                     .overlay(alignment: .topLeading) { PieceAvailabilityBadge(piece: piece) }
             }.selectionIndicator(chosen, cornerRadius: 16)
-        }.buttonStyle(.plain).id(piece.id)
+        }.buttonStyle(.plain).id(piece.id).accessibilityIdentifier("piece.card.\(piece.displayName)")
             .accessibilityLabel(piece.displayName).accessibilityValue(chosen ? "Selected" : "Not selected")
             .accessibilityAddTraits(chosen ? .isSelected : [])
     }
@@ -161,7 +161,7 @@ struct OutfitCollectionCard: View {
                     CollectionArtwork(pieceIDs: outfit.pieceIDs)
                 }
             }
-        }.buttonStyle(.plain).id(outfit.id)
+        }.buttonStyle(.plain).id(outfit.id).accessibilityIdentifier("outfit.card.\(outfit.displayName)")
             .contextMenu {
                 NavigationLink(value: ClosetRoute.outfit(outfit.id)) { AccessoryLabel("Open outfit", systemImage: "arrow.up.forward.square") }
                 AccessoryButton("Edit outfit", systemImage: AppSymbols.edit) { state.buildOutfit(editing: outfit) }
@@ -222,7 +222,7 @@ struct ThemeCollectionCard: View {
             ClosetCard(title: theme.displayName, detail: "\(theme.outfitIDs.count) outfits") {
                 ThemeCover(outfits: members)
             }
-        }.buttonStyle(.plain).id(theme.id)
+        }.buttonStyle(.plain).id(theme.id).accessibilityIdentifier("theme.card.\(theme.displayName)")
             .contextMenu {
                 NavigationLink(value: ClosetRoute.theme(theme.id)) { AccessoryLabel("Open theme", systemImage: "folder") }
                 AccessoryButton("Edit theme", systemImage: AppSymbols.edit) { state.openTheme(editing: theme) }
