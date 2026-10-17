@@ -66,12 +66,12 @@ struct LocalProfileView: View {
         Button(action: action) {
             Text(title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
                 .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
-                .contentShape(RoundedRectangle(cornerRadius: AppRadius.group))
+                .contentShape(Capsule())
         }.buttonStyle(.plain)
-            .glassControlSurface(RoundedRectangle(cornerRadius: AppRadius.group))
+            .glassControlSurface(Capsule())
             .overlay {
                 if contrast == .increased {
-                    RoundedRectangle(cornerRadius: AppRadius.group).stroke(AppTheme.controlBoundary, lineWidth: 1)
+                    Capsule().stroke(AppTheme.controlBoundary, lineWidth: 1)
                 }
             }
     }
