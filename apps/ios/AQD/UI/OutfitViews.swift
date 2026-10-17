@@ -108,7 +108,7 @@ struct OutfitEditorView: View {
                 Button { hidePicker { choosingThemes = true } } label: {
                     Label(names.isEmpty ? "Add to theme" : "Edit", systemImage: "plus").font(.subheadline)
                         .padding(.horizontal, 12).frame(minHeight: 32)
-                        .background(AppTheme.surface, in: Capsule()).foregroundStyle(AppTheme.ink)
+                        .foregroundStyle(AppTheme.ink).raisedSurface(Capsule())
                 }.buttonStyle(.plain).disabled(locked).frame(minHeight: AppControlMetrics.minimumTarget)
                     .accessibilityLabel("Themes").accessibilityValue(names.isEmpty ? "None selected" : names.joined(separator: ", "))
             }

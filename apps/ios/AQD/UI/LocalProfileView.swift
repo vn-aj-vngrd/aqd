@@ -68,7 +68,7 @@ struct LocalProfileView: View {
                 .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
                 .contentShape(RoundedRectangle(cornerRadius: AppRadius.group))
         }.buttonStyle(.plain)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
+            .raisedSurface(RoundedRectangle(cornerRadius: AppRadius.group))
             .overlay {
                 if contrast == .increased {
                     RoundedRectangle(cornerRadius: AppRadius.group).stroke(AppTheme.controlBoundary, lineWidth: 1)

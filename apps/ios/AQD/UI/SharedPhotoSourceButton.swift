@@ -28,7 +28,7 @@ struct SharedPhotoSourceButton: View {
             Button { sourcePresentation.wrappedValue = true } label: {
                 if iconOnly {
                     Image(systemName: "camera.fill").foregroundStyle(AppTheme.ink).frame(width: 44, height: 44)
-                        .background(AppTheme.surface, in: Circle())
+                        .raisedSurface(Circle())
                 } else {
                     HStack {
                         AccessoryLabel(title, systemImage: "photo")

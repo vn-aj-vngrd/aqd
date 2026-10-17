@@ -1,8 +1,19 @@
 import SwiftUI
 
+extension View {
+    /// Single recipe for tappable white surfaces (chips, secondary buttons): a hairline edge and a
+    /// soft shadow keep them visible on the canvas and on sheets. Cards and rows stay flat.
+    func raisedSurface<S: InsettableShape>(_ shape: S) -> some View {
+        background {
+            shape.fill(AppTheme.surface)
+                .overlay(shape.strokeBorder(AppTheme.divider, lineWidth: 1))
+                .shadow(color: AppTheme.controlShadow, radius: 4, y: 1)
+        }
+    }
+}
+
 /// Shared selectable capsule for category and filter rows. Selected uses the neutral
-/// primary pair; unselected is a white surface lifted by a hairline and soft shadow so it
-/// stays visible on the canvas and on sheets.
+/// primary pair; unselected uses the raised white surface.
 struct AppChip: View {
     let title: String
     let isSelected: Bool
@@ -11,17 +22,20 @@ struct AppChip: View {
     var body: some View {
         Button(action: action) {
             Text(title).font(.subheadline)
-                .padding(.horizontal, AppSpacing.medium).padding(.vertical, 6)
-                .frame(minHeight: AppControlMetrics.minimumTarget)
+                .padding(.horizontal, AppSpacing.medium).frame(minHeight: 32)
                 .foregroundStyle(isSelected ? AppTheme.onPrimary : AppTheme.ink)
-                .background {
-                    Capsule().fill(isSelected ? AppTheme.primaryFill : AppTheme.surface)
-                        .overlay(Capsule().strokeBorder(isSelected ? .clear : AppTheme.divider, lineWidth: 1))
-                        .shadow(color: isSelected ? .clear : AppTheme.controlShadow, radius: 4, y: 1)
-                        .padding(.vertical, 6)
-                }
+                .background { if isSelected { Capsule().fill(AppTheme.primaryFill) } }
+                .modifier(RaisedWhenUnselected(isSelected: isSelected))
+                .frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+    }
+}
+
+private struct RaisedWhenUnselected: ViewModifier {
+    let isSelected: Bool
+    func body(content: Content) -> some View {
+        if isSelected { content } else { content.raisedSurface(Capsule()) }
     }
 }
