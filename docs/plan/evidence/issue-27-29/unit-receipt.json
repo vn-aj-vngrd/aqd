@@ -2046,5 +2046,21 @@
       "/tmp/aqd-custom-confirmations-release.log": "68f3fef7eada42d917067b41a21d162186fd9dfc5cfa16066d0f1fce6aaa6da4",
       "/tmp/aqd-custom-confirmations-install.json": "c3b53c15720cf293ebd2bca12913b0c6afbee2dd043bba3491026a04624803af"
     }
+  },
+  "todayWeatherUI": {
+    "codeCommit": "cec918b0e878f8f2b9a63cab9e462e333ca4259e",
+    "debugBuild": "/tmp/aqd-today-weather-ui-debug.log",
+    "debugResult": "TEST BUILD SUCCEEDED",
+    "core": "/tmp/aqd-today-weather-core.log",
+    "corePassed": 2,
+    "install": "/tmp/aqd-today-weather-install.json",
+    "installResult": "success",
+    "appLaunched": false,
+    "nativeTestsExecuted": false,
+    "runtimeComplete": false,
+    "liveWeatherEnabled": false,
+    "serviceBlocker": "Personal Team 355RN23UY7 does not support WeatherKit; owner explicitly chose to keep WeatherKit pending.",
+    "blockedBuild": "/tmp/aqd-today-weather-enabled-debug.log",
+    "ownerDecision": "Defer live WeatherKit; retain installed location/Today UI fixes."
   }
 }

@@ -2750,5 +2750,11 @@
     "codeCommit": "dfce4f36d9d07828b91f87202a0a06d416a65a72",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false
+  },
+  "todayWeatherUI": {
+    "codeCommit": "cec918b0e878f8f2b9a63cab9e462e333ca4259e",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false,
+    "liveWeatherEnabled": false
   }
 }
