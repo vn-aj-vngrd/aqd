@@ -47,7 +47,7 @@ struct OutfitEditorView: View {
         }.interactiveDismissDisabled()
             .sheet(isPresented: pickerVisible) {
                 OutfitPickerSheet(model: model, detent: $detent)
-                    .presentationDetents([OutfitPickerSheet.peek, .medium, .large], selection: $detent)
+                    .presentationDetents([OutfitPickerSheet.collapsed, OutfitPickerSheet.peek, .medium, .large], selection: $detent)
                     .presentationBackgroundInteraction(.enabled(upThrough: .medium))
                     .presentationDragIndicator(.visible)
                     .interactiveDismissDisabled()
@@ -82,9 +82,18 @@ struct OutfitEditorView: View {
                 OutfitCanvas(pieceIDs: model.draft.pieceIDs, isLocked: locked) { id in
                     model.applyManualPieces(model.draft.pieceIDs.filter { $0 != id })
                 }.accessibilityIdentifier("outfit.canvas")
-                    .padding(.bottom, detent == OutfitPickerSheet.peek ? 272 + AppSpacing.large : geometry.size.height * 0.5 + 72)
+                    .padding(.bottom, reservedBottom(in: geometry.size.height))
                     .animation(.smooth(duration: 0.25), value: detent)
             }.padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small)
+        }
+    }
+
+    /// Space the canvas keeps clear of the picker sheet at its current stop.
+    private func reservedBottom(in height: CGFloat) -> CGFloat {
+        switch detent {
+        case OutfitPickerSheet.collapsed: 72 + AppSpacing.large
+        case OutfitPickerSheet.peek: 272 + AppSpacing.large
+        default: height * 0.5 + 72
         }
     }
 

@@ -97,6 +97,7 @@ struct OutfitCanvas: View {
 
 /// Resizable picker shown over the builder: a peek row, then a searchable grid.
 struct OutfitPickerSheet: View {
+    static let collapsed = PresentationDetent.height(72)
     static let peek = PresentationDetent.height(272)
     @Bindable var model: OutfitEditorModel
     @Binding var detent: PresentationDetent
@@ -105,6 +106,7 @@ struct OutfitPickerSheet: View {
     @Environment(\.dynamicTypeSize) private var typeSize
 
     private var isPeek: Bool { detent == Self.peek }
+    private var isCollapsed: Bool { detent == Self.collapsed }
     private var locked: Bool { model.pending || model.unknown || model.generating }
     private var pieces: [WardrobePiece] {
         let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -119,20 +121,28 @@ struct OutfitPickerSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.small) {
-            HStack {
-                Text("Add pieces").font(AppTypography.section)
-                Spacer()
-                Text("\(model.draft.pieceIDs.count) in outfit").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-            }.padding(.top, AppSpacing.large)
-            if !isPeek { searchField }
-            ScrollView(.horizontal) {
+            Button { detent = isCollapsed ? Self.peek : Self.collapsed } label: {
                 HStack(spacing: AppSpacing.small) {
-                    chip(nil)
-                    ForEach(model.state.pieceCategories) { chip($0) }
-                }.padding(.trailing, AppSpacing.screen)
-            }.scrollIndicators(.hidden).frame(height: AppControlMetrics.minimumTarget)
-                .mask(LinearGradient(stops: [.init(color: .black, location: 0.92), .init(color: .clear, location: 1)], startPoint: .leading, endPoint: .trailing))
-            content
+                    Text("Add pieces").font(.headline)
+                    Text("\(model.draft.pieceIDs.count) in outfit").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    Spacer()
+                    Image(systemName: isCollapsed ? "chevron.up" : "chevron.down")
+                        .font(.footnote.weight(.semibold)).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                }.frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+            }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).padding(.top, AppSpacing.small)
+                .accessibilityLabel("Add pieces").accessibilityValue(isCollapsed ? "Collapsed" : "Expanded")
+                .accessibilityHint(isCollapsed ? "Expands the piece picker" : "Collapses the piece picker")
+            if !isCollapsed {
+                if !isPeek { searchField }
+                ScrollView(.horizontal) {
+                    HStack(spacing: AppSpacing.small) {
+                        chip(nil)
+                        ForEach(model.state.pieceCategories) { chip($0) }
+                    }.padding(.trailing, AppSpacing.screen)
+                }.scrollIndicators(.hidden).frame(height: AppControlMetrics.minimumTarget)
+                    .mask(LinearGradient(stops: [.init(color: .black, location: 0.92), .init(color: .clear, location: 1)], startPoint: .leading, endPoint: .trailing))
+                content
+            }
         }
         .padding(.horizontal, AppSpacing.screen)
         .sensoryFeedback(.selection, trigger: model.draft.pieceIDs)
