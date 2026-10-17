@@ -1964,5 +1964,16 @@
     "runtimeComplete": false,
     "sourceSHA256": "9bf9a5c9f763fd10967403b05bc752598cf61d96e512591facab5948f6755ac9",
     "review": "Single-agent Standards/Spec source review; actual turn scroll, keyboard, title/background and appearance acceptance unverified."
+  },
+  "profileBackdrop": {
+    "codeCommit": "6915a984ef61a42275734d3ff8a52a96f582629c",
+    "debugBuild": "/tmp/aqd-profile-backdrop-debug.log",
+    "debugResult": "BUILD SUCCEEDED",
+    "install": "/tmp/aqd-profile-backdrop-install.json",
+    "installResult": "success",
+    "appLaunched": false,
+    "nativeTestsExecuted": false,
+    "runtimeComplete": false,
+    "sourceSHA256": "14552a9e29130cd9174774215530746e01398754b933032b1176ed3bee01adb6"
   }
 }

@@ -304,3 +304,5 @@ Owner Profile backdrop correction October17: match Today native navigation/scrol
 Profile backdrop Standards/Spec self-review: the native background policy now matches Today exactly, with no UIKit-wide mutation or authored overlay. Identity/header/grid geometry, semantic light/dark canvas, toolbar labels and destinations are unchanged. Source-only cosmetic correction; no mirrored unit test added. Device scrolling, backdrop and appearance acceptance remain unverified.
 
 Profile backdrop signed generic Debug passed `/tmp/aqd-profile-backdrop-debug.log`; docs/whitespace pass. No device tests or app launch.
+
+Profile backdrop checkpoint `6915a984ef61a42275734d3ff8a52a96f582629c` built and installed successfully, with no app launch/device tests. Receipt `profileBackdrop` records the source-bound checks. Native header/scroll-edge and dark-mode rendering remain manual acceptance.

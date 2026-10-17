@@ -2730,5 +2730,10 @@
     "codeCommit": "ba85b5e9bbb313dd73811bde3cf4c23b930399d3",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false
+  },
+  "profileBackdrop": {
+    "codeCommit": "6915a984ef61a42275734d3ff8a52a96f582629c",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false
   }
 }
