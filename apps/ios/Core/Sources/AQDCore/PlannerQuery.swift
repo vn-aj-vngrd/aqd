@@ -3,7 +3,7 @@ import Foundation
 /// Local filter and sort options for the Planner root, shared by the day list and the plans list.
 public struct PlannerQuery: Hashable, Sendable {
     public enum Status: String, CaseIterable, Sendable {
-        case all = "All entries", open = "Still open", toChoose = "No outfit yet", needsReview = "Needs review", worn = "Worn", skipped = "Skipped"
+        case all = "All entries", open = "Still open", toChoose = "Open without an outfit", needsReview = "Needs review", worn = "Worn", skipped = "Skipped"
     }
     public enum Kind: String, CaseIterable, Sendable {
         case all = "All plans", plans = "Plans", routines = "Routines", trips = "Trips"

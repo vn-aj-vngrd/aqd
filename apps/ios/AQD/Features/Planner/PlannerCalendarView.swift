@@ -163,15 +163,8 @@ struct PlannerCalendarView: View {
                     }
                 }
         }.buttonStyle(.plain).accessibilityLabel(fullDate)
-            .accessibilityValue("\(today ? "Today. " : "")\(marker.map(Self.describe) ?? "\(count) \(countLabel)")\(selected ? ". Selected" : "")")
+            .accessibilityValue("\(today ? "Today. " : "")\(marker?.accessibilitySummary ?? "\(count) \(countLabel)")\(selected ? ". Selected" : "")")
             .accessibilityAddTraits(selected ? [.isSelected] : [])
-    }
-    private static func describe(_ marker: PlannerDayMarker) -> String {
-        if marker.isEmpty { return "Nothing planned" }
-        let parts = [(marker.planned, "planned"), (marker.gaps, "without an outfit"), (marker.worn, "worn"),
-                     (marker.skipped, "skipped"), (marker.needsReview, "needs review")]
-            .filter { $0.0 > 0 }.map { "\($0.0) \($0.1)" }
-        return parts.joined(separator: ", ")
     }
     private func formatted(_ date: Date, style: Date.FormatStyle) -> String {
         var style = style; style.timeZone = zone

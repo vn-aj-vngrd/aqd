@@ -71,6 +71,8 @@ Build outfit specifics: the canvas stays pinned and fills the space above the pi
 
 Show full-source Fit photos and compositions of actual pieces; preserve proportions. Missing media shows a quiet category symbol and name. Task copy: Add piece, Build outfit, Review changes, Save outfit. Explain privacy at the affected choice. AI output stays a draft until a saved receipt.
 
+- **No dot separators.** Never join metadata with " · ". Use spacing, a trailing-aligned value, separate lines, or commas for VoiceOver labels.
+
 ## Accessibility and privacy guardrails
 
 Semantic labels, traits and values on every control; keyboard-safe editing; light and dark; Reduce Motion replaces transitions with fades. No implicit wear, publication, body-use, AI or weather consent, and no private-photo upload. Weather-free private journeys work offline.

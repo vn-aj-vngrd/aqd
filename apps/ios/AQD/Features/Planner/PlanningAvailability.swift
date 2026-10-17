@@ -12,6 +12,6 @@ enum PlanningAvailability {
             return nil
         }
         guard !conflicts.isEmpty else { return nil }
-        return "\(day.key) · \(outfit.name): \(conflicts.joined(separator: ", ")). Choose another outfit or leave this date unassigned."
+        return "\(day.key), \(outfit.name): \(conflicts.joined(separator: ", ")). Choose another outfit or leave this date unassigned."
     }
 }

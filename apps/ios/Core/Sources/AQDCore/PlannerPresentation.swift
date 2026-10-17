@@ -11,6 +11,12 @@ public struct PlannerDayMarker: Equatable, Sendable {
     public var isEmpty: Bool { total == 0 }
     /// Open items still need a decision; a day with only worn or skipped entries is settled.
     public var hasOpenItems: Bool { planned + gaps > 0 }
+    /// Spoken summary for the calendar cell; every state with a count is named.
+    public var accessibilitySummary: String {
+        if isEmpty { return "Nothing planned" }
+        return [(planned, "planned"), (gaps, "without an outfit"), (worn, "worn"), (skipped, "skipped"), (needsReview, "needs review")]
+            .filter { $0.0 > 0 }.map { "\($0.0) \($0.1)" }.joined(separator: ", ")
+    }
 }
 
 public enum PlannerPresentation {
@@ -35,8 +41,9 @@ public enum PlannerPresentation {
     /// An entry needs review when flagged, or when its outfit changed after planning.
     public static func isStale(_ entry: OutfitPlanEntry, outfitRevisions: [UUID: Int]) -> Bool {
         if entry.requiresReview { return true }
-        guard let id = entry.outfitID, let current = outfitRevisions[id] else { return false }
-        return current != entry.outfitRevision
+        // An entry without a planned revision has nothing to compare against, so it is not stale.
+        guard let id = entry.outfitID, let current = outfitRevisions[id], let planned = entry.outfitRevision else { return false }
+        return current != planned
     }
 
     /// The single next step a day card offers; settled entries offer none.

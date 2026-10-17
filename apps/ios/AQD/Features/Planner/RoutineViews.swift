@@ -96,7 +96,7 @@ struct RoutineScopeChooser: View {
                     Text("Recorded wear and completed entries stay intact.").foregroundStyle(AppTheme.secondary)
                     if !editable.isEmpty {
                         Picker("Starting entry", selection: $selectedID) {
-                            ForEach(editable) { Text("\($0.day.displayDate) · \($0.occasion)").tag(Optional($0.id)) }
+                            ForEach(editable) { Text("\($0.day.displayDate)\u{2003}\($0.occasion)").tag(Optional($0.id)) }
                         }.pickerStyle(.menu).frame(minHeight: 44)
                         DisclosureRow(title: "This entry") { choose(.entry, selectedID) }.disabled(selectedID == nil)
                         DisclosureRow(title: "This and future entries") { choose(.future, selectedID) }.disabled(selectedID == nil)

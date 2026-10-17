@@ -80,8 +80,12 @@ struct PlanAuthoringView: View {
         return VStack(spacing: 8) {
             Image(systemName: symbol).font(.system(size: 28)).accessibilityHidden(true)
             Text(plan.name.isEmpty ? "Name your plan" : plan.name).font(AppTypography.section).lineLimit(2).multilineTextAlignment(.center)
-            Text(count > 0 ? "\(range) · \(count) \(count == 1 ? "date" : "dates")" : "Choose a valid range")
-                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            if count > 0 {
+                Text(range).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                Text("\(count) \(count == 1 ? "date" : "dates")").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            } else {
+                Text("Choose a valid range").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }
         }.frame(maxWidth: .infinity).padding(.vertical, 20).padding(.horizontal, 16)
             .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 16))
             .accessibilityElement(children: .combine)
@@ -134,8 +138,10 @@ struct PlanAuthoringView: View {
             DisclosureRow(title: model.draft.plan.name, value: "Edit details") {
                 model.update(invalidateConflicts: false) { $0.reviewing = false }
             }.disabled(locked)
-            Text("\(model.draft.plan.start.displayDate) – \(model.draft.plan.end.displayDate) · \(model.draft.plan.start.timeZoneID)")
-                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(model.draft.plan.start.displayDate) – \(model.draft.plan.end.displayDate)")
+                Text(model.draft.plan.start.timeZoneID)
+            }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             if let scope = model.draft.editScope {
                 Text(scope == .entry ? "This entry only. Shared plan settings stay unchanged." : scope == .future ? "This and future entries. Earlier and completed entries stay intact." : "Whole routine. Recorded wear and completed entries stay intact.")
                     .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
@@ -143,7 +149,7 @@ struct PlanAuthoringView: View {
                     Text("\(model.draft.removedEntryIDs.count) reviewed entries will be removed from this scope.").foregroundStyle(AppTheme.warning)
                 }
             }
-            if model.draft.usesRules == true { Text("Rule-based rotation · Review before saving").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+            if model.draft.usesRules == true { Text("Rule-based rotation. Review before saving.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
             ForEach(model.draft.slots) { slot in
                 VStack(alignment: .leading, spacing: 8) {
                     if let conflict = model.availabilityMessage(for: slot) { SemanticFeedback(role: .warning, message: conflict) }
@@ -171,8 +177,12 @@ struct PlanAuthoringView: View {
                 DisclosureRow(title: "Resolve \(entry.day.displayDate)", value: conflictLabel(entry)) { resolvingConflict = entry.id }.disabled(locked)
             }
             let assigned = model.draft.slots.filter { $0.outfit != nil }.count
-            Text("\(assigned) assigned · \(model.draft.slots.count - assigned) gaps · \(model.conflicts.count) overlaps")
-                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(assigned) assigned")
+                Text("\(model.draft.slots.count - assigned) gaps")
+                Text("\(model.conflicts.count) overlaps")
+            }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(assigned) assigned, \(model.draft.slots.count - assigned) gaps, \(model.conflicts.count) overlaps")
         }
     }
 }
@@ -185,7 +195,10 @@ private struct PlanConflictView: View {
         ScrollView {
         VStack(alignment: .leading, spacing: 16) {
             Text("Resolve a conflict").font(AppTypography.fieldLabel)
-            Text("\(existing.day.displayDate) · \(existing.occasion)")
+            VStack(alignment: .leading, spacing: 2) {
+                Text(existing.day.displayDate)
+                if !existing.occasion.isEmpty { Text(existing.occasion).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+            }
             Text(model.state.outfits.first { $0.id == existing.outfitID }?.displayName ?? "Existing unassigned entry")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             Button { choose(.keepBoth) } label: {

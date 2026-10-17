@@ -27,6 +27,21 @@ struct PlannerPresentationTests {
         OutfitPlanEntry(id: UUID(), planID: plan, ownerID: UUID(), day: day(d), occasion: "", outfitID: outfit,
                         outfitRevision: outfit == nil ? nil : (revision ?? 1), state: state, requiresReview: review)
     }
+    @Test func entryWithoutPlannedRevisionIsNotStale() {
+        let outfit = UUID()
+        let legacy = OutfitPlanEntry(id: UUID(), planID: UUID(), ownerID: UUID(), day: day(1), occasion: "", outfitID: outfit,
+                                     outfitRevision: nil, state: .planned)
+        #expect(!PlannerPresentation.isStale(legacy, outfitRevisions: [outfit: 3]))
+        #expect(PlannerPresentation.isStale(entry(1, .planned, outfit: outfit, revision: 1), outfitRevisions: [outfit: 3]))
+    }
+
+    @Test func markerAnnouncesEveryStateWithACount() {
+        var marker = PlannerDayMarker()
+        #expect(marker.accessibilitySummary == "Nothing planned")
+        marker.planned = 1; marker.gaps = 2; marker.worn = 1; marker.skipped = 1; marker.needsReview = 1
+        #expect(marker.accessibilitySummary == "1 planned, 2 without an outfit, 1 worn, 1 skipped, 1 needs review")
+    }
+
     @Test func nextActionIsOnePerOpenEntryAndNoneWhenSettled() {
         let outfit = UUID()
         #expect(PlannerPresentation.nextAction(for: entry(1, .unassigned)) == .chooseOutfit)
@@ -86,6 +101,13 @@ struct PlannerQueryTests {
     private func plan(_ name: String, _ start: Int, routine: Bool = false, trip: Bool = false) -> PlanDefinition {
         PlanDefinition(ownerID: UUID(), name: name, start: day(start), end: day(start + 1),
                        routine: routine ? RoutineConfiguration() : nil, trip: trip ? TripConfiguration() : nil)
+    }
+
+    @Test func sortDoesNotReorderEntries() {
+        let list = [entry(.worn), entry(.planned), entry(.skipped), entry(.unassigned)]
+        for sort in PlannerQuery.Sort.allCases {
+            #expect(PlannerQuery(sort: sort).apply(to: list).map(\.id) == list.map(\.id))
+        }
     }
 
     @Test func statusFilterSelectsEntries() {

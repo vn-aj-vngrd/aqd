@@ -28,16 +28,16 @@ struct TripDetailContent: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             if let destination = plan.trip?.destination, !destination.isEmpty { Text(destination).font(AppTypography.section) }
-            if let activities = plan.trip?.activities, !activities.isEmpty { Text(activities.joined(separator: " · ")).font(AppTypography.body) }
+            if let activities = plan.trip?.activities, !activities.isEmpty { Text(activities.joined(separator: ", ")).font(AppTypography.body) }
             VStack(spacing: 0) {
-                DisclosureRow(title: "Outfit plan", value: summary.map { "\(state.planEntries.filter { $0.planID == plan.id }.count) entries · \($0.gaps.count) gaps" } ?? "Review saved dates", placement: .grouped) {
+                DisclosureRow(title: "Outfit plan", value: summary.map { "\(state.planEntries.filter { $0.planID == plan.id }.count) entries, \($0.gaps.count) gaps" } ?? "Review saved dates", placement: .grouped) {
                     state.plannerPath.append(.dates(plan.id, false))
                 }
                 DisclosureRow(title: "Packing list", value: summary.map { "\($0.items.count) unique pieces" } ?? "Open packing", placement: .grouped) {
                     state.plannerPath.append(.packing(plan.id))
                 }
             }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
-            Text("Weather context · Off").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            PlannerMetaLine(leading: "Weather context", trailing: "Off", leadingFont: AppTypography.supporting)
             if let error { SemanticFeedback(role: .danger, message: error); Button("Retry packing summary", action: refresh).frame(minHeight: 44) }
         }.onAppear(perform: refresh).onChange(of: state.planEntries) { refresh() }
     }
@@ -111,7 +111,10 @@ struct TripPackingView: View {
             VStack(alignment: .leading, spacing: 12) {
                 if let plan = state.planDefinitions.first(where: { $0.id == id }) {
                     Text(plan.name).font(AppTypography.section)
-                    Text("\(plan.start.displayDate) – \(plan.end.displayDate) · \(plan.start.timeZoneID)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("\(plan.start.displayDate) – \(plan.end.displayDate)")
+                        Text(plan.start.timeZoneID)
+                    }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }
                 if let summary {
                     Text("\(summary.items.count) unique pieces from your assigned outfits. \(summary.gaps.count) dates or assignments need review.")

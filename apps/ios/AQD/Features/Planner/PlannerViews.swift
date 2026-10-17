@@ -32,7 +32,7 @@ struct LocalPlannerView: View {
         guard let marker = markers[state.plannerDay.key], !marker.isEmpty else { return "Nothing planned" }
         let parts = [(marker.planned, "planned"), (marker.gaps, "to choose"), (marker.worn, "worn"), (marker.skipped, "skipped")]
             .filter { $0.0 > 0 }.map { "\($0.0) \($0.1)" }
-        return parts.joined(separator: " · ")
+        return parts.joined(separator: ", ")
     }
 
     var body: some View {
@@ -101,8 +101,11 @@ struct LocalPlannerView: View {
             Section("Show plans") {
                 ForEach(PlannerQuery.Kind.allCases, id: \.self) { option($0.rawValue, $0, $query.kind) }
             }
-            Section("Sort plans by") {
-                ForEach(PlannerQuery.Sort.allCases, id: \.self) { option($0.rawValue, $0, $query.sort) }
+            // Sort only orders plans, so it appears only when there are at least two to order.
+            if state.planDefinitions.count > 1 {
+                Section("Sort plans by") {
+                    ForEach(PlannerQuery.Sort.allCases, id: \.self) { option($0.rawValue, $0, $query.sort) }
+                }
             }
             if !query.isDefault {
                 Button("Reset filters", systemImage: "arrow.counterclockwise") { query = PlannerQuery(text: query.text) }
@@ -137,9 +140,8 @@ struct LocalPlannerView: View {
 
     private var dayHeader: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(isToday ? "Today" : selectedDateLabel).font(AppTypography.section)
-            Text(isToday ? "\(selectedDateLabel) · \(daySummary)" : daySummary)
-                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            PlannerMetaLine(leading: isToday ? "Today" : selectedDateLabel, trailing: daySummary, leadingFont: AppTypography.section)
+            if isToday { Text(selectedDateLabel).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
         }.frame(maxWidth: .infinity, alignment: .leading).accessibilityElement(children: .combine)
             .accessibilityIdentifier("planner.dayHeader")
     }
@@ -148,7 +150,7 @@ struct LocalPlannerView: View {
         if let recent = state.recentPlan {
             TimelineView(.periodic(from: .now, by: 1)) { context in
                 HStack {
-                    Text("Plan saved · \(recent.day.displayDate)")
+                    Text("Plan saved for \(recent.day.displayDate)")
                     Spacer()
                     if state.planUndoPending || (state.planUndoDeadline ?? .distantPast) >= context.date {
                         Button(state.planUndoPending ? "Check Undo" : "Undo") { state.undoRecentPlan() }
@@ -162,8 +164,8 @@ struct LocalPlannerView: View {
     @ViewBuilder private var dayEntries: some View {
         if entries.isEmpty && state.planError == nil && query.status != .all {
             VStack(spacing: AppSpacing.small) {
-                AppEmptyState("No \(query.status.rawValue.lowercased())", systemImage: "line.3.horizontal.decrease",
-                    description: Text("No entries on this day match the filter."), fillsAvailableSpace: false)
+                AppEmptyState("No entries match", systemImage: "line.3.horizontal.decrease",
+                    description: Text("Nothing on this day matches “\(query.status.rawValue)”."), fillsAvailableSpace: false)
                 SecondaryAction(title: "Show all entries", compact: true) { query.status = .all }
             }.frame(maxWidth: .infinity)
         } else if entries.isEmpty && state.planError == nil {
@@ -181,10 +183,17 @@ struct LocalPlannerView: View {
         let groups = groups
         if !groups.inRange.isEmpty { planGroup(state.plannerMode == .week ? "This week" : "This month", groups.inRange) }
         if !groups.upcoming.isEmpty { planGroup("Upcoming", groups.upcoming) }
+        if filteredPlans.isEmpty && !state.planDefinitions.isEmpty && query.isFiltering {
+            VStack(spacing: AppSpacing.small) {
+                AppEmptyState("No plans match", systemImage: "line.3.horizontal.decrease",
+                    description: Text("The plan filter hides every plan."), fillsAvailableSpace: false)
+                SecondaryAction(title: "Clear filters", compact: true) { query = PlannerQuery(text: query.text) }
+            }.frame(maxWidth: .infinity)
+        }
         if !groups.past.isEmpty {
             DisclosureGroup(isExpanded: $showPast) {
                 VStack(spacing: 0) { ForEach(groups.past) { planRow($0) } }
-            } label: { Text("Past · \(groups.past.count)").font(AppTypography.section) }
+            } label: { PlannerMetaLine(leading: "Past", trailing: "\(groups.past.count)", leadingFont: AppTypography.section) }
                 .tint(AppTheme.ink).foregroundStyle(AppTheme.ink)
         }
     }
@@ -201,7 +210,7 @@ struct LocalPlannerView: View {
         let summary = summaries[plan.id]
         let kind = summary?.kind ?? .plan
         let range = plan.start.key == plan.end.key ? plan.start.displayDate : "\(plan.start.displayDate) – \(plan.end.displayDate)"
-        let kindLabel = kind == .trip ? "Trip · " : kind == .routine ? "Routine · " : ""
+        let kindLabel = kind == .trip ? "Trip" : kind == .routine ? "Routine" : nil
         var status: [String] = []
         if let summary {
             if summary.gaps > 0 { status.append("\(summary.gaps) to choose") }
@@ -211,9 +220,9 @@ struct LocalPlannerView: View {
             HStack(spacing: AppSpacing.medium) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(plan.name.isEmpty ? "Untitled plan" : plan.name).font(AppTypography.body)
-                    Text(kindLabel + range).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                    PlannerMetaLine(leading: range, trailing: kindLabel, leadingFont: AppTypography.metadata)
                     if !status.isEmpty {
-                        Text(status.joined(separator: " · ")).font(AppTypography.metadata).foregroundStyle(AppTheme.warning)
+                        Text(status.joined(separator: ", ")).font(AppTypography.metadata).foregroundStyle(AppTheme.warning)
                     }
                 }.frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary)
@@ -228,6 +237,28 @@ struct LocalPlannerView: View {
                     AccessoryButton("Packing list", systemImage: "suitcase") { state.plannerPath.append(.packing(plan.id)) }
                 }
             }
+    }
+}
+
+/// Two related facts without a separator glyph: the second sits trailing, or on its own line when space runs out.
+struct PlannerMetaLine: View {
+    let leading: String
+    var trailing: String?
+    var leadingFont: Font = AppTypography.body
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .firstTextBaseline, spacing: AppSpacing.medium) {
+                Text(leading).font(leadingFont).foregroundStyle(AppTheme.ink)
+                if let trailing {
+                    Spacer(minLength: AppSpacing.small)
+                    Text(trailing).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                }
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(leading).font(leadingFont).foregroundStyle(AppTheme.ink)
+                if let trailing { Text(trailing).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+            }.frame(maxWidth: .infinity, alignment: .leading)
+        }.accessibilityElement(children: .ignore).accessibilityLabel([leading, trailing].compactMap { $0 }.joined(separator: ", "))
     }
 }
 
@@ -267,9 +298,9 @@ struct PlanDayCard: View {
                 HStack(spacing: AppSpacing.small) {
                     Button { perform(next) } label: {
                         Text(next.rawValue).font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
-                            .padding(.horizontal, AppSpacing.large).frame(minHeight: 36)
+                            .padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.minimumTarget)
                             .glassControlSurface(Capsule())
-                            .frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+                            .contentShape(Rectangle())
                     }.buttonStyle(.plain)
                     Spacer(minLength: 0)
                     Menu {
