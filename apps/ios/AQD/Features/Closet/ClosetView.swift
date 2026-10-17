@@ -35,8 +35,9 @@ struct ClosetView: View {
                 } else if scope == "Pieces" {
                     pieceCollection
                 } else if scope == "Outfits" {
-                    OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID, sort: outfitSort, summary: collectionSummary)
-                } else { ThemeCollectionView(query: themeQuery, summary: collectionSummary) }
+                    OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID, sort: outfitSort, summary: collectionSummary,
+                                         clearFilters: { favoritesOnly = false; themeID = nil })
+                } else { ThemeCollectionView(query: themeQuery, summary: collectionSummary, clearFilters: { themeQuery = ThemeCollectionQuery() }) }
             }
             .padding(.top, AppSpacing.large)
             .background(AppTheme.canvas)
@@ -195,9 +196,12 @@ struct ClosetView: View {
     }
     @ViewBuilder private var pieceCollection: some View {
         if error == nil && results.isEmpty {
-            EmptyStatePage(title: archived ? "No archived pieces" : category == nil && availability == nil ? "Your closet starts here" : "No matching pieces",
+            let filtered = category != nil || availability != nil
+            EmptyStatePage(title: archived ? "No archived pieces" : !filtered ? "Your closet starts here" : "No matching pieces",
                            systemImage: "tshirt",
-                           description: Text(category == nil && availability == nil ? "Add a photo and a few details. Everything stays on this device." : "Try another category or clear the filters."))
+                           description: Text(!filtered ? "Add a photo and a few details. Everything stays on this device." : "Try another category or clear the filters."),
+                           actionTitle: archived ? "Show active pieces" : filtered ? "Clear filters" : "Add a piece",
+                           action: archived ? { archived = false } : filtered ? { category = nil; availability = nil } : { state.addPiece() })
         } else {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.large) {
@@ -259,11 +263,13 @@ struct PieceThumbnail: View {
 private struct PieceOptionsButton: UIViewRepresentable {
     let isArchived: Bool
     let archiveDisabled: Bool
+    let styleDisabled: Bool
     let edit: () -> Void
     let archive: () -> Void
     let delete: () -> Void
     let availability: () -> Void
     let cutout: () -> Void
+    let style: () -> Void
 
     final class TargetButton: UIButton {
         override var intrinsicContentSize: CGSize { CGSize(width: 48, height: 44) }
@@ -292,12 +298,14 @@ private struct PieceOptionsButton: UIViewRepresentable {
                                      attributes: archiveDisabled ? .disabled : []) { _ in archive() }
         let deleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"),
                                     attributes: .destructive) { _ in delete() }
+        let styleAction = UIAction(title: "Style this", image: UIImage(systemName: "square.stack"),
+                                   attributes: styleDisabled ? .disabled : []) { _ in style() }
         let cutoutAction = UIAction(title: "Cut out photo", image: UIImage(systemName: "scissors"),
                                     attributes: archiveDisabled ? .disabled : []) { _ in cutout() }
         let destructiveGroup = UIMenu(options: .displayInline, children: [deleteAction])
         let availabilityAction = UIAction(title: "Availability", image: UIImage(systemName: "checkmark.circle"),
                                           attributes: archiveDisabled ? .disabled : []) { _ in availability() }
-        button.menu = UIMenu(children: [editAction, cutoutAction, availabilityAction, archiveAction, destructiveGroup])
+        button.menu = UIMenu(children: [styleAction, editAction, cutoutAction, availabilityAction, archiveAction, destructiveGroup])
     }
 
     func sizeThatFits(_ proposal: ProposedViewSize, uiView: TargetButton, context: Context) -> CGSize? {
@@ -342,6 +350,7 @@ struct PieceDetailView: View {
                             Text(piece.displayName).font(AppTypography.section)
                             Text(state.categoryName(for: piece)).foregroundStyle(AppTheme.secondary)
                         }
+                        statusChip(piece)
                         if !piece.details.color.isEmpty { detail("Color", piece.details.color) }
                         if !piece.details.brand.isEmpty { detail("Brand", piece.details.brand) }
                         if !piece.details.size.isEmpty { detail("Size", piece.details.size) }
@@ -361,6 +370,10 @@ struct PieceDetailView: View {
                     }
                     .padding(AppSpacing.screen).frame(maxWidth: .infinity, alignment: .leading)
                     .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                    PrimaryAction(title: "Style this") { state.buildOutfit(pieceID: piece.id) }
+                        .disabled(piece.isArchived || piece.availability != .available || deleteInFlight)
+                        .accessibilityHint("Starts an outfit with this piece")
+                    outfitsSection(for: piece)
                     if let wear {
                         VStack(alignment: .leading, spacing: AppSpacing.large) {
                             detail("Recorded wears", String(wear.recorded))
@@ -401,7 +414,7 @@ struct PieceDetailView: View {
         .sheet(isPresented: $availabilityPresented) {
             if let piece { PieceAvailabilityView(piece: piece) }
         }
-        .onAppear(perform: refresh)
+        .onAppear { refresh(); state.reloadOutfits() }
         .onChange(of: state.collectionRefreshID) { refresh() }
         .sheet(isPresented: $deleteDecision) {
             if let piece { PieceDeletionView(piece: piece) { deleteDecision = false; dismiss() } }
@@ -412,6 +425,54 @@ struct PieceDetailView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: { Text("The piece keeps its identity and can be restored.") }
+    }
+
+    /// Current availability as a tappable status; tapping opens the availability task.
+    private static func status(of piece: WardrobePiece) -> (text: String, symbol: String) {
+        if piece.isArchived { return ("Archived", "archivebox") }
+        switch piece.availability {
+        case .available: return ("Available", "checkmark.circle")
+        case .unavailable: return ("Unavailable", "xmark.circle")
+        case .laundry: return ("In the laundry", "washer")
+        }
+    }
+
+    private func statusChip(_ piece: WardrobePiece) -> some View {
+        let status = Self.status(of: piece), text = status.text, symbol = status.symbol
+        return Button { availabilityPresented = true } label: {
+            Label(text, systemImage: symbol).font(.subheadline).foregroundStyle(AppTheme.ink)
+                .padding(.horizontal, AppSpacing.medium).frame(minHeight: 32).glassControlSurface(Capsule())
+                .frame(minHeight: AppControlMetrics.minimumTarget)
+        }.buttonStyle(.plain).disabled(piece.isArchived || deleteInFlight)
+            .accessibilityLabel("Availability: \(text)").accessibilityHint("Changes whether you can wear this piece now")
+    }
+
+    private func outfitsSection(for piece: WardrobePiece) -> some View {
+        let outfits = state.outfits.filter { $0.pieceIDs.contains(piece.id) }
+        return VStack(alignment: .leading, spacing: AppSpacing.medium) {
+            HStack {
+                Text("In outfits").font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
+                Spacer()
+                Text(outfits.isEmpty ? "None yet" : "\(outfits.count)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }
+            if outfits.isEmpty {
+                Text("Use Style this to build the first look with this piece.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            } else {
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: AppSpacing.medium) {
+                        ForEach(outfits) { outfit in
+                            NavigationLink(value: ClosetRoute.outfit(outfit.id)) {
+                                VStack(spacing: 4) {
+                                    CollectionArtwork(pieceIDs: outfit.pieceIDs, height: 108).padding(AppSpacing.small).frame(width: 104)
+                                        .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group))
+                                    Text(outfit.displayName).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated().frame(width: 104)
+                                }
+                            }.buttonStyle(.plain).accessibilityLabel("Open outfit \(outfit.displayName)")
+                        }
+                    }.padding(.vertical, 2)
+                }.scrollIndicators(.hidden)
+            }
+        }
     }
 
     @ToolbarContentBuilder
@@ -432,7 +493,8 @@ struct PieceDetailView: View {
     }
 
     private func optionsButton(for piece: WardrobePiece) -> some View {
-        PieceOptionsButton(isArchived: piece.isArchived, archiveDisabled: deleteInFlight, edit: {
+        PieceOptionsButton(isArchived: piece.isArchived, archiveDisabled: deleteInFlight,
+                           styleDisabled: piece.isArchived || piece.availability != .available, edit: {
             state.editPiece(piece)
         }) {
             if piece.isArchived {
@@ -440,7 +502,7 @@ struct PieceDetailView: View {
             } else {
                 archiveOperationID = UUID(); reviewedArchive = piece; archiveDecision = true
             }
-        } delete: { deleteDecision = true } availability: { availabilityPresented = true } cutout: { state.editPiece(piece, openCutout: true) }
+        } delete: { deleteDecision = true } availability: { availabilityPresented = true } cutout: { state.editPiece(piece, openCutout: true) } style: { state.buildOutfit(pieceID: piece.id) }
         .frame(width: 48, height: 44)
     }
 

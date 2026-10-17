@@ -188,12 +188,15 @@ struct OutfitCollectionView: View {
         })
     }
     var summary: ClosetCollectionSummary? = nil
+    var clearFilters: (() -> Void)? = nil
     var body: some View {
         Group {
             if state.outfitError == nil && outfits.isEmpty {
                 EmptyStatePage(title: state.outfits.isEmpty ? "Your first outfit starts here" : "No matching outfits",
                                systemImage: "square.stack",
-                               description: Text(state.outfits.isEmpty ? "Combine pieces from your closet. Every outfit stays private." : "Clear the theme or Favorites filter to see your other looks."))
+                               description: Text(state.outfits.isEmpty ? "Combine pieces from your closet. Every outfit stays private." : "Clear the theme or Favorites filter to see your other looks."),
+                               actionTitle: state.outfits.isEmpty ? "Build an outfit" : clearFilters == nil ? nil : "Clear filters",
+                               action: state.outfits.isEmpty ? { state.buildOutfit() } : clearFilters)
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: AppSpacing.large) {
@@ -234,9 +237,22 @@ struct OutfitDetailView: View {
     @State private var pendingMutation: OutfitMutationRequest?
     @State private var error: String?
 
-    private func pieceLabel(_ id: UUID) -> String {
-        guard let piece = state.ownedPieces.first(where: { $0.id == id }) else { return "Unavailable piece" }
-        return piece.displayName + (piece.isArchived ? " · Archived" : "")
+    /// The themes this outfit belongs to, each a link to the theme.
+    @ViewBuilder private func themeChips(for outfit: Outfit) -> some View {
+        let themes = state.themes.filter { $0.outfitIDs.contains(outfit.id) }
+        if !themes.isEmpty {
+            ScrollView(.horizontal) {
+                HStack(spacing: AppSpacing.small) {
+                    ForEach(themes) { theme in
+                        NavigationLink(value: ClosetRoute.theme(theme.id)) {
+                            Label(theme.displayName, systemImage: "folder").font(.subheadline).foregroundStyle(AppTheme.ink).truncated()
+                                .padding(.horizontal, AppSpacing.medium).frame(minHeight: 32).glassControlSurface(Capsule())
+                                .frame(minHeight: AppControlMetrics.minimumTarget)
+                        }.buttonStyle(.plain).accessibilityLabel("Theme \(theme.displayName)")
+                    }
+                }
+            }.scrollIndicators(.hidden)
+        }
     }
 
     var body: some View {
@@ -246,13 +262,17 @@ struct OutfitDetailView: View {
                     OutfitComposition(pieceIDs: outfit.pieceIDs)
                     Text("\(outfit.pieceIDs.count) pieces · Private on this iPhone").foregroundStyle(AppTheme.secondary)
                     if outfit.isFavorite { Label("Favorite", systemImage: "heart.fill").foregroundStyle(AppTheme.ink) }
+                    themeChips(for: outfit)
                     PrimaryAction(title: "Plan outfit") { state.openPlan(outfitID: outfit.id) }.disabled(pendingMutation != nil)
                     SecondaryAction(title: "Record wear") { state.openWear(outfitID: outfit.id) }.disabled(pendingMutation != nil)
-                    ForEach(outfit.pieceIDs, id: \.self) { pieceID in
-                        NavigationLink(value: ClosetRoute.piece(pieceID)) {
-                            Label(pieceLabel(pieceID), systemImage: "tshirt")
-                                .frame(minHeight: 44)
-                        }
+                    VStack(alignment: .leading, spacing: AppSpacing.medium) {
+                        Text("Pieces").font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
+                        VStack(spacing: 0) {
+                            ForEach(Array(outfit.pieceIDs.enumerated()), id: \.element) { index, pieceID in
+                                if index > 0 { Divider().padding(.leading, 84) }
+                                OutfitPieceRow(pieceID: pieceID)
+                            }
+                        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                     }
                     if let error { SemanticFeedback(role: .danger, message: error) }
                     if let pendingMutation {
@@ -326,5 +346,32 @@ struct OutfitDetailView: View {
         pendingMutation = nil; error = nil
         state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries()
         if case .deleted = receipt { dismiss() }
+    }
+}
+
+/// A piece in an outfit: photo, name and where it lives, opening the piece.
+private struct OutfitPieceRow: View {
+    @Environment(AppState.self) private var state
+    let pieceID: UUID
+
+    var body: some View {
+        if let piece = state.ownedPieces.first(where: { $0.id == pieceID }) {
+            NavigationLink(value: ClosetRoute.piece(piece.id)) {
+                HStack(spacing: AppSpacing.medium) {
+                    PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(width: 56, height: 64)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(piece.displayName).font(AppTypography.body).foregroundStyle(AppTheme.ink).truncated()
+                        Text([state.categoryName(for: piece), piece.isArchived ? "Archived" : piece.availability != .available ? "Unavailable" : ""]
+                            .filter { !$0.isEmpty }.joined(separator: " · "))
+                            .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
+                    }
+                    Spacer(minLength: AppSpacing.small)
+                    Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                }.padding(AppSpacing.medium).frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+            }.buttonStyle(.plain)
+        } else {
+            Label("Piece unavailable", systemImage: "tshirt").font(AppTypography.body).foregroundStyle(AppTheme.secondary)
+                .padding(AppSpacing.medium).frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading)
+        }
     }
 }

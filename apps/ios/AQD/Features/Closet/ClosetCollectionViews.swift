@@ -160,11 +160,14 @@ struct ThemeCollectionView: View {
     var query = ThemeCollectionQuery()
     private var themes: [OutfitTheme] { query.apply(to: state.themes) }
     var summary: ClosetCollectionSummary? = nil
+    var clearFilters: (() -> Void)? = nil
     var body: some View {
         Group {
             if state.themeError == nil && themes.isEmpty {
                 EmptyStatePage(title: state.themes.isEmpty ? "Make a little collection" : "No matching themes", systemImage: "folder",
-                               description: Text(state.themes.isEmpty ? "Keep outfits together by mood or occasion. A theme can start empty." : "Try another content filter to see your other themes."))
+                               description: Text(state.themes.isEmpty ? "Keep outfits together by mood or occasion. A theme can start empty." : "Try another content filter to see your other themes."),
+                               actionTitle: state.themes.isEmpty ? "Create a theme" : clearFilters == nil ? nil : "Clear filters",
+                               action: state.themes.isEmpty ? { state.openTheme() } : clearFilters)
             } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppSpacing.large) {
@@ -208,6 +211,7 @@ struct ThemeCollectionCard: View {
 
 struct ThemeDetailView: View {
     @Environment(AppState.self) private var state
+    @Environment(\.dynamicTypeSize) private var typeSize
     let id: UUID
     @Environment(\.dismiss) private var dismiss
     @State private var deletion: ThemeDeletionRequest?
@@ -222,7 +226,11 @@ struct ThemeDetailView: View {
             }
             if let theme = state.themes.first(where: { $0.id == id }) {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("\(theme.outfitIDs.count) outfits · Private theme").foregroundStyle(AppTheme.secondary)
+                    let members = state.outfits.filter { theme.outfitIDs.contains($0.id) }
+                    ThemeCover(outfits: members, height: 180).padding(AppSpacing.small).frame(maxWidth: .infinity)
+                        .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        .accessibilityLabel("\(theme.displayName) cover, \(members.count) outfits")
+                    Text(theme.outfitIDs.count == 1 ? "1 outfit · Private theme" : "\(theme.outfitIDs.count) outfits · Private theme").foregroundStyle(AppTheme.secondary)
                     if !theme.description.isEmpty { Text(theme.displayDescription) }
                     if let error = state.outfitError {
                         SemanticFeedback(role: .danger, message: error)
@@ -231,7 +239,9 @@ struct ThemeDetailView: View {
                         AppEmptyState("Room for your outfits", systemImage: "square.stack", description: Text("Add saved outfits to this theme. Your other themes stay independent."), fillsAvailableSpace: false)
                         PrimaryAction(title: "Add outfits") { state.openTheme(editing: theme, chooseOutfits: true) }
                     }
-                    ForEach(state.outfits.filter { theme.outfitIDs.contains($0.id) }) { OutfitCollectionCard(outfit: $0) }
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 16) {
+                        ForEach(state.outfits.filter { theme.outfitIDs.contains($0.id) }) { OutfitCollectionCard(outfit: $0) }
+                    }
                 }.padding(20)
             } else { AppEmptyState("Theme unavailable", systemImage: "folder", description: Text("The theme is no longer in this closet.")) }
         }.background(AppTheme.canvas)
