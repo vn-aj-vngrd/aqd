@@ -2756,5 +2756,10 @@
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false,
     "liveWeatherEnabled": false
+  },
+  "onboardingNextGlass": {
+    "codeCommit": "d8caa9f81a22c7e2a160b257b9f52aae59677290",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false
   }
 }

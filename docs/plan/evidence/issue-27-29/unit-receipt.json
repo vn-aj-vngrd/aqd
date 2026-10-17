@@ -2062,5 +2062,19 @@
     "serviceBlocker": "Personal Team 355RN23UY7 does not support WeatherKit; owner explicitly chose to keep WeatherKit pending.",
     "blockedBuild": "/tmp/aqd-today-weather-enabled-debug.log",
     "ownerDecision": "Defer live WeatherKit; retain installed location/Today UI fixes."
+  },
+  "onboardingNextGlass": {
+    "codeCommit": "d8caa9f81a22c7e2a160b257b9f52aae59677290",
+    "debugBuild": "/tmp/aqd-next-glass-debug.log",
+    "debugResult": "BUILD SUCCEEDED",
+    "install": "/tmp/aqd-next-glass-install.json",
+    "installResult": "success",
+    "appLaunched": false,
+    "nativeTestsExecuted": false,
+    "runtimeComplete": false,
+    "sourceSHA256": {
+      "apps/ios/AQD/UI/AppActions.swift": "833a93488297c1ab3efbf96bb2c624f2bb4680426b757d1f5868562fd3d5924a",
+      "apps/ios/AQD/UI/StyleEditorView.swift": "79599edc372f7ab9430a15bd6867fc55d1dee3b1abce825e26e65b3b72eee971"
+    }
   }
 }
