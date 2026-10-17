@@ -100,8 +100,7 @@ test("local entry points require readiness and preserve focused physical-test bo
       ["scripts/test-ios.sh",[],{IOS_DEVICE_READY:""},/readiness response/],
       ["scripts/test-ios.sh",[],{IOS_DEVELOPMENT_TEAM:""},/signing identity/],
       ["scripts/test-ios.sh",[],{IOS_TEST_SCOPE:"e2e"},/explicit focused test selection/],
-      ["scripts/prove-ios.sh",["30"],{IOS_DEVICE_READY:""},/readiness/],
-      ["scripts/prove-ios.sh",["21"],{},/deferred to issue #30/],
+
       ["scripts/test-ios.sh",[],{IOS_TEST_SCOPE:"e2e",AQD_E2E_ISSUE:""},/deferred to issue #30/],
       ["scripts/seed-ios-test-photo.sh",["11111111-1111-4111-8111-111111111111"],{},/seeding is disabled/],
     ]) {

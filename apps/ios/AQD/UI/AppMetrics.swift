@@ -1,7 +1,7 @@
 import AQDCore
 import SwiftUI
 
-/// Bounded local layout changes from docs/design/motion.md.
+/// Bounded local layout motion.
 enum AQDMotion {
     static let reflow = Animation.smooth(duration: 0.22, extraBounce: 0)
 }

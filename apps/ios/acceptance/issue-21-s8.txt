@@ -1,2 +1,0 @@
-# S3 numeric range: large/tiny/whole-foot boundaries, restart and ordinary height save/return.
-AQDUITests/BodyFlowTests/testHeightUnitsCustomUseCancelDoneAndSavedSettingsRelaunch
