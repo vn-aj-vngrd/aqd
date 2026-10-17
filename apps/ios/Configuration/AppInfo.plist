@@ -27,7 +27,7 @@
     <key>NSSpeechRecognitionUsageDescription</key>
     <string>AQD transcribes only a recording you start, using supported on-device recognition. No cloud transcription.</string>
     <key>NSCameraUsageDescription</key>
-    <string>AQD uses the camera only when you choose to photograph a wardrobe piece.</string>
+    <string>AQD uses the camera only when you choose to photograph your wardrobe or attach a photo to Agent.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>AQD uses your approximate location only when you choose Use current location for optional Apple Weather. Choose a city instead to avoid location access.</string>
     <key>UTExportedTypeDeclarations</key>

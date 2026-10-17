@@ -12,7 +12,7 @@ import Foundation
                       weather: WeatherClient?, selection: WeatherSelection?, maximumCharacters: Int, maximumRecords: Int, now: Date = Date()) throws -> Result {
         var used: [AgentDataSource] = []
         var unavailable: [AgentDataSource] = [], records: [AgentKnowledgeRecord] = []
-        var facts = ["Saved local data as of \(LocalPlanDay(date: now).key). Plans are not recorded wear. Photo pixels are not interpreted."]
+        var facts = ["Saved local data as of \(LocalPlanDay(date: now).key). Plans are not recorded wear. Saved wardrobe and fit photos are not automatically analyzed. Explicit attachment references state their separate analysis method."]
         func read<T>(_ source: AgentDataSource, _ body: () throws -> [T]) -> [T] {
             guard preferences.allows(source) else { return [] }
             do { return try body() } catch { unavailable.append(source); return [] }
