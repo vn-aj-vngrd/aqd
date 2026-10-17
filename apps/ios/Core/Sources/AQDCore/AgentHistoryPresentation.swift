@@ -4,7 +4,7 @@ public enum AgentHistoryPresentation {
     public enum Status { case loading, complete, incomplete, draft, empty }
     public static func status(_ conversation: AgentConversation) -> Status {
         if conversation.messages.contains(where: \.isActive) { return .loading }
-        if !conversation.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return .draft }
+        if !conversation.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !(conversation.draftAttachments ?? []).isEmpty { return .draft }
         guard let reply = conversation.messages.last(where: { $0.role == .assistant }) else { return .empty }
         return reply.status == .complete ? .complete : .incomplete
     }

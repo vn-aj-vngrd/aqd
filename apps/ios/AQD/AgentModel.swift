@@ -11,21 +11,23 @@ import Observation
     var weatherClient: WeatherClient?
     var controls: AgentControlsModel?
     let qualification: AgentQualification?
+    var attachmentImportCount = 0
+    private let usesNativeProvider: Bool
     private let provider: @MainActor (String, Int) -> AsyncThrowingStream<String, any Error>
     private var generation: Task<Void, Never>?
     private var timeout: Task<Void, Never>?
     var slow = false
     var active: Bool { conversation.messages.contains(where: \.isActive) }
     var supportsGeneration: Bool { qualification?.isValid == true && [.available, .awaitingQualification].contains(availability) }
-    var canGenerate: Bool { supportsGeneration && !active && pending == nil && deletion == nil && metadataSave == nil && controls?.hasPending != true }
+    var canGenerate: Bool { supportsGeneration && attachmentImportCount == 0 && !active && pending == nil && deletion == nil && metadataSave == nil && controls?.hasPending != true }
     var hasPendingOperation: Bool { pending != nil || deletion != nil || metadataSave != nil }
     private var pending: (AgentConversation, UUID)?
     private var retention: Task<Void, Never>?
     private var metadataSave: (AgentConversation, UUID)?
     private var deletion: (UUID, Int, UUID)?
     init(store: PieceStore, qualification: AgentQualification? = AgentQualification.current, reconcileInterruptedAttempt: Bool = true,
-         provider: @escaping @MainActor (String, Int) -> AsyncThrowingStream<String, any Error> = NativeAgentProvider.stream) throws {
-        self.store = store; self.qualification = qualification; self.provider = provider
+         provider: (@MainActor (String, Int) -> AsyncThrowingStream<String, any Error>)? = nil) throws {
+        self.store = store; self.qualification = qualification; self.provider = provider ?? NativeAgentProvider.stream; usesNativeProvider = provider == nil
         conversation = AgentConversation(ownerID: try store.todayConfiguration().ownerID)
         reloadHistory()
         if let latest = history.first(where: { !$0.isArchived }) { conversation = latest }
@@ -45,6 +47,19 @@ import Observation
             guard !Task.isCancelled else { return }; _ = self?.persist()
         }
     }
+    func addAttachment(_ value: AgentAttachment, to conversationID: UUID) {
+        guard conversation.id == conversationID, !active else { return }
+        do {
+            var values = conversation.draftAttachments ?? []; values.append(value)
+            try AgentAttachment.validate(values); conversation.draftAttachments = values; _ = persist()
+        } catch { self.error = "Attach up to four photos or documents. This attachment couldn’t be added; your draft is retained." }
+    }
+    func removeAttachment(_ id: UUID) {
+        guard !active, !hasPendingOperation else { return }
+        conversation.draftAttachments?.removeAll { $0.id == id }
+        if conversation.draftAttachments?.isEmpty == true { conversation.draftAttachments = nil }
+        _ = persist()
+    }
     @discardableResult func persist() -> Bool {
         retention?.cancel()
         guard metadataSave == nil else { return false }
@@ -58,10 +73,10 @@ import Observation
                 conversation.revision = acknowledged.revision
             }
             if let saved = history.first(where: { $0.id == conversation.id }),
-               saved.draft == conversation.draft, saved.context == conversation.context, saved.messages == conversation.messages, saved.proposals == conversation.proposals, saved.pinnedAt == conversation.pinnedAt, saved.archivedAt == conversation.archivedAt {
+               saved.draft == conversation.draft, saved.draftAttachments == conversation.draftAttachments, saved.context == conversation.context, saved.messages == conversation.messages, saved.proposals == conversation.proposals, saved.pinnedAt == conversation.pinnedAt, saved.archivedAt == conversation.archivedAt {
                 if !hasPendingOperation { error = nil }; return true
             }
-            if conversation.revision == 0 && conversation.draft.isEmpty && conversation.messages.isEmpty && (conversation.proposals ?? []).isEmpty && conversation.context == AgentContext() { return true }
+            if conversation.revision == 0 && conversation.draft.isEmpty && (conversation.draftAttachments ?? []).isEmpty && conversation.messages.isEmpty && (conversation.proposals ?? []).isEmpty && conversation.context == AgentContext() { return true }
             pending = (conversation, UUID())
             let result = try store.saveAgentConversation(conversation, operationID: pending!.1)
             pending = nil; conversation = result; reloadHistory(); return true
@@ -223,8 +238,8 @@ import Observation
             var diagnostics: AgentResponseDiagnostics?
             if conversation.context.automatic == true && conversation.context.scope == .closet {
                 let historyText = conversation.messages.filter { $0.id != messageID && ($0.role == .user || $0.status == .complete) }
-                    .map { "\($0.role.rawValue): \($0.source)" }.joined(separator: "\n")
-                let userTurn = messageID == nil ? "\nuser: " + conversation.draft : ""
+                    .map { "\($0.role.rawValue): \($0.promptText)" }.joined(separator: "\n")
+                let userTurn = messageID == nil ? "\nuser: " + conversation.draftPrompt : ""
                 let dialogue = "\nConversation:\n" + historyText + userTurn
                 let budget = min(4500, qualification.maximumPromptCharacters - dialogue.count - 80)
                 guard budget >= 512 else { throw AgentContextError.budgetExceeded }
@@ -265,12 +280,18 @@ import Observation
             // Keep every prior user instruction or request a new conversation. Never silently drop turns.
             prompt += "\nConversation:\n" + conversation.messages.filter {
                 $0.id != messageID && ($0.role == .user || $0.status == .complete)
-            }.map { "\($0.role.rawValue): \($0.source)" }.joined(separator: "\n")
-            if messageID == nil { prompt += "\nuser: " + conversation.draft }
+            }.map { "\($0.role.rawValue): \($0.promptText)" }.joined(separator: "\n")
+            if messageID == nil { prompt += "\nuser: " + conversation.draftPrompt }
             guard prompt.count <= qualification.maximumPromptCharacters else { error = "This conversation exceeds the on-device context budget. Start a new conversation; this history and draft will stay."; return }
             contextSummary = snapshot.summary
             }
             guard prompt.count <= qualification.maximumPromptCharacters else { throw AgentContextError.budgetExceeded }
+            let images: [AgentAttachment]
+            if messageID == nil, !(conversation.draftAttachments ?? []).isEmpty {
+                images = (conversation.draftAttachments ?? []).filter { $0.kind == .image }
+            } else {
+                images = conversation.messages.last(where: { $0.role == .user && ($0.attachments ?? []).contains(where: { $0.kind == .image }) })?.attachments?.filter { $0.kind == .image } ?? []
+            }
             let attempt = try messageID.map { try conversation.retry(messageID: $0) } ?? conversation.beginAttempt()
             conversation.messages[conversation.messages.count - 1].contextSummary = contextSummary
             conversation.messages[conversation.messages.count - 1].diagnostics = diagnostics
@@ -290,7 +311,10 @@ import Observation
                 guard let self else { return }
                 defer { timeout?.cancel(); timeout = nil; generation = nil; slow = false }
                 do {
-                    for try await text in provider(prompt, qualification.responseTokens) {
+                    let response = usesNativeProvider && !images.isEmpty
+                        ? NativeAgentProvider.streamAttached(prompt: prompt, responseTokens: qualification.responseTokens, attachments: images)
+                        : provider(prompt, qualification.responseTokens)
+                    for try await text in response {
                         try Task.checkCancellation()
                         guard conversation.id == conversationID, let i = conversation.messages.firstIndex(where: { $0.attemptID == attempt && $0.isActive && $0.status != .stopping }) else { throw CancellationError() }
                         guard text.hasPrefix(conversation.messages[i].source) else { throw CocoaError(.coderInvalidValue) }

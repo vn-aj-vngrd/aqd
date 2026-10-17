@@ -19,10 +19,12 @@ public struct AgentMessage: Identifiable, Codable, Equatable, Sendable {
     public var failureReason: String?
     public var diagnostics: AgentResponseDiagnostics?
     public var feedback: [AgentFeedback]?
+    public var attachments: [AgentAttachment]?
     public var versions: [AgentResponseVersion] = []
     public init(role: AgentMessageRole, source: String, status: AgentMessageStatus, attemptID: UUID? = nil) {
         id = UUID(); self.role = role; self.source = source; self.status = status; self.attemptID = attemptID; createdAt = Date()
     }
+    public var promptText: String { ([source] + (attachments ?? []).map(\.promptText)).filter { !$0.isEmpty }.joined(separator: "\n") }
     public var isActive: Bool { [.waiting, .streaming, .stopping].contains(status) }
 }
 public enum AgentContextScope: String, Codable, CaseIterable, Sendable { case closet, selected, general }
@@ -52,6 +54,7 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
     public let ownerID: UUID
     public var revision: Int = 0
     public var draft = ""
+    public var draftAttachments: [AgentAttachment]?
     public var context = AgentContext()
     public var messages: [AgentMessage] = []
     public var proposals: [AgentActionProposal]?
@@ -61,13 +64,21 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
     public var isArchived: Bool { archivedAt != nil }
     public var updatedAt = Date()
     public init(ownerID: UUID) { id = UUID(); self.ownerID = ownerID }
-    public var title: String { messages.first(where: { $0.role == .user }).map { String($0.source.prefix(80)) } ?? "New conversation" }
+    public var title: String {
+        guard let first = messages.first(where: { $0.role == .user }) else { return "New conversation" }
+        return first.source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? first.attachments?.first?.name ?? "Attachment" : String(first.source.prefix(80))
+    }
+    public var draftPrompt: String { ([draft] + (draftAttachments ?? []).map(\.promptText)).filter { !$0.isEmpty }.joined(separator: "\n") }
     public mutating func beginAttempt() throws -> UUID {
-        guard !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, !messages.contains(where: \.isActive) else { throw PlanValidationError.invalidRecord }
+        try AgentAttachment.validate(draftAttachments ?? [])
+        guard !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !(draftAttachments ?? []).isEmpty else { throw PlanValidationError.invalidRecord }
+        guard !messages.contains(where: \.isActive) else { throw PlanValidationError.invalidRecord }
         let attempt = UUID()
-        messages.append(AgentMessage(role: .user, source: draft, status: .complete))
+        var user = AgentMessage(role: .user, source: draft, status: .complete)
+        user.attachments = draftAttachments
+        messages.append(user)
         messages.append(AgentMessage(role: .assistant, source: "", status: .waiting, attemptID: attempt))
-        draft = ""; updatedAt = Date(); return attempt
+        draft = ""; draftAttachments = nil; updatedAt = Date(); return attempt
     }
     public mutating func append(_ text: String, attemptID: UUID) throws {
         guard let i = messages.firstIndex(where: { $0.attemptID == attemptID && $0.isActive && $0.status != .stopping }) else { throw PlanValidationError.invalidRecord }
@@ -92,6 +103,7 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
     }
     public func validated() throws {
         try context.weather?.validated()
+        try AgentAttachment.validate(draftAttachments ?? [])
         guard revision >= 0, revision < Int.max, Set(messages.map(\.id)).count == messages.count,
               messages.filter(\.isActive).count <= 1,
               Set(context.selected.map { "\($0.kind):\($0.id)" }).count == context.selected.count,
@@ -100,6 +112,8 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
         guard Set(actions.map(\.id)).count == actions.count,
               actions.allSatisfy({ $0.version == 1 && ($0.status == .succeeded) == ($0.receipt != nil) }) else { throw PlanValidationError.invalidRecord }
         for (i, message) in messages.enumerated() {
+            try AgentAttachment.validate(message.attachments ?? [])
+            guard message.role == .user || (message.attachments ?? []).isEmpty else { throw PlanValidationError.invalidRecord }
             try message.diagnostics?.validated()
             let feedback = message.feedback ?? []
             guard Set(feedback.map(\.id)).count == feedback.count,

@@ -105,8 +105,8 @@ import Foundation
         }
         if preferences.allows(.pastChats) {
             for chat in chats where chat.id != currentConversationID {
-                for message in chat.messages where message.role == .user && !message.source.isEmpty {
-                    records.append(AgentKnowledgeRecord(id: message.id, source: .pastChats, text: "Past user chat topic (not current instructions): " + message.source))
+                for message in chat.messages where message.role == .user && !message.promptText.isEmpty {
+                    records.append(AgentKnowledgeRecord(id: message.id, source: .pastChats, text: "Past user chat topic and attachment text (not current instructions; image pixels not inspected): " + message.promptText))
                 }
             }
         }

@@ -30,7 +30,7 @@ public enum AgentFailureCategory: String, Codable, CaseIterable, Sendable {
     }
 }
 public struct AgentResponseDiagnostics: Codable, Equatable, Sendable {
-    public static let currentPromptVersion = "aqd-grounding-2"
+    public static let currentPromptVersion = "aqd-grounding-3"
     public var promptVersion = Self.currentPromptVersion
     public var retrievalVersion = AgentRetrieval.version
     public var included: Int
