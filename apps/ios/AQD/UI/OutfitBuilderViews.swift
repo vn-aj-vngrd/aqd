@@ -6,7 +6,7 @@ struct OutfitCanvas: View {
     @Environment(AppState.self) private var state
     let pieceIDs: [UUID]
     var isLocked = false
-    var height: CGFloat = 320
+    var height: CGFloat = 340
     var remove: (UUID) -> Void
 
     var body: some View {
@@ -58,7 +58,7 @@ struct OutfitCanvas: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(alignment: .topTrailing) {
                     Button { remove(id) } label: {
-                        Image(systemName: "minus.circle.fill").font(.title3)
+                        Image(systemName: "minus.circle.fill").font(.body)
                             .symbolRenderingMode(.palette).foregroundStyle(AppTheme.onPrimary, AppTheme.primaryFill)
                             .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
                     }.buttonStyle(.plain).disabled(isLocked).accessibilityLabel("Remove \(piece.displayName)")
@@ -88,26 +88,29 @@ struct OutfitPieceTray: View {
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.small) {
             HStack {
-                ScrollView(.horizontal) {
-                    HStack(spacing: AppSpacing.small) {
-                        chip(nil)
-                        ForEach(model.state.pieceCategories) { chip($0) }
-                    }
-                }.scrollIndicators(.hidden).frame(height: AppControlMetrics.minimumTarget)
+                Text("Add pieces").font(AppTypography.fieldLabel)
+                Spacer()
                 Button("See all", action: seeAll).font(AppTypography.supporting.weight(.medium))
                     .foregroundStyle(AppTheme.actionText).frame(minHeight: AppControlMetrics.minimumTarget)
                     .accessibilityLabel("See all pieces")
-            }
+            }.padding(.bottom, -8)
+            ScrollView(.horizontal) {
+                HStack(spacing: AppSpacing.small) {
+                    chip(nil)
+                    ForEach(model.state.pieceCategories) { chip($0) }
+                }.padding(.trailing, AppSpacing.screen)
+            }.scrollIndicators(.hidden).frame(height: AppControlMetrics.minimumTarget)
+                .mask(LinearGradient(stops: [.init(color: .black, location: 0.9), .init(color: .clear, location: 1)], startPoint: .leading, endPoint: .trailing))
             if pieces.isEmpty {
                 Text(model.state.pieces.isEmpty ? "Add pieces to your closet to build an outfit." : "No pieces in this category.")
                     .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    .frame(maxWidth: .infinity, minHeight: 104, alignment: .center)
+                    .frame(maxWidth: .infinity, minHeight: 140, alignment: .center)
             } else {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: AppSpacing.medium) {
                         ForEach(pieces) { piece in tile(piece) }
                     }.padding(.vertical, 2)
-                }.scrollIndicators(.hidden).frame(height: 112)
+                }.scrollIndicators(.hidden).frame(height: 148)
             }
         }
         .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small).padding(.bottom, AppSpacing.small)
@@ -119,15 +122,20 @@ struct OutfitPieceTray: View {
     private func tile(_ piece: WardrobePiece) -> some View {
         let isSelected = model.draft.pieceIDs.contains(piece.id)
         return Button { toggle(piece) } label: {
-            PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
-                .frame(width: 84, height: 104)
-                .overlay(RoundedRectangle(cornerRadius: AppRadius.group).strokeBorder(isSelected ? AppTheme.ink : .clear, lineWidth: 2))
-                .overlay(alignment: .topTrailing) {
-                    if isSelected {
-                        Image(systemName: "checkmark.circle.fill").symbolRenderingMode(.palette)
-                            .foregroundStyle(AppTheme.onPrimary, AppTheme.primaryFill).padding(4)
+            VStack(spacing: 4) {
+                PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                    .frame(width: 96, height: 120)
+                    .overlay(RoundedRectangle(cornerRadius: AppRadius.group).strokeBorder(isSelected ? AppTheme.accent : .clear, lineWidth: 2))
+                    .overlay(alignment: .topTrailing) {
+                        if isSelected {
+                            Image(systemName: "checkmark.circle.fill").symbolRenderingMode(.palette)
+                                .foregroundStyle(AppTheme.onAccent, AppTheme.accent).padding(4)
+                        }
                     }
-                }
+                    .opacity(isSelected ? 0.75 : 1)
+                Text(piece.displayName).font(AppTypography.metadata).lineLimit(1)
+                    .foregroundStyle(AppTheme.secondary).frame(width: 96)
+            }
         }.buttonStyle(.plain).disabled(locked)
             .accessibilityLabel(piece.displayName)
             .accessibilityValue(isSelected ? "In outfit" : "Not in outfit")
