@@ -64,7 +64,7 @@ struct StyleEditorView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     if model.saved != nil {
                         if model.draft.source == .onboarding {
-                            ToolbarForwardAction(title: savedContinueTitle) { model.finish() }
+                            ToolbarForwardAction(title: savedContinueTitle, usesGlass: true) { model.finish() }
                                 .accessibilityIdentifier("style.saved.continue")
                         } else {
                             ToolbarSaveAction(title: "Done") { model.finish() }
@@ -74,7 +74,7 @@ struct StyleEditorView: View {
                         ToolbarSaveAction(title: model.unknown ? "Check save" : "Save", isPending: model.pending) { Task { await model.save() } }
                             .disabled(model.pending || (!model.unknown && (!model.draft.isComplete || (model.draft.baseRevision > 0 && !model.hasUnsavedChanges)))).accessibilityLabel(model.unknown ? "Check save" : "Save preferences")
                     } else {
-                        ToolbarForwardAction(title: model.draft.editingFromReview ? "Review preferences" : "Next question") { model.next() }
+                        ToolbarForwardAction(title: model.draft.editingFromReview ? "Review preferences" : "Next question", usesGlass: true) { model.next() }
                             .disabled(!model.draft.isAnswered(page) || model.pending || model.unknown || model.error != nil)
                     }
                 }

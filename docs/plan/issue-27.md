@@ -348,3 +348,9 @@ Owner confirmed Xcode account and WeatherKit App ID setup complete. Enable the W
 After owner account setup, the entitlement-enabled retry failed with a more specific blocker: team 355RN23UY7 is a Personal Team and does not support WeatherKit. Log `/tmp/aqd-today-weather-enabled-debug.log`. The ordinary-profile project settings remain in place; the UI version already installed successfully, but no live temperature is available. Owner is choosing between another provider, a paid Apple Developer team, or deferral. Do not enable an alternate network provider without that choice.
 
 Owner chose “Keep WeatherKit pending for now.” Retain the installed UI fix and default-disabled live service; no alternate provider or paid-team changes are authorized. The live-temperature portion is explicitly deferred.
+
+Owner October17: style-preference/onboarding Next arrows use the existing neutral native glass toolbar style, matching Back. Scope includes the saved-step continuation and question/review arrow; Planner/Agent retain their current emphasis. Semantic ink supports both appearances; native glass owns transparency accessibility adaptation, with existing older-OS fallback. Navigation, validation and save behavior are unchanged. Cosmetic source review/build only, no device tests or launch.
+
+Next-glass source Standards/Spec self-review: only StyleEditorView opts into the neutral glass variant. Its existing Next/review/saved-continue callbacks, disabled prerequisites and accessibility identifiers remain unchanged. Shared Planner/Agent callers keep the prior prominent default. Existing native glass helper supplies availability fallback and semantic ink; no custom gesture or animation added. Rendered appearance remains manual review.
+
+Next-glass signed generic Debug passed `/tmp/aqd-next-glass-debug.log`; docs/whitespace checks pass. No device test or app launch.

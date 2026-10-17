@@ -126,12 +126,20 @@ struct ToolbarSaveAction: View {
 /// Primary navigation between review steps; persistence stays with ToolbarSaveAction.
 struct ToolbarForwardAction: View {
     let title: String
+    var usesGlass = false
     let action: () -> Void
     var body: some View {
-        Button(action: action) {
-            Image(systemName: "chevron.forward")
-        }.buttonStyle(.borderedProminent).tint(AppTheme.primaryFill)
-            .foregroundStyle(AppTheme.onPrimary).accessibilityLabel(title)
+        if usesGlass {
+            button.neutralToolbarGlass().buttonBorderShape(.circle)
+                .tint(AppTheme.ink).foregroundStyle(AppTheme.ink)
+        } else {
+            button.buttonStyle(.borderedProminent).tint(AppTheme.primaryFill)
+                .foregroundStyle(AppTheme.onPrimary)
+        }
+    }
+    private var button: some View {
+        Button(action: action) { Image(systemName: "chevron.forward") }
+            .accessibilityLabel(title)
     }
 }
 
