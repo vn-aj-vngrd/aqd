@@ -1,5 +1,6 @@
 import AQDCore
 import Foundation
+import ImageIO
 import Observation
 #if DEBUG
 import SwiftData
@@ -384,7 +385,7 @@ final class AppState {
         }
     }
 
-    func editPiece(_ piece: WardrobePiece) {
+    func editPiece(_ piece: WardrobePiece, openCutout: Bool = false) {
         guard !hasActiveEditor else { return }
         guard let store else { return }
         do {
@@ -396,6 +397,7 @@ final class AppState {
             capture = CaptureModel(state: self, draft: draft,
                                    operationID: recovered?.operationID ?? UUID(),
                                    saved: try recovered.flatMap { try store.pendingSavedPiece(for: $0) })
+            capture?.opensCutout = openCutout
         } catch {
             collectionError = "This piece’s saved draft couldn’t open. It hasn’t been replaced."
         }
@@ -490,7 +492,17 @@ final class CaptureModel: Identifiable {
     var draftSaveFailed = false
     var isSaving = false
     var saved: WardrobePiece?
+    /// Progress of the automatic cutout for the draft photo.
+    enum CutoutState: Equatable { case idle, working, applied, noSubject, failed }
+    var cutoutState = CutoutState.idle
+    /// Plain-language photo quality hints for the current draft photo.
+    var photoHints: [PhotoQualityHint] = []
+    /// True when the mode is "Ask each time" and a fresh photo is waiting for a decision.
+    var offersCutout = false
+    /// Set when the editor is opened straight to the cutout (for example from a piece's menu).
+    var opensCutout = false
     @ObservationIgnored private unowned let state: AppState
+    @ObservationIgnored private var cutoutTask: Task<Void, Never>?
     @ObservationIgnored private let preparer = PhotoPreparer()
     @ObservationIgnored private var importTask: Task<Void, Never>?
     @ObservationIgnored private var previewCache: (id: UUID, recipe: PhotoEditRecipe, data: Data)?
@@ -589,7 +601,10 @@ final class CaptureModel: Identifiable {
                 guard importGate.apply(photoID: photoID, request: request, to: &draft) else { return }
                 operationID = UUID()
                 persistDraft()
-                if !draftSaveFailed { completedPhotoImportID = photoID }
+                if !draftSaveFailed {
+                    completedPhotoImportID = photoID
+                    photoImported(width: prepared.pixelWidth, height: prepared.pixelHeight)
+                }
             } catch {
                 guard importGate.canAccept(request, for: draft) else { return }
                 importGate.cancel()
@@ -599,6 +614,7 @@ final class CaptureModel: Identifiable {
     }
 
     func cancelImport() {
+        cancelCutout()
         importGate.cancel()
         importTask?.cancel()
         importTask = nil
@@ -740,6 +756,8 @@ final class CaptureModel: Identifiable {
 }
 
 struct BackgroundPhotoInput: Sendable {
+    /// The saved cutout when the draft photo is already a derived cutout, so Refine can reopen its mask.
+    let existingCutout: Data?
     let draftID: UUID
     let operationID: UUID
     let sourceID: UUID
@@ -755,21 +773,82 @@ extension CaptureModel {
     func backgroundInput() throws -> BackgroundPhotoInput {
         guard !isSaving, !isImporting, saved == nil, let source = draft.photoID, let store = state.store else { throw BackgroundPhotoError.staleSource }
         let original = try store.backgroundOriginalID(for: source) ?? source
-        return BackgroundPhotoInput(draftID: draft.id, operationID: operationID, sourceID: source, originalID: original, recipe: draft.photoRecipe, data: try store.originalPhoto(id: original))
+        let existing = original == source ? nil : try store.originalPhoto(id: source)
+        return BackgroundPhotoInput(existingCutout: existing, draftID: draft.id, operationID: operationID, sourceID: source, originalID: original, recipe: draft.photoRecipe, data: try store.originalPhoto(id: original))
     }
     func backgroundSourceIsCurrent(_ input: BackgroundPhotoInput) -> Bool {
         !isSaving && !isImporting && saved == nil && draft.id == input.draftID && operationID == input.operationID && draft.photoID == input.sourceID && draft.photoRecipe == input.recipe
     }
-    func acceptBackground(_ prepared: PreparedPhoto?, input: BackgroundPhotoInput) -> Bool {
+    func acceptBackground(_ prepared: PreparedPhoto?, input: BackgroundPhotoInput, crop: PhotoEditRecipe.NormalizedRect? = nil) -> Bool {
         guard backgroundSourceIsCurrent(input), let store = state.store else { return false }
         do {
             let id: UUID
             if let prepared { id = try store.acceptBackgroundPhoto(prepared, originalID: input.originalID) }
             else { _ = try store.originalPhoto(id: input.originalID); id = input.originalID }
-            draft.photoID = id; draft.photoRecipe = .fitOriginal; operationID = UUID(); persistDraft()
+            var recipe = crop.map { PhotoEditRecipe(crop: $0) } ?? .fitOriginal
+            if (try? recipe.validated()) == nil { recipe = .fitOriginal }
+            draft.photoID = id; draft.photoRecipe = recipe; operationID = UUID(); persistDraft()
             return !draftSaveFailed
         } catch { errorText = "The background result could not be applied. Your previous accepted photo is retained."; return false }
     }
+    // MARK: Automatic cutout
+
+    fileprivate func photoImported(width: Int, height: Int) {
+        cutoutState = .idle
+        photoHints = PhotoQuality.assess(pixelWidth: width, pixelHeight: height)
+        switch CutoutMode.current {
+        case .auto: autoCutout()
+        case .ask: offersCutout = true
+        case .off: break
+        }
+    }
+
+    /// Cut the piece out of the draft photo in the background; the original is always kept.
+    func autoCutout() {
+        guard cutoutState != .working, !hasProcessedPhoto, let input = try? backgroundInput() else { return }
+        cutoutTask?.cancel()
+        cutoutState = .working
+        offersCutout = false
+        cutoutTask = Task { [weak self] in
+            do {
+                let outcome = try await CutoutPipeline.automatic(original: input.data)
+                guard !Task.isCancelled, let self, self.backgroundSourceIsCurrent(input) else { return }
+                if self.acceptBackground(outcome.prepared, input: input, crop: outcome.crop) {
+                    self.cutoutState = .applied
+                    self.photoHints = outcome.hints
+                } else { self.cutoutState = .failed }
+            } catch BackgroundPhotoError.noForeground {
+                guard !Task.isCancelled, let self, self.backgroundSourceIsCurrent(input) else { return }
+                let size = Self.pixelSize(of: input.data)
+                self.cutoutState = .noSubject
+                self.photoHints = PhotoQuality.assess(pixelWidth: size.width, pixelHeight: size.height, subjectFound: false)
+            } catch {
+                guard !Task.isCancelled, let self, self.backgroundSourceIsCurrent(input) else { return }
+                self.cutoutState = .failed
+            }
+        }
+    }
+
+    func cancelCutout() {
+        cutoutTask?.cancel()
+        cutoutTask = nil
+        if cutoutState == .working { cutoutState = .idle }
+    }
+
+    /// Replace a cutout with the untouched original photo.
+    func useOriginalPhoto() {
+        guard let input = try? backgroundInput(), acceptBackground(nil, input: input) else { return }
+        cutoutState = .idle
+        let size = Self.pixelSize(of: input.data)
+        photoHints = PhotoQuality.assess(pixelWidth: size.width, pixelHeight: size.height)
+    }
+
+    private static func pixelSize(of data: Data) -> (width: Int, height: Int) {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] else { return (0, 0) }
+        return ((properties[kCGImagePropertyPixelWidth] as? Int) ?? 0, (properties[kCGImagePropertyPixelHeight] as? Int) ?? 0)
+    }
+
     func resetThumbnailData() -> Data? {
         guard let id = draft.photoID, let original = try? state.store?.backgroundOriginalID(for: id) else { return originalThumbnailData() }
         return try? state.store?.thumbnailPhoto(id: original)

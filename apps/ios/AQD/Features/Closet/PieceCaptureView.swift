@@ -68,6 +68,12 @@ struct PieceCaptureView: View {
             } message: {
                 Text("Allow Camera in iPhone Settings to take a photo, or choose an existing photo. Your entered fields are unchanged.")
             }
+            .appConfirmation("Cut out the background?", isPresented: $model.offersCutout) {
+                Button("Cut out") { model.autoCutout() }
+                Button("Keep original", role: .cancel) {}
+            } message: {
+                Text("A clean cutout makes a better listing photo. You can refine it or go back to the original at any time.")
+            }
             .appConfirmation("Camera access is restricted", isPresented: $cameraRestricted) {
                 Button("Choose from Photos") { pickerPresented = true }
                 Button("Keep draft", role: .cancel) {}
@@ -102,6 +108,9 @@ struct PieceCaptureView: View {
         .sheet(isPresented: $showBackgroundRemoval) { PieceCutoutView(capture: model) }
         .editImportedPhoto(model, importing: model.isImporting, locked: model.isSaving, presented: $showPhotoEditor)
         .sheet(isPresented: $showPhotoEditor) { PhotoEditorView(model: model, isPresentedModally: true) }
+        .onAppear {
+            if model.opensCutout { model.opensCutout = false; showBackgroundRemoval = true }
+        }
         .onDisappear { model.cancelImport() }
     }
 
@@ -109,6 +118,13 @@ struct PieceCaptureView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.large) {
                 mediaContent
+                if !model.photoHints.isEmpty {
+                    VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                        ForEach(model.photoHints, id: \.self) { hint in
+                            Label(hint.message, systemImage: "info.circle").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }
+                    }.accessibilityIdentifier("capture.photoHints")
+                }
                 LabeledField(title: "Name", text: Binding(get: { model.draft.displayName },
                                                          set: { model.update(\.name, value: $0) }),
                              prompt: "e.g. Cotton shirt", validation: nameValidation, accessibilityID: "capture.field.name",
@@ -208,11 +224,11 @@ struct PieceCaptureView: View {
                 .overlay(alignment: .bottomLeading) {
                     if image != nil {
                         Button { nameEditing = false; showBackgroundRemoval = true } label: {
-                            Label("Cut out", systemImage: "scissors").font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.ink)
+                            Label(model.hasProcessedPhoto ? "Refine" : "Cut out", systemImage: "scissors").font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.ink)
                                 .padding(.horizontal, AppSpacing.medium).frame(minHeight: AppControlMetrics.minimumTarget)
                                 .glassControlSurface(Capsule())
-                        }.buttonStyle(.plain).padding(AppSpacing.medium).disabled(model.isImporting || model.isSaving)
-                            .accessibilityLabel("Cut out piece").accessibilityHint("Removes the background and trims the sides")
+                        }.buttonStyle(.plain).padding(AppSpacing.medium).disabled(model.isImporting || model.isSaving || model.cutoutState == .working)
+                            .accessibilityLabel(model.hasProcessedPhoto ? "Refine cutout" : "Cut out piece").accessibilityHint("Removes the background and trims the sides")
                             .accessibilityIdentifier("capture.cutout")
                     }
                 }
@@ -223,7 +239,14 @@ struct PieceCaptureView: View {
                             .glassControlSurface(Circle()).padding(AppSpacing.medium).accessibilityHidden(true)
                     }
                 }
-                .overlay { if model.isImporting { ProgressView().controlSize(.large) } }
+                .overlay {
+                    if model.isImporting || model.cutoutState == .working {
+                        VStack(spacing: AppSpacing.small) {
+                            ProgressView().controlSize(.large)
+                            if model.cutoutState == .working { Text("Cutting out the piece…").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+                        }.padding(AppSpacing.large).background(.regularMaterial, in: RoundedRectangle(cornerRadius: AppRadius.group))
+                    }
+                }
                 .contentShape(RoundedRectangle(cornerRadius: AppRadius.field))
             }
             .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)

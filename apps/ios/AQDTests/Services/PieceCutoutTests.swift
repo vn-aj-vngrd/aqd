@@ -72,23 +72,32 @@ struct PieceCutoutTests {
     }
 
     @Test func exportIsATransparentPNGAtTheOriginalSize() throws {
-        let png = try CutoutRenderer.exportPNG(original: redImage(), mask: try bandImage(), fitPadding: nil)
+        let png = try CutoutRenderer.exportPNG(original: redImage(), mask: try bandImage())
         let image = try decode(png)
-        #expect(image.width == 40 && image.height == 40)
+        #expect(image.width == 40 && image.height == 40, "the derived photo keeps the original size so the crop stays a recipe")
         #expect(alpha(image, 1, 1) == 0, "background pixels are transparent")
         #expect(alpha(image, 20, 20) == 255, "the kept piece is opaque")
     }
 
-    @Test func fitToPieceCropsToTheKeptArea() throws {
-        let png = try CutoutRenderer.exportPNG(original: redImage(), mask: try bandImage(), fitPadding: 0)
+    @Test func solidBackgroundsFillTheRemovedArea() throws {
+        let png = try CutoutRenderer.exportPNG(original: redImage(), mask: try bandImage(), background: .white)
         let image = try decode(png)
-        #expect(image.width < 40 && image.height < 20 && image.width > image.height)
-        #expect(alpha(image, image.width / 2, image.height / 2) == 255)
+        #expect(alpha(image, 1, 1) == 255 && alpha(image, 20, 20) == 255)
+    }
+
+    @Test func aSavedCutoutRebuildsItsMaskFromTheAlphaChannel() throws {
+        let png = try CutoutRenderer.exportPNG(original: redImage(), mask: try bandImage())
+        let rebuilt = try #require(CutoutRenderer.alphaMask(of: try decode(png)))
+        let original = CutoutRenderer.coverage(of: try bandImage())
+        #expect(abs(CutoutRenderer.coverage(of: rebuilt) - original) < 0.03)
+        let found = CutoutRenderer.normalizedBounds(of: rebuilt)
+        let bounds = try #require(found)
+        #expect(abs(bounds.x - 8.0 / 40) < 0.06 && abs(bounds.y - 14.0 / 40) < 0.06)
     }
 
     @Test func exportRefusesAnEmptyMask() throws {
         let blank = try #require(CutoutMask(width: 8, height: 8, keeping: false))
         let empty = try #require(blank.image)
-        #expect(throws: CutoutError.self) { try CutoutRenderer.exportPNG(original: redImage(), mask: empty, fitPadding: nil) }
+        #expect(throws: CutoutError.self) { try CutoutRenderer.exportPNG(original: redImage(), mask: empty) }
     }
 }

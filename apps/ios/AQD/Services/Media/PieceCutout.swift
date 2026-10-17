@@ -1,3 +1,4 @@
+import AQDCore
 import CoreGraphics
 import CoreImage
 import Foundation
@@ -74,9 +75,13 @@ enum CutoutRenderer {
     static let context = CIContext(options: [.cacheIntermediates: false])
     private static let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)
 
-    /// `image` with pixels removed wherever `mask` is dark. Mask luminance becomes alpha, scaled to the image.
-    static func composite(_ image: CIImage, mask: CGImage) -> CIImage {
-        let raw = CIImage(cgImage: mask)
+    /// `image` with pixels removed wherever `mask` is dark. Mask luminance becomes alpha, scaled to the image;
+    /// `feather` softens the mask edge by that many mask pixels.
+    static func composite(_ image: CIImage, mask: CGImage, feather: CGFloat = 0) -> CIImage {
+        var raw = CIImage(cgImage: mask)
+        if feather > 0 {
+            raw = raw.clampedToExtent().applyingGaussianBlur(sigma: Double(feather)).cropped(to: CIImage(cgImage: mask).extent)
+        }
         let scaled = raw.transformed(by: CGAffineTransform(scaleX: image.extent.width / raw.extent.width,
                                                            y: image.extent.height / raw.extent.height))
             .transformed(by: CGAffineTransform(translationX: image.extent.minX, y: image.extent.minY))
@@ -116,19 +121,32 @@ enum CutoutRenderer {
         return Double(pixels.reduce(0) { $0 + Int($1) }) / (255 * Double(pixels.count))
     }
 
-    /// Full-resolution transparent PNG of `original` through `mask`, optionally cropped to the kept piece.
-    static func exportPNG(original: Data, mask: CGImage, fitPadding: CGFloat?) throws -> Data {
+    /// The kept box as a normalized rectangle (top-left origin), or nil when nothing is kept.
+    static func normalizedBounds(of mask: CGImage) -> PhotoEditRecipe.NormalizedRect? {
+        keptBounds(of: mask).map { .init(x: $0.minX, y: $0.minY, width: $0.width, height: $0.height) }
+    }
+
+    /// The alpha channel of `image` as a gray keep-mask the same size, so a saved cutout can be refined later.
+    static func alphaMask(of image: CGImage) -> CGImage? {
+        let width = image.width, height = image.height
+        var bytes = [UInt8](repeating: 0, count: width * height)
+        guard let context = CGContext(data: &bytes, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width,
+                                      space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.alphaOnly.rawValue) else { return nil }
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        guard let provider = CGDataProvider(data: Data(bytes) as CFData) else { return nil }
+        return CGImage(width: width, height: height, bitsPerComponent: 8, bitsPerPixel: 8, bytesPerRow: width,
+                       space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue),
+                       provider: provider, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
+    }
+
+    /// Full-resolution PNG of `original` through `mask`, the same pixel size as the original so the crop stays a recipe.
+    static func exportPNG(original: Data, mask: CGImage, background: CutoutBackground = .transparent, feather: CGFloat = 0) throws -> Data {
         guard let source = CGImageSourceCreateWithData(original as CFData, nil),
               let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil) else { throw CutoutError.invalidImage }
-        guard let bounds = keptBounds(of: mask) else { throw CutoutError.emptyResult }
-        var result = composite(CIImage(cgImage: cgImage), mask: mask)
-        if let padding = fitPadding {
-            let width = CGFloat(cgImage.width), height = CGFloat(cgImage.height)
-            let padX = bounds.width * width * padding, padY = bounds.height * height * padding
-            let crop = CGRect(x: bounds.minX * width - padX, y: (1 - bounds.maxY) * height - padY,
-                              width: bounds.width * width + padX * 2, height: bounds.height * height + padY * 2)
-                .intersection(result.extent)
-            result = result.cropped(to: crop)
+        guard keptBounds(of: mask) != nil else { throw CutoutError.emptyResult }
+        var result = composite(CIImage(cgImage: cgImage), mask: mask, feather: feather)
+        if let color = background.color {
+            result = result.composited(over: CIImage(color: color).cropped(to: result.extent))
         }
         guard let output = context.createCGImage(result, from: result.extent, format: .RGBA8, colorSpace: colorSpace) else { throw CutoutError.encodingFailed }
         let bytes = NSMutableData()
@@ -136,5 +154,18 @@ enum CutoutRenderer {
         CGImageDestinationAddImage(destination, output, nil)
         guard CGImageDestinationFinalize(destination) else { throw CutoutError.encodingFailed }
         return bytes as Data
+    }
+}
+
+/// What sits behind the piece in the saved photo.
+enum CutoutBackground: String, CaseIterable {
+    case transparent = "Transparent", white = "White", softGray = "Soft gray"
+
+    var color: CIColor? {
+        switch self {
+        case .transparent: nil
+        case .white: CIColor(red: 1, green: 1, blue: 1)
+        case .softGray: CIColor(red: 0.94, green: 0.94, blue: 0.93)
+        }
     }
 }

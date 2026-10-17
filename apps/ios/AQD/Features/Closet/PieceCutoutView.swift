@@ -57,9 +57,12 @@ struct PieceCutoutView: View {
         applying = true
         Task {
             do {
-                let png = try await model.exportPNG()
-                let prepared = try await PhotoPreparer().prepare(data: png)
-                if capture.acceptBackground(prepared, input: model.source) { dismiss() }
+                let outcome = try await model.finish()
+                if capture.acceptBackground(outcome.prepared, input: model.source, crop: outcome.crop) {
+                    capture.photoHints = outcome.hints
+                    capture.cutoutState = .applied
+                    dismiss()
+                }
                 else { error = capture.errorText ?? "The photo changed. Cancel and open the cutout again." }
             } catch {
                 self.error = "The cutout couldn’t be prepared. Your photo is unchanged. Try again."
@@ -94,11 +97,23 @@ struct PieceCutoutView: View {
                 sliderRow("Brush", value: bound.brushRadius, range: 8...48)
             }
             sliderRow("Zoom", value: bound.zoom, range: 1...4)
+            sliderRow("Softness", value: bound.feather, range: 0...4, onChange: { model.refresh() })
+            ScrollView(.horizontal) {
+                HStack(spacing: AppSpacing.small) {
+                    Text("Background").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    ForEach(CutoutBackground.allCases, id: \.self) { option in
+                        AppChip(title: option.rawValue, isSelected: model.background == option) { model.background = option; model.refresh() }
+                    }
+                }
+            }.scrollIndicators(.hidden)
             HStack(spacing: AppSpacing.medium) {
                 iconButton("arrow.uturn.backward", label: "Undo", enabled: model.canUndo) { model.undo() }
                 iconButton("arrow.uturn.forward", label: "Redo", enabled: model.canRedo) { model.redo() }
                 Button("Reset") { model.reset() }.frame(minHeight: AppControlMetrics.minimumTarget)
                     .disabled(!model.edited && !model.isTrimmed)
+                if model.hasSavedCutout {
+                    Button("Use original") { capture.useOriginalPhoto(); dismiss() }.frame(minHeight: AppControlMetrics.minimumTarget)
+                }
                 Spacer()
                 Toggle("Fit to piece", isOn: bound.fitToPiece).labelsHidden()
                 Text("Fit to piece").font(AppTypography.supporting)
@@ -114,10 +129,10 @@ struct PieceCutoutView: View {
         }
     }
 
-    private func sliderRow(_ title: String, value: Binding<CGFloat>, range: ClosedRange<CGFloat>) -> some View {
+    private func sliderRow(_ title: String, value: Binding<CGFloat>, range: ClosedRange<CGFloat>, onChange: (() -> Void)? = nil) -> some View {
         HStack(spacing: AppSpacing.medium) {
-            Text(title).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).frame(width: 52, alignment: .leading)
-            Slider(value: value, in: range).accessibilityLabel(title)
+            Text(title).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).frame(width: 64, alignment: .leading)
+            Slider(value: value, in: range, onEditingChanged: { editing in if !editing { onChange?() } }).accessibilityLabel(title)
         }
     }
 

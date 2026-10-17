@@ -28,6 +28,9 @@ final class PieceCutoutModel {
     var offset = CGSize.zero
     var showOriginal = false
     var fitToPiece = true
+    var background = CutoutBackground.transparent
+    /// Edge softness in working-resolution pixels.
+    var feather: CGFloat = 0.8
     private(set) var trim = PieceCutoutModel.fullTrim
 
     private var mask: CutoutMask?
@@ -54,6 +57,13 @@ final class PieceCutoutModel {
         workImage = image
         self.mask = mask
         let data = source.data
+        // A saved cutout already holds the mask in its alpha channel: reopen it instead of detecting again.
+        if let existing = source.existingCutout, let cgImage = Self.decode(existing), let alpha = CutoutRenderer.alphaMask(of: cgImage) {
+            autoMask = alpha
+            mask.load(alpha)
+            finishDetection(.ready)
+            return
+        }
         task = Task { [weak self] in
             do {
                 let detected = try await PhotoBackgroundRemover.shared.detectMask(data: data)
@@ -143,19 +153,24 @@ final class PieceCutoutModel {
     private func render() {
         guard let work = workImage, let effective = effectiveMask() else { return }
         coverage = CutoutRenderer.coverage(of: effective)
-        let result = CutoutRenderer.composite(CIImage(cgImage: work), mask: effective)
+        var result = CutoutRenderer.composite(CIImage(cgImage: work), mask: effective, feather: feather)
+        if let color = background.color { result = result.composited(over: CIImage(color: color).cropped(to: result.extent)) }
         cutout = CutoutRenderer.context.createCGImage(result, from: result.extent)
     }
 
-    private struct Box: @unchecked Sendable { let mask: CGImage }
+    /// Re-render the preview after a background or softness change.
+    func refresh() { render() }
 
-    /// Transparent PNG at the original resolution, cropped to the piece when `fitToPiece` is on.
-    func exportPNG() async throws -> Data {
+    /// The full-size cutout as a new draft photo plus its non-destructive fit-to-piece crop.
+    func finish() async throws -> CutoutOutcome {
         guard let effective = effectiveMask() else { throw CutoutError.emptyResult }
-        let box = Box(mask: effective), data = source.data, padding: CGFloat? = fitToPiece ? 0.04 : nil
-        return try await Task.detached(priority: .userInitiated) {
-            try CutoutRenderer.exportPNG(original: data, mask: box.mask, fitPadding: padding)
-        }.value
+        return try await CutoutPipeline.render(original: source.data, mask: effective, background: background, feather: feather, fitToPiece: fitToPiece)
+    }
+
+    var hasSavedCutout: Bool { source.existingCutout != nil }
+
+    private static func decode(_ data: Data) -> CGImage? {
+        CGImageSourceCreateWithData(data as CFData, nil).flatMap { CGImageSourceCreateImageAtIndex($0, 0, nil) }
     }
 
     private static func workingImage(from data: Data) -> CGImage? {

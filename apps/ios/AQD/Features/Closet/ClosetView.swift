@@ -263,6 +263,7 @@ private struct PieceOptionsButton: UIViewRepresentable {
     let archive: () -> Void
     let delete: () -> Void
     let availability: () -> Void
+    let cutout: () -> Void
 
     final class TargetButton: UIButton {
         override var intrinsicContentSize: CGSize { CGSize(width: 48, height: 44) }
@@ -291,10 +292,12 @@ private struct PieceOptionsButton: UIViewRepresentable {
                                      attributes: archiveDisabled ? .disabled : []) { _ in archive() }
         let deleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"),
                                     attributes: .destructive) { _ in delete() }
+        let cutoutAction = UIAction(title: "Cut out photo", image: UIImage(systemName: "scissors"),
+                                    attributes: archiveDisabled ? .disabled : []) { _ in cutout() }
         let destructiveGroup = UIMenu(options: .displayInline, children: [deleteAction])
         let availabilityAction = UIAction(title: "Availability", image: UIImage(systemName: "checkmark.circle"),
                                           attributes: archiveDisabled ? .disabled : []) { _ in availability() }
-        button.menu = UIMenu(children: [editAction, availabilityAction, archiveAction, destructiveGroup])
+        button.menu = UIMenu(children: [editAction, cutoutAction, availabilityAction, archiveAction, destructiveGroup])
     }
 
     func sizeThatFits(_ proposal: ProposedViewSize, uiView: TargetButton, context: Context) -> CGSize? {
@@ -437,7 +440,7 @@ struct PieceDetailView: View {
             } else {
                 archiveOperationID = UUID(); reviewedArchive = piece; archiveDecision = true
             }
-        } delete: { deleteDecision = true } availability: { availabilityPresented = true }
+        } delete: { deleteDecision = true } availability: { availabilityPresented = true } cutout: { state.editPiece(piece, openCutout: true) }
         .frame(width: 48, height: 44)
     }
 
