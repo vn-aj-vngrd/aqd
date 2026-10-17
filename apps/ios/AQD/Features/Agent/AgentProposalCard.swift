@@ -5,6 +5,7 @@ import SwiftUI
 struct AgentProposalCard: View {
     let proposal: AgentActionProposal
     let locked: Bool
+    var pieces: [WardrobePiece] = []
     let review: () -> Void
     let dismiss: () -> Void
 
@@ -32,6 +33,7 @@ struct AgentProposalCard: View {
         VStack(alignment: .leading, spacing: AppSpacing.small) {
             Text(proposal.action.title).font(AppTypography.section).foregroundStyle(AppTheme.ink)
             Text(detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            thumbnails
             Text(proposal.status == .executing ? "Check save result" : "Not saved · Review before it changes anything")
                 .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             HStack(spacing: AppSpacing.small) {
@@ -48,6 +50,20 @@ struct AgentProposalCard: View {
         }.padding(AppSpacing.medium).frame(maxWidth: .infinity, alignment: .leading)
             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
             .accessibilityElement(children: .contain)
+    }
+
+    @ViewBuilder private var thumbnails: some View {
+        if case .outfit(let draft) = proposal.action {
+            let shown = draft.pieceIDs.compactMap { id in pieces.first { $0.id == id } }
+            if !shown.isEmpty {
+                HStack(spacing: AppSpacing.small) {
+                    ForEach(shown) { piece in
+                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(width: 56, height: 64)
+                            .clipShape(RoundedRectangle(cornerRadius: AppRadius.field)).accessibilityLabel(piece.displayName)
+                    }
+                }
+            }
+        }
     }
 
     private var receiptRow: some View {

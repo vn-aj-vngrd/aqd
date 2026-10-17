@@ -282,7 +282,7 @@ struct AgentConversationView: View {
             AgentMessageRow(message: message, slow: model.slow, canRegenerate: canRegenerate(message),
                             retry: { model.send(retrying: message.id) }, showDetails: { details = message })
             ForEach(model.conversation.proposals(for: message)) { proposal in
-                AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, review: { reviewingID = proposal.id }, dismiss: { model.cancelProposal(proposal.id) })
+                AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { reviewingID = proposal.id }, dismiss: { model.cancelProposal(proposal.id) })
             }
         }
     }
@@ -307,7 +307,7 @@ struct AgentConversationView: View {
     }
     private var unlinkedProposalRows: some View {
         ForEach(model.conversation.unlinkedProposals) { proposal in
-            AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, review: { reviewingID = proposal.id }, dismiss: { model.cancelProposal(proposal.id) })
+            AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { reviewingID = proposal.id }, dismiss: { model.cancelProposal(proposal.id) })
         }
     }
 }

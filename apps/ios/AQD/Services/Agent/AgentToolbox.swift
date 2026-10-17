@@ -9,10 +9,12 @@ struct AgentToolHandlers: Sendable {
     var wearStats: @MainActor @Sendable (_ window: AgentWearWindow, _ pieceIDs: [UUID]) throws -> String
     var weather: @MainActor @Sendable (_ day: String) throws -> String
     var prepare: @MainActor @Sendable (_ request: AgentMutationRequest, _ revision: Int?) throws -> String
+    var suggestOutfit: @MainActor @Sendable (_ occasion: String?, _ mood: String?, _ pinnedIDs: [UUID]) async throws -> String
 }
 
 enum AgentToolID: String, CaseIterable, Sendable {
     case findRecords, wearStats, weatherFor, editCloset, editOutfit, editTheme, editPlan, recordWear, editProfile
+    case suggestOutfit, proposeOutfit, proposeTheme, relabel
 
     var isProposal: Bool { ![.findRecords, .wearStats, .weatherFor].contains(self) }
     fileprivate var keywords: [String] {
@@ -26,6 +28,10 @@ enum AgentToolID: String, CaseIterable, Sendable {
         case .editPlan: ["plan", "trip", "week", "pack", "schedule", "routine"]
         case .recordWear: ["wore", "wearing", "log", "record"]
         case .editProfile: ["profile", "bio", "my name"]
+        case .suggestOutfit: ["suggest", "recommend", "should i wear", "what to wear", "idea", "occasion", "mood", "pair", "go with", "outfit"]
+        case .proposeOutfit: ["new outfit", "an outfit", "outfit from", "put together", "combine", "save this outfit", "create outfit", "make outfit"]
+        case .proposeTheme: ["theme", "collection", "group", "gather", "set of outfits"]
+        case .relabel: ["name", "label", "rename", "call", "title", "occasion", "mood", "unnamed"]
         }
     }
 }
@@ -34,7 +40,7 @@ enum AgentToolID: String, CaseIterable, Sendable {
 /// which keeps the tool definitions small enough for the on-device context window.
 enum AgentToolbox {
     static let maximumTools = 3
-    private static let writeVerbs = ["save", "create", "make", "add", "rename", "change", "edit", "update", "set", "mark", "plan", "record", "log", "put", "remove", "move"]
+    private static let writeVerbs = ["save", "create", "make", "add", "rename", "change", "edit", "update", "set", "mark", "plan", "record", "log", "put", "remove", "move", "suggest", "recommend", "should i wear", "label", "name", "group"]
 
     /// Most relevant first. A change request always carries `findRecords`, because edits need exact IDs and revisions.
     static func route(_ prompt: String, weatherAvailable: Bool) -> [AgentToolID] {

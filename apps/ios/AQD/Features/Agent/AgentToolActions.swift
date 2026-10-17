@@ -114,6 +114,10 @@ import AQDCore
             guard let plan = plans.first(where: { $0.id == id }) else { throw AgentToolRejection.unknownRecord(id) }
             current = plan.revision
         case .updateProfile: current = identity?.revision
+        case .relabel:
+            guard let id = request.targetID else { throw AgentToolRejection.missingTarget }
+            guard let found = outfits.first(where: { $0.id == id })?.revision ?? themes.first(where: { $0.id == id })?.revision else { throw AgentToolRejection.unknownRecord(id) }
+            current = found
         case .createOutfit, .createTheme, .createPlan, .recordWear: current = nil
         }
         if let current {
@@ -166,6 +170,36 @@ import AQDCore
         return "Fresh Apple Weather for \(selection.place.name), \(selection.day.key), fetched \(reading.fetchedAt): " + String(decoding: try JSONEncoder().encode(reading), as: UTF8.self)
     }
 
+    /// Builds an outfit for the owner's occasion or mood with the on-device model, or the rule-based combiner when it can't answer, then prepares it as a normal review.
+    func suggestToolOutfit(occasion: String?, mood: String?, pinnedIDs: [UUID], conversationID: UUID, attemptID: UUID) async throws -> String {
+        let preferences = try store.localSettings().agentPreferences ?? AgentPreferences()
+        guard preferences.allows(.pieces), preferences.allows(.outfits) else { throw AgentToolRejection.invalidArguments }
+        let pieces = try store.pieces()
+        let pins = Array(Set(pinnedIDs))
+        let readiness = OutfitReadiness(pieces: pieces, pinnedIDs: pins)
+        if let unavailable = readiness.unavailablePins.first { throw AgentToolRejection.unknownRecord(unavailable) }
+        var draft = OutfitDraft(ownerID: conversation.ownerID)
+        draft.pinnedPieceIDs = pins; draft.occasion = occasion; draft.mood = mood
+        var ids: [UUID]
+        do {
+            ids = try await OutfitSuggestions.generateForAgent(draft: draft, pieces: pieces)
+            var check = draft
+            try check.applyProposal(ids, pieces: pieces)
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            guard readiness.isReady else {
+                let missing = readiness.missingCategories.map(\.rawValue).joined(separator: ", ")
+                appendToolStep(AgentToolStep(tool: "suggestOutfit", summary: "Closet is missing \(missing)", count: 0), attemptID: attemptID)
+                return "No outfit prepared: the available closet has no \(missing). Tell the user to add that piece from Closet with the camera, then ask again."
+            }
+            ids = readiness.candidateIDs
+        }
+        let label = (occasion ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        return try prepareToolChange(AgentMutationRequest(kind: .createOutfit, name: label.isEmpty ? "A look from your closet" : String("\(label) look".prefix(80)),
+            pieceIDs: ids, occasion: occasion, mood: mood, pinnedIDs: pins.isEmpty ? nil : pins), conversationID: conversationID, attemptID: attemptID)
+    }
+
     /// Routes this turn's prompt to two or three tools whose handlers are bound to one attempt.
     func toolSelection(for prompt: String, conversationID: UUID, attemptID: UUID) -> AgentToolSelection? {
         guard conversation.context.automatic == true, conversation.context.scope == .closet else { return nil }
@@ -183,6 +217,9 @@ import AQDCore
             }, prepare: { [weak self] request, revision in
                 guard let self else { throw CancellationError() }
                 return try self.prepareToolChange(request, revision: revision, conversationID: conversationID, attemptID: attemptID)
+            }, suggestOutfit: { [weak self] occasion, mood, pinnedIDs in
+                guard let self else { throw CancellationError() }
+                return try await self.suggestToolOutfit(occasion: occasion, mood: mood, pinnedIDs: pinnedIDs, conversationID: conversationID, attemptID: attemptID)
             })
         return AgentToolSelection(ids: ids, handlers: handlers)
     }

@@ -61,6 +61,19 @@ enum OutfitSuggestions {
         #endif
         throw OutfitSuggestionError.invalidProposal
     }
+
+    /// The Agent proposes through the same on-device generator without the Outfits-screen qualification gate; every result is still a reviewable proposal.
+    static let agentQualification = OutfitSuggestionQualification(maximumCandidates: 40, responseTokens: 120, timeoutSeconds: 15)
+
+    static func generateForAgent(draft: OutfitDraft, pieces: [WardrobePiece]) async throws -> [UUID] {
+        guard modelAvailability() == .available else { throw OutfitSuggestionError.invalidProposal }
+        #if canImport(FoundationModels)
+        if #available(iOS 26, *) {
+            return try await generateOnDevice(draft: draft, pieces: pieces, qualification: agentQualification)
+        }
+        #endif
+        throw OutfitSuggestionError.invalidProposal
+    }
 }
 
 #if canImport(FoundationModels)
