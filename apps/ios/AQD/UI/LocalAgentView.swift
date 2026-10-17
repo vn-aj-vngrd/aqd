@@ -54,6 +54,8 @@ struct AgentConversationView: View {
     @State private var details: AgentMessage?
     @State private var copied: UUID?
     @State private var followsLatest = true
+    @State private var pinnedTurn: UUID?
+    @State private var chatScrollPhase = ScrollPhase.idle
     @State private var didFocus = false
     @FocusState private var focused: Bool
     init(model: AgentModel, close: @escaping () -> Void, automaticallyFocusComposer: Bool = true) {
@@ -80,59 +82,72 @@ struct AgentConversationView: View {
             } else if isNewConversation {
                 emptyChat
             } else {
+        GeometryReader { geometry in
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 24) {
-                    if let error = model.error {
-                        SemanticFeedback(role: .danger, message: error)
-                    }
+                LazyVStack(alignment: .leading, spacing: AppSpacing.section) {
+                    if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                     if model.hasPendingOperation || model.error != nil {
-                        Button("Retry operation") { model.retryPending() }.frame(minHeight: 44)
+                        Button("Retry operation") { model.retryPending() }.frame(minHeight: AppControlMetrics.minimumTarget)
                     }
-                    ForEach(Array(model.conversation.messages.enumerated()), id: \.element.id) { index, message in
-                        if AgentChatTimestamp.startsGroup(message.createdAt, after: index > 0 ? model.conversation.messages[index - 1].createdAt : nil) {
-                            TimelineView(.periodic(from: .now, by: 60)) { timeline in
-                                Text(AgentChatTimestamp.label(for: message.createdAt, relativeTo: timeline.date))
-                                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                                    .frame(maxWidth: .infinity).padding(.vertical, AppSpacing.xSmall)
-                            }
+                    messageRows(in: 0..<(latestUserIndex ?? 0))
+                    if let index = latestUserIndex { timestamp(before: index) }
+                    VStack(alignment: .leading, spacing: AppSpacing.section) {
+                        if let index = latestUserIndex {
+                            let message = model.conversation.messages[index]
+                            messageRow(message)
+                            messageRows(in: (index + 1)..<model.conversation.messages.count)
+                        } else { messageRows(in: 0..<model.conversation.messages.count) }
+                        proposalRows
+                        if !model.supportsGeneration {
+                            AgentAvailabilityContent(availability: model.availability, recheck: model.recheckAvailability,
+                                                     showsActions: false)
+                            if !model.conversation.draft.isEmpty { Text("Your retained draft").font(AppTypography.section); Text(model.conversation.draft).textSelection(.enabled) }
                         }
-                        messageRow(message).id(message.id)
+                        Color.clear.frame(height: 1).id("latest")
+                            .onGeometryChange(for: Bool.self) { marker in
+                                let frame = marker.frame(in: .named("agent-message-viewport"))
+                                return frame.maxY >= 0 && frame.minY <= geometry.size.height
+                            } action: { visible in followsLatest = visible }
                     }
-                    ForEach(model.conversation.proposals ?? []) { proposal in
-                        NavigationLink { AgentActionReviewView(model: model, id: proposal.id).secondaryPage() } label: {
-                            HStack(spacing: AppSpacing.medium) {
-                                Image(systemName: proposal.status == .succeeded ? "checkmark.circle" : "square.and.pencil")
-                                    .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
-                                VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                                    Text(proposal.action.title).foregroundStyle(AppTheme.ink)
-                                    Text(proposal.status == .succeeded ? "Saved locally" : proposal.status == .cancelled ? "Cancelled" : proposal.status == .executing ? "Check save result" : "Not saved · Tap to review")
-                                        .font(.footnote).foregroundStyle(AppTheme.secondary)
-                                }
-                                Spacer(minLength: AppSpacing.small)
-                                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
-                            }.frame(minHeight: AppControlMetrics.minimumTarget)
-                                .padding(AppSpacing.medium).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
-                        }
-                    }
-                    if !model.supportsGeneration {
-                        AgentAvailabilityContent(availability: model.availability, recheck: model.recheckAvailability,
-                                                 showsActions: false)
-                        if !model.conversation.draft.isEmpty { Text("Your retained draft").font(AppTypography.section); Text(model.conversation.draft).textSelection(.enabled) }
-                    }
-                    Color.clear.frame(height: 1).id("latest").onAppear { followsLatest = true }.onDisappear { followsLatest = false }
-                }.padding(20).disabled(voice)
-            }.defaultScrollAnchor(.bottom, for: .initialOffset)
+                    .frame(maxWidth: .infinity, minHeight: max(0, geometry.size.height - 2 * AppSpacing.screen), alignment: .top)
+                    .id(latestUserIndex.map { model.conversation.messages[$0].id } ?? model.conversation.id)
+                }.padding(AppSpacing.screen).disabled(voice)
+            }.coordinateSpace(name: "agent-message-viewport")
+                .defaultScrollAnchor(.bottom, for: .initialOffset)
+                .modifier(AgentChatScrollEdges())
                 .id(model.conversation.id)
-                .onAppear { followsLatest = true; proxy.scrollTo("latest", anchor: .bottom) }
-                .onChange(of: model.conversation.messages.last?.source) { _, _ in if followsLatest { proxy.scrollTo("latest", anchor: .bottom) } }
-                .overlay(alignment: .bottomTrailing) { if !followsLatest { Button { followsLatest = true; proxy.scrollTo("latest", anchor: .bottom) } label: {
+                .onAppear {
+                    followsLatest = true
+                    if model.active, let index = latestUserIndex {
+                        let id = model.conversation.messages[index].id
+                        pinnedTurn = id; proxy.scrollTo(id, anchor: .top)
+                    } else { pinnedTurn = nil; proxy.scrollTo("latest", anchor: .bottom) }
+                }
+                .onChange(of: model.conversation.messages.last?.attemptID) { _, _ in
+                    guard model.active, let index = latestUserIndex else { return }
+                    let id = model.conversation.messages[index].id
+                    pinnedTurn = id
+                    withAnimation(reduceMotion ? nil : AQDMotion.reflow) { proxy.scrollTo(id, anchor: .top) }
+                }
+                .onChange(of: model.conversation.messages.last?.source) { _, _ in
+                    if pinnedTurn == nil && followsLatest && chatScrollPhase == .idle { proxy.scrollTo("latest", anchor: .bottom) }
+                }
+                .onScrollPhaseChange { _, phase in
+                    chatScrollPhase = phase
+                    if phase == .interacting { pinnedTurn = nil }
+                }
+                .overlay(alignment: .bottomTrailing) { if !followsLatest { Button {
+                    pinnedTurn = nil; followsLatest = true; proxy.scrollTo("latest", anchor: .bottom)
+                } label: {
                     Image(systemName: "arrow.down").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
                         .background(AppTheme.surface, in: Circle())
                 }.accessibilityLabel("Jump to latest").padding(AppSpacing.large) } }
         }
+        }
             }
-        }.background(AppTheme.canvas).navigationTitle("Agent").navigationBarTitleDisplayMode(.inline)
+        }.background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
                 if model.supportsGeneration || voice {
                     VStack(spacing: AppSpacing.small) {
@@ -368,6 +383,43 @@ struct AgentConversationView: View {
             .contentShape(Rectangle())
     }
 
+    private var latestUserIndex: Int? { model.conversation.messages.lastIndex { $0.role == .user } }
+
+    @ViewBuilder private func timestamp(before index: Int) -> some View {
+        let message = model.conversation.messages[index]
+        if AgentChatTimestamp.startsGroup(message.createdAt, after: index > 0 ? model.conversation.messages[index - 1].createdAt : nil) {
+            TimelineView(.periodic(from: .now, by: 60)) { timeline in
+                Text(AgentChatTimestamp.label(for: message.createdAt, relativeTo: timeline.date))
+                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                    .frame(maxWidth: .infinity).padding(.vertical, AppSpacing.xSmall)
+            }
+        }
+    }
+    private func messageRows(in range: Range<Int>) -> some View {
+        ForEach(Array(model.conversation.messages.enumerated()).filter { range.contains($0.offset) }, id: \.element.id) { index, message in
+            timestamp(before: index)
+            messageRow(message).id(message.id)
+        }
+    }
+    private var proposalRows: some View {
+        ForEach(model.conversation.proposals ?? []) { proposal in
+            NavigationLink { AgentActionReviewView(model: model, id: proposal.id).secondaryPage() } label: {
+                HStack(spacing: AppSpacing.medium) {
+                    Image(systemName: proposal.status == .succeeded ? "checkmark.circle" : "square.and.pencil")
+                        .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                        Text(proposal.action.title).foregroundStyle(AppTheme.ink)
+                        Text(proposal.status == .succeeded ? "Saved locally" : proposal.status == .cancelled ? "Cancelled" : proposal.status == .executing ? "Check save result" : "Not saved · Tap to review")
+                            .font(.footnote).foregroundStyle(AppTheme.secondary)
+                    }
+                    Spacer(minLength: AppSpacing.small)
+                    Image(systemName: "chevron.right").font(.footnote).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                }.frame(minHeight: AppControlMetrics.minimumTarget)
+                    .padding(AppSpacing.medium).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            }
+        }
+    }
+
     private var canSend: Bool {
         model.canGenerate && (!model.conversation.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !(model.conversation.draftAttachments ?? []).isEmpty)
     }
@@ -559,5 +611,13 @@ struct AgentHistoryView: View {
                 Button("Cancel", role: .cancel) { selected = nil }
                 Button("Delete conversation", role: .destructive) { if let selected { model.delete(selected) }; selected = nil }
             } message: { Text("Deletes this conversation, its draft and responses on this iPhone. Saved pieces, outfits and plans stay.") }
+    }
+}
+
+/// Keep the chat canvas uninterrupted beneath its native toolbar controls.
+private struct AgentChatScrollEdges: ViewModifier {
+    @ViewBuilder func body(content: Content) -> some View {
+        if #available(iOS 26, *) { content.scrollEdgeEffectHidden(true, for: .top) }
+        else { content }
     }
 }
