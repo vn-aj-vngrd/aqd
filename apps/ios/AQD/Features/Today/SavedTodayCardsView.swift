@@ -39,7 +39,7 @@ struct SavedTodayCardsView: View {
                         } label: {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(label(card)).font(AppTypography.body).foregroundStyle(AppTheme.ink)
-                                Text(card.kind == .personalNote ? String(card.text.prefix(120)) : "Private photo · \(card.text)").lineLimit(3).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                                Text(card.kind == .personalNote ? String(card.text.prefix(120)) : "Private photo, \(card.text)").lineLimit(3).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                                 Text(usage?.active == true ? "In Home layout" : usage?.draft == true ? "Used in a retained draft" : usage?.undo == true ? "Retained by layout Undo" : "Saved, not on Today").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                             }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 8)
                         }.buttonStyle(.plain).disabled(pending || request != nil || model.locked)

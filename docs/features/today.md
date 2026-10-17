@@ -32,3 +32,11 @@ Personal cards are never uploaded, published or sent to Agent. Photo cards use t
 - Reopen after restart with the saved layout and personal content intact.
 - A failed save keeps the previous layout and the draft.
 - Each kind handles empty, loading, invalid and lost-source states without writing records.
+
+## Reading the stack
+
+- Each card has one title and no eyebrow. Metadata uses separate lines or commas, never a middle dot.
+- Today's look leads with one primary button chosen by `TodayPresentation.look`: Record wear for a current plan, Review plan when the outfit changed or is flagged, Choose outfit when the outfit is gone, Build outfit or Add piece with no plan. The outfit opens from its picture; Plan details is the only quiet link. Worn and skipped looks offer no button.
+- Upcoming plans show short relative days (Today, Tomorrow, then Mon, Oct 19) and skip today's entry while a Today's look card already shows it.
+- Closet in use names the month, not a date range, and keeps one short sentence when there is nothing to show.
+- Quick actions are compact capsules, each at least 44 pt tall.
