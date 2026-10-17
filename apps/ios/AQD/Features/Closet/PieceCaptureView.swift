@@ -22,7 +22,6 @@ struct PieceCaptureView: View {
     @State private var manageCategories = false
     @State private var showPhotoEditor = false
     @State private var showBackgroundRemoval = false
-    @State private var backgroundCropRequested = false
     @State private var discardDecision = false
     @State private var cameraDenied = false
     @State private var cameraRestricted = false
@@ -100,9 +99,7 @@ struct PieceCaptureView: View {
                 .ignoresSafeArea()
         }
         .sheet(isPresented: $showDetails) { PieceDetailsView(model: model) }
-        .sheet(isPresented: $showBackgroundRemoval, onDismiss: {
-            if backgroundCropRequested { backgroundCropRequested = false; showPhotoEditor = true }
-        }) { BackgroundRemovalView(capture: model) { backgroundCropRequested = true; showBackgroundRemoval = false } }
+        .sheet(isPresented: $showBackgroundRemoval) { PieceCutoutView(capture: model) }
         .editImportedPhoto(model, importing: model.isImporting, locked: model.isSaving, presented: $showPhotoEditor)
         .sheet(isPresented: $showPhotoEditor) { PhotoEditorView(model: model, isPresentedModally: true) }
         .onDisappear { model.cancelImport() }
@@ -186,7 +183,7 @@ struct PieceCaptureView: View {
                     Button("Edit photo", systemImage: "crop") { showPhotoEditor = true }
                 }
                 if model.draft.photoID != nil {
-                    Button("Remove background", systemImage: "person.crop.rectangle") { showBackgroundRemoval = true }
+                    Button("Cut out piece", systemImage: "scissors") { showBackgroundRemoval = true }
                     Divider()
                     Button("Remove photo", systemImage: "trash", role: .destructive) { model.removePhoto(); photoFocused = true }
                 }
@@ -208,6 +205,17 @@ struct PieceCaptureView: View {
                 }
                 .frame(maxWidth: .infinity).frame(height: image == nil ? 240 : 320)
                 .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                .overlay(alignment: .bottomLeading) {
+                    if image != nil {
+                        Button { nameEditing = false; showBackgroundRemoval = true } label: {
+                            Label("Cut out", systemImage: "scissors").font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.ink)
+                                .padding(.horizontal, AppSpacing.medium).frame(minHeight: AppControlMetrics.minimumTarget)
+                                .glassControlSurface(Capsule())
+                        }.buttonStyle(.plain).padding(AppSpacing.medium).disabled(model.isImporting || model.isSaving)
+                            .accessibilityLabel("Cut out piece").accessibilityHint("Removes the background and trims the sides")
+                            .accessibilityIdentifier("capture.cutout")
+                    }
+                }
                 .overlay(alignment: .bottomTrailing) {
                     if image != nil {
                         Image(systemName: "pencil").font(.body.weight(.medium)).foregroundStyle(AppTheme.ink)

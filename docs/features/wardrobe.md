@@ -23,7 +23,7 @@ Add piece follows the [modal pattern](../../DESIGN.md#add-and-edit-modal-pattern
 
 - Save needs photo, name and category. A plain hint names what is missing.
 - Cancel, denied or failed photo capture keeps entered fields. Denied camera offers Settings, Photos or Keep draft. A corrupt image shows an error without losing metadata. A replacement photo applies only after preparation succeeds.
-- Photo framing is full-source Fit in a portrait preview with optional crop, pan, zoom, 90° rotation and reset. The original is kept app-private and the Photos asset is never altered. Background removal is an explicit previewed action.
+- Photo framing is full-source Fit in a portrait preview with optional crop, pan, zoom, 90° rotation and reset. The original is kept app-private and the Photos asset is never altered. **Cut out piece** is a core capture tool, offered on the photo and in its menu. On-device subject detection (Apple Vision) proposes the cutout; the user refines it with Erase and Restore brushes, Trim sides, zoom, undo/redo and a compare-with-original toggle. Done saves a full-resolution transparent PNG, cropped to the piece when Fit to piece is on, and keeps the original for Reset. Nothing leaves the device. Apple Intelligence has no public background-removal API, so Vision is the engine; the editor works fully by hand when detection finds nothing. Listing-quality photos matter, so transparency is the default output.
 - Where a classifier is supported it proposes editable fields; user edits win and failure never blocks manual entry.
 - Save is atomic. The receipt shows the photo first with Build outfit, Add another piece and Open my closet. Failed saves keep the draft and prepared photo.
 
