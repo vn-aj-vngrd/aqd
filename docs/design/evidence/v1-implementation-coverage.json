@@ -2651,5 +2651,10 @@
     "codeCommit": "16931423fcc5ecf080dbae06ae4bc5a5d7580aef",
     "receipt": "docs/plan/evidence/issue-28-22/unit-receipt.json",
     "runtimeComplete": false
+  },
+  "settingsDensity": {
+    "codeCommit": "f89a2230ff160a4b5aa7692aad58672e1957630d",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false
   }
 }

@@ -590,3 +590,5 @@ Owner requested smaller Settings gaps. Existing row labels already reserve 44 po
 Settings density October17: root rows use4-point vertical insets around44-point minimum content,16-point section spacing and8-point top scroll margin. Source review confirms Settings-only scope, no data/routing changes, native value/disclosure alignment and Dynamic Type growth. Signed generic Debug passed `/tmp/aqd-settings-density-debug.log`; docs/whitespace checks pass. Native/device tests skipped by owner; no app launch, UI automation or rendered claim. Concurrent custom discard files excluded from clean snapshot and retained in workspace.
 
 Settings density build installed successfully (`/tmp/aqd-settings-density-install.json`). Owner opens the app for visual review.
+
+Settings density code checkpoint: `f89a2230ff160a4b5aa7692aad58672e1957630d`.

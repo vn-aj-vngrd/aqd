@@ -1570,5 +1570,17 @@
       "apps/ios/AQD/UI/LocalAgentView.swift": "3dc4909f55209690ad0cda7deb71114acb078da36fa8c3865d01f421d8783c82"
     },
     "concurrentDialog": "Preserved and excluded from clean snapshot build"
+  },
+  "settingsDensity": {
+    "codeCommit": "f89a2230ff160a4b5aa7692aad58672e1957630d",
+    "sourceSHA256": "27362eb71d316b116e1c156d72d087d7b90b33f4f4c8eca077ba58404a7731c0",
+    "signedGenericDebug": "/tmp/aqd-settings-density-debug.log",
+    "buildResult": "BUILD SUCCEEDED",
+    "install": "/tmp/aqd-settings-density-install.json",
+    "installResult": "Succeeded",
+    "nativeTests": "Skipped by owner",
+    "runtimeComplete": false,
+    "launch": "Not attempted",
+    "review": "Self-reviewed Settings-only geometry, native minimum targets, Dynamic Type and unchanged routes; no findings"
   }
 }
