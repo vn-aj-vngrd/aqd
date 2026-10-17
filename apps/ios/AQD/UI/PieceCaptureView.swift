@@ -14,11 +14,9 @@ struct PieceCaptureView: View {
 
     @Environment(\.openURL) private var openURL
     @Bindable var model: CaptureModel
-    @State private var sourceSheet = false
     @State private var pickerPresented = false
     @State private var cameraPresented = false
     @State private var selectedPhoto: PhotosPickerItem?
-    @State private var pendingSource: PhotoSource?
     @State private var cameraData: Data?
     @State private var showDetails = false
     @State private var manageCategories = false
@@ -31,8 +29,6 @@ struct PieceCaptureView: View {
     @State private var cameraUnavailable = false
     @AccessibilityFocusState private var photoFocused: Bool
     @FocusState private var nameEditing: Bool
-
-    private enum PhotoSource: Hashable { case photos, camera, edit, backgroundRemoval, remove }
 
     var body: some View {
         NavigationStack {
@@ -121,35 +117,11 @@ struct PieceCaptureView: View {
                                                          set: { model.update(\.name, value: $0) }),
                              prompt: "e.g. Cotton shirt", validation: nameValidation, accessibilityID: "capture.field.name",
                              editingFocus: $nameEditing).submitLabel(.done).onSubmit { nameEditing = false }
-                VStack(spacing: 0) {
-                    HStack(spacing: 12) {
-                        Menu {
-                            ForEach(model.categories) { category in
-                                Button { nameEditing = false; model.selectCategory(category) } label: {
-                                    if model.categorySelectionID == category.id {
-                                        Label(category.name, systemImage: "checkmark")
-                                    } else { Text(category.name) }
-                                }
-                            }
-                            Divider()
-                            AccessoryButton("Manage categories", systemImage: "slider.horizontal.3") {
-                                nameEditing = false
-                                manageCategories = true
-                            }
-                        } label: {
-                            MenuSelectionLabel(title: model.categoryName)
-                        }
-                        .menuIndicator(.hidden).buttonStyle(.plain).foregroundStyle(AppTheme.ink)
-                        .accessibilityLabel("Category")
-                        .accessibilityValue(model.categoryName)
-                        .accessibilityIdentifier("capture.category")
-                    }.padding(.horizontal, 14).frame(minHeight: 54)
-                    Divider().padding(.leading, 14)
-                    DisclosureRow(title: "More details", value: "Optional") {
-                        nameEditing = false
-                        showDetails = true
-                    }
-                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                categoryChips
+                DisclosureRow(title: "More details", value: "Optional") {
+                    nameEditing = false
+                    showDetails = true
+                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                 if let error = model.errorText {
                     // This legacy channel mixes failures/conflicts/unknown writes.
                     // Keep its exact recovery copy; do not infer a severity from prose.
@@ -158,8 +130,9 @@ struct PieceCaptureView: View {
                         Button("Retry keeping draft") { model.persistDraft() }.frame(minHeight: 44)
                     }
                 }
-                if model.draft.photoID == nil && (!model.draft.name.isEmpty || model.draft.category != nil) {
-                    SemanticFeedback(role: .danger, message: "Add a photo to save this piece.")
+                if let hint = saveHint {
+                    Text(hint).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        .accessibilityIdentifier("capture.saveHint")
                 }
             }
             .padding(.horizontal, AppSpacing.screen)
@@ -168,45 +141,88 @@ struct PieceCaptureView: View {
             .disabled(model.isSaving)
         }
         .scrollDismissesKeyboard(.interactively)
+    }
 
+    /// What still blocks Save, in plain words. Empty once the piece can be saved.
+    private var saveHint: String? {
+        guard model.saved == nil, !model.isSaving, !model.isImporting else { return nil }
+        var missing: [String] = []
+        if model.draft.photoID == nil { missing.append("a photo") }
+        if model.draft.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { missing.append("a name") }
+        if model.draft.category == nil { missing.append("a category") }
+        guard !missing.isEmpty else { return nil }
+        let list = missing.count == 1 ? missing[0] : missing.dropLast().joined(separator: ", ") + " and " + missing[missing.count - 1]
+        return "To save, add " + list + "."
+    }
+
+    private var categoryChips: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
+            Text("Category").font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
+            ScrollView(.horizontal) {
+                HStack(spacing: AppSpacing.small) {
+                    ForEach(model.categories) { category in
+                        AppChip(title: category.name, isSelected: model.categorySelectionID == category.id) {
+                            nameEditing = false
+                            model.selectCategory(category)
+                        }.accessibilityIdentifier("capture.category.\(category.id)")
+                    }
+                    Button { nameEditing = false; manageCategories = true } label: {
+                        Image(systemName: "slider.horizontal.3").foregroundStyle(AppTheme.ink)
+                            .frame(width: 32, height: 32).glassControlSurface(Circle())
+                            .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+                    }.buttonStyle(.plain).accessibilityLabel("Manage categories")
+                }
+            }.scrollIndicators(.hidden)
+        }
     }
 
     private var mediaContent: some View {
         let image = model.photoData().flatMap { UIImage(data: $0) }
-        return VStack(alignment: .leading, spacing: 12) {
-            Button { nameEditing = false; sourceSheet = true } label: {
-            Group {
-                if let image {
-                    Image(uiImage: image).resizable().scaledToFit()
-                        .frame(maxWidth: .infinity).frame(height: 280)
-                        .accessibilityLabel(model.draft.photoRecipe.crop == nil ? "Selected piece photo, entire image fitted" : "Selected piece photo, portrait crop")
-                } else {
-                    VStack(spacing: 12) {
-                        Image(systemName: "photo.on.rectangle.angled").font(.system(size: 40, weight: .light))
-                            .foregroundStyle(AppTheme.ink).accessibilityHidden(true)
-                        Text(model.draft.photoID == nil ? "Start with a piece photo" : "Photo unavailable")
-                            .font(AppTypography.detailTitle)
-                        Text(model.draft.photoID == nil ? "Choose a photo or take one now." : "Choose another photo. Your details are kept.")
-                            .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    }.frame(maxWidth: .infinity, minHeight: 180).padding(16)
+        return VStack(alignment: .leading, spacing: AppSpacing.small) {
+            Menu {
+                Button("Choose from Photos", systemImage: "photo.on.rectangle") { nameEditing = false; pickerPresented = true }
+                Button("Take photo", systemImage: "camera") { nameEditing = false; requestCamera() }
+                if image != nil {
+                    Divider()
+                    Button("Edit photo", systemImage: "crop") { showPhotoEditor = true }
                 }
-            }.frame(maxWidth: .infinity).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 12))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }.buttonStyle(.plain).disabled(model.isImporting || model.isSaving)
-                .accessibilityLabel(model.draft.photoID == nil ? "Add piece photo" : "Change piece photo")
-            DisclosureRow(title: model.draft.photoID == nil ? "Add photo" : image == nil ? "Replace unavailable photo" : "Change photo", value: "") {
-                nameEditing = false
-                sourceSheet = true
-            }.disabled(model.isImporting || model.isSaving)
-                .popover(isPresented: $sourceSheet, arrowEdge: .top) {
-                    PhotoSourcePopover(photos: { pendingSource = .photos; sourceSheet = false },
-                                       camera: { pendingSource = .camera; sourceSheet = false },
-                                       edit: image == nil ? nil : { pendingSource = .edit; sourceSheet = false },
-                                       removeBackground: model.draft.photoID == nil ? nil : { pendingSource = .backgroundRemoval; sourceSheet = false },
-                                       remove: model.draft.photoID == nil ? nil : { pendingSource = .remove; sourceSheet = false })
-                        .onDisappear(perform: presentPendingSource)
+                if model.draft.photoID != nil {
+                    Button("Remove background", systemImage: "person.crop.rectangle") { showBackgroundRemoval = true }
+                    Divider()
+                    Button("Remove photo", systemImage: "trash", role: .destructive) { model.removePhoto(); photoFocused = true }
                 }
-                .accessibilityIdentifier("capture.addPhoto").accessibilityFocused($photoFocused)
+            } label: {
+                ZStack {
+                    if let image {
+                        Image(uiImage: image).resizable().scaledToFit()
+                            .padding(AppSpacing.medium)
+                            .accessibilityLabel(model.draft.photoRecipe.crop == nil ? "Selected piece photo, entire image fitted" : "Selected piece photo, portrait crop")
+                    } else {
+                        VStack(spacing: AppSpacing.medium) {
+                            Image(systemName: "camera").font(.system(size: 34, weight: .light))
+                                .foregroundStyle(AppTheme.ink).accessibilityHidden(true)
+                            Text(model.draft.photoID == nil ? "Add a photo" : "Photo unavailable").font(AppTypography.detailTitle)
+                            Text(model.draft.photoID == nil ? "Take one now or choose from Photos." : "Choose another photo. Your details are kept.")
+                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
+                        }.padding(AppSpacing.large)
+                    }
+                }
+                .frame(maxWidth: .infinity).frame(height: image == nil ? 240 : 320)
+                .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                .overlay(alignment: .bottomTrailing) {
+                    if image != nil {
+                        Image(systemName: "pencil").font(.body.weight(.medium)).foregroundStyle(AppTheme.ink)
+                            .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+                            .glassControlSurface(Circle()).padding(AppSpacing.medium).accessibilityHidden(true)
+                    }
+                }
+                .overlay { if model.isImporting { ProgressView().controlSize(.large) } }
+                .contentShape(RoundedRectangle(cornerRadius: AppRadius.field))
+            }
+            .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
+            .disabled(model.isImporting || model.isSaving)
+            .accessibilityLabel(model.draft.photoID == nil ? "Add piece photo" : "Change piece photo")
+            .accessibilityIdentifier("capture.addPhoto").accessibilityFocused($photoFocused)
             if model.isImporting {
                 HStack(spacing: 12) {
                     OperationProgress(title: "Preparing photo…")
@@ -214,7 +230,7 @@ struct PieceCaptureView: View {
                     Button("Cancel") { model.cancelImport() }.frame(minHeight: 44)
                 }
             }
-        }.padding(12).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        }
     }
 
     private var nameValidation: String? {
@@ -227,8 +243,20 @@ struct PieceCaptureView: View {
 
     private func receipt(_ piece: WardrobePiece) -> some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                Text(piece.displayName).font(.title2.weight(.medium))
+            VStack(alignment: .leading, spacing: AppSpacing.large) {
+                Group {
+                    if let data = model.photoData(), let image = UIImage(data: data) {
+                        Image(uiImage: image).resizable().scaledToFit().padding(AppSpacing.medium)
+                    } else {
+                        Image(systemName: "tshirt").font(.system(size: 36, weight: .light)).foregroundStyle(AppTheme.secondary)
+                    }
+                }.frame(maxWidth: .infinity).frame(height: 320)
+                    .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                    .accessibilityLabel("Photo of \(piece.displayName)")
+                VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                    Text(piece.displayName).font(.title2.weight(.medium))
+                    Text(model.categoryName(for: piece)).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                }
                 SemanticFeedback(role: .success, message: "Saved privately on this device.")
                 if model.receiptIsHistorical {
                     Text("This receipt shows an earlier saved revision. Your closet opens the current piece.")
@@ -237,32 +265,18 @@ struct PieceCaptureView: View {
                 if let error = model.errorText {
                     Text(error).font(.subheadline).foregroundStyle(AppTheme.error)
                 }
-                if let data = model.photoData(), let image = UIImage(data: data) {
-                    Image(uiImage: image).resizable().scaledToFit()
-                        .frame(maxWidth: .infinity, maxHeight: 280)
-                }
-            }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(AppSpacing.screen)
         }
         .safeAreaInset(edge: .bottom) {
             ActionFooter {
                 ActionStack {
                     PrimaryAction(title: model.isFirstOutfit ? "Build my first outfit" : "Build outfit") { model.buildFirstOutfit() }
+                    SecondaryAction(title: "Add another piece") { model.addAnother() }
+                        .accessibilityIdentifier("capture.addAnother")
                     SecondaryAction(title: "Open my closet") { model.openCloset() }
                         .accessibilityIdentifier("capture.openCloset")
                 }
             }
-        }
-    }
-
-    private func presentPendingSource() {
-        defer { pendingSource = nil }
-        switch pendingSource {
-        case .photos: pickerPresented = true
-        case .camera: requestCamera()
-        case .edit: showPhotoEditor = true
-        case .backgroundRemoval: showBackgroundRemoval = true
-        case .remove: model.removePhoto()
-        case nil: photoFocused = true
         }
     }
 

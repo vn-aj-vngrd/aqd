@@ -682,6 +682,16 @@ final class CaptureModel: Identifiable {
         state.retryPhotoCleanup()
     }
 
+    func categoryName(for piece: WardrobePiece) -> String { state.categoryName(for: piece) }
+
+    /// Acknowledge this receipt, then start a fresh piece draft in the same flow.
+    func addAnother() {
+        guard saved != nil, acknowledgePresentation() else { return }
+        state.retryPhotoCleanup()
+        state.capture = nil
+        state.addPiece()
+    }
+
     func openCloset() {
         guard saved != nil, acknowledgePresentation() else { return }
         state.openClosetDestination()
