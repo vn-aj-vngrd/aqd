@@ -91,15 +91,3 @@ struct LocalRestoreView: View {
     }
     private func install(destination: Int) { if let store = model.installed { onInstall(store, model.coordinator, destination) } }
 }
-
-struct LocalDataCleanupView: View {
-    @Environment(AppState.self) private var state
-    var body: some View {
-        if let error = state.localDataCleanupError {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(error).font(.subheadline).foregroundStyle(AppTheme.warning)
-                Button("Retry local data cleanup") { state.retryLocalDataCleanup() }.frame(minHeight: 44)
-            }.padding(16).frame(maxWidth: .infinity, alignment: .leading).background(AppTheme.canvas)
-        }
-    }
-}

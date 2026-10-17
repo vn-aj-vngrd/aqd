@@ -209,7 +209,6 @@ private struct AppRootView: View {
         AnyView(VStack(spacing: 0) {
             content
             PhotoCleanupRecoveryView()
-            LocalDataCleanupView()
         }.environment(state))
     }
 }

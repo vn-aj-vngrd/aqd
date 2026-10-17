@@ -42,6 +42,13 @@ struct LocalSettingsView: View {
                 Text("Stored on this iPhone with no account or automatic cloud backup. Export a copy to protect against device loss or deleting AQD.")
             }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
                 .listRowBackground(AppTheme.surface)
+            if let recovery = state.localDataCleanupError {
+                Section {
+                    Button { state.openRestore() } label: { SettingsRow(title: "Review data operation", symbol: "arrow.counterclockwise", disclosure: true) }
+                    Button { state.retryLocalDataCleanup() } label: { SettingsRow(title: "Retry cleanup", symbol: "arrow.clockwise") }
+                } header: { Text("Data recovery") } footer: { Text(recovery) }
+                    .listRowBackground(AppTheme.surface)
+            }
             #if DEBUG
             Section {
                 Button { previewWelcome = true } label: { SettingsRow(title: "Preview welcome screen", symbol: "hand.wave", disclosure: true) }

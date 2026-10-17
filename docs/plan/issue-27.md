@@ -314,3 +314,9 @@ Reset review source self-review: complete deletion scope is explicit before proc
 Reset review signed generic Debug passed `/tmp/aqd-reset-review-ui-debug.log`; docs/whitespace pass. No app launch/device tests or rendered acceptance.
 
 Reset review UI checkpoint `63a239e2f1c1353d4910206bc02b7905696beecb` installed successfully without launching AQD or resetting data. Receipt `resetReviewUI` binds source/build/install evidence; rendered and keyboard/disclosure acceptance remain manual.
+
+Owner remove retained-data banner October17: remove the global LocalDataCleanupView appended below every root. Keep coordinator/pending review/cleanup state and normal recovery unchanged; Settings Restore already resumes/cancels retained reviews. Do not cancel any pending operation, delete recovery files or clear diagnostics simply to hide this notice. Settings alone retains compact review/retry actions when recovery needs attention; the raw notice is no longer appended to main destinations. Cosmetic build/install verification, no data operation/device tests/app launch.
+
+Recovery-banner source self-review: remove the root view call and unused banner component; conditionally expose existing review/retry actions in Settings. Pending coordinator state, diagnostics, source validation, automatic cleanup and safe recovery are unchanged. No pending reset/restore is executed, cancelled or deleted by this UI change. Original photo-cleanup notice remains separately owned. Cosmetic-only check; no mirrored unit test or device execution.
+
+Signed generic Debug passed `/tmp/aqd-remove-data-banner-debug.log`; docs and whitespace pass. No device tests or app launch.
