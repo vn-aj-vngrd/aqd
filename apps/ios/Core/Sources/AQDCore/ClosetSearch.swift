@@ -8,4 +8,5 @@ public enum ClosetSearchResults: Equatable, Sendable {
     public var count: Int {
         switch self { case .pieces(let values): values.count; case .outfits(let values): values.count; case .themes(let values): values.count }
     }
+    public var isEmpty: Bool { count == 0 } // swiftlint:disable:this empty_count -- defines isEmpty for this enum
 }

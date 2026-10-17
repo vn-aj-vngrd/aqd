@@ -80,5 +80,4 @@ struct StylePreferencesTests {
         #expect(summary.contains("Preferred patterns: Stripes"))
         #expect(summary.contains("Patterns to avoid: Checks"))
     }
-
 }

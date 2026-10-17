@@ -2078,7 +2078,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     private struct AvailabilityRequest: Encodable {
         let id: UUID
@@ -2129,7 +2128,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     func pieceDeletionImpact(id: UUID) throws -> PieceDeletionImpact {
         guard let piece = try piece(id: id) else { throw StoreError.staleRevision }
@@ -2174,7 +2172,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     func isThemeDeletionAcknowledged(_ request: ThemeDeletionRequest) throws -> Bool {
         guard request.expectedRevision > 0 else { throw StoreError.invalidRecord }
@@ -2202,7 +2199,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     func deletePlanEntry(_ request: PlanEntryDeletionRequest) throws {
         guard request.expectedRevision > 0 else { throw StoreError.invalidRecord }
@@ -2221,7 +2217,6 @@ extension PieceStore {
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()
     }
 }
-
 
 extension PieceStore {
     func planDefinitions() throws -> [PlanDefinition] {
@@ -2325,7 +2320,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     func packingState(planID: UUID) throws -> PackingState {
         guard try planDefinitions().contains(where: { $0.id == planID && $0.trip != nil }) else { throw StoreError.staleRevision }
@@ -2385,7 +2379,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     func applyHistoryMutation(_ request: HistoryMutation) throws {
         let context = ModelContext(container)
@@ -2424,7 +2417,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     private func resetWearLinks(_ wearID: UUID, in context: ModelContext) throws {
         for record in try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()) {
@@ -2435,7 +2427,6 @@ extension PieceStore {
         }
     }
 }
-
 
 extension PieceStore {
     private func personalPhotoOwners(in context: ModelContext) throws -> [(id: UUID, recipe: PhotoEditRecipe)] {
@@ -2524,7 +2515,6 @@ extension PieceStore {
         context.delete(record); try commit(context)
     }
 }
-
 
 extension PieceStore {
     func fitMemories() throws -> [FitMemory] {
@@ -2860,7 +2850,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     func agentConversations() throws -> [AgentConversation] {
         let owner = try todayConfiguration().ownerID
@@ -2910,7 +2899,6 @@ private struct AgentSaveAcknowledgment: Codable {
     let revision: Int
     let updatedAt: Date
 }
-
 
 extension PieceStore {
     func localSettings() throws -> LocalSettings {
