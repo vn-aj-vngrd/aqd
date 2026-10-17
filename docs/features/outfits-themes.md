@@ -36,3 +36,5 @@ Outfit detail shows the composition, the themes it belongs to (as links), Plan a
 - Assign an outfit to two themes, then rename or remove one without deleting the outfit.
 - Old single-theme prototype data migrates without losing outfits or membership.
 - Failed or retried saves keep edits and create no duplicates.
+
+Quick actions. An outfit card's menu offers Open, Edit, Add to Favorites, Duplicate, Plan outfit and Record wear. Duplicate opens Build outfit with the same pieces, themes and the name "<name> copy" as a new unsaved draft; it is refused with a message while another outfit draft is unfinished or when a piece is unavailable. Inside a theme, an outfit's menu adds Remove from theme, which changes only the membership and leaves no draft behind if it fails.

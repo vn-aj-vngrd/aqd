@@ -50,3 +50,7 @@ Piece detail shows the photo, a tappable availability status, a **Style this** a
 - Old prototype data migrates with IDs, images, notes and wear intact; newer or malformed data is never overwritten.
 
 Quick actions. A piece card's context menu offers Open, Edit, Style this and Move to laundry (Back from laundry when it is there); archived pieces have no laundry action. Moving a piece out of Available flags planned looks that use it for review. An outfit card's menu adds Add to Favorites. Cards show a status mark only for unavailable, laundry or archived pieces. Piece, card, detail and outfit rows word status from one rule (`PieceStatus`): Available, Unavailable, In the laundry, Archived. The piece detail order is hero, name and category, status, Style this, filled-in details, In outfits, wear.
+
+Select. Pieces has a Select mode in the summary row: tapping a card chooses it instead of opening it, and a bottom bar applies Laundry, Available or Archive to the chosen pieces (Archive asks first). Each piece is its own acknowledged write; if some are stale the rest still apply, the haptic is a warning and a message says how many were not changed. Leaving the scope or finishing a clean change ends Select.
+
+Photo capture. Take photo opens the system camera with a thirds grid, a centered piece frame and one spoken line ("Lay the piece flat and fill the frame"); the overlay never intercepts touches. Photo-source menus elsewhere (Profile, Today) are compact capsules, never full-width cards.
