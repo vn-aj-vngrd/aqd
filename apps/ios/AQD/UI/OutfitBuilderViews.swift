@@ -8,14 +8,18 @@ struct OutfitCanvas: View {
     var isLocked = false
     var remove: (UUID) -> Void
 
-    private var ordered: [UUID] {
-        let order = state.pieceCategories.map(\.id)
-        func rank(_ id: UUID) -> Int {
-            guard let piece = state.ownedPieces.first(where: { $0.id == id }),
-                  let category = state.category(for: piece)?.id, let index = order.firstIndex(of: category) else { return order.count }
-            return index
-        }
-        return pieceIDs.enumerated().sorted { (rank($0.element), $0.offset) < (rank($1.element), $1.offset) }.map(\.element)
+    private static let mainOrder: [PieceCategory] = [.layers, .tops, .dresses, .bottoms]
+
+    private func type(_ id: UUID) -> PieceCategory? { state.ownedPieces.first { $0.id == id }?.category }
+
+    /// Garments read large, in wearing order; shoes and accessories form a smaller strip.
+    private var split: (main: [UUID], small: [UUID]) {
+        func rank(_ id: UUID) -> Int { type(id).flatMap { Self.mainOrder.firstIndex(of: $0) } ?? Self.mainOrder.count }
+        let isSmall: (UUID) -> Bool = { id in type(id) == .shoes || type(id) == .accessories }
+        let main = pieceIDs.enumerated().filter { !isSmall($0.element) }
+            .sorted { (rank($0.element), $0.offset) < (rank($1.element), $1.offset) }.map(\.element)
+        let small = pieceIDs.filter(isSmall)
+        return small.count == pieceIDs.count ? (small, []) : (main, small)
     }
 
     var body: some View {
@@ -23,11 +27,19 @@ struct OutfitCanvas: View {
             if pieceIDs.isEmpty {
                 VStack(spacing: AppSpacing.small) {
                     Image(systemName: "tshirt").font(.system(size: 36, weight: .light)).accessibilityHidden(true)
-                    Text("Pick pieces below to build your look")
+                    Text("Tap a piece below to start your look")
                         .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }.foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                layout.padding(AppSpacing.medium)
+                let parts = split
+                VStack(spacing: AppSpacing.medium) {
+                    collage(parts.main)
+                    if !parts.small.isEmpty {
+                        HStack(spacing: 8) {
+                            ForEach(parts.small, id: \.self) { tile($0).frame(maxWidth: 96) }
+                        }.frame(height: 92).frame(maxWidth: .infinity)
+                    }
+                }.padding(AppSpacing.medium)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -35,9 +47,8 @@ struct OutfitCanvas: View {
         .animation(.smooth(duration: 0.28), value: pieceIDs)
     }
 
-    @ViewBuilder private var layout: some View {
+    @ViewBuilder private func collage(_ ids: [UUID]) -> some View {
         let gap: CGFloat = 8
-        let ids = ordered
         switch ids.count {
         case 1:
             tile(ids[0])
@@ -54,8 +65,9 @@ struct OutfitCanvas: View {
             VStack(spacing: gap) {
                 ForEach(rows.indices, id: \.self) { row in
                     HStack(spacing: gap) {
+                        if columns == 3, rows[row].count == 1 { Color.clear }
                         ForEach(rows[row], id: \.self) { tile($0) }
-                        if rows[row].count < columns { ForEach(0..<(columns - rows[row].count), id: \.self) { _ in Color.clear } }
+                        if columns == 3, rows[row].count == 1 { Color.clear }
                     }
                 }
             }
@@ -96,10 +108,13 @@ struct OutfitPickerSheet: View {
     private var locked: Bool { model.pending || model.unknown || model.generating }
     private var pieces: [WardrobePiece] {
         let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        return model.state.pieces.filter { piece in
+        let matches = model.state.pieces.filter { piece in
             (categoryID == nil || model.state.category(for: piece)?.id == categoryID)
                 && (needle.isEmpty || "\(piece.displayName) \(piece.details.color) \(piece.details.brand)".localizedCaseInsensitiveContains(needle))
         }
+        guard isPeek else { return matches }
+        let chosen = Set(model.draft.pieceIDs)
+        return matches.filter { !chosen.contains($0.id) } + matches.filter { chosen.contains($0.id) }
     }
 
     var body: some View {
@@ -134,7 +149,7 @@ struct OutfitPickerSheet: View {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: AppSpacing.medium) {
                     ForEach(pieces) { tile($0, width: 88, height: 112) }
-                }.padding(.vertical, 2)
+                }.padding(.vertical, 2).animation(.smooth(duration: 0.25), value: model.draft.pieceIDs)
             }.scrollIndicators(.hidden)
         } else {
             ScrollView {
@@ -171,7 +186,7 @@ struct OutfitPickerSheet: View {
                         }
                     }
                     .opacity(isSelected ? 0.75 : 1)
-                Text(piece.displayName).font(AppTypography.metadata).lineLimit(1).foregroundStyle(AppTheme.secondary)
+                Text(width == nil ? piece.displayName : model.state.categoryName(for: piece)).font(AppTypography.metadata).lineLimit(1).foregroundStyle(AppTheme.secondary)
             }.frame(width: width)
         }.buttonStyle(.plain).disabled(locked)
             .accessibilityLabel(piece.displayName)
