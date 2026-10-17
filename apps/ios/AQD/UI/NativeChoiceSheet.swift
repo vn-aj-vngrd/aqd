@@ -53,38 +53,3 @@ struct NativeChoiceRow: View {
         }
     }
 }
-
-/// A short source choice anchored to its row, including on compact iPhones.
-struct PhotoSourcePopover: View {
-    let photos: () -> Void
-    let camera: () -> Void
-    var edit: (() -> Void)? = nil
-    var removeBackground: (() -> Void)? = nil
-    var remove: (() -> Void)? = nil
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            choice("Choose from Photos", symbol: "photo.on.rectangle", action: photos)
-            Divider()
-            choice("Take photo", symbol: "camera", action: camera)
-            if let edit { Divider(); choice("Edit photo", symbol: "crop", action: edit) }
-            if let removeBackground { Divider(); choice("Remove background", symbol: "person.crop.rectangle", action: removeBackground) }
-            if let remove { Divider(); choice("Remove photo", symbol: "trash", role: .destructive, action: remove) }
-        }.padding(AppSpacing.large).frame(width: 280)
-            .presentationCompactAdaptation(.popover)
-            .accessibilityHint("Selected photos are copied into AQD on this device. Originals stay in Photos.")
-    }
-
-    private func choice(_ title: String, symbol: String, role: ButtonRole? = nil, action: @escaping () -> Void) -> some View {
-        Button(role: role, action: action) {
-            HStack(spacing: AppSpacing.medium) {
-                Image(systemName: symbol)
-                    .foregroundStyle(role == .destructive ? AppTheme.error : AppTheme.controlIcon)
-                    .frame(width: AppControlMetrics.disclosureLane).accessibilityHidden(true)
-                Text(title).foregroundStyle(role == .destructive ? AppTheme.error : AppTheme.ink)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }.font(AppTypography.body)
-                .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading)
-                .contentShape(Rectangle())
-        }.buttonStyle(.plain)
-    }
-}

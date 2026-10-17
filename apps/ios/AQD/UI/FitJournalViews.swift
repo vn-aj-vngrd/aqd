@@ -158,8 +158,6 @@ struct FitEditorView: View {
     @Bindable var model: FitEditorModel
     @State private var discard = false
     @State private var removePhoto = false
-    @State private var choosingOutfit = false
-    @State private var photoSources = false
     @State private var timezone = false
     @State private var editingPhoto = false
     var body: some View {
@@ -182,7 +180,7 @@ struct FitEditorView: View {
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle(model.draft.base == nil ? "Add fit" : "Edit fit").navigationBarTitleDisplayMode(.inline)
+            }.background(AppTheme.canvas).onAppear { model.state.reloadOutfits(); model.state.reloadPieces() }.navigationTitle(model.draft.base == nil ? "Add fit" : "Edit fit").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 if model.saved == nil { confirmation }
             } }.tint(AppTheme.ink)
@@ -195,7 +193,6 @@ struct FitEditorView: View {
                 } }
                 .editImportedPhoto(model, importing: model.importing, locked: model.locked, presented: $editingPhoto)
                 .navigationDestination(isPresented: $editingPhoto) { PhotoEditorView(model: model).secondaryPage() }
-                .navigationDestination(isPresented: $choosingOutfit) { FitOutfitChooser(model: model) }
                 .navigationDestination(isPresented: $timezone) {
                     TimezoneChooser(current: model.draft.value.day.timeZoneID) { zone in model.update { $0.day.timeZoneID = zone }; return model.error == nil }
                 }
@@ -208,38 +205,53 @@ struct FitEditorView: View {
             }
     }
     private var mediaContent: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Button { photoSources = true } label: {
-            Group {
-                if model.draft.value.photoID != nil || model.draft.value.outfit != nil {
-                    FitMemoryArtwork(memory: model.draft.value).frame(minHeight: 160, maxHeight: 280)
-                } else {
-                    VStack(spacing: 12) {
-                        Image(systemName: "photo.on.rectangle.angled").font(.system(size: 40, weight: .light))
-                            .foregroundStyle(AppTheme.ink).accessibilityHidden(true)
-                        Text("Start with a photo or outfit").font(AppTypography.detailTitle)
-                        Text("Keep a look you want to remember.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    }.frame(maxWidth: .infinity, minHeight: 180).padding(16)
-                }
-            }.frame(maxWidth: .infinity).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 12))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }.buttonStyle(.plain).disabled(model.locked)
-                .accessibilityLabel(model.draft.value.photoID == nil ? "Add fit photo" : "Change fit photo")
-            SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add photo" : "Change photo", selectionToken: model.importID, locked: model.locked, presentation: $photoSources,
+        let hasMedia = model.draft.value.photoID != nil || model.draft.value.outfit != nil
+        return VStack(alignment: .leading, spacing: AppSpacing.medium) {
+            SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add fit photo" : "Change fit photo",
+                selectionToken: model.importID, locked: model.locked,
                 onEdit: model.draft.value.photoID == nil ? nil : { editingPhoto = true },
-                onRemove: model.draft.value.photoID == nil ? nil : { removePhoto = true }, onData: model.importPhoto)
+                onRemove: model.draft.value.photoID == nil ? nil : { removePhoto = true }, onData: model.importPhoto) {
+                Group {
+                    if hasMedia {
+                        FitMemoryArtwork(memory: model.draft.value).padding(AppSpacing.small)
+                    } else {
+                        VStack(spacing: AppSpacing.medium) {
+                            Image(systemName: "camera").font(.system(size: 34, weight: .light))
+                                .foregroundStyle(AppTheme.ink).accessibilityHidden(true)
+                            Text("Add a photo").font(AppTypography.detailTitle)
+                            Text("Or link an outfit below to keep a look you want to remember.")
+                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
+                        }.padding(AppSpacing.large)
+                    }
+                }
+                .frame(maxWidth: .infinity).frame(minHeight: hasMedia ? 280 : 220, maxHeight: hasMedia ? 340 : 220)
+                .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                .clipShape(RoundedRectangle(cornerRadius: AppRadius.field))
+                .overlay(alignment: .bottomTrailing) {
+                    if model.draft.value.photoID != nil {
+                        Image(systemName: "pencil").font(.body.weight(.medium)).foregroundStyle(AppTheme.ink)
+                            .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+                            .glassControlSurface(Circle()).padding(AppSpacing.medium).accessibilityHidden(true)
+                    }
+                }
+                .overlay { if model.importing { ProgressView().controlSize(.large) } }
+            }
             if model.importing {
                 HStack {
-                    ProgressView("Preparing photo")
+                    OperationProgress(title: "Preparing photo…")
                     Spacer()
                     Button("Cancel import") { model.cancelImport() }.frame(minHeight: 44)
                 }
             }
-            DisclosureRow(title: "Outfit", value: model.draft.value.outfit?.displayName ?? "Link an outfit") { choosingOutfit = true }.disabled(model.locked)
-            if model.draft.value.outfit != nil {
-                Button("Unlink outfit") { _ = model.link(nil) }.frame(minHeight: 44).disabled(model.locked)
+            HStack {
+                Text("Outfit").font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
+                Spacer()
+                AppChip(title: "No outfit", isSelected: model.draft.value.outfit == nil) { _ = model.link(nil) }.disabled(model.locked)
+            }.padding(.bottom, -AppSpacing.small)
+            OutfitSelectionStrip(outfits: model.state.outfits, selectedID: model.draft.value.outfit?.id, locked: model.locked) { outfit in
+                _ = model.link(outfit)
             }
-        }.padding(12).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        }
     }
     private var dateDetails: some View {
         VStack(spacing: 0) {
@@ -254,26 +266,6 @@ struct FitEditorView: View {
         }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).disabled(model.locked)
     }
 
-}
-
-private struct FitOutfitChooser: View {
-    @Bindable var model: FitEditorModel
-    @Environment(\.dismiss) private var dismiss
-    @State private var query = ""
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("You can save this memory with a photo instead, or build an outfit in Closet.")) }
-                ForEach(model.state.outfits.filter { query.isEmpty || $0.displayName.localizedCaseInsensitiveContains(query) }) { outfit in
-                    Button { if model.link(outfit) { dismiss() } } label: {
-                        VStack(alignment: .leading, spacing: 8) { OutfitComposition(pieceIDs: outfit.pieceIDs); Text(outfit.displayName).foregroundStyle(AppTheme.ink) }
-                    }.buttonStyle(.plain).disabled(model.locked)
-                }
-                if let error = model.error { SemanticFeedback(role: .danger, message: error) }
-            }.padding(20)
-        }.background(AppTheme.canvas).navigationTitle("Link outfit").navigationBarTitleDisplayMode(.inline).searchable(text: $query, prompt: "Search outfits")
-            .onAppear { model.state.reloadOutfits(); model.state.reloadPieces() }
-    }
 }
 
 struct FitMemoryDetailView: View {

@@ -125,3 +125,17 @@ Owner tour/navigation refinement October17: Back actions use plain content text 
 Owner color simplification October17 (supersedes every earlier gold action-text, soft-selection and prominent-glass instruction above and in feature/design contracts): charcoal/light primary-fill and ink are the only control, selection and tint colors, including the app-wide root tint, toggles, pickers and links. Save, Done and equivalent commits use the native prominent capsule filled with primary-fill and labelled on-primary. Gold remains only as the brand accent for the logo Q and welcome artwork; the action-text, soft-selection and prominent-glass tokens are removed. Contrast pairs listing gold above are historical.
 
 Glass control rule October17: compact tappable white controls (selection chips, Profile Edit profile / Wear insights, Add to theme, round icon buttons) use the one shared `glassControlSurface` recipe in `AQD/UI/AppChip.swift`: native interactive regular glass on iOS 26+, and a flat surface with a divider hairline under Reduce Transparency, Increase Contrast or older systems. No hand-drawn shadows. Selection chips are the shared `AppChip`; new chips or compact buttons reuse these instead of hand-built backgrounds. Full-width rows, cards and fields stay flat with no shadow.
+
+## Add and edit modal pattern · October17
+
+Every Add/Create/Plan/Record editor (Add piece, Build outfit, Create theme, Add fit, Plan a look, Plan authoring, Record wear) follows one structure. Owner direction October17; supersedes pushed choosers and popovers in feature and design contracts.
+
+1. **Hero first.** The top of the sheet is a live preview of the thing being made: photo card, outfit canvas, theme cover or chosen-outfit preview. It updates as choices change, uses the image-ground surface with 16 corners and an empty state that says what to do next.
+2. **Choose inline, not by pushing.** Selecting owned content happens on the same screen: `AppChip` rows for categories and filters, `OutfitSelectionStrip` / `PieceSelectionStrip` for outfits and pieces, a resizable detent sheet when the set is large (Build outfit). Do not push a chooser screen or nest a sheet in a push for a simple choice. Selected tiles use `selectionIndicator` (neutral ring and checkmark).
+3. **One native menu for photo sources.** `SharedPhotoSourceButton` is a native Menu (Photos, Camera, Edit, Remove); a hero image can be its label. No popovers.
+4. **Compact fields.** Name first, optional details last (More details row or sheet). Section captions use the field-label style; no Required/Optional qualifiers.
+5. **Confirm in the toolbar.** Close (x) leading, Save trailing as the prominent charcoal capsule. Explain why Save is unavailable with one line of plain secondary text, not red feedback. Dirty cancel uses the shared discard confirmation.
+6. **Controls.** Compact tappable white controls use `glassControlSurface` (native glass on iOS 26+, flat hairline fallback). Charcoal is the only selection and tint color. Rows, cards and fields stay flat; no hand-drawn shadows.
+7. **Result first.** After saving, show the result (photo, composition or cover) with the next actions (Add another, Build outfit, Open); transient saves return straight to the new record.
+
+New editors reuse these components; a hand-built chip, chooser or photo menu is a defect.

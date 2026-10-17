@@ -10,7 +10,6 @@ struct OutfitPlanEditorView: View {
 
     @Bindable var model: OutfitPlanEditorModel
     @State private var discard = false
-    @State private var choosing = false
     @State private var choosingZone = false
     @State private var weather = false
 
@@ -26,6 +25,23 @@ struct OutfitPlanEditorView: View {
         return calendar.startOfDay(for: first)...upper.addingTimeInterval(-1)
     }
 
+    private var planHero: some View {
+        Group {
+            if let outfit = model.draft.outfit {
+                CollectionArtwork(pieceIDs: outfit.pieceIDs, height: 200).padding(AppSpacing.medium)
+                    .accessibilityLabel(outfit.displayName)
+            } else {
+                VStack(spacing: AppSpacing.small) {
+                    Image(systemName: "calendar").font(.system(size: 32, weight: .light)).accessibilityHidden(true)
+                    Text(model.draft.unassignedByChoice == true ? "Date kept unassigned" : "Choose an outfit below")
+                        .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                }.foregroundStyle(AppTheme.ink)
+            }
+        }.frame(maxWidth: .infinity).frame(height: 224)
+            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .animation(.smooth(duration: 0.25), value: model.draft.outfit?.id)
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -37,6 +53,17 @@ struct OutfitPlanEditorView: View {
                         Text("Planning never records wear.").foregroundStyle(AppTheme.secondary)
                         PrimaryAction(title: "Open Planner") { model.finish(openPlanner: true) }
                     } else {
+                        planHero
+                        HStack {
+                            Text("Outfit").font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
+                            Spacer()
+                            AppChip(title: "Unassigned", isSelected: model.draft.outfit == nil && model.draft.unassignedByChoice == true) {
+                                model.update { $0.outfit = nil; $0.unassignedByChoice = true; $0.allowsOverlap = nil }
+                            }.disabled(model.pending || model.unknown)
+                        }.padding(.bottom, -AppSpacing.small)
+                        OutfitSelectionStrip(outfits: model.state.outfits, selectedID: model.draft.outfit?.id, locked: model.pending || model.unknown) { outfit in
+                            model.update { $0.outfit = outfit; $0.unassignedByChoice = nil; $0.allowsOverlap = nil }
+                        }
                         ThemedDatePicker("Date", selection: Binding(get: { (try? model.draft.day.date()) ?? Date() }, set: { date in
                                 let zone = TimeZone(identifier: model.draft.day.timeZoneID) ?? .current
                                 model.update { $0.day = LocalPlanDay(date: date, timeZone: zone); $0.allowsOverlap = nil }
@@ -53,11 +80,6 @@ struct OutfitPlanEditorView: View {
                         LabeledField(title: "Occasion", text: Binding(get: { model.draft.occasion }, set: { value in
                             model.update { $0.occasion = value; $0.allowsOverlap = nil }
                         })).disabled(model.pending || model.unknown)
-                        DisclosureRow(title: "Outfit", value: model.draft.outfit?.displayName ?? "Choose outfit") { choosing = true }
-                            .disabled(model.pending || model.unknown)
-                        PlanUnassignedAction(isSelected: model.draft.outfit == nil && model.draft.unassignedByChoice == true) {
-                            model.update { $0.outfit = nil; $0.unassignedByChoice = true; $0.allowsOverlap = nil }
-                        }.disabled(model.pending || model.unknown)
                         DisclosureRow(title: "Timezone", value: model.draft.day.timeZoneID) { choosingZone = true }
                             .disabled(model.pending || model.unknown || namedPlan != nil)
                         if let context = model.draft.weather {
@@ -74,7 +96,7 @@ struct OutfitPlanEditorView: View {
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(20)
-            }.background(AppTheme.canvas)
+            }.background(AppTheme.canvas).onAppear { model.state.reloadOutfits(); model.state.reloadPieces() }
                 .navigationTitle(model.saved == nil ? model.draft.baseEntry == nil ? "Plan a look" : "Edit plan entry" : "Plan saved").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 if model.saved == nil { confirmation }
@@ -96,7 +118,6 @@ struct OutfitPlanEditorView: View {
                     WeatherContextView(client: client, initial: model.draft.weather, day: model.draft.day) { selection in model.update { $0.weather = selection }; return model.draft.weather == selection && model.error == nil }
                 }
             }
-            .navigationDestination(isPresented: $choosing) { PlanOutfitChooser(model: model) }
                 .navigationDestination(isPresented: $choosingZone) {
                     TimezoneChooser(current: model.draft.day.timeZoneID) { zone in
                         model.update { $0.day.timeZoneID = zone; $0.allowsOverlap = nil }
@@ -108,45 +129,6 @@ struct OutfitPlanEditorView: View {
                     model.finish(discarding: true)
                     if model.state.planEditor == nil { discard = false }
                 }
-    }
-}
-
-private struct PlanOutfitChooser: View {
-    @Bindable var model: OutfitPlanEditorModel
-    @State private var query = ""
-    @Environment(\.dismiss) private var dismiss
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                PlanUnassignedAction(isSelected: model.draft.outfit == nil && model.draft.unassignedByChoice == true) {
-                    model.update { $0.outfit = nil; $0.unassignedByChoice = true; $0.allowsOverlap = nil }
-                    if model.error == nil { dismiss() }
-                }.disabled(model.pending || model.unknown)
-                if let error = model.state.outfitError {
-                    SemanticFeedback(role: .danger, message: error)
-                    Button("Retry outfits") { model.state.reloadOutfits() }
-                } else if model.state.outfits.isEmpty {
-                    AppEmptyState("No saved outfits", systemImage: "square.stack",
-                                           description: Text("Keep this date unassigned, or save an outfit in Closet first."))
-                }
-                ForEach(model.state.outfits.filter { query.isEmpty || $0.displayName.localizedCaseInsensitiveContains(query) }) { outfit in
-                    Button {
-                        model.update { $0.outfit = outfit; $0.unassignedByChoice = nil; $0.allowsOverlap = nil }
-                        if model.error == nil { dismiss() }
-                    } label: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            OutfitComposition(pieceIDs: outfit.pieceIDs)
-                            Text(outfit.displayName).foregroundStyle(AppTheme.ink)
-                        }
-                    }.buttonStyle(.plain)
-                }
-                if let error = model.error { SemanticFeedback(role: .danger, message: error) }
-            }.padding(20)
-        }.background(AppTheme.canvas)
-            .navigationTitle("Choose one outfit").navigationBarTitleDisplayMode(.inline)
-            .tint(AppTheme.ink)
-            .searchable(text: $query, prompt: "Search outfits")
-            .onAppear { model.state.reloadOutfits(); model.state.reloadPieces() }
     }
 }
 

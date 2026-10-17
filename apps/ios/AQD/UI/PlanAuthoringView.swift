@@ -9,7 +9,6 @@ struct PlanAuthoringView: View {
 
     @Bindable var model: PlanAuthoringModel
     @State private var discard = false
-    @State private var choosingSlot: UUID?
     @State private var choosingZone = false
     @State private var resolvingConflict: UUID?
     @State private var choosingPreferred = false
@@ -66,9 +65,6 @@ struct PlanAuthoringView: View {
                     if let entry = model.conflicts.first(where: { $0.id == resolvingConflict }) { PlanConflictView(model: model, existing: entry) }
                     else { AppEmptyState("Conflict changed", systemImage: "calendar", description: Text("Return to the plan review and inspect its current dates."), fillsAvailableSpace: false) }
                 }
-                .navigationDestination(isPresented: Binding(get: { choosingSlot != nil }, set: { if !$0 { choosingSlot = nil } })) {
-                    if let id = choosingSlot { PlanSlotOutfitChooser(model: model, slotID: id) }
-                }
         }.onAppear { model.state.reloadPieces(); model.state.reloadOutfits() }.interactiveDismissDisabled()
             .draftDiscardConfirmation(isPresented: $discard, title: "Discard plan draft?", message: "No dates are saved by discarding. Existing plans and history stay unchanged.") {
                     model.finish(discarding: true)
@@ -101,6 +97,13 @@ struct PlanAuthoringView: View {
             }), displayedComponents: .date).environment(\.timeZone, TimeZone(identifier: model.draft.plan.start.timeZoneID) ?? .current)
             .padding(.horizontal, 14).frame(minHeight: 54)
     }
+    private func chooseSlot(_ id: UUID, _ outfit: Outfit?) {
+        model.update { draft in
+            if let i = draft.slots.firstIndex(where: { $0.id == id }) {
+                draft.slots[i].outfit = outfit; draft.slots[i].unassignedByChoice = outfit == nil
+            }
+        }
+    }
     private func needsCompositionReview(_ slot: PlanSlotDraft) -> Bool {
         guard let base = model.draft.baseEntries?.first(where: { $0.id == slot.id }),
               let outfit = slot.outfit, base.outfitID == outfit.id else { return false }
@@ -132,7 +135,12 @@ struct PlanAuthoringView: View {
                         SemanticFeedback(role: .warning, message: "This outfit changed. Review its current pieces below; Save confirms the updated composition.")
                         OutfitComposition(pieceIDs: outfit.pieceIDs)
                     }
-                    DisclosureRow(title: slot.day.displayDate, value: slot.outfit?.displayName ?? (slot.unassignedByChoice ? "Intentional gap" : "Choose outfit")) { choosingSlot = slot.id }
+                    HStack {
+                        Text(slot.day.displayDate).font(AppTypography.fieldLabel)
+                        Spacer()
+                        AppChip(title: "Gap", isSelected: slot.outfit == nil && slot.unassignedByChoice) { chooseSlot(slot.id, nil) }
+                    }.padding(.bottom, -AppSpacing.small)
+                    OutfitSelectionStrip(outfits: model.state.outfits, selectedID: slot.outfit?.id, locked: locked) { chooseSlot(slot.id, $0) }
                     LabeledField(title: "Occasion", text: Binding(get: { model.draft.slots.first { $0.id == slot.id }?.occasion ?? "" }, set: { value in
                         model.update { draft in if let i = draft.slots.firstIndex(where: { $0.id == slot.id }) { draft.slots[i].occasion = value } }
                     }))
@@ -184,41 +192,6 @@ private struct PlanConflictView: View {
     }
     private func selected(_ choice: PlanConflictChoice) -> Bool {
         model.draft.resolutions.contains { $0.existing == existing && $0.choice == choice }
-    }
-}
-
-private struct PlanSlotOutfitChooser: View {
-    @Bindable var model: PlanAuthoringModel
-    let slotID: UUID
-    @Environment(\.dismiss) private var dismiss
-    @State private var query = ""
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                PlanUnassignedAction(isSelected: model.draft.slots.contains { $0.id == slotID && $0.outfit == nil && $0.unassignedByChoice }) { choose(nil) }
-                    .disabled(model.pending || model.unknown)
-                if model.state.outfits.isEmpty { AppEmptyState("No saved outfits", systemImage: "square.stack", description: Text("Keep this date unassigned. You can build outfits in Closet.")) }
-                ForEach(model.state.outfits.filter { query.isEmpty || $0.displayName.localizedCaseInsensitiveContains(query) }) { outfit in
-                    Button { choose(outfit) } label: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            OutfitComposition(pieceIDs: outfit.pieceIDs)
-                            Text(outfit.displayName).foregroundStyle(AppTheme.ink)
-                        }
-                    }.buttonStyle(.plain)
-                }
-                if let error = model.error { SemanticFeedback(role: .danger, message: error) }
-            }.padding(20)
-        }.background(AppTheme.canvas).navigationTitle("Choose outfit").navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $query, prompt: "Search outfits").tint(AppTheme.ink)
-            .onAppear { model.state.reloadOutfits() }
-    }
-    private func choose(_ outfit: Outfit?) {
-        model.update { draft in
-            if let i = draft.slots.firstIndex(where: { $0.id == slotID }) {
-                draft.slots[i].outfit = outfit; draft.slots[i].unassignedByChoice = outfit == nil
-            }
-        }
-        if model.error == nil { dismiss() }
     }
 }
 

@@ -190,13 +190,7 @@ struct OutfitPickerSheet: View {
             VStack(spacing: 4) {
                 PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                     .frame(maxWidth: width ?? .infinity).frame(height: height)
-                    .overlay(RoundedRectangle(cornerRadius: AppRadius.group).strokeBorder(isSelected ? AppTheme.ink : .clear, lineWidth: 2))
-                    .overlay(alignment: .topTrailing) {
-                        if isSelected {
-                            Image(systemName: "checkmark.circle.fill").symbolRenderingMode(.palette)
-                                .foregroundStyle(AppTheme.onPrimary, AppTheme.primaryFill).padding(4)
-                        }
-                    }
+                    .selectionIndicator(isSelected)
                     .opacity(isSelected ? 0.75 : 1)
                 Text(width == nil ? piece.displayName : model.state.categoryName(for: piece)).font(AppTypography.metadata).lineLimit(1).foregroundStyle(AppTheme.secondary)
             }.frame(width: width)

@@ -1,3 +1,4 @@
+import AQDCore
 import SwiftUI
 
 extension View {
@@ -52,5 +53,88 @@ private struct RaisedWhenUnselected: ViewModifier {
     let isSelected: Bool
     func body(content: Content) -> some View {
         if isSelected { content } else { content.glassControlSurface(Capsule()) }
+    }
+}
+
+extension View {
+    /// Shared selected-tile treatment: neutral ring and checkmark (never gold).
+    func selectionIndicator(_ isSelected: Bool, cornerRadius: CGFloat = AppRadius.group) -> some View {
+        overlay(RoundedRectangle(cornerRadius: cornerRadius).strokeBorder(isSelected ? AppTheme.ink : .clear, lineWidth: 2))
+            .overlay(alignment: .topTrailing) {
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill").symbolRenderingMode(.palette)
+                        .foregroundStyle(AppTheme.onPrimary, AppTheme.primaryFill).padding(6)
+                }
+            }
+    }
+}
+
+/// Inline horizontal choice of one saved outfit, replacing pushed outfit choosers.
+struct OutfitSelectionStrip: View {
+    let outfits: [Outfit]
+    let selectedID: UUID?
+    var locked = false
+    let select: (Outfit) -> Void
+
+    var body: some View {
+        if outfits.isEmpty {
+            Text("No saved outfits yet. Save an outfit in Closet first.")
+                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+        } else {
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: AppSpacing.medium) {
+                    ForEach(outfits) { outfit in
+                        let isSelected = outfit.id == selectedID
+                        Button { select(outfit) } label: {
+                            VStack(spacing: 4) {
+                                CollectionArtwork(pieceIDs: outfit.pieceIDs, height: 108).padding(AppSpacing.small)
+                                    .frame(width: 104)
+                                    .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group))
+                                    .selectionIndicator(isSelected)
+                                Text(outfit.displayName).font(AppTypography.metadata).lineLimit(1)
+                                    .foregroundStyle(AppTheme.secondary).frame(width: 104)
+                            }
+                        }.buttonStyle(.plain).disabled(locked)
+                            .accessibilityLabel(outfit.displayName)
+                            .accessibilityValue(isSelected ? "Selected" : "Not selected")
+                            .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+                    }
+                }.padding(.vertical, 2)
+            }.scrollIndicators(.hidden).sensoryFeedback(.selection, trigger: selectedID)
+        }
+    }
+}
+
+/// Inline horizontal multi-select of owned pieces, replacing pushed piece choosers.
+struct PieceSelectionStrip: View {
+    let pieces: [WardrobePiece]
+    let selected: [UUID]
+    var locked = false
+    let toggle: (WardrobePiece) -> Void
+
+    var body: some View {
+        if pieces.isEmpty {
+            Text("No pieces available.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+        } else {
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: AppSpacing.medium) {
+                    ForEach(pieces) { piece in
+                        let isSelected = selected.contains(piece.id)
+                        Button { toggle(piece) } label: {
+                            VStack(spacing: 4) {
+                                PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                                    .frame(width: 88, height: 112).selectionIndicator(isSelected)
+                                    .opacity(isSelected ? 0.75 : 1)
+                                Text(piece.displayName).font(AppTypography.metadata).lineLimit(1)
+                                    .foregroundStyle(AppTheme.secondary).frame(width: 88)
+                            }
+                        }.buttonStyle(.plain).disabled(locked)
+                            .accessibilityLabel(piece.displayName)
+                            .accessibilityValue(isSelected ? "Selected" : "Not selected")
+                            .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+                    }
+                }.padding(.vertical, 2)
+            }.scrollIndicators(.hidden).sensoryFeedback(.selection, trigger: selected)
+        }
     }
 }

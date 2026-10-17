@@ -216,13 +216,7 @@ struct ThemeEditorView: View {
             VStack(alignment: .leading, spacing: AppSpacing.small) {
                 CollectionArtwork(pieceIDs: outfit.pieceIDs, height: 110).padding(AppSpacing.small)
                     .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group))
-                    .overlay(RoundedRectangle(cornerRadius: AppRadius.group).strokeBorder(isSelected ? AppTheme.ink : .clear, lineWidth: 2))
-                    .overlay(alignment: .topTrailing) {
-                        if isSelected {
-                            Image(systemName: "checkmark.circle.fill").symbolRenderingMode(.palette)
-                                .foregroundStyle(AppTheme.onPrimary, AppTheme.primaryFill).padding(6)
-                        }
-                    }
+                    .selectionIndicator(isSelected)
                 Text(outfit.displayName).font(AppTypography.supporting).lineLimit(1).foregroundStyle(AppTheme.ink)
             }
         }.buttonStyle(.plain).disabled(locked)

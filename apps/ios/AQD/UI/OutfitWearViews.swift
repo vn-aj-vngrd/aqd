@@ -15,7 +15,6 @@ struct OutfitWearEditorView: View {
 
     @Bindable var model: OutfitWearEditorModel
     @State private var discard = false
-    @State private var choosing = false
     @State private var timezone = false
     var body: some View {
         NavigationStack {
@@ -28,7 +27,9 @@ struct OutfitWearEditorView: View {
                         SecondaryAction(title: "Open wear history") { model.finishOpeningHistory() }
 
                     } else {
-                        OutfitComposition(pieceIDs: model.draft.pieceIDs)
+                        OutfitCanvas(pieceIDs: model.draft.pieceIDs, isLocked: model.pending || model.unknown) { id in
+                            setPieces(model.draft.pieceIDs.filter { $0 != id })
+                        }.frame(height: 260)
                         if model.draft.planEntry != nil {
                             Text("Recording for this planned date. Choose a different date to keep the plan unchanged.")
                                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
@@ -40,10 +41,13 @@ struct OutfitWearEditorView: View {
                             }), displayedComponents: .date, showsTitle: false)
                             .environment(\.timeZone, TimeZone(identifier: model.draft.day.timeZoneID) ?? .current).labelsHidden()
                         }.disabled(model.pending || model.unknown)
-                        DisclosureRow(title: "Pieces", value: "\(model.draft.pieceIDs.count) selected") { choosing = true }
-                            .disabled(model.pending || model.unknown)
-                        ForEach(model.draft.pieceIDs, id: \.self) { id in
-                            Text(pieceName(id)).foregroundStyle(AppTheme.secondary)
+                        VStack(alignment: .leading, spacing: AppSpacing.medium) {
+                            Text("Pieces worn").font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
+                            PieceSelectionStrip(pieces: model.pieces, selected: model.draft.pieceIDs, locked: model.pending || model.unknown) { piece in
+                                var ids = model.draft.pieceIDs
+                                if let index = ids.firstIndex(of: piece.id) { ids.remove(at: index) } else { ids.append(piece.id) }
+                                setPieces(ids)
+                            }
                         }
                         DisclosureRow(title: "Timezone", value: model.draft.day.timeZoneID) { timezone = true }
                             .disabled(model.pending || model.unknown)
@@ -81,22 +85,19 @@ struct OutfitWearEditorView: View {
                         return model.error == nil
                     }
                 }
-                .navigationDestination(isPresented: $choosing) {
-                    OwnedPieceChooser(pieces: model.pieces, initialSelection: model.draft.pieceIDs, error: model.error,
-                                      isLocked: model.pending || model.unknown, actionTitle: "Use pieces") { ids in
-                        model.update { draft in
-                            draft.pieceIDs = ids
-                            draft.reviewedRevisions = Dictionary(uniqueKeysWithValues: model.pieces.filter { ids.contains($0.id) }.map { ($0.id, $0.revision) })
-                        }
-                        return model.error == nil
-                    }
-                }
         }.interactiveDismissDisabled()
             .draftDiscardConfirmation(isPresented: $discard, title: "Discard wear draft?", message: "No wear is recorded by discarding this draft. Your existing history stays unchanged.") {
                     model.finish(discarding: true)
                     if model.state.wearEditor == nil { discard = false }
                 }
     }
+    private func setPieces(_ ids: [UUID]) {
+        model.update { draft in
+            draft.pieceIDs = ids
+            draft.reviewedRevisions = Dictionary(uniqueKeysWithValues: model.pieces.filter { ids.contains($0.id) }.map { ($0.id, $0.revision) })
+        }
+    }
+
     private func pieceName(_ id: UUID) -> String {
         if let snapshot = model.draft.baseRecord?.pieces.first(where: { $0.id == id }) { return snapshot.displayName }
         return model.pieces.first(where: { $0.id == id })?.displayName ?? "Unavailable piece"
