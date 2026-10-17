@@ -10,39 +10,21 @@ struct LocalProfileView: View {
     var body: some View {
         @Bindable var state = state
         NavigationStack {
-            Group {
-                if state.fitMemories.isEmpty && state.fitError == nil {
-                    GeometryReader { geometry in
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: AppSpacing.section) {
-                                identityHeader
-                                profileActions
-                                if let error = state.identityError {
-                                    SemanticFeedback(role: .danger, message: error)
-                                    Button("Retry profile") { state.reloadIdentity() }.frame(minHeight: 44)
-                                }
-                                Spacer(minLength: 0)
-                                AppEmptyState("A little space for your style", systemImage: "photo.stack",
-                                              description: Text("Keep a photo or outfit here. Your fit memories stay private."), fillsAvailableSpace: false)
-                                    .frame(maxWidth: .infinity)
-                                Spacer(minLength: 0)
-                            }.frame(minHeight: max(0, geometry.size.height - AppSpacing.large - AppSpacing.screen))
-                                .padding(.horizontal, AppSpacing.screen)
-                                .padding(.top, AppSpacing.large).padding(.bottom, AppSpacing.screen)
-                        }
-                    }
-.accessibilityIdentifier("profile.fits.empty")
-                } else {
             ScrollViewReader { proxy in
-            ScrollView {
-                VStack(alignment: .leading, spacing: AppSpacing.section) {
-                    identityHeader.padding(.horizontal, 20)
-                    profileActions.padding(.horizontal, 20)
-                    FitJournalGrid()
-                    if let error = state.identityError { SemanticFeedback(role: .danger, message: error); Button("Retry profile") { state.reloadIdentity() } }
-                }.padding(.top, AppSpacing.large).padding(.bottom, AppSpacing.screen)
-            }.onChange(of: state.fitAnchor) { _, id in if let id { proxy.scrollTo(id) } }
-            }
+                ScrollView {
+                    VStack(alignment: .leading, spacing: AppSpacing.section) {
+                        identityHeader.padding(.horizontal, AppSpacing.screen)
+                        profileActions.padding(.horizontal, AppSpacing.screen)
+                        if let error = state.identityError {
+                            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                                SemanticFeedback(role: .danger, message: error)
+                                Button("Retry profile") { state.reloadIdentity() }.frame(minHeight: 44)
+                            }.padding(.horizontal, AppSpacing.screen)
+                        }
+                        FitJournalGrid()
+                    }.padding(.top, AppSpacing.headerGap).padding(.bottom, AppSpacing.screen)
+                }.onChange(of: state.fitAnchor) { _, id in
+                    if let id { DispatchQueue.main.async { proxy.scrollTo(id, anchor: .center) } }
                 }
             }.background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
                 .toolbarBackground(AppTheme.canvas, for: .navigationBar)

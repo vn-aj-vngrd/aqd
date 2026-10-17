@@ -62,52 +62,82 @@ struct FitMemoryArtwork: View {
     }
 }
 
+private enum FitJournalTab: String, CaseIterable {
+    case all = "All fits", photos = "Photos", outfits = "Linked outfits"
+    var symbol: String {
+        switch self { case .all: "square.grid.3x3"; case .photos: "photo"; case .outfits: "square.stack" }
+    }
+    func includes(_ memory: FitMemory) -> Bool {
+        switch self { case .all: true; case .photos: memory.photoID != nil; case .outfits: memory.outfit != nil }
+    }
+}
+
 struct FitJournalGrid: View {
     @State private var openedMemoryID: UUID?
+    @State private var tab: FitJournalTab = .all
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
+    private var memories: [FitMemory] { state.fitMemories.filter(tab.includes) }
     var body: some View {
-        Group {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Your fits").font(AppTypography.fieldLabel).padding(.horizontal, 20)
-                if let error = state.fitError {
+        VStack(alignment: .leading, spacing: 0) {
+            tabs
+            if let error = state.fitError {
+                VStack(alignment: .leading, spacing: AppSpacing.medium) {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry journal") { state.reloadFits() }.frame(minHeight: 44)
-                } else if state.fitMemories.isEmpty {
-                    VStack(alignment: .leading, spacing: AppSpacing.medium) {
-                        Text("A little space for your style").font(.headline)
-                        Text("Use Add fit (+) above to keep a photo or outfit here. Memories stay private.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12)).accessibilityIdentifier("profile.fits.empty")
-                } else {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3), spacing: 8) {
-                        ForEach(state.fitMemories) { memory in
-                            NavigationLink { FitMemoryDetailView(id: memory.id).secondaryPage() } label: {
-                                FitMemoryArtwork(memory: memory, thumbnail: true)
-                                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                                        .padding(4)
-                                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
-                            }.buttonStyle(.plain).id(memory.id)
-                                .contextMenu {
-                                    AccessoryButton("Open fit", systemImage: "arrow.up.forward.square") { openedMemoryID = memory.id }
-                                    AccessoryButton("Edit fit", systemImage: AppSymbols.edit) { state.openFit(memory) }
-                                    AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.recordWear(from: memory) }
-                                } preview: {
-                                    CollectionContextPreview(title: memory.outfit?.displayName ?? "Fit", detail: memory.day.displayDate) {
-                                        FitMemoryArtwork(memory: memory, thumbnail: memory.photoID == nil)
-                                            .frame(height: 360).clipped()
-                                    }.environment(state)
-                                }
-                                .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.displayName ?? "unlinked"), \(memory.displayNote)")
-                        }
-                    }.padding(.horizontal, 20)
+                }.padding(AppSpacing.screen)
+            } else if memories.isEmpty {
+                emptyState.padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.section)
+            } else {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 2, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3), spacing: 2) {
+                    ForEach(memories) { memory in
+                        NavigationLink { FitMemoryDetailView(id: memory.id).secondaryPage() } label: {
+                            FitMemoryArtwork(memory: memory, thumbnail: true)
+                        }.buttonStyle(.plain).id(memory.id)
+                            .contextMenu {
+                                AccessoryButton("Open fit", systemImage: "arrow.up.forward.square") { openedMemoryID = memory.id }
+                                AccessoryButton("Edit fit", systemImage: AppSymbols.edit) { state.openFit(memory) }
+                                AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.recordWear(from: memory) }
+                            } preview: {
+                                CollectionContextPreview(title: memory.outfit?.displayName ?? "Fit", detail: memory.day.displayDate) {
+                                    FitMemoryArtwork(memory: memory, thumbnail: memory.photoID == nil)
+                                        .frame(height: 360).clipped()
+                                }.environment(state)
+                            }
+                            .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.displayName ?? "unlinked"), \(memory.displayNote)")
+                    }
                 }
             }
         }.navigationDestination(isPresented: Binding(get: { openedMemoryID != nil }, set: { if !$0 { openedMemoryID = nil } })) {
             if let id = openedMemoryID { FitMemoryDetailView(id: id).secondaryPage() }
-        }
+        }.onChange(of: state.fitAnchor) { _, id in if id != nil { tab = .all } }
     }
-
+    private var tabs: some View {
+        HStack(alignment: .bottom, spacing: 0) {
+            ForEach(FitJournalTab.allCases, id: \.self) { item in
+                Button { tab = item } label: {
+                    VStack(spacing: AppSpacing.small) {
+                        VStack(spacing: AppSpacing.xSmall) {
+                            Image(systemName: item.symbol).font(.title3)
+                            Text(item.rawValue).font(AppTypography.metadata)
+                                .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
+                        }.frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
+                            .padding(.horizontal, AppSpacing.xSmall)
+                        Rectangle().fill(tab == item ? AppTheme.ink : .clear).frame(height: 2)
+                    }.foregroundStyle(tab == item ? AppTheme.ink : AppTheme.controlIcon).contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityLabel(item.rawValue)
+                    .accessibilityAddTraits(tab == item ? .isSelected : [])
+                    .accessibilityIdentifier("profile.fits.tab.\(item == .all ? "all" : item == .photos ? "photos" : "outfits")")
+            }
+        }.padding(.bottom, 2)
+    }
+    private var emptyState: some View {
+        AppEmptyState(tab == .all ? "A little space for your style" : tab == .photos ? "No fit photos yet" : "No linked outfits yet",
+                      systemImage: tab == .outfits ? "square.stack" : "photo.stack",
+                      description: Text(tab == .all ? "Use Add fit (+) above to keep a photo or outfit here. Memories stay private." : tab == .photos ? "Add a photo to a fit to see it here. Your other fits are in All fits." : "Link an outfit to a fit to see it here. Your other fits are in All fits."),
+                      fillsAvailableSpace: false)
+            .frame(maxWidth: .infinity).accessibilityIdentifier("profile.fits.empty")
+    }
 }
 
 struct FitEditorView: View {
