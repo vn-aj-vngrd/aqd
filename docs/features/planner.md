@@ -4,12 +4,12 @@ Planner is the third root (Week default, Month alternate, selected date preserve
 
 ## Planner root
 
-- The calendar marks each day by state, not count: dot planned, ring no outfit yet, check worn, bar needs review. The selected day shows a plain summary ("2 planned · 1 to choose") and a Today button returns to the current date.
-- Each open entry carries its next action on the card: Choose outfit for a gap, Review when its outfit changed, otherwise Record wear, plus Skip. Worn and skipped entries sink below open ones.
-- Plans are grouped by the visible range (This week or This month), Upcoming, and a collapsed Past. Each row shows kind, full range and what still needs a decision; an upcoming trip opens its packing list.
+- The calendar marks each day by state, not count: dot planned, ring no outfit yet, check worn, bar needs review. The selected day shows a plain summary ("2 planned · 1 to choose"). A plain Today text button sits beside the month title while another date is selected.
+- Each open entry card shows exactly one next step as a quiet glass control: Choose outfit for a gap, Review when its outfit changed, otherwise Record wear. Edit, Record wear (when not the next step) and Skip live in one trailing ellipsis menu and the context menu. Worn and skipped entries sink below open ones and show no actions. There are no system bordered buttons; the empty day offers one primary action, Plan this day.
+- Plans are grouped by the visible range (This week or This month), Upcoming, and a collapsed Past. Rows are flat: name, kind and full range, and what still needs a decision; an upcoming trip opens its packing list.
 - Swipe the calendar sideways to move a week or month.
-- A filter and sort menu mirrors Closet: show entries by status (still open, no outfit yet, needs review, worn, skipped), show plans by kind (plans, routines, trips) and sort plans (soonest, latest, name). The icon fills while a filter is on, and Reset clears them.
-- Search spans every date: plan names, trip destinations and activities, routine occasions, entry occasions and outfit names. Results list matching plans, then dated entries with the same card actions.
+- The toolbar mirrors Closet: Add to Planner (plus) leading, Search and one filter and sort menu trailing. The menu shows entries by status (still open, no outfit yet, needs review, worn, skipped), plans by kind (plans, routines, trips) and sorts plans (soonest, latest, name). The icon fills while a filter is on, and Reset clears them.
+- Search opens only from the magnifier. While searching, the calendar, day header and Today button are hidden and only results show. It spans every date: plan names, trip destinations and activities, routine occasions, entry occasions and outfit names. Results list matching plans, then dated entries with the same card actions.
 
 ## Plans
 
