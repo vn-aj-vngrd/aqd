@@ -53,6 +53,36 @@ struct AgentContextTests {
         context.scope = .general
         #expect(try AgentContextSnapshot.build(context, pieces: pieces, outfits: [], themes: [], maximumPieces: 2).pieces.isEmpty)
     }
+    @Test func conversationalPunctuationPreservesMarkdownEmojiCodeAndLinks() {
+        let source = "**Blue shirt**—try it with jeans 👕\n\n- Soft layers — easy to wear\n`literal—code` [Look](https://example.com/a—b)\n```text\nkeep—this\n```"
+        let result = AgentMarkdownPolicy.conversationalText(source)
+        #expect(result == source)
+        #expect(AgentMarkdownPolicy.conversationalText("**Blue shirt**—try it with jeans 👕\n\n- Soft layers — easy to wear") == "**Blue shirt**, try it with jeans 👕\n\n- Soft layers, easy to wear")
+        #expect(AgentMarkdownPolicy.conversationalText("[Look](HTTPS://example.com/a—b) — try it") == "[Look](HTTPS://example.com/a—b), try it")
+        #expect(AgentMarkdownPolicy.conversationalText("``size—chart``\n    keep—code") == "``size—chart``\n    keep—code")
+        #expect(AgentMarkdownPolicy.conversationalText(result) == result)
+        #expect(AgentMarkdownPolicy.conversationalText("**A look** ✨\n\nTry a belt.") == "**A look** ✨\n\nTry a belt.")
+    }
+
+    @Test func conversationOrganizationDecodesLegacyAndFiltersPinnedFirst() throws {
+        let owner = UUID()
+        var first = AgentConversation(ownerID: owner), second = AgentConversation(ownerID: owner), archived = AgentConversation(ownerID: owner)
+        first.updatedAt = Date(timeIntervalSince1970: 100)
+        second.updatedAt = Date(timeIntervalSince1970: 50); second.pinnedAt = Date()
+        archived.archivedAt = Date(); archived.pinnedAt = Date()
+        let history = [first, archived, second]
+        #expect(AgentHistoryFilter.active.conversations(in: history).map(\.id) == [second.id, first.id])
+        #expect(AgentHistoryFilter.pinned.conversations(in: history).map(\.id) == [second.id])
+        #expect(AgentHistoryFilter.archived.conversations(in: history).map(\.id) == [archived.id])
+        #expect(AgentHistoryFilter.all.conversations(in: history).count == 3)
+        // Optional organization keys are absent from previously saved records.
+        let encoded = try JSONEncoder().encode(first)
+        let decoded = try JSONDecoder().decode(AgentConversation.self, from: encoded)
+        #expect(!decoded.isPinned && !decoded.isArchived)
+        let restored = try JSONDecoder().decode(AgentConversation.self, from: JSONEncoder().encode(archived))
+        #expect(restored.isArchived && restored.isPinned)
+    }
+
     @Test func markdownRejectsExecutableLinksAndRetainsExactSourceForCopy() {
         #expect(!AgentMarkdownPolicy.allowsLink("javascript:alert(1)"))
         #expect(!AgentMarkdownPolicy.allowsLink("file:///private/data"))

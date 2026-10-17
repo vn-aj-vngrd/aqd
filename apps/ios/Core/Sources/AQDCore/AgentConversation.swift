@@ -52,6 +52,10 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
     public var context = AgentContext()
     public var messages: [AgentMessage] = []
     public var proposals: [AgentActionProposal]?
+    public var pinnedAt: Date?
+    public var archivedAt: Date?
+    public var isPinned: Bool { pinnedAt != nil }
+    public var isArchived: Bool { archivedAt != nil }
     public var updatedAt = Date()
     public init(ownerID: UUID) { id = UUID(); self.ownerID = ownerID }
     public var title: String { messages.first(where: { $0.role == .user }).map { String($0.source.prefix(80)) } ?? "New conversation" }
@@ -100,5 +104,24 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
                   message.elapsedSeconds.map({ $0.isFinite && $0 >= 0 }) ?? true else { throw PlanValidationError.invalidRecord }
         }
         guard messages.count.isMultiple(of: 2) else { throw PlanValidationError.invalidRecord }
+    }
+}
+
+public enum AgentHistoryFilter: String, CaseIterable, Sendable {
+    case active = "Active", pinned = "Pinned", archived = "Archived", all = "All conversations"
+
+    public func conversations(in history: [AgentConversation]) -> [AgentConversation] {
+        history.filter { value in
+            switch self {
+            case .active: !value.isArchived
+            case .pinned: value.isPinned && !value.isArchived
+            case .archived: value.isArchived
+            case .all: true
+            }
+        }.sorted { left, right in
+            if left.isPinned != right.isPinned { return left.isPinned }
+            if left.updatedAt != right.updatedAt { return left.updatedAt > right.updatedAt }
+            return left.id.uuidString < right.id.uuidString
+        }
     }
 }

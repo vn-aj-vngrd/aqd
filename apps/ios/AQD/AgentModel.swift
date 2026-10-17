@@ -16,17 +16,18 @@ import Observation
     var slow = false
     var active: Bool { conversation.messages.contains(where: \.isActive) }
     var supportsGeneration: Bool { qualification?.isValid == true && [.available, .awaitingQualification].contains(availability) }
-    var canGenerate: Bool { supportsGeneration && !active && pending == nil && deletion == nil }
-    var hasPendingOperation: Bool { pending != nil || deletion != nil }
+    var canGenerate: Bool { supportsGeneration && !active && pending == nil && deletion == nil && metadataSave == nil }
+    var hasPendingOperation: Bool { pending != nil || deletion != nil || metadataSave != nil }
     private var pending: (AgentConversation, UUID)?
     private var retention: Task<Void, Never>?
+    private var metadataSave: (AgentConversation, UUID)?
     private var deletion: (UUID, Int, UUID)?
     init(store: PieceStore, qualification: AgentQualification? = AgentQualification.current, reconcileInterruptedAttempt: Bool = true,
          provider: @escaping @MainActor (String, Int) -> AsyncThrowingStream<String, any Error> = NativeAgentProvider.stream) throws {
         self.store = store; self.qualification = qualification; self.provider = provider
         conversation = AgentConversation(ownerID: try store.todayConfiguration().ownerID)
         reloadHistory()
-        if let latest = history.first { conversation = latest }
+        if let latest = history.first(where: { !$0.isArchived }) { conversation = latest }
         if conversation.messages.contains(where: \.isActive) {
             conversation.interruptActiveAttempt()
             if reconcileInterruptedAttempt { _ = persist() }
@@ -45,6 +46,7 @@ import Observation
     }
     @discardableResult func persist() -> Bool {
         retention?.cancel()
+        guard metadataSave == nil else { return false }
         do {
             if let (value, operation) = pending {
                 let unchanged = conversation == value
@@ -55,7 +57,7 @@ import Observation
                 conversation.revision = acknowledged.revision
             }
             if let saved = history.first(where: { $0.id == conversation.id }),
-               saved.draft == conversation.draft, saved.context == conversation.context, saved.messages == conversation.messages, saved.proposals == conversation.proposals {
+               saved.draft == conversation.draft, saved.context == conversation.context, saved.messages == conversation.messages, saved.proposals == conversation.proposals, saved.pinnedAt == conversation.pinnedAt, saved.archivedAt == conversation.archivedAt {
                 if !hasPendingOperation { error = nil }; return true
             }
             if conversation.revision == 0 && conversation.draft.isEmpty && conversation.messages.isEmpty && (conversation.proposals ?? []).isEmpty && conversation.context == AgentContext() { return true }
@@ -71,8 +73,35 @@ import Observation
         conversation = value
         if conversation.messages.contains(where: \.isActive) { conversation.interruptActiveAttempt(); _ = persist() }
     }
+    func setOrganization(_ value: AgentConversation, pinned: Bool? = nil, archived: Bool? = nil) {
+        guard !active, !hasPendingOperation, persist() else { return }
+        guard var latest = history.first(where: { $0.id == value.id }) else { return }
+        if let pinned { latest.pinnedAt = pinned ? Date() : nil }
+        if let archived { latest.archivedAt = archived ? Date() : nil }
+        metadataSave = (latest, UUID())
+        reconcileOrganization()
+    }
+    private func reconcileOrganization() {
+        guard let (value, operation) = metadataSave else { return }
+        do {
+            let saved = try store.saveAgentConversation(value, operationID: operation)
+            metadataSave = nil
+            if conversation.id == saved.id {
+                conversation.revision = saved.revision
+                conversation.updatedAt = saved.updatedAt
+                conversation.pinnedAt = saved.pinnedAt
+                conversation.archivedAt = saved.archivedAt
+            }
+            reloadHistory()
+        } catch PieceStore.StoreError.staleRevision {
+            metadataSave = nil; reloadHistory()
+            self.error = "This conversation changed. Reopen it before trying again."
+        } catch {
+            self.error = "The conversation update wasn’t confirmed. Try again to check the same change."
+        }
+    }
     func delete(_ value: AgentConversation) {
-        guard !active else { return }
+        guard !active, metadataSave == nil, pending == nil else { return }
         guard deletion == nil || deletion?.0 == value.id else { return }
         deletion = deletion ?? (value.id, value.revision, UUID())
         reconcileDeletion()
@@ -243,7 +272,8 @@ import Observation
         generation?.cancel(); _ = persist()
     }
     func retryPending() {
-        if deletion != nil { reconcileDeletion() }
+        if metadataSave != nil { reconcileOrganization(); if metadataSave == nil { _ = persist() } }
+        else if deletion != nil { reconcileDeletion() }
         else { _ = persist() }
     }
     func recheckAvailability() { availability = OutfitSuggestions.modelAvailability(); if active && !supportsGeneration { suspend() } }

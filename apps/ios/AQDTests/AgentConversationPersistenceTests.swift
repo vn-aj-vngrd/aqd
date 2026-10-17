@@ -5,6 +5,31 @@ import SwiftData
 import AQDCore
 
 @Suite(.serialized) @MainActor struct AgentConversationPersistenceTests {
+    @Test(arguments: [false, true]) func organizationRetriesWithoutLosingCurrentDraft(lostAcknowledgment: Bool) throws {
+        var before = false, after = false
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),
+            beforeOutfitSave: { if before { throw CocoaError(.fileWriteNoPermission) } },
+            afterOutfitSave: { if after { throw CocoaError(.fileReadUnknown) } })
+        let model = try AgentModel(store: store)
+        model.updateDraft("Saved chat"); try #require(model.persist())
+        let target = model.conversation
+        model.newConversation(); model.updateDraft("Current draft"); try #require(model.persist())
+        let currentID = model.conversation.id
+        before = !lostAcknowledgment; after = lostAcknowledgment
+        model.setOrganization(target, pinned: true, archived: true)
+        #expect(model.hasPendingOperation)
+        model.updateDraft("Current draft retained")
+        before = false; after = false; model.retryPending()
+        #expect(!model.hasPendingOperation)
+        #expect(model.conversation.id == currentID && model.conversation.draft == "Current draft retained")
+        let saved = try #require(store.agentConversations().first { $0.id == target.id })
+        #expect(saved.isPinned && saved.isArchived && saved.revision == 2)
+        model.open(target.id)
+        model.setOrganization(model.conversation, pinned: false, archived: false)
+        #expect(!model.conversation.isPinned && !model.conversation.isArchived)
+        #expect(try !AgentModel(store: store).conversation.isArchived)
+    }
+
     @Test(arguments: [false, true]) func reviewedVoiceTranscriptRetriesWithoutDuplicateAppend(lostAcknowledgment: Bool) throws {
         var before = false, after = false
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),

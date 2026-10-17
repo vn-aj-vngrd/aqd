@@ -73,6 +73,19 @@ public struct AgentContextSnapshot: Codable, Equatable, Sendable {
 }
 
 public enum AgentMarkdownPolicy {
+    /// Code-bearing replies keep their literal source; generation instructions govern their punctuation.
+    public static func conversationalText(_ source: String) -> String {
+        guard source.contains("—"), !source.contains("`"), !source.contains("~~~"),
+              !source.components(separatedBy: "\n").contains(where: { $0.hasPrefix("    ") || $0.hasPrefix("\t") }),
+              let tokens = try? NSRegularExpression(pattern: #"(?i:https?)://[^\s)]+|[ \t]*—[ \t]*"#) else { return source }
+        var value = source
+        for match in tokens.matches(in: source, range: NSRange(source.startIndex..., in: source)).reversed() {
+            guard let range = Range(match.range, in: value), !value[range].lowercased().hasPrefix("http") else { continue }
+            value.replaceSubrange(range, with: ", ")
+        }
+        return value
+    }
+
     public static func allowsLink(_ value: String) -> Bool {
         guard let url = URL(string: value), let scheme = url.scheme?.lowercased(), ["https", "http"].contains(scheme), url.host?.isEmpty == false else { return false }; return true
     }

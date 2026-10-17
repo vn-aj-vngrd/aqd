@@ -62,6 +62,8 @@ struct AgentConversationView: View {
                     AgentAvailabilityContent(availability: model.availability, recheck: model.recheckAvailability,
                                              fillsPage: true, retainedDraft: model.conversation.draft)
                 }
+            } else if isNewConversation {
+                emptyChat
             } else {
         ScrollViewReader { proxy in
             ScrollView {
@@ -71,12 +73,6 @@ struct AgentConversationView: View {
                     }
                     if model.hasPendingOperation || model.error != nil {
                         Button("Retry operation") { model.retryPending() }.frame(minHeight: 44)
-                    }
-                    if model.conversation.messages.isEmpty && model.supportsGeneration {
-                        Text("What would you like to wear?").font(.title).frame(maxWidth: .infinity).padding(.vertical, 40)
-                        ForEach(["Tonight’s look", "Plan my week", "Rediscover unworn pieces", "Start with a piece"], id: \.self) { title in
-                            Button(title) { model.updateDraft(title); focused = true }.frame(minHeight: 44)
-                        }
                     }
                     ForEach(model.conversation.messages) { message in
                         messageRow(message).id(message.id)
@@ -105,7 +101,12 @@ struct AgentConversationView: View {
             }
         }.background(AppTheme.canvas).navigationTitle("Agent").navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom) {
-                if model.supportsGeneration { composer }
+                if model.supportsGeneration {
+                    VStack(spacing: AppSpacing.small) {
+                        if isNewConversation { suggestions }
+                        composer
+                    }
+                }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Back").disabled(model.active) }
@@ -123,9 +124,15 @@ struct AgentConversationView: View {
                                     AccessoryButton("Conversations", systemImage: "bubble.left.and.bubble.right") { model.reloadHistory(); history = true }.disabled(model.active)
                                 }
                                 if model.conversation.revision > 0 {
+                                    AccessoryButton(model.conversation.isPinned ? "Unpin conversation" : "Pin conversation", systemImage: model.conversation.isPinned ? "pin.slash" : "pin") {
+                                        model.setOrganization(model.conversation, pinned: !model.conversation.isPinned)
+                                    }.disabled(model.active || model.hasPendingOperation)
+                                    AccessoryButton(model.conversation.isArchived ? "Restore conversation" : "Archive conversation", systemImage: "archivebox") {
+                                        model.setOrganization(model.conversation, archived: !model.conversation.isArchived)
+                                    }.disabled(model.active || model.hasPendingOperation)
                                     Button(role: .destructive) {
                                         if model.persist() { deletingConversation = model.conversation }
-                                    } label: { Label("Delete conversation", systemImage: "trash") }
+                                    } label: { Label("Delete conversation", systemImage: "trash").foregroundStyle(AppTheme.error) }
                                         .disabled(model.active || model.hasPendingOperation)
                                 }
                             }
@@ -160,18 +167,58 @@ struct AgentConversationView: View {
             } message: { Text("Deletes its messages and draft on this iPhone. Saved pieces, outfits and plans stay.") }
             .onAppear { if automaticallyFocusComposer && model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
     }
+    private var isNewConversation: Bool {
+        model.supportsGeneration && model.conversation.messages.isEmpty && (model.conversation.proposals ?? []).isEmpty
+    }
+
+    private var emptyChat: some View {
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: AppSpacing.section) {
+                    if let error = model.error { SemanticFeedback(role: .danger, message: error) }
+                    if model.hasPendingOperation || model.error != nil {
+                        Button("Retry operation") { model.retryPending() }.frame(minHeight: AppControlMetrics.minimumTarget)
+                    }
+                    Text("What would you like to wear?").font(.title2.weight(.medium))
+                        .multilineTextAlignment(.center).accessibilityAddTraits(.isHeader)
+                }.padding(.horizontal, AppSpacing.screen)
+                    .frame(maxWidth: .infinity, minHeight: geometry.size.height)
+            }.scrollIndicators(.hidden)
+        }
+    }
+
+    private var suggestions: some View {
+        VStack(spacing: AppSpacing.xSmall) {
+            suggestion("Tonight’s look", symbol: "moon.stars")
+            suggestion("Plan my week", symbol: "calendar")
+            suggestion("Rediscover unworn pieces", symbol: "sparkles")
+        }.padding(.horizontal, AppSpacing.section)
+    }
+
+    private func suggestion(_ title: String, symbol: String) -> some View {
+        Button { model.updateDraft(title); focused = true } label: {
+            HStack(spacing: AppSpacing.medium) {
+                Image(systemName: symbol).foregroundStyle(AppTheme.controlIcon)
+                    .frame(width: AppControlMetrics.disclosureLane).accessibilityHidden(true)
+                Text(title).foregroundStyle(AppTheme.ink).multilineTextAlignment(.leading)
+                Spacer(minLength: 0)
+            }.font(AppTypography.body).frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
+                .contentShape(Rectangle())
+        }.buttonStyle(.plain).disabled(!model.canGenerate)
+    }
+
     @ViewBuilder private func messageRow(_ message: AgentMessage) -> some View {
         if message.role == .user {
             HStack(alignment: .top, spacing: 0) {
                 Spacer(minLength: AppControlMetrics.minimumTarget)
                 Text(message.source).textSelection(.enabled)
                     .padding(.horizontal, AppSpacing.large).padding(.vertical, AppSpacing.medium)
-                    .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.composer))
+                    .background(AppTheme.messageBubble, in: RoundedRectangle(cornerRadius: AppRadius.composer))
                     .accessibilityLabel("You: " + message.source)
             }.frame(maxWidth: .infinity, alignment: .trailing)
         } else {
             VStack(alignment: .leading, spacing: AppSpacing.small) {
-                AgentMarkdownBody(source: message.source)
+                AgentMarkdownBody(source: AgentMarkdownPolicy.conversationalText(message.source))
                 if message.isActive {
                     HStack(spacing: AppSpacing.small) {
                         ProgressView()
@@ -259,7 +306,8 @@ struct AgentConversationView: View {
     }
 
     private func copy(_ message: AgentMessage, markdown: Bool) {
-        let value = markdown ? (message.status == .complete ? "" : "Incomplete response\n\n") + message.source : AgentMarkdownPolicy.plainText(message.source, incomplete: message.status != .complete)
+        let source = AgentMarkdownPolicy.conversationalText(message.source)
+        let value = markdown ? (message.status == .complete ? "" : "Incomplete response\n\n") + source : AgentMarkdownPolicy.plainText(source, incomplete: message.status != .complete)
         UIPasteboard.general.string = value
         if UIPasteboard.general.string == value { copied = message.id; UIAccessibility.post(notification: .announcement, argument: "Response copied") }
     }
@@ -304,6 +352,8 @@ struct AgentHistoryView: View {
     @Bindable var model: AgentModel
     let open: (AgentConversation) -> Void
     @State private var selected: AgentConversation?
+    @State private var filter: AgentHistoryFilter = .active
+    private var conversations: [AgentConversation] { filter.conversations(in: model.history) }
     var body: some View {
         List {
             if let error = model.error { Text(error).foregroundStyle(AppTheme.error) }
@@ -312,23 +362,53 @@ struct AgentHistoryView: View {
                     if model.hasPendingOperation { model.retryPending() } else { model.reloadHistory() }
                 }
             }
-            if model.history.isEmpty { AppEmptyState("No conversations yet", systemImage: "bubble.left", description: Text("Conversations stay on this iPhone.")) }
-            ForEach(model.history) { value in
-                Button { open(value) } label: { VStack(alignment: .leading, spacing: 4) { Text(value.title).foregroundStyle(AppTheme.ink); Text(value.updatedAt, style: .date).font(.footnote).foregroundStyle(AppTheme.secondary) } }
+            if conversations.isEmpty {
+                AppEmptyState(filter == .active ? "No active conversations" : filter == .pinned ? "No pinned conversations" : filter == .archived ? "No archived conversations" : "No conversations yet",
+                              systemImage: filter == .pinned ? "pin" : filter == .archived ? "archivebox" : "bubble.left",
+                              description: Text(filter == .pinned ? "Pin a conversation from its options to keep it close." : "Conversations stay on this iPhone."))
+            }
+            if filter != .active { Text(filter.rawValue).font(.subheadline).foregroundStyle(AppTheme.secondary).listRowBackground(Color.clear) }
+            ForEach(conversations) { value in
+                Button { open(value) } label: {
+                    HStack(spacing: AppSpacing.medium) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(value.title).foregroundStyle(AppTheme.ink)
+                            Text(value.updatedAt, style: .date).font(.footnote).foregroundStyle(AppTheme.secondary)
+                        }
+                        Spacer(minLength: 8)
+                        if value.isArchived { Image(systemName: "archivebox").foregroundStyle(AppTheme.controlIcon).accessibilityLabel("Archived") }
+                        if value.isPinned { Image(systemName: "pin.fill").foregroundStyle(AppTheme.controlIcon).accessibilityLabel("Pinned") }
+                    }
+                }
                     .disabled(model.hasPendingOperation)
                     .contextMenu {
                         AccessoryButton("Open conversation", systemImage: "bubble.left") { open(value) }.disabled(model.active || model.hasPendingOperation)
-                        Button(role: .destructive) { selected = value } label: { Label("Delete conversation", systemImage: "trash") }.disabled(model.active || model.hasPendingOperation)
+                        AccessoryButton(value.isPinned ? "Unpin" : "Pin", systemImage: value.isPinned ? "pin.slash" : "pin") { model.setOrganization(value, pinned: !value.isPinned) }.disabled(model.active || model.hasPendingOperation)
+                        AccessoryButton(value.isArchived ? "Restore" : "Archive", systemImage: "archivebox") { model.setOrganization(value, archived: !value.isArchived) }.disabled(model.active || model.hasPendingOperation)
+                        Button(role: .destructive) { selected = value } label: { Label("Delete conversation", systemImage: "trash").foregroundStyle(AppTheme.error) }.disabled(model.active || model.hasPendingOperation)
                     } preview: {
                         VStack(alignment: .leading, spacing: AppSpacing.medium) {
                             Text(value.title).font(AppTypography.section)
                             Text(value.messages.last?.source ?? "No messages yet").font(AppTypography.supporting).lineLimit(6)
                         }.padding(AppSpacing.screen).frame(width: 280, alignment: .leading).background(AppTheme.surface)
                     }
-                    .swipeActions { Button("Delete", role: .destructive) { selected = value } }
+                    .swipeActions(allowsFullSwipe: false) {
+                        Button("Delete", role: .destructive) { selected = value }
+                        Button(value.isArchived ? "Restore" : "Archive", systemImage: "archivebox") { model.setOrganization(value, archived: !value.isArchived) }.tint(AppTheme.secondary)
+                    }.disabled(model.active || model.hasPendingOperation)
             }
         }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Conversations")
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { model.newConversation(); open(model.conversation) } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation) } }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Picker("Show conversations", selection: $filter) {
+                            ForEach(AgentHistoryFilter.allCases, id: \.self) { option in Text(option.rawValue).tag(option) }
+                        }
+                    } label: { Image(systemName: filter == .active ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle.fill") }
+                        .accessibilityLabel("Filter conversations").accessibilityValue(filter.rawValue)
+                }
+                ToolbarItem(placement: .topBarTrailing) { Button { model.newConversation(); open(model.conversation) } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation) }
+            }
             .alert("Delete this conversation?", isPresented: Binding(get: { selected != nil }, set: { if !$0 { selected = nil } })) {
                 Button("Cancel", role: .cancel) { selected = nil }
                 Button("Delete conversation", role: .destructive) { if let selected { model.delete(selected) }; selected = nil }
