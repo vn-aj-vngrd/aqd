@@ -2720,5 +2720,10 @@
     "codeCommit": "6891c4000d5171cd75150beb0b9d1640c99e5d41",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false
+  },
+  "resetAndDevelopmentSeed": {
+    "codeCommit": "66756db481173b2869940ab7508be20ad17f23e3",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false
   }
 }

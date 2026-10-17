@@ -594,3 +594,5 @@ Settings density build installed successfully (`/tmp/aqd-settings-density-instal
 Settings density code checkpoint: `f89a2230ff160a4b5aa7692aad58672e1957630d`.
 
 Owner Reset Data/development seeding October17 is implemented on the active companion branch; detailed scope/checkpoints are also recorded in issue27. Reuse the existing reviewed .erase coordinator operation, expose exact RESET confirmation, and return the fresh installed store to real Welcome. DEBUG Seed sample data wraps existing idempotent sample preparation/backup without changing entry progress or personal records. No actual reset or seed of the owner's store is authorized by adding these controls; install only, without app launch. Native execution remains skipped at owner's request.
+
+Reset/development seed checkpoint `66756db481173b2869940ab7508be20ad17f23e3` installed successfully `/tmp/aqd-reset-seed-install.json`. AQD was not launched and the current user store was neither reset nor seeded. Receipt `resetAndDevelopmentSeed` binds Core/native-compile/Release/exclusion/install evidence; native runtime and rendered/onboarding acceptance remain manual.

@@ -1921,5 +1921,36 @@
     "nativeTestsExecuted": false,
     "runtimeComplete": false,
     "sourceSHA256": "100ff5e049ebb05965d217d929d05f66d6612aea46f722d81cfef24a71caff1c"
+  },
+  "resetAndDevelopmentSeed": {
+    "codeCommit": "66756db481173b2869940ab7508be20ad17f23e3",
+    "coreTests": 107,
+    "coreSuites": 31,
+    "coreResult": "Passed",
+    "nativeTestBuild": "TEST BUILD SUCCEEDED",
+    "nativeTestsExecuted": false,
+    "newNativeRegressionsCompiled": 2,
+    "releaseResult": "BUILD SUCCEEDED",
+    "releaseSeedMarkersPresent": false,
+    "installResult": "success",
+    "appLaunched": false,
+    "userStoreResetOrSeeded": false,
+    "runtimeComplete": false,
+    "review": "Single-agent Standards/Spec source review. Live reset, seeding and onboarding acceptance unverified.",
+    "sourceSHA256": {
+      "apps/ios/AQD/LocalRestoreModel.swift": "993f02e6060c2c777808f21c018f881755d5ac615c277d91289706b6fced5c21",
+      "apps/ios/AQD/UI/DevelopmentSeedView.swift": "1bbc972e32dad8ded4332d617fc22cb78aa14fb7fa67b57d9c38eb03c85c3d7a",
+      "apps/ios/AQD/UI/LocalEraseView.swift": "37f4e94c78c27f19a546149e05760bfa2e29e88cb6fb1fef7471bf88682eb459",
+      "apps/ios/AQD/UI/LocalSettingsView.swift": "7ec03839ca92ac633ec69b0550387f97f7c3b8b73b37fa53f56dba2d2b5b01e0",
+      "apps/ios/AQDTests/LocalEraseTests.swift": "cbd135899e2cc278869b5e58967f33ec3be6e7410864ed43b6c0526e2e0d8ecd",
+      "apps/ios/AQDTests/PreviewSampleContentTests.swift": "c9348f548d42d0abc7c6d6850c78c45320cfd39ddf4ed2d6618230aa37b3d12b"
+    },
+    "artifactSHA256": {
+      "/tmp/aqd-reset-seed-core.log": "17648195a3d45381720daaa677f4ca4fd9810d1cd222f587b35d3626b308c93a",
+      "/tmp/aqd-reset-seed-test-build.log": "b46279ebab6f46fd04f14583703890c8a9a274d8b4764a9920f9f9e625ce9237",
+      "/tmp/aqd-reset-seed-release.log": "6eb2f0fa83b2a86154649476fb16843b0e0f8769cb021b317d7c9d9855a370fb",
+      "/tmp/aqd-reset-seed-release-exclusion.json": "fc77fb9131ee041501161990f429866b180ae5ed405a714f2698540dfeae783a",
+      "/tmp/aqd-reset-seed-install.json": "70e71553f926797418514ab272c7e6702345f2a82bcf6e7e2212e41e34190323"
+    }
   }
 }
