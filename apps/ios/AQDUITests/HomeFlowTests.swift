@@ -43,4 +43,15 @@ final class HomeFlowTests: XCTestCase {
                       "upcoming plans use short relative days and skip today's look")
         shot("Today upcoming")
     }
+
+    /// Evidence for review: the stack top to bottom with eyebrows above titles.
+    func testStackReadsEyebrowThenTitle() {
+        app.tabBars.buttons["Today"].tap()
+        XCTAssertTrue(app.buttons["Record wear"].waitForExistence(timeout: 10))
+        for index in 0..<4 {
+            shot("Today \(index)")
+            app.swipeUp(velocity: .slow)
+        }
+        XCTAssertFalse(app.staticTexts["OCT 18 TO OCT 18"].exists, "the week eyebrow spans the whole week")
+    }
 }

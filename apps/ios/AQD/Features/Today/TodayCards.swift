@@ -7,12 +7,62 @@ struct TodayCard: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     private var today: LocalPlanDay { LocalPlanDay() }
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(instance.kind.title).font(AppTypography.section).foregroundStyle(AppTheme.ink).accessibilityAddTraits(.isHeader)
+        VStack(alignment: .leading, spacing: AppSpacing.large) {
+            VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                if let eyebrow = header.eyebrow {
+                    Text(eyebrow).font(AppTypography.metadata.weight(.semibold)).tracking(0.5).textCase(.uppercase)
+                        .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                }
+                Text(header.title).font(AppTypography.section).foregroundStyle(AppTheme.ink)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityLabel(header.eyebrow.map { "\(header.title), \($0)" } ?? header.title)
+            }
             content.font(AppTypography.supporting).buttonStyle(.plain)
-        }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        }.frame(maxWidth: .infinity, alignment: .leading).padding(AppSpacing.screen)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
             .accessibilityIdentifier("today.widget.\(instance.id.uuidString)")
+    }
+
+    /// Plan entries Today's look follows: today's, or the pinned one.
+    private var lookEntries: [OutfitPlanEntry] {
+        state.planEntries.filter { entry in
+            if let pin = instance.options?.pinnedID { return entry.id == pin }
+            guard let zone = TimeZone(identifier: entry.day.timeZoneID) else { return false }
+            return entry.day.key == LocalPlanDay(timeZone: zone).key
+        }.sorted { $0.id.uuidString < $1.id.uuidString }
+    }
+
+    /// Label, title and the eyebrow's context, decided per kind by `TodayPresentation.header`.
+    private var header: TodayPresentation.Header {
+        var own: String?
+        var context: String?
+        switch instance.kind {
+        case .personalNote, .personalPhoto: own = instance.options?.personal?.title
+        case .theme: own = instance.options?.pinnedID.flatMap { pin in state.themes.first { $0.id == pin }?.displayName }
+        case .weatherContext: own = state.weatherClient?.local?.enabled == true ? state.weatherClient?.local?.place?.name : nil
+        case .todayLook:
+            if let entry = lookEntries.first { own = state.outfits.first { $0.id == entry.outfitID }?.displayName }
+        case .wearAgain:
+            own = instance.options?.pinnedID.map { pin in state.pieces.first { $0.id == pin }?.displayName }
+                ?? TodaySources.wearAgain(pieces: state.pieces, records: state.wearRecords, through: today)?.displayName
+        case .weekInWear:
+            if let bounds = try? TodaySources.week(containing: instance.options?.period ?? today, through: today), let first = try? bounds.start.date() {
+                var calendar = Calendar(identifier: .gregorian)
+                calendar.timeZone = TimeZone(identifier: bounds.start.timeZoneID) ?? .current
+                if let last = calendar.date(byAdding: .day, value: 6, to: first) {
+                    context = "\(bounds.start.shortDay) to \(LocalPlanDay(date: last, timeZone: calendar.timeZone).shortDay)"
+                }
+            }
+        case .closetInUse:
+            if let month = try? (instance.options?.period ?? TodaySources.completedMonth(before: today)), let date = try? month.date() {
+                context = date.formatted(Date.FormatStyle(timeZone: TimeZone(identifier: month.timeZoneID) ?? .current).month(.wide).year())
+            }
+        case .upcomingPlans:
+            context = instance.options?.pinnedID != nil ? nil : "Next \(instance.options?.upcomingDays ?? 7) days"
+        default: break
+        }
+        return TodayPresentation.header(kind: instance.kind.title, contentTitle: own, context: context,
+                                        personal: instance.kind == .personalNote || instance.kind == .personalPhoto)
     }
     @ViewBuilder private var content: some View {
         switch instance.kind {
@@ -25,7 +75,6 @@ struct TodayCard: View {
         case .theme:
             if let error = state.themeError { failure(error) { state.reloadThemes() } }
             else if let pin = instance.options?.pinnedID, let theme = state.themes.first(where: { $0.id == pin }) {
-                Text(theme.displayName).font(AppTypography.body)
                 Text("\(theme.outfitIDs.count) outfits").foregroundStyle(AppTheme.secondary)
                 NavigationLink(value: ClosetRoute.theme(theme.id)) { TodayCardActionLabel(title: theme.outfitIDs.isEmpty ? "Add outfits" : "Open theme") }.frame(minHeight: 44)
             } else { configure("Choose an available theme to keep its outfits here.") }
@@ -48,19 +97,22 @@ struct TodayCard: View {
                           alignment: .leading, spacing: AppSpacing.small) {
                 ForEach(instance.options?.actions ?? TodayAction.defaults, id: \.self) { action in
                     Button { perform(action) } label: {
-                        Text(action.title).font(.subheadline).foregroundStyle(AppTheme.ink).truncated()
+                        Label(action.title, systemImage: Self.symbol(for: action)).font(.subheadline).foregroundStyle(AppTheme.ink)
+                            .lineLimit(1).minimumScaleFactor(0.85)
                             .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget).glassControlSurface(Capsule())
                     }.accessibilityIdentifier("today.action.\(action.title)")
                 }
             }
         case .weatherContext:
-            TodayWeatherSummary()
+            TodayWeatherSummary(showsPlace: false)
         case .personalNote, .personalPhoto:
             if let card = instance.options?.personal {
-                if !card.title.isEmpty { Text(card.title).font(AppTypography.section) }
-                if card.kind == .personalPhoto { TodayPersonalPhoto(card: card).frame(maxHeight: 260) }
-                Text(card.text).lineLimit(4).foregroundStyle(AppTheme.ink)
-                NavigationLink { TodayPersonalDetail(instanceID: instance.id) } label: { TodayCardActionLabel(title: "Read more") }.frame(minHeight: 44)
+                NavigationLink { TodayPersonalDetail(instanceID: instance.id) } label: {
+                    VStack(alignment: .leading, spacing: AppSpacing.medium) {
+                        if card.kind == .personalPhoto { TodayPersonalPhoto(card: card, fillsWidth: true) }
+                        if !card.text.isEmpty { TodayCaption(text: card.text) }
+                    }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityHint("Opens the full card")
             } else { configure("Choose your own private content.") }
         }
     }
@@ -69,11 +121,7 @@ struct TodayCard: View {
         else if let error = state.outfitError { failure(error) { state.reloadOutfits() } }
         else if let error = state.pieceReadError { failure(error) { state.reloadPieces() } }
         else {
-            let entries = state.planEntries.filter { entry in
-                if let pin = instance.options?.pinnedID { return entry.id == pin }
-                guard let zone = TimeZone(identifier: entry.day.timeZoneID) else { return false }
-                return entry.day.key == LocalPlanDay(timeZone: zone).key
-            }.sorted { $0.id.uuidString < $1.id.uuidString }
+            let entries = lookEntries
             if entries.isEmpty, instance.options?.pinnedID != nil { configure("The selected plan entry is unavailable. Choose another entry or follow Today.") }
             else if entries.isEmpty {
                 let look = TodayPresentation.look(entry: nil, outfitRevision: nil, hasPieces: !state.pieces.isEmpty)
@@ -94,7 +142,6 @@ struct TodayCard: View {
                 OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 110, limit: 4)
             }.buttonStyle(.plain).accessibilityLabel("Open outfit \(outfit.displayName)")
             VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                Text(outfit.displayName).font(AppTypography.body)
                 if !entry.occasion.isEmpty { Text(entry.occasion).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
                 Text(look.status).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             }
@@ -133,7 +180,6 @@ struct TodayCard: View {
             } else {
                 Text("\(Set(records.map(\.day.key)).count) days, \(Set(records.flatMap { $0.pieces.map(\.id) }).count) pieces")
                 if records.isEmpty { Text("No wear recorded in this week yet.").foregroundStyle(AppTheme.secondary) }
-                Text("\(bounds.start.displayDate) – \(bounds.end.displayDate)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                 NavigationLink { LocalWearHistoryView(periodStart: bounds.start, periodEnd: bounds.end).secondaryPage() } label: { TodayCardActionLabel(title: "View this week") }.frame(minHeight: 44)
             }
         }
@@ -147,10 +193,6 @@ struct TodayCard: View {
                 Text("\(summary.usedActiveCount) of \(summary.activeCount) active pieces recorded").foregroundStyle(AppTheme.secondary)
                 ProgressView(value: value).tint(AppTheme.ink)
             } else { Text("Record a few looks to see which pieces you reach for.").foregroundStyle(AppTheme.secondary) }
-            if let first = try? summary.start.date() {
-                Text(first, format: Date.FormatStyle(timeZone: TimeZone(identifier: summary.start.timeZoneID) ?? .current).month(.wide).year())
-                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-            }
             NavigationLink { LocalWearInsightsView(initialMonth: month).secondaryPage() } label: { TodayCardActionLabel(title: "View this month") }.frame(minHeight: 44)
         }
     }
@@ -177,7 +219,6 @@ struct TodayCard: View {
                     .frame(maxWidth: .infinity).frame(height: 220)
                     .accessibilityLabel("View \(piece.displayName)")
             }.buttonStyle(.plain)
-            Text(piece.displayName).font(AppTypography.body)
             if let date = PieceWearSummary(piece: piece, records: state.wearRecords).lastWorn {
                 Text("Last recorded \(date.key)").foregroundStyle(AppTheme.secondary)
             } else { Text("No dated wear recorded for this piece.").foregroundStyle(AppTheme.secondary) }
@@ -250,6 +291,16 @@ struct TodayCard: View {
         }
     }
 
+    private static func symbol(for action: TodayAction) -> String {
+        switch action {
+        case .addPiece: "tshirt"
+        case .buildOutfit: "square.stack"
+        case .planner: "calendar"
+        case .recordWear: "checkmark.circle"
+        case .addFit: "photo"
+        case .openCloset: "hanger"
+        }
+    }
     private func perform(_ action: TodayAction) {
         switch action {
         case .addPiece: state.addPiece()
@@ -287,7 +338,6 @@ private struct TodayPersonalDetail: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 if let instance, let card = instance.options?.personal {
-                    if !card.title.isEmpty { Text(card.title).font(AppTypography.section) }
                     if card.kind == .personalPhoto { TodayPersonalPhoto(card: card).frame(minHeight: 200) }
                     Text(card.text).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
                     SecondaryAction(title: "Edit card") { state.openTodayEditor(); state.todayEditor?.begin(instance) }
@@ -296,7 +346,7 @@ private struct TodayPersonalDetail: View {
             }.padding(20)
         }
             }
-        }.background(AppTheme.canvas).navigationTitle(instance?.kind.title ?? "Saved card").navigationBarTitleDisplayMode(.inline)
+        }.background(AppTheme.canvas).navigationTitle(TodayPresentation.title(kind: instance?.kind.title ?? "Saved card", contentTitle: instance?.options?.personal?.title)).navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -340,6 +390,8 @@ struct TodayWeatherNotice: View {
 /// Discoverable Weather setup and matching, attributed saved readings. The shared
 /// client still owns consent, qualification, freshness and all network requests.
 struct TodayWeatherSummary: View {
+    /// A weather card already names the place in its title; the standalone notice keeps it here.
+    var showsPlace = true
     @Environment(AppState.self) private var state
     @Environment(\.colorScheme) private var colorScheme
     @State private var setup = false
@@ -354,7 +406,7 @@ struct TodayWeatherSummary: View {
                     SemanticFeedback(role: .warning, message: error)
                     Button { client.reload() } label: { TodayCardActionLabel(title: "Retry weather preferences") }.frame(minHeight: 44)
                 } else if client.local?.enabled == true, let place = client.local?.place {
-                    Text(place.name).font(AppTypography.body).truncated()
+                    if showsPlace { Text(place.name).font(AppTypography.body).truncated() }
                     TimelineView(.periodic(from: .now, by: 60)) { context in
                         let day = LocalPlanDay(date: context.date, timeZone: TimeZone(identifier: place.timeZoneID) ?? .current)
                         let selection = WeatherSelection(place: place, day: day)
@@ -418,6 +470,28 @@ struct TodayWeatherSummary: View {
     }
 }
 
+/// A note or caption clamped to four lines; the quiet "Read more" appears only when text is actually cut off.
+private struct TodayCaption: View {
+    let text: String
+    @State private var shown: CGFloat = 0
+    @State private var full: CGFloat = 0
+    private var isTruncated: Bool { full > shown + 1 }
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+            Text(text).font(AppTypography.supporting).foregroundStyle(AppTheme.ink).lineLimit(4)
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { shown = $0 }
+                .background(alignment: .topLeading) {
+                    Text(text).font(AppTypography.supporting).fixedSize(horizontal: false, vertical: true).hidden()
+                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { full = $0 }
+                }
+            if isTruncated {
+                Text("Read more").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+        }
+    }
+}
+
 /// One upcoming plan: picture, outfit, a short relative day and its occasion.
 private struct TodayAgendaRow: View {
     @Environment(AppState.self) private var state
@@ -449,18 +523,21 @@ private struct TodayAgendaRow: View {
     }
 }
 
-/// Consistent compact action rows retain their actual Button/NavigationLink owner.
+/// The card's one quiet action: trailing text, 44 pt target, no chevron row.
 private struct TodayCardActionLabel: View {
     let title: String
     var body: some View {
-        HStack(spacing: 12) {
-            Text(title).fixedSize(horizontal: false, vertical: true)
-            Spacer(minLength: 12)
-            Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
-        }
-        .font(AppTypography.supporting)
-        .foregroundStyle(AppTheme.ink)
-        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-        .contentShape(Rectangle())
+        Text(title).font(AppTypography.supporting.weight(.medium)).foregroundStyle(AppTheme.ink)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .trailing)
+            .contentShape(Rectangle())
+    }
+}
+
+private extension LocalPlanDay {
+    /// "Oct 18" in the day's own time zone.
+    var shortDay: String {
+        guard let value = try? date() else { return key }
+        return value.formatted(Date.FormatStyle(timeZone: TimeZone(identifier: timeZoneID) ?? .current).month(.abbreviated).day())
     }
 }

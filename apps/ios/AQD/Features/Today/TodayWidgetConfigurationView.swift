@@ -124,10 +124,19 @@ struct TodayWidgetConfigurationView: View {
 }
 struct TodayPersonalPhoto: View {
     let card: TodayPersonalCard
+    /// On a Today card the photo fills the card width at a 4:5 frame instead of floating centered.
+    var fillsWidth = false
     @Environment(AppState.self) private var state
     var body: some View {
         if let id = card.photoID, let data = try? state.store?.photoRendition(id: id, recipe: card.photoRecipe), let image = UIImage(data: data) {
-            Image(uiImage: image).resizable().scaledToFit().accessibilityLabel(card.title.isEmpty ? "Private Today photo" : card.title)
+            if fillsWidth {
+                Color.clear.aspectRatio(4 / 5, contentMode: .fit).frame(maxHeight: 380).frame(maxWidth: .infinity)
+                    .overlay { Image(uiImage: image).resizable().scaledToFill() }
+                    .clipShape(RoundedRectangle(cornerRadius: AppRadius.field))
+                    .accessibilityElement().accessibilityLabel(card.title.isEmpty ? "Private Today photo" : card.title)
+            } else {
+                Image(uiImage: image).resizable().scaledToFit().accessibilityLabel(card.title.isEmpty ? "Private Today photo" : card.title)
+            }
         } else {
             AppEmptyState(card.photoID == nil ? "Choose your own photo" : "Saved photo unavailable", systemImage: "photo", description: Text("Replace or recover the AQD photo. Your title and caption are retained."), fillsAvailableSpace: false)
         }
