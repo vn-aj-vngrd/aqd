@@ -52,4 +52,13 @@ struct PendingReceiptTests {
         try store.acknowledgePiecePresentation(draftID: draft.id, operationID: operation)
         #expect(try store.newPieceDraft() == nil)
     }
+
+    @Test func aChosenCategoryAssignmentSurvivesSavingAndReopening() async throws {
+        let (store, draft, operation) = try await savedButUnacknowledged(recipe: .fit, organizationCategoryID: "tops")
+        #expect(try store.piece(id: draft.itemID)?.details.organizationCategoryID == "tops")
+        #expect(try store.piece(id: draft.itemID)?.details.tags.isEmpty == true, "the reserved entry never shows as a user tag")
+        try store.acknowledgePiecePresentation(draftID: draft.id, operationID: operation)
+        let reopened = try PieceStore(directory: store.localDirectory)
+        #expect(try reopened.pieces().first?.details.organizationCategoryID == "tops")
+    }
 }

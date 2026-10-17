@@ -48,7 +48,7 @@ final class StoredPiece {
         season = piece.details.season
         condition = piece.details.condition
         ownershipAge = piece.details.ownershipAge
-        tags = piece.details.tags
+        tags = Self.storedTags(for: piece.details)
         notes = piece.details.notes
         priorWearCount = piece.details.priorWearCount
         availability = piece.availability.rawValue
@@ -56,6 +56,20 @@ final class StoredPiece {
         isArchived = piece.isArchived
         createdAt = piece.createdAt
         updatedAt = piece.updatedAt
+    }
+
+    /// A piece's category assignment has no column of its own: adding one would change every versioned schema hash.
+    /// It rides in `tags` as one reserved entry that never reaches `PieceDetails.tags`.
+    private static let categoryTagPrefix = "aqd.category:"
+
+    private static func storedTags(for details: PieceDetails) -> [String] {
+        details.tags + (details.organizationCategoryID.map { [categoryTagPrefix + $0] } ?? [])
+    }
+
+    private static func visibleTags(_ tags: [String]) -> [String] { tags.filter { !$0.hasPrefix(categoryTagPrefix) } }
+
+    private static func organizationCategoryID(in tags: [String]) -> String? {
+        tags.first { $0.hasPrefix(categoryTagPrefix) }.map { String($0.dropFirst(categoryTagPrefix.count)) }
     }
 
     func recipe() throws -> PhotoEditRecipe {
@@ -80,7 +94,8 @@ final class StoredPiece {
         return WardrobePiece(id: id, name: name, category: category, photoID: photoID,
                              details: PieceDetails(color: color, brand: brand, size: size, fit: fit, material: material,
                                                    season: season, condition: condition, ownershipAge: ownershipAge,
-                                                   tags: tags, notes: notes, priorWearCount: priorWearCount),
+                                                   tags: Self.visibleTags(tags), notes: notes, priorWearCount: priorWearCount,
+                                                   organizationCategoryID: Self.organizationCategoryID(in: tags)),
                              availability: availability, revision: revision, isArchived: isArchived,
                              createdAt: createdAt, updatedAt: updatedAt, photoRecipe: try recipe())
     }
@@ -102,7 +117,7 @@ final class StoredPiece {
         season = piece.details.season
         condition = piece.details.condition
         ownershipAge = piece.details.ownershipAge
-        tags = piece.details.tags
+        tags = Self.storedTags(for: piece.details)
         notes = piece.details.notes
         priorWearCount = piece.details.priorWearCount
         availability = piece.availability.rawValue
@@ -188,9 +203,9 @@ final class StoredPhotoCleanup {
 }
 
 extension WardrobePiece {
-    /// The piece as `StoredPiece` keeps it. The organization category is carried by drafts and receipts but is not a
-    /// stored column, so receipt checks compare against this form rather than the raw snapshot.
-    var persistedForm: WardrobePiece {
+    /// The piece without its category assignment. Receipts written before assignments were persisted lack it on the
+    /// stored side, so receipt checks compare both sides in this form.
+    var withoutCategoryAssignment: WardrobePiece {
         let stored = PieceDetails(color: details.color, brand: details.brand, size: details.size, fit: details.fit, material: details.material,
                                   season: details.season, condition: details.condition, ownershipAge: details.ownershipAge,
                                   tags: details.tags, notes: details.notes, priorWearCount: details.priorWearCount)

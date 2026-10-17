@@ -742,7 +742,7 @@ final class PieceStore {
               snapshot.availability == draft.availability,
               snapshot.revision > 0, snapshot.revision - 1 == (draft.baseRevision ?? 0),
               let current = try piece(id: itemID), current.createdAt == snapshot.createdAt,
-              current == snapshot.persistedForm || current.revision > snapshot.revision else {
+              current.withoutCategoryAssignment == snapshot.withoutCategoryAssignment || current.revision > snapshot.revision else {
             throw StoreError.invalidRecord
         }
         return snapshot
