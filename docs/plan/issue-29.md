@@ -582,3 +582,11 @@ October17 combined editor/tour/Agent source `1952f857b19b36409ea709d465703c6f074
 Owner Categories toolbar refinement October17: replace Edit text with a pencil symbol, retain checkmark during editing, remove the per-button glass style and group Edit/Add in one native ToolbarItemGroup. The OS owns the single shared glass surface; labels, edit mode and Add guards remain. Cosmetic source/build verification only, no computer use or launch requested. Preserve concurrent custom-dialog source edits untouched.
 
 October17 Category toolbar follow-up: pencil/check and Plus share one native ToolbarItemGroup, removing the nested per-button glass style. Generic-device Debug build passed `/tmp/aqd-category-toolbar-build.log`; installed successfully `/tmp/aqd-category-toolbar-install.json`, not launched per owner preference. Input: clean1952f85 snapshot plus updated WardrobeCategorySettingsView; concurrent custom-dialog edits preserved in workspace and excluded from this toolbar build. Cosmetic-only change; no new unit or rendered proof.
+
+### Settings density refinement (October 17)
+
+Owner requested smaller Settings gaps. Existing row labels already reserve 44 points, then native List padding expands them to roughly72. Set explicit 4-point vertical row insets for roughly52-point rows, preserve standard horizontal grouping, use16-point inter-section spacing and8-point top scroll margin to avoid stacked header/list gaps. Scope Settings root only; retain Dynamic Type expansion, native navigation, icons, values and data warnings. Cosmetic source/build/install checks; owner continues to skip device tests and opens AQD manually.
+
+Settings density October17: root rows use4-point vertical insets around44-point minimum content,16-point section spacing and8-point top scroll margin. Source review confirms Settings-only scope, no data/routing changes, native value/disclosure alignment and Dynamic Type growth. Signed generic Debug passed `/tmp/aqd-settings-density-debug.log`; docs/whitespace checks pass. Native/device tests skipped by owner; no app launch, UI automation or rendered claim. Concurrent custom discard files excluded from clean snapshot and retained in workspace.
+
+Settings density build installed successfully (`/tmp/aqd-settings-density-install.json`). Owner opens the app for visual review.

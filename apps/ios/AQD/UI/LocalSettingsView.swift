@@ -21,12 +21,14 @@ struct LocalSettingsView: View {
                 Button { weather = true } label: {
                     SettingsRow(title: "Weather", symbol: "cloud.sun", value: state.weatherClient?.local?.enabled == true ? state.weatherClient?.local?.place?.name ?? "Place unavailable" : "Off", disclosure: true)
                 }
-            }.listRowBackground(AppTheme.surface)
+            }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
+                .listRowBackground(AppTheme.surface)
             Section("Assistance & help") {
                 NavigationLink { LocalAssistanceSettingsView().secondaryPage() } label: { SettingsRow(title: "About Agent", symbol: "sparkle") }
                 NavigationLink { LocalPrivacySettingsView().secondaryPage() } label: { SettingsRow(title: "Help & privacy", symbol: "hand.raised") }
                 Button { state.beginTour(from: .settings) } label: { SettingsRow(title: "App tour", symbol: "play.rectangle", disclosure: true) }
-            }.listRowBackground(AppTheme.surface)
+            }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
+                .listRowBackground(AppTheme.surface)
             Section {
                 NavigationLink { ArchivedPiecesView().secondaryPage() } label: { SettingsRow(title: "Archived pieces", symbol: "archivebox") }
                 NavigationLink { LocalExportView().secondaryPage() } label: { SettingsRow(title: "Export closet", symbol: "square.and.arrow.up") }
@@ -34,7 +36,8 @@ struct LocalSettingsView: View {
                 Button(role: .destructive) { state.openErase() } label: { SettingsRow(title: "Erase closet", symbol: "trash", disclosure: true, destructive: true) }
             } header: { Text("Your data") } footer: {
                 Text("Stored on this iPhone with no account or automatic cloud backup. Export a copy to protect against device loss or deleting AQD.")
-            }.listRowBackground(AppTheme.surface)
+            }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
+                .listRowBackground(AppTheme.surface)
             #if DEBUG
             Section {
                 Button { previewWelcome = true } label: { SettingsRow(title: "Preview welcome screen", symbol: "hand.wave", disclosure: true) }
@@ -42,11 +45,12 @@ struct LocalSettingsView: View {
                 Button { previewSplash = true } label: { SettingsRow(title: "Preview splash screen", symbol: "arrow.clockwise", disclosure: true) }
                     .accessibilityIdentifier("aqd.development.splash")
             } header: { Text("Development") } footer: { Text("Previews preserve your setup. Close and reopen AQD to test the system launch screen.") }
+                .listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
                 .listRowBackground(AppTheme.surface)
             #endif
         }
-        .listStyle(.insetGrouped).navigationTitle("Settings").navigationBarTitleDisplayMode(.inline)
-        .contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).tint(AppTheme.ink)
+        .listStyle(.insetGrouped).listSectionSpacing(AppSpacing.large).navigationTitle("Settings").navigationBarTitleDisplayMode(.inline)
+        .contentMargins(.top, AppSpacing.small, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).tint(AppTheme.ink)
         .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
         .onAppear { state.reloadSettings() }
         .sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true } } }
