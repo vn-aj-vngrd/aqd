@@ -164,16 +164,16 @@ private struct AppConfirmationCard<Actions: View, Message: View>: View {
                     .accessibilityAddTraits(.isHeader).accessibilityFocused($titleFocused)
                 message().font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-            }.padding(.horizontal, AppSpacing.medium)
+            }.frame(maxWidth: .infinity, alignment: .leading)
             ViewThatFits(in: .horizontal) {
                 if !typeSize.isAccessibilitySize {
-                    HStack(spacing: AppSpacing.small) { actions().fixedSize(horizontal: true, vertical: false) }
+                    HStack(spacing: AppSpacing.small) { actions() }
                 }
                 VStack(spacing: AppSpacing.small) { actions() }
             }
             .buttonStyle(ConfirmationActionStyle(perform: perform, registerCancel: { cancelAction = $0 }))
         }
-        .padding(AppSpacing.large).frame(maxWidth: 340)
+        .padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.screen).frame(maxWidth: 340)
         .background {
             if reduceTransparency { shape.fill(AppTheme.surface) }
             else { shape.fill(.regularMaterial) }
