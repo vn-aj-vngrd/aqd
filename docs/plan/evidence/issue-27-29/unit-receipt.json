@@ -1868,5 +1868,36 @@
     "nativeTestsExecuted": false,
     "runtimeComplete": false,
     "sourceSHA256": "a6601a195c710e581eeee2d651e6abc95c459f23feb79dd15c8143632d05509b"
+  },
+  "reorderAndComposerRefinement": {
+    "codeCommit": "a1cb8eafc315ae5424a3600feb5ca3264032f445",
+    "debugBuild": "/tmp/aqd-reorder-composer-press-debug.log",
+    "debugResult": "BUILD SUCCEEDED",
+    "install": "/tmp/aqd-reorder-composer-press-install.json",
+    "installResult": "success",
+    "semanticColorContrast": {
+      "scope": "Semantic row colors only; system handles and rendered appearance not evaluated",
+      "ratios": {
+        "light": {
+          "ink": 15.7,
+          "secondary": 5.57,
+          "boundary": 4.21
+        },
+        "dark": {
+          "ink": 12.56,
+          "secondary": 7.24,
+          "boundary": 4.52
+        }
+      }
+    },
+    "appLaunched": false,
+    "nativeTestsExecuted": false,
+    "runtimeComplete": false,
+    "sourceSHA256": {
+      "apps/ios/AQD/UI/AppRows.swift": "1485d3fb1e9ac06deb48a6c03a13f8b1fa0b66db6debd69a29ee7895c5d62a6e",
+      "apps/ios/AQD/UI/TodayEditorView.swift": "bcf63a40c7e1a204765068a9f2088f177cccbe3a4cc515a6ff6ebbac2484d834",
+      "apps/ios/AQD/UI/WardrobeCategorySettingsView.swift": "19177522109038ca7fa49d56379c4fd5d6c56c1f2ecab42f775edf433af78ac2",
+      "apps/ios/AQD/UI/LocalAgentView.swift": "6ed2e178476ce01c331974aea9a807379b8baa0791bb5bdd0bb107118cfeda07"
+    }
   }
 }
