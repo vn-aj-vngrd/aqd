@@ -399,10 +399,9 @@ struct AgentHistoryView: View {
     @ViewBuilder private func status(_ value: AgentConversation) -> some View {
         switch AgentHistoryPresentation.status(value) {
         case .loading: ProgressView().controlSize(.mini).frame(width: 12).accessibilityLabel("Responding")
-        case .complete: Circle().fill(Color.blue).frame(width: 7, height: 7).frame(width: 12).accessibilityLabel("Response complete")
+        case .complete, .empty: Color.clear.frame(width: 12, height: 7).accessibilityHidden(true)
         case .incomplete: Image(systemName: "exclamationmark.circle").font(.footnote).foregroundStyle(AppTheme.error).frame(width: 12).accessibilityLabel("Response incomplete")
         case .draft: Image(systemName: AppSymbols.edit).font(.footnote).foregroundStyle(AppTheme.controlIcon).frame(width: 12).accessibilityLabel("Draft")
-        case .empty: Color.clear.frame(width: 12, height: 7).accessibilityHidden(true)
         }
     }
     var body: some View {
