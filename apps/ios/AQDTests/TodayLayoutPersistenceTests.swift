@@ -7,6 +7,48 @@ import UIKit
 
 @Suite(.serialized) @MainActor
 struct TodayLayoutPersistenceTests {
+    @Test func nativeReorderMovesBothDirectionsAndSavedHomeUsesTheSameOrder() async throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let state = AppState(store: store)
+        state.openTodayEditor()
+        let model = try #require(state.todayEditor)
+        let original = model.catalog
+        model.moveInCatalog(from: IndexSet(integer: 0), to: 2)
+        #expect(model.catalog[0].id == original[1].id)
+        #expect(model.catalog[1].id == original[0].id)
+        #expect(model.draft.hasChanges)
+        #expect(try store.todayConfiguration().instances == original)
+        model.moveInCatalog(from: IndexSet(integer: 1), to: 0)
+        #expect(!model.draft.hasChanges)
+        let last = try #require(original.last)
+        model.setVisibility(last.id, visible: false)
+        model.moveInCatalog(from: IndexSet(integer: original.count - 1), to: 0)
+        let expected = model.catalog
+        #expect(expected.first?.id == last.id)
+        #expect(expected.first?.isVisible == false)
+        await model.save()
+        #expect(state.todayEditor == nil)
+        #expect(state.today?.instances == expected)
+        let reopened = try PieceStore(directory: store.localDirectory)
+        #expect(try reopened.todayConfiguration().instances == expected)
+        #expect(AppState(store: reopened).today?.instances == expected)
+    }
+
+    @Test func nativeReorderRejectsInvalidOffsetsAndLockedEdits() throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let state = AppState(store: store)
+        state.openTodayEditor()
+        let model = try #require(state.todayEditor)
+        let original = model.draft
+        model.moveInCatalog(from: IndexSet(integer: model.catalog.count), to: 0)
+        model.moveInCatalog(from: IndexSet(integer: 0), to: -1)
+        model.moveInCatalog(from: IndexSet(integer: 0), to: model.catalog.count + 1)
+        #expect(model.draft == original)
+        model.pending = true
+        model.moveInCatalog(from: IndexSet(integer: 0), to: 2)
+        #expect(model.draft == original)
+    }
+
     @Test func visibilityIsDraftOnlyReversibleAndSurvivesSaveWithoutDroppingSettings() async throws {
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         let state = AppState(store: store), base = try store.todayConfiguration()

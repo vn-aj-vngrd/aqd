@@ -87,7 +87,7 @@ private struct TourCard: View {
     var body: some View {
         if let tour = state.entry.tour {
             let step = tour.step
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: AppSpacing.medium) {
                 ViewThatFits(in: .vertical) {
                     explanation(step).fixedSize(horizontal: false, vertical: true)
                     ScrollView { explanation(step) }
@@ -100,13 +100,17 @@ private struct TourCard: View {
         }
     }
     private func explanation(_ step: Int) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: AppSpacing.medium) {
             HStack(spacing: 12) {
                 Text("\(step + 1) of \(PrivateEntryState.tourStepCount)").font(.subheadline).foregroundStyle(AppTheme.secondary)
                     .accessibilityFocused($focusedStep, equals: step)
                 Spacer(minLength: 0)
-                Button("Skip tour") { state.updateEntry { $0.skipTour() } }.frame(minHeight: 44)
-                    .foregroundStyle(AppTheme.ink)
+                Button { state.updateEntry { $0.skipTour() } } label: {
+                    Image(systemName: "xmark").font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(AppTheme.secondary)
+                        .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+                        .contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityLabel("Skip tour").accessibilityIdentifier("tour.skip")
             }
             VStack(alignment: .leading, spacing: 8) {
                 Text(titles[step]).font(AppTypography.section)
@@ -118,16 +122,13 @@ private struct TourCard: View {
         }
     }
     private var back: some View {
-        SecondaryAction(title: "Back") { state.updateEntry { $0.backInTour() } }
-            .background(AppTheme.imageGround, in: Capsule()).accessibilityIdentifier("tour.back")
+        SecondaryAction(title: "Back", compact: true) { state.updateEntry { $0.backInTour() } }
+            .accessibilityIdentifier("tour.back")
     }
     private func next(_ step: Int) -> some View {
-        Button { state.updateEntry { $0.nextInTour() } } label: {
-            HStack {
-                Text(step == PrivateEntryState.tourStepCount - 1 ? "Finish tour" : "Next")
-                Image(systemName: step == PrivateEntryState.tourStepCount - 1 ? "checkmark" : "chevron.forward")
-            }.frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
-        }.neutralToolbarGlass().tint(step == PrivateEntryState.tourStepCount - 1 ? AppTheme.actionText : AppTheme.ink).id(step)
+        PrimaryAction(title: step == PrivateEntryState.tourStepCount - 1 ? "Finish tour" : "Next",
+                      compact: true) { state.updateEntry { $0.nextInTour() } }
+            .accessibilityIdentifier("tour.next").id(step)
     }
 }
 

@@ -9,6 +9,7 @@ struct WeatherContextView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.colorScheme) private var colorScheme
     @State private var lookup = WeatherPlaceLookup()
+    @State private var choosingLocation = false
     @State private var enabled: Bool
     @State private var place: WeatherPlace?
     @State private var day: LocalPlanDay
@@ -36,75 +37,70 @@ struct WeatherContextView: View {
         NavigationStack {
             Form {
                 Section {
-                    Toggle("Use weather", isOn: $enabled).disabled(saving || unknown)
+                    Toggle(isOn: $enabled) {
+                        AccessoryLabel("Use weather", systemImage: "cloud.sun")
+                    }.disabled(saving || unknown)
                 } footer: {
-                    Text("Search sends your query to Apple Maps. Weather sends coordinates and date to Apple WeatherKit. Your wardrobe, photos, body details, journal and chat stay private.")
-                }.listRowBackground(AppTheme.surface)
-                if let error = client.error {
-                    Section { SemanticFeedback(role: .warning, message: error) }.listRowBackground(AppTheme.surface)
-                }
-                Section {
-                    TextField("City and country", text: $lookup.query).accessibilityLabel("City and country")
-                    Button { cancelFetch(); lookup.searchCity() } label: { Label("Search cities", systemImage: "magnifyingglass") }
-                        .disabled(lookup.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    Button { cancelFetch(); lookup.useCurrentLocation() } label: { Label("Use current location", systemImage: "location") }
-                    if lookup.pending {
-                        ProgressView("Finding place")
-                        Button("Cancel lookup") { lookup.cancel() }
-                    }
-                    if let error = lookup.error { SemanticFeedback(role: .warning, message: error) }
-                    ForEach(Array(lookup.results.enumerated()), id: \.offset) { _, item in
-                        Button(item.name ?? item.placemark.locality ?? "Choose city") { cancelFetch(); lookup.choose(item) }.frame(minHeight: 44)
-                    }
-                } header: { Text("Location") }
-                footer: { Text("Search needs internet. Current location asks once for approximate access while using AQD.") }
-                    .disabled(saving || unknown).listRowBackground(AppTheme.surface)
-                if let place {
-                    Section("Selected city") {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(place.name).font(AppTypography.body)
-                            Text(place.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                        }
-                    }.listRowBackground(AppTheme.surface)
-                }
-                Section {
-                    ThemedDatePicker("Weather date", selection: Binding(get: { (try? day.date()) ?? Date() }, set: { date in
-                        cancelFetch(); day = LocalPlanDay(date: date, timeZone: TimeZone(identifier: day.timeZoneID) ?? .current)
-                    }), displayedComponents: .date).environment(\.timeZone, TimeZone(identifier: day.timeZoneID) ?? .current).disabled(saving || unknown)
+                    Text(enabled ? "Your city’s coordinates and forecast date go to Apple Weather. Your wardrobe stays private." : "Weather is off. Turning it on shares your chosen city’s coordinates and date with Apple Weather. Your wardrobe stays private.")
                 }.listRowBackground(AppTheme.surface)
                 if enabled {
                     Section {
-                        if !client.qualified {
-                            Label("Live weather isn’t available in this build.", systemImage: "cloud.slash")
-                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        Button { choosingLocation = true } label: {
+                            HStack(spacing: AppSpacing.medium) {
+                                Image(systemName: "mappin.and.ellipse").foregroundStyle(AppTheme.controlIcon).frame(width: 24)
+                                VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                                    Text(place?.name ?? "Choose a city").foregroundStyle(AppTheme.ink).multilineTextAlignment(.leading)
+                                    Text(place == nil ? "Search or use your current location" : "Weather location")
+                                        .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                                }
+                                Spacer(minLength: AppSpacing.small)
+                                Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.controlIcon)
+                            }.frame(minHeight: 44).contentShape(Rectangle())
+                        }.buttonStyle(.plain).accessibilityHint("Choose a different city")
+                        if !persistsPreference {
+                            ThemedDatePicker("Forecast date", selection: Binding(get: { (try? day.date()) ?? Date() }, set: { date in
+                                cancelFetch(); day = LocalPlanDay(date: date, timeZone: TimeZone(identifier: day.timeZoneID) ?? .current)
+                            }), displayedComponents: .date).environment(\.timeZone, TimeZone(identifier: day.timeZoneID) ?? .current)
                         }
-                        if pending {
-                            ProgressView("Loading weather")
-                            Button("Cancel weather request") { cancelFetch() }
-                        }
-                        TimelineView(.periodic(from: .now, by: 30)) { context in
-                            if let snapshot, let reading = snapshot.reading(for: day, now: context.date, qualified: client.qualified), let attribution = snapshot.attribution,
-                               let image = UIImage(data: colorScheme == .dark ? attribution.dark : attribution.light) {
-                                WeatherReadingView(reading: reading, now: context.date)
-                                Image(uiImage: image).resizable().scaledToFit().frame(maxWidth: 180, maxHeight: 44).accessibilityLabel("Apple Weather")
-                                Link("Data sources", destination: attribution.legalURL).frame(minHeight: 44)
+                    }.disabled(saving || unknown).listRowBackground(AppTheme.surface)
+                    if client.qualified, place != nil {
+                        Section {
+                            if pending {
+                                ProgressView("Loading weather")
+                                Button("Cancel weather request") { cancelFetch() }
                             }
-                        }
-                        Button { fetch(manual: true) } label: { Label("Refresh weather", systemImage: "arrow.clockwise") }
-                            .disabled(selection == nil || pending || saving || unknown || !client.qualified)
+                            TimelineView(.periodic(from: .now, by: 30)) { context in
+                                if let snapshot, let reading = snapshot.reading(for: day, now: context.date, qualified: client.qualified), let attribution = snapshot.attribution,
+                                   let image = UIImage(data: colorScheme == .dark ? attribution.dark : attribution.light) {
+                                    WeatherReadingView(reading: reading, now: context.date)
+                                    Image(uiImage: image).resizable().scaledToFit().frame(maxWidth: 180, maxHeight: 44).accessibilityLabel("Apple Weather")
+                                    Link("Data sources", destination: attribution.legalURL).frame(minHeight: 44)
+                                }
+                            }
+                            Button { fetch(manual: true) } label: { AccessoryLabel("Refresh weather", systemImage: "arrow.clockwise") }
+                                .disabled(selection == nil || pending || saving || unknown)
+                        }.listRowBackground(AppTheme.surface)
+                    }
+                    if let error = client.error {
+                        Section { SemanticFeedback(role: .warning, message: error) }.listRowBackground(AppTheme.surface)
+                    }
+                    Section {
+                        DisclosureGroup("Weather and privacy") {
+                            Text("City search sends your search text to Apple Maps. Weather sends the selected coordinates and date to Apple WeatherKit. Neither receives your wardrobe, photos, body details, journal or chat.")
+                            Text("City search needs no location permission. Current location uses approximate, foreground access once.")
+                        }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    } footer: {
+                        if !client.qualified { Text("Live forecasts aren’t available in this build. You can still save your weather preferences.") }
                     }.listRowBackground(AppTheme.surface)
                 }
                 if let error {
                     Section { SemanticFeedback(role: .warning, message: error) }.listRowBackground(AppTheme.surface)
                 }
-                Section {
-                    DisclosureGroup("Weather and privacy") {
-                        Text("City search sends your search text to Apple Maps. Weather sends the selected coordinates and date to Apple WeatherKit. Neither receives your wardrobe, photos, body details, journal or chat.")
-                        Text("City search needs no location permission. Current location uses approximate, foreground access once. No account or Apple Intelligence is required.")
-                    }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                }.listRowBackground(AppTheme.surface)
-            }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)
-                .navigationTitle("Weather context").navigationBarTitleDisplayMode(.inline)
+            }.listSectionSpacing(AppSpacing.large).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)
+                .navigationTitle("Weather").navigationBarTitleDisplayMode(.inline)
+                .navigationDestination(isPresented: $choosingLocation) {
+                    WeatherLocationPicker(lookup: lookup, current: place) { choosingLocation = false }
+                }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button { cancelFetch(); lookup.cancel(); dismiss() } label: { Image(systemName: "xmark") }
@@ -119,9 +115,14 @@ struct WeatherContextView: View {
                 }
         }.tint(AppTheme.ink).interactiveDismissDisabled(saving || unknown)
             .onChange(of: lookup.selected) { _, selected in
-                guard let selected else { return }; cancelFetch(); place = selected; day.timeZoneID = selected.timeZoneID
+                guard enabled, let selected else { return }; cancelFetch(); place = selected; day.timeZoneID = selected.timeZoneID; choosingLocation = false
+                if client.qualified { fetch(manual: false) }
             }
-            .onChange(of: enabled) { _, _ in cancelFetch() }
+            .onChange(of: enabled) { _, isEnabled in
+                cancelFetch(); lookup.cancel(); choosingLocation = false
+                if !unknown { error = nil }
+                if isEnabled, client.qualified { fetch(manual: false) }
+            }
             .onChange(of: scenePhase) { _, phase in
                 if phase != .active { cancelFetch(); lookup.cancel() }
                 else if enabled, client.qualified { fetch(manual: false) }
@@ -175,6 +176,71 @@ struct WeatherContextView: View {
         }
     }
 }
+/// Search is submitted explicitly. Typing alone never sends a location query.
+private struct WeatherLocationPicker: View {
+    @Bindable var lookup: WeatherPlaceLookup
+    let current: WeatherPlace?
+    let keepCurrent: () -> Void
+    @FocusState private var searchFocused: Bool
+    var body: some View {
+        List {
+            Section {
+                Button { searchFocused = false; lookup.useCurrentLocation() } label: {
+                    AccessoryLabel("Use current location", systemImage: "location")
+                        .frame(minHeight: 44)
+                }.disabled(lookup.pending)
+            } footer: { Text("Requests approximate location once. City search needs no location access.") }
+                .listRowBackground(AppTheme.surface)
+            if let current, lookup.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                Section("Selected city") {
+                    Button(action: keepCurrent) {
+                        HStack(spacing: AppSpacing.medium) {
+                            Text(current.name).foregroundStyle(AppTheme.ink).multilineTextAlignment(.leading)
+                            Spacer(minLength: AppSpacing.small)
+                            Image(systemName: "checkmark").foregroundStyle(AppTheme.controlIcon)
+                        }.frame(minHeight: 44)
+                    }.accessibilityValue("Selected")
+                }.listRowBackground(AppTheme.surface)
+            }
+            if lookup.pending {
+                Section { ProgressView("Finding city…"); Button("Cancel search") { lookup.cancel() } }.listRowBackground(AppTheme.surface)
+            } else if !lookup.results.isEmpty {
+                Section("Search results") {
+                    ForEach(Array(lookup.results.enumerated()), id: \.offset) { _, item in
+                        Button { searchFocused = false; lookup.choose(item) } label: {
+                            VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                                Text(item.placemark.locality ?? item.name ?? "City").foregroundStyle(AppTheme.ink)
+                                Text([item.placemark.administrativeArea, item.placemark.country].compactMap { $0 }.joined(separator: ", "))
+                                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
+                        }.buttonStyle(.plain)
+                    }
+                }.listRowBackground(AppTheme.surface)
+            } else if !lookup.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, lookup.error == nil {
+                Section {
+                    Button { search() } label: { AccessoryLabel("Search cities", systemImage: "magnifyingglass").frame(minHeight: 44) }
+                }.listRowBackground(AppTheme.surface)
+            }
+            if let error = lookup.error {
+                Section { SemanticFeedback(role: .warning, message: error) }.listRowBackground(AppTheme.surface)
+            }
+            Section {} footer: { Text("Search sends the city or country you enter to Apple Maps.") }
+        }.listStyle(.insetGrouped).listSectionSpacing(AppSpacing.large)
+            .scrollContentBackground(.hidden).background(AppTheme.canvas)
+            .navigationTitle("Choose city").navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $lookup.query, placement: .navigationBarDrawer(displayMode: .always), prompt: "City or country")
+            .searchFocused($searchFocused)
+            .onSubmit(of: .search) { search() }
+            .onChange(of: lookup.query) { _, _ in lookup.cancel(); lookup.results = []; lookup.error = nil }
+            .onAppear { lookup.cancel(); lookup.selected = nil; lookup.query = ""; lookup.results = []; lookup.error = nil }
+            .onDisappear { lookup.cancel() }
+    }
+    private func search() {
+        guard !lookup.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        searchFocused = false; lookup.searchCity()
+    }
+}
+
 struct WeatherReadingView: View {
     let reading: WeatherReading
     let now: Date

@@ -6,6 +6,7 @@ struct PrimaryAction: View {
     var isPending = false
     var systemImage: String? = nil
     var role: ButtonRole? = nil
+    var compact = false
     let action: () -> Void
     @Environment(\.isEnabled) private var isEnabled
     private var usesAccent: Bool { isEnabled || isPending }
@@ -28,8 +29,8 @@ struct PrimaryAction: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, AppSpacing.screen)
-            .padding(.vertical, AppSpacing.medium)
-            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.actionHeight)
+            .padding(.vertical, compact ? AppSpacing.small : AppSpacing.medium)
+            .frame(maxWidth: .infinity, minHeight: compact ? AppControlMetrics.minimumTarget : AppControlMetrics.actionHeight)
             .foregroundStyle(usesAccent ? activeForeground : AppTheme.secondary)
             .background(usesAccent ? (role == .destructive ? AppTheme.dangerFill : AppTheme.primaryFill) : AppTheme.divider, in: Capsule())
             .contentShape(Rectangle())
@@ -43,6 +44,7 @@ struct PrimaryAction: View {
 
 struct SecondaryAction: View {
     let title: String
+    var compact = false
     let action: () -> Void
     @Environment(\.isEnabled) private var isEnabled
 
@@ -52,8 +54,8 @@ struct SecondaryAction: View {
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, AppSpacing.screen)
-                .padding(.vertical, AppSpacing.medium)
-                .frame(maxWidth: .infinity, minHeight: AppControlMetrics.actionHeight)
+                .padding(.vertical, compact ? AppSpacing.small : AppSpacing.medium)
+                .frame(maxWidth: .infinity, minHeight: compact ? AppControlMetrics.minimumTarget : AppControlMetrics.actionHeight)
                 .foregroundStyle(isEnabled ? AppTheme.ink : AppTheme.secondary)
                 .contentShape(Rectangle())
         }.buttonStyle(ContentActionStyle())
@@ -121,14 +123,15 @@ struct ToolbarSaveAction: View {
     }
 }
 
-/// Neutral navigation between review steps; persistence stays with ToolbarSaveAction.
+/// Primary navigation between review steps; persistence stays with ToolbarSaveAction.
 struct ToolbarForwardAction: View {
     let title: String
     let action: () -> Void
     var body: some View {
         Button(action: action) {
             Image(systemName: "chevron.forward")
-        }.tint(AppTheme.ink).accessibilityLabel(title)
+        }.buttonStyle(.borderedProminent).tint(AppTheme.primaryFill)
+            .foregroundStyle(AppTheme.onPrimary).accessibilityLabel(title)
     }
 }
 

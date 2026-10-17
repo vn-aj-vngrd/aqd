@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 enum AppSymbols {
-    static let edit = "pencil.line"
+    static let edit = "pencil"
 }
 
 enum AppTheme {

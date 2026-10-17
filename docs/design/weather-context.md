@@ -67,3 +67,11 @@ Verify signed-device access, feature off/on, no AQD sign-in, no Foundation Model
 Dynamic Type, VoiceOver state/source/time announcements, source focus return,44-point targets, keyboard-safe city search, short phones, landscape/iPad adaptations and semantic appearances remain native acceptance. No implementation, service or permission check is established by this design task.
 
 Owner native form refinement October16: Weather context groups Use weather, Location lookup, selected city, date and optional readings in opaque semantic-white sections. The first visible footer names query → Apple Maps, coordinates/date → Apple WeatherKit and excludes wardrobe/photos/body/journal/chat before online actions. Detailed privacy is expandable. Lookup/current-location/cancel controls remain contextual rows; Save/Done/Check result remain top-right with original validation/reconciliation guards. No network or qualification capability is enabled by this redesign.
+
+## Compact weather settings refinement, October17
+
+Owner requested a quieter Off state and a clearer location-selection flow. Off shows only the switch and concise network/privacy explanation; city, forecast date, retrieval controls and privacy details stay hidden. Turning Off cancels in-flight weather and place lookup. Saved city is retained for enabling again. Save-result recovery remains visible when needed.
+
+On shows one selected-city disclosure row, opening a native searchable city list. Search submits explicitly to Apple Maps; typing alone sends no query. Results include city and region/country, Current Location stays a separate action, and the saved city has a checkmark. Query edits clear stale results and cancel old lookup work. Returning without selection preserves the chosen city.
+
+Settings do not expose a one-off forecast date, because their saved preference contains only enablement and place. Contextual outfit/planning callers retain their local forecast date picker. Existing source attribution, freshness, qualification and acknowledged save/retry rules remain. Use semantic surfaces, gray accessory icons, native search and compact section spacing in both appearances. Source syntax/whitespace checks are distinct from compiled or inspected native UI acceptance.

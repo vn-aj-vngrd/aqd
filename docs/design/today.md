@@ -28,6 +28,8 @@ Owner update October16: Today exposes Weather setup even when no weather widget 
 
 ## Content and control grammar
 
+Customize Today uses native List reordering with an always-visible system drag handle. Moving a row changes the retained draft order, including hidden widgets, while the saved Home layout stays unchanged until Save succeeds. Save reloads Home using that same ordered configuration. Move up and Move down accessibility actions remain available; pending or unconfirmed saves lock reordering.
+
 Today cards use opaque semantic surfaces,16 padding/16 corners, contextual title symbols, semantic detail-title headings and supporting body copy. They do not use Liquid Glass. First-use, planned and optional-weather fixtures share stock identities/order: Today’s look, Your week in wear, Closet in use. First-piece guidance lives inside the look card. No-history cards explain the source action without invented numbers/percentages. Existing source queries and actual recorded metrics remain authoritative.
 
 Standalone real picker/configuration rows use opaque surface/night-surface, min52 height,14 padding,16 corners, semantic-gray current value,12 gap and a fixed22 disclosure lane. The whole row is a native44-min target. Distinguish actions from passive metadata. Native Menu rows retain OS-owned menu geometry; grouped forms retain related-row grouping instead of separate floating cards. Native focus/invalid/disabled/Increase Contrast feedback is never removed. Fields are borderless white52/14/16; multiline TextEditor grows/scrolls and retains all text. No arbitrary Note/title/caption limits are introduced.

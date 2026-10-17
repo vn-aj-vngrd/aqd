@@ -179,29 +179,84 @@ struct LocalAssistanceSettingsView: View {
     @Environment(AppState.self) private var state
     @Environment(\.scenePhase) private var scenePhase
     @State private var availability = OutfitSuggestions.modelAvailability()
+    private var statusTitle: String {
+        switch availability {
+        case .available: "Ready on this iPhone"
+        case .unsupported: "Not supported on this iPhone"
+        case .intelligenceOff: "Apple Intelligence is off"
+        case .preparing: "Getting ready"
+        case .localeUnavailable: "Language not supported"
+        case .awaitingQualification: "Not enabled in this build"
+        }
+    }
+    private var statusDetail: String {
+        switch availability {
+        case .available: "Powered by Apple Intelligence"
+        case .unsupported: "Your saved conversations and wardrobe stay available."
+        case .intelligenceOff: "Enable Apple Intelligence in iPhone Settings, then check again."
+        case .preparing: "Apple Intelligence is preparing its model. Check again shortly."
+        case .localeUnavailable: "Choose a supported Apple Intelligence language in iPhone Settings."
+        case .awaitingQualification: "Your saved conversations and wardrobe stay available."
+        }
+    }
     var body: some View {
-        CenteredPageContent {
-            Image(systemName: "sparkles").font(.system(size: 32, weight: .light)).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
-            VStack(spacing: 8) {
-                Text("On-device Agent").font(AppTypography.section)
-                Text(availability.message).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-            }
-            VStack(alignment: .leading, spacing: 16) {
-                Label("Manual tools stay available", systemImage: "slider.horizontal.3")
-                Label("Review every change before saving", systemImage: "checkmark.circle")
-                Label("No cloud model", systemImage: "iphone")
-            }.font(AppTypography.supporting).frame(maxWidth: .infinity, alignment: .leading)
-                .padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppSpacing.section) {
+                VStack(alignment: .leading, spacing: AppSpacing.medium) {
+                    Image(systemName: "sparkle").font(.system(size: 28, weight: .regular))
+                        .foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                    Text("More from what you own.").font(AppTypography.section)
+                        .foregroundStyle(AppTheme.ink).accessibilityAddTraits(.isHeader)
+                    Text("Find outfit ideas, rediscover pieces and explore your wardrobe with Agent.")
+                        .font(AppTypography.body).foregroundStyle(AppTheme.secondary)
+                }
+                HStack(alignment: .center, spacing: AppSpacing.medium) {
+                    Image(systemName: availability == .available ? "checkmark.circle" : "info.circle")
+                        .foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                        Text(statusTitle).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
+                        Text(statusDetail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    }.frame(maxWidth: .infinity, alignment: .leading)
+                    Button { availability = OutfitSuggestions.modelAvailability() } label: {
+                        Image(systemName: "arrow.clockwise").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+                    }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityLabel("Check Agent availability again")
+                }.padding(AppSpacing.large)
+                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                VStack(alignment: .leading, spacing: AppSpacing.section) {
+                    aboutRow("Your wardrobe, in context", symbol: "tshirt", detail: "Uses relevant saved pieces, preferences and recorded wear. Choose what Agent can use in AI settings.")
+                    aboutRow("On this iPhone", symbol: "iphone", detail: "Replies are generated on-device. Your conversations aren't sent to an AQD server.")
+                    aboutRow("You're in control", symbol: "checkmark.shield", detail: "A reply doesn't change your records. Review suggestions and decide what to keep.")
+                }
+                NavigationLink { AgentSettingsView().secondaryPage() } label: {
+                    HStack(spacing: AppSpacing.medium) {
+                        Image(systemName: "slider.horizontal.3").foregroundStyle(AppTheme.controlIcon)
+                        Text("AI settings").foregroundStyle(AppTheme.ink)
+                        Spacer(minLength: AppSpacing.small)
+                        Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                    }.font(AppTypography.body).padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.rowHeight)
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                }.buttonStyle(.plain)
+                Text("AI can make mistakes. Check details that matter to you.")
+                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+            }.frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.headerGap).padding(.bottom, AppSpacing.section)
         }.background(AppTheme.canvas).navigationTitle("About Agent").navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 ActionFooter {
-                    ActionStack {
-                        PrimaryAction(title: "Open Agent") { state.agentLaunchID = UUID() }
-                        SecondaryAction(title: "Check availability again") { availability = OutfitSuggestions.modelAvailability() }
-                    }
+                    PrimaryAction(title: "Open Agent") { state.agentLaunchID = UUID() }
                 }
             }
             .onChange(of: scenePhase) { _, phase in if phase == .active { availability = OutfitSuggestions.modelAvailability() } }
+    }
+    private func aboutRow(_ title: String, symbol: String, detail: String) -> some View {
+        HStack(alignment: .top, spacing: AppSpacing.medium) {
+            Image(systemName: symbol).font(.body).foregroundStyle(AppTheme.controlIcon)
+                .frame(width: AppControlMetrics.disclosureLane, height: 24).accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                Text(title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
+                Text(detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }.frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 }
 struct LocalPrivacySettingsView: View {

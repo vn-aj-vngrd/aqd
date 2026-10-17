@@ -54,6 +54,22 @@ import Observation
         guard instances.indices.contains(destination), let source = instances.firstIndex(where: { $0.id == id }), source != destination else { return }
         let instance = instances.remove(at: source)
         instances.insert(instance, at: destination)
+        retainCatalogOrder(instances)
+    }
+    func moveInCatalog(from offsets: IndexSet, to destination: Int) {
+        guard !locked, draft.nested == nil else { return }
+        var instances = catalog
+        guard !offsets.isEmpty, offsets.allSatisfy(instances.indices.contains),
+              (0...instances.count).contains(destination) else { return }
+        let moving = offsets.map { instances[$0] }
+        for index in offsets.reversed() { instances.remove(at: index) }
+        let insertion = destination - offsets.filter { $0 < destination }.count
+        instances.insert(contentsOf: moving, at: insertion)
+        guard instances != catalog else { return }
+        retainCatalogOrder(instances)
+    }
+    private func retainCatalogOrder(_ reordered: [TodayWidgetInstance]) {
+        var instances = reordered
         let missingStock = stockInstances.filter { stock in !draft.base.instances.contains { $0.kind == stock.kind } }
         if instances.map(\.id) == (draft.base.instances + missingStock).map(\.id) {
             let stockIDs = Set(missingStock.map(\.id))

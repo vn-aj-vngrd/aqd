@@ -24,30 +24,20 @@ struct TodayEditorView: View {
                             }.buttonStyle(.borderless).disabled(model.locked)
                                 .accessibilityLabel("\(instance.isVisible ? "Hide" : "Show") \(instance.kind.title) on Home")
                                 .accessibilityValue(instance.isVisible ? "Visible" : "Hidden")
-                            Image(systemName: "line.3.horizontal").font(.system(size: 18))
-                                .foregroundStyle(AppTheme.controlIcon).frame(width: 44, height: 44).contentShape(Rectangle())
-                                .draggable(instance.id.uuidString)
-                                .accessibilityLabel("Reorder \(instance.kind.title)")
-                                .accessibilityHint("Use Move up or Move down actions")
-                                .accessibilityAction(named: "Move up") { model.moveInCatalog(instance.id, to: index - 1) }
-                                .accessibilityAction(named: "Move down") { model.moveInCatalog(instance.id, to: index + 1) }
-                                .allowsHitTesting(!model.locked)
                         }.padding(.horizontal, 12).padding(.vertical, 4)
                             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                             .listRowBackground(Color.clear).listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                             .accessibilityValue("Position \(index + 1) of \(model.catalog.count)")
-                            .dropDestination(for: String.self) { values, _ in
-                                guard values.count == 1, let raw = values.first, let id = UUID(uuidString: raw),
-                                      model.catalog.contains(where: { $0.id == id }), !model.locked else { return false }
-                                model.moveInCatalog(id, to: index)
-                                return true
-                            }
+                            .moveDisabled(model.locked)
+                            .accessibilityAction(named: "Move up") { model.moveInCatalog(instance.id, to: index - 1) }
+                            .accessibilityAction(named: "Move down") { model.moveInCatalog(instance.id, to: index + 1) }
+                    }.onMove { offsets, destination in
+                        model.moveInCatalog(from: offsets, to: destination)
                     }
                 }
                 if let error = model.error { Section { SemanticFeedback(role: .danger, message: error) }.listRowBackground(AppTheme.surface) }
-            }.listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden)
-                .contentMargins(.top, AppSpacing.large, for: .scrollContent)
+            }.environment(\.editMode, .constant(.active)).listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden)
                 .background(AppTheme.canvas)
                 .animation(reduceMotion ? nil : AQDMotion.reflow, value: model.catalog.map(\.id))
                 .navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)

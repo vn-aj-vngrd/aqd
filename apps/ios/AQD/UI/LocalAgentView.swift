@@ -40,6 +40,7 @@ struct AgentConversationView: View {
     @State private var history = false
     @State private var deletingConversation: AgentConversation?
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorSchemeContrast) private var contrast
     @State private var attachments = false
     @State private var attachmentSource: AgentAttachmentSource = .photos
@@ -393,7 +394,7 @@ struct AgentConversationView: View {
     @ViewBuilder private var composerBackground: some View {
         if #available(iOS 26, *), !reduceTransparency, contrast != .increased {
             RoundedRectangle(cornerRadius: AppRadius.composer).fill(.clear)
-                .glassEffect(.regular, in: RoundedRectangle(cornerRadius: AppRadius.composer))
+                .glassEffect(.regular.interactive(!reduceMotion), in: RoundedRectangle(cornerRadius: AppRadius.composer))
         } else {
             RoundedRectangle(cornerRadius: AppRadius.composer).fill(AppTheme.surface)
                 .overlay(RoundedRectangle(cornerRadius: AppRadius.composer).stroke(contrast == .increased ? AppTheme.controlBoundary : AppTheme.divider, lineWidth: 1))

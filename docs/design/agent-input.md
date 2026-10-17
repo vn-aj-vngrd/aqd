@@ -14,6 +14,8 @@ Agent navigation uses the shared centered detail-title style: 20/26 pt, medium w
 
 ## One native glass composer
 
+The composer uses native interactive glass for its subtle touch response. Disable that response with Reduce Motion and retain the opaque fallback for Reduce Transparency or Increased Contrast. Do not add a long-press recognizer or scale the editor; native cursor placement, selection and Paste remain available.
+
 Use one regular Liquid Glass functional shell containing a transparent native TextEditor, optional attachment rail and a compact toolbar. The toolbar contains Attach (+), a context selector, Dictate (microphone), and Send / Stop in one stable 44 pt position. Neutral controls live within the shared shell; do not stack glass on every child. Send is prominent only when valid input and supported runtime are ready. Empty Send has the native disabled trait; do not rely on a pale color alone.
 
 Text starts at body size, grows through roughly one to five visible lines, then scrolls internally. Use a keyboard-safe inset rather than hard-coded keyboard heights. Return inserts a newline; sending is explicit. Retain native selection, paste, dictation, editing menus, spelling and hardware-keyboard support. A nonempty supported attachment may initiate a message without text; unsupported or preparing attachments require resolution first. Limits come from runtime/media configuration and display an actual remaining count or specific validation error. Reaching a limit retains the entire draft for editing; never silently truncate it.
