@@ -15,7 +15,7 @@ struct TodayEditorView: View {
                                 HStack(spacing: 12) {
                                     Image(systemName: instance.kind.symbol).foregroundStyle(AppTheme.controlIcon).font(.system(size: 20)).frame(width: 24).accessibilityHidden(true)
                                     Text(instance.kind.title).font(AppTypography.body).frame(maxWidth: .infinity, alignment: .leading)
-                                }.foregroundStyle(AppTheme.ink).frame(minHeight: 52).contentShape(Rectangle())
+                                }.foregroundStyle(AppTheme.ink).frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
                             }.buttonStyle(.borderless).disabled(model.locked).accessibilityHint("Configure widget")
                             Button { model.setVisibility(instance.id, visible: !instance.isVisible) } label: {
                                 Image(systemName: instance.isVisible ? "eye" : "eye.slash")
@@ -24,10 +24,15 @@ struct TodayEditorView: View {
                             }.buttonStyle(.borderless).disabled(model.locked)
                                 .accessibilityLabel("\(instance.isVisible ? "Hide" : "Show") \(instance.kind.title) on Home")
                                 .accessibilityValue(instance.isVisible ? "Visible" : "Hidden")
-                        }.padding(.horizontal, 12).padding(.vertical, 4)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
-                            .listRowBackground(Color.clear).listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        }
+                            .listRowBackground(
+                                RoundedRectangle(cornerRadius: AppRadius.field)
+                                    .fill(AppTheme.surface)
+                                    .padding(.vertical, AppSpacing.xSmall)
+                            )
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(top: AppSpacing.small, leading: AppSpacing.medium,
+                                                     bottom: AppSpacing.small, trailing: AppSpacing.medium))
                             .accessibilityValue("Position \(index + 1) of \(model.catalog.count)")
                             .moveDisabled(model.locked)
                             .accessibilityAction(named: "Move up") { model.moveInCatalog(instance.id, to: index - 1) }
