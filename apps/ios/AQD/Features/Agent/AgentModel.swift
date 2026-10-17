@@ -6,6 +6,8 @@ import Observation
     let store: PieceStore
     var conversation: AgentConversation
     var history: [AgentConversation] = []
+    /// When each conversation was last seen on screen; kept on this device only.
+    private(set) var readMarks: [UUID: Date] = AgentModel.loadReadMarks()
     var error: String?
     var availability = OutfitSuggestions.modelAvailability()
     var weatherClient: WeatherClient?
@@ -88,6 +90,21 @@ import Observation
             let result = try store.saveAgentConversation(conversation, operationID: pending!.1)
             pending = nil; conversation = result; reloadHistory(); return true
         } catch { self.error = "The conversation save wasn’t confirmed. Your text is still here. Retry checks the same save before writing again."; return false }
+    }
+    private static let readMarksKey = "agent.readMarks"
+    private static func loadReadMarks() -> [UUID: Date] {
+        let stored = UserDefaults.standard.dictionary(forKey: readMarksKey) as? [String: Double] ?? [:]
+        return Dictionary(uniqueKeysWithValues: stored.compactMap { key, value in UUID(uuidString: key).map { ($0, Date(timeIntervalSince1970: value)) } })
+    }
+    /// A finished reply the user has not seen yet.
+    func isUnread(_ value: AgentConversation) -> Bool {
+        guard let last = value.messages.last, last.role == .assistant, last.status == .complete else { return false }
+        return last.createdAt.addingTimeInterval(last.elapsedSeconds ?? 0) > (readMarks[value.id] ?? .distantPast)
+    }
+    func markCurrentRead() {
+        guard !conversation.messages.isEmpty else { return }
+        readMarks[conversation.id] = Date()
+        UserDefaults.standard.set(Dictionary(uniqueKeysWithValues: readMarks.map { ($0.key.uuidString, $0.value.timeIntervalSince1970) }), forKey: Self.readMarksKey)
     }
     func newConversation() { guard !active, attachmentImportCount == 0, deletion == nil, persist() else { return }; conversation = AgentConversation(ownerID: conversation.ownerID) }
     func open(_ id: UUID) {

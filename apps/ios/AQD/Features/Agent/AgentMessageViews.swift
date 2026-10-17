@@ -62,11 +62,8 @@ struct AgentMessageRow: View {
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             Spacer(minLength: AppSpacing.small)
             if canRegenerate {
-                Button(action: retry) {
-                    Label("Try again", systemImage: "arrow.clockwise").font(AppTypography.supporting)
-                        .padding(.horizontal, AppSpacing.medium).frame(minHeight: AppControlMetrics.minimumTarget - 8)
-                        .background(AppTheme.surface, in: Capsule()).contentShape(Capsule())
-                }.buttonStyle(.plain).foregroundStyle(AppTheme.ink)
+                Button(action: retry) { Image(systemName: "arrow.clockwise").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }
+                    .buttonStyle(.plain).foregroundStyle(AppTheme.controlIcon).accessibilityLabel("Try again")
             }
             Button(action: showDetails) { Image(systemName: "info.circle").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }
                 .buttonStyle(.plain).foregroundStyle(AppTheme.controlIcon).accessibilityLabel("Why it failed")

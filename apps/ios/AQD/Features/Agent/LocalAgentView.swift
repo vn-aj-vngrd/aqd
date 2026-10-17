@@ -249,7 +249,10 @@ struct AgentConversationView: View {
             } message: { Text("Deletes its messages and draft on this iPhone. Saved pieces, outfits and plans stay.") }
             .onDisappear { if !attachmentPickerPresented { attachmentImporter.cancel() } }
             .onChange(of: scenePhase) { _, phase in if phase == .background { attachmentImporter.cancel() } }
-            .onAppear { if automaticallyFocusComposer && model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
+            .onChange(of: model.conversation.messages.last?.status) { _, _ in if !history { model.markCurrentRead() } }
+            .onChange(of: model.conversation.id) { _, _ in if !history { model.markCurrentRead() } }
+            .onChange(of: history) { _, showing in if !showing { model.markCurrentRead() } }
+            .onAppear { model.markCurrentRead(); if automaticallyFocusComposer && model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
     }
     private var isNewConversation: Bool {
         model.supportsGeneration && model.conversation.messages.isEmpty && (model.conversation.proposals ?? []).isEmpty
@@ -399,7 +402,10 @@ struct AgentHistoryView: View {
     @ViewBuilder private func status(_ value: AgentConversation) -> some View {
         switch AgentHistoryPresentation.status(value) {
         case .loading: ProgressView().controlSize(.mini).frame(width: 12).accessibilityLabel("Responding")
-        case .complete, .empty: Color.clear.frame(width: 12, height: 7).accessibilityHidden(true)
+        case .complete:
+            Circle().fill(model.isUnread(value) ? Color.blue : AppTheme.secondary.opacity(0.35)).frame(width: 7, height: 7).frame(width: 12)
+                .accessibilityLabel(model.isUnread(value) ? "Unread response" : "Read")
+        case .empty: Color.clear.frame(width: 12, height: 7).accessibilityHidden(true)
         case .incomplete: Image(systemName: "exclamationmark.circle").font(.footnote).foregroundStyle(AppTheme.error).frame(width: 12).accessibilityLabel("Response incomplete")
         case .draft: Image(systemName: AppSymbols.edit).font(.footnote).foregroundStyle(AppTheme.controlIcon).frame(width: 12).accessibilityLabel("Draft")
         }
