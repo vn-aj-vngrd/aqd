@@ -9,7 +9,7 @@ Profile is a private dated fit journal plus optional local identity. It is not a
 - **Add fit** starts from a source: the Profile **+** menu offers Take photo, Choose from Photos and From an outfit, and the editor opens already on that source. It follows the [modal pattern](../../DESIGN.md#add-and-edit-modal-pattern): a hero photo card (native source menu), an inline outfit strip with a No outfit chip, a note, then a collapsed Date row (date and timezone). Over-limit notes keep their text with inline validation; nothing is truncated silently.
 - When an outfit is already planned for the fit's day, one tap on "Planned for this day" links it. One plain line says what a new fit still needs ("Add a photo or choose an outfit to save.").
 - With an outfit linked, an off-by-default **Record wear next** toggle opens Record wear after saving. Saving never records wear; the count changes only when the wear is confirmed there. Fits are not shared or exported from the journal.
-- The journal groups fits by month, orders newest or oldest first, and searches notes and outfit names. While searching, the identity header and tabs give way to results. The Fits, Outfits and Pieces counts open their lists; Wear history is under More.
+- The journal groups fits by month, and orders them newest or oldest first. Profile has no search. The Fits, Outfits and Pieces counts open their lists; Wear history is under More.
 - Adding, editing or deleting a memory never records wear or changes counts. Only an explicit Record wear does.
 - Deleting a memory removes only that memory and unshared photo copies; the outfit, wear history and original Photos stay.
 - Profile shows real counts of Fits, Outfits and active Pieces, or an unavailable state on read errors.

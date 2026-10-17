@@ -76,9 +76,8 @@ struct FitJournalGrid: View {
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
     private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: 2, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3) }
-    private var searching: Bool { query.isSearching }
     private var memories: [FitMemory] {
-        FitJournalQuery(content: tab == .photos && !searching ? .photos : .all, sort: query.sort, text: query.text).apply(to: state.fitMemories)
+        FitJournalQuery(content: tab == .photos ? .photos : .all, sort: query.sort).apply(to: state.fitMemories)
     }
     private var sections: [FitMonthSection] { FitJournalPresentation.sections(memories) }
     private func monthTitle(_ section: FitMonthSection) -> String {
@@ -88,13 +87,13 @@ struct FitJournalGrid: View {
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if !searching { tabs }
-            if let error = state.fitError, tab != .outfits || searching {
+            tabs
+            if let error = state.fitError, tab != .outfits {
                 VStack(alignment: .leading, spacing: AppSpacing.medium) {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry journal") { state.reloadFits() }.frame(minHeight: 44)
                 }.padding(AppSpacing.screen)
-            } else if tab == .outfits && !searching {
+            } else if tab == .outfits {
                 if let error = state.outfitError {
                     VStack(alignment: .leading, spacing: AppSpacing.medium) {
                         SemanticFeedback(role: .danger, message: error)
@@ -108,8 +107,6 @@ struct FitJournalGrid: View {
                         ForEach(state.outfits) { outfit in OutfitCollectionCard(outfit: outfit, gallery: true) }
                     }
                 }
-            } else if memories.isEmpty && searching {
-                ContentUnavailableView.search(text: query.searchTerm).padding(.vertical, AppSpacing.section)
             } else if memories.isEmpty {
                 emptyState.padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.section)
             } else {

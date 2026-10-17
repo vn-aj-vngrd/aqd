@@ -14,10 +14,8 @@ struct LocalProfileView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppSpacing.section) {
-                        if !query.isSearching {
-                            identityHeader.padding(.horizontal, AppSpacing.screen)
-                            profileActions.padding(.horizontal, AppSpacing.screen)
-                        }
+                        identityHeader.padding(.horizontal, AppSpacing.screen)
+                        profileActions.padding(.horizontal, AppSpacing.screen)
                         if let error = state.identityError {
                             VStack(alignment: .leading, spacing: AppSpacing.small) {
                                 SemanticFeedback(role: .danger, message: error)
@@ -29,8 +27,7 @@ struct LocalProfileView: View {
                 }.onChange(of: state.fitAnchor) { _, id in
                     if let id { journalTab = .all; DispatchQueue.main.async { proxy.scrollTo(id, anchor: .center) } }
                 }
-            }.searchable(text: $query.text, prompt: "Search fits")
-                .background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
+            }.background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Menu {
