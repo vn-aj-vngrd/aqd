@@ -57,7 +57,6 @@ struct ClosetView: View {
                             .tint(AppTheme.ink).accessibilityIdentifier("closet.addPiece")
                     }
                 }
-                if scope == "Pieces", !state.closetSearchActive { pieceFilterMenu }
                 if scope == "Outfits" { outfitFilterMenu }
                 if scope == "Themes" { themeFilterMenu }
             }
@@ -176,25 +175,40 @@ struct ClosetView: View {
             .tint(AppTheme.ink)
         }
     }
-    private var pieceFilterMenu: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Menu {
-                Section("Filter by Category") {
-                    filterOption("All categories", value: Optional<String>.none, selection: $category)
-                    ForEach(state.pieceCategories) { value in
-                        filterOption(value.name, value: Optional(value.id), selection: $category)
-                    }
+    /// Status is a visible, always-on filter: All, Available, Unavailable, Laundry or Archived.
+    private var statusChips: some View {
+        ScrollView(.horizontal) {
+            HStack(spacing: AppSpacing.small) {
+                AppChip(title: "All", isSelected: !archived && availability == nil) { archived = false; availability = nil }
+                ForEach([PieceAvailability.available, .unavailable, .laundry], id: \.self) { value in
+                    AppChip(title: value.rawValue.capitalized, isSelected: !archived && availability == value) { archived = false; availability = value }
                 }
-                Section("Filter by Status") {
-                    filterOption("All statuses", value: Optional<PieceAvailability>.none, selection: $availability)
-                    ForEach([PieceAvailability.available, .unavailable, .laundry], id: \.self) { value in
-                        filterOption(value.rawValue.capitalized, value: Optional(value), selection: $availability)
-                    }
+                AppChip(title: "Archived", isSelected: archived) { archived = true; availability = nil }
+            }.padding(.horizontal, 20)
+        }.scrollIndicators(.hidden)
+    }
+
+    /// Category chips, the same control as the outfit picker's.
+    private var categoryChips: some View {
+        ScrollView(.horizontal) {
+            HStack(spacing: AppSpacing.small) {
+                AppChip(title: "All", isSelected: category == nil) { category = nil }
+                ForEach(state.pieceCategories) { value in
+                    AppChip(title: value.name, isSelected: category == value.id) { category = value.id }
                 }
-            } label: { Label("Filter pieces", systemImage: "line.3.horizontal.decrease") }.tint(AppTheme.ink)
+            }.padding(.horizontal, 20)
+        }.scrollIndicators(.hidden)
+    }
+
+    private var pieceCollection: some View {
+        VStack(spacing: 0) {
+            categoryChips
+            statusChips.padding(.bottom, AppSpacing.small)
+            pieceResults
         }
     }
-    @ViewBuilder private var pieceCollection: some View {
+
+    @ViewBuilder private var pieceResults: some View {
         if error == nil && results.isEmpty {
             let filtered = category != nil || availability != nil
             EmptyStatePage(title: archived ? "No archived pieces" : !filtered ? "Your closet starts here" : "No matching pieces",
