@@ -44,7 +44,7 @@ Reuse these; a hand-built equivalent is a defect.
 | Compact tappable white control or round icon button | `glassControlSurface(shape)` |
 | Text input, picker with label and validation | `LabeledField`, `LabeledControl` |
 | Disclosure row, grouped rows | `DisclosureRow`, `SurfaceGroup` |
-| Photo source (Photos, Camera, Edit, Remove) | `SharedPhotoSourceButton`, one native Menu; a hero image can be its label |
+| Photo source | Empty: direct Take photo and Photos buttons. With a photo: a compact ellipsis menu (`SharedPhotoSourceButton`) plus visible Crop and Cut out buttons. Never use a large card as a menu label: the system glass menu morphs from its anchor and clips. |
 | Pick one outfit / several pieces inline | `OutfitSelectionStrip`, `PieceSelectionStrip`, with `selectionIndicator` |
 | Theme cover collage | `ThemeCover` |
 | Empty, error, progress | `AppEmptyState`, `SemanticFeedback`, `OperationProgress` |
@@ -60,10 +60,10 @@ Every Add, Create, Plan and Record editor follows this structure.
 
 1. **Hero first.** A live preview of what is being made tops the sheet: photo card, outfit canvas, theme cover or chosen-outfit preview. It uses the image ground with 16 radius, updates as choices change, and its empty state says what to do next.
 2. **Choose inline, never push.** Select owned content on the same screen with chips, selection strips or a resizable detent sheet (Build outfit: collapsed, peek, medium, large). A simple choice never pushes a chooser or nests a sheet in a push.
-3. **One native menu for photo sources;** no popovers.
+3. **Photo sources are direct.** Empty state shows Take photo and Photos; a compact menu handles replace and remove. No popovers, no large menu anchors.
 4. **Compact fields,** name first, optional detail last (a More details row or sheet).
 5. **Toolbar confirm.** Close (x) leading, Save trailing. When Save is unavailable, one plain secondary line says what is missing (not red). A dirty close uses the shared discard confirmation.
-6. **Result first.** After saving, show the result with next actions (Add another, Build outfit, Open); transient saves return straight to the new record.
+6. **Save and return.** Save closes the sheet and returns to the list with the new item in view and a success haptic. No receipt screen, and no save that opens another editor or pushes a detail. Related tasks (Style this, Add to theme) are offered where the item lives, not chained after a save.
 
 Build outfit specifics: the canvas stays pinned and fills the space above the picker, ordering garments large (layers, tops, dresses, bottoms) with shoes and accessories in a smaller strip; the picker lists unselected pieces first; a new outfit's name defaults to "<Weekday> look".
 
@@ -74,3 +74,7 @@ Show full-source Fit photos and compositions of actual pieces; preserve proporti
 ## Accessibility and privacy guardrails
 
 Semantic labels, traits and values on every control; keyboard-safe editing; light and dark; Reduce Motion replaces transitions with fades. No implicit wear, publication, body-use, AI or weather consent, and no private-photo upload. Weather-free private journeys work offline.
+
+## Detail screens and empty states
+
+Piece, outfit and theme details share one structure: a hero (photo card, composition or theme cover), a status or info line, the primary action, then sections (pieces, themes, "In outfits") with thumbnails. Related records link to their own detail. Options live in one trailing More menu with Edit first and destructive actions last. Every empty list offers exactly one next action: Add a piece, Build an outfit, Create a theme, or Clear filters when filters hide content.

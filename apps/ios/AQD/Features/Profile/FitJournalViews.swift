@@ -202,38 +202,49 @@ struct FitEditorView: View {
                 model.finish(discarding: true); if model.state.fitEditor == nil { discard = false }
             }
     }
+    private func photoSource<Label: View>(@ViewBuilder label: @escaping () -> Label) -> some View {
+        SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add fit photo" : "Change fit photo",
+            selectionToken: model.importID, locked: model.locked,
+            onEdit: model.draft.value.photoID == nil ? nil : { editingPhoto = true },
+            onRemove: model.draft.value.photoID == nil ? nil : { removePhoto = true }, onData: model.importPhoto, label: label)
+    }
+
+    private func sourceLabel(_ title: String, systemImage: String) -> some View {
+        Label(title, systemImage: systemImage).font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.ink)
+            .padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.minimumTarget).glassControlSurface(Capsule())
+    }
+
     private var mediaContent: some View {
         let hasMedia = model.draft.value.photoID != nil || model.draft.value.outfit != nil
         return VStack(alignment: .leading, spacing: AppSpacing.medium) {
-            SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add fit photo" : "Change fit photo",
-                selectionToken: model.importID, locked: model.locked,
-                onEdit: model.draft.value.photoID == nil ? nil : { editingPhoto = true },
-                onRemove: model.draft.value.photoID == nil ? nil : { removePhoto = true }, onData: model.importPhoto) {
-                Group {
-                    if hasMedia {
-                        FitMemoryArtwork(memory: model.draft.value).padding(AppSpacing.small)
-                    } else {
-                        VStack(spacing: AppSpacing.medium) {
-                            Image(systemName: "camera").font(.system(size: 34, weight: .light))
-                                .foregroundStyle(AppTheme.ink).accessibilityHidden(true)
-                            Text("Add a photo").font(AppTypography.detailTitle)
-                            Text("Or link an outfit below to keep a look you want to remember.")
-                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
-                        }.padding(AppSpacing.large)
-                    }
+            Group {
+                if hasMedia {
+                    FitMemoryArtwork(memory: model.draft.value).padding(AppSpacing.small)
+                } else {
+                    VStack(spacing: AppSpacing.medium) {
+                        Image(systemName: "camera").font(.system(size: 34, weight: .light))
+                            .foregroundStyle(AppTheme.ink).accessibilityHidden(true)
+                        Text("Add a photo").font(AppTypography.detailTitle)
+                        Text("Or link an outfit below to keep a look you want to remember.")
+                            .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
+                        photoSource { sourceLabel("Add photo", systemImage: "photo.on.rectangle") }
+                    }.padding(AppSpacing.large)
                 }
-                .frame(maxWidth: .infinity).frame(minHeight: hasMedia ? 280 : 220, maxHeight: hasMedia ? 340 : 220)
-                .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
-                .clipShape(RoundedRectangle(cornerRadius: AppRadius.field))
-                .overlay(alignment: .bottomTrailing) {
-                    if model.draft.value.photoID != nil {
-                        Image(systemName: "pencil").font(.body.weight(.medium)).foregroundStyle(AppTheme.ink)
-                            .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
-                            .glassControlSurface(Circle()).padding(AppSpacing.medium).accessibilityHidden(true)
-                    }
-                }
-                .overlay { if model.importing { ProgressView().controlSize(.large) } }
             }
+            .frame(maxWidth: .infinity).frame(minHeight: hasMedia ? 280 : 240, maxHeight: hasMedia ? 340 : 260)
+            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .clipShape(RoundedRectangle(cornerRadius: AppRadius.field))
+            .overlay(alignment: .bottomTrailing) {
+                // A small, separate menu: the system glass menu morphs cleanly from a compact control.
+                if model.draft.value.photoID != nil {
+                    photoSource {
+                        Image(systemName: "ellipsis").font(.body.weight(.medium)).foregroundStyle(AppTheme.ink)
+                            .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+                            .glassControlSurface(Circle())
+                    }.padding(AppSpacing.medium)
+                }
+            }
+            .overlay { if model.importing { ProgressView().controlSize(.large) } }
             if model.importing {
                 HStack {
                     OperationProgress(title: "Preparing photo…")

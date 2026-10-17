@@ -2287,13 +2287,14 @@ struct PiecePersistenceTests {
         let newer = try store.setArchived(id: saved.id, archived: true, expectedRevision: saved.revision, operationID: UUID())
         let state = AppState(store: store)
         state.addPiece()
+        // The stale receipt is finished quietly: Add piece opens blank and the newer record is never rewound.
         let model = try #require(state.capture)
-        #expect(model.saved == saved)
-        #expect(model.receiptIsHistorical)
+        #expect(model.saved == nil)
+        #expect(model.draft.itemID != saved.id)
         #expect(try store.piece(id: saved.id) == newer)
-        model.openCloset()
+        state.capture = nil
         #expect(try store.piece(id: saved.id) == newer)
-        #expect(try store.newPieceDraft() == nil)
+        #expect(try store.newPieceDraft()?.draft.itemID != saved.id, "no draft or receipt for the old piece remains")
         // Another pending edit is removed with the current record and all its proof.
         let edit = PieceDraft(itemID: saved.id, name: "Pending deletion", category: .tops,
             photoID: source.id, baseRevision: newer.revision)

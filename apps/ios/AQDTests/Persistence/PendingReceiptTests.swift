@@ -61,4 +61,15 @@ struct PendingReceiptTests {
         let reopened = try PieceStore(directory: store.localDirectory)
         #expect(try reopened.pieces().first?.details.organizationCategoryID == "tops")
     }
+
+    @Test func addPieceFinishesAStaleReceiptQuietlyAndOpensABlankDraft() async throws {
+        let (store, _, _) = try await savedButUnacknowledged(recipe: .fit)
+        let state = AppState(store: store)
+        state.addPiece()
+        let capture = try #require(state.capture)
+        #expect(capture.saved == nil, "no receipt screen is shown")
+        #expect(capture.draft.name.isEmpty && capture.draft.photoID == nil)
+        #expect(try store.newPieceDraft() == nil || state.capture?.draft.baseRevision == nil)
+        #expect(try store.pieces().contains { $0.name == "Cotton shirt" })
+    }
 }

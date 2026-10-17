@@ -264,7 +264,11 @@ struct ThemeEditorView: View {
     private func finishSaved() {
         guard let saved = model.saved, model.finish() else { return }
         if let didSave { didSave(saved) }
-        else if model.draft.baseRevision == 0 { state.openClosetDestination(scope: "Themes", route: .theme(saved.id)) }
+        else if model.draft.baseRevision == 0 {
+            // Return to the Themes list with the new theme in view; no detail screen is pushed.
+            state.closetScope = "Themes"
+            state.closetThemeAnchor = saved.id
+        }
         dismiss()
     }
 }

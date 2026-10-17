@@ -7,7 +7,13 @@ import UIKit
 struct PieceCaptureView: View {
     private var confirmation: some View {
         ToolbarSaveAction(title: "Save",
-                              isPending: model.isSaving) { model.save(); if model.saved != nil { model.leave() } }
+                              isPending: model.isSaving) {
+            model.save()
+            if model.saved != nil {
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                model.leave()
+            }
+        }
                     .disabled(!model.canSave)
                     .accessibilityIdentifier("capture.save")
     }
@@ -118,6 +124,10 @@ struct PieceCaptureView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.large) {
                 mediaContent
+                if model.cutoutState == .failed {
+                    Label("Automatic cutout isn’t available for this photo. Tap Cut out to erase the background by hand, or Crop to trim the sides.",
+                          systemImage: "info.circle").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                }
                 if !model.photoHints.isEmpty {
                     VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
                         ForEach(model.photoHints, id: \.self) { hint in
@@ -188,71 +198,86 @@ struct PieceCaptureView: View {
         }
     }
 
+    /// No photo yet: two direct choices, no menu.
+    private var emptyPhoto: some View {
+        VStack(spacing: AppSpacing.medium) {
+            Image(systemName: "camera").font(.system(size: 34, weight: .light)).foregroundStyle(AppTheme.ink).accessibilityHidden(true)
+            Text(model.draft.photoID == nil ? "Add a photo" : "Photo unavailable").font(AppTypography.detailTitle)
+            Text(model.draft.photoID == nil ? "A flat piece on a plain, well-lit surface works best." : "Choose another photo. Your details are kept.")
+                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
+            HStack(spacing: AppSpacing.small) {
+                Button { nameEditing = false; requestCamera() } label: {
+                    Label("Take photo", systemImage: "camera").font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.onPrimary)
+                        .padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.minimumTarget)
+                        .background(AppTheme.primaryFill, in: Capsule())
+                }.buttonStyle(.plain).accessibilityIdentifier("capture.takePhoto")
+                Button { nameEditing = false; pickerPresented = true } label: {
+                    Label("Photos", systemImage: "photo.on.rectangle").font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.ink)
+                        .padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.minimumTarget)
+                        .glassControlSurface(Capsule())
+                }.buttonStyle(.plain).accessibilityIdentifier("capture.addPhoto")
+            }.disabled(model.isImporting || model.isSaving).accessibilityFocused($photoFocused)
+        }.padding(AppSpacing.large)
+    }
+
+    private func photoAction(_ title: String, systemImage: String, id: String, label: String, action: @escaping () -> Void) -> some View {
+        Button { nameEditing = false; action() } label: {
+            Label(title, systemImage: systemImage).font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.ink)
+                .padding(.horizontal, AppSpacing.medium).frame(minHeight: AppControlMetrics.minimumTarget)
+                .glassControlSurface(Capsule())
+        }.buttonStyle(.plain).disabled(model.isImporting || model.isSaving || model.cutoutState == .working)
+            .accessibilityLabel(label).accessibilityIdentifier(id)
+    }
+
     private var mediaContent: some View {
         let image = model.photoData().flatMap { UIImage(data: $0) }
         return VStack(alignment: .leading, spacing: AppSpacing.small) {
-            Menu {
-                Button("Choose from Photos", systemImage: "photo.on.rectangle") { nameEditing = false; pickerPresented = true }
-                Button("Take photo", systemImage: "camera") { nameEditing = false; requestCamera() }
-                if image != nil {
-                    Divider()
-                    Button("Edit photo", systemImage: "crop") { showPhotoEditor = true }
+            ZStack {
+                if let image {
+                    Image(uiImage: image).resizable().scaledToFit()
+                        .padding(AppSpacing.medium)
+                        .accessibilityLabel(model.draft.photoRecipe.crop == nil ? "Selected piece photo, entire image fitted" : "Selected piece photo, portrait crop")
+                } else {
+                    emptyPhoto
                 }
-                if model.draft.photoID != nil {
-                    Button("Cut out piece", systemImage: "scissors") { showBackgroundRemoval = true }
-                    Divider()
-                    Button("Remove photo", systemImage: "trash", role: .destructive) { model.removePhoto(); photoFocused = true }
-                }
-            } label: {
-                ZStack {
-                    if let image {
-                        Image(uiImage: image).resizable().scaledToFit()
-                            .padding(AppSpacing.medium)
-                            .accessibilityLabel(model.draft.photoRecipe.crop == nil ? "Selected piece photo, entire image fitted" : "Selected piece photo, portrait crop")
-                    } else {
-                        VStack(spacing: AppSpacing.medium) {
-                            Image(systemName: "camera").font(.system(size: 34, weight: .light))
-                                .foregroundStyle(AppTheme.ink).accessibilityHidden(true)
-                            Text(model.draft.photoID == nil ? "Add a photo" : "Photo unavailable").font(AppTypography.detailTitle)
-                            Text(model.draft.photoID == nil ? "Take one now or choose from Photos." : "Choose another photo. Your details are kept.")
-                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
-                        }.padding(AppSpacing.large)
-                    }
-                }
-                .frame(maxWidth: .infinity).frame(height: image == nil ? 240 : 320)
-                .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
-                .overlay(alignment: .bottomLeading) {
-                    if image != nil {
-                        Button { nameEditing = false; showBackgroundRemoval = true } label: {
-                            Label(model.hasProcessedPhoto ? "Refine" : "Cut out", systemImage: "scissors").font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.ink)
-                                .padding(.horizontal, AppSpacing.medium).frame(minHeight: AppControlMetrics.minimumTarget)
-                                .glassControlSurface(Capsule())
-                        }.buttonStyle(.plain).padding(AppSpacing.medium).disabled(model.isImporting || model.isSaving || model.cutoutState == .working)
-                            .accessibilityLabel(model.hasProcessedPhoto ? "Refine cutout" : "Cut out piece").accessibilityHint("Removes the background and trims the sides")
-                            .accessibilityIdentifier("capture.cutout")
-                    }
-                }
-                .overlay(alignment: .bottomTrailing) {
-                    if image != nil {
-                        Image(systemName: "pencil").font(.body.weight(.medium)).foregroundStyle(AppTheme.ink)
-                            .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
-                            .glassControlSurface(Circle()).padding(AppSpacing.medium).accessibilityHidden(true)
-                    }
-                }
-                .overlay {
-                    if model.isImporting || model.cutoutState == .working {
-                        VStack(spacing: AppSpacing.small) {
-                            ProgressView().controlSize(.large)
-                            if model.cutoutState == .working { Text("Cutting out the piece…").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
-                        }.padding(AppSpacing.large).background(.regularMaterial, in: RoundedRectangle(cornerRadius: AppRadius.group))
-                    }
-                }
-                .contentShape(RoundedRectangle(cornerRadius: AppRadius.field))
             }
-            .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
-            .disabled(model.isImporting || model.isSaving)
-            .accessibilityLabel(model.draft.photoID == nil ? "Add piece photo" : "Change piece photo")
-            .accessibilityIdentifier("capture.addPhoto").accessibilityFocused($photoFocused)
+            .frame(maxWidth: .infinity).frame(height: image == nil ? 280 : 320)
+            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .overlay(alignment: .bottomLeading) {
+                if image != nil {
+                    HStack(spacing: AppSpacing.small) {
+                        photoAction("Crop", systemImage: "crop", id: "capture.crop", label: "Crop photo") { showPhotoEditor = true }
+                        photoAction(model.hasProcessedPhoto ? "Refine" : "Cut out", systemImage: "scissors", id: "capture.cutout",
+                                    label: model.hasProcessedPhoto ? "Refine cutout" : "Cut out piece") { showBackgroundRemoval = true }
+                    }.padding(AppSpacing.medium)
+                }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                // A small, separate menu: the system glass menu morphs cleanly from a compact control.
+                if image != nil {
+                    Menu {
+                        Button("Choose from Photos", systemImage: "photo.on.rectangle") { nameEditing = false; pickerPresented = true }
+                        Button("Take photo", systemImage: "camera") { nameEditing = false; requestCamera() }
+                        Divider()
+                        Button("Remove photo", systemImage: "trash", role: .destructive) { model.removePhoto(); photoFocused = true }
+                    } label: {
+                        Image(systemName: "ellipsis").font(.body.weight(.medium)).foregroundStyle(AppTheme.ink)
+                            .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+                            .glassControlSurface(Circle())
+                    }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
+                        .disabled(model.isImporting || model.isSaving || model.cutoutState == .working)
+                        .padding(AppSpacing.medium)
+                        .accessibilityLabel("Change piece photo").accessibilityIdentifier("capture.addPhoto").accessibilityFocused($photoFocused)
+                }
+            }
+            .overlay {
+                if model.isImporting || model.cutoutState == .working {
+                    VStack(spacing: AppSpacing.small) {
+                        ProgressView().controlSize(.large)
+                        if model.cutoutState == .working { Text("Cutting out the piece…").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+                    }.padding(AppSpacing.large).background(.regularMaterial, in: RoundedRectangle(cornerRadius: AppRadius.group))
+                }
+            }
             if model.isImporting {
                 HStack(spacing: 12) {
                     OperationProgress(title: "Preparing photo…")
@@ -300,10 +325,7 @@ struct PieceCaptureView: View {
         .safeAreaInset(edge: .bottom) {
             ActionFooter {
                 ActionStack {
-                    PrimaryAction(title: model.isFirstOutfit ? "Build my first outfit" : "Build outfit") { model.buildFirstOutfit() }
-                    SecondaryAction(title: "Add another piece") { model.addAnother() }
-                        .accessibilityIdentifier("capture.addAnother")
-                    SecondaryAction(title: "Open my closet") { model.openCloset() }
+                    PrimaryAction(title: "Done") { model.openCloset() }
                         .accessibilityIdentifier("capture.openCloset")
                 }
             }

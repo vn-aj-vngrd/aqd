@@ -27,7 +27,7 @@ A sheet with a live collage cover from member outfits (generated, not stored), n
 
 Outfits browse with search, theme and favorites filters. Themes filter All, With outfits or Empty, and sort Name A–Z, Z–A or Most outfits; ties use name order then ID. A filtered-empty list offers Clear filters; a truly empty one offers Create theme. Reading and filtering never write.
 
-Outfit detail shows the composition, pieces (with unavailable references), Plan and Record wear, and a More menu with Edit, Favorite and a reviewed Delete. Delete names its theme and plan impact and keeps pieces, photos and recorded wear. Theme detail lists member outfits and add/remove membership. Owned favorites are separate from community bookmarks.
+Outfit detail shows the composition, the themes it belongs to (as links), Plan and Record wear, then its pieces as photo rows that open the piece (unavailable references are labelled), and a More menu with Edit, Favorite and a reviewed Delete. Delete names its theme and plan impact and keeps pieces, photos and recorded wear. Theme detail shows the collage cover, a count and its outfits in the same grid as the Outfits tab, with Add outfits in More. Empty lists offer Build an outfit or Create a theme. Owned favorites are separate from community bookmarks.
 
 ## Acceptance
 

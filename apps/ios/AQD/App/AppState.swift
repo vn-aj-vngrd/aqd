@@ -376,7 +376,15 @@ final class AppState {
         guard !hasActiveEditor else { return }
         guard let store else { return }
         do {
-            let recovered = try store.newPieceDraft()
+            var recovered = try store.newPieceDraft()
+            // A saved piece whose receipt was never acknowledged is finished quietly; Add piece always opens ready for a new piece.
+            // If the acknowledgement cannot be written, the receipt is shown instead, so nothing is ever lost.
+            if let pending = recovered, try store.pendingSavedPiece(for: pending) != nil,
+               (try? store.acknowledgePiecePresentation(draftID: pending.draft.id, operationID: pending.operationID)) != nil {
+                reloadPieces()
+                retryPhotoCleanup()
+                recovered = try store.newPieceDraft()
+            }
             capture = CaptureModel(state: self, draft: recovered?.draft ?? PieceDraft(),
                                    operationID: recovered?.operationID ?? UUID(),
                                    saved: try recovered.flatMap { try store.pendingSavedPiece(for: $0) })
@@ -643,8 +651,11 @@ final class CaptureModel: Identifiable {
 
     func leave() {
         cancelImport()
-        if saved != nil {
+        if let piece = saved {
             guard acknowledgePresentation() else { return }
+            // Saving returns to the list with the new piece in view; it never starts another task.
+            state.closetScope = "Pieces"
+            state.closetPieceAnchor = piece.id
             state.capture = nil
             state.retryPhotoCleanup()
             return
@@ -685,28 +696,12 @@ final class CaptureModel: Identifiable {
         }
     }
 
-    var isFirstOutfit: Bool { state.outfits.isEmpty }
-
-    func buildFirstOutfit() {
-        guard let saved, acknowledgePresentation() else { return }
-        state.pendingFirstOutfitPieceID = saved.id
-        state.capture = nil
-        state.retryPhotoCleanup()
-    }
-
     func categoryName(for piece: WardrobePiece) -> String { state.categoryName(for: piece) }
 
-    /// Acknowledge this receipt, then start a fresh piece draft in the same flow.
-    func addAnother() {
-        guard saved != nil, acknowledgePresentation() else { return }
-        state.retryPhotoCleanup()
-        state.capture = nil
-        state.addPiece()
-    }
-
     func openCloset() {
-        guard saved != nil, acknowledgePresentation() else { return }
+        guard let piece = saved, acknowledgePresentation() else { return }
         state.openClosetDestination()
+        state.closetPieceAnchor = piece.id
         state.capture = nil
         state.retryPhotoCleanup()
     }

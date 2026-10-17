@@ -82,6 +82,9 @@ final class OutfitEditorModel: Identifiable {
             try store.acknowledgeOutfitReceipt(draft)
             state.outfitEditor = nil; state.reloadOutfits()
             state.reloadThemes()
+            // Saving returns to the list with the new outfit in view; it never starts another task.
+            state.closetScope = "Outfits"
+            state.closetOutfitAnchor = draft.outfitID
             if openOutfit { state.openClosetDestination(scope: "Outfits", route: .outfit(draft.outfitID)) }
         } catch { self.error = "The outfit is saved. Retry opening your collection; no additional outfit will be created." }
     }
@@ -97,9 +100,12 @@ extension AppState {
         guard !hasActiveEditor, entry.page == .main else { return }
         do {
             guard let store, let draft = try store.outfitDraft() else { return }
-            let model = OutfitEditorModel(state: self, draft: draft)
-            model.saved = try store.savedOutfit(for: draft)
-            outfitEditor = model
+            if try store.savedOutfit(for: draft) != nil {
+                try store.acknowledgeOutfitReceipt(draft)
+                reloadOutfits(); reloadThemes()
+                return
+            }
+            outfitEditor = OutfitEditorModel(state: self, draft: draft)
         } catch { outfitError = "Your outfit draft couldn’t be read. Keep your app data and retry." }
     }
 
@@ -108,10 +114,14 @@ extension AppState {
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
             if let existing = try store.outfitDraft() {
-                let model = OutfitEditorModel(state: self, draft: existing)
-                model.saved = try store.savedOutfit(for: existing)
-                outfitEditor = model
-                return
+                // A saved outfit whose receipt was never acknowledged is finished quietly; Build outfit starts fresh.
+                if try store.savedOutfit(for: existing) != nil {
+                    try store.acknowledgeOutfitReceipt(existing)
+                    reloadOutfits(); reloadThemes()
+                } else {
+                    outfitEditor = OutfitEditorModel(state: self, draft: existing)
+                    return
+                }
             }
             var draft: OutfitDraft
             if let outfit {

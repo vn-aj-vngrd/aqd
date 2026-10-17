@@ -25,7 +25,8 @@ Add piece follows the [modal pattern](../../DESIGN.md#add-and-edit-modal-pattern
 - Cancel, denied or failed photo capture keeps entered fields. Denied camera offers Settings, Photos or Keep draft. A corrupt image shows an error without losing metadata. A replacement photo applies only after preparation succeeds.
 - Photo framing is full-source Fit in a portrait preview with optional crop, pan, zoom, 90° rotation and reset. The original is kept app-private and the Photos asset is never altered. **Cut out piece** is a core capture tool. By default (Settings → Photo cutout: Automatic, Ask each time or Off) a new photo is cut out on-device with Apple Vision as soon as it is added, with progress on the photo card. **Cut out** / **Refine** on the card, a piece's menu and Add piece's photo menu open the editor: Erase and Restore brushes, Trim sides, zoom, softness, background (Transparent, White or Soft gray), undo and redo, Original compare, Reset and Use original. Done saves a full-size derived photo (transparent by default) and records "fit to piece" as a crop recipe, so the original is never altered and Reset always works. Refine rebuilds its mask from the saved photo's alpha channel, so no extra data is stored. Plain-language hints flag low resolution (short side under 800 px), a piece touching the photo edge, a small piece, a mostly kept background, or no piece found. Nothing leaves the device. Apple Intelligence has no public background-removal API, so Vision is the engine; the editor works fully by hand when detection finds nothing.
 - Where a classifier is supported it proposes editable fields; user edits win and failure never blocks manual entry.
-- Save is atomic. The receipt shows the photo first with Build outfit, Add another piece and Open my closet. Failed saves keep the draft and prepared photo.
+- Save is atomic and one step: the sheet closes and the closet scrolls to the new piece, with a success haptic. There is no receipt screen and nothing chains into Build outfit or Create theme. A receipt left unacknowledged by an earlier interruption is finished quietly the next time Add piece opens; only if that write fails is a plain receipt with Done shown. Failed saves keep the draft and prepared photo.
+- The photo card offers Crop and Cut out (Refine once cut out) directly. Photos from Photos or the Camera are accepted up to the device's full resolution; sources above 40 megapixels (a 48 MP capture) are scaled down on decode instead of rejected. Where automatic cutout isn't available the card says so and the manual editor does the job.
 
 ## Browse and lifecycle
 
@@ -38,7 +39,7 @@ Pieces support category and availability/archive filters, metadata search and so
 
 ## States
 
-Empty closet offers Add. Empty filters offer Clear. Loading differs from empty. Unreadable storage offers recovery and blocks overwrite. Destructive changes need review.
+Piece detail shows the photo, a tappable availability status, a **Style this** action (available pieces only), an **In outfits** strip and wear history; More has Style this, Edit, Cut out photo, Availability, Archive and Delete. An empty closet offers Add a piece; empty filters offer Clear filters. Loading differs from empty. Unreadable storage offers recovery and blocks overwrite. Destructive changes need review.
 
 ## Acceptance
 
