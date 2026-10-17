@@ -22,16 +22,13 @@ Today · Closet · Planner · Agent · Profile are the shared destination identi
 | Supporting text / `--color-secondary` | `#6A6863` | `#BCB9B1` |
 | Divider / `--color-line` | `#E4E2DC` | `#4A4842` |
 | Image ground / `--color-image-ground` | `#F5F4F1` | `#242422` |
-| Selection accent / `--color-accent` | `#8C6A36` | `#D3B47C` |
-| Action text / `--color-action-text` | `#765829` | `#D9BD8A` |
+| Brand accent / `--color-accent` (logo Q and welcome artwork only) | `#8C6A36` | `#D3B47C` |
 | On accent / `--color-on-accent` | `#FFFFFF` | `#1C1C1B` |
 | Primary fill / `--color-primary-fill` | `#292826` | `#F2F0EB` |
 | On primary / `--color-on-primary` | `#FFFFFF` | `#242321` |
 | Collection selection / `--color-segment-selection` | `#E8E8E8` | `#454545` |
-| Soft selection / `--color-accent-soft` | `#F5F2EC` | `#383125` |
 | Control boundary / `--color-control-border` | `#807B72` | `#969187` |
 | Regular glass / `--color-glass` | `rgb(255 255 255 / 88%)` | `rgb(43 43 41 / 94%)` |
-| Prominent glass / `--color-glass-prominent` | `var(--color-accent)` | `var(--color-night-accent)` |
 | Glass edge / `--color-glass-edge` | `rgb(255 255 255 / 70%)` | `rgb(255 255 255 / 12%)` |
 | Segment track / `--color-segment-track` | `rgb(118 118 128 / 10%)` | `rgb(118 118 128 / 24%)` |
 | Control shadow / `--color-shadow` | `rgb(20 20 22 / 8%)` | `rgb(0 0 0 / 22%)` |
@@ -124,3 +121,5 @@ Owner color refinement October17: interactive navigation and selection use neutr
 Decorative icon rule October17: icons paired with visible labels use `controlIcon` (the existing secondary-text gray), including Settings, menu actions, context menus, sheets and widget rows. Shared AccessoryLabel/AccessoryButton preserve that role in native menus without tinting the label. Standalone navigation/actions stay ink; destructive and status symbols retain semantic colors. Top segmented selection uses neutral gray in both appearances to match the bottom navigation style.
 
 Owner tour/navigation refinement October17: Back actions use plain content text without an extra authored background. Forward step controls use the semantic solid primary-fill/on-primary pair, matching Welcome in both appearances; shared toolbar forward controls use this same pair. Compact content-action variants retain a44-point minimum target with Dynamic Type wrapping. Tour uses this compact variant and a quiet close glyph labelled Skip tour for accessibility. This supersedes the tour's filled Back/glass Next treatment; ordinary content primary actions retain the50-point default.
+
+Owner color simplification October17 (supersedes every earlier gold action-text, soft-selection and prominent-glass instruction above and in feature/design contracts): charcoal/light primary-fill and ink are the only control, selection and tint colors, including the app-wide root tint, toggles, pickers and links. Save, Done and equivalent commits use the native prominent capsule filled with primary-fill and labelled on-primary. Gold remains only as the brand accent for the logo Q and welcome artwork; the action-text, soft-selection and prominent-glass tokens are removed. Contrast pairs listing gold above are historical.

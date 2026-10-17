@@ -103,7 +103,7 @@ struct AQDWordmark: View {
     }
 }
 
-/// Native text confirmation for sheet editors. Feature owners retain their
+/// Native prominent (filled charcoal) confirmation for sheet editors. Feature owners retain their
 /// validation, cancellation and immutable save/reconciliation operations.
 struct ToolbarSaveAction: View {
     let title: String
@@ -115,9 +115,9 @@ struct ToolbarSaveAction: View {
             guard isEnabled && !isPending else { return }
             action()
         } label: {
-            Text(title).font(AppTypography.action).frame(minWidth: 44, minHeight: 44)
+            Text(title).font(AppTypography.action).foregroundStyle(AppTheme.onPrimary)
         }
-        .tint(AppTheme.actionText)
+        .buttonStyle(.borderedProminent).buttonBorderShape(.capsule).tint(AppTheme.primaryFill)
         .disabled(isPending || !isEnabled)
         .accessibilityValue(isPending ? "In progress" : "")
     }

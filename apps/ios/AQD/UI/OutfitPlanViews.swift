@@ -87,7 +87,7 @@ struct OutfitPlanEditorView: View {
                             else if model.hasUnsavedChanges { discard = true }
                             else { model.finish(discarding: true) }
                         } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
-                            .tint(model.saved == nil ? AppTheme.ink : AppTheme.actionText).accessibilityLabel(model.saved == nil ? "Cancel plan" : "Done")
+                            .tint(AppTheme.ink).accessibilityLabel(model.saved == nil ? "Cancel plan" : "Done")
                             .disabled(model.pending || model.unknown)
                     }
                 }

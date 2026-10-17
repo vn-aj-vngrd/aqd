@@ -142,7 +142,7 @@ struct LocalAppearanceSettingsView: View {
             if let error = state.settingsError {
                 Section {
                     SemanticFeedback(role: .danger, message: error)
-                    Button("Retry appearance save") { state.retryAppearanceSave() }.tint(AppTheme.actionText)
+                    Button("Retry appearance save") { state.retryAppearanceSave() }.tint(AppTheme.ink)
                 }.listRowBackground(AppTheme.surface)
             }
         }.listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)

@@ -12,17 +12,14 @@ enum AppTheme {
     static let secondary = color(light: 0x6A6863, dark: 0xBCB9B1)
     static let controlIcon = secondary
     static let imageGround = color(light: 0xF5F4F1, dark: 0x242422)
+    // Brand mark only (logo Q, welcome artwork). Never a UI control or selection color.
     static let accent = color(light: 0x8C6A36, dark: 0xD3B47C)
-    // Two-role palette: charcoal (ink/primaryFill) owns controls and selection; gold is text-only for
-    // committing actions (Save/Done) and plain links. No gold fills, tints, rings or toggles.
-    static let actionText = color(light: 0x765829, dark: 0xD9BD8A)
     static let onAccent = color(light: 0xFFFFFF, dark: 0x1C1C1B)
     static let primaryFill = color(light: 0x292826, dark: 0xF2F0EB)
     static let onPrimary = color(light: 0xFFFFFF, dark: 0x242321)
     static let segmentSelection = color(light: 0xE8E8E8, dark: 0x454545)
     static let messageBubble = segmentSelection
     static let divider = color(light: 0xE4E2DC, dark: 0x4A4842)
-    static let accentSoft = color(light: 0xF5F2EC, dark: 0x383125)
     static let controlBoundary = color(light: 0x807B72, dark: 0x969187)
     static let error = color(light: 0xD4142A, dark: 0xFF6472)
     static let errorSurface = color(light: 0xFFF0F2, dark: 0x422027)
@@ -34,7 +31,6 @@ enum AppTheme {
     static let information = secondary
     static let informationSurface = imageGround
     static let regularGlass = color(light: 0xFFFFFF, dark: 0x2B2B29, lightAlpha: 0.88, darkAlpha: 0.94)
-    static let prominentGlass = accent
     static let glassEdge = color(light: 0xFFFFFF, dark: 0xFFFFFF, lightAlpha: 0.70, darkAlpha: 0.12)
     static let segmentTrack = color(light: 0x767680, dark: 0x767680, lightAlpha: 0.10, darkAlpha: 0.24)
     static let controlShadow = color(light: 0x141416, dark: 0x000000, lightAlpha: 0.08, darkAlpha: 0.22)

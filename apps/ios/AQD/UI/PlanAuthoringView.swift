@@ -54,7 +54,7 @@ struct PlanAuthoringView: View {
                         else { model.finish(discarding: true) }
                     } label: { if model.saved != nil { Text("Done") } else { Image(systemName: "xmark") } }
                         .accessibilityLabel(model.saved != nil ? "Done" : "Cancel plan")
-                        .tint(model.saved == nil ? AppTheme.ink : AppTheme.actionText).disabled(model.pending || model.unknown)
+                        .tint(AppTheme.ink).disabled(model.pending || model.unknown)
                 } }
                 .navigationDestination(isPresented: $choosingPreferred) { RoutineOutfitChooser(model: model) }
                 .navigationDestination(isPresented: $choosingZone) {
