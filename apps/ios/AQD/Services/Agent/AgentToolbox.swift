@@ -1,0 +1,86 @@
+import Foundation
+import AQDCore
+
+enum AgentWearWindow: String, Sendable { case thisMonth, lastMonth }
+
+/// Feature-owned implementations the model-facing tools call. Each runs on the main actor against the store.
+struct AgentToolHandlers: Sendable {
+    var find: @MainActor @Sendable (_ query: String, _ kinds: [AgentDataSource]) throws -> String
+    var wearStats: @MainActor @Sendable (_ window: AgentWearWindow, _ pieceIDs: [UUID]) throws -> String
+    var weather: @MainActor @Sendable (_ day: String) throws -> String
+    var prepare: @MainActor @Sendable (_ request: AgentMutationRequest, _ revision: Int?) throws -> String
+}
+
+enum AgentToolID: String, CaseIterable, Sendable {
+    case findRecords, wearStats, weatherFor, editCloset, editOutfit, editTheme, editPlan, recordWear, editProfile
+
+    var isProposal: Bool { ![.findRecords, .wearStats, .weatherFor].contains(self) }
+    fileprivate var keywords: [String] {
+        switch self {
+        case .findRecords: ["find", "show", "list", "which", "what do i have", "my ", "own", "have"]
+        case .wearStats: ["wear", "worn", "wore", "unworn", "how many", "how often", "most", "least", "stats", "rediscover"]
+        case .weatherFor: ["weather", "rain", "temperature", "cold", "hot", "warm", "forecast", "tomorrow", "umbrella"]
+        case .editCloset: ["rename", "laundry", "unavailable", "available", "color", "colour", "brand", "piece", "shirt", "shoe"]
+        case .editOutfit: ["outfit", "look", "combine"]
+        case .editTheme: ["theme", "collection"]
+        case .editPlan: ["plan", "trip", "week", "pack", "schedule", "routine"]
+        case .recordWear: ["wore", "wearing", "log", "record"]
+        case .editProfile: ["profile", "bio", "my name"]
+        }
+    }
+}
+
+/// Registry and intent routing: each turn offers only the two or three tools the request needs,
+/// which keeps the tool definitions small enough for the on-device context window.
+enum AgentToolbox {
+    static let maximumTools = 3
+    private static let writeVerbs = ["save", "create", "make", "add", "rename", "change", "edit", "update", "set", "mark", "plan", "record", "log", "put", "remove", "move"]
+
+    /// Most relevant first. A change request always carries `findRecords`, because edits need exact IDs and revisions.
+    static func route(_ prompt: String, weatherAvailable: Bool) -> [AgentToolID] {
+        let text = prompt.lowercased()
+        let wantsChange = writeVerbs.contains { text.contains($0) }
+        var scored: [(tool: AgentToolID, score: Int)] = AgentToolID.allCases.compactMap { tool in
+            if tool == .weatherFor && !weatherAvailable { return nil }
+            if tool.isProposal && !wantsChange { return nil }
+            let hits = tool.keywords.filter { text.contains($0) }.count
+            return tool == .findRecords ? (tool, hits + 1) : hits > 0 ? (tool, hits + 1) : nil
+        }
+        scored.sort { $0.score > $1.score }
+        var chosen = scored.map(\.tool)
+        let proposals = chosen.filter(\.isProposal)
+        if let lead = proposals.first {
+            let rest = chosen.filter { $0 != lead && $0 != .findRecords }
+            chosen = [lead, .findRecords] + rest
+        }
+        return Array(chosen.prefix(maximumTools))
+    }
+
+    /// Drops the least relevant tools until their measured definitions fit. Returns an empty list when none fit.
+    @MainActor static func fit(_ tools: [AgentToolID], measure: ([AgentToolID]) async throws -> Int, fits: (Int) -> Bool) async rethrows -> [AgentToolID] {
+        var kept = tools
+        while !kept.isEmpty {
+            if fits(try await measure(kept)) { return kept }
+            kept.removeLast()
+        }
+        return kept
+    }
+
+    static func id(_ value: String) throws -> UUID {
+        guard let id = UUID(uuidString: value.trimmingCharacters(in: .whitespacesAndNewlines)) else { throw AgentToolRejection.malformedID(value) }
+        return id
+    }
+
+    /// Cancellation propagates; a rejection explains itself to the model; anything else is a generic refusal.
+    static func result(_ body: @MainActor () async throws -> String) async throws -> String {
+        do { return try await body() }
+        catch is CancellationError { throw CancellationError() }
+        catch let rejection as AgentToolRejection { return "No proposal prepared. " + rejection.reason }
+        catch { return "No change prepared or applied. Arguments, source access, dates, conflicts or records could not be validated. Ask the user to clarify or use the manual editor. Do not claim success." }
+    }
+}
+
+struct AgentToolSelection: Sendable {
+    let ids: [AgentToolID]
+    let handlers: AgentToolHandlers
+}

@@ -21,6 +21,7 @@ public struct AgentMessage: Identifiable, Codable, Equatable, Sendable {
     public var diagnostics: AgentResponseDiagnostics?
     public var feedback: [AgentFeedback]?
     public var attachments: [AgentAttachment]?
+    public var toolSteps: [AgentToolStep]?
     public var versions: [AgentResponseVersion] = []
     public init(role: AgentMessageRole, source: String, status: AgentMessageStatus, attemptID: UUID? = nil) {
         id = UUID(); self.role = role; self.source = source; self.status = status; self.attemptID = attemptID; createdAt = Date()

@@ -342,14 +342,8 @@ import Observation
                 defer { timeout?.cancel(); timeout = nil; generation = nil; slow = false }
                 do {
                     let response = usesNativeProvider
-                        ? NativeAgentProvider.streamAttached(prompt: prompt, responseTokens: qualification.responseTokens, attachments: images, enablesTools: conversation.context.automatic == true && conversation.context.scope == .closet,
-                            lookup: { [weak self] query in
-                                guard let self else { throw CancellationError() }
-                                return try self.lookupToolRecords(query, conversationID: conversationID, attemptID: attempt)
-                            }, prepareChange: { [weak self] request in
-                                guard let self else { throw CancellationError() }
-                                return try self.prepareToolChange(request, conversationID: conversationID, attemptID: attempt)
-                            })
+                        ? NativeAgentProvider.streamAttached(prompt: prompt, responseTokens: qualification.responseTokens, attachments: images,
+                            tools: toolSelection(for: conversation.messages.last(where: { $0.role == .user })?.source ?? "", conversationID: conversationID, attemptID: attempt))
                         : provider(prompt, qualification.responseTokens)
                     for try await text in response {
                         try Task.checkCancellation()

@@ -179,3 +179,31 @@ import AQDCore
         #expect(try store.localIdentity()?.caption == nil && model.conversation.proposals?.first?.receipt == nil)
     }
 }
+
+@MainActor extension AgentMutationToolPersistenceTests {
+    @Test func unknownIDAndStaleRevisionAreRefusedWithReasonAndNoProposal() throws {
+        let (store, model, attempt) = try activeModel()
+        let unknown = UUID()
+        #expect(throws: AgentToolRejection.unknownRecord(unknown)) {
+            try model.prepareToolChange(.init(kind: .editPiece, targetID: unknown, name: "Tee"), revision: 1, conversationID: model.conversation.id, attemptID: attempt)
+        }
+        var identity = LocalIdentityDraft(ownerID: model.conversation.ownerID); identity.name = "Van"
+        try store.saveIdentityDraft(identity); _ = try store.saveIdentity(identity); try store.finishIdentityDraft(identity)
+        let current = try #require(store.localIdentity()?.revision)
+        #expect(throws: AgentToolRejection.staleRevision(expected: current - 1, current: current)) {
+            try model.prepareToolChange(.init(kind: .updateProfile, caption: "New bio"), revision: current - 1, conversationID: model.conversation.id, attemptID: attempt)
+        }
+        #expect(throws: AgentToolRejection.revisionRequired) {
+            try model.prepareToolChange(.init(kind: .updateProfile, caption: "New bio"), conversationID: model.conversation.id, attemptID: attempt)
+        }
+        #expect(model.conversation.proposals == nil)
+        #expect(model.conversation.messages.last?.toolSteps?.count == 3 && model.conversation.messages.last?.toolSteps?.allSatisfy { $0.rejection != nil } == true)
+    }
+    @Test func routingOffersTwoOrThreeToolsAndEditsCarryLookup() {
+        #expect(AgentToolbox.route("rename my blue shirt", weatherAvailable: false).prefix(2) == [.editCloset, .findRecords])
+        #expect(AgentToolbox.route("what did I wear most this month", weatherAvailable: true).contains(.wearStats))
+        #expect(!AgentToolbox.route("will it rain tomorrow", weatherAvailable: false).contains(.weatherFor))
+        #expect(AgentToolbox.route("rename and plan and log the profile outfit theme", weatherAvailable: true).count <= 3)
+        #expect(AgentToolStep.lookup([.pieces: 6]).summary == "Looked up 6 pieces")
+    }
+}
