@@ -93,7 +93,7 @@ struct OutfitPieceTray: View {
                         chip(nil)
                         ForEach(model.state.pieceCategories) { chip($0) }
                     }
-                }.scrollIndicators(.hidden)
+                }.scrollIndicators(.hidden).frame(height: AppControlMetrics.minimumTarget)
                 Button("See all", action: seeAll).font(AppTypography.supporting.weight(.medium))
                     .foregroundStyle(AppTheme.actionText).frame(minHeight: AppControlMetrics.minimumTarget)
                     .accessibilityLabel("See all pieces")
@@ -107,7 +107,7 @@ struct OutfitPieceTray: View {
                     LazyHStack(spacing: AppSpacing.medium) {
                         ForEach(pieces) { piece in tile(piece) }
                     }.padding(.vertical, 2)
-                }.scrollIndicators(.hidden)
+                }.scrollIndicators(.hidden).frame(height: 112)
             }
         }
         .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small).padding(.bottom, AppSpacing.small)
