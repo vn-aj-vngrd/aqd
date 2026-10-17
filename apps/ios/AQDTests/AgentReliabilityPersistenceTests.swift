@@ -97,3 +97,82 @@ import AQDCore
         #expect(try store.agentConversations().first?.messages.first?.attachments?.map(\.id) == order)
     }
 }
+
+@Suite(.serialized) @MainActor struct AgentMutationToolPersistenceTests {
+    private func activeModel() throws -> (PieceStore, AgentModel, UUID) {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let model = try AgentModel(store: store)
+        model.conversation.draft = "Set my bio to Everyday looks"
+        let attempt = try model.conversation.beginAttempt(); try #require(model.persist())
+        return (store, model, attempt)
+    }
+    @Test func toolCreatesOneDurableReviewWithoutMutatingAndApplyCreatesReceipt() throws {
+        let (store, model, attempt) = try activeModel()
+        let request = AgentMutationRequest(kind: .updateProfile, caption: "Everyday looks")
+        _ = try model.prepareToolChange(request, conversationID: model.conversation.id, attemptID: attempt)
+        _ = try model.prepareToolChange(request, conversationID: model.conversation.id, attemptID: attempt)
+        #expect(try store.localIdentity() == nil)
+        #expect(try store.agentConversations().first?.proposals?.count == 1)
+        let proposal = try #require(model.conversation.proposals?.first)
+        model.approveProposal(proposal.id, version: 1)
+        #expect(try store.localIdentity() == nil) // A running model cannot approve its own tool output.
+        try model.conversation.complete(attemptID: attempt); try #require(model.persist())
+        model.approveProposal(proposal.id, version: 1)
+        model.approveProposal(proposal.id, version: 1)
+        #expect(try store.localIdentity()?.caption == "Everyday looks")
+        #expect(try store.localIdentity()?.revision == 1)
+        #expect(try store.agentConversations().first?.proposals?.first?.receipt?.kind == "profile")
+        let reopened = try AgentModel(store: PieceStore(directory: store.localDirectory))
+        #expect(reopened.conversation.proposals?.first?.status == .succeeded)
+    }
+    @Test func cancellationPreventsToolUse() throws {
+        let (store, model, attempt) = try activeModel()
+        let request = AgentMutationRequest(kind: .updateProfile, name: "Van")
+        model.stop()
+        #expect(throws: (any Error).self) { try model.prepareToolChange(request, conversationID: model.conversation.id, attemptID: attempt) }
+        #expect(try store.localIdentity() == nil && model.conversation.proposals == nil)
+    }
+    @Test func staleProfileAndManualDraftAreNeverOverwritten() throws {
+        let (store, model, attempt) = try activeModel()
+        _ = try model.prepareToolChange(.init(kind: .updateProfile, caption: "Agent bio"), conversationID: model.conversation.id, attemptID: attempt)
+        try model.conversation.complete(attemptID: attempt); try #require(model.persist())
+        var manual = LocalIdentityDraft(ownerID: model.conversation.ownerID); manual.name = "Manual name"
+        try store.saveIdentityDraft(manual)
+        let proposal = try #require(model.conversation.proposals?.first)
+        model.approveProposal(proposal.id, version: proposal.version)
+        #expect(try store.identityDraft() == manual && store.localIdentity() == nil)
+        // Reconcile the same proposal after the manual draft is saved. Its old base must be refused.
+        _ = try store.saveIdentity(manual); try store.finishIdentityDraft(manual)
+        model.approveProposal(proposal.id, version: proposal.version)
+        #expect(try store.localIdentity()?.name == "Manual name" && store.localIdentity()?.caption == nil)
+        #expect(try store.identityDraft() == nil)
+    }
+    @Test func generalContextAndBoundedCallsDoNotExposeRecordsOrPrepareChanges() throws {
+        let (_, model, attempt) = try activeModel()
+        model.conversation.context.scope = .general
+        #expect(throws: (any Error).self) { try model.lookupToolRecords("profile", conversationID: model.conversation.id, attemptID: attempt) }
+        model.conversation.context.scope = .closet
+        for _ in 0..<8 { _ = try model.lookupToolRecords("profile", conversationID: model.conversation.id, attemptID: attempt) }
+        #expect(throws: (any Error).self) { try model.prepareToolChange(.init(kind: .updateProfile, name: "Van"), conversationID: model.conversation.id, attemptID: attempt) }
+        #expect(model.conversation.proposals == nil)
+    }
+}
+
+@MainActor extension AgentMutationToolPersistenceTests {
+    @Test func lookupReturnsExactIDsAndRevokedSourceBlocksApproval() throws {
+        let (store, model, attempt) = try activeModel()
+        var identity = LocalIdentityDraft(ownerID: model.conversation.ownerID); identity.name = "Van"
+        try store.saveIdentityDraft(identity); _ = try store.saveIdentity(identity); try store.finishIdentityDraft(identity)
+        let lookup = try model.lookupToolRecords("Van profile", conversationID: model.conversation.id, attemptID: attempt)
+        #expect(lookup.contains(model.conversation.ownerID.uuidString))
+        _ = try model.prepareToolChange(.init(kind: .updateProfile, caption: "New bio"), conversationID: model.conversation.id, attemptID: attempt)
+        var preferences = AgentPreferences(); preferences.set(.profile, enabled: false)
+        _ = try store.saveLocalSettings(LocalSettingsRequest(base: store.localSettings(), agentPreferences: preferences))
+        let hidden = try model.lookupToolRecords("Van profile", conversationID: model.conversation.id, attemptID: attempt)
+        #expect(!hidden.contains("Van") && !hidden.contains(model.conversation.ownerID.uuidString))
+        try model.conversation.complete(attemptID: attempt); try #require(model.persist())
+        let proposal = try #require(model.conversation.proposals?.first)
+        model.approveProposal(proposal.id, version: 1)
+        #expect(try store.localIdentity()?.caption == nil && model.conversation.proposals?.first?.receipt == nil)
+    }
+}

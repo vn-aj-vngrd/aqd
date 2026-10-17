@@ -14,6 +14,8 @@ import Observation
     var attachmentImportCount = 0
     private let usesNativeProvider: Bool
     private let provider: @MainActor (String, Int) -> AsyncThrowingStream<String, any Error>
+    var toolCalls = 0
+    var toolProposals: [(AgentMutationRequest, UUID)] = []
     private var generation: Task<Void, Never>?
     private var timeout: Task<Void, Never>?
     var slow = false
@@ -188,30 +190,47 @@ import Observation
               let proposal = conversation.proposals?[i], proposal.version == version,
               proposal.status == .proposed || proposal.status == .executing else { return }
         do {
+            if let request = proposal.toolRequest {
+                let preferences = try store.localSettings().agentPreferences ?? AgentPreferences()
+                guard conversation.context.automatic == true, conversation.context.scope == .closet,
+                      request.kind.requiredSources.allSatisfy(preferences.allows) else { throw PieceStore.StoreError.staleRevision }
+            }
             try conversation.proposals?[i].approve(version: version)
             guard persist(), let proposal = conversation.proposals?[i] else { return }
             let receipt: AgentActionReceipt
             switch proposal.action {
+            case .piece(let change):
+                let value = try store.savePiece(change.draft, operationID: change.operationID)
+                receipt = AgentActionReceipt(recordID: value.id, kind: "piece")
+            case .profile(let draft):
+                if try store.savedIdentity(for: draft) == nil {
+                    guard try store.localIdentity() == draft.base else { throw PieceStore.StoreError.staleRevision }
+                    guard try store.identityDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }
+                    try store.saveIdentityDraft(draft)
+                }
+                let value = try store.saveIdentity(draft)
+                if try store.identityDraft() == draft { try store.finishIdentityDraft(draft) }
+                receipt = AgentActionReceipt(recordID: value.ownerID, kind: "profile")
             case .availability(let change):
                 let piece = try store.setAvailability(id: change.pieceID, value: change.value, expectedRevision: change.expectedRevision, operationID: change.operationID)
                 receipt = AgentActionReceipt(recordID: piece.id, kind: "piece")
             case .theme(let draft):
-                if try store.savedTheme(for: draft) == nil { try validateSources(proposal); try store.saveThemeDraft(draft) }
+                if try store.savedTheme(for: draft) == nil { guard try store.themeDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }; try validateSources(proposal); try store.saveThemeDraft(draft) }
                 let value = try store.saveTheme(draft)
                 if try store.themeDraft() == draft { try store.finishThemeDraft(draft) }
                 receipt = AgentActionReceipt(recordID: value.id, kind: "theme")
             case .outfit(let draft):
-                if try store.savedOutfit(for: draft) == nil { try validateSources(proposal); try store.saveOutfitDraft(draft) }
+                if try store.savedOutfit(for: draft) == nil { guard try store.outfitDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }; try validateSources(proposal); try store.saveOutfitDraft(draft) }
                 let value = try store.saveOutfit(draft)
                 if try store.outfitDraft() == draft { try store.acknowledgeOutfitReceipt(draft) }
                 receipt = AgentActionReceipt(recordID: value.id, kind: "outfit")
             case .plan(let draft):
-                if try store.savedPlanAuthoring(draft) == nil { try validateSources(proposal); try store.savePlanAuthoringDraft(draft) }
+                if try store.savedPlanAuthoring(draft) == nil { guard try store.planAuthoringDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }; try validateSources(proposal); try store.savePlanAuthoringDraft(draft) }
                 let value = try store.savePlanAuthoring(draft)
                 if try store.planAuthoringDraft() == draft { try store.finishPlanAuthoring(draft) }
                 receipt = AgentActionReceipt(recordID: value.plan.id, kind: "plan")
             case .wear(let draft):
-                if try store.savedWear(for: draft) == nil { try store.saveWearDraft(draft) }
+                if try store.savedWear(for: draft) == nil { guard try store.wearDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }; try store.saveWearDraft(draft) }
                 let value = try store.saveWear(draft)
                 if try store.wearDraft() == draft { try store.finishWearDraft(draft) }
                 receipt = AgentActionReceipt(recordID: value.id, kind: "wear")
@@ -219,7 +238,7 @@ import Observation
             conversation.proposals?[i].receipt = receipt; conversation.proposals?[i].status = .succeeded; _ = persist()
         } catch {
             switch error {
-            case is ThemeValidationError, is OutfitValidationError, is PlanValidationError, is PlanAuthoringError, is WearValidationError, PieceStore.StoreError.staleRevision:
+            case is ThemeValidationError, is OutfitValidationError, is PlanValidationError, is PlanAuthoringError, is WearValidationError, PieceStore.StoreError.staleRevision, PieceStore.StoreError.staleDraft:
                 conversation.proposals?[i].status = .proposed; _ = persist()
             default: break
             }
@@ -287,6 +306,10 @@ import Observation
             guard prompt.count <= qualification.maximumPromptCharacters else { error = "This conversation exceeds the on-device context budget. Start a new conversation; this history and draft will stay."; return }
             contextSummary = snapshot.summary
             }
+            let actionFacts = (conversation.proposals ?? []).suffix(8).map {
+                "Review \($0.id): \($0.action.title), status=\($0.status.rawValue), saved receipt=\($0.receipt?.kind ?? "none")"
+            }.joined(separator: "\n")
+            prompt += "\nCurrent local review facts (only succeeded with receipt is saved):\n" + actionFacts
             guard prompt.count <= qualification.maximumPromptCharacters else { throw AgentContextError.budgetExceeded }
             let images: [AgentAttachment]
             if messageID == nil, !(conversation.draftAttachments ?? []).isEmpty {
@@ -301,6 +324,7 @@ import Observation
                 conversation.messages[conversation.messages.count - 1].diagnostics?.failure = .storage
                 conversation.interruptActiveAttempt(); return
             }
+            toolCalls = 0; toolProposals = []
             let conversationID = conversation.id, start = ContinuousClock.now
             slow = false
             timeout = Task { [weak self] in
@@ -313,8 +337,15 @@ import Observation
                 guard let self else { return }
                 defer { timeout?.cancel(); timeout = nil; generation = nil; slow = false }
                 do {
-                    let response = usesNativeProvider && !images.isEmpty
-                        ? NativeAgentProvider.streamAttached(prompt: prompt, responseTokens: qualification.responseTokens, attachments: images)
+                    let response = usesNativeProvider
+                        ? NativeAgentProvider.streamAttached(prompt: prompt, responseTokens: qualification.responseTokens, attachments: images, enablesTools: conversation.context.automatic == true && conversation.context.scope == .closet,
+                            lookup: { [weak self] query in
+                                guard let self else { throw CancellationError() }
+                                return try self.lookupToolRecords(query, conversationID: conversationID, attemptID: attempt)
+                            }, prepareChange: { [weak self] request in
+                                guard let self else { throw CancellationError() }
+                                return try self.prepareToolChange(request, conversationID: conversationID, attemptID: attempt)
+                            })
                         : provider(prompt, qualification.responseTokens)
                     for try await text in response {
                         try Task.checkCancellation()

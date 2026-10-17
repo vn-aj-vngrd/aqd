@@ -101,10 +101,18 @@ struct AgentConversationView: View {
                     }
                     ForEach(model.conversation.proposals ?? []) { proposal in
                         NavigationLink { AgentActionReviewView(model: model, id: proposal.id).secondaryPage() } label: {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(proposal.action.title)
-                                Text(proposal.status == .succeeded ? "Saved receipt available" : proposal.status.rawValue.capitalized + " · Review required").font(.footnote).foregroundStyle(AppTheme.secondary)
-                            }.frame(minHeight: 44)
+                            HStack(spacing: AppSpacing.medium) {
+                                Image(systemName: proposal.status == .succeeded ? "checkmark.circle" : "square.and.pencil")
+                                    .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                                VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                                    Text(proposal.action.title).foregroundStyle(AppTheme.ink)
+                                    Text(proposal.status == .succeeded ? "Saved locally" : proposal.status == .cancelled ? "Cancelled" : proposal.status == .executing ? "Check save result" : "Not saved · Tap to review")
+                                        .font(.footnote).foregroundStyle(AppTheme.secondary)
+                                }
+                                Spacer(minLength: AppSpacing.small)
+                                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                            }.frame(minHeight: AppControlMetrics.minimumTarget)
+                                .padding(AppSpacing.medium).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                         }
                     }
                     if !model.supportsGeneration {
