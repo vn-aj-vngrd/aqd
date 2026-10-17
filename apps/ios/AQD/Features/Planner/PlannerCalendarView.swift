@@ -75,6 +75,12 @@ struct PlannerCalendarView: View {
             }
             if let error { SemanticFeedback(role: .danger, message: error) }
         }.tint(AppTheme.ink)
+            .simultaneousGesture(DragGesture(minimumDistance: 24).onEnded { value in
+                // Swipe the calendar like Apple Calendar: only clear horizontal drags change the period.
+                let dx = value.translation.width, dy = value.translation.height
+                guard abs(dx) > 60, abs(dx) > abs(dy) * 2 else { return }
+                withAnimation(reduceMotion ? nil : AQDMotion.reflow) { move(dx < 0 ? 1 : -1) }
+            })
             .sheet(isPresented: $chooseDate) {
                 NavigationStack {
                     VStack(spacing: 20) {

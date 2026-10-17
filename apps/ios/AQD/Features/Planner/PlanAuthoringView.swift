@@ -71,8 +71,24 @@ struct PlanAuthoringView: View {
                     if model.state.planAuthoringEditor == nil { discard = false }
                 }
     }
+    /// Live preview of what is being made: kind, range and how many dates it resolves to.
+    private var hero: some View {
+        let plan = model.draft.plan
+        let symbol = plan.trip != nil ? "suitcase" : plan.routine != nil ? "repeat" : "calendar"
+        let count = (try? plan.days().count) ?? 0
+        let range = plan.start.key == plan.end.key ? plan.start.displayDate : "\(plan.start.displayDate) – \(plan.end.displayDate)"
+        return VStack(spacing: 8) {
+            Image(systemName: symbol).font(.system(size: 28)).accessibilityHidden(true)
+            Text(plan.name.isEmpty ? "Name your plan" : plan.name).font(AppTypography.section).lineLimit(2).multilineTextAlignment(.center)
+            Text(count > 0 ? "\(range) · \(count) \(count == 1 ? "date" : "dates")" : "Choose a valid range")
+                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+        }.frame(maxWidth: .infinity).padding(.vertical, 20).padding(.horizontal, 16)
+            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 16))
+            .accessibilityElement(children: .combine)
+    }
     private var fields: some View {
         VStack(alignment: .leading, spacing: 16) {
+            hero
             LabeledField(title: "Name", text: Binding(get: { model.draft.plan.name }, set: { value in model.update { $0.plan.name = value } })).disabled(definitionLocked)
             VStack(spacing: 0) {
                 dateField("Starts", start: true)
