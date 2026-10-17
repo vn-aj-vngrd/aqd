@@ -9,6 +9,7 @@ struct LocalSettingsView: View {
     @State private var previewWelcome = false
     @State private var tourAfterWelcome = false
     @State private var previewSplash = false
+    @State private var seedSamples = false
     #endif
     var body: some View {
         List {
@@ -35,7 +36,8 @@ struct LocalSettingsView: View {
                 NavigationLink { ArchivedPiecesView().secondaryPage() } label: { SettingsRow(title: "Archived pieces", symbol: "archivebox") }
                 NavigationLink { LocalExportView().secondaryPage() } label: { SettingsRow(title: "Export closet", symbol: "square.and.arrow.up") }
                 Button { state.openRestore() } label: { SettingsRow(title: "Restore closet", symbol: "arrow.counterclockwise", disclosure: true) }
-                Button(role: .destructive) { state.openErase() } label: { SettingsRow(title: "Erase closet", symbol: "trash", disclosure: true, destructive: true) }
+                Button(role: .destructive) { state.openErase() } label: { SettingsRow(title: "Reset data", symbol: "trash", disclosure: true, destructive: true) }
+                    .accessibilityIdentifier("aqd.settings.reset-data")
             } header: { Text("Your data") } footer: {
                 Text("Stored on this iPhone with no account or automatic cloud backup. Export a copy to protect against device loss or deleting AQD.")
             }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
@@ -46,6 +48,8 @@ struct LocalSettingsView: View {
                     .accessibilityIdentifier("aqd.development.welcome")
                 Button { previewSplash = true } label: { SettingsRow(title: "Preview splash screen", symbol: "arrow.clockwise", disclosure: true) }
                     .accessibilityIdentifier("aqd.development.splash")
+                Button { seedSamples = true } label: { SettingsRow(title: "Seed sample data", symbol: "square.stack.3d.up", disclosure: true) }
+                    .accessibilityIdentifier("aqd.development.seed-data")
             } header: { Text("Development") } footer: { Text("Previews preserve your setup. Close and reopen AQD to test the system launch screen.") }
                 .listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
                 .listRowBackground(AppTheme.surface)
@@ -61,6 +65,9 @@ struct LocalSettingsView: View {
             if tourAfterWelcome { tourAfterWelcome = false; state.beginTour(from: .settings) }
         }) { WelcomeView(previewDismiss: { tour in tourAfterWelcome = tour; previewWelcome = false }).background(AppTheme.canvas) }
         .fullScreenCover(isPresented: $previewSplash) { DevelopmentSplashPreview() }
+        .sheet(isPresented: $seedSamples) {
+            DevelopmentSeedView().environment(state).appAppearance(state.appearance)
+        }
         #endif
     }
     private var appearanceTitle: String { state.appearance == .system ? "Automatic" : state.appearance.rawValue.capitalized }
@@ -268,7 +275,7 @@ struct LocalPrivacySettingsView: View {
             Text("App deletion or device loss can lose your data. Export a sensitive local archive from Settings. Your chosen Files destination may use cloud storage; protect copies you export.")
             Text("Permissions and optional services").font(AppTypography.section)
             Text("Camera and supported microphone/speech permissions are requested only after an explicit action. Photos uses your selected media. Optional Apple city search sends your city query; qualified weather uses the selected place/date without wardrobe, photos, body details or conversations.")
-            Text("Restore replaces local data after review. Erase clears AQD-owned records and files; original Photos and previous exported copies stay outside AQD.")
+            Text("Restore replaces local data after review. Reset data clears AQD-owned records and files and returns to Welcome; original Photos and previous exported copies stay outside AQD.")
         }.padding(20) }.background(AppTheme.canvas).navigationTitle("Help and privacy").navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 ActionFooter {

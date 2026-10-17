@@ -62,8 +62,13 @@ import Observation
         phase = .validating; error = nil
         task = Task {
             do { await Task.yield(); try Task.checkCancellation(); review = try await coordinator.prepareErase(source: source); phase = .review }
-            catch { self.error = "Erase review couldn’t be prepared. Your local data has not changed."; phase = .failed }
+            catch { self.error = "Reset review couldn’t be prepared. Your local data has not changed."; phase = .failed }
         }
+    }
+    /// Reset is the same reviewed all-domain replacement, with its own visible confirmation word.
+    func resetData(confirmation: String) {
+        guard kind == .erase, confirmation == "RESET" else { return }
+        commit(confirmation: "ERASE")
     }
     func commit(confirmation: String? = nil) {
         guard let review, phase == .review || phase == .failed || phase == .unknown else { return }

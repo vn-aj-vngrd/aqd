@@ -210,4 +210,17 @@ struct PreviewSampleContentTests {
         #expect(try reopened.pieces().count == 12 && reopened.themes().count == 4)
     }
 }
+
+@MainActor extension PreviewSampleContentTests {
+    @Test func explicitSeedingKeepsFreshWelcomeAndDoesNotInventWear() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: root.appendingPathComponent("store"))
+        let entry = try store.localExperience().entryState
+        _ = try await PreviewSampleContent.populate(store: store, outputDirectory: root.appendingPathComponent("output"))
+        #expect(try store.localExperience().entryState == entry)
+        #expect(AppState(store: store).entry.page == .welcome)
+        #expect(try store.wearRecords().isEmpty && store.localIdentity() == nil)
+        #expect(try store.pieces().count == 12 && store.outfits().count == 6)
+    }
+}
 #endif

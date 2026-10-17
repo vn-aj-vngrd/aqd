@@ -592,3 +592,5 @@ Settings density October17: root rows use4-point vertical insets around44-point 
 Settings density build installed successfully (`/tmp/aqd-settings-density-install.json`). Owner opens the app for visual review.
 
 Settings density code checkpoint: `f89a2230ff160a4b5aa7692aad58672e1957630d`.
+
+Owner Reset Data/development seeding October17 is implemented on the active companion branch; detailed scope/checkpoints are also recorded in issue27. Reuse the existing reviewed .erase coordinator operation, expose exact RESET confirmation, and return the fresh installed store to real Welcome. DEBUG Seed sample data wraps existing idempotent sample preparation/backup without changing entry progress or personal records. No actual reset or seed of the owner's store is authorized by adding these controls; install only, without app launch. Native execution remains skipped at owner's request.

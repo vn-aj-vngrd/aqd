@@ -54,3 +54,25 @@ import Testing
         #expect(try Data(contentsOf: outside) == Data("outside original and exported copy".utf8))
     }
 }
+
+@MainActor extension LocalEraseTests {
+    @Test func resetDataRequiresExactConfirmationAndInstallsRealWelcomeState() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: root)
+        try store.saveEntryState(PrivateEntryState(alreadyEntered: true))
+        let coordinator = LocalDataCoordinator(legacyRoot: root)
+        let model = LocalRestoreModel(coordinator: coordinator, source: store, kind: .erase)
+        model.prepareErase()
+        for _ in 0..<100 { if model.phase != .validating { break }; try await Task.sleep(for: .milliseconds(5)) }
+        try #require(model.phase == .review)
+        model.resetData(confirmation: "reset")
+        #expect(model.phase == .review && model.installed == nil)
+        model.resetData(confirmation: "RESET")
+        for _ in 0..<100 { if model.phase != .committing { break }; try await Task.sleep(for: .milliseconds(5)) }
+        let installed = try #require(model.installed)
+        let state = AppState(store: installed, dataRoot: root, coordinator: coordinator)
+        #expect(model.phase == .complete && state.entry.page == .welcome)
+        #expect(!state.entry.welcomeSeen && state.entry.tour == nil)
+        #expect(try installed.localIdentity() == nil && installed.localExperience().style == nil)
+    }
+}
