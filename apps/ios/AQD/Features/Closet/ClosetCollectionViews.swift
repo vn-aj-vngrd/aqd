@@ -90,7 +90,7 @@ struct CollectionArtwork: View {
         .frame(height: height).clipped()
         .overlay(alignment: .bottomTrailing) {
             if let text = badge ?? (pieceIDs.count > 4 ? "+\(pieceIDs.count - 4) more" : nil) {
-                Text(text).font(AppTypography.metadata).lineLimit(1).truncationMode(.tail)
+                Text(text).font(AppTypography.metadata).truncated()
                     .padding(.horizontal, 8).padding(.vertical, 4)
                     .background(AppTheme.surface, in: Capsule()).padding(4)
                     .accessibilityLabel(text)
@@ -109,11 +109,11 @@ struct ClosetCard<Artwork: View>: View {
             artwork().padding(8).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10)).padding(8)
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 4) {
-                    Text(title).font(AppTypography.fieldLabel).lineLimit(1).truncationMode(.tail)
+                    Text(title).font(AppTypography.fieldLabel).truncated()
                         .frame(maxWidth: .infinity, alignment: .leading)
                     if favorite { Image(systemName: "heart.fill").font(AppTypography.metadata).foregroundStyle(AppTheme.ink).accessibilityLabel("Favorite") }
                 }.foregroundStyle(AppTheme.ink)
-                Text(detail).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).lineLimit(1).truncationMode(.tail)
+                Text(detail).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
             }.padding(.horizontal, 12).padding(.top, 4).padding(.bottom, 12)
         }.frame(maxWidth: .infinity, alignment: .leading)
             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))

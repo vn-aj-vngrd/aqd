@@ -346,7 +346,7 @@ struct TodayWeatherSummary: View {
                     SemanticFeedback(role: .warning, message: error)
                     Button { client.reload() } label: { TodayCardActionLabel(title: "Retry weather preferences") }.frame(minHeight: 44)
                 } else if client.local?.enabled == true, let place = client.local?.place {
-                    Text(place.name).font(AppTypography.body).lineLimit(1).truncationMode(.tail)
+                    Text(place.name).font(AppTypography.body).truncated()
                     TimelineView(.periodic(from: .now, by: 60)) { context in
                         let day = LocalPlanDay(date: context.date, timeZone: TimeZone(identifier: place.timeZoneID) ?? .current)
                         let selection = WeatherSelection(place: place, day: day)

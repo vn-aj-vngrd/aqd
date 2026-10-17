@@ -91,7 +91,7 @@ struct OutfitSelectionStrip: View {
                                     .frame(width: 104)
                                     .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group))
                                     .selectionIndicator(isSelected)
-                                Text(outfit.displayName).font(AppTypography.metadata).lineLimit(1)
+                                Text(outfit.displayName).font(AppTypography.metadata).truncated()
                                     .foregroundStyle(AppTheme.secondary).frame(width: 104)
                             }
                         }.buttonStyle(.plain).disabled(locked)
@@ -125,7 +125,7 @@ struct PieceSelectionStrip: View {
                                 PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                                     .frame(width: 88, height: 112).selectionIndicator(isSelected)
                                     .opacity(isSelected ? 0.75 : 1)
-                                Text(piece.displayName).font(AppTypography.metadata).lineLimit(1)
+                                Text(piece.displayName).font(AppTypography.metadata).truncated()
                                     .foregroundStyle(AppTheme.secondary).frame(width: 88)
                             }
                         }.buttonStyle(.plain).disabled(locked)

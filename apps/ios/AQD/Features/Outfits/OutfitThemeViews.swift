@@ -85,30 +85,44 @@ struct ThemeCover: View {
     let outfits: [Outfit]
     var height: CGFloat = 134
 
+    /// Distinct pieces taken round-robin across the outfits, so every outfit is represented and no piece repeats.
+    static func coverPieceIDs(_ outfits: [Outfit], limit: Int = 4) -> [UUID] {
+        var seen = Set<UUID>(), result: [UUID] = []
+        let rounds = outfits.map(\.pieceIDs.count).max() ?? 0
+        for round in 0..<rounds {
+            for outfit in outfits where round < outfit.pieceIDs.count {
+                if seen.insert(outfit.pieceIDs[round]).inserted { result.append(outfit.pieceIDs[round]) }
+                if result.count == limit { return result }
+            }
+        }
+        return result
+    }
+
     var body: some View {
+        let ids = Self.coverPieceIDs(outfits)
         Group {
-            if outfits.isEmpty {
+            if ids.isEmpty {
                 Image(systemName: "folder").font(.title2).foregroundStyle(AppTheme.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity).accessibilityLabel("Empty theme")
-            } else if outfits.count == 1 {
-                CollectionArtwork(pieceIDs: outfits[0].pieceIDs, height: height)
+            } else if ids.count == 1 {
+                tile(ids[0], width: nil, height: height)
             } else {
-                let shown = Array(outfits.prefix(4))
-                let rows = shown.count > 2 ? 2 : 1
+                let rows = ids.count > 2 ? 2 : 1
                 let cell = max(0, (height - CGFloat(rows - 1) * 6) / CGFloat(rows))
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 2), spacing: 6) {
-                    ForEach(shown) { outfit in
-                        if let id = outfit.pieceIDs.first, let piece = state.ownedPieces.first(where: { $0.id == id }) {
-                            PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
-                                .frame(maxWidth: .infinity).frame(height: cell).clipped()
-                        } else {
-                            Image(systemName: "tshirt").foregroundStyle(AppTheme.secondary)
-                                .frame(maxWidth: .infinity).frame(height: cell)
-                        }
-                    }
+                    ForEach(ids, id: \.self) { tile($0, width: nil, height: cell) }
                 }
             }
         }.frame(height: height).clipped()
+    }
+
+    @ViewBuilder private func tile(_ id: UUID, width: CGFloat?, height: CGFloat) -> some View {
+        if let piece = state.ownedPieces.first(where: { $0.id == id }) {
+            PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                .frame(maxWidth: width ?? .infinity).frame(height: height).clipped()
+        } else {
+            Image(systemName: "tshirt").foregroundStyle(AppTheme.secondary).frame(maxWidth: .infinity).frame(height: height)
+        }
     }
 }
 
@@ -142,12 +156,22 @@ struct ThemeEditorView: View {
                             Text("Theme saved").font(AppTypography.section)
                             Text(saved.displayName)
                         } else {
-                            ThemeCover(outfits: selectedOutfits, height: 180).padding(AppSpacing.medium)
-                                .frame(maxWidth: .infinity)
-                                .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                                ThemeCover(outfits: selectedOutfits, height: 180)
+                                    .padding(AppSpacing.small).frame(maxWidth: .infinity)
+                                    .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group))
+                                HStack(alignment: .firstTextBaseline, spacing: AppSpacing.small) {
+                                    Text(model.draft.displayName.isEmpty ? "Untitled theme" : model.draft.displayName)
+                                        .font(AppTypography.fieldLabel).foregroundStyle(model.draft.displayName.isEmpty ? AppTheme.secondary : AppTheme.ink).truncated()
+                                    Spacer(minLength: AppSpacing.small)
+                                    Text(selectedOutfits.count == 1 ? "1 outfit" : "\(selectedOutfits.count) outfits")
+                                        .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).fixedSize()
+                                }
+                            }.padding(AppSpacing.small)
+                                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                                 .animation(.smooth(duration: 0.25), value: model.draft.outfitIDs)
-                                .accessibilityElement(children: .ignore)
-                                .accessibilityLabel("Theme cover, \(selectedOutfits.count) outfits")
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel("Theme cover, \(model.draft.displayName.isEmpty ? "untitled" : model.draft.displayName), \(selectedOutfits.count) outfits")
                             LabeledField(title: "Name", text: Binding(get: { model.draft.displayName }, set: { name in model.update { $0.name = name } }),
                                          prompt: "e.g. Weekend", editingFocus: $nameEditing)
                                 .submitLabel(.done).onSubmit { nameEditing = false }.disabled(locked)
@@ -217,7 +241,7 @@ struct ThemeEditorView: View {
                 CollectionArtwork(pieceIDs: outfit.pieceIDs, height: 110).padding(AppSpacing.small)
                     .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group))
                     .selectionIndicator(isSelected)
-                Text(outfit.displayName).font(AppTypography.supporting).lineLimit(1).foregroundStyle(AppTheme.ink)
+                Text(outfit.displayName).font(AppTypography.supporting).truncated().foregroundStyle(AppTheme.ink)
             }
         }.buttonStyle(.plain).disabled(locked)
             .accessibilityLabel(outfit.displayName)

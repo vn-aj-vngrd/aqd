@@ -562,7 +562,7 @@ struct AgentHistoryView: View {
                     HStack(spacing: AppSpacing.small) {
                         status(value)
                         Text(value.title).font(AppTypography.body).foregroundStyle(AppTheme.ink)
-                            .lineLimit(1).truncationMode(.tail).frame(maxWidth: .infinity, alignment: .leading)
+                            .truncated().frame(maxWidth: .infinity, alignment: .leading)
                         if value.isPinned { Image(systemName: "pin.fill").font(.footnote).foregroundStyle(AppTheme.controlIcon).accessibilityLabel("Pinned") }
                         if value.isArchived { Image(systemName: "archivebox").font(.footnote).foregroundStyle(AppTheme.controlIcon).accessibilityLabel("Archived") }
                         TimelineView(.periodic(from: .now, by: 60)) { timeline in

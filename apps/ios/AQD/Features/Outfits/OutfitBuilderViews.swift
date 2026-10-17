@@ -192,7 +192,7 @@ struct OutfitPickerSheet: View {
                     .frame(maxWidth: width ?? .infinity).frame(height: height)
                     .selectionIndicator(isSelected)
                     .opacity(isSelected ? 0.75 : 1)
-                Text(width == nil ? piece.displayName : model.state.categoryName(for: piece)).font(AppTypography.metadata).lineLimit(1).foregroundStyle(AppTheme.secondary)
+                Text(width == nil ? piece.displayName : model.state.categoryName(for: piece)).font(AppTypography.metadata).truncated().foregroundStyle(AppTheme.secondary)
             }.frame(width: width)
         }.buttonStyle(.plain).disabled(locked)
             .accessibilityLabel(piece.displayName)
