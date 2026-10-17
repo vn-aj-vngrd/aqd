@@ -6,6 +6,7 @@ import Observation
 @MainActor @Observable final class AgentAttachmentImporter {
     struct Pending: Identifiable { let id: UUID; let name: String; var error: String? }
     private(set) var pending: [Pending] = []
+    private(set) var order: [UUID] = []
     private var jobs: [UUID: Task<Void, Never>] = [:]
     private var deadlines: [UUID: Task<Void, Never>] = [:]
     let model: AgentModel
@@ -14,12 +15,17 @@ import Observation
     func add(name: String, operation: @escaping @Sendable () async throws -> AgentAttachment) {
         guard count < AgentAttachment.maximumCount, !model.active, !model.hasPendingOperation else { model.error = "Attach up to four photos or files per message."; return }
         let id = UUID(), conversationID = model.conversation.id
+        let existing = (model.conversation.draftAttachments ?? []).map(\.id) + pending.map(\.id)
+        order.removeAll { !existing.contains($0) }
+        for ready in existing where !order.contains(ready) { order.append(ready) }
+        order.append(id)
         pending.append(Pending(id: id, name: name)); updateCount()
         jobs[id] = Task { [weak self] in
             do {
                 let value = try await AgentAttachmentReader.perform(operation)
                 guard let self, !Task.isCancelled, pending.contains(where: { $0.id == id }), model.conversation.id == conversationID else { return }
-                model.addAttachment(value, to: conversationID); remove(id)
+                let ready = AgentAttachment(id: id, kind: value.kind, name: value.name, preview: value.preview, text: value.text, method: value.method, partial: value.partial)
+                model.addAttachment(ready, to: conversationID, order: order); remove(id)
             } catch {
                 guard let self, !Task.isCancelled, let index = pending.firstIndex(where: { $0.id == id }) else { return }
                 pending[index].error = (error as? LocalizedError)?.errorDescription ?? "Couldn’t load this attachment. Remove it and choose again."
@@ -33,7 +39,9 @@ import Observation
     }
     func remove(_ id: UUID) {
         jobs[id]?.cancel(); jobs[id] = nil; deadlines[id]?.cancel(); deadlines[id] = nil
-        pending.removeAll { $0.id == id }; updateCount()
+        pending.removeAll { $0.id == id }
+        if !(model.conversation.draftAttachments ?? []).contains(where: { $0.id == id }) { order.removeAll { $0 == id } }
+        updateCount()
     }
     func cancel() { for item in pending { remove(item.id) } }
     private func updateCount() { model.attachmentImportCount = pending.count }

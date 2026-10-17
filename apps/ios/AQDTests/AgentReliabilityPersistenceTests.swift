@@ -82,3 +82,18 @@ import AQDCore
         #expect(model.conversation.messages.first?.attachments == [photo])
     }
 }
+
+@MainActor struct AgentAttachmentSelectionOrderTests {
+    @Test func completionOrderDoesNotChangeSelectedOrderInSavedDraftOrMessage() throws {
+        let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        let model = try AgentModel(store: store)
+        let first = AgentAttachment(kind: .document, name: "first.txt", text: "First", method: "Document text")
+        let second = AgentAttachment(kind: .document, name: "second.txt", text: "Second", method: "Document text")
+        let order = [first.id, second.id]
+        model.addAttachment(second, to: model.conversation.id, order: order)
+        model.addAttachment(first, to: model.conversation.id, order: order)
+        #expect(try store.agentConversations().first?.draftAttachments?.map(\.id) == order)
+        _ = try model.conversation.beginAttempt(); try #require(model.persist())
+        #expect(try store.agentConversations().first?.messages.first?.attachments?.map(\.id) == order)
+    }
+}

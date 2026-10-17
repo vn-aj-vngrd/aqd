@@ -83,6 +83,7 @@ struct AgentAttachmentPicker: ViewModifier {
 struct AgentAttachmentStrip: View {
     let attachments: [AgentAttachment]
     var pending: [AgentAttachmentImporter.Pending] = []
+    var order: [UUID] = []
     var remove: ((UUID) -> Void)?
     var cancelImport: ((UUID) -> Void)?
     var locked = false
@@ -91,28 +92,33 @@ struct AgentAttachmentStrip: View {
     private var tileSize: CGFloat { textSize.isAccessibilitySize ? 140 : 104 }
     @State private var selected: AgentAttachment?
     @State private var importError: String?
+    private var visibleIDs: [UUID] {
+        let ids = attachments.map(\.id) + pending.map(\.id)
+        return order.filter { ids.contains($0) } + ids.filter { !order.contains($0) }
+    }
     var body: some View {
         ScrollView(.horizontal) {
             HStack(alignment: .top, spacing: AppSpacing.small) {
-                ForEach(attachments) { attachment in
-                    tile(name: attachment.name, id: attachment.id, action: { selected = attachment }, remove: remove) {
-                        if let data = attachment.preview, let image = UIImage(data: data) {
-                            Image(uiImage: image).resizable().scaledToFill().frame(width: tileSize, height: tileSize).clipped()
-                        } else {
-                            VStack(spacing: AppSpacing.small) {
-                                if !textSize.isAccessibilitySize { Image(systemName: "doc.text").font(.title2).foregroundStyle(AppTheme.controlIcon) }
-                                Text(attachment.name).font(AppTypography.metadata).foregroundStyle(AppTheme.ink).lineLimit(2).multilineTextAlignment(.center)
-                            }.padding(AppSpacing.small).frame(width: tileSize, height: tileSize)
+                ForEach(visibleIDs, id: \.self) { id in
+                    if let attachment = attachments.first(where: { $0.id == id }) {
+                        tile(name: attachment.name, id: attachment.id, action: { selected = attachment }, remove: remove) {
+                            if let data = attachment.preview, let image = UIImage(data: data) {
+                                Image(uiImage: image).resizable().scaledToFill().frame(width: tileSize, height: tileSize).clipped()
+                            } else {
+                                VStack(spacing: AppSpacing.small) {
+                                    if !textSize.isAccessibilitySize { Image(systemName: "doc.text").font(.title2).foregroundStyle(AppTheme.controlIcon) }
+                                    Text(attachment.name).font(AppTypography.metadata).foregroundStyle(AppTheme.ink).lineLimit(2).multilineTextAlignment(.center)
+                                }.padding(AppSpacing.small).frame(width: tileSize, height: tileSize)
+                            }
                         }
+                    } else if let item = pending.first(where: { $0.id == id }) {
+                        tile(name: item.name, id: item.id, action: { importError = item.error }, remove: cancelImport, removalLocked: false) {
+                            VStack(spacing: AppSpacing.small) {
+                                if item.error != nil { Image(systemName: "exclamationmark.circle").foregroundStyle(AppTheme.error); Text("Couldn’t load").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+                                else { AgentWorkingIndicator(title: "Loading…") }
+                            }.frame(width: tileSize, height: tileSize)
+                        }.accessibilityLabel(item.error ?? "Loading \(item.name)")
                     }
-                }
-                ForEach(pending) { item in
-                    tile(name: item.name, id: item.id, action: { importError = item.error }, remove: cancelImport, removalLocked: false) {
-                        VStack(spacing: AppSpacing.small) {
-                            if item.error != nil { Image(systemName: "exclamationmark.circle").foregroundStyle(AppTheme.error); Text("Couldn’t load").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
-                            else { AgentWorkingIndicator(title: "Loading…") }
-                        }.frame(width: tileSize, height: tileSize)
-                    }.accessibilityLabel(item.error ?? "Loading \(item.name)")
                 }
             }.padding(.vertical, AppSpacing.xSmall)
         }.alert("Attachment couldn’t load", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {

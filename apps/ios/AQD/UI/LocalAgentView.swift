@@ -370,7 +370,7 @@ struct AgentConversationView: View {
                 AgentVoiceView(model: model, isPresented: $voice)
             } else {
             if !(model.conversation.draftAttachments ?? []).isEmpty || !attachmentImporter.pending.isEmpty {
-                AgentAttachmentStrip(attachments: model.conversation.draftAttachments ?? [], pending: attachmentImporter.pending,
+                AgentAttachmentStrip(attachments: model.conversation.draftAttachments ?? [], pending: attachmentImporter.pending, order: attachmentImporter.order,
                                      remove: model.removeAttachment, cancelImport: attachmentImporter.remove, locked: model.active || model.hasPendingOperation)
             }
             TextField("Ask Agent…", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical)

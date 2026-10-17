@@ -47,11 +47,13 @@ import Observation
             guard !Task.isCancelled else { return }; _ = self?.persist()
         }
     }
-    func addAttachment(_ value: AgentAttachment, to conversationID: UUID) {
+    func addAttachment(_ value: AgentAttachment, to conversationID: UUID, order: [UUID] = []) {
         guard conversation.id == conversationID, !active else { return }
         do {
             var values = conversation.draftAttachments ?? []; values.append(value)
-            try AgentAttachment.validate(values); conversation.draftAttachments = values; _ = persist()
+            try AgentAttachment.validate(values)
+            if !order.isEmpty { values.sort { (order.firstIndex(of: $0.id) ?? Int.max) < (order.firstIndex(of: $1.id) ?? Int.max) } }
+            conversation.draftAttachments = values; _ = persist()
         } catch { self.error = "Attach up to four photos or documents. This attachment couldn’t be added; your draft is retained." }
     }
     func removeAttachment(_ id: UUID) {
@@ -82,9 +84,9 @@ import Observation
             pending = nil; conversation = result; reloadHistory(); return true
         } catch { self.error = "The conversation save wasn’t confirmed. Your text is still here. Retry checks the same save before writing again."; return false }
     }
-    func newConversation() { guard !active, deletion == nil, persist() else { return }; conversation = AgentConversation(ownerID: conversation.ownerID) }
+    func newConversation() { guard !active, attachmentImportCount == 0, deletion == nil, persist() else { return }; conversation = AgentConversation(ownerID: conversation.ownerID) }
     func open(_ id: UUID) {
-        guard !active, deletion == nil, persist() else { return }; reloadHistory()
+        guard !active, attachmentImportCount == 0, deletion == nil, persist() else { return }; reloadHistory()
         guard let value = history.first(where: { $0.id == id }) else { error = "This conversation is unavailable. Start a new conversation."; return }
         conversation = value
         if conversation.messages.contains(where: \.isActive) { conversation.interruptActiveAttempt(); _ = persist() }
