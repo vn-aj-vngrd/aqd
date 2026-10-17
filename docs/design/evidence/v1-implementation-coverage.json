@@ -2695,5 +2695,10 @@
     "codeCommit": "dc3ecc0133d490638ea4378651d2e6db3e3df529",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false
+  },
+  "agentLocalMutationTools": {
+    "codeCommit": "46c7c5737b3e8670e739ecf549df253bd6a1ef59",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false
   }
 }

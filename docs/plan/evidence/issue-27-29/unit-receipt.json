@@ -1816,5 +1816,46 @@
     "runtimeComplete": false,
     "sourceSHA256": "31c168872b4ab9d2a3c98b709b08de806c5d91128152fcae73ed3c8aa78e96be",
     "review": "Single-agent Standards/Spec source review; cosmetic spacing only. Visual acceptance pending."
+  },
+  "agentLocalMutationTools": {
+    "codeCommit": "46c7c5737b3e8670e739ecf549df253bd6a1ef59",
+    "recordedOn": "2026-10-17",
+    "coreTests": 107,
+    "coreSuites": 31,
+    "coreResult": "Passed",
+    "nativeTestBuild": "TEST BUILD SUCCEEDED",
+    "nativeTestsExecuted": false,
+    "newNativeRegressionsCompiled": 5,
+    "releaseResult": "BUILD SUCCEEDED",
+    "installResult": "success",
+    "appLaunched": false,
+    "runtimeComplete": false,
+    "review": "Single-agent Standards/Spec source review. Live model tool selection, UI and physical tests unverified.",
+    "promptVersion": "aqd-grounding-4",
+    "syntheticContextEvaluation": {
+      "passed": 10,
+      "total": 10,
+      "liveModelEvaluated": false
+    },
+    "sourceSHA256": {
+      "apps/ios/AQD/AgentModel.swift": "4bd9e309da76a1bf8b32c634df6c3132d73fb528f34e33a58407947d20e5f39a",
+      "apps/ios/AQD/AgentMutationTools.swift": "46e7f85a7200f9a0122b30a0e46af300ebe03eb97076f6412490994ee1f94e97",
+      "apps/ios/AQD/AgentToolActions.swift": "02b166e643fd2903722ccc14c1cf45bd65adcf0608002ce483a4c433f2e4f09c",
+      "apps/ios/AQD/NativeAgentProvider.swift": "5dfa6cceb66f73e018b7097395e556dbe480715ff4ade97b4d7928ffbf13419f",
+      "apps/ios/AQD/UI/AgentActionViews.swift": "b11b82baa8425d326da8ca21df5ab9889dbc9c984e348147ed840a3057d9dd9b",
+      "apps/ios/AQD/UI/LocalAgentView.swift": "43f12ed0375aa2033c722c2458b4b15db6985d4a73dbb48bdf2e844d13f322fe",
+      "apps/ios/AQDTests/AgentReliabilityPersistenceTests.swift": "a6029153500e49729b83feef49ced26d24cf65db338a07f1d8dfb75f39951a39",
+      "apps/ios/Core/Sources/AQDCore/AgentAction.swift": "5f4381cf427ed160712b7699b2e4542e9486714b4766dcb793e1d1cbfb8c30c4",
+      "apps/ios/Core/Sources/AQDCore/AgentMutation.swift": "a5344ba4224d6cffd0b9a2b947426d50cdd68886056e3dc9de51f9aea188df2f",
+      "apps/ios/Core/Sources/AQDCore/AgentReliability.swift": "138e071d11678c28559063a667f9eee6d7e44bd40371e1d4ff44c4afea2308c6",
+      "apps/ios/Core/Tests/AQDCoreTests/AgentMutationTests.swift": "f7a82944799a3f6bc7d641122cb6881861cb210a294d0a6504f0a79c2f723012"
+    },
+    "artifactSHA256": {
+      "/tmp/aqd-agent-mutations-core.log": "a9174e9df8efef76e1dfeaf39642a649fac94fa1dce8e6d179936dca2f5f7e78",
+      "/tmp/aqd-agent-mutations-evaluation.json": "925aa41c6adc18980060721fa93debd4e7a1b3b77a9a36d86898052a2251e1e6",
+      "/tmp/aqd-agent-mutations-test-build.log": "fe3ac5b8e96611770ab75b8e25da26a8a90564b1b7a1145390fc97c0c92dc739",
+      "/tmp/aqd-agent-mutations-release.log": "d972c49f6e3a4fe4672e31244be8d1b6bcf115b41787bb6e2e5f2e46b24fae22",
+      "/tmp/aqd-agent-mutations-install.json": "dd69371ea82a37bba751b7a2983d0d1b184eb6c74441ccacf9fb4bd6b19bbca3"
+    }
   }
 }
