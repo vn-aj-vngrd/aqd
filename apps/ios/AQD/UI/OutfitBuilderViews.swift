@@ -163,11 +163,11 @@ struct OutfitPickerSheet: View {
             VStack(spacing: 4) {
                 PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                     .frame(maxWidth: width ?? .infinity).frame(height: height)
-                    .overlay(RoundedRectangle(cornerRadius: AppRadius.group).strokeBorder(isSelected ? AppTheme.accent : .clear, lineWidth: 2))
+                    .overlay(RoundedRectangle(cornerRadius: AppRadius.group).strokeBorder(isSelected ? AppTheme.ink : .clear, lineWidth: 2))
                     .overlay(alignment: .topTrailing) {
                         if isSelected {
                             Image(systemName: "checkmark.circle.fill").symbolRenderingMode(.palette)
-                                .foregroundStyle(AppTheme.onAccent, AppTheme.accent).padding(4)
+                                .foregroundStyle(AppTheme.onPrimary, AppTheme.primaryFill).padding(4)
                         }
                     }
                     .opacity(isSelected ? 0.75 : 1)
