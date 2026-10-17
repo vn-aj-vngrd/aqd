@@ -52,6 +52,6 @@ final class HomeFlowTests: XCTestCase {
             shot("Today \(index)")
             app.swipeUp(velocity: .slow)
         }
-        XCTAssertFalse(app.staticTexts["OCT 18 TO OCT 18"].exists, "the week eyebrow spans the whole week")
+        XCTAssertFalse(app.staticTexts["Oct 18"].exists, "the week eyebrow spans the whole week")
     }
 }

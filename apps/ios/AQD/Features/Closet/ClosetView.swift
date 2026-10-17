@@ -439,7 +439,7 @@ struct PieceDetailView: View {
                     if let wear {
                         VStack(alignment: .leading, spacing: AppSpacing.large) {
                             detail("Recorded wears", String(wear.recorded))
-                            detail("Last worn", wear.lastWorn?.key ?? "No recorded history")
+                            detail("Last worn", wear.lastWorn?.display(.standard) ?? "No recorded history")
                             NavigationLink { LocalWearHistoryView(pieceID: piece.id).secondaryPage() } label: {
                                 HStack {
                                     Text("Wear history")

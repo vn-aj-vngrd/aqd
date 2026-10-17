@@ -50,7 +50,7 @@ struct TodayCard: View {
                 var calendar = Calendar(identifier: .gregorian)
                 calendar.timeZone = TimeZone(identifier: bounds.start.timeZoneID) ?? .current
                 if let last = calendar.date(byAdding: .day, value: 6, to: first) {
-                    context = "\(bounds.start.shortDay) to \(LocalPlanDay(date: last, timeZone: calendar.timeZone).shortDay)"
+                    context = LocalPlanDay.displayRange(bounds.start, LocalPlanDay(date: last, timeZone: calendar.timeZone))
                 }
             }
         case .closetInUse:
@@ -220,7 +220,7 @@ struct TodayCard: View {
                     .accessibilityLabel("View \(piece.displayName)")
             }.buttonStyle(.plain)
             if let date = PieceWearSummary(piece: piece, records: state.wearRecords).lastWorn {
-                Text("Last recorded \(date.key)").foregroundStyle(AppTheme.secondary)
+                Text("Last recorded \(date.display(.standard))").foregroundStyle(AppTheme.secondary)
             } else { Text("No dated wear recorded for this piece.").foregroundStyle(AppTheme.secondary) }
             Button { state.buildOutfit(pieceID: piece.id) } label: { TodayCardActionLabel(title: "Build with this piece") }.frame(minHeight: 44)
         } else if instance.options?.pinnedID != nil { configure("The selected piece is unavailable.") }
@@ -529,9 +529,4 @@ private struct TodayCardActionLabel: View {
             .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .trailing)
             .contentShape(Rectangle())
     }
-}
-
-private extension LocalPlanDay {
-    /// "Oct 18" in the day's own time zone.
-    var shortDay: String { display(.compact) }
 }
