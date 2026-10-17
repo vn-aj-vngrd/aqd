@@ -361,7 +361,7 @@ private struct OutfitPieceRow: View {
                     PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(width: 56, height: 64)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(piece.displayName).font(AppTypography.body).foregroundStyle(AppTheme.ink).truncated()
-                        Text([state.categoryName(for: piece), piece.isArchived ? "Archived" : piece.availability != .available ? "Unavailable" : ""]
+                        Text([state.categoryName(for: piece), PieceStatus(piece).isNotable ? PieceStatus(piece).title : ""]
                             .filter { !$0.isEmpty }.joined(separator: " · "))
                             .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
                     }

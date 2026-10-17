@@ -85,7 +85,7 @@ struct ClosetView: View {
             .onChange(of: availability) { refreshPieces() }
             .onChange(of: sort) { refreshPieces() }
             .onChange(of: state.collectionRefreshID) { refreshPieces() }
-        }.tint(state.closetSearchActive ? AppTheme.ink : AppTheme.ink)
+        }.tint(AppTheme.ink)
     }
 
     private var scopeSelection: Binding<String> {
@@ -101,7 +101,7 @@ struct ClosetView: View {
                         Button { scopeSelection.wrappedValue = value.rawValue } label: {
                             Label(value.rawValue, systemImage: scope == value.rawValue ? "checkmark.circle.fill" : "circle")
                                 .padding(.horizontal, 12).frame(minHeight: 44)
-                        }.buttonStyle(.plain).foregroundStyle(scope == value.rawValue ? AppTheme.ink : AppTheme.ink)
+                        }.buttonStyle(.plain).foregroundStyle(AppTheme.ink)
                             .accessibilityAddTraits(scope == value.rawValue ? [.isSelected] : [])
                     }
                 }
@@ -125,7 +125,7 @@ struct ClosetView: View {
                         }
                     }
                 }
-            } label: { Label("Filter and sort themes", systemImage: "line.3.horizontal.decrease") }
+            } label: { Label("Filter and sort themes", systemImage: filterIcon(active: (state.closetSearchActive ? searchThemeQuery : themeQuery).content != .all)) }
             .tint(AppTheme.ink).accessibilityIdentifier("closet.themes.filter")
             .accessibilityValue((state.closetSearchActive ? searchThemeQuery : themeQuery).content.rawValue)
         }
@@ -172,8 +172,8 @@ struct ClosetView: View {
                         filterOption("Unavailable theme", value: Optional(selectedID), selection: state.closetSearchActive ? $searchThemeID : $themeID)
                     }
                 }
-            } label: { Label("Filter outfits", systemImage: "line.3.horizontal.decrease") }
-            .tint(AppTheme.ink)
+            } label: { Label("Filter outfits", systemImage: filterIcon(active: outfitFilterActive)) }
+            .tint(AppTheme.ink).accessibilityValue(outfitFilterActive ? "Filtered" : "All outfits")
         }
     }
     /// Status filter: All, Available, Unavailable, Laundry or Archived. Category lives in the chip row.
@@ -188,9 +188,17 @@ struct ClosetView: View {
                     statusOption("Archived", selected: archived) { archived = true; availability = nil }
                 }
             } label: {
-                Label("Filter pieces", systemImage: archived || availability != nil ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease")
+                Label("Filter pieces", systemImage: filterIcon(active: archived || availability != nil))
             }.tint(AppTheme.ink).accessibilityValue(archived ? "Archived" : availability.map { $0.rawValue.capitalized } ?? "All statuses")
         }
+    }
+
+    /// The same filter icon everywhere; it fills while a filter hides content.
+    private func filterIcon(active: Bool) -> String {
+        active ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease"
+    }
+    private var outfitFilterActive: Bool {
+        state.closetSearchActive ? searchFavoritesOnly || searchThemeID != nil : favoritesOnly || themeID != nil
     }
 
     private func statusOption(_ title: String, selected: Bool, action: @escaping () -> Void) -> some View {
@@ -211,7 +219,7 @@ struct ClosetView: View {
 
     private var pieceCollection: some View {
         VStack(spacing: 0) {
-            categoryChips.padding(.bottom, AppSpacing.small)
+            if !state.ownedPieces.isEmpty { categoryChips.padding(.bottom, AppSpacing.small) }
             pieceResults
         }
     }
@@ -367,34 +375,26 @@ struct PieceDetailView: View {
                     .accessibilityLabel("View photo of \(piece.displayName) full screen")
                     .accessibilityHint("Opens a zoomable photo viewer")
                     .accessibilityIdentifier("piece.photo.fullScreen")
-                    VStack(alignment: .leading, spacing: AppSpacing.large) {
+                    VStack(alignment: .leading, spacing: AppSpacing.small) {
                         VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
                             Text(piece.displayName).font(AppTypography.section)
                             Text(state.categoryName(for: piece)).foregroundStyle(AppTheme.secondary)
                         }
                         statusChip(piece)
-                        if !piece.details.color.isEmpty { detail("Color", piece.details.color) }
-                        if !piece.details.brand.isEmpty { detail("Brand", piece.details.brand) }
-                        if !piece.details.size.isEmpty { detail("Size", piece.details.size) }
-                        if !piece.details.fit.isEmpty { detail("Fit", piece.details.fit) }
-                        if !piece.details.material.isEmpty { detail("Material", piece.details.material) }
-                        if !piece.details.season.isEmpty { detail("Season", piece.details.season) }
-                        if !piece.details.condition.isEmpty { detail("Condition", piece.details.condition) }
-                        if !piece.details.ownershipAge.isEmpty { detail("Ownership", piece.details.ownershipAge) }
-                        if !piece.details.tags.isEmpty { detail("Tags", piece.details.tags.joined(separator: ", ")) }
-                        detail("Availability", piece.availability == .laundry ? "In the laundry" : piece.availability.rawValue.capitalized)
-                        if !piece.details.notes.isEmpty { detail("Notes", piece.displayNotes) }
-                        if let estimate = piece.details.priorWearCount {
-                            detail("Prior wear estimate", String(estimate))
-                            Text("This is an estimate, not recorded wear.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                        }
-                        if piece.isArchived { Text("Archived").font(AppTypography.supporting) }
                     }
-                    .padding(AppSpacing.screen).frame(maxWidth: .infinity, alignment: .leading)
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                     PrimaryAction(title: "Style this") { state.buildOutfit(pieceID: piece.id) }
                         .disabled(piece.isArchived || piece.availability != .available || deleteInFlight)
-                        .accessibilityHint("Starts an outfit with this piece")
+                        .accessibilityHint(piece.availability == .available && !piece.isArchived ? "Starts an outfit with this piece" : "Only available pieces can be styled")
+                    if !detailRows(piece).isEmpty {
+                        VStack(alignment: .leading, spacing: AppSpacing.large) {
+                            ForEach(detailRows(piece), id: \.title) { detail($0.title, $0.value) }
+                            if piece.details.priorWearCount != nil {
+                                Text("This is an estimate, not recorded wear.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            }
+                        }
+                        .padding(AppSpacing.screen).frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                    }
                     outfitsSection(for: piece)
                     if let wear {
                         VStack(alignment: .leading, spacing: AppSpacing.large) {
@@ -450,17 +450,8 @@ struct PieceDetailView: View {
     }
 
     /// Current availability as a tappable status; tapping opens the availability task.
-    private static func status(of piece: WardrobePiece) -> (text: String, symbol: String) {
-        if piece.isArchived { return ("Archived", "archivebox") }
-        switch piece.availability {
-        case .available: return ("Available", "checkmark.circle")
-        case .unavailable: return ("Unavailable", "xmark.circle")
-        case .laundry: return ("In the laundry", "washer")
-        }
-    }
-
     private func statusChip(_ piece: WardrobePiece) -> some View {
-        let status = Self.status(of: piece), text = status.text, symbol = status.symbol
+        let status = PieceStatus(piece), text = status.title, symbol = status.symbol
         return Button { availabilityPresented = true } label: {
             Label(text, systemImage: symbol).font(.subheadline).foregroundStyle(AppTheme.ink)
                 .padding(.horizontal, AppSpacing.medium).frame(minHeight: 32).glassControlSurface(Capsule())
@@ -526,6 +517,19 @@ struct PieceDetailView: View {
             }
         } delete: { deleteDecision = true } availability: { availabilityPresented = true } cutout: { state.editPiece(piece, openCutout: true) } style: { state.buildOutfit(pieceID: piece.id) }
         .frame(width: 48, height: 44)
+    }
+
+    /// Only the details the owner filled in, in reading order.
+    private func detailRows(_ piece: WardrobePiece) -> [(title: String, value: String)] {
+        let details = piece.details
+        let rows: [(String, String)] = [
+            ("Color", details.color), ("Brand", details.brand), ("Size", details.size), ("Fit", details.fit),
+            ("Material", details.material), ("Season", details.season), ("Condition", details.condition),
+            ("Ownership", details.ownershipAge), ("Tags", details.tags.joined(separator: ", ")),
+            ("Notes", details.notes.isEmpty ? "" : piece.displayNotes),
+            ("Prior wear estimate", details.priorWearCount.map(String.init) ?? "")
+        ]
+        return rows.filter { !$0.1.isEmpty }.map { (title: $0.0, value: $0.1) }
     }
 
     private func detail(_ title: String, _ value: String) -> some View {

@@ -20,8 +20,12 @@ struct PieceCollectionGrid: View {
                     .contextMenu {
                         NavigationLink(value: ClosetRoute.piece(piece.id)) { AccessoryLabel("Open piece", systemImage: "arrow.up.forward.square") }
                         AccessoryButton("Edit piece", systemImage: AppSymbols.edit) { state.editPiece(piece) }
-                        AccessoryButton("Build an outfit", systemImage: "square.stack") { state.buildOutfit(pieceID: piece.id) }
+                        AccessoryButton("Style this", systemImage: "square.stack") { state.buildOutfit(pieceID: piece.id) }
                             .disabled(piece.isArchived || piece.availability != .available)
+                        if !piece.isArchived {
+                            AccessoryButton(piece.availability == .laundry ? "Back from laundry" : "Move to laundry",
+                                            systemImage: piece.availability == .laundry ? "checkmark.circle" : "washer") { state.toggleLaundry(piece) }
+                        }
                     } preview: {
                         CollectionContextPreview(title: piece.displayName, detail: state.categoryName(for: piece)) {
                             PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
@@ -33,28 +37,24 @@ struct PieceCollectionGrid: View {
     }
 }
 
+/// A mark on the card only when the piece needs attention; available pieces stay clean.
 struct PieceAvailabilityBadge: View {
     let piece: WardrobePiece
-    private var symbol: String {
-        if piece.isArchived { return "archivebox" }
-        switch piece.availability {
-        case .available: return "checkmark"
-        case .unavailable: return "xmark"
-        case .laundry: return "washer"
-        }
-    }
+    private var status: PieceStatus { PieceStatus(piece) }
     private var tint: Color {
-        if piece.isArchived { return AppTheme.secondary }
-        switch piece.availability {
-        case .available: return AppTheme.success
-        case .unavailable: return AppTheme.error
-        case .laundry: return AppTheme.information
+        switch status {
+        case .available: AppTheme.success
+        case .unavailable: AppTheme.error
+        case .laundry: AppTheme.information
+        case .archived: AppTheme.secondary
         }
     }
-    var body: some View {
-        Image(systemName: symbol).font(.system(size: 11, weight: .semibold)).foregroundStyle(tint)
-            .frame(width: 24, height: 24).background(AppTheme.surface, in: Circle())
-            .accessibilityLabel(piece.isArchived ? "Archived" : piece.availability.rawValue.capitalized)
+    @ViewBuilder var body: some View {
+        if status.isNotable {
+            Image(systemName: status.symbol).font(.system(size: 11, weight: .semibold)).foregroundStyle(tint)
+                .frame(width: 24, height: 24).background(AppTheme.surface, in: Circle())
+                .accessibilityLabel(status.title)
+        }
     }
 }
 
@@ -144,6 +144,8 @@ struct OutfitCollectionCard: View {
             .contextMenu {
                 NavigationLink(value: ClosetRoute.outfit(outfit.id)) { AccessoryLabel("Open outfit", systemImage: "arrow.up.forward.square") }
                 AccessoryButton("Edit outfit", systemImage: AppSymbols.edit) { state.buildOutfit(editing: outfit) }
+                AccessoryButton(outfit.isFavorite ? "Remove from Favorites" : "Add to Favorites",
+                                systemImage: outfit.isFavorite ? "heart.slash" : "heart") { state.toggleFavorite(outfit) }
                 AccessoryButton("Plan outfit", systemImage: "calendar") { state.openPlan(outfitID: outfit.id) }
                 AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: outfit.id) }
             } preview: {

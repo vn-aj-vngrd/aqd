@@ -30,7 +30,7 @@ Add piece follows the [modal pattern](../../DESIGN.md#add-and-edit-modal-pattern
 
 ## Browse and lifecycle
 
-Pieces are filtered by a Category chip row (All and each category, the same control as the outfit picker) and a Status filter menu (All, Available, Unavailable, Laundry, Archived) whose icon fills while a status filter is active. Pieces also support metadata search and sort by recently added, name, most or least worn. They combine, and clear restores everything. Search is scoped to Pieces, Outfits and Themes, owner-only, offline, with per-tab state kept.
+Pieces are filtered by a Category chip row (All and each category, the same control as the outfit picker) and a Status filter menu (All, Available, Unavailable, Laundry, Archived) whose icon fills while a status filter is active (Outfits and Themes filters fill the same way). Category chips hide until the closet has a piece. Pieces also support metadata search and sort by recently added, name, most or least worn. They combine, and clear restores everything. Search is scoped to Pieces, Outfits and Themes, owner-only, offline, with per-tab state kept.
 
 - **Edit** keeps the ID; a failed write changes neither the stored nor the visible record.
 - **Archive** keeps outfits and history and marks affected future plans unavailable. Restore never erases history.
@@ -48,3 +48,5 @@ Piece detail shows the photo, a tappable availability status, a **Style this** a
 - Search plus filters combine and clear. Archive and restore keep outfit and wear history.
 - Delete preview matches the result, including an unassigned future plan.
 - Old prototype data migrates with IDs, images, notes and wear intact; newer or malformed data is never overwritten.
+
+Quick actions. A piece card's context menu offers Open, Edit, Style this and Move to laundry (Back from laundry when it is there); archived pieces have no laundry action. Moving a piece out of Available flags planned looks that use it for review. An outfit card's menu adds Add to Favorites. Cards show a status mark only for unavailable, laundry or archived pieces. Piece, card, detail and outfit rows word status from one rule (`PieceStatus`): Available, Unavailable, In the laundry, Archived. The piece detail order is hero, name and category, status, Style this, filled-in details, In outfits, wear.
