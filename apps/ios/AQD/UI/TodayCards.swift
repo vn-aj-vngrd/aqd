@@ -335,6 +335,9 @@ struct TodayWeatherSummary: View {
     @Environment(AppState.self) private var state
     @Environment(\.colorScheme) private var colorScheme
     @State private var setup = false
+    @State private var loading = false
+    @State private var loadFailed = false
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -343,21 +346,48 @@ struct TodayWeatherSummary: View {
                     SemanticFeedback(role: .warning, message: error)
                     Button { client.reload() } label: { TodayCardActionLabel(title: "Retry weather preferences") }.frame(minHeight: 44)
                 } else if client.local?.enabled == true, let place = client.local?.place {
-                    Text(place.name).font(AppTypography.body)
+                    Text(place.name).font(AppTypography.body).lineLimit(1).truncationMode(.tail)
                     TimelineView(.periodic(from: .now, by: 60)) { context in
                         let day = LocalPlanDay(date: context.date, timeZone: TimeZone(identifier: place.timeZoneID) ?? .current)
                         let selection = WeatherSelection(place: place, day: day)
-                        if let snapshot = client.cached(selection, now: context.date),
-                           let reading = snapshot.reading(for: day, now: context.date, qualified: client.qualified),
-                           let attribution = snapshot.attribution,
-                           let mark = UIImage(data: colorScheme == .dark ? attribution.dark : attribution.light) {
-                            WeatherReadingView(reading: reading, now: context.date)
-                            Image(uiImage: mark).resizable().scaledToFit().frame(maxWidth: 160, maxHeight: 36)
-                                .accessibilityLabel("Apple Weather")
-                            Link(destination: attribution.legalURL) { TodayCardActionLabel(title: "Data sources") }
-                        } else {
-                            Text(client.qualified ? "Open weather to refresh conditions for today." : "Live weather isn’t available in this build. Your saved city is retained.")
-                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        VStack(alignment: .leading, spacing: AppSpacing.small) {
+                            if let snapshot = client.cached(selection, now: context.date),
+                               let reading = snapshot.reading(for: day, now: context.date, qualified: client.qualified),
+                               let attribution = snapshot.attribution,
+                               let mark = UIImage(data: colorScheme == .dark ? attribution.dark : attribution.light) {
+                                HStack {
+                                    Label(reading.condition, systemImage: reading.symbol)
+                                    Spacer(minLength: AppSpacing.small)
+                                    if let temperature = reading.temperatureCelsius, let date = reading.currentDate,
+                                       let zone = TimeZone(identifier: day.timeZoneID),
+                                       LocalPlanDay(date: date, timeZone: zone) == day {
+                                        Text(Measurement(value: temperature, unit: UnitTemperature.celsius), format: .measurement(width: .abbreviated, usage: .weather))
+                                            .font(.title2.weight(.semibold))
+                                    }
+                                }
+                                Text("Low \(Measurement(value: reading.lowCelsius, unit: UnitTemperature.celsius).formatted(.measurement(width: .abbreviated, usage: .weather))) · High \(Measurement(value: reading.highCelsius, unit: UnitTemperature.celsius).formatted(.measurement(width: .abbreviated, usage: .weather)))")
+                                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                                if reading.freshness(at: context.date) == .saved {
+                                    Text("Saved weather · \(reading.fetchedAt.formatted(date: .omitted, time: .shortened))")
+                                        .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                                }
+                                Image(uiImage: mark).resizable().scaledToFit().frame(maxWidth: 160, maxHeight: 36)
+                                    .accessibilityLabel("Apple Weather")
+                                Link(destination: attribution.legalURL) { TodayCardActionLabel(title: "Data sources") }
+                            } else {
+                                if loading { ProgressView("Loading weather…") }
+                                if !loading {
+                                    Text(loadFailed ? "Weather couldn’t load. Open details to retry." : "Weather is unavailable right now.")
+                                        .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                                }
+                            }
+                        }
+                        .task(id: "\(selection.key)|\(client.epoch)|\(scenePhase)|\(Int(context.date.timeIntervalSince1970 / 1800))") {
+                            guard scenePhase == .active, client.qualified else { return }
+                            loading = true; loadFailed = false
+                            defer { loading = false }
+                            do { _ = try await client.fetch(selection, consent: true, foreground: scenePhase == .active) }
+                            catch { if !Task.isCancelled { loadFailed = true } }
                         }
                     }
                 } else {

@@ -3,7 +3,14 @@ import Foundation
 import Observation
 
 /// Numerical release requires signed service access, supplied attribution and LOCAL16.
-enum WeatherQualification { static let enabled = false }
+enum WeatherQualification {
+    // Enable only with the signed WeatherKit entitlement; release still needs LOCAL16 proof.
+    #if DEBUG && AQD_WEATHER_PREVIEW
+    static let enabled = true
+    #else
+    static let enabled = false
+    #endif
+}
 
 @Observable @MainActor final class WeatherClient {
     typealias Provider = @Sendable (WeatherSelection) async throws -> WeatherSnapshot

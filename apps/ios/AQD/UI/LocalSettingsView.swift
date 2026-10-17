@@ -20,7 +20,7 @@ struct LocalSettingsView: View {
                     SettingsRow(title: "Appearance", symbol: "circle.lefthalf.filled", value: appearanceTitle)
                 }
                 Button { weather = true } label: {
-                    SettingsRow(title: "Weather", symbol: "cloud.sun", value: state.weatherClient?.local?.enabled == true ? state.weatherClient?.local?.place?.name ?? "Place unavailable" : "Off", disclosure: true)
+                    SettingsRow(title: "Weather", symbol: "cloud.sun", value: state.weatherClient?.local?.enabled == true ? state.weatherClient?.local?.place?.name ?? "Place unavailable" : "Off", valueLineLimit: 1, disclosure: true)
                 }
             }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
                 .listRowBackground(AppTheme.surface)
@@ -93,6 +93,7 @@ private struct SettingsRow: View {
     let title: String
     let symbol: String
     var value: String? = nil
+    var valueLineLimit: Int? = nil
     var disclosure = false
     var destructive = false
     @Environment(\.dynamicTypeSize) private var typeSize
@@ -103,13 +104,13 @@ private struct SettingsRow: View {
             if typeSize.isAccessibilitySize {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title).foregroundStyle(destructive ? AppTheme.error : AppTheme.ink)
-                    if let value { Text(value).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+                    if let value { Text(value).lineLimit(valueLineLimit).truncationMode(.tail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
                 }
                 Spacer(minLength: 0)
             } else {
-                Text(title).foregroundStyle(destructive ? AppTheme.error : AppTheme.ink)
+                Text(title).foregroundStyle(destructive ? AppTheme.error : AppTheme.ink).layoutPriority(1)
                 Spacer(minLength: 8)
-                if let value { Text(value).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.trailing) }
+                if let value { Text(value).lineLimit(valueLineLimit).truncationMode(.tail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.trailing) }
             }
             if disclosure { Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).accessibilityHidden(true) }
         }.font(AppTypography.body).frame(minHeight: 44).contentShape(Rectangle())

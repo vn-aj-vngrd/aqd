@@ -108,7 +108,7 @@ struct WeatherContextPersistenceTests {
     }
     @Test func disabledQualificationAndMissingConsentNeverCallProvider() async throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString), store = try PieceStore(directory: directory)
-        let probe = WeatherProbe(), selected = selection(), client = WeatherClient(store: store, provider: { try await probe.provide($0) })
+        let probe = WeatherProbe(), selected = selection(), client = WeatherClient(store: store, qualified: false, provider: { try await probe.provide($0) })
         do { _ = try await client.fetch(selected, consent: true); Issue.record("Unqualified request ran") } catch { }
         do { _ = try await client.fetch(selected, consent: false); Issue.record("Unconsented request ran") } catch { }
         #expect(await probe.calls == 0)
