@@ -106,7 +106,7 @@ struct PieceCaptureView: View {
             }
             photoFocused = true
         }) {
-            NativeCamera(onPhoto: { data in cameraData = data; cameraPresented = false },
+            NativeCamera(guide: .piece, onPhoto: { data in cameraData = data; cameraPresented = false },
                          onCancel: { cameraPresented = false })
                 .ignoresSafeArea()
         }

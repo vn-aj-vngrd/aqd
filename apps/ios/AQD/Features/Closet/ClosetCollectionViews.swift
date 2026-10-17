@@ -4,10 +4,13 @@ import SwiftUI
 struct PieceCollectionGrid: View {
     @Environment(AppState.self) private var state
     let pieces: [WardrobePiece]
+    /// When set, taps choose pieces for a bulk action instead of opening them.
+    var selection: Binding<Set<UUID>>?
     @Environment(\.dynamicTypeSize) private var typeSize
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 2), alignment: .leading, spacing: 16) {
             ForEach(pieces) { piece in
+                if let selection { selectableCard(piece, selection: selection) } else {
                 NavigationLink(value: ClosetRoute.piece(piece.id)) {
                     ClosetCard(title: piece.displayName, detail: [state.categoryName(for: piece), piece.details.color,
                         piece.isArchived ? "Archived" : ""]
@@ -32,8 +35,24 @@ struct PieceCollectionGrid: View {
                                 .frame(height: 300).clipped()
                         }.environment(state)
                     }
+                }
             }
         }.scrollTargetLayout()
+    }
+
+    private func selectableCard(_ piece: WardrobePiece, selection: Binding<Set<UUID>>) -> some View {
+        let chosen = selection.wrappedValue.contains(piece.id)
+        return Button {
+            if chosen { selection.wrappedValue.remove(piece.id) } else { selection.wrappedValue.insert(piece.id) }
+        } label: {
+            ClosetCard(title: piece.displayName, detail: state.categoryName(for: piece)) {
+                PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                    .frame(maxWidth: .infinity).frame(height: 134).clipped()
+                    .overlay(alignment: .topLeading) { PieceAvailabilityBadge(piece: piece) }
+            }.selectionIndicator(chosen, cornerRadius: 16)
+        }.buttonStyle(.plain).id(piece.id)
+            .accessibilityLabel(piece.displayName).accessibilityValue(chosen ? "Selected" : "Not selected")
+            .accessibilityAddTraits(chosen ? .isSelected : [])
     }
 }
 
@@ -125,6 +144,8 @@ struct OutfitCollectionCard: View {
     @Environment(AppState.self) private var state
     let outfit: Outfit
     var gallery = false
+    /// Set inside a theme so the menu can take the outfit out of it.
+    var theme: OutfitTheme?
     var body: some View {
         NavigationLink(value: ClosetRoute.outfit(outfit.id)) {
             if gallery {
@@ -146,8 +167,12 @@ struct OutfitCollectionCard: View {
                 AccessoryButton("Edit outfit", systemImage: AppSymbols.edit) { state.buildOutfit(editing: outfit) }
                 AccessoryButton(outfit.isFavorite ? "Remove from Favorites" : "Add to Favorites",
                                 systemImage: outfit.isFavorite ? "heart.slash" : "heart") { state.toggleFavorite(outfit) }
+                AccessoryButton("Duplicate", systemImage: "plus.square.on.square") { state.duplicateOutfit(outfit) }
                 AccessoryButton("Plan outfit", systemImage: "calendar") { state.openPlan(outfitID: outfit.id) }
                 AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: outfit.id) }
+                if let theme {
+                    Button("Remove from \(theme.displayName)", systemImage: "minus.circle", role: .destructive) { state.remove(outfit, from: theme) }
+                }
             } preview: {
                 CollectionContextPreview(title: outfit.displayName, detail: "\(outfit.pieceIDs.count) pieces") {
                     CollectionArtwork(pieceIDs: outfit.pieceIDs, height: 300)
@@ -228,6 +253,7 @@ struct ThemeDetailView: View {
             }
             if let theme = state.themes.first(where: { $0.id == id }) {
                 VStack(alignment: .leading, spacing: 20) {
+                    if let message = state.themeError { SemanticFeedback(role: .danger, message: message) }
                     let members = state.outfits.filter { theme.outfitIDs.contains($0.id) }
                     ThemeCover(outfits: members, height: 180).padding(AppSpacing.small).frame(maxWidth: .infinity)
                         .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
@@ -242,7 +268,7 @@ struct ThemeDetailView: View {
                         PrimaryAction(title: "Add outfits") { state.openTheme(editing: theme, chooseOutfits: true) }
                     }
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 16) {
-                        ForEach(state.outfits.filter { theme.outfitIDs.contains($0.id) }) { OutfitCollectionCard(outfit: $0) }
+                        ForEach(state.outfits.filter { theme.outfitIDs.contains($0.id) }) { OutfitCollectionCard(outfit: $0, theme: theme) }
                     }
                 }.padding(20)
             } else { AppEmptyState("Theme unavailable", systemImage: "folder", description: Text("The theme is no longer in this closet.")) }

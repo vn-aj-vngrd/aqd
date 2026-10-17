@@ -83,12 +83,10 @@ struct SharedPhotoSourceRowLabel: View {
             Image(systemName: "camera.fill").foregroundStyle(AppTheme.ink).frame(width: 44, height: 44)
                 .glassControlSurface(Circle())
         } else {
-            HStack {
-                AccessoryLabel(title, systemImage: "photo")
-                Spacer()
-                Image(systemName: "chevron.down").font(AppTypography.disclosure).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
-            }.foregroundStyle(AppTheme.ink).padding(.horizontal, 14).frame(minHeight: 54)
-                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            // Compact, never a full-width card: the system menu morphs from its anchor and clips a wide one.
+            Label(title, systemImage: "photo").font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
+                .padding(.horizontal, AppSpacing.medium).frame(minHeight: AppControlMetrics.minimumTarget)
+                .glassControlSurface(Capsule()).frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }

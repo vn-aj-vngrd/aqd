@@ -18,6 +18,9 @@ struct ClosetView: View {
     @State private var themeQuery = ThemeCollectionQuery()
     @State private var searchThemeQuery = ThemeCollectionQuery()
     @State private var searchModel: ClosetSearchModel?
+    @State private var selecting = false
+    @State private var selected: Set<UUID> = []
+    @State private var archiveSelected = false
 
     private var scope: String { state.closetSearchActive ? state.closetSearchScope : state.closetScope }
     private var searchInput: ClosetSearchInput {
@@ -137,7 +140,7 @@ struct ClosetView: View {
     }
     private var collectionSummary: ClosetCollectionSummary {
         let summary = collectionSummaryData
-        return ClosetCollectionSummary(title: summary.title, order: summary.order, pieceSort: scope == "Pieces" ? $sort : nil, themeSort: scope == "Themes" ? $themeQuery.sort : nil, outfitSort: scope == "Outfits" ? $outfitSort : nil)
+        return ClosetCollectionSummary(title: summary.title, order: summary.order, selecting: scope == "Pieces" && !results.isEmpty ? $selecting : nil, pieceSort: scope == "Pieces" ? $sort : nil, themeSort: scope == "Themes" ? $themeQuery.sort : nil, outfitSort: scope == "Outfits" ? $outfitSort : nil)
     }
     private var collectionSummaryData: (title: String, order: String) {
         func count(_ value: Int, _ singular: String, _ plural: String) -> String { "\(value) \(value == 1 ? singular : plural)" }
@@ -222,6 +225,43 @@ struct ClosetView: View {
             if !state.ownedPieces.isEmpty { categoryChips.padding(.bottom, AppSpacing.small) }
             pieceResults
         }
+        .safeAreaInset(edge: .bottom) { if selecting { selectionBar } }
+        .onChange(of: selecting) { _, on in if !on { selected = [] } }
+        .onChange(of: results) { _, latest in selected = selected.intersection(latest.map(\.id)) }
+        .onChange(of: scope) { selecting = false }
+        .appConfirmation("Archive \(selected.count) \(selected.count == 1 ? "piece" : "pieces")?", isPresented: $archiveSelected) {
+            Button("Archive") { finishBulk(state.archive(chosenPieces)) }
+            Button("Cancel", role: .cancel) {}
+        } message: { Text("They keep their identity and can be restored from Archived.") }
+    }
+
+    private var chosenPieces: [WardrobePiece] { results.filter { selected.contains($0.id) } }
+
+    /// Bulk actions for the chosen pieces; every change is its own acknowledged write.
+    private var selectionBar: some View {
+        VStack(spacing: AppSpacing.small) {
+            Text(selected.isEmpty ? "Choose pieces" : "\(selected.count) selected").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+            HStack(spacing: AppSpacing.small) {
+                bulkButton("Laundry", "washer", id: "closet.bulk.laundry") { finishBulk(state.setAvailability(.laundry, for: chosenPieces)) }
+                bulkButton("Available", "checkmark.circle", id: "closet.bulk.available") { finishBulk(state.setAvailability(.available, for: chosenPieces)) }
+                bulkButton("Archive", "archivebox", id: "closet.bulk.archive") { archiveSelected = true }
+            }
+        }
+        .padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.small).frame(maxWidth: .infinity)
+        .background(AppTheme.canvas)
+    }
+
+    private func bulkButton(_ title: String, _ symbol: String, id: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: symbol).font(.subheadline).foregroundStyle(AppTheme.ink)
+                .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget).glassControlSurface(Capsule())
+        }.buttonStyle(.plain).disabled(selected.isEmpty).opacity(selected.isEmpty ? 0.5 : 1).accessibilityIdentifier(id)
+    }
+
+    private func finishBulk(_ result: AppState.BulkResult) {
+        if result.failed == 0 { selecting = false }
+        refreshPieces()
+        if result.changed > 0 { UINotificationFeedbackGenerator().notificationOccurred(.success) }
     }
 
     @ViewBuilder private var pieceResults: some View {
@@ -244,7 +284,7 @@ struct ClosetView: View {
                         Text("Wear totals include prior estimates. Last worn uses recorded dates; pieces without dated history appear last.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     }
-                    PieceCollectionGrid(pieces: results)
+                    PieceCollectionGrid(pieces: results, selection: selecting ? $selected : nil)
                 }
             }.padding(20)
         }.scrollPosition(id: Binding(get: { state.closetPieceAnchor }, set: { state.closetPieceAnchor = $0 }))
@@ -649,6 +689,7 @@ private struct ClosetSearchField: ViewModifier {
 struct ClosetCollectionSummary: View {
     let title: String
     let order: String
+    var selecting: Binding<Bool>? = nil
     var pieceSort: Binding<PieceSort>? = nil
     var themeSort: Binding<ThemeCollectionQuery.Sort>? = nil
     var outfitSort: Binding<OutfitCollectionSort>? = nil
@@ -657,16 +698,24 @@ struct ClosetCollectionSummary: View {
         VStack(alignment: .leading, spacing: 6) {
             if typeSize.isAccessibilitySize {
                 Text(title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
-                if !order.isEmpty { sortControl }
+                selectControl
+                if !order.isEmpty && selecting?.wrappedValue != true { sortControl }
             } else {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Text(title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
                     Spacer(minLength: 12)
-                    if !order.isEmpty { sortControl }
+                    selectControl
+                    if !order.isEmpty && selecting?.wrappedValue != true { sortControl }
                 }
             }
         }.frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .contain).accessibilityIdentifier("closet.collection.summary")
+    }
+    @ViewBuilder private var selectControl: some View {
+        if let selecting {
+            Button(selecting.wrappedValue ? "Done" : "Select") { selecting.wrappedValue.toggle() }
+                .font(AppTypography.metadata).tint(AppTheme.ink).frame(minHeight: 44).accessibilityIdentifier("closet.select")
+        }
     }
     @ViewBuilder private var sortControl: some View {
         if pieceSort != nil || themeSort != nil || outfitSort != nil {

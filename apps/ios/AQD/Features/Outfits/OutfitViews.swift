@@ -292,6 +292,7 @@ struct OutfitDetailView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
                             AccessoryButton("Edit outfit", systemImage: AppSymbols.edit) { state.buildOutfit(editing: outfit) }
+                            AccessoryButton("Duplicate", systemImage: "plus.square.on.square") { state.duplicateOutfit(outfit) }
                             AccessoryButton(outfit.isFavorite ? "Remove from Favorites" : "Add to Favorites", systemImage: outfit.isFavorite ? "heart.slash" : "heart") {
                                 apply(OutfitMutationRequest(outfit: outfit, action: .favorite(!outfit.isFavorite)))
                             }
