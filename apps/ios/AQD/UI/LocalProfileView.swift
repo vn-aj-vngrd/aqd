@@ -4,8 +4,8 @@ import SwiftUI
 struct LocalProfileView: View {
     @Environment(AppState.self) private var state
     @State private var categories = false
+    @State private var journalTab: FitJournalTab = .all
     @Environment(\.dynamicTypeSize) private var typeSize
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
     var body: some View {
         @Bindable var state = state
@@ -21,18 +21,20 @@ struct LocalProfileView: View {
                                 Button("Retry profile") { state.reloadIdentity() }.frame(minHeight: 44)
                             }.padding(.horizontal, AppSpacing.screen)
                         }
-                        FitJournalGrid()
+                        FitJournalGrid(tab: $journalTab)
                     }.padding(.top, AppSpacing.headerGap).padding(.bottom, AppSpacing.screen)
                 }.onChange(of: state.fitAnchor) { _, id in
-                    if let id { DispatchQueue.main.async { proxy.scrollTo(id, anchor: .center) } }
+                    if let id { journalTab = .all; DispatchQueue.main.async { proxy.scrollTo(id, anchor: .center) } }
                 }
             }.background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
                 .toolbarBackground(AppTheme.canvas, for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button { state.openFit() } label: { Label("Add fit", systemImage: "plus") }
-                            .accessibilityIdentifier("profile.addFit")
+                        Button {
+                            if journalTab == .outfits { state.buildOutfit() } else { state.openFit() }
+                        } label: { Label(journalTab == .outfits ? "Add outfit" : "Add fit", systemImage: "plus") }
+                            .accessibilityIdentifier(journalTab == .outfits ? "profile.addOutfit" : "profile.addFit")
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
@@ -42,6 +44,7 @@ struct LocalProfileView: View {
                         } label: { Label("More", systemImage: "ellipsis") }
                     }
                 }
+                .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
                 .navigationDestination(isPresented: $state.profileInsights) { LocalWearInsightsView().secondaryPage() }
                 .navigationDestination(isPresented: $state.profileHistory) { LocalWearHistoryView().secondaryPage() }
                 .navigationDestination(isPresented: $categories) { WardrobeCategorySettingsView().secondaryPage() }
@@ -61,21 +64,18 @@ struct LocalProfileView: View {
     private var wearInsights: some View {
         profileAction("Wear insights") { state.profileInsights = true }
     }
-    @ViewBuilder private func profileAction(_ title: String, action: @escaping () -> Void) -> some View {
-        let button = Button(action: action) {
-            Text(title).font(AppTypography.fieldLabel).frame(maxWidth: .infinity, minHeight: 44)
-                .contentShape(RoundedRectangle(cornerRadius: 12))
+    private func profileAction(_ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
+                .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
+                .contentShape(RoundedRectangle(cornerRadius: AppRadius.group))
         }.buttonStyle(.plain)
-        if #available(iOS 26.0, *), !reduceTransparency, contrast != .increased {
-            button.glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 12))
-        } else {
-            button.background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 12))
-                .overlay {
-                    if contrast == .increased {
-                        RoundedRectangle(cornerRadius: 12).stroke(AppTheme.controlBoundary, lineWidth: 1)
-                    }
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
+            .overlay {
+                if contrast == .increased {
+                    RoundedRectangle(cornerRadius: AppRadius.group).stroke(AppTheme.controlBoundary, lineWidth: 1)
                 }
-        }
+            }
     }
     private var identityHeader: some View {
         VStack(alignment: .leading, spacing: AppSpacing.section) {

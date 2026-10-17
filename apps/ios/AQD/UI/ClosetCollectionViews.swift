@@ -124,11 +124,21 @@ struct ClosetCard<Artwork: View>: View {
 struct OutfitCollectionCard: View {
     @Environment(AppState.self) private var state
     let outfit: Outfit
+    var gallery = false
     var body: some View {
         NavigationLink(value: ClosetRoute.outfit(outfit.id)) {
-            let memberships = state.themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.displayName)
-            ClosetCard(title: outfit.displayName, detail: (["\(outfit.pieceIDs.count) pieces"] + memberships).joined(separator: " · "), favorite: outfit.isFavorite) {
-                CollectionArtwork(pieceIDs: outfit.pieceIDs)
+            if gallery {
+                GeometryReader { geometry in
+                    CollectionArtwork(pieceIDs: outfit.pieceIDs, height: max(0, geometry.size.height - 16))
+                        .padding(8).frame(width: geometry.size.width, height: geometry.size.height)
+                        .background(AppTheme.imageGround).clipped()
+                }.aspectRatio(3 / 4, contentMode: .fit)
+                    .accessibilityLabel("\(outfit.displayName), \(outfit.pieceIDs.count) pieces")
+            } else {
+                let memberships = state.themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.displayName)
+                ClosetCard(title: outfit.displayName, detail: (["\(outfit.pieceIDs.count) pieces"] + memberships).joined(separator: " · "), favorite: outfit.isFavorite) {
+                    CollectionArtwork(pieceIDs: outfit.pieceIDs)
+                }
             }
         }.buttonStyle(.plain).id(outfit.id)
             .contextMenu {

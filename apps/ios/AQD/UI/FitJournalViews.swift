@@ -62,34 +62,46 @@ struct FitMemoryArtwork: View {
     }
 }
 
-private enum FitJournalTab: String, CaseIterable {
-    case all = "All fits", photos = "Photos", outfits = "Linked outfits"
+enum FitJournalTab: String, CaseIterable {
+    case all = "All fits", photos = "Photos", outfits = "Outfits"
     var symbol: String {
-        switch self { case .all: "square.grid.3x3"; case .photos: "photo"; case .outfits: "square.stack" }
-    }
-    func includes(_ memory: FitMemory) -> Bool {
-        switch self { case .all: true; case .photos: memory.photoID != nil; case .outfits: memory.outfit != nil }
+        switch self { case .all: "square.grid.3x3.fill"; case .photos: "photo"; case .outfits: "hanger" }
     }
 }
 
 struct FitJournalGrid: View {
     @State private var openedMemoryID: UUID?
-    @State private var tab: FitJournalTab = .all
+    @Binding var tab: FitJournalTab
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
-    private var memories: [FitMemory] { state.fitMemories.filter(tab.includes) }
+    private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: 2, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3) }
+    private var memories: [FitMemory] { tab == .photos ? state.fitMemories.filter { $0.photoID != nil } : state.fitMemories }
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             tabs
-            if let error = state.fitError {
+            if let error = state.fitError, tab != .outfits {
                 VStack(alignment: .leading, spacing: AppSpacing.medium) {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry journal") { state.reloadFits() }.frame(minHeight: 44)
                 }.padding(AppSpacing.screen)
+            } else if tab == .outfits {
+                if let error = state.outfitError {
+                    VStack(alignment: .leading, spacing: AppSpacing.medium) {
+                        SemanticFeedback(role: .danger, message: error)
+                        Button("Retry outfits") { state.reloadOutfits() }.frame(minHeight: 44)
+                    }.padding(AppSpacing.screen)
+                } else if state.outfits.isEmpty {
+                    AppEmptyState("No outfits yet", systemImage: "hanger", description: Text("Use Add outfit (+) above to build a look from your pieces."), fillsAvailableSpace: false)
+                        .frame(maxWidth: .infinity).padding(AppSpacing.screen)
+                } else {
+                    LazyVGrid(columns: columns, spacing: 2) {
+                        ForEach(state.outfits) { outfit in OutfitCollectionCard(outfit: outfit, gallery: true) }
+                    }
+                }
             } else if memories.isEmpty {
                 emptyState.padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.section)
             } else {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 2, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3), spacing: 2) {
+                LazyVGrid(columns: columns, spacing: 2) {
                     ForEach(memories) { memory in
                         NavigationLink { FitMemoryDetailView(id: memory.id).secondaryPage() } label: {
                             FitMemoryArtwork(memory: memory, thumbnail: true)
@@ -110,19 +122,16 @@ struct FitJournalGrid: View {
             }
         }.navigationDestination(isPresented: Binding(get: { openedMemoryID != nil }, set: { if !$0 { openedMemoryID = nil } })) {
             if let id = openedMemoryID { FitMemoryDetailView(id: id).secondaryPage() }
-        }.onChange(of: state.fitAnchor) { _, id in if id != nil { tab = .all } }
+        }
     }
     private var tabs: some View {
         HStack(alignment: .bottom, spacing: 0) {
             ForEach(FitJournalTab.allCases, id: \.self) { item in
                 Button { tab = item } label: {
-                    VStack(spacing: AppSpacing.small) {
-                        VStack(spacing: AppSpacing.xSmall) {
-                            Image(systemName: item.symbol).font(.title3)
-                            Text(item.rawValue).font(AppTypography.metadata)
-                                .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
-                        }.frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
-                            .padding(.horizontal, AppSpacing.xSmall)
+                    VStack(spacing: 0) {
+                        Image(systemName: item.symbol).font(.system(size: 22, weight: .regular))
+                            .symbolRenderingMode(.monochrome)
+                            .frame(maxWidth: .infinity, minHeight: 48)
                         Rectangle().fill(tab == item ? AppTheme.ink : .clear).frame(height: 2)
                     }.foregroundStyle(tab == item ? AppTheme.ink : AppTheme.controlIcon).contentShape(Rectangle())
                 }.buttonStyle(.plain).accessibilityLabel(item.rawValue)
@@ -132,12 +141,13 @@ struct FitJournalGrid: View {
         }.padding(.bottom, 2)
     }
     private var emptyState: some View {
-        AppEmptyState(tab == .all ? "A little space for your style" : tab == .photos ? "No fit photos yet" : "No linked outfits yet",
-                      systemImage: tab == .outfits ? "square.stack" : "photo.stack",
-                      description: Text(tab == .all ? "Use Add fit (+) above to keep a photo or outfit here. Memories stay private." : tab == .photos ? "Add a photo to a fit to see it here. Your other fits are in All fits." : "Link an outfit to a fit to see it here. Your other fits are in All fits."),
+        AppEmptyState(tab == .all ? "A little space for your style" : "No fit photos yet",
+                      systemImage: "photo.stack",
+                      description: Text(tab == .all ? "Use Add fit (+) above to keep a photo or outfit here. Memories stay private." : "Add a photo to a fit to see it here. Your other fits are in All fits."),
                       fillsAvailableSpace: false)
             .frame(maxWidth: .infinity).accessibilityIdentifier("profile.fits.empty")
     }
+
 }
 
 struct FitEditorView: View {

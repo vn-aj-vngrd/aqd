@@ -64,3 +64,13 @@ Profile gallery October17 source review: symbol/label selected traits, at-least4
 Final gallery build installed successfully (`/tmp/aqd-profile-gallery-install.json`), including committed inline voice recorder. Owner opens AQD manually.
 
 Gallery code checkpoint: `16931423fcc5ecf080dbae06ae4bc5a5d7580aef`. Source hashes and build/install receipts recorded in issue28/22 unit evidence; runtimeComplete remains false.
+
+### Profile tab and action surface correction (October 17)
+
+Owner requested icon-only tabs, a useful Outfits tab, better glyphs, and solid white Edit profile/Wear insights buttons with dark support. Use grid/photo/hanger icons at consistent22-point regular weight and44-point-or-larger targets with selected underline and spoken labels. Hanger tab now shows actual saved outfits via existing Closet artwork/actions in a square gallery variant; this supersedes the linked-fit-only filter. Keep All fits/Photos journal filters. Profile action buttons use semantic surface (white light/charcoal dark), with high-contrast boundary fallback. Native routes, error/empty and saved-fit focus retained.
+
+Profile/menu follow-up October17: signed generic Debug passed `/tmp/aqd-profile-menu-polish-debug.log`; source-only review checks actual Outfits collection and Profile-local routes, independent fit/outfit read-error recovery, reusable square gallery variant with existing edit/plan/wear actions, icon-only selected/accessibility labels, solid semantic light/dark surfaces and increased-contrast boundary, and explicit original-image danger glyph tint. Existing mutation/retry guards remain. Docs/whitespace pass. Device tests skipped by owner; rendered light/dark and audio checks unverified. Concurrent custom discard edits preserved and excluded from build.
+
+Profile Add (+) follows the selected collection: Add fit for journal tabs, Add outfit for Outfits. New outfit creation reuses the existing local builder and returns to the selected Outfits gallery. Saved fit anchors switch back to All fits.
+
+Final Profile/menu Debug passed `/tmp/aqd-profile-menu-polish-final-debug.log`, including context-aware Add and current shared danger glyph source. Header/grid selection owns one shared state; outfit editing/creation reuse existing builder sheets, and actual Outfit gallery uses Profile-local value navigation. No new Core/persistence changes after timestamp88-test result.
