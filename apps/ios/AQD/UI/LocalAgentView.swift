@@ -91,7 +91,7 @@ struct AgentConversationView: View {
                         if !model.conversation.draft.isEmpty { Text("Your retained draft").font(AppTypography.section); Text(model.conversation.draft).textSelection(.enabled) }
                     }
                     Color.clear.frame(height: 1).id("latest").onAppear { followsLatest = true }.onDisappear { followsLatest = false }
-                }.padding(20)
+                }.padding(20).disabled(voice)
             }.onChange(of: model.conversation.messages.last?.source) { _, _ in if followsLatest { proxy.scrollTo("latest", anchor: .bottom) } }
                 .overlay(alignment: .bottomTrailing) { if !followsLatest { Button { followsLatest = true; proxy.scrollTo("latest", anchor: .bottom) } label: {
                     Image(systemName: "arrow.down").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
@@ -101,19 +101,19 @@ struct AgentConversationView: View {
             }
         }.background(AppTheme.canvas).navigationTitle("Agent").navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom) {
-                if model.supportsGeneration {
+                if model.supportsGeneration || voice {
                     VStack(spacing: AppSpacing.small) {
-                        if isNewConversation { suggestions }
+                        if isNewConversation && !voice { suggestions }
                         composer
                     }
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Back").disabled(model.active) }
+                ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Back").disabled(model.active || voice) }
                 if model.supportsGeneration {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button { model.newConversation(); focused = true } label: { Image(systemName: "square.and.pencil") }
-                            .accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation)
+                            .accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation || voice)
                     }
                 }
                 if model.supportsGeneration || !model.history.isEmpty {
@@ -142,12 +142,11 @@ struct AgentConversationView: View {
                                     AccessoryButton("Local tools", systemImage: "slider.horizontal.3") { state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); tools = true }.disabled(model.active || model.hasPendingOperation)
                                 }
                             }
-                        } label: { Label("More", systemImage: "ellipsis") }
+                        } label: { Label("More", systemImage: "ellipsis") }.disabled(voice)
                     }
                 }
             }.navigationDestination(isPresented: $history) { AgentHistoryView(model: model) { value in if value.revision > 0 { model.open(value.id) }; history = false } }
             .sheet(isPresented: $tools) { AgentActionComposerView(model: model).environment(state).appAppearance(state.appearance) }
-            .sheet(isPresented: $voice) { AgentVoiceView(model: model).appAppearance(state.appearance) }
             .sheet(isPresented: $context) { AgentContextView(model: model).environment(state).appAppearance(state.appearance) }
             .sheet(item: $details) { message in NavigationStack { Form {
                 Group {
@@ -266,6 +265,9 @@ struct AgentConversationView: View {
 
     private var composer: some View {
         VStack(alignment: .leading, spacing: AppSpacing.small) {
+            if voice {
+                AgentVoiceView(model: model, isPresented: $voice)
+            } else {
             TextField("Ask Agent…", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical)
                 .lineLimit(1...6).focused($focused).padding(.horizontal, AppSpacing.xSmall)
                 .accessibilityLabel("Message Agent")
@@ -278,7 +280,7 @@ struct AgentConversationView: View {
                     .accessibilityLabel("Context and tools")
                 Spacer(minLength: AppSpacing.small)
                 if AgentVoiceModel.isSupported {
-                    Button { voice = true } label: { Image(systemName: "mic").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }.accessibilityLabel("Voice input")
+                    Button { focused = false; voice = true } label: { Image(systemName: "mic").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }.accessibilityLabel("Voice input").disabled(model.active || model.hasPendingOperation)
                 }
                 Button { if model.active { model.stop() } else { model.send() } } label: {
                     Image(systemName: model.active ? "stop.fill" : "arrow.up")
@@ -290,6 +292,7 @@ struct AgentConversationView: View {
                         .contentShape(Rectangle())
                 }.buttonStyle(.plain).accessibilityLabel(model.active ? "Stop response" : "Send to Agent")
                     .disabled(!model.active && !canSend)
+            }
             }
         }.padding(AppSpacing.medium)
             .background { composerBackground }

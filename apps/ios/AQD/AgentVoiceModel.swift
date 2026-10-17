@@ -13,13 +13,16 @@ import AVFoundation
     var reason = "On-device voice input isn’t enabled yet. Keep typing; your draft and context stay."
     var startedAt: Date?
     var level: Float = 0
+    var levels: [Float] = Array(repeating: 0, count: 28)
     private let engine = AVAudioEngine()
     private var recognition: SFSpeechRecognitionTask?
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var token = UUID()
+    private var finishing: Task<Void, Never>?
     private var tapInstalled = false
     func begin() async {
         guard Self.qualified else { phase = .unavailable; return }
+        phase = .permission
         let current = UUID(); token = current
         let status = await withCheckedContinuation { continuation in SFSpeechRecognizer.requestAuthorization { continuation.resume(returning: $0) } }
         guard token == current else { return }
@@ -33,7 +36,7 @@ import AVFoundation
             try AVAudioSession.sharedInstance().setCategory(.record, mode: .measurement, options: .duckOthers)
             try AVAudioSession.sharedInstance().setActive(true)
             let request = SFSpeechAudioBufferRecognitionRequest(); request.requiresOnDeviceRecognition = true; request.shouldReportPartialResults = true
-            self.request = request; transcript = ""
+            self.request = request; transcript = ""; levels = Array(repeating: 0, count: 28)
             let input = engine.inputNode, format = engine.inputNode.outputFormat(forBus: 0)
             guard format.sampleRate > 0, format.channelCount > 0 else { throw CocoaError(.featureUnsupported) }
             input.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
@@ -41,7 +44,10 @@ import AVFoundation
                 if let values = buffer.floatChannelData?.pointee {
                     let count = Int(buffer.frameLength)
                     let magnitude = count > 0 ? (0..<count).reduce(Float(0)) { $0 + abs(values[$1]) } / Float(count) : 0
-                    Task { @MainActor [weak self] in if self?.token == current { self?.level = magnitude } }
+                    Task { @MainActor [weak self] in if let self, self.token == current, self.phase == .listening {
+                        self.level = magnitude
+                        self.levels.removeFirst(); self.levels.append(min(magnitude * 14, 1))
+                    } }
                 }
             }
             tapInstalled = true
@@ -60,14 +66,24 @@ import AVFoundation
             engine.prepare(); try engine.start(); startedAt = Date(); phase = .listening
         } catch { stopAudio(); reason = "Recording could not start. Your draft is retained. Keep typing or try again."; phase = .unavailable }
     }
-    func finishRecording() { guard phase == .listening else { return }; stopAudio(); phase = .transcribing }
+    func finishRecording() {
+        guard phase == .listening else { return }
+        stopAudio(); phase = .transcribing
+        let current = token
+        finishing?.cancel()
+        finishing = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(8))
+            guard !Task.isCancelled, let self, self.token == current, self.phase == .transcribing else { return }
+            self.interrupt()
+        }
+    }
     private func stopAudio() {
         if engine.isRunning { engine.stop() }
         if tapInstalled { engine.inputNode.removeTap(onBus: 0); tapInstalled = false }
         request?.endAudio(); level = 0
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
-    func discard() { token = UUID(); stopAudio(); recognition?.cancel(); recognition = nil; request = nil; transcript = ""; startedAt = nil }
+    func discard() { finishing?.cancel(); finishing = nil; token = UUID(); stopAudio(); recognition?.cancel(); recognition = nil; request = nil; transcript = ""; startedAt = nil }
     func interrupt() { let received = transcript; discard(); transcript = received; reason = "Recording was interrupted. Your typed draft and any received transcript are retained."; phase = received.isEmpty ? .unavailable : .review }
 }
 

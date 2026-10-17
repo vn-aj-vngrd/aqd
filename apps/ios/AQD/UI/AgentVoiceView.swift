@@ -1,121 +1,103 @@
 import SwiftUI
 import UIKit
 
+/// Inline dictation keeps recording controls in the same glass surface as the message draft.
 struct AgentVoiceView: View {
-    private var confirmation: some View {
-        ToolbarSaveAction(title: "Done") {
-                            if transcriptReview.hasApplied || model.conversation.draft == base { useTranscript() } else { appendReview = true }
-                        }.disabled(voice.transcript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-    }
-
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     @Bindable var model: AgentModel
+    @Binding var isPresented: Bool
     @State private var voice = AgentVoiceModel()
-    @State private var base = ""
     @State private var transcriptReview = AgentTranscriptReview()
-    @State private var discard = false
-    @State private var appendReview = false
-    @State private var detent = PresentationDetent.medium
+    @State private var useWhenFinished = false
+
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
+            if voice.phase == .review {
+                TextField("Your message", text: $voice.transcript, axis: .vertical)
+                    .lineLimit(1...6).disabled(transcriptReview.hasApplied)
+                    .accessibilityLabel("Recorded transcript")
+            } else if voice.phase == .unavailable {
+                Text(voice.reason).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }
+            HStack(spacing: AppSpacing.small) {
+                Button { voice.discard(); isPresented = false } label: {
+                    control("xmark", filled: false)
+                }.accessibilityLabel(transcriptReview.hasApplied ? "Return to draft" : "Cancel recording")
+                Group {
                     switch voice.phase {
                     case .permission:
-                        VStack(spacing: AppSpacing.section) {
-                            VStack(spacing: AppSpacing.small) {
-                                Text("Speak your message").font(.title2.weight(.semibold))
-                                Text("Review the transcript before adding it to chat.")
-                                    .font(AppTypography.body).foregroundStyle(AppTheme.secondary)
-                            }
-                            recordControl(symbol: "mic.fill", title: "Start recording") { Task { await voice.begin() } }
-                            Text("Tap to record").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                            Text("Transcribed on this iPhone. Nothing sends automatically.")
-                                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                        }.multilineTextAlignment(.center).frame(maxWidth: .infinity).padding(.vertical, AppSpacing.section)
+                        HStack { ProgressView(); Text("Preparing microphone…").font(AppTypography.supporting) }
                     case .listening:
-                        VStack(spacing: AppSpacing.section) {
-                            Text("Listening…").font(.title2.weight(.semibold))
-                            if let startedAt = voice.startedAt { Text(startedAt, style: .timer).font(.title3.monospacedDigit()).foregroundStyle(AppTheme.secondary) }
-                            recordControl(symbol: "stop.fill", title: "Finish recording") { voice.finishRecording() }
-                            ProgressView(value: min(Double(voice.level) * 10, 1))
-                                .tint(AppTheme.ink).accessibilityLabel("Measured microphone level")
-                            Text("Tap to finish").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        }.frame(maxWidth: .infinity).padding(.vertical, AppSpacing.large)
-                        if !voice.transcript.isEmpty {
-                            Text(voice.transcript).frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(AppSpacing.large).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
-                        }
+                        waveform
                     case .transcribing:
-                        VStack(spacing: AppSpacing.large) {
-                            ProgressView()
-                            Text("Finishing your transcript…").font(AppTypography.section)
-                            Text("Nothing has been sent.").foregroundStyle(AppTheme.secondary)
-                            Button("Stop transcription") { voice.interrupt() }.frame(minHeight: AppControlMetrics.minimumTarget)
-                        }.frame(maxWidth: .infinity).padding(.vertical, AppSpacing.section)
+                        HStack { ProgressView(); Text("Finishing…").font(AppTypography.supporting) }
                     case .review:
-                        LabeledControl(title: "Transcript") {
-                            TextField("Your message", text: $voice.transcript, axis: .vertical)
-                                .lineLimit(4...12).disabled(transcriptReview.hasApplied)
-                        }
-                        AccessoryButton("Record again", systemImage: "arrow.counterclockwise") { voice.discard(); Task { await voice.begin() } }
-                            .frame(minHeight: AppControlMetrics.minimumTarget).disabled(transcriptReview.hasApplied)
-                        Text("Done adds this text to your draft. Send when you’re ready.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        Text(transcriptReview.hasApplied ? "Transcript kept in draft" : "Review before sending")
+                            .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     case .unavailable:
-                        VStack(spacing: AppSpacing.large) {
-                            Image(systemName: "mic.slash").font(.largeTitle).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
-                            Text("Voice isn’t available").font(AppTypography.section)
-                            Text(voice.reason).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                            if AgentVoiceModel.qualified {
-                                HStack(spacing: AppSpacing.large) {
-                                    Button("Settings") { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } }
-                                    Button("Try again") { Task { await voice.begin() } }
-                                }.frame(minHeight: AppControlMetrics.minimumTarget)
-                            }
-                        }.multilineTextAlignment(.center).frame(maxWidth: .infinity).padding(.vertical, AppSpacing.section)
+                        HStack {
+                            Button("Settings") { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } }
+                            Button("Try again") { Task { await voice.begin() } }
+                        }.font(AppTypography.supporting)
                     }
-                    if let error = model.error { SemanticFeedback(role: .danger, message: error) }
-                    if transcriptReview.hasApplied {
-                        Text("Your transcript is in the chat draft. Retry saving it, or return to chat.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        SecondaryAction(title: "Retry saving transcript", action: useTranscript)
-                    }
-                }.padding(20)
-            }.background(AppTheme.canvas).navigationTitle("Voice input").navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .confirmationAction) {
-                if voice.phase == .review { confirmation }
-            } }
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button(action: safeExit) { Image(systemName: "xmark") }.accessibilityLabel("Cancel") } }
-                .alert("Discard this recording?", isPresented: $discard) {
-                    Button("Cancel", role: .cancel) {}
-                    Button("Discard recording", role: .destructive) { voice.discard(); dismiss() }
-                } message: { Text("Discards only this unfinished recording and transcript. Your earlier typed draft stays.") }
-                .alert("Your typed draft changed", isPresented: $appendReview) {
-                    Button("Cancel", role: .cancel) {}
-                    Button("Append transcript") { useTranscript() }
-                } message: { Text("Keep your current text and append this reviewed transcript?") }
-        }.tint(AppTheme.ink).onAppear { base = model.conversation.draft }
-            .onChange(of: scenePhase) { _, phase in
-                if phase != .active && (voice.phase == .listening || voice.phase == .transcribing) { voice.interrupt() }
+                }.frame(maxWidth: .infinity, alignment: .leading)
+                if voice.phase == .listening {
+                    Button { voice.finishRecording() } label: { control("stop.fill", filled: false) }
+                        .accessibilityLabel("Stop and review recording")
+                } else if voice.phase == .review && !transcriptReview.hasApplied {
+                    Button { voice.discard(); Task { await voice.begin() } } label: { control("mic", filled: false) }
+                        .accessibilityLabel("Record again")
+                }
+                if voice.phase == .listening || voice.phase == .review || voice.phase == .transcribing {
+                    Button {
+                        if voice.phase == .listening { useWhenFinished = true; voice.finishRecording() }
+                        else { useTranscript() }
+                    } label: { control("arrow.up", filled: true) }
+                        .accessibilityLabel(transcriptReview.hasApplied ? "Retry saving transcript" : "Use transcript in draft")
+                        .disabled(voice.phase == .transcribing || (voice.phase == .review && voice.transcript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+                }
+            }.buttonStyle(.plain)
+            if voice.phase == .listening, let startedAt = voice.startedAt {
+                HStack(spacing: AppSpacing.small) {
+                    Text("Recording")
+                    Text(startedAt, style: .timer).monospacedDigit()
+                    Spacer()
+                    Text("On this iPhone")
+                }.font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).padding(.horizontal, AppSpacing.small)
             }
-            .onChange(of: voice.phase == .review) { _, reviewing in if reviewing { detent = .large } }
-            .presentationDetents([.medium, .large], selection: $detent)
-            .presentationDragIndicator(.visible)
+        }.task { await voice.begin() }
+            .onChange(of: voice.phase) { _, phase in
+                if phase == .review && useWhenFinished { useWhenFinished = false; useTranscript() }
+                if phase == .unavailable { useWhenFinished = false }
+            }
+            .onChange(of: scenePhase) { _, phase in
+                if phase != .active && (voice.phase == .listening || voice.phase == .transcribing) {
+                    useWhenFinished = false; voice.interrupt()
+                }
+            }
             .onDisappear { voice.discard() }
-            .interactiveDismissDisabled(voice.phase == .listening || voice.phase == .transcribing || !voice.transcript.isEmpty)
-    }
-    private func recordControl(symbol: String, title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: symbol).font(.largeTitle).frame(width: 72, height: 72)
-        }.neutralToolbarGlass().buttonBorderShape(.circle).tint(AppTheme.ink).accessibilityLabel(title)
     }
 
-    private func safeExit() {
-        if transcriptReview.hasApplied { voice.discard(); dismiss(); return }
-        if voice.phase == .listening || voice.phase == .transcribing || !voice.transcript.isEmpty { voice.finishRecording(); discard = true }
-        else { voice.discard(); dismiss() }
+    private var waveform: some View {
+        HStack(spacing: 3) {
+            ForEach(voice.levels.indices, id: \.self) { index in
+                Capsule().fill(AppTheme.controlIcon.opacity(0.4 + Double(index) / 60))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: max(3, CGFloat(voice.levels[index]) * 28))
+            }
+        }.frame(height: 32).accessibilityElement(children: .ignore)
+            .accessibilityLabel("Live microphone level")
+    }
+    private func control(_ symbol: String, filled: Bool) -> some View {
+        Image(systemName: symbol).font(.body.weight(.semibold))
+            .foregroundStyle(filled ? AppTheme.onPrimary : AppTheme.ink)
+            .frame(width: 32, height: 32)
+            .background(filled ? AppTheme.primaryFill : AppTheme.segmentSelection, in: Circle())
+            .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+            .contentShape(Rectangle())
     }
     private func useTranscript() {
-        if transcriptReview.apply(voice.transcript, to: model) { voice.discard(); dismiss() }
+        guard !voice.transcript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        if transcriptReview.apply(voice.transcript, to: model) { voice.discard(); isPresented = false }
     }
 }
