@@ -2635,5 +2635,11 @@
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false,
     "scope": "Transparent sample media and alpha-preserving archive/edit pipeline; Profile bio placement; neutral-gold/charcoal palette and glass Closet navigation."
+  },
+  "agentChatOrganizationRefinement": {
+    "codeCommit": "c63b6fc160a1cf17866c47042805c465a7c4d4df",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false,
+    "scope": "Centered empty chat; bottom icon suggestions; visible bubbles; compact voice; conversational Markdown; Pin/Archive/Restore, destructive Delete and history filters."
   }
 }

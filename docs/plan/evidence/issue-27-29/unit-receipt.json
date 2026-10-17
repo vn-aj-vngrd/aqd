@@ -1515,5 +1515,37 @@
       "/tmp/aqd-final-review-launch.json": "9c272a6693d8dc4a645d36dcfb83c964a67c8704f0a09c428bf9a6ad63ff2e53",
       "/tmp/aqd-final-save-tour-agent-docs.log": "2deee5e67a778123df1067548d755f94c82979642f42707d34cae22cb8d621d0"
     }
+  },
+  "agentChatOrganizationRefinement": {
+    "sourceHead": "c63b6fc160a1cf17866c47042805c465a7c4d4df",
+    "date": "2026-10-17",
+    "core": {
+      "passed": 86,
+      "suites": 26,
+      "failures": 0,
+      "log": "/tmp/aqd-agent-organize-core.log"
+    },
+    "signedDebug": "/tmp/aqd-agent-organize-clean-debug.log",
+    "nativeTestCompilation": "/tmp/aqd-agent-organize-test-build.log",
+    "nativeExecution": "Not run: renewed unlocked-device readiness requested, no confirmation yet. Prior native255 belongs to source1952f85.",
+    "install": "/tmp/aqd-agent-organize-install-final.json",
+    "launch": "Not attempted; owner opens AQD.",
+    "reviews": "Independent Standards and Spec source reviews clear after code/link preservation correction.",
+    "runtimeComplete": false,
+    "excludedConcurrentFiles": [
+      "apps/ios/AQD/UI/DraftDiscardSheet.swift",
+      "docs/design/native-presentations.md"
+    ],
+    "sourceSHA256": {
+      "apps/ios/AQD/AgentModel.swift": "905102fa9fc9360bdde1222c44f079edb0a4036b18dc4285b8c17a4ae997fc2e",
+      "apps/ios/AQD/NativeAgentProvider.swift": "84b4b226002ca05d2b757e823723e4c65df1741e1922cc0ee9db7b80f75b8bb7",
+      "apps/ios/AQD/UI/AgentVoiceView.swift": "fc7a2e5e86a51077867633c5c087a67625d9d27faf199c0f64cd7b3566c84786",
+      "apps/ios/AQD/UI/AppTheme.swift": "107022ad5069530540d38f567a933475f310f4d78b4f619776a1ecd5493098b1",
+      "apps/ios/AQD/UI/LocalAgentView.swift": "7cdf1f01f7577d574e3449c6e205d05687a30fe1d30c99405d0fe375af56538c",
+      "apps/ios/AQDTests/AgentConversationPersistenceTests.swift": "e2071bf83f91e4a0d43f2adb50fad9100ee615e6f8a15eb6aac96fa2cb8fb06a",
+      "apps/ios/Core/Sources/AQDCore/AgentConversation.swift": "8984a64a3620e0e6325ad08f96346d5e42c874d27735269769c5c4d3c05672b4",
+      "apps/ios/Core/Sources/AQDCore/AgentContextSnapshot.swift": "f1bf739504bec1c17b896ba98199fae8c872e6121cfa1e074634a14600e1d3b6",
+      "apps/ios/Core/Tests/AQDCoreTests/AgentContextTests.swift": "3f89847d39438d330f06781c84625edcf66c9799b224fb5c91c1ea1fe2be5dc5"
+    }
   }
 }
