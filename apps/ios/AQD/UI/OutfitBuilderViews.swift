@@ -210,7 +210,7 @@ struct OutfitPickerSheet: View {
         if let index = ids.firstIndex(of: piece.id) { ids.remove(at: index) } else { ids.append(piece.id) }
         guard model.applyManualPieces(ids) else { return }
         if model.draft.baseRevision == 0, model.draft.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, !ids.isEmpty {
-            model.update { $0.name = "Look · " + Date.now.formatted(.dateTime.month(.abbreviated).day()) }
+            model.update { $0.name = Date.now.formatted(.dateTime.weekday(.wide)) + " look" }
         }
     }
 
