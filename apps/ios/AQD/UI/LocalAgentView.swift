@@ -128,20 +128,23 @@ struct AgentConversationView: View {
                 if model.supportsGeneration || !model.history.isEmpty {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
-                            Section("Conversation") {
-                                if !model.history.isEmpty {
-                                    AccessoryButton("Conversations", systemImage: "bubble.left.and.bubble.right") { model.reloadHistory(); history = true }.disabled(model.active)
+                            if !model.history.isEmpty {
+                                Section {
+                                    AccessoryButton("Conversations", systemImage: "arrow.right") { model.reloadHistory(); history = true }
+                                        .disabled(model.active || model.hasPendingOperation)
                                 }
-                                if model.conversation.revision > 0 {
-                                    AccessoryButton(model.conversation.isPinned ? "Unpin conversation" : "Pin conversation", systemImage: model.conversation.isPinned ? "pin.slash" : "pin") {
+                            }
+                            if model.conversation.revision > 0 {
+                                Section("Current conversation") {
+                                    AccessoryButton(model.conversation.isPinned ? "Unpin" : "Pin", systemImage: model.conversation.isPinned ? "pin.slash" : "pin") {
                                         model.setOrganization(model.conversation, pinned: !model.conversation.isPinned)
                                     }.disabled(model.active || model.hasPendingOperation)
-                                    AccessoryButton(model.conversation.isArchived ? "Restore conversation" : "Archive conversation", systemImage: "archivebox") {
+                                    AccessoryButton(model.conversation.isArchived ? "Restore" : "Archive", systemImage: "archivebox") {
                                         model.setOrganization(model.conversation, archived: !model.conversation.isArchived)
                                     }.disabled(model.active || model.hasPendingOperation)
                                     Button(role: .destructive) {
                                         if model.persist() { deletingConversation = model.conversation }
-                                    } label: { Label("Delete conversation", systemImage: "trash").foregroundStyle(AppTheme.error) }
+                                    } label: { AccessoryLabel("Delete", systemImage: "trash", destructive: true) }
                                         .disabled(model.active || model.hasPendingOperation)
                                 }
                             }
@@ -414,7 +417,7 @@ struct AgentHistoryView: View {
                         AccessoryButton("Open conversation", systemImage: "bubble.left") { open(value) }.disabled(model.active || model.hasPendingOperation)
                         AccessoryButton(value.isPinned ? "Unpin" : "Pin", systemImage: value.isPinned ? "pin.slash" : "pin") { model.setOrganization(value, pinned: !value.isPinned) }.disabled(model.active || model.hasPendingOperation)
                         AccessoryButton(value.isArchived ? "Restore" : "Archive", systemImage: "archivebox") { model.setOrganization(value, archived: !value.isArchived) }.disabled(model.active || model.hasPendingOperation)
-                        Button(role: .destructive) { selected = value } label: { Label("Delete conversation", systemImage: "trash").foregroundStyle(AppTheme.error) }.disabled(model.active || model.hasPendingOperation)
+                        Button(role: .destructive) { selected = value } label: { AccessoryLabel("Delete", systemImage: "trash", destructive: true) }.disabled(model.active || model.hasPendingOperation)
                     } preview: {
                         VStack(alignment: .leading, spacing: AppSpacing.medium) {
                             Text(value.title).font(AppTypography.section)

@@ -132,12 +132,15 @@ struct ToolbarForwardAction: View {
     }
 }
 
-/// Decorative label icons share Settings' semantic gray, including native menus.
+/// Native menu symbols resolve semantic gray or danger color for the selected appearance.
 struct AccessoryLabel: View {
     let title: String
     let systemImage: String
+    var destructive = false
     @Environment(\.colorScheme) private var colorScheme
-    init(_ title: String, systemImage: String) { self.title = title; self.systemImage = systemImage }
+    init(_ title: String, systemImage: String, destructive: Bool = false) {
+        self.title = title; self.systemImage = systemImage; self.destructive = destructive
+    }
     var body: some View {
         Label {
             Text(title)
@@ -147,7 +150,7 @@ struct AccessoryLabel: View {
     }
     private var symbol: UIImage {
         let traits = UITraitCollection(userInterfaceStyle: colorScheme == .dark ? .dark : .light)
-        let color = UIColor(AppTheme.controlIcon).resolvedColor(with: traits)
+        let color = UIColor(destructive ? AppTheme.error : AppTheme.controlIcon).resolvedColor(with: traits)
         return UIImage(systemName: systemImage)?.withTintColor(color, renderingMode: .alwaysOriginal) ?? UIImage()
     }
 }
