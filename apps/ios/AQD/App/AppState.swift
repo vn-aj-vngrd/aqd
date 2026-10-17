@@ -395,6 +395,25 @@ final class AppState {
         }
     }
 
+    /// Opens the normal Add piece editor with a prefilled draft (for example guessed by the Agent). An existing
+    /// recoverable draft is never replaced; `onSaved` runs once the save is acknowledged.
+    @discardableResult
+    func addPiece(prefilled draft: PieceDraft, onSaved: @escaping @MainActor (WardrobePiece) -> Void) -> Bool {
+        guard !hasActiveEditor, let store else { return false }
+        do {
+            guard try store.newPieceDraft() == nil else {
+                collectionError = "Finish or discard your open piece draft before adding another."
+                return false
+            }
+            capture = CaptureModel(state: self, draft: draft, operationID: UUID())
+            capture?.onSaved = onSaved
+            return true
+        } catch {
+            collectionError = "The saved draft couldn’t open. It hasn’t been replaced."
+            return false
+        }
+    }
+
     func editPiece(_ piece: WardrobePiece, openCutout: Bool = false) {
         guard !hasActiveEditor else { return }
         guard let store else { return }
@@ -502,6 +521,8 @@ final class CaptureModel: Identifiable {
     var draftSaveFailed = false
     var isSaving = false
     var saved: WardrobePiece?
+    /// Called after a save is acknowledged, so a caller that prefilled the draft can show its own receipt.
+    @ObservationIgnored var onSaved: (@MainActor (WardrobePiece) -> Void)?
     /// Progress of the automatic cutout for the draft photo.
     enum CutoutState: Equatable { case idle, working, applied, noSubject, failed }
     var cutoutState = CutoutState.idle
@@ -643,6 +664,7 @@ final class CaptureModel: Identifiable {
         do {
             saved = try store.savePiece(draft, operationID: operationID, retainForPresentation: true)
             state.reloadPieces()
+            if let saved { onSaved?(saved) }
             errorText = nil
         } catch PieceStore.StoreError.staleRevision {
             errorText = "This piece changed after your draft began. Your edits are retained. Keep them for reference, or review Discard draft to start again from the latest saved piece."

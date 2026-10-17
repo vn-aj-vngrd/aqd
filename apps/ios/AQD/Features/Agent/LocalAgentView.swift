@@ -268,6 +268,12 @@ struct AgentConversationView: View {
         return titles + ["Rediscover unworn pieces"]
     }
 
+    /// A new piece from a photo is reviewed in the Closet editor; every other proposal opens the review sheet.
+    private func openReview(_ proposal: AgentActionProposal) {
+        if case .piece(let change) = proposal.action, change.isNewPiece, proposal.status == .proposed { model.openAddedPieceEditor(proposal, in: state) }
+        else { reviewingID = proposal.id }
+    }
+
     private func sendSuggestion(_ title: String) {
         guard model.canGenerate else { return }
         model.updateDraft(title); model.send()
@@ -282,7 +288,7 @@ struct AgentConversationView: View {
             AgentMessageRow(message: message, slow: model.slow, canRegenerate: canRegenerate(message),
                             retry: { model.send(retrying: message.id) }, showDetails: { details = message })
             ForEach(model.conversation.proposals(for: message)) { proposal in
-                AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { reviewingID = proposal.id }, dismiss: { model.cancelProposal(proposal.id) })
+                AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) })
             }
         }
     }
@@ -307,7 +313,7 @@ struct AgentConversationView: View {
     }
     private var unlinkedProposalRows: some View {
         ForEach(model.conversation.unlinkedProposals) { proposal in
-            AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { reviewingID = proposal.id }, dismiss: { model.cancelProposal(proposal.id) })
+            AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) })
         }
     }
 }

@@ -143,6 +143,7 @@ extension AgentToolbox {
             case .recordWear: AgentRecordWearTool(handlers: handlers)
             case .editProfile: AgentEditProfileTool(handlers: handlers)
             case .suggestOutfit, .proposeOutfit, .proposeTheme, .relabel: makeOutfitTool(id, handlers: handlers) ?? AgentFindRecordsTool(handlers: handlers)
+            case .addPieceFromPhoto: AgentAddPieceFromPhotoTool(handlers: handlers)
             }
         }
     }

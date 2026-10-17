@@ -6,6 +6,9 @@ struct AgentActionReviewView: View {
     @Bindable var model: AgentModel
     let id: UUID
     private var proposal: AgentActionProposal? { model.conversation.proposals?.first { $0.id == id } }
+    private func isNewPiece(_ proposal: AgentActionProposal) -> Bool {
+        if case .piece(let change) = proposal.action { change.isNewPiece } else { false }
+    }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -29,7 +32,7 @@ struct AgentActionReviewView: View {
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle("Review changes").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
-                if let proposal, proposal.status == .proposed || proposal.status == .executing {
+                if let proposal, proposal.status == .proposed || proposal.status == .executing, !isNewPiece(proposal) {
                     ToolbarSaveAction(title: proposal.status == .executing ? "Check result" : "Apply") {
                         model.approveProposal(id, version: proposal.version)
                         state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); state.reloadWear(); state.reloadIdentity()
@@ -42,10 +45,10 @@ struct AgentActionReviewView: View {
     @ViewBuilder private func preview(_ action: AgentReviewedAction) -> some View {
         switch action {
         case .piece(let change):
-            Text(change.draft.name).font(.headline)
+            Text(change.draft.name.isEmpty ? "New piece" : change.draft.name).font(.headline)
             LabeledContent("Color", value: change.draft.details.color)
             LabeledContent("Brand", value: change.draft.details.brand)
-            Text("Photo, category and other details stay unchanged.").font(.footnote).foregroundStyle(AppTheme.secondary)
+            Text(change.isNewPiece ? "Saved from the Closet editor with your full-quality photo." : "Photo, category and other details stay unchanged.").font(.footnote).foregroundStyle(AppTheme.secondary)
         case .profile(let draft):
             Text("Name").font(.headline); Text((draft.base?.name ?? "Not set") + " → " + (draft.name.isEmpty ? "Not set" : draft.name))
             Text("Bio").font(.headline); Text((draft.base?.caption ?? LocalProfileIdentity.defaultCaption) + " → " + (draft.caption ?? LocalProfileIdentity.defaultCaption))

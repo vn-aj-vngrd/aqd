@@ -11,7 +11,10 @@ public struct AgentAvailabilityChange: Codable, Equatable, Sendable {
 public struct AgentPieceChange: Codable, Equatable, Sendable {
     public let draft: PieceDraft
     public let operationID: UUID
-    public init(draft: PieceDraft) { self.draft = draft; operationID = UUID() }
+    /// Set when the draft is a new piece guessed from a chat photo; the photo itself is added in the Closet editor.
+    public let attachmentID: UUID?
+    public init(draft: PieceDraft, attachmentID: UUID? = nil) { self.draft = draft; operationID = UUID(); self.attachmentID = attachmentID }
+    public var isNewPiece: Bool { attachmentID != nil }
 }
 public enum AgentReviewedAction: Codable, Equatable, Sendable {
     case outfit(OutfitDraft), theme(ThemeDraft), plan(PlanAuthoringDraft), wear(OutfitWearDraft), availability(AgentAvailabilityChange), profile(LocalIdentityDraft), piece(AgentPieceChange)
