@@ -10,10 +10,16 @@ struct AgentFeedbackView: View {
             if let library { AgentFeedbackList(library: library) }
             else if error == nil { ProgressView("Loading…") }
             else {
-                AppEmptyState("Feedback couldn’t load", systemImage: "bubble.left", description: Text(error ?? "Your saved feedback is retained."))
-                    .overlay(alignment: .bottom) { Button("Try again", action: load).padding(AppSpacing.screen) }
+                EmptyStatePage(title: "Feedback couldn’t load", systemImage: "bubble.left",
+                               description: Text(error ?? "Your saved feedback is retained."))
             }
-        }.navigationTitle("Feedback").navigationBarTitleDisplayMode(.inline).background(AppTheme.canvas).task { load() }
+        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            .navigationTitle("Feedback").navigationBarTitleDisplayMode(.inline).background(AppTheme.canvas)
+            .toolbar {
+                if library == nil && error != nil {
+                    ToolbarItem(placement: .topBarTrailing) { Button("Try again", action: load) }
+                }
+            }.task { load() }
     }
     private func load() {
         do {
@@ -38,14 +44,46 @@ private struct AgentFeedbackList: View {
     @State private var editing: AgentFeedback?
     private var visible: [AgentFeedback] { library.items.filter(filter.includes) }
     var body: some View {
+        Group {
+            if visible.isEmpty && library.error == nil {
+                EmptyStatePage(title: LocalizedStringKey(emptyTitle), systemImage: filter == .reports ? "flag" : "bubble.left",
+                               description: Text(library.items.isEmpty
+                                   ? "Rate an Agent reply, or tap Add feedback to share a problem or idea. Feedback stays on this iPhone until you export it."
+                                   : "Nothing matches this filter. Choose All feedback to see your saved feedback."))
+            } else { feedbackList }
+        }.background(AppTheme.canvas).tint(AppTheme.ink)
+            .toolbar {
+                if !library.items.isEmpty {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu { Picker("Show feedback", selection: $filter) { ForEach(FeedbackFilter.allCases, id: \.self) { Text($0.rawValue).tag($0) } } }
+                            label: { Image(systemName: "line.3.horizontal.decrease") }.accessibilityLabel("Filter feedback").accessibilityValue(filter.rawValue)
+                            .disabled(library.hasPending)
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { editing = AgentFeedback(isReport: true) } label: { Image(systemName: "plus") }.accessibilityLabel("Add feedback").disabled(library.hasPending)
+                }
+            }.sheet(item: $editing, onDismiss: { library.reload() }) { value in
+                NavigationStack { AgentFeedbackEditor(library: library, feedback: value) }.appAppearance(state.appearance)
+            }.onAppear { library.reload() }
+    }
+
+    private var emptyTitle: String {
+        guard !library.items.isEmpty else { return "No feedback yet" }
+        switch filter {
+        case .all: return "No feedback yet"
+        case .helpful: return "No helpful feedback"
+        case .notHelpful: return "No negative feedback"
+        case .reports: return "No reports yet"
+        }
+    }
+
+    private var feedbackList: some View {
         List {
             Section {
                 if let error = library.error {
                     SemanticFeedback(role: .danger, message: error)
                     Button(library.hasPending ? "Retry save" : "Reload feedback") { if library.hasPending { _ = library.retry() } else { library.reload() } }
-                }
-                if visible.isEmpty {
-                    AppEmptyState("No feedback here yet", systemImage: "bubble.left", description: Text("Rate an Agent reply or use + to report a problem or share an idea."), fillsAvailableSpace: false)
                 }
                 ForEach(visible) { value in
                     Button { editing = value } label: {
@@ -62,7 +100,7 @@ private struct AgentFeedbackList: View {
                         }.frame(minHeight: AppControlMetrics.minimumTarget)
                     }.disabled(library.hasPending || library.agent.active)
                 }
-            } footer: { Text("Only saved feedback appears here. Reports stay local until you review and export one. Deleting a chat also removes its response feedback.") }
+            } footer: { Text("Feedback stays on this iPhone until you export it. Deleting a chat also removes its reply feedback.") }
                 .listRowBackground(AppTheme.surface)
             if !library.items.isEmpty {
                 Section("Common issues") {
@@ -73,17 +111,6 @@ private struct AgentFeedbackList: View {
             }
         }.listStyle(.insetGrouped).listSectionSpacing(AppSpacing.large).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent)
             .scrollContentBackground(.hidden).background(AppTheme.canvas).tint(AppTheme.ink)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu { Picker("Show feedback", selection: $filter) { ForEach(FeedbackFilter.allCases, id: \.self) { Text($0.rawValue).tag($0) } } }
-                        label: { Image(systemName: "line.3.horizontal.decrease") }.accessibilityLabel("Filter feedback").accessibilityValue(filter.rawValue)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { editing = AgentFeedback(isReport: true) } label: { Image(systemName: "plus") }.accessibilityLabel("Add feedback").disabled(library.hasPending)
-                }
-            }.sheet(item: $editing, onDismiss: { library.reload() }) { value in
-                NavigationStack { AgentFeedbackEditor(library: library, feedback: value) }.appAppearance(state.appearance)
-            }.onAppear { library.reload() }
     }
 }
 

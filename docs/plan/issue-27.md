@@ -274,3 +274,9 @@ Inner alignment Standards/Spec source self-review: plus glyph and editor text no
 Signed generic Debug passed `/tmp/aqd-composer-inner-alignment-debug.log`; docs/whitespace checks pass. Device tests and app launch remain skipped.
 
 Inner composer alignment checkpoint `dcb41a2d44ea986e8c3b590fe921a36c6997189b` built and installed successfully without app launch. Receipt `composerInnerAlignment` records source-bound checks; visual alignment remains manual acceptance.
+
+Owner Feedback empty-state refinement October17: reuse EmptyStatePage outside the native List so empty feedback centers on the canvas without a surface card/footer. Distinguish an empty library from a filter with no matches, simplify copy and disable meaningless empty-library filtering. Preserve Add/report/editor/save/export flows and error recovery; use the shared full-page pattern for read failures/loading too. Semantic light/dark colors and growing/scrolling text remain shared. Cosmetic build/install checks only, no device tests/app launch.
+
+Feedback empty-page source self-review: shared EmptyStatePage fills available safe content, centers without a row background and scrolls for large text. Empty-library filtering is hidden; filtered no-match copy points back to All feedback, with Add still available. Populated library rows/footer and mutation/report/export save guards remain. Read errors keep explicit toolbar retry; loading fills the page. Semantic canvas and shared native typography retain both appearances. No persistence/schema or synthetic behavior test changes. Rendered light/dark/accessibility acceptance remains unverified.
+
+Feedback page signed generic Debug passed `/tmp/aqd-feedback-empty-page-debug.log`; docs links and whitespace checks pass. Device tests and app launch remain skipped.
