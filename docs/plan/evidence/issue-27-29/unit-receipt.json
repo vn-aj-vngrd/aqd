@@ -1975,5 +1975,17 @@
     "nativeTestsExecuted": false,
     "runtimeComplete": false,
     "sourceSHA256": "14552a9e29130cd9174774215530746e01398754b933032b1176ed3bee01adb6"
+  },
+  "resetReviewUI": {
+    "codeCommit": "63a239e2f1c1353d4910206bc02b7905696beecb",
+    "debugBuild": "/tmp/aqd-reset-review-ui-debug.log",
+    "debugResult": "BUILD SUCCEEDED",
+    "install": "/tmp/aqd-reset-review-ui-install.json",
+    "installResult": "success",
+    "appLaunched": false,
+    "nativeTestsExecuted": false,
+    "userStoreReset": false,
+    "runtimeComplete": false,
+    "sourceSHA256": "a04cb97cea08abf84585efd8766453c89d79b43032d4acd211fe925c975e6c9e"
   }
 }

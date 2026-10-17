@@ -312,3 +312,5 @@ Owner reset UX simplification October17: reduce dense/repeated reset review cont
 Reset review source self-review: complete deletion scope is explicit before proceeding, and exact domain counts remain accessible through native disclosure rather than being removed. Original Photos/exports and irreversibility stay visible; OS permissions and unreadable-count handling remain in details. Export, typed RESET, final confirmation, retry/unknown and Welcome installation are untouched. Shared spacing/typography/semantic surfaces and scrollable growing content preserve appearance/accessibility patterns. Cosmetic-only change; no mirrored unit test added, no reset or device execution.
 
 Reset review signed generic Debug passed `/tmp/aqd-reset-review-ui-debug.log`; docs/whitespace pass. No app launch/device tests or rendered acceptance.
+
+Reset review UI checkpoint `63a239e2f1c1353d4910206bc02b7905696beecb` installed successfully without launching AQD or resetting data. Receipt `resetReviewUI` binds source/build/install evidence; rendered and keyboard/disclosure acceptance remain manual.
