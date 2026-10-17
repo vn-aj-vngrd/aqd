@@ -125,3 +125,24 @@ public enum AgentHistoryFilter: String, CaseIterable, Sendable {
         }
     }
 }
+
+public enum AgentChatTimestamp {
+    public static func startsGroup(_ date: Date, after previous: Date?, calendar: Calendar = .current) -> Bool {
+        guard let previous else { return true }
+        return !calendar.isDate(date, inSameDayAs: previous) || date.timeIntervalSince(previous) >= 15 * 60
+    }
+    public static func label(for date: Date, relativeTo now: Date = Date(), calendar: Calendar = .current, locale: Locale = .current) -> String {
+        let formatter = DateFormatter()
+        formatter.calendar = calendar; formatter.timeZone = calendar.timeZone; formatter.locale = locale
+        let day: String
+        if calendar.isDate(date, inSameDayAs: now) { day = String(localized: "Today", locale: locale) }
+        else if let yesterday = calendar.date(byAdding: .day, value: -1, to: now), calendar.isDate(date, inSameDayAs: yesterday) { day = String(localized: "Yesterday", locale: locale) }
+        else {
+            let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: date), to: calendar.startOfDay(for: now)).day ?? 0
+            let template = (2...6).contains(days) ? "EEEE" : calendar.component(.year, from: date) == calendar.component(.year, from: now) ? "MMM d" : "MMM d yyyy"
+            formatter.setLocalizedDateFormatFromTemplate(template); day = formatter.string(from: date)
+        }
+        formatter.dateStyle = .none; formatter.timeStyle = .short
+        return day + " " + formatter.string(from: date)
+    }
+}

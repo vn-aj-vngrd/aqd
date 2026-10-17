@@ -86,6 +86,15 @@ public enum AgentMarkdownPolicy {
         return value
     }
 
+    public static func spokenText(_ source: String) -> String {
+        let withoutTargets = source.replacingOccurrences(of: #"!?\[([^\]]*)\]\([^)]+\)"#, with: "$1", options: .regularExpression)
+        let prose = String(((try? AttributedString(markdown: withoutTargets, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))) ?? AttributedString(withoutTargets)).characters)
+        return prose
+            .replacingOccurrences(of: #"(?m)^\s{0,3}(#{1,6}|>|[-*+]|\d+[.)])\s+"#, with: "", options: .regularExpression)
+            .replacingOccurrences(of: #"(?m)^\s*(```|~~~)[^\n]*$"#, with: "", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     public static func allowsLink(_ value: String) -> Bool {
         guard let url = URL(string: value), let scheme = url.scheme?.lowercased(), ["https", "http"].contains(scheme), url.host?.isEmpty == false else { return false }; return true
     }

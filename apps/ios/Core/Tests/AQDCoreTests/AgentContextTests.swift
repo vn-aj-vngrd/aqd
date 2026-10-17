@@ -83,6 +83,34 @@ struct AgentContextTests {
         #expect(restored.isArchived && restored.isPinned)
     }
 
+    @Test func chatTimestampsUseLocalDaysAndBoundedSessionGaps() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: "Asia/Manila"))
+        let formatter = ISO8601DateFormatter()
+        let now = try #require(formatter.date(from: "2026-10-17T03:30:00Z"))
+        let today = try #require(formatter.date(from: "2026-10-17T01:05:00Z"))
+        let yesterday = try #require(formatter.date(from: "2026-10-16T01:05:00Z"))
+        let locale = Locale(identifier: "en_US")
+        #expect(AgentChatTimestamp.label(for: today, relativeTo: now, calendar: calendar, locale: locale).split(whereSeparator: \.isWhitespace).joined(separator: " ") == "Today 9:05 AM")
+        #expect(AgentChatTimestamp.label(for: yesterday, relativeTo: now, calendar: calendar, locale: locale).split(whereSeparator: \.isWhitespace).joined(separator: " ") == "Yesterday 9:05 AM")
+        #expect(AgentChatTimestamp.label(for: today, relativeTo: now, calendar: calendar, locale: Locale(identifier: "en_GB")) == "Today 09:05")
+        #expect(AgentChatTimestamp.startsGroup(today, after: nil, calendar: calendar))
+        #expect(!AgentChatTimestamp.startsGroup(today, after: today.addingTimeInterval(-899), calendar: calendar))
+        #expect(AgentChatTimestamp.startsGroup(today, after: today.addingTimeInterval(-900), calendar: calendar))
+        let midnight = try #require(formatter.date(from: "2026-10-16T16:00:00Z"))
+        #expect(AgentChatTimestamp.startsGroup(midnight, after: midnight.addingTimeInterval(-60), calendar: calendar))
+        let old = try #require(formatter.date(from: "2025-10-17T01:05:00Z"))
+        #expect(AgentChatTimestamp.label(for: old, relativeTo: now, calendar: calendar, locale: locale).contains("2025"))
+    }
+    @Test func speechTextKeepsWordsAndParagraphsWithoutReadingMarkdownTargets() {
+        let source = "## Tonight\n\nTry **linen** and *denim*. 👕\n\n- [Your shirt](https://example.com/private-path)\n- Soft layers"
+        let text = AgentMarkdownPolicy.spokenText(source)
+        #expect(text.contains("Tonight") && text.contains("Try linen and denim. 👕"))
+        #expect(text.contains("Your shirt") && text.contains("\n\n"))
+        #expect(!text.contains("https://") && !text.contains("**") && !text.contains("##"))
+        #expect(AgentMarkdownPolicy.spokenText("").isEmpty)
+    }
+
     @Test func markdownRejectsExecutableLinksAndRetainsExactSourceForCopy() {
         #expect(!AgentMarkdownPolicy.allowsLink("javascript:alert(1)"))
         #expect(!AgentMarkdownPolicy.allowsLink("file:///private/data"))

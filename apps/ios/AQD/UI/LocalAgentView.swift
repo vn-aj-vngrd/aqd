@@ -43,6 +43,8 @@ struct AgentConversationView: View {
     @State private var context = false
     @State private var tools = false
     @State private var voice = false
+    @State private var readAloud = AgentReadAloud()
+    @Environment(\.scenePhase) private var scenePhase
     @State private var details: AgentMessage?
     @State private var copied: UUID?
     @State private var followsLatest = true
@@ -74,7 +76,14 @@ struct AgentConversationView: View {
                     if model.hasPendingOperation || model.error != nil {
                         Button("Retry operation") { model.retryPending() }.frame(minHeight: 44)
                     }
-                    ForEach(model.conversation.messages) { message in
+                    ForEach(Array(model.conversation.messages.enumerated()), id: \.element.id) { index, message in
+                        if AgentChatTimestamp.startsGroup(message.createdAt, after: index > 0 ? model.conversation.messages[index - 1].createdAt : nil) {
+                            TimelineView(.periodic(from: .now, by: 60)) { timeline in
+                                Text(AgentChatTimestamp.label(for: message.createdAt, relativeTo: timeline.date))
+                                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                                    .frame(maxWidth: .infinity).padding(.vertical, AppSpacing.xSmall)
+                            }
+                        }
                         messageRow(message).id(message.id)
                     }
                     ForEach(model.conversation.proposals ?? []) { proposal in
@@ -164,6 +173,11 @@ struct AgentConversationView: View {
                     if let value = deletingConversation { model.delete(value) }; deletingConversation = nil
                 }
             } message: { Text("Deletes its messages and draft on this iPhone. Saved pieces, outfits and plans stay.") }
+            .onDisappear { readAloud.stop() }
+            .onChange(of: scenePhase) { _, phase in if phase != .active { readAloud.stop() } }
+            .onChange(of: model.conversation.id) { _, _ in readAloud.stop() }
+            .onChange(of: model.active) { _, active in if active { readAloud.stop() } }
+            .onChange(of: voice) { _, recording in if recording { readAloud.stop() } }
             .onAppear { if automaticallyFocusComposer && model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
     }
     private var isNewConversation: Bool {
@@ -232,29 +246,41 @@ struct AgentConversationView: View {
                     }
                     if let reason = message.failureReason { Text(reason).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
                     responseActions(message)
+                    if readAloud.errorMessageID == message.id, let error = readAloud.error {
+                        Text(error).font(AppTypography.supporting).foregroundStyle(AppTheme.error)
+                    }
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
     private func responseActions(_ message: AgentMessage) -> some View {
-        HStack(spacing: 0) {
+        let reading = readAloud.messageID == message.id
+        let hasText = !message.source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        return HStack(spacing: 0) {
             Button { copy(message, markdown: false) } label: {
-                responseIcon(copied == message.id ? "checkmark" : "doc.on.doc")
-            }.accessibilityLabel(copied == message.id ? "Response copied" : "Copy response")
-            if message.id == model.conversation.messages.last?.id && model.canGenerate {
-                Button { model.send(retrying: message.id) } label: { responseIcon("arrow.clockwise") }
-                    .accessibilityLabel("Try response again")
-            }
+                responseIcon(copied == message.id ? "checkmark" : "square.on.square")
+            }.accessibilityLabel(copied == message.id ? "Response copied" : "Copy response").disabled(!hasText)
+            Button { readAloud.toggle(message) } label: {
+                responseIcon(reading ? "stop.circle" : "speaker.wave.2")
+            }.accessibilityLabel(reading ? "Stop reading" : "Read aloud").disabled(!hasText)
             Menu {
-                AccessoryButton("Copy Markdown", systemImage: "doc.on.doc") { copy(message, markdown: true) }
-                AccessoryButton("Response details", systemImage: "info.circle") { details = message }
+                Section(AgentChatTimestamp.label(for: message.createdAt)) {
+                    AccessoryButton(reading ? "Stop reading" : "Read aloud", systemImage: reading ? "stop.circle" : "speaker.wave.2") { readAloud.toggle(message) }.disabled(!hasText)
+                    AccessoryButton("Copy Markdown", systemImage: "doc.text") { copy(message, markdown: true) }.disabled(!hasText)
+                }
+                Section("Response") {
+                    if message.id == model.conversation.messages.last?.id {
+                        AccessoryButton("Try again", systemImage: "arrow.clockwise") { readAloud.stop(); model.send(retrying: message.id) }.disabled(!model.canGenerate)
+                    }
+                    AccessoryButton("Response details", systemImage: "info.circle") { readAloud.stop(); details = message }
+                }
             } label: { responseIcon("ellipsis") }.accessibilityLabel("Response options")
-        }.buttonStyle(.plain)
+        }.buttonStyle(.plain).padding(.leading, -AppSpacing.medium)
     }
 
     private func responseIcon(_ name: String) -> some View {
-        Image(systemName: name).font(AppTypography.supporting).foregroundStyle(AppTheme.controlIcon)
+        Image(systemName: name).font(.system(size: 16, weight: .regular)).foregroundStyle(AppTheme.controlIcon)
             .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
             .contentShape(Rectangle())
     }
@@ -280,7 +306,7 @@ struct AgentConversationView: View {
                     .accessibilityLabel("Context and tools")
                 Spacer(minLength: AppSpacing.small)
                 if AgentVoiceModel.isSupported {
-                    Button { focused = false; voice = true } label: { Image(systemName: "mic").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }.accessibilityLabel("Voice input").disabled(model.active || model.hasPendingOperation)
+                    Button { readAloud.stop(); focused = false; voice = true } label: { Image(systemName: "mic").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }.accessibilityLabel("Voice input").disabled(model.active || model.hasPendingOperation)
                 }
                 Button { if model.active { model.stop() } else { model.send() } } label: {
                     Image(systemName: model.active ? "stop.fill" : "arrow.up")
