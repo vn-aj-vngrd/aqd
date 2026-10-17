@@ -1723,5 +1723,19 @@
     "runtimeComplete": false,
     "launch": "Not attempted; owner opens app",
     "sourceSHA256": "8f95282b2b4362f532af3c65edc793ee917eccd2b06f6bcf8e2634601d8ab88a"
+  },
+  "agentWorkingShimmer": {
+    "codeCommit": "bb1be452ac0bdc87c17c45aed39d8a179d9d409b",
+    "signedGenericDebug": "/tmp/aqd-agent-shimmer-debug.log",
+    "buildResult": "BUILD SUCCEEDED",
+    "install": "/tmp/aqd-agent-shimmer-install.json",
+    "installResult": "Succeeded",
+    "nativeTests": "Skipped by owner",
+    "runtimeComplete": false,
+    "launch": "Not attempted; owner opens app",
+    "sourceSHA256": {
+      "apps/ios/AQD/UI/AgentWorkingIndicator.swift": "22ded9390f0b8373927411524adcd55d2f16f1f99206f896cd23960e64e35280",
+      "apps/ios/AQD/UI/LocalAgentView.swift": "ee52af1924c3e7999528671a5442df3758722dae30f8e898355f0291fdeab374"
+    }
   }
 }
