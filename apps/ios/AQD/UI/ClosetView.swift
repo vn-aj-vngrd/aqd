@@ -285,7 +285,7 @@ private struct PieceOptionsButton: UIViewRepresentable {
 
     func updateUIView(_ button: TargetButton, context: Context) {
         button.tintColor = UIColor(AppTheme.ink)
-        let editAction = UIAction(title: "Edit piece", image: UIImage(systemName: "square.and.pencil"),
+        let editAction = UIAction(title: "Edit piece", image: UIImage(systemName: AppSymbols.edit),
                                   attributes: archiveDisabled ? .disabled : []) { _ in edit() }
         let archiveAction = UIAction(title: isArchived ? "Restore" : "Archive",
                                      image: UIImage(systemName: isArchived ? "arrow.uturn.backward" : "archivebox"),

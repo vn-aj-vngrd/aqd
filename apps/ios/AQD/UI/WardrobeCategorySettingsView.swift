@@ -45,7 +45,7 @@ struct WardrobeCategorySettingsView: View {
                         withAnimation { editMode = editMode.isEditing ? .inactive : .active }
                     } label: {
                         if editMode.isEditing { Image(systemName: "checkmark") }
-                        else { Image(systemName: "pencil") }
+                        else { Image(systemName: AppSymbols.edit) }
                     }.tint(AppTheme.ink).disabled(!loaded)
                         .accessibilityLabel(editMode.isEditing ? "Finish editing categories" : "Edit categories")
                     Button { editing = WardrobeCategory(name: "", type: .tops) } label: { Label("Add category", systemImage: "plus") }

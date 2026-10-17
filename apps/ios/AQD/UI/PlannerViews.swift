@@ -45,7 +45,7 @@ struct LocalPlannerView: View {
                         NavigationLink(value: PlannerRoute.entry(entry.id)) { PlanAgendaRow(entry: entry) }.buttonStyle(.plain)
                             .contextMenu {
                                 AccessoryButton("Open plan", systemImage: "calendar") { state.plannerPath.append(.entry(entry.id)) }
-                                AccessoryButton("Edit plan", systemImage: "square.and.pencil") { state.openPlan(editing: entry) }
+                                AccessoryButton("Edit plan", systemImage: AppSymbols.edit) { state.openPlan(editing: entry) }
                                     .disabled(entry.state == .worn || entry.state == .skipped)
                                 if entry.state == .planned || entry.state == .unassigned {
                                     AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: entry.outfitID, entry: entry) }
@@ -178,7 +178,7 @@ struct LocalPlanEntryView: View {
                         if let outfit = state.outfits.first(where: { $0.id == entry.outfitID }) {
                             NavigationLink(value: ClosetRoute.outfit(outfit.id)) { AccessoryLabel("Open outfit", systemImage: "square.stack") }
                         }
-                        AccessoryButton("Edit plan", systemImage: "square.and.pencil") { state.openPlan(editing: entry) }
+                        AccessoryButton("Edit plan", systemImage: AppSymbols.edit) { state.openPlan(editing: entry) }
                             .disabled(removal != nil || skipRequest != nil || entry.state == .worn || entry.state == .skipped)
                         if entry.state == .planned || entry.state == .unassigned {
                             AccessoryButton(skipRequest == nil ? "Skip this date" : "Check skip result", systemImage: "forward.end") { skip(entry) }

@@ -19,7 +19,7 @@ struct PieceCollectionGrid: View {
                 }.buttonStyle(.plain).id(piece.id)
                     .contextMenu {
                         NavigationLink(value: ClosetRoute.piece(piece.id)) { AccessoryLabel("Open piece", systemImage: "arrow.up.forward.square") }
-                        AccessoryButton("Edit piece", systemImage: "square.and.pencil") { state.editPiece(piece) }
+                        AccessoryButton("Edit piece", systemImage: AppSymbols.edit) { state.editPiece(piece) }
                         AccessoryButton("Build an outfit", systemImage: "square.stack") { state.buildOutfit(pieceID: piece.id) }
                             .disabled(piece.isArchived || piece.availability != .available)
                     } preview: {
@@ -133,7 +133,7 @@ struct OutfitCollectionCard: View {
         }.buttonStyle(.plain).id(outfit.id)
             .contextMenu {
                 NavigationLink(value: ClosetRoute.outfit(outfit.id)) { AccessoryLabel("Open outfit", systemImage: "arrow.up.forward.square") }
-                AccessoryButton("Edit outfit", systemImage: "square.and.pencil") { state.buildOutfit(editing: outfit) }
+                AccessoryButton("Edit outfit", systemImage: AppSymbols.edit) { state.buildOutfit(editing: outfit) }
                 AccessoryButton("Plan outfit", systemImage: "calendar") { state.openPlan(outfitID: outfit.id) }
                 AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: outfit.id) }
             } preview: {
@@ -185,7 +185,7 @@ struct ThemeCollectionCard: View {
         }.buttonStyle(.plain).id(theme.id)
             .contextMenu {
                 NavigationLink(value: ClosetRoute.theme(theme.id)) { AccessoryLabel("Open theme", systemImage: "folder") }
-                AccessoryButton("Edit theme", systemImage: "square.and.pencil") { state.openTheme(editing: theme) }
+                AccessoryButton("Edit theme", systemImage: AppSymbols.edit) { state.openTheme(editing: theme) }
                 AccessoryButton("Add outfits", systemImage: "plus") { state.openTheme(editing: theme, chooseOutfits: true) }
                 AccessoryButton("Build an outfit", systemImage: "square.stack") { state.buildOutfit(themeID: theme.id) }
             } preview: {
@@ -230,7 +230,7 @@ struct ThemeDetailView: View {
                 if let theme = state.themes.first(where: { $0.id == id }) {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
-                            AccessoryButton("Edit theme", systemImage: "square.and.pencil") { state.openTheme(editing: theme) }
+                            AccessoryButton("Edit theme", systemImage: AppSymbols.edit) { state.openTheme(editing: theme) }
                             AccessoryButton("Add outfits", systemImage: "plus") { state.openTheme(editing: theme, chooseOutfits: true) }
                             AccessoryButton("Build an outfit", systemImage: "square.stack") { state.buildOutfit(themeID: theme.id) }
                             Button("Delete theme", systemImage: "trash", role: .destructive) {

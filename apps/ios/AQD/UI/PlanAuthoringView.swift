@@ -265,7 +265,7 @@ struct PlanDefinitionView: View {
             .onAppear { state.reloadPlanEntries(); state.reloadOutfits() }
             .toolbar {
                 if plan != nil { ToolbarItem(placement: .topBarTrailing) {
-                    Button { editPresented = true } label: { Label("Edit plan scope", systemImage: "square.and.pencil") }.tint(AppTheme.ink)
+                    Button { editPresented = true } label: { Label("Edit plan scope", systemImage: AppSymbols.edit) }.tint(AppTheme.ink)
                 } }
             }
             .sheet(isPresented: $editPresented, onDismiss: {

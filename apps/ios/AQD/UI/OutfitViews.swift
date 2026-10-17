@@ -68,7 +68,7 @@ struct OutfitEditorView: View {
                     }
                     if model.saved != nil {
                         ToolbarItem(placement: .topBarTrailing) {
-                            Menu { AccessoryButton("Edit outfit", systemImage: "square.and.pencil") { model.editSavedOutfit() } }
+                            Menu { AccessoryButton("Edit outfit", systemImage: AppSymbols.edit) { model.editSavedOutfit() } }
                                 label: { Label("More outfit options", systemImage: "ellipsis") }
                                 .tint(AppTheme.ink).disabled(model.pending || model.unknown)
                         }
@@ -242,7 +242,7 @@ struct OutfitDetailView: View {
                 if let outfit = state.outfits.first(where: { $0.id == id }) {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
-                            AccessoryButton("Edit outfit", systemImage: "square.and.pencil") { state.buildOutfit(editing: outfit) }
+                            AccessoryButton("Edit outfit", systemImage: AppSymbols.edit) { state.buildOutfit(editing: outfit) }
                             AccessoryButton(outfit.isFavorite ? "Remove from Favorites" : "Add to Favorites", systemImage: outfit.isFavorite ? "heart.slash" : "heart") {
                                 apply(OutfitMutationRequest(outfit: outfit, action: .favorite(!outfit.isFavorite)))
                             }

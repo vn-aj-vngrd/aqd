@@ -90,7 +90,7 @@ struct FitJournalGrid: View {
                             }.buttonStyle(.plain).id(memory.id)
                                 .contextMenu {
                                     AccessoryButton("Open fit", systemImage: "arrow.up.forward.square") { openedMemoryID = memory.id }
-                                    AccessoryButton("Edit fit", systemImage: "square.and.pencil") { state.openFit(memory) }
+                                    AccessoryButton("Edit fit", systemImage: AppSymbols.edit) { state.openFit(memory) }
                                     AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.recordWear(from: memory) }
                                 } preview: {
                                     CollectionContextPreview(title: memory.outfit?.displayName ?? "Fit", detail: memory.day.displayDate) {
@@ -293,7 +293,7 @@ struct FitMemoryDetailView: View {
                     if request != nil {
                         AccessoryButton("Check deletion result", systemImage: "arrow.clockwise", action: delete)
                     } else if let memory {
-                        AccessoryButton("Edit fit", systemImage: "square.and.pencil") { state.openFit(memory) }
+                        AccessoryButton("Edit fit", systemImage: AppSymbols.edit) { state.openFit(memory) }
                         AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.recordWear(from: memory) }
                         if let snapshot = memory.outfit, state.outfits.contains(where: { $0.id == snapshot.id }) {
                             NavigationLink(value: ClosetRoute.outfit(snapshot.id)) { AccessoryLabel("Open linked outfit", systemImage: "square.stack") }

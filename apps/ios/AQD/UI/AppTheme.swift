@@ -1,6 +1,10 @@
 import SwiftUI
 import UIKit
 
+enum AppSymbols {
+    static let edit = "pencil.line"
+}
+
 enum AppTheme {
     static let canvas = color(light: 0xF7F7F5, dark: 0x1C1C1B)
     static let surface = color(light: 0xFFFFFF, dark: 0x2B2B29)
