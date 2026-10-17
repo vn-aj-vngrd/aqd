@@ -3,6 +3,19 @@ import Testing
 @testable import AQDCore
 
 struct StylePreferencesTests {
+    @Test func colorSelectionsPreserveCustomWordsAndToggleWithoutCaseDuplicates() {
+        #expect(ColorPreferences.selections(in: " red, Navy, custom shade ") == ["red", "Navy", "custom shade"])
+        #expect(ColorPreferences.toggling("Red", in: "red, Navy, custom shade") == "Navy, custom shade")
+        #expect(ColorPreferences.toggling("Blue", in: "red, custom shade") == "red, custom shade, Blue")
+        #expect(ColorPreferences.toggling("  ", in: "red") == "red")
+        var colors = ColorPreferences()
+        colors.declined = true
+        colors.preferredColors = ColorPreferences.toggling("Red", in: colors.preferredColors)
+        colors.declined = false
+        #expect(colors.isAnswered)
+        colors.preferredColors = ColorPreferences.toggling("red", in: colors.preferredColors)
+        #expect(!colors.isAnswered)
+    }
     @Test func freshAnswersAreIncompleteAndEveryExplicitRefusalCompletesReview() throws {
         var answers = StylePreferences()
         #expect(answers.answeredCount == 0)
@@ -67,5 +80,4 @@ struct StylePreferencesTests {
         #expect(summary.contains("Preferred patterns: Stripes"))
         #expect(summary.contains("Patterns to avoid: Checks"))
     }
-
 }

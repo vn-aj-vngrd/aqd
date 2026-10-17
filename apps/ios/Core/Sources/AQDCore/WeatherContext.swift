@@ -82,6 +82,7 @@ public struct LocalWeatherState: Codable, Equatable, Sendable {
     public var enabled: Bool
     public var place: WeatherPlace?
     public var cache: [WeatherSnapshot]
+    public var setupNoticeDismissed: Bool?
     public init(ownerID: UUID) { self.ownerID = ownerID; revision = 0; enabled = false; place = nil; cache = [] }
     public func validated() throws {
         guard revision >= 0, revision < Int.max, !enabled || place != nil, enabled || cache.isEmpty,

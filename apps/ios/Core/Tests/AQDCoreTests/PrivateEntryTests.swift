@@ -21,11 +21,16 @@ struct PrivateEntryTests {
         #expect(entry.tour == nil)
         #expect(entry.page == .welcome)
         try entry.startTour(from: .welcome)
-        for _ in 0..<4 { entry.nextInTour() }
+        for step in 0..<PrivateEntryState.tourStepCount {
+            #expect(entry.tour?.step == step)
+            try entry.validated()
+            #expect(try JSONDecoder().decode(PrivateEntryState.self, from: JSONEncoder().encode(entry)) == entry)
+            entry.nextInTour()
+        }
         #expect(entry.page == .ready)
         #expect(entry.tourOutcome == .finished)
         entry.reviewTourFromReady()
-        #expect(entry.tour?.step == 3)
+        #expect(entry.tour?.step == PrivateEntryState.tourStepCount - 1)
         #expect(entry.tour?.source == .welcome)
         entry.nextInTour()
         #expect(entry.page == .ready)
@@ -40,11 +45,24 @@ struct PrivateEntryTests {
         #expect(entry.tour == nil)
     }
 
+    @Test func developmentPreviewTourPreservesPrivacyAndReadyProgress() throws {
+        for page in [PrivateEntryState.Page.privacy, .ready] {
+            var entry = PrivateEntryState(alreadyEntered: false); entry.page = page
+            try entry.startTour(from: .preview)
+            for _ in 0..<PrivateEntryState.tourStepCount { try entry.validated(); entry.nextInTour() }
+            #expect(entry.page == page && entry.tour == nil)
+            try entry.startTour(from: .preview); entry.skipTour()
+            #expect(entry.page == page && entry.tour == nil)
+            try entry.startTour(from: .preview); entry.backInTour()
+            #expect(entry.page == page && entry.tour == nil)
+        }
+    }
+
     @Test func mismatchedTourCallerAndUnsupportedProgressAreRefused() throws {
         var entry = PrivateEntryState(alreadyEntered: false)
         #expect(throws: PrivateEntryState.ValidationError.invalidState) { try entry.startTour(from: .settings) }
         try entry.startTour(from: .welcome)
-        entry.tour?.step = 4
+        entry.tour?.step = PrivateEntryState.tourStepCount
         #expect(throws: PrivateEntryState.ValidationError.invalidState) { try entry.validated() }
     }
 }

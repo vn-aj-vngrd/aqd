@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm check)",
+      "Bash(pnpm check:agents)",
+      "Bash(node scripts/*)",
+      "Bash(swiftlint:*)",
+      "Bash(swiftformat:*)",
+      "Bash(xcrun devicectl list devices:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr checks:*)"
+    ],
+    "deny": [
+      "Read(./apps/ios/Configuration/Local.xcconfig)",
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/swift-guard.sh" }]
+      }
+    ]
+  }
+}

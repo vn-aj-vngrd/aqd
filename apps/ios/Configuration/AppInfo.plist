@@ -22,10 +22,21 @@
     <string>$(CURRENT_PROJECT_VERSION)</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>AQD uses the microphone only when you choose on-device voice input. Review the transcript before sending.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>AQD transcribes only a recording you start, using supported on-device recognition. No cloud transcription.</string>
     <key>NSCameraUsageDescription</key>
-    <string>AQD uses the camera only when you choose to photograph a wardrobe piece.</string>
+    <string>AQD uses the camera only when you choose to photograph your wardrobe or attach a photo to Agent.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>AQD uses your approximate location only when you choose Use current location for optional Apple Weather. Choose a city instead to avoid location access.</string>
+    <key>UTExportedTypeDeclarations</key>
+    <array><dict>
+        <key>UTTypeIdentifier</key><string>app.aqd.local-archive</string>
+        <key>UTTypeDescription</key><string>AQD private closet archive</string>
+        <key>UTTypeConformsTo</key><array><string>public.data</string></array>
+        <key>UTTypeTagSpecification</key><dict><key>public.filename-extension</key><array><string>aqdarchive</string></array></dict>
+    </dict></array>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>

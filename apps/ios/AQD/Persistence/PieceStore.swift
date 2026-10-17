@@ -290,8 +290,18 @@ enum LocalSchemaV20: VersionedSchema {
     static var models: [any PersistentModel.Type] { LocalSchemaV19.models + [StoredWeatherState.self, StoredWeatherSave.self] }
 }
 
+enum LocalSchemaV21: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(21, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV20.models + [StoredAgentConversation.self, StoredAgentOperation.self] }
+}
+
+enum LocalSchemaV22: VersionedSchema {
+    static var versionIdentifier: Schema.Version { Schema.Version(22, 0, 0) }
+    static var models: [any PersistentModel.Type] { LocalSchemaV21.models + [StoredLocalSettings.self, StoredSettingsSave.self, StoredLocalMutation.self] }
+}
+
 enum LocalMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self, LocalSchemaV15.self, LocalSchemaV16.self, LocalSchemaV17.self, LocalSchemaV18.self, LocalSchemaV19.self, LocalSchemaV20.self] }
+    static var schemas: [any VersionedSchema.Type] { [LocalSchemaV1.self, LocalSchemaV2.self, LocalSchemaV3.self, LocalSchemaV4.self, LocalSchemaV5.self, LocalSchemaV6.self, LocalSchemaV7.self, LocalSchemaV8.self, LocalSchemaV9.self, LocalSchemaV10.self, LocalSchemaV11.self, LocalSchemaV12.self, LocalSchemaV13.self, LocalSchemaV14.self, LocalSchemaV15.self, LocalSchemaV16.self, LocalSchemaV17.self, LocalSchemaV18.self, LocalSchemaV19.self, LocalSchemaV20.self, LocalSchemaV21.self, LocalSchemaV22.self] }
     static var stages: [MigrationStage] {
         [.lightweight(fromVersion: LocalSchemaV1.self, toVersion: LocalSchemaV2.self),
          .lightweight(fromVersion: LocalSchemaV2.self, toVersion: LocalSchemaV3.self),
@@ -311,7 +321,9 @@ enum LocalMigrationPlan: SchemaMigrationPlan {
          .lightweight(fromVersion: LocalSchemaV16.self, toVersion: LocalSchemaV17.self),
          .lightweight(fromVersion: LocalSchemaV17.self, toVersion: LocalSchemaV18.self),
          .lightweight(fromVersion: LocalSchemaV18.self, toVersion: LocalSchemaV19.self),
-         .lightweight(fromVersion: LocalSchemaV19.self, toVersion: LocalSchemaV20.self)]
+         .lightweight(fromVersion: LocalSchemaV19.self, toVersion: LocalSchemaV20.self),
+         .lightweight(fromVersion: LocalSchemaV20.self, toVersion: LocalSchemaV21.self),
+         .lightweight(fromVersion: LocalSchemaV21.self, toVersion: LocalSchemaV22.self)]
     }
 }
 
@@ -357,13 +369,13 @@ final class PieceStore {
         self.mediaDirectory = directory.appendingPathComponent("media", isDirectory: true)
         let storeURL = directory.appendingPathComponent("wardrobe.store")
         let versionURL = directory.appendingPathComponent("schema-version")
-        let version = Data("AQD-piece-store:20".utf8)
-        let previousVersions = (1..<20).map { Data("AQD-piece-store:\($0)".utf8) }
+        let version = Data("AQD-piece-store:22".utf8)
+        let previousVersions = (1..<22).map { Data("AQD-piece-store:\($0)".utf8) }
         // A dangling symlink is existing storage too, not permission to create
         // a fresh store through a redirected path.
         let hasStore = (try? FileManager.default.attributesOfItem(atPath: storeURL.path)) != nil
         let hasVersion = FileManager.default.fileExists(atPath: versionURL.path)
-        let schema = Schema(versionedSchema: LocalSchemaV20.self)
+        let schema = Schema(versionedSchema: LocalSchemaV22.self)
         var needsTodaySeed = !hasStore
         var maySeedExperience = !hasVersion
         // Never create an empty replacement for unrecognized, incomplete or newer storage.
@@ -537,7 +549,7 @@ final class PieceStore {
         do {
             let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(
                 ofType: NSSQLiteStoreType, at: storeURL, options: [NSReadOnlyPersistentStoreOption: true])
-            let candidates = [(schema, 20), (Schema(versionedSchema: LocalSchemaV19.self), 19), (Schema(versionedSchema: LocalSchemaV18.self), 18), (Schema(versionedSchema: LocalSchemaV17.self), 17), (Schema(versionedSchema: LocalSchemaV16.self), 16), (Schema(versionedSchema: LocalSchemaV15.self), 15), (Schema(versionedSchema: LocalSchemaV14.self), 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
+            let candidates = [(schema, 22), (Schema(versionedSchema: LocalSchemaV21.self), 21), (Schema(versionedSchema: LocalSchemaV20.self), 20), (Schema(versionedSchema: LocalSchemaV19.self), 19), (Schema(versionedSchema: LocalSchemaV18.self), 18), (Schema(versionedSchema: LocalSchemaV17.self), 17), (Schema(versionedSchema: LocalSchemaV16.self), 16), (Schema(versionedSchema: LocalSchemaV15.self), 15), (Schema(versionedSchema: LocalSchemaV14.self), 14), (Schema(versionedSchema: LocalSchemaV13.self), 13), (Schema(versionedSchema: LocalSchemaV12.self), 12), (Schema(versionedSchema: LocalSchemaV11.self), 11), (Schema(versionedSchema: LocalSchemaV10.self), 10), (Schema(versionedSchema: LocalSchemaV9.self), 9), (Schema(versionedSchema: LocalSchemaV8.self), 8), (Schema(versionedSchema: LocalSchemaV7.self), 7), (Schema(versionedSchema: LocalSchemaV6.self), 6), (Schema(versionedSchema: LocalSchemaV5.self), 5), (Schema(versionedSchema: LocalSchemaV4.self), 4), (Schema(versionedSchema: LocalSchemaV3.self), 3), (Schema(versionedSchema: LocalSchemaV2.self), 2)]
             let match = candidates.first { candidate in
                 let model: NSManagedObjectModel?
                 if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: candidate.0) }
@@ -563,7 +575,16 @@ final class PieceStore {
         }
     }
 
-    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 20) throws -> Bool {
+    private static func bootstrapNeedsToday(in context: ModelContext, storeVersion: Int = 22) throws -> Bool {
+        if storeVersion >= 22 {
+            guard try context.fetchCount(FetchDescriptor<StoredLocalSettings>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredSettingsSave>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredLocalMutation>()) <= 1 else { throw StoreError.unsupportedStore }
+        }
+        if storeVersion >= 21 {
+            guard try context.fetchCount(FetchDescriptor<StoredAgentConversation>()) == 0,
+                  try context.fetchCount(FetchDescriptor<StoredAgentOperation>()) == 0 else { throw StoreError.unsupportedStore }
+        }
         if storeVersion >= 20 {
             guard try context.fetchCount(FetchDescriptor<StoredWeatherState>()) == 0,
                   try context.fetchCount(FetchDescriptor<StoredWeatherSave>()) == 0 else { throw StoreError.unsupportedStore }
@@ -663,7 +684,7 @@ final class PieceStore {
         guard records.count == 1, let record = records.first else { throw StoreError.unsupportedStore }
         let today = try record.value()
         guard today.revision == 1,
-              today.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse] else {
+              (today.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse] || today.instances.map(\.kind) == TodayWidgetKind.allCases) else {
             throw StoreError.unsupportedStore
         }
         return false
@@ -691,6 +712,20 @@ final class PieceStore {
         let value = try JSONDecoder().decode(LocalExperience.self, from: record.payload)
         try value.validated()
         return (record, value)
+    }
+
+    func savePieceCategories(_ categories: [WardrobeCategory], expected: [WardrobeCategory]) throws {
+        try WardrobeCategory.validate(categories)
+        guard allowsSave else { throw StoreError.corruptStore }
+        let context = ModelContext(container)
+        var (record, value) = try experienceRecord(in: context)
+        let current = value.pieceCategories ?? WardrobeCategory.defaults
+        if current == categories { return }
+        guard current == expected else { throw StoreError.staleRevision }
+        value.pieceCategories = categories
+        try value.validated()
+        record.payload = try JSONEncoder().encode(value)
+        try commit(context)
     }
 
     func saveStyleDraft(_ draft: StylePreferenceDraft) throws {
@@ -1425,6 +1460,9 @@ final class PieceStore {
         do {
             // Protection errors precede database commit; never report a failed write after acknowledgment.
             try protectStoreFiles()
+            let mutations = try context.fetch(FetchDescriptor<StoredLocalMutation>())
+            guard mutations.count <= 1 else { throw StoreError.invalidRecord }
+            if let mutation = mutations.first { mutation.stamp = UUID() } else { context.insert(StoredLocalMutation()) }
             try context.save()
         } catch { context.rollback(); throw error }
     }
@@ -2040,7 +2078,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     private struct AvailabilityRequest: Encodable {
         let id: UUID
@@ -2091,7 +2128,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     func pieceDeletionImpact(id: UUID) throws -> PieceDeletionImpact {
         guard let piece = try piece(id: id) else { throw StoreError.staleRevision }
@@ -2136,7 +2172,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     func isThemeDeletionAcknowledged(_ request: ThemeDeletionRequest) throws -> Bool {
         guard request.expectedRevision > 0 else { throw StoreError.invalidRecord }
@@ -2164,7 +2199,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     func deletePlanEntry(_ request: PlanEntryDeletionRequest) throws {
         guard request.expectedRevision > 0 else { throw StoreError.invalidRecord }
@@ -2183,7 +2217,6 @@ extension PieceStore {
         try beforeOutfitSave(); try commit(context); try afterOutfitSave()
     }
 }
-
 
 extension PieceStore {
     func planDefinitions() throws -> [PlanDefinition] {
@@ -2287,7 +2320,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     func packingState(planID: UUID) throws -> PackingState {
         guard try planDefinitions().contains(where: { $0.id == planID && $0.trip != nil }) else { throw StoreError.staleRevision }
@@ -2347,7 +2379,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     func applyHistoryMutation(_ request: HistoryMutation) throws {
         let context = ModelContext(container)
@@ -2386,7 +2417,6 @@ extension PieceStore {
     }
 }
 
-
 extension PieceStore {
     private func resetWearLinks(_ wearID: UUID, in context: ModelContext) throws {
         for record in try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>()) {
@@ -2397,7 +2427,6 @@ extension PieceStore {
         }
     }
 }
-
 
 extension PieceStore {
     private func personalPhotoOwners(in context: ModelContext) throws -> [(id: UUID, recipe: PhotoEditRecipe)] {
@@ -2438,7 +2467,7 @@ extension PieceStore {
     }
     func saveIdentityDraft(_ draft: LocalIdentityDraft) throws {
         guard allowsSave, draft.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
-        _ = try draft.result()
+        try draft.validatedForRetention()
         guard try savedIdentity(for: draft) == nil else { throw StoreError.operationConflict }
         let context = ModelContext(container)
         let records = try context.fetch(FetchDescriptor<StoredIdentityDraft>())
@@ -2486,7 +2515,6 @@ extension PieceStore {
         context.delete(record); try commit(context)
     }
 }
-
 
 extension PieceStore {
     func fitMemories() throws -> [FitMemory] {
@@ -2597,6 +2625,9 @@ extension PieceStore {
     func savedTodayLayout(_ draft: TodayLayoutDraft) throws -> TodayConfiguration? {
         let records = try ModelContext(container).fetch(FetchDescriptor<StoredTodaySave>()).filter { $0.id == draft.operationID }
         guard let receipt = records.first else { return nil }
+        if let acknowledgment = try? JSONDecoder().decode(ArchiveOperationDigest.self, from: receipt.request) {
+            guard records.count == 1, acknowledgment.digest == digest(try encode(draft)) else { throw StoreError.operationConflict }; return try draft.result()
+        }
         guard records.count == 1, try JSONDecoder().decode(TodayLayoutDraft.self, from: receipt.request) == draft else { throw StoreError.operationConflict }
         let result = try JSONDecoder().decode(TodayConfiguration.self, from: receipt.result)
         guard result == (try draft.result()) else { throw StoreError.invalidRecord }; return result
@@ -2607,8 +2638,8 @@ extension PieceStore {
         let result = try draft.result(), context = ModelContext(container)
         let existing = try todayPersonalCards()
         for instance in result.instances {
-            try instance.validatedContent(ownerID: result.ownerID)
-            if let pin = instance.options?.pinnedID,
+            try instance.validatedContent(ownerID: result.ownerID, requireContent: instance.options != nil)
+            if instance.isVisible, let pin = instance.options?.pinnedID,
                draft.base.instances.first(where: { $0.id == instance.id })?.options?.pinnedID != pin {
                 let available: Bool
                 switch instance.kind {
@@ -2698,6 +2729,9 @@ extension PieceStore {
     func todayCardDeletionApplied(_ request: TodayCardDeletion) throws -> Bool {
         let records = try ModelContext(container).fetch(FetchDescriptor<StoredTodayCardDeletion>()).filter { $0.id == request.operationID }
         guard let record = records.first else { return false }
+        if let acknowledgment = try? JSONDecoder().decode(ArchiveOperationDigest.self, from: record.payload) {
+            guard records.count == 1, record.acknowledged, acknowledgment.digest == digest(try encode(request)) else { throw StoreError.operationConflict }; return record.applied
+        }
         guard records.count == 1, try record.value() == request else { throw StoreError.operationConflict }; return record.applied
     }
     func deleteTodayCard(_ request: TodayCardDeletion) throws {
@@ -2728,8 +2762,12 @@ extension PieceStore {
     }
     func finishTodayCardDeletion(_ request: TodayCardDeletion, cancelling: Bool = false) throws {
         let context = ModelContext(container)
-        guard let task = try context.fetch(FetchDescriptor<StoredTodayCardDeletion>()).first(where: { $0.id == request.operationID }), try task.value() == request,
+        guard let task = try context.fetch(FetchDescriptor<StoredTodayCardDeletion>()).first(where: { $0.id == request.operationID }),
               task.applied || cancelling else { throw StoreError.operationConflict }
+        if let acknowledgment = try? JSONDecoder().decode(ArchiveOperationDigest.self, from: task.payload) {
+            guard task.acknowledged, acknowledgment.digest == digest(try encode(request)) else { throw StoreError.operationConflict }; return
+        }
+        guard try task.value() == request else { throw StoreError.operationConflict }
         task.acknowledged = true; try commit(context)
     }
 }
@@ -2770,6 +2808,17 @@ extension PieceStore {
         let value = try records.first?.value() ?? LocalWeatherState(ownerID: owner)
         guard value.ownerID == owner else { throw StoreError.invalidRecord }; return value
     }
+    func dismissWeatherSetupNotice() throws {
+        guard allowsSave else { throw StoreError.staleRevision }
+        var value = try weatherState()
+        if value.setupNoticeDismissed == true { return }
+        value.setupNoticeDismissed = true
+        try value.validated()
+        let context = ModelContext(container)
+        if let record = try context.fetch(FetchDescriptor<StoredWeatherState>()).first { record.payload = try encode(value) }
+        else { context.insert(try StoredWeatherState(value)) }
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+    }
     func savedWeatherPreference(_ request: WeatherPreferenceRequest) throws -> WeatherPreference? {
         let records = try ModelContext(container).fetch(FetchDescriptor<StoredWeatherSave>()).filter { $0.id == request.operationID }
         guard let receipt = records.first else { return nil }
@@ -2800,3 +2849,290 @@ extension PieceStore {
         record.payload = try encode(value); try commit(context)
     }
 }
+
+extension PieceStore {
+    func agentConversations() throws -> [AgentConversation] {
+        let owner = try todayConfiguration().ownerID
+        return try ModelContext(container).fetch(FetchDescriptor<StoredAgentConversation>()).map {
+            let value = try $0.value()
+            guard value.ownerID == owner else { throw StoreError.invalidRecord }; return value
+        }.sorted { $0.updatedAt == $1.updatedAt ? $0.id.uuidString < $1.id.uuidString : $0.updatedAt > $1.updatedAt }
+    }
+    @discardableResult func saveAgentConversation(_ value: AgentConversation, operationID: UUID) throws -> AgentConversation {
+        try value.validated()
+        guard value.ownerID == (try todayConfiguration().ownerID) else { throw StoreError.invalidRecord }
+        let context = ModelContext(container), checksum = digest(try encode(value))
+        if let receipt = try context.fetch(FetchDescriptor<StoredAgentOperation>()).first(where: { $0.id == operationID }) {
+            guard receipt.conversationID == value.id, receipt.digest == checksum, let result = receipt.result else { throw StoreError.operationConflict }
+            if let acknowledgment = try? JSONDecoder().decode(AgentSaveAcknowledgment.self, from: result) {
+                var saved = value; saved.revision = acknowledgment.revision; saved.updatedAt = acknowledgment.updatedAt; return saved
+            }
+            return try JSONDecoder().decode(AgentConversation.self, from: result)
+        }
+        guard !(try context.fetch(FetchDescriptor<StoredAgentOperation>())).contains(where: { $0.conversationID == value.id && $0.result == nil }) else { throw StoreError.deletedPiece }
+        let stored = try context.fetch(FetchDescriptor<StoredAgentConversation>()).first { $0.id == value.id }
+        guard try stored?.value().revision ?? 0 == value.revision else { throw StoreError.staleRevision }
+        var saved = value; saved.revision += 1; saved.updatedAt = Date()
+        try beforeOutfitSave()
+        if let stored { stored.payload = try encode(saved) } else { context.insert(try StoredAgentConversation(saved)) }
+        context.insert(StoredAgentOperation(id: operationID, conversationID: value.id, digest: checksum, result: try encode(AgentSaveAcknowledgment(revision: saved.revision, updatedAt: saved.updatedAt))))
+        try commit(context); try afterOutfitSave(); return saved
+    }
+    func deleteAgentConversation(id: UUID, expectedRevision: Int, operationID: UUID) throws {
+        let context = ModelContext(container), checksum = "delete:\(id):\(expectedRevision)"
+        if let receipt = try context.fetch(FetchDescriptor<StoredAgentOperation>()).first(where: { $0.id == operationID }) {
+            guard receipt.conversationID == id, receipt.digest == checksum, receipt.result == nil else { throw StoreError.operationConflict }; return
+        }
+        guard let stored = try context.fetch(FetchDescriptor<StoredAgentConversation>()).first(where: { $0.id == id }),
+              try stored.value().revision == expectedRevision,
+              try stored.value().ownerID == todayConfiguration().ownerID else { throw StoreError.staleRevision }
+        guard try !(stored.value().proposals ?? []).contains(where: { $0.status == .executing }) else { throw StoreError.operationConflict }
+        try beforeOutfitSave(); context.delete(stored)
+        // Superseded save acknowledgments no longer retain deleted conversation text.
+        for receipt in try context.fetch(FetchDescriptor<StoredAgentOperation>()) where receipt.conversationID == id { context.delete(receipt) }
+        context.insert(StoredAgentOperation(id: operationID, conversationID: id, digest: checksum, result: nil))
+        try commit(context); try afterOutfitSave()
+    }
+}
+
+private struct AgentSaveAcknowledgment: Codable {
+    let revision: Int
+    let updatedAt: Date
+}
+
+extension PieceStore {
+    func localSettings() throws -> LocalSettings {
+        let owner = try todayConfiguration().ownerID
+        let rows = try ModelContext(container).fetch(FetchDescriptor<StoredLocalSettings>())
+        guard rows.count <= 1 else { throw StoreError.invalidRecord }
+        let value = try rows.first?.value() ?? LocalSettings(ownerID: owner)
+        guard value.ownerID == owner else { throw StoreError.invalidRecord }; return value
+    }
+    func mutationStamp() throws -> UUID? {
+        let rows = try ModelContext(container).fetch(FetchDescriptor<StoredLocalMutation>())
+        guard rows.count <= 1, rows.allSatisfy({ $0.id == 1 }) else { throw StoreError.invalidRecord }; return rows.first?.stamp
+    }
+    @discardableResult func saveLocalSettings(_ request: LocalSettingsRequest) throws -> LocalSettings {
+        let context = ModelContext(container)
+        if let receipt = try context.fetch(FetchDescriptor<StoredSettingsSave>()).first(where: { $0.id == request.operationID }) {
+            if let fingerprint = String(data: receipt.request, encoding: .utf8), fingerprint.hasPrefix("sha256:") {
+                guard fingerprint == "sha256:" + digest(try encode(request)) else { throw StoreError.operationConflict }
+            } else {
+                guard try JSONDecoder().decode(LocalSettingsRequest.self, from: receipt.request) == request else { throw StoreError.operationConflict }
+            }
+            return try JSONDecoder().decode(LocalSettings.self, from: receipt.result)
+        }
+        guard request.base == (try localSettings()) else { throw StoreError.staleRevision }
+        let value = try request.result()
+        try beforeOutfitSave()
+        if let record = try context.fetch(FetchDescriptor<StoredLocalSettings>()).first { record.payload = try encode(value) }
+        else { context.insert(try StoredLocalSettings(value)) }
+        let removed = Set((request.base.feedback ?? []).map(\.id)).subtracting((value.feedback ?? []).map(\.id))
+        if !removed.isEmpty {
+            for receipt in try context.fetch(FetchDescriptor<StoredSettingsSave>()) {
+                var prior = try JSONDecoder().decode(LocalSettings.self, from: receipt.result)
+                if !(Set((prior.feedback ?? []).map(\.id)).intersection(removed)).isEmpty {
+                    prior.feedback?.removeAll { removed.contains($0.id) }
+                    receipt.result = try encode(prior)
+                    if let oldRequest = try? JSONDecoder().decode(LocalSettingsRequest.self, from: receipt.request) {
+                        receipt.request = Data(("sha256:" + digest(try encode(oldRequest))).utf8)
+                    }
+                }
+            }
+        }
+        context.insert(try StoredSettingsSave(request, result: value, fingerprint: digest(try encode(request)))); try commit(context); try afterOutfitSave(); return value
+    }
+}
+
+extension PieceStore {
+    var localDirectory: URL { directory }
+    func archiveSeed() throws -> LocalArchiveSeed {
+        let stamp = try mutationStamp()
+        let temporary = FileManager.default.temporaryDirectory.appendingPathComponent("AQD-archive-\(UUID().uuidString)", isDirectory: true)
+        do {
+            try LocalArchiveIO.protectedDirectory(temporary); try LocalArchiveIO.protectedDirectory(temporary.appendingPathComponent("media"))
+            guard try FileManager.default.attributesOfItem(atPath: directory.path)[.type] as? FileAttributeType == .typeDirectory,
+                  try FileManager.default.attributesOfItem(atPath: mediaDirectory.path)[.type] as? FileAttributeType == .typeDirectory else { throw StoreError.unsafeMediaPath }
+            try LocalArchiveIO.write(LocalArchiveIO.read(directory.appendingPathComponent("schema-version"), maximum: 100), to: temporary.appendingPathComponent("schema-version"))
+            let photos = Set(try ModelContext(container).fetch(FetchDescriptor<StoredPhoto>()).map { $0.id.uuidString })
+            let files = try FileManager.default.contentsOfDirectory(at: mediaDirectory, includingPropertiesForKeys: nil).filter { photos.contains(String($0.lastPathComponent.prefix(36))) }
+            return LocalArchiveSeed(directory: temporary, database: directory.appendingPathComponent("wardrobe.store"), media: files, stamp: stamp)
+        } catch { try? FileManager.default.removeItem(at: temporary); throw error }
+    }
+    func validateArchiveContents() throws -> LocalArchiveSummary {
+        let owner = try todayConfiguration().ownerID
+        let owned = try pieces() + pieces(archived: true), outfits = try outfits(), themes = try themes(), plans = try planDefinitions(), entries = try planEntries(), wear = try wearRecords(), fits = try fitMemories(), conversations = try agentConversations(), cards = try todayPersonalCards()
+        let experience = try localExperience(); try experience.validated()
+        _ = try localSettings(); _ = try weatherState(); _ = try todayDraft(); _ = try todayUndo()
+        _ = try identityDraft(); _ = try localIdentity(); _ = try fitDraft(); _ = try outfitDraft(); _ = try themeDraft(); _ = try planDraft(); _ = try planAuthoringDraft(); _ = try wearDraft()
+        let context = ModelContext(container)
+        for record in try context.fetch(FetchDescriptor<StoredPieceDraft>()) { _ = try archivePieceDraft(record) }
+        let pieceIDs = Set(owned.map(\.id)), outfitIDs = Set(outfits.map(\.id)), planIDs = Set(plans.map(\.id))
+        guard outfits.allSatisfy({ $0.ownerID == owner && Set($0.pieceIDs).isSubset(of: pieceIDs) }),
+              themes.allSatisfy({ $0.ownerID == owner && Set($0.outfitIDs).isSubset(of: outfitIDs) }),
+              entries.allSatisfy({ $0.ownerID == owner && ($0.outfitID.map { outfitIDs.contains($0) } ?? true) }),
+              Set(owned.map(\.id)).count == owned.count, Set(outfits.map(\.id)).count == outfits.count,
+              Set(plans.map(\.id)).count == plans.count, Set(entries.map(\.id)).count == entries.count else { throw StoreError.invalidRecord }
+        // Entries created individually predate grouped definitions; their stable plan IDs remain valid.
+        for plan in plans { _ = try packingState(planID: plan.id) }
+        for state in try context.fetch(FetchDescriptor<StoredPackingState>()) { guard planIDs.contains(try state.value().planID) else { throw StoreError.invalidRecord } }
+        var photoOwners = owned.map { (id: $0.photoID, recipe: $0.photoRecipe) }
+        photoOwners += try personalPhotoOwners(in: context) + todayPhotoOwners(in: context)
+        for record in try context.fetch(FetchDescriptor<StoredPieceDraft>()) {
+            let draft = try archivePieceDraft(record); if let id = draft.photoID { photoOwners.append((id: id, recipe: draft.photoRecipe)) }
+        }
+        let sources = try photoSources(in: context)
+        for photo in photoOwners {
+            _ = try originalPhoto(id: photo.id); _ = try photoRendition(id: photo.id, recipe: photo.recipe); _ = try photoThumbnail(id: photo.id, recipe: photo.recipe)
+            if let original = sources[photo.id] { _ = try originalPhoto(id: original) }
+        }
+        var drafts = try context.fetchCount(FetchDescriptor<StoredPieceDraft>())
+        drafts += [try outfitDraft() != nil, try themeDraft() != nil, try planDraft() != nil, try planAuthoringDraft() != nil,
+                   try wearDraft() != nil, try fitDraft() != nil, try identityDraft() != nil, try todayDraft() != nil, experience.styleDraft != nil].filter { $0 }.count
+        return LocalArchiveSummary(ownerID: owner, pieces: owned.count, outfits: outfits.count, themes: themes.count, plans: plans.count,
+            entries: entries.count, wear: wear.count, fits: fits.count, conversations: conversations.count, personalCards: cards.count, drafts: drafts)
+    }
+}
+
+private struct ArchiveOperationDigest: Codable { let digest: String }
+extension PieceStore {
+    private func archivePieceDraft(_ record: StoredPieceDraft) throws -> PieceDraft {
+        let draft = try JSONDecoder().decode(PieceDraft.self, from: record.payload)
+        guard draft.id == record.id, draft.itemID == record.itemID else { throw StoreError.invalidRecord }; try draft.photoRecipe.validated(); return draft
+    }
+    /// Apply only to the disposable export snapshot. Preserve pending recovery payloads.
+    func compactArchiveAcknowledgments() throws {
+        let context = ModelContext(container), active = try todayDraft()?.operationID
+        var changed = false
+        for receipt in try context.fetch(FetchDescriptor<StoredTodaySave>()) where receipt.id != active {
+            if (try? JSONDecoder().decode(ArchiveOperationDigest.self, from: receipt.request)) == nil {
+                let request = try JSONDecoder().decode(TodayLayoutDraft.self, from: receipt.request)
+                receipt.request = try encode(ArchiveOperationDigest(digest: digest(try encode(request)))); receipt.result = Data(); changed = true
+            }
+        }
+        for task in try context.fetch(FetchDescriptor<StoredTodayCardDeletion>()) where task.acknowledged {
+            if (try? JSONDecoder().decode(ArchiveOperationDigest.self, from: task.payload)) == nil {
+                let request = try task.value(); task.payload = try encode(ArchiveOperationDigest(digest: digest(try encode(request)))); changed = true
+            }
+        }
+        if changed { try commit(context) }
+    }
+}
+
+extension PieceStore {
+    static func archiveSchema(at url: URL) throws -> Int {
+        let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: NSSQLiteStoreType, at: url, options: [NSReadOnlyPersistentStoreOption: true])
+        for (index, version) in LocalMigrationPlan.schemas.enumerated() {
+            let schema = Schema(versionedSchema: version), model: NSManagedObjectModel?
+            if #available(iOS 26, *) { model = NSManagedObjectModel.makeManagedObjectModel(for: schema) }
+            else { model = NSManagedObjectModel().makeManagedObjectModel(for: schema) }
+            if let model, (metadata[NSStoreModelVersionHashesKey] as? [String: Data]) == model.entityVersionHashesByName { return index + 1 }
+        }
+        throw LocalArchiveError.newer
+    }
+}
+
+#if DEBUG
+extension PieceStore {
+    /// Compare-and-swap the exact legacy seed text, never any user-edited fields.
+    func replacePreviewSampleContexts(plans: [(before: OutfitPlanEntry, after: OutfitPlanEntry)], fits: [(before: FitMemory, after: FitMemory)]) throws {
+        guard allowsSave, Set(plans.map { $0.before.id }).count == plans.count,
+              Set(fits.map { $0.before.id }).count == fits.count else { throw StoreError.invalidRecord }
+        let owner = try todayConfiguration().ownerID
+        let context = ModelContext(container)
+        for change in plans {
+            let before = change.before, id = before.id
+            guard let index = (0..<7).first(where: { PreviewSampleContent.id(301 + $0) == id }),
+                  before.ownerID == owner, before.revision == 1, before.occasion == PreviewSampleContent.legacyPlanOccasion(index),
+                  before.state == .planned, !before.requiresReview,
+                  let record = try context.fetch(FetchDescriptor<StoredOutfitPlanEntry>(predicate: #Predicate { $0.id == id })).first,
+                  try record.value() == before else { throw StoreError.staleRevision }
+            var expected = before; expected.occasion = PreviewSampleContent.planContexts[index]; expected.revision += 1
+            guard expected == change.after else { throw StoreError.invalidRecord }
+            try expected.validated(); record.payload = try JSONEncoder().encode(expected)
+        }
+        for change in fits {
+            let before = change.before, id = before.id
+            guard let index = (0..<8).first(where: { PreviewSampleContent.id(401 + $0) == id }),
+                  before.ownerID == owner, before.revision == 1, before.note == PreviewSampleContent.legacyFitNote,
+                  let record = try context.fetch(FetchDescriptor<StoredFitMemory>(predicate: #Predicate { $0.id == id })).first,
+                  try record.value() == before else { throw StoreError.staleRevision }
+            var expected = before; expected.note = PreviewSampleContent.fitNotes[index]; expected.revision += 1
+            guard expected == change.after else { throw StoreError.invalidRecord }
+            try expected.validated(); record.payload = try JSONEncoder().encode(expected)
+        }
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+    }
+    func replacePreviewSamplePhotos(_ replacements: [(piece: WardrobePiece, photoID: UUID)]) throws {
+        guard allowsSave, Set(replacements.map { $0.piece.id }).count == replacements.count else { throw StoreError.invalidRecord }
+        let context = ModelContext(container)
+        for replacement in replacements {
+            let piece = replacement.piece, id = piece.id
+            guard PreviewSampleContent.sampleIDs["pieces", default: []].contains(id), piece.revision == 1,
+                  piece.photoRecipe == .fitOriginal,
+                  let record = try context.fetch(FetchDescriptor<StoredPiece>(predicate: #Predicate { $0.id == id })).first,
+                  try record.value() == piece else { throw StoreError.staleRevision }
+            _ = try originalPhoto(id: replacement.photoID); _ = try thumbnailPhoto(id: replacement.photoID)
+            let result = WardrobePiece(id: id, name: piece.name, category: piece.category, photoID: replacement.photoID,
+                details: piece.details, availability: piece.availability, revision: piece.revision + 1,
+                isArchived: piece.isArchived, createdAt: piece.createdAt, updatedAt: Date(), photoRecipe: .fitOriginal)
+            try queueCleanup(photoID: piece.photoID, context: context)
+            record.apply(result)
+        }
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+    }
+    /// Owner-requested sample population. All graph records commit together;
+    /// existing records/drafts and actual wear remain unchanged.
+    func insertPreviewSamples(_ samples: PreviewSampleContent.Bundle) throws {
+        guard allowsSave else { throw StoreError.corruptStore }
+        let owner = try todayConfiguration().ownerID
+        let existing = try PreviewSampleContent.existingIDs(in: self)
+        guard existing.values.allSatisfy(\.isEmpty) else { throw StoreError.operationConflict }
+        let pieceIDs = Set(samples.pieces.map(\.id))
+        let availableIDs = Set(samples.pieces.filter { $0.availability == .available }.map(\.id))
+        let outfitIDs = Set(samples.outfits.map(\.id))
+        guard pieceIDs.count == samples.pieces.count, outfitIDs.count == samples.outfits.count,
+              pieceIDs == Set(PreviewSampleContent.sampleIDs["pieces", default: []]),
+              outfitIDs == Set(PreviewSampleContent.sampleIDs["outfits", default: []]),
+              Set(samples.themes.map(\.id)) == Set(PreviewSampleContent.sampleIDs["themes", default: []]),
+              Set(samples.plans.map(\.id)) == Set(PreviewSampleContent.sampleIDs["plans", default: []]),
+              Set(samples.fits.map(\.id)) == Set(PreviewSampleContent.sampleIDs["fits", default: []]) else { throw StoreError.invalidRecord }
+        for piece in samples.pieces {
+            try PieceDraft(name: piece.name, category: piece.category, photoID: piece.photoID, details: piece.details).validated()
+            try piece.photoRecipe.validated()
+            _ = try photoRendition(id: piece.photoID, recipe: piece.photoRecipe)
+        }
+        for outfit in samples.outfits {
+            try outfit.validated()
+            guard outfit.ownerID == owner, Set(outfit.pieceIDs).isSubset(of: availableIDs) else { throw StoreError.invalidRecord }
+        }
+        var names = Set(try themes().map { OutfitTheme.nameKey($0.name) })
+        for theme in samples.themes {
+            try theme.validated()
+            guard theme.ownerID == owner, Set(theme.outfitIDs).isSubset(of: outfitIDs),
+                  names.insert(OutfitTheme.nameKey(theme.name)).inserted else { throw StoreError.invalidRecord }
+        }
+        let existingPlans = try planEntries()
+        for plan in samples.plans {
+            try plan.validated()
+            guard plan.ownerID == owner, plan.state == .planned,
+                  samples.outfits.contains(where: { $0.id == plan.outfitID && $0.revision == plan.outfitRevision }),
+                  !existingPlans.contains(where: { $0.day == plan.day && $0.occasion == plan.occasion }) else { throw StoreError.invalidRecord }
+        }
+        for fit in samples.fits {
+            try fit.validated()
+            guard fit.ownerID == owner, let snapshot = fit.outfit,
+                  let outfit = samples.outfits.first(where: { $0.id == snapshot.id }),
+                  try FitOutfitSnapshot(outfit: outfit, pieces: samples.pieces) == snapshot else { throw StoreError.invalidRecord }
+            if let photo = fit.photoID { _ = try photoRendition(id: photo, recipe: fit.photoRecipe) }
+        }
+        let context = ModelContext(container)
+        for value in samples.pieces { context.insert(StoredPiece(value)) }
+        for value in samples.outfits { context.insert(try StoredOutfit(value)) }
+        for value in samples.themes { context.insert(try StoredOutfitTheme(value)) }
+        for value in samples.plans { context.insert(try StoredOutfitPlanEntry(value)) }
+        for value in samples.fits { context.insert(try StoredFitMemory(value)) }
+        try beforeOutfitSave(); try commit(context); try afterOutfitSave()
+    }
+}
+#endif

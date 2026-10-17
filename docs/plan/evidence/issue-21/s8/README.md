@@ -1,7 +1,0 @@
-# S3 stable inch remainder
-
-[Codex finding](https://github.com/vn-aj-vngrd/aqd/pull/33#discussion_r4285110496) reproduced four failing public assertions:137500000000000000cm yielded negative8in after subtractive cancellation, trapping unit switching. Stable modulo keeps the inch remainder within range; display carry and nonzero-value handling remain intact. Canonical cm is unchanged.
-
-Core36 pass, including905 accepted-value round-trip samples spanning subnormal through greatestFiniteMagnitude. These are deterministic samples, not exhaustive floating-point proof. Physical native96 and the expanded height journey1/1 pass, zero failures/skips. The journey covers large/tiny/whole-foot cases with restart/switch back, then ordinary height/custom picker/review/save and Settings reopening. Final unsigned Release builds; tooling57 and documentation checks pass. Independent bounded Standards/Spec reviews found no remaining concrete defect.
-
-[Original inspected image](large-height-remainder.png) shows positive8in with enabled units/Continue. Very long feet text uses native unfocused truncation; complete-value and canonical-return assertions prove the actual value. [Receipt](receipt.json) records source/product/image hashes and real results. Earlier [feature proof](../README.md), [S6](../s6/README.md) and [S7](../s7/README.md) keep their actual revisions; unaffected source/results are explicitly reused. Final-head CI/Codex remain required. No local simulator, ordinary-data reset or private capture publication.
