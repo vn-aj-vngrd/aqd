@@ -33,11 +33,28 @@ public struct AgentMutationRequest: Codable, Equatable, Sendable {
     public var date: String?
     public var assignments: [AgentPlanAssignment]
     public var availability: PieceAvailability?
+    /// Inclusive range a new plan must cover completely; days arrive in batches and are only reviewed once none are missing.
+    public var rangeStart: String?
+    public var rangeEnd: String?
     public init(kind: AgentMutationKind, targetID: UUID? = nil, name: String? = nil, caption: String? = nil, color: String? = nil, brand: String? = nil,
                 pieceIDs: [UUID] = [], outfitIDs: [UUID] = [], date: String? = nil,
-                assignments: [AgentPlanAssignment] = [], availability: PieceAvailability? = nil) {
+                assignments: [AgentPlanAssignment] = [], availability: PieceAvailability? = nil, rangeStart: String? = nil, rangeEnd: String? = nil) {
         self.kind = kind; self.targetID = targetID; self.name = name; self.caption = caption; self.color = color; self.brand = brand
         self.pieceIDs = pieceIDs; self.outfitIDs = outfitIDs; self.date = date; self.assignments = assignments; self.availability = availability
+        self.rangeStart = rangeStart; self.rangeEnd = rangeEnd
+    }
+    private static func day(_ text: String, timeZone: TimeZone) throws -> LocalPlanDay {
+        let parts = text.split(separator: "-", omittingEmptySubsequences: false).compactMap { Int($0) }
+        guard parts.count == 3 else { throw PlanValidationError.invalidDay }
+        let result = LocalPlanDay(year: parts[0], month: parts[1], day: parts[2], timeZoneID: timeZone.identifier)
+        guard result.key == text else { throw PlanValidationError.invalidDay }; _ = try result.date(); return result
+    }
+    /// Days of the requested range that no assignment covers yet; nil when the request names no range. Throws when the range is invalid or too long.
+    public func missingDays(timeZone: TimeZone = .current) throws -> [String]? {
+        guard let rangeStart, let rangeEnd else { return nil }
+        let range = try PlanDefinition(ownerID: UUID(), name: "Range", start: Self.day(rangeStart, timeZone: timeZone), end: Self.day(rangeEnd, timeZone: timeZone)).days().map(\.key)
+        let covered = Set(assignments.map(\.date))
+        return range.filter { !covered.contains($0) }
     }
     public func prepare(ownerID: UUID, pieces: [WardrobePiece] = [], outfits: [Outfit] = [], themes: [OutfitTheme] = [],
                         plans: [PlanDefinition] = [], entries: [OutfitPlanEntry] = [], identity: LocalProfileIdentity? = nil,
@@ -45,12 +62,7 @@ public struct AgentMutationRequest: Codable, Equatable, Sendable {
         guard pieceIDs.count <= 24, outfitIDs.count <= 24, assignments.count <= 14,
               Set(pieceIDs).count == pieceIDs.count, Set(outfitIDs).count == outfitIDs.count,
               (name?.count ?? 0) <= 80, (caption?.count ?? 0) <= 160 else { throw PlanValidationError.invalidRecord }
-        func day(_ text: String) throws -> LocalPlanDay {
-            let parts = text.split(separator: "-", omittingEmptySubsequences: false).compactMap { Int($0) }
-            guard parts.count == 3 else { throw PlanValidationError.invalidDay }
-            let result = LocalPlanDay(year: parts[0], month: parts[1], day: parts[2], timeZoneID: timeZone.identifier)
-            guard result.key == text else { throw PlanValidationError.invalidDay }; _ = try result.date(); return result
-        }
+        func day(_ text: String) throws -> LocalPlanDay { try Self.day(text, timeZone: timeZone) }
         switch kind {
         case .editPiece:
             guard let piece = pieces.first(where: { $0.id == targetID && !$0.isArchived }), name != nil || color != nil || brand != nil else { throw PlanValidationError.invalidRecord }
@@ -82,6 +94,7 @@ public struct AgentMutationRequest: Codable, Equatable, Sendable {
             guard !assignments.isEmpty else { throw PlanAuthoringError.invalidSlots }
             let days = try assignments.map { try day($0.date) }
             guard Set(days.map(\.key)).count == days.count else { throw PlanAuthoringError.invalidSlots }
+            if let missing = try missingDays(timeZone: timeZone), !missing.isEmpty || days.contains(where: { $0.key < rangeStart ?? "" || $0.key > rangeEnd ?? "" }) { throw PlanAuthoringError.invalidSlots }
             var draft: PlanAuthoringDraft
             if kind == .editPlan {
                 guard let value = plans.first(where: { $0.id == targetID && $0.ownerID == ownerID }), value.routine == nil, value.trip == nil else { throw PlanValidationError.invalidRecord }

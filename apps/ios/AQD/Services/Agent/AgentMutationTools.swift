@@ -140,6 +140,7 @@ extension AgentToolbox {
             case .editOutfit: AgentEditOutfitTool(handlers: handlers)
             case .editTheme: AgentEditThemeTool(handlers: handlers)
             case .editPlan: AgentEditPlanTool(handlers: handlers)
+            case .proposePlan: AgentProposePlanTool(handlers: handlers)
             case .recordWear: AgentRecordWearTool(handlers: handlers)
             case .editProfile: AgentEditProfileTool(handlers: handlers)
             }
