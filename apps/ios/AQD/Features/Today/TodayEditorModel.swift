@@ -131,20 +131,8 @@ import Observation
     func save() async {
         guard !pending, !importing, saved == nil else { return }
         if !draft.hasChanges && !unknown { finish(discarding: true); return }
-        pending = true; defer { pending = false }
-        do {
-            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-            if !unknown && draftFailed { try store.saveTodayDraft(draft); draftFailed = false }
-            if let receipt = try store.savedTodayLayout(draft) { saved = receipt }
-            else { saved = try store.saveTodayLayout(draft) }
-            unknown = false; error = nil; state.reloadToday()
-            finish()
-        } catch {
-            do {
-                if let receipt = try state.store?.savedTodayLayout(draft) { saved = receipt; unknown = false; state.reloadToday(); self.error = nil; finish() }
-                else { unknown = false; self.error = "Today was not saved. Your previous layout and draft are retained. Retry or keep editing." }
-            } catch { unknown = true; self.error = "The save result could not be read. Check the result before editing or leaving." }
-        }
+        await runSave()
+        if saved != nil { finish() }
     }
     func finish(discarding: Bool = false) {
         do {
@@ -221,4 +209,20 @@ extension AppState {
             Task { await todayEditor?.save() }
         } catch { todayError = "Layout Undo could not complete. Your saved layout is retained." }
     }
+}
+
+extension TodayEditorModel: DraftSaving {
+    func persistDraft() throws {
+        guard draftFailed else { return }
+        try state.requireStore().saveTodayDraft(draft)
+        draftFailed = false
+    }
+    func commit() throws -> TodayConfiguration {
+        let store = try state.requireStore()
+        return try store.savedTodayLayout(draft) ?? store.saveTodayLayout(draft)
+    }
+    func receipt() throws -> TodayConfiguration? { try state.requireStore().savedTodayLayout(draft) }
+    func didFinishSave(recovered: Bool) { state.reloadToday() }
+    func notSavedMessage() -> String { "Today was not saved. Your previous layout and draft are retained. Retry or keep editing." }
+    var unknownMessage: String { "The save result could not be read. Check the result before editing or leaving." }
 }

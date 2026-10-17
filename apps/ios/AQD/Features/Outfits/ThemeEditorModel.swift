@@ -43,26 +43,19 @@ final class ThemeEditorModel: Identifiable {
         catch { self.error = "These edits couldn’t be retained. Keep this screen open and retry. Your saved theme hasn’t changed." }
     }
 
-    func save() async {
-        guard !pending, saved == nil else { return }
-        pending = true
-        defer { pending = false }
-        await Task.yield()
-        do {
-            if !unknown { try store.saveThemeDraft(draft) }
-            saved = try store.saveTheme(draft); unknown = false; error = nil
-        } catch {
-            do {
-                saved = try store.savedTheme(for: draft)
-                unknown = false
-                self.error = saved == nil ? "The theme wasn’t saved. Use a unique name of up to 40 characters and current outfits, then retry." : nil
-            } catch { unknown = true; self.error = "The result is unknown. Check this same save before making further changes." }
-        }
-    }
+    func save() async { await runSave() }
 
     func finish(discarding: Bool = false) -> Bool {
         guard !pending, !unknown else { return false }
         do { try store.finishThemeDraft(draft, discarding: discarding); return true }
         catch { self.error = "This task couldn’t be closed. Your data is retained; retry."; return false }
     }
+}
+
+extension ThemeEditorModel: DraftSaving {
+    func persistDraft() throws { try store.saveThemeDraft(draft) }
+    func commit() throws -> OutfitTheme { try store.saveTheme(draft) }
+    func receipt() throws -> OutfitTheme? { try store.savedTheme(for: draft) }
+    func notSavedMessage() -> String { "The theme wasn’t saved. Use a unique name of up to 40 characters and current outfits, then retry." }
+    var unknownMessage: String { "The result is unknown. Check this same save before making further changes." }
 }

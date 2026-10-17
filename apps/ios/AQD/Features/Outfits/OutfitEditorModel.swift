@@ -62,31 +62,8 @@ final class OutfitEditorModel: Identifiable {
     }
 
     func save() async {
-        guard !pending, !generating, saved == nil else { return }
-        pending = true
-        defer { pending = false }
-        await Task.yield()
-        do {
-            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-            if !unknown { try store.saveOutfitDraft(draft) }
-            saved = try store.saveOutfit(draft)
-            error = nil; unknown = false
-            state.reloadOutfits()
-        } catch {
-            do {
-                guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-                if let receipt = try store.savedOutfit(for: draft) {
-                    saved = receipt; self.error = nil; unknown = false
-                    state.reloadOutfits()
-                } else {
-                    unknown = false
-                    self.error = "The outfit wasn’t saved. Your draft is retained. Check its name and selected pieces, then retry."
-                }
-            } catch {
-                unknown = true
-                self.error = "The save result is unknown. Check the same operation again before editing or starting another save."
-            }
-        }
+        guard !generating else { return }
+        await runSave()
     }
 
     func discard() {
@@ -279,4 +256,13 @@ extension AppState {
             buildOutfit(editing: outfit)
         } catch { outfitError = "The saved outfit couldn’t reopen. Your collection is retained; retry from its detail." }
     }
+}
+
+extension OutfitEditorModel: DraftSaving {
+    func persistDraft() throws { try state.requireStore().saveOutfitDraft(draft) }
+    func commit() throws -> Outfit { try state.requireStore().saveOutfit(draft) }
+    func receipt() throws -> Outfit? { try state.requireStore().savedOutfit(for: draft) }
+    func didFinishSave(recovered: Bool) { state.reloadOutfits() }
+    func notSavedMessage() -> String { "The outfit wasn’t saved. Your draft is retained. Check its name and selected pieces, then retry." }
+    var unknownMessage: String { "The save result is unknown. Check the same operation again before editing or starting another save." }
 }

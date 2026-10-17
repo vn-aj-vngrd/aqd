@@ -43,23 +43,7 @@ final class OutfitWearEditorModel: Identifiable {
                 try store.saveWearDraft(draft)
             } catch { self.error = "The matching record changed. Review the current history before retrying."; return }
         }
-        pending = true
-        defer { pending = false }
-        await Task.yield()
-        do {
-            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-            if !unknown { try store.saveWearDraft(draft) }
-            saved = try store.saveWear(draft); unknown = false; error = nil; state.reloadWear(); state.reloadPlanEntries()
-        } catch {
-            do {
-                guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-                saved = try store.savedWear(for: draft)
-                duplicate = try store.matchingWear(for: draft)
-                unknown = false
-                self.error = saved == nil ? "Wear wasn’t recorded. Check the day and current pieces, or use the matching existing record. Your draft is retained." : nil
-                state.reloadWear(); state.reloadPlanEntries()
-            } catch { unknown = true; self.error = "The result is unknown. Check the same operation before editing or recording again." }
-        }
+        await runSave()
     }
     func finishOpeningHistory() {
         guard saved != nil else { return }
@@ -111,4 +95,18 @@ extension AppState {
             wearEditor = try OutfitWearEditorModel(state: self, draft: draft)
         } catch { collectionError = "A wear draft couldn’t open. Your saved outfit and history haven’t changed." }
     }
+}
+
+extension OutfitWearEditorModel: DraftSaving {
+    func persistDraft() throws { try state.requireStore().saveWearDraft(draft) }
+    func commit() throws -> OutfitWearRecord { try state.requireStore().saveWear(draft) }
+    func receipt() throws -> OutfitWearRecord? {
+        let store = try state.requireStore()
+        let found = try store.savedWear(for: draft)
+        duplicate = try store.matchingWear(for: draft)
+        return found
+    }
+    func didFinishSave(recovered: Bool) { state.reloadWear(); state.reloadPlanEntries() }
+    func notSavedMessage() -> String { "Wear wasn’t recorded. Check the day and current pieces, or use the matching existing record. Your draft is retained." }
+    var unknownMessage: String { "The result is unknown. Check the same operation before editing or recording again." }
 }

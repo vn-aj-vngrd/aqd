@@ -58,20 +58,8 @@ final class FitEditorModel: Identifiable {
         }
     }
     func save() async {
-        guard !pending, !importing, saved == nil else { return }; pending = true
-        await Task.yield()
-        do {
-            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-            if !unknown { try store.saveFitDraft(draft) }
-            saved = try store.saveFit(draft); unknown = false; error = nil; state.reloadFits()
-        } catch {
-            do {
-                guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-                saved = try store.savedFit(for: draft); unknown = false; state.reloadFits()
-                self.error = saved == nil ? "Fit was not saved. Review the date, current outfit and photo, and keep notes within 500 characters. Your draft is retained." : nil
-            } catch { unknown = true; self.error = "The result is unknown. Check the same save before editing." }
-        }
-        pending = false
+        guard !importing else { return }
+        await runSave()
         if saved != nil { finish() }
     }
     func finish(discarding: Bool = false) {
@@ -122,4 +110,13 @@ extension AppState {
             if current == nil { wearEditor?.error = "Choose the pieces you actually wore. This memory does not imply a wear or reconstruct deleted garments." }
         } catch { fitError = "This memory changed or could not be read. Reload it before recording wear." }
     }
+}
+
+extension FitEditorModel: DraftSaving {
+    func persistDraft() throws { try state.requireStore().saveFitDraft(draft) }
+    func commit() throws -> FitMemory { try state.requireStore().saveFit(draft) }
+    func receipt() throws -> FitMemory? { try state.requireStore().savedFit(for: draft) }
+    func didFinishSave(recovered: Bool) { state.reloadFits() }
+    func notSavedMessage() -> String { "Fit was not saved. Review the date, current outfit and photo, and keep notes within 500 characters. Your draft is retained." }
+    var unknownMessage: String { "The result is unknown. Check the same save before editing." }
 }

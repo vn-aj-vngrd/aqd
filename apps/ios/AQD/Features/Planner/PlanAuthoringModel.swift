@@ -102,24 +102,7 @@ final class PlanAuthoringModel: Identifiable {
         } catch { self.error = "The reviewed source couldn’t refresh. Keep this draft or cancel and reopen the current routine." }
     }
 
-    func save() async {
-        guard !pending, saved == nil else { return }
-        pending = true; defer { pending = false }
-        await Task.yield()
-        do {
-            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-            if !unknown { try store.savePlanAuthoringDraft(draft) }
-            saved = try store.savePlanAuthoring(draft); unknown = false; error = nil; state.reloadPlanEntries()
-        } catch {
-            do {
-                guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-                saved = try store.savedPlanAuthoring(draft); unknown = false
-                state.reloadPieces()
-                self.error = saved == nil ? (availabilityConflicts.isEmpty ? "The plan wasn’t saved. Review its dates, current outfits, intentional gaps and conflict choices, then retry." : availabilityConflicts.joined(separator: "\n")) : nil
-                state.reloadPlanEntries(); state.reloadOutfits()
-            } catch { unknown = true; self.error = "The result is unknown. Check this same save before editing or starting another plan." }
-        }
-    }
+    func save() async { await runSave() }
     func finish(discarding: Bool = false, openPlan: Bool = false) {
         guard !pending, !unknown else { return }
         do {
@@ -183,4 +166,20 @@ extension AppState {
             planAuthoringEditor = try PlanAuthoringModel(state: self, draft: draft)
         } catch { collectionError = "The routine couldn’t open for this edit scope. Your saved entries and history are retained." }
     }
+}
+
+extension PlanAuthoringModel: DraftSaving {
+    func persistDraft() throws { try state.requireStore().savePlanAuthoringDraft(draft) }
+    func commit() throws -> PlanAuthoringReceipt { try state.requireStore().savePlanAuthoring(draft) }
+    func receipt() throws -> PlanAuthoringReceipt? { try state.requireStore().savedPlanAuthoring(draft) }
+    func didFinishSave(recovered: Bool) {
+        if recovered { state.reloadPieces(); state.reloadOutfits() }
+        state.reloadPlanEntries()
+    }
+    func notSavedMessage() -> String {
+        availabilityConflicts.isEmpty
+            ? "The plan wasn’t saved. Review its dates, current outfits, intentional gaps and conflict choices, then retry."
+            : availabilityConflicts.joined(separator: "\n")
+    }
+    var unknownMessage: String { "The result is unknown. Check this same save before editing or starting another plan." }
 }

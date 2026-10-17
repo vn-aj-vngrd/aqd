@@ -32,27 +32,7 @@ final class OutfitPlanEditorModel: Identifiable {
             try store.savePlanDraft(draft); error = nil
         } catch { self.error = "These plan edits couldn’t be retained. Keep the screen open and retry." }
     }
-    func save() async {
-        guard !pending, saved == nil else { return }
-        pending = true
-        defer { pending = false }
-        await Task.yield()
-        do {
-            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-            if !unknown { try store.savePlanDraft(draft) }
-            saved = try store.savePlan(draft)
-            unknown = false; error = nil; state.reloadPlanEntries()
-        } catch {
-            do {
-                guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-                saved = try store.savedPlan(for: draft)
-                unknown = false
-                state.reloadPieces()
-                self.error = saved == nil ? (availabilityConflict ?? "The plan wasn’t saved. Check its current outfit and date, and explicitly keep both if that occasion already has a plan. Your draft is retained.") : nil
-                state.reloadPlanEntries()
-            } catch { unknown = true; self.error = "The save result is unknown. Check the same operation before editing or starting another plan." }
-        }
-    }
+    func save() async { await runSave() }
     func finish(discarding: Bool = false, openPlanner: Bool = false) {
         guard !pending, !unknown else { return }
         do {
@@ -117,4 +97,18 @@ extension AppState {
             recentPlan = nil; planUndoRequest = nil; planUndoDeadline = nil; planUndoPending = false; reloadPlanEntries()
         } catch { planError = "Undo isn’t acknowledged. Retry the same Undo before changing this entry." }
     }
+}
+
+extension OutfitPlanEditorModel: DraftSaving {
+    func persistDraft() throws { try state.requireStore().savePlanDraft(draft) }
+    func commit() throws -> OutfitPlanEntry { try state.requireStore().savePlan(draft) }
+    func receipt() throws -> OutfitPlanEntry? { try state.requireStore().savedPlan(for: draft) }
+    func didFinishSave(recovered: Bool) {
+        if recovered { state.reloadPieces() }
+        state.reloadPlanEntries()
+    }
+    func notSavedMessage() -> String {
+        availabilityConflict ?? "The plan wasn’t saved. Check its current outfit and date, and explicitly keep both if that occasion already has a plan. Your draft is retained."
+    }
+    var unknownMessage: String { "The save result is unknown. Check the same operation before editing or starting another plan." }
 }

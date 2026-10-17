@@ -26,6 +26,10 @@ final class AppState {
     var themeError: String?
     var themeEditor: ThemeEditorModel?
     var store: PieceStore?
+    func requireStore() throws -> PieceStore {
+        guard let store else { throw PieceStore.StoreError.corruptStore }
+        return store
+    }
     var localDataRoot: URL?
     var dataCoordinator: LocalDataCoordinator?
     var restoreModel: LocalRestoreModel?

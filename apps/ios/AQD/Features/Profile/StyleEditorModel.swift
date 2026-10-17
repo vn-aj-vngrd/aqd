@@ -46,32 +46,8 @@ final class StyleEditorModel: Identifiable {
     }
 
     func save() async {
-        guard !pending, saved == nil, draft.isComplete else { return }
-        pending = true
-        defer { pending = false }
-        await Task.yield()
-        do {
-            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-            if !unknown { try store.saveStyleDraft(draft) }
-            saved = try store.saveStylePreferences(draft)
-            unknown = false; error = nil
-        } catch {
-            // A lost acknowledgment must be reconciled against the same exact
-            // operation before editing or retry can produce another write.
-            do {
-                guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-                let value = try store.localExperience()
-                if let receipt = value.style, receipt.operationID == draft.operationID, receipt.answers == draft.answers {
-                    saved = receipt; unknown = false; self.error = nil
-                } else {
-                    unknown = false
-                    self.error = "Preferences weren’t saved. Your previous preferences and this draft are still here. Retry save, or keep editing."
-                }
-            } catch {
-                unknown = true
-                self.error = "The save result is unknown. Keep this draft while AQD checks the same save. No second update will be started."
-            }
-        }
+        guard draft.isComplete else { return }
+        await runSave()
     }
 
     func discard() {
@@ -106,4 +82,17 @@ final class StyleEditorModel: Identifiable {
         }
         state.styleEditor = nil
     }
+}
+
+extension StyleEditorModel: DraftSaving {
+    func persistDraft() throws { try state.requireStore().saveStyleDraft(draft) }
+    func commit() throws -> SavedStylePreferences { try state.requireStore().saveStylePreferences(draft) }
+    /// A lost acknowledgment is reconciled against the same exact operation before any retry can write again.
+    func receipt() throws -> SavedStylePreferences? {
+        guard let receipt = try state.requireStore().localExperience().style,
+              receipt.operationID == draft.operationID, receipt.answers == draft.answers else { return nil }
+        return receipt
+    }
+    func notSavedMessage() -> String { "Preferences weren’t saved. Your previous preferences and this draft are still here. Retry save, or keep editing." }
+    var unknownMessage: String { "The save result is unknown. Keep this draft while AQD checks the same save. No second update will be started." }
 }

@@ -50,19 +50,9 @@ final class LocalIdentityEditorModel: Identifiable {
         }
     }
     func save() async {
-        guard !pending, !importing, saved == nil else { return }
-        pending = true; defer { pending = false; if saved != nil { finish() } }; await Task.yield()
-        do {
-            guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-            if !unknown { try store.saveIdentityDraft(draft) }
-            saved = try store.saveIdentity(draft); unknown = false; error = nil; state.reloadIdentity()
-        } catch {
-            do {
-                guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-                saved = try store.savedIdentity(for: draft); unknown = false; state.reloadIdentity()
-                self.error = saved == nil ? "Profile was not saved. Your edits and previous identity are retained. Retry the same save." : nil
-            } catch { unknown = true; self.error = "The result is unknown. Check the same save before editing." }
-        }
+        guard !importing else { return }
+        await runSave()
+        if saved != nil { finish() }
     }
     func finish(discarding: Bool = false) {
         guard !pending, !unknown else { return }
@@ -97,4 +87,13 @@ extension AppState {
         do { if try store?.identityDraft() != nil { openIdentity() } }
         catch { identityError = "Your profile draft could not be recovered. Keep the app data." }
     }
+}
+
+extension LocalIdentityEditorModel: DraftSaving {
+    func persistDraft() throws { try state.requireStore().saveIdentityDraft(draft) }
+    func commit() throws -> LocalProfileIdentity { try state.requireStore().saveIdentity(draft) }
+    func receipt() throws -> LocalProfileIdentity? { try state.requireStore().savedIdentity(for: draft) }
+    func didFinishSave(recovered: Bool) { state.reloadIdentity() }
+    func notSavedMessage() -> String { "Profile was not saved. Your edits and previous identity are retained. Retry the same save." }
+    var unknownMessage: String { "The result is unknown. Check the same save before editing." }
 }
