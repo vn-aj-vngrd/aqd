@@ -52,6 +52,8 @@ import AQDCore
     }
     private func makeToolProposal(_ request: AgentMutationRequest, revision: Int?, conversationID: UUID, attemptID: UUID) throws -> String {
         try validateToolAttempt(conversationID: conversationID, attemptID: attemptID)
+        var request = request
+        if let staged = try stagePlanBatch(&request, attemptID: attemptID) { return staged }
         let preferences = try store.localSettings().agentPreferences ?? AgentPreferences()
         guard request.kind.requiredSources.allSatisfy(preferences.allows) else { throw PieceStore.StoreError.invalidRecord }
         if let proposal = conversation.proposals?.first(where: { $0.toolRequest == request && ($0.status == .proposed || $0.status == .executing) }) {
@@ -85,7 +87,8 @@ import AQDCore
         toolProposals.append((request, proposal.id))
         guard persist() else { throw PieceStore.StoreError.operationConflict }
         appendToolStep(AgentToolStep(tool: "proposal", summary: "Prepared a review: \(action.title)", count: 1), attemptID: attemptID)
-        return "Prepared review \(proposal.id): \(action.title). No domain changes applied. Ask the user to open this review card and tap Apply. Never claim it is saved."
+        let weather = request.kind == .createPlan ? (freshToolWeather() == nil ? " No fresh weather was used; do not call the plan weather-aware." : "") : ""
+        return "Prepared review \(proposal.id): \(action.title)." + weather + " No domain changes applied. Ask the user to open this review card and tap Apply. Never claim it is saved."
     }
 
     /// Records the receipt once the Closet editor acknowledges the save. A repeat for the same proposal never adds a second receipt.

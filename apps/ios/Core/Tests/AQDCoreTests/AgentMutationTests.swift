@@ -43,6 +43,19 @@ extension AgentMutationTests {
         #expect(draft.slots.map { $0.day.key } == ["2026-10-19", "2026-10-20"])
         #expect(draft.slots.allSatisfy { $0.outfit?.id == id } && draft.reviewing)
     }
+    @Test func rangedPlanReportsMissingDaysAndRefusesPartialCoverage() throws {
+        let owner = UUID(), id = UUID()
+        let piece = WardrobePiece(id: UUID(), name: "Shirt", category: .tops, photoID: UUID())
+        let outfit = Outfit(id: id, ownerID: owner, name: "Everyday", pieceIDs: [piece.id])
+        var request = AgentMutationRequest(kind: .createPlan, name: "Week", assignments: [.init(date: "2026-10-19", outfitID: id)], rangeStart: "2026-10-19", rangeEnd: "2026-10-21")
+        #expect(try request.missingDays() == ["2026-10-20", "2026-10-21"])
+        #expect(throws: (any Error).self) { try request.prepare(ownerID: owner, pieces: [piece], outfits: [outfit]) }
+        request.assignments += [.init(date: "2026-10-20", outfitID: id), .init(date: "2026-10-21", outfitID: id)]
+        #expect(try request.missingDays() == [])
+        guard case .plan(let draft) = try request.prepare(ownerID: owner, pieces: [piece], outfits: [outfit]) else { Issue.record("Expected plan"); return }
+        #expect(draft.slots.count == 3)
+        #expect(throws: (any Error).self) { try AgentMutationRequest(kind: .createPlan, rangeStart: "2026-10-01", rangeEnd: "2026-10-30").missingDays() }
+    }
     @Test func unavailablePieceCannotEnterAnOutfitAndForeignOutfitCannotEnterATheme() throws {
         let owner = UUID()
         let piece = WardrobePiece(id: UUID(), name: "Laundry shirt", category: .tops, photoID: UUID(), availability: .laundry)

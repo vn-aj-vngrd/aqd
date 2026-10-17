@@ -13,7 +13,7 @@ struct AgentToolHandlers: Sendable {
 }
 
 enum AgentToolID: String, CaseIterable, Sendable {
-    case findRecords, wearStats, weatherFor, editCloset, editOutfit, editTheme, editPlan, recordWear, editProfile, addPieceFromPhoto
+    case findRecords, wearStats, weatherFor, editCloset, editOutfit, editTheme, editPlan, proposePlan, recordWear, editProfile, addPieceFromPhoto
     case suggestOutfit, proposeOutfit, proposeTheme, relabel
 
     var isProposal: Bool { ![.findRecords, .wearStats, .weatherFor].contains(self) }
@@ -25,7 +25,8 @@ enum AgentToolID: String, CaseIterable, Sendable {
         case .editCloset: ["rename", "laundry", "unavailable", "available", "color", "colour", "brand", "piece", "shirt", "shoe"]
         case .editOutfit: ["outfit", "look", "combine"]
         case .editTheme: ["theme", "collection"]
-        case .editPlan: ["plan", "trip", "week", "pack", "schedule", "routine"]
+        case .editPlan: ["edit plan", "change plan", "update plan", "swap", "trip", "pack", "routine"]
+        case .proposePlan: ["plan", "week", "schedule", "days", "next", "outfits for"]
         case .recordWear: ["wore", "wearing", "log", "record"]
         case .editProfile: ["profile", "bio", "my name"]
         case .suggestOutfit: ["suggest", "recommend", "should i wear", "what to wear", "idea", "occasion", "mood", "pair", "go with", "outfit"]

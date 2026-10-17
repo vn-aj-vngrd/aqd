@@ -23,7 +23,9 @@ struct AgentActionReviewView: View {
                         else if receipt.kind == "theme" { NavigationLink("Open theme", value: ClosetRoute.theme(receipt.recordID)) }
                         else if receipt.kind == "piece" { NavigationLink("Open piece", value: ClosetRoute.piece(receipt.recordID)) }
                         else if receipt.kind == "profile" { Text("Your Profile now shows these saved details.") }
-                        else { Text("Open Planner or wear history to review the acknowledged records.") }
+                        else if receipt.kind == "plan", case .plan(let draft) = proposal.action {
+                            PrimaryAction(title: "Open in Planner") { state.plannerDay = draft.plan.start; state.plannerMode = .week; state.selection = 2 }
+                        } else { Text("Open Planner or wear history to review the acknowledged records.") }
                     } else if proposal.status == .proposed || proposal.status == .executing {
                         if proposal.status == .proposed { SecondaryAction(title: "Keep current records") { model.cancelProposal(id) } }
                         Text("Approval applies only to this exact version. Changed records require a new review. Check an unconfirmed operation before making another draft.").font(.footnote).foregroundStyle(AppTheme.secondary)
@@ -57,6 +59,8 @@ struct AgentActionReviewView: View {
         case .outfit(let draft): Text(draft.displayName).font(.headline); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }
         case .plan(let draft):
             Text(draft.plan.name).font(.headline)
+            Text("\(draft.plan.start.displayDate) – \(draft.plan.end.displayDate) · \(draft.slots.filter { $0.outfit != nil }.count) of \(draft.slots.count) days planned. All days save together or not at all.")
+                .font(.footnote).foregroundStyle(AppTheme.secondary)
             ForEach(draft.slots) { slot in VStack(alignment: .leading) { Text(slot.day.displayDate); Text(slot.day.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary); Text(slot.outfit?.displayName ?? "Intentionally unassigned") } }
         case .wear(let draft): Text(draft.day.displayDate); Text(draft.day.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }; Text("Records actual wear. This is separate from a plan or fit memory.")
         case .availability(let change): Text(change.pieceName).font(.headline); Text("Availability → " + change.value.rawValue.capitalized); Text("Affected future plans will require review; actual wear stays.")

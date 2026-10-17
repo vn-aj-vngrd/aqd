@@ -18,6 +18,7 @@ import Observation
     private let provider: @MainActor (String, Int) -> AsyncThrowingStream<String, any Error>
     var toolCalls = 0
     var toolProposals: [(AgentMutationRequest, UUID)] = []
+    var stagedPlanDays: [String: [AgentPlanAssignment]] = [:]
     private var generation: Task<Void, Never>?
     private var timeout: Task<Void, Never>?
     var slow = false
@@ -243,7 +244,9 @@ import Observation
         } catch {
             switch error {
             case is ThemeValidationError, is OutfitValidationError, is PlanValidationError, is PlanAuthoringError, is WearValidationError, PieceStore.StoreError.staleRevision, PieceStore.StoreError.staleDraft:
-                conversation.proposals?[i].status = .proposed; _ = persist()
+                // An outfit that changed since the review cannot be applied; the proposal closes so a fresh review can be prepared.
+                let outdated = error as? PieceStore.StoreError == .staleRevision && !(conversation.proposals?[i].sources ?? []).isEmpty
+                conversation.proposals?[i].status = outdated ? .cancelled : .proposed; _ = persist()
             default: break
             }
             self.error = "The reviewed change wasn’t confirmed. Changed records require a new review. For an unconfirmed save, check the same operation before making another draft."
@@ -329,7 +332,7 @@ import Observation
                 conversation.messages[conversation.messages.count - 1].diagnostics?.failure = .storage
                 conversation.interruptActiveAttempt(); return
             }
-            toolCalls = 0; toolProposals = []
+            toolCalls = 0; toolProposals = []; stagedPlanDays = [:]
             let conversationID = conversation.id, start = ContinuousClock.now
             slow = false
             var lastStreamSave: ContinuousClock.Instant?

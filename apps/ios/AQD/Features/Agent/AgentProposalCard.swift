@@ -34,6 +34,7 @@ struct AgentProposalCard: View {
             Text(proposal.action.title).font(AppTypography.section).foregroundStyle(AppTheme.ink)
             Text(detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             thumbnails
+            if case .plan(let draft) = proposal.action { planGrid(draft) }
             Text(proposal.status == .executing ? "Check save result" : "Not saved · Review before it changes anything")
                 .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             HStack(spacing: AppSpacing.small) {
@@ -64,6 +65,30 @@ struct AgentProposalCard: View {
                 }
             }
         }
+    }
+
+    /// First seven days of a plan: weekday initial over a mark for an assigned outfit or a gap. The full list lives in Review.
+    private func planGrid(_ draft: PlanAuthoringDraft) -> some View {
+        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+            HStack(spacing: AppSpacing.small) {
+                ForEach(draft.slots.prefix(7)) { slot in
+                    VStack(spacing: AppSpacing.xSmall) {
+                        Text(Self.weekdayInitial(slot.day)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                        Image(systemName: slot.outfit == nil ? "minus" : "tshirt").foregroundStyle(slot.outfit == nil ? AppTheme.secondary : AppTheme.ink)
+                    }.frame(maxWidth: .infinity).accessibilityElement(children: .ignore)
+                        .accessibilityLabel("\(slot.day.displayDate): \(slot.outfit?.displayName ?? "no outfit")")
+                }
+            }
+            if draft.slots.count > 7 {
+                Text("+\(draft.slots.count - 7) more days").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+            }
+        }
+    }
+
+    private static func weekdayInitial(_ day: LocalPlanDay) -> String {
+        var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(identifier: day.timeZoneID) ?? .current
+        guard let date = try? day.date() else { return "–" }
+        return calendar.veryShortWeekdaySymbols[calendar.component(.weekday, from: date) - 1]
     }
 
     private var receiptRow: some View {
