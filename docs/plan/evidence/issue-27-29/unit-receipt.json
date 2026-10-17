@@ -1737,5 +1737,71 @@
       "apps/ios/AQD/UI/AgentWorkingIndicator.swift": "22ded9390f0b8373927411524adcd55d2f16f1f99206f896cd23960e64e35280",
       "apps/ios/AQD/UI/LocalAgentView.swift": "ee52af1924c3e7999528671a5442df3758722dae30f8e898355f0291fdeab374"
     }
+  },
+  "agentComposerAttachments": {
+    "codeCommit": "a0d94b2a68e030893597bde9089fc21b7684cd0b",
+    "inputCommit": "12e436f",
+    "composerCommit": "b143f81",
+    "selectionOrderCommit": "33edfc8",
+    "coreTests": 101,
+    "coreSuites": 30,
+    "coreResult": "Passed",
+    "coreLog": "/tmp/aqd-composer-attachments-core.log",
+    "syntheticContextEvaluation": {
+      "passed": 10,
+      "total": 10,
+      "promptVersion": "aqd-grounding-3",
+      "liveModelEvaluated": false,
+      "report": "docs/plan/evidence/issue-27-29/agent-attachment-evaluation.json"
+    },
+    "nativeTestCompilation": "/tmp/aqd-composer-attachment-order-test-build.log",
+    "nativeTestCompilationResult": "TEST BUILD SUCCEEDED",
+    "nativeTests": "Compiled only; execution skipped by owner",
+    "signedGenericDebug": "/tmp/aqd-composer-attachments-layout-debug.log",
+    "debugResult": "BUILD SUCCEEDED",
+    "unsignedRelease": "/tmp/aqd-composer-attachments-layout-release.log",
+    "install": "/tmp/aqd-composer-attachments-install.json",
+    "runtimeComplete": false,
+    "launch": "Not attempted; owner opens app",
+    "toolchain": "Xcode 27.0 / iPhoneOS27.0 SDK",
+    "limits": [
+      "Four references per message",
+      "Images normalized to bounded local JPEG references; original files not retained",
+      "Documents use bounded text excerpts, with partial disclosure",
+      "Direct image input requires available iOS27 on-device model; older runtime uses explicit text/OCR fallback",
+      "Image tokens share the on-device context limit; too-large requests retain history and report a context error",
+      "Feedback export does not automatically include image pixels",
+      "No cloud model or automatic sending"
+    ],
+    "review": "Self-reviewed Standards and Spec: backward decode, JSON ownership/deletion, image/excerpt bounds, selected order, durable retries with newer drafts, active-import Send/navigation guards, cancellation/picker lifecycle, labelled image input and actual token checks, retained sent/draft previews, semantic surfaces and accessibility fallbacks. No remaining source findings. Actual native camera/picker/image quality and rendered acceptance unverified.",
+    "sourceSHA256": {
+      "apps/ios/AQD/AgentAttachmentImporter.swift": "c1b822b36482f53fc5c55bf0683f0d07a90fda9029362875c093acfa6d247786",
+      "apps/ios/AQD/AgentAttachmentReader.swift": "6c847b4395f3291a82030eae9af3ac4eebcc92d9db323d025191966a05ff1b4d",
+      "apps/ios/AQD/AgentKnowledgeSource.swift": "0545f5195e42eb1d4c95600ef80ca294b6d08dfc3d20957ec1937442c7ed6613",
+      "apps/ios/AQD/AgentModel.swift": "967cf9068aca64da79b659142b927116e3db01210bb0cc0e09fa73a4b22c6ae3",
+      "apps/ios/AQD/NativeAgentProvider.swift": "741e623f06c92133b917b892819bcc304644838bf0acb93964293cac251b5f03",
+      "apps/ios/AQD/UI/AgentAttachmentView.swift": "188fb2c2834ed0feea2bebfba81fbb27bbd0293ce3ee6202d7899e4c30621b50",
+      "apps/ios/AQD/UI/AgentSettingsView.swift": "0780b1fe5bc475ad12dd81bcc29fde1b3a79247617eed9debbe3ce694f69c31d",
+      "apps/ios/AQD/UI/LocalAgentView.swift": "878a4c8d20190b9466b66646224c4f8b3bc6a3b634d86f447085326692bbdb0c",
+      "apps/ios/AQDTests/AgentAttachmentReaderTests.swift": "13420a15263ac527eb70751475eabc6c80a142f5407ddd11bea5509da67d26b9",
+      "apps/ios/AQDTests/AgentReliabilityPersistenceTests.swift": "569a7cf4ee18ba0935fe3f9e6dce291c84a354327d09bf717c18a868650a6d75",
+      "apps/ios/Core/Sources/AQDCore/AgentAttachment.swift": "ccf72ce78af806a10452757670f63c7037d3546bc1821b88338a58bcc744bd9a",
+      "apps/ios/Core/Sources/AQDCore/AgentConversation.swift": "7bf74b67c59a4b214cf56ce5d5c731f43b217117e225691ab4df11180774d461",
+      "apps/ios/Core/Sources/AQDCore/AgentHistoryPresentation.swift": "d2f05f56c486d42ab79c645af514da2223c7579b6a911d6b825c2ff2d6c527be",
+      "apps/ios/Core/Sources/AQDCore/AgentReliability.swift": "64318aa05bfb5e1400a9a8023e9b131e79a5c70ba584cc6f8df504167e47c31a",
+      "apps/ios/Core/Tests/AQDCoreTests/AgentAttachmentTests.swift": "85c6175f3aab9492096bcc3fab9a249de3ec3f997c457020e7f0108f980dd94c"
+    },
+    "releaseResult": "BUILD SUCCEEDED",
+    "installResult": "Succeeded",
+    "recordedOn": "2026-10-17",
+    "nativeTestScope": "Attachment lifecycle, persistence, selected order, cancellation and preparation regressions compiled; final strip-height-only presentation correction compiled separately in Debug/Release.",
+    "artifactSHA256": {
+      "/tmp/aqd-composer-attachments-core.log": "e39f5cab3b4f05bc99a0903624640f37fc4fd7c5f0be04e6579d23b7863258a5",
+      "/tmp/aqd-composer-attachments-evaluation.log": "f27946241e3d7fd66ef5d3e3a8f8f4ec3d679e86c07594cab034ec7f9edb2b9d",
+      "/tmp/aqd-composer-attachment-order-test-build.log": "9b252c867446f0ac1fd477a31e34e0090eeca7a3fc337446394c263d79f7d83e",
+      "/tmp/aqd-composer-attachments-layout-debug.log": "34e82be7276b9d11bb502a2d36170d26b044b0716ae62e244357fa83ca38b9f4",
+      "/tmp/aqd-composer-attachments-layout-release.log": "2856249054d1473de55eefd360d8d28022aad8ef6a91e63bb87d7ac0da3c541f",
+      "/tmp/aqd-composer-attachments-install.json": "eef6c6e012d5d49db85c0685609fcf5303ff20f5d623bca4598942ebdb74ed3e"
+    }
   }
 }

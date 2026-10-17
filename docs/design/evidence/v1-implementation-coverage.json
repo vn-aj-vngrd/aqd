@@ -2684,5 +2684,11 @@
     "codeCommit": "bb1be452ac0bdc87c17c45aed39d8a179d9d409b",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false
+  },
+  "agentComposerAttachments": {
+    "codeCommit": "a0d94b2a68e030893597bde9089fc21b7684cd0b",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "syntheticEvaluation": "docs/plan/evidence/issue-27-29/agent-attachment-evaluation.json",
+    "runtimeComplete": false
   }
 }
