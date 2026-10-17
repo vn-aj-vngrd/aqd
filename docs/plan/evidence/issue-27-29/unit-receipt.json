@@ -1910,5 +1910,16 @@
     "nativeTestsExecuted": false,
     "runtimeComplete": false,
     "sourceSHA256": "273dd58d08ad49e6aef65a7016fbe6d1a376c4ac9ca1e401db5afec1d229d5de"
+  },
+  "feedbackEmptyPage": {
+    "codeCommit": "6891c4000d5171cd75150beb0b9d1640c99e5d41",
+    "debugBuild": "/tmp/aqd-feedback-empty-page-debug.log",
+    "debugResult": "BUILD SUCCEEDED",
+    "install": "/tmp/aqd-feedback-empty-page-install.json",
+    "installResult": "success",
+    "appLaunched": false,
+    "nativeTestsExecuted": false,
+    "runtimeComplete": false,
+    "sourceSHA256": "100ff5e049ebb05965d217d929d05f66d6612aea46f722d81cfef24a71caff1c"
   }
 }
