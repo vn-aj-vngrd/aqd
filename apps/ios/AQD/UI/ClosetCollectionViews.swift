@@ -190,7 +190,7 @@ struct ThemeCollectionCard: View {
     var body: some View {
         NavigationLink(value: ClosetRoute.theme(theme.id)) {
             ClosetCard(title: theme.displayName, detail: "\(theme.outfitIDs.count) outfits") {
-                CollectionArtwork(pieceIDs: members.first?.pieceIDs ?? [], badge: members.count > 1 ? "+\(members.count - 1) outfits" : nil)
+                ThemeCover(outfits: members)
             }
         }.buttonStyle(.plain).id(theme.id)
             .contextMenu {
