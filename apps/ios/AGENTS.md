@@ -12,7 +12,7 @@ AQD/
   Features/<X>/   One folder per feature: Closet, Outfits, Planner, Wear, Today, Agent, Profile, Settings, Onboarding, Weather
   DesignSystem/   Foundation/ (AppTheme, AppMetrics), Components/ (shared controls and presentation)
   Services/       Adapters over Apple frameworks and the model: Agent, Weather, Archive, Media
-  Persistence/    SwiftData store, stored models, migrations, receipts
+  Persistence/    SwiftData store (one `PieceStore+<Aggregate>.swift` per aggregate), stored models, schemas, receipts
   Resources/      Assets, launch colors, bundled artwork
 Core/             Swift package: pure rules, validation, value types (the domain layer)
 AQDTests/         Mirrors the layers: App, DesignSystem, Features, Persistence, Services, Support
