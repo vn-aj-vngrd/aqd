@@ -365,18 +365,20 @@ struct AgentConversationView: View {
     }
 
     private var composer: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.small) {
+        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
             if voice {
                 AgentVoiceView(model: model, isPresented: $voice)
+                    .padding(.horizontal, AppSpacing.small)
             } else {
             if !(model.conversation.draftAttachments ?? []).isEmpty || !attachmentImporter.pending.isEmpty {
                 AgentAttachmentStrip(attachments: model.conversation.draftAttachments ?? [], pending: attachmentImporter.pending, order: attachmentImporter.order,
                                      remove: model.removeAttachment, cancelImport: attachmentImporter.remove, locked: model.active || model.hasPendingOperation)
+                    .padding(.horizontal, AppSpacing.small)
             }
             TextField("Ask Agent…", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical)
-                .lineLimit(1...6).focused($focused).padding(.horizontal, AppSpacing.xSmall)
+                .lineLimit(1...6).focused($focused).padding(.horizontal, AppSpacing.large)
                 .accessibilityLabel("Message Agent")
-            HStack(spacing: AppSpacing.small) {
+            HStack(spacing: 0) {
                 Menu {
                     ForEach(AgentAttachmentSource.allCases) { source in
                         AccessoryButton(source.rawValue, systemImage: source.icon) {
@@ -400,10 +402,13 @@ struct AgentConversationView: View {
                 }.buttonStyle(.plain).accessibilityLabel(model.active ? "Stop response" : "Send to Agent")
                     .disabled(!model.active && !canSend)
             }
+            .padding(.horizontal, AppSpacing.xSmall)
             }
-        }.padding(AppSpacing.medium)
+        }
+            .padding(.top, AppSpacing.medium)
+            .padding(.bottom, AppSpacing.xSmall)
             .background { composerBackground }
-            .padding(.horizontal, AppSpacing.large).padding(.bottom, AppSpacing.small)
+            .padding(.horizontal, AppSpacing.xSmall).padding(.bottom, AppSpacing.xSmall)
     }
     @ViewBuilder private var composerBackground: some View {
         if #available(iOS 26, *), !reduceTransparency, contrast != .increased {
