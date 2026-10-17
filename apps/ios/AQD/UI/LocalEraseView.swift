@@ -6,6 +6,7 @@ struct LocalEraseView: View {
     let onInstall: (PieceStore, LocalDataCoordinator, Int) -> Void
     @State private var phrase = ""
     @State private var confirm = false
+    @FocusState private var confirmationFocused: Bool
     var body: some View {
         NavigationStack {
             ScrollView { VStack(alignment: .leading, spacing: 20) {
@@ -13,27 +14,7 @@ struct LocalEraseView: View {
                 case .choose, .validating:
                     ProgressView("Preparing reset review…")
                 case .review:
-                    Label("Start from scratch", systemImage: "trash").font(AppTypography.section)
-                    Text("Reset AQD’s local data and return to Welcome to go through onboarding again.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    if let summary = model.review?.originalSummary { LocalDataSummaryView(summary: summary) }
-                    else { Text("Current data could not be fully validated. Reset replaces all AQD local data on this iPhone.") }
-                    Text("Removes your closet, outfits, plans, wear history, fit journal, chats, feedback, profile, preferences, Today content and AQD-owned photo copies.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    Text("Original Photos, exported archives and iPhone permission settings stay. There is no automatic cloud copy to restore.").font(.subheadline).foregroundStyle(AppTheme.secondary)
-                    NavigationLink { LocalExportView().navigationTitle("Export before reset").secondaryPage() } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: "square.and.arrow.up").accessibilityHidden(true)
-                            Text("Export a copy first")
-                            Spacer(minLength: 12)
-                            Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
-                        }.font(AppTypography.supporting).foregroundStyle(AppTheme.ink).frame(minHeight: 44)
-                    }
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Type RESET to continue").font(AppTypography.fieldLabel)
-                        TextField("RESET", text: $phrase).textInputAutocapitalization(.characters).autocorrectionDisabled()
-                            .font(AppTypography.body).padding(14).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                            .accessibilityLabel("Type RESET to confirm")
-                        Text("This action can’t be undone.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                    }
+                    reviewContent
                 case .committing:
                     ProgressView("Resetting local data…")
                     Text("Keep AQD open while your local data resets.")
@@ -47,13 +28,13 @@ struct LocalEraseView: View {
                     Text("Check the reset outcome").font(.title2)
                     Text(model.error ?? "Check the same operation before resetting again. A completed switch cannot be undone by cancelling.")
                 }
-            }.padding(20) }.background(AppTheme.canvas).navigationTitle("Reset data").navigationBarTitleDisplayMode(.inline)
+            }.padding(AppSpacing.screen) }.scrollDismissesKeyboard(.interactively).background(AppTheme.canvas).navigationTitle("Reset data").navigationBarTitleDisplayMode(.inline)
                 .safeAreaInset(edge: .bottom, spacing: 0) {
                     if model.phase != .choose && model.phase != .validating && model.phase != .committing {
                         ActionFooter {
                             switch model.phase {
                             case .review:
-                                PrimaryAction(title: "Reset data", systemImage: "trash", role: .destructive) { confirm = true }
+                                PrimaryAction(title: "Reset data", role: .destructive) { confirmationFocused = false; confirm = true }
                                     .disabled(phrase != "RESET")
                             case .complete:
                                 PrimaryAction(title: "Return to Welcome") { if let store = model.installed { onInstall(store, model.coordinator, 0) } }
@@ -77,4 +58,62 @@ struct LocalEraseView: View {
             .onChange(of: model.review?.version) { _, _ in phrase = "" }
             .interactiveDismissDisabled(model.review != nil || model.phase == .committing || model.phase == .validating)
     }
+
+    private var reviewContent: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.section) {
+            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                Text("Start fresh").font(AppTypography.detailTitle)
+                Text("Delete all data in AQD and restart onboarding.")
+                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }
+
+            VStack(alignment: .leading, spacing: 0) {
+                DisclosureGroup {
+                    VStack(alignment: .leading, spacing: AppSpacing.medium) {
+                        Text("Your closet, outfits, plans, wear history, fits, chats, feedback, profile, settings, drafts and AQD photo copies will be removed. iPhone permission settings stay unchanged.")
+                            .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        if let summary = model.review?.originalSummary { LocalDataSummaryView(summary: summary) }
+                        else {
+                            Text("The exact counts couldn’t be read. Reset still removes all local AQD data.")
+                                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        }
+                    }.padding(.bottom, AppSpacing.medium)
+                } label: {
+                    Text("What will be deleted").font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                        .frame(minHeight: AppControlMetrics.minimumTarget)
+                }.padding(.horizontal, AppControlMetrics.fieldPadding)
+
+                Divider().padding(.horizontal, AppControlMetrics.fieldPadding)
+                NavigationLink { LocalExportView().navigationTitle("Export before reset").secondaryPage() } label: {
+                    HStack(spacing: AppSpacing.medium) {
+                        Image(systemName: "square.and.arrow.up").foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                        Text("Export a copy first")
+                        Spacer(minLength: AppSpacing.medium)
+                        Image(systemName: "chevron.forward").font(AppTypography.disclosure)
+                            .foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                    }.font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                        .frame(minHeight: AppControlMetrics.minimumTarget)
+                        .padding(.horizontal, AppControlMetrics.fieldPadding)
+                        .padding(.vertical, AppSpacing.xSmall)
+                }
+            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
+
+            Text("Your original Photos and exported copies stay.")
+                .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+
+            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                Text("Type RESET to confirm").font(AppTypography.fieldLabel)
+                TextField("RESET", text: $phrase)
+                    .textInputAutocapitalization(.characters).autocorrectionDisabled()
+                    .focused($confirmationFocused).submitLabel(.done)
+                    .onSubmit { confirmationFocused = false }
+                    .font(AppTypography.body).padding(AppControlMetrics.fieldPadding)
+                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                    .accessibilityLabel("Type RESET to confirm")
+                Text("This can’t be undone. There is no automatic backup.")
+                    .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+            }
+        }
+    }
+
 }

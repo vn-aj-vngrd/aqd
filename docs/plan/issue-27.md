@@ -306,3 +306,9 @@ Profile backdrop Standards/Spec self-review: the native background policy now ma
 Profile backdrop signed generic Debug passed `/tmp/aqd-profile-backdrop-debug.log`; docs/whitespace pass. No device tests or app launch.
 
 Profile backdrop checkpoint `6915a984ef61a42275734d3ff8a52a96f582629c` built and installed successfully, with no app launch/device tests. Receipt `profileBackdrop` records the source-bound checks. Native header/scroll-edge and dark-mode rendering remain manual acceptance.
+
+Owner reset UX simplification October17: reduce dense/repeated reset review content to a quiet introduction, native expandable exact data impact, export navigation and existing typed confirmation. Keep full counts/details accessible without overwhelming first view. Preserve RESET plus final destructive confirmation, export, cancellation, stale-review/unknown/retry and actual Welcome replacement. Improve keyboard Done/dismissal; semantic surfaces and native disclosure remain accessible. Cosmetic source/build/install checks, no actual reset or device execution.
+
+Reset review source self-review: complete deletion scope is explicit before proceeding, and exact domain counts remain accessible through native disclosure rather than being removed. Original Photos/exports and irreversibility stay visible; OS permissions and unreadable-count handling remain in details. Export, typed RESET, final confirmation, retry/unknown and Welcome installation are untouched. Shared spacing/typography/semantic surfaces and scrollable growing content preserve appearance/accessibility patterns. Cosmetic-only change; no mirrored unit test added, no reset or device execution.
+
+Reset review signed generic Debug passed `/tmp/aqd-reset-review-ui-debug.log`; docs/whitespace pass. No app launch/device tests or rendered acceptance.
