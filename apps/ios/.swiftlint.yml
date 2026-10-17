@@ -1,0 +1,68 @@
+# Run from apps/ios. Errors fail the commit hook; warnings are advisory targets for code you touch.
+# Do not add inline disables without a reason on the same line.
+included:
+  - AQD
+  - AQDTests
+  - AQDUITests
+  - Core/Sources
+  - Core/Tests
+excluded:
+  - Core/.build
+  - build
+
+disabled_rules:
+  - statement_position       # conflicts with the repository's one-line `} catch {` style
+  - switch_case_alignment
+  - multiple_closures_with_trailing_closure
+  - todo
+
+opt_in_rules:
+  - empty_count
+  - empty_string
+  - first_where
+  - last_where
+  - sorted_first_last
+  - contains_over_first_not_nil
+  - redundant_nil_coalescing
+  - unused_optional_binding
+  - fatal_error_message
+  - overridden_super_call
+  - private_over_fileprivate
+  - toggle_bool
+  - force_unwrapping
+
+line_length:
+  warning: 160
+  error: 1200
+  ignores_comments: true
+  ignores_urls: true
+  ignores_function_declarations: true
+
+file_length:
+  warning: 800
+  error: 4000
+type_body_length:
+  warning: 600
+  error: 3000
+function_body_length:
+  warning: 80
+  error: 400
+cyclomatic_complexity:
+  warning: 20
+  error: 60
+large_tuple:
+  warning: 4
+  error: 6
+type_name:
+  min_length: 2
+  max_length: 60
+identifier_name:
+  min_length: 1
+  max_length: 60
+  excluded: [id, x, y]
+
+force_cast: error
+force_try: error
+
+force_unwrapping:
+  severity: warning

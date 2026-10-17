@@ -1,0 +1,5 @@
+# Whitespace-only formatting. Style beyond this is reviewed by people and agents, not rewritten wholesale.
+--swiftversion 6.0
+--indent 4
+--exclude Core/.build,build,DerivedData
+--rules trailingSpace,linebreakAtEndOfFile,consecutiveBlankLines,blankLinesAtStartOfScope,blankLinesAtEndOfScope

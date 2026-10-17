@@ -20,6 +20,7 @@ Skills in `.agents/skills`: `aqd-implement` (slice work), `aqd-verify` (checks),
 ## Rules
 
 - **Plans, status and evidence live in GitHub issues**, never in repo files. Docs hold only stable contracts and decisions; change a contract in the same PR as its behavior.
+- **Respect the iOS layers** (App, Features, DesignSystem, Services, Persistence, Core) and their import rules in [apps/ios/AGENTS.md](apps/ios/AGENTS.md); `pnpm check` enforces them.
 - **Reuse before building.** UI composes the shared components in `apps/ios/AQD/UI` (`AppChip`, `glassControlSurface`, `SharedPhotoSourceButton`, selection strips, `ToolbarSaveAction`). Colors come from `AppTheme`; charcoal is the only control color.
 - **Run native checks on the physical iPhone 17 Pro Max.** Ask the owner to connect and unlock it first. Keep simulators shut down.
 - **Preserve user data.** Drafts, stable IDs and acknowledged writes survive failure; corrupt or newer stores are never replaced.

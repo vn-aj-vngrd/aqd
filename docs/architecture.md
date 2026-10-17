@@ -27,18 +27,8 @@ flowchart LR
 
 ## Native standards
 
-Paths are under `apps/ios`.
+Layers, ownership, conventions and lint rules for `apps/ios` are defined in [apps/ios/AGENTS.md](../apps/ios/AGENTS.md) and enforced by `scripts/check-ios-layers.mjs`. Product-level rules:
 
-| Change | Owner |
-| --- | --- |
-| Pure rules, validation, value types | `Core/Sources/AQDCore` with Core tests |
-| Records, receipts, migrations | `AQD/Persistence/PieceStore.swift` and native tests |
-| Navigation and coordination | `AQD/AppState.swift`, `AQDApp.swift`, `UI/RootViews.swift` |
-| Media | `AQD/Media/PhotoPreparer.swift` |
-| Shared UI | `UI/AppTheme.swift`, `AppMetrics.swift`, `AppActions.swift`, `AppFields.swift`, `AppRows.swift`, `AppFeedback.swift`, `AppChip.swift`, `NativeTabs.swift` |
-
-- Keep UI and SwiftData work on the main-actor boundary and media work in the isolated preparer. Check request and draft identity so stale results never replace newer choices.
-- One owner per draft and navigation selection. Back, Cancel and interactive dismissal keep the source, selection and unsaved changes.
+- Check request and draft identity so stale async results never replace newer choices.
 - A success receipt reports an acknowledged write, never an optimistic one. Test the real save and read path including failed and unknown-completion writes.
-- Verify any new API against the installed SDK before use. Keep availability guards for the iOS 18 floor.
-- Test pure rules in Core and persistence, media and recovery through native test seams, following the neighboring suite.
+- Keep CloudKit off, file protection and backup exclusion intact; schemas are frozen once delivered and tested with populated old stores.
