@@ -27,6 +27,21 @@ struct PlannerPresentationTests {
         OutfitPlanEntry(id: UUID(), planID: plan, ownerID: UUID(), day: day(d), occasion: "", outfitID: outfit,
                         outfitRevision: outfit == nil ? nil : (revision ?? 1), state: state, requiresReview: review)
     }
+    @Test func nextActionIsOnePerOpenEntryAndNoneWhenSettled() {
+        let outfit = UUID()
+        #expect(PlannerPresentation.nextAction(for: entry(1, .unassigned)) == .chooseOutfit)
+        #expect(PlannerPresentation.nextAction(for: entry(1, .planned, outfit: outfit)) == .recordWear)
+        #expect(PlannerPresentation.nextAction(for: entry(1, .planned, outfit: outfit), outfitRevisions: [outfit: 2]) == .review)
+        #expect(PlannerPresentation.nextAction(for: entry(1, .planned, outfit: outfit, review: true)) == .review)
+        #expect(PlannerPresentation.nextAction(for: entry(1, .worn)) == nil)
+        #expect(PlannerPresentation.nextAction(for: entry(1, .skipped)) == nil)
+    }
+
+    @Test func openFirstSinksSettledEntriesAndKeepsOrder() {
+        let list = [entry(1, .worn), entry(1, .planned), entry(1, .skipped), entry(1, .unassigned)]
+        #expect(PlannerPresentation.openFirst(list).map(\.state) == [.planned, .unassigned, .worn, .skipped])
+    }
+
     private func plan(_ start: Int, _ end: Int, trip: Bool = false) -> PlanDefinition {
         PlanDefinition(ownerID: UUID(), name: "P", start: day(start), end: day(end), trip: trip ? TripConfiguration() : nil)
     }

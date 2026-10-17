@@ -39,6 +39,22 @@ public enum PlannerPresentation {
         return current != entry.outfitRevision
     }
 
+    /// The single next step a day card offers; settled entries offer none.
+    public enum NextAction: String, Sendable { case chooseOutfit = "Choose outfit", review = "Review", recordWear = "Record wear" }
+
+    public static func nextAction(for entry: OutfitPlanEntry, outfitRevisions: [UUID: Int] = [:]) -> NextAction? {
+        switch entry.state {
+        case .unassigned: .chooseOutfit
+        case .planned: isStale(entry, outfitRevisions: outfitRevisions) ? .review : .recordWear
+        case .worn, .skipped: nil
+        }
+    }
+
+    /// Open entries first, then worn and skipped; order within each group is kept.
+    public static func openFirst(_ entries: [OutfitPlanEntry]) -> [OutfitPlanEntry] {
+        entries.filter { $0.state == .planned || $0.state == .unassigned } + entries.filter { $0.state == .worn || $0.state == .skipped }
+    }
+
     public enum Kind: String, Sendable { case plan, routine, trip }
 
     public struct PlanSummary: Identifiable, Equatable, Sendable {
