@@ -95,3 +95,32 @@ struct SurfaceGroup<Data: RandomAccessCollection, ID: Hashable, Row: View>: View
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
     }
 }
+
+/// Background belongs to the native row so reorder/delete accessories stay inside it.
+private struct ReorderableSurfaceRow: ViewModifier {
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    func body(content: Content) -> some View {
+        content
+            .frame(minHeight: AppControlMetrics.minimumTarget)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: AppRadius.field)
+                    .fill(AppTheme.surface)
+                    .overlay {
+                        if contrast == .increased {
+                            RoundedRectangle(cornerRadius: AppRadius.field)
+                                .stroke(AppTheme.controlBoundary, lineWidth: 1)
+                        }
+                    }
+                    .padding(.vertical, AppSpacing.xSmall)
+                    .accessibilityHidden(true)
+            )
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: AppSpacing.small, leading: AppSpacing.medium,
+                                     bottom: AppSpacing.small, trailing: AppSpacing.medium))
+    }
+}
+
+extension View {
+    func reorderableSurfaceRow() -> some View { modifier(ReorderableSurfaceRow()) }
+}

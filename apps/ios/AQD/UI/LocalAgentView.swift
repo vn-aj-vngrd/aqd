@@ -373,20 +373,23 @@ struct AgentConversationView: View {
     }
 
     private var composer: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+        composerSurface
+            .padding(.horizontal, AppSpacing.large).padding(.bottom, AppSpacing.small)
+    }
+
+    private var composerContent: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
             if voice {
                 AgentVoiceView(model: model, isPresented: $voice)
-                    .padding(.horizontal, AppSpacing.small)
             } else {
             if !(model.conversation.draftAttachments ?? []).isEmpty || !attachmentImporter.pending.isEmpty {
                 AgentAttachmentStrip(attachments: model.conversation.draftAttachments ?? [], pending: attachmentImporter.pending, order: attachmentImporter.order,
                                      remove: model.removeAttachment, cancelImport: attachmentImporter.remove, locked: model.active || model.hasPendingOperation)
-                    .padding(.horizontal, AppSpacing.small)
             }
             TextField("Ask Agent…", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical)
-                .lineLimit(1...6).focused($focused).padding(.horizontal, AppSpacing.large)
+                .lineLimit(1...6).focused($focused).padding(.horizontal, AppSpacing.xSmall)
                 .accessibilityLabel("Message Agent")
-            HStack(spacing: 0) {
+            HStack(spacing: AppSpacing.small) {
                 Menu {
                     ForEach(AgentAttachmentSource.allCases) { source in
                         AccessoryButton(source.rawValue, systemImage: source.icon) {
@@ -410,21 +413,18 @@ struct AgentConversationView: View {
                 }.buttonStyle(.plain).accessibilityLabel(model.active ? "Stop response" : "Send to Agent")
                     .disabled(!model.active && !canSend)
             }
-            .padding(.horizontal, AppSpacing.xSmall)
             }
-        }
-            .padding(.top, AppSpacing.medium)
-            .padding(.bottom, AppSpacing.xSmall)
-            .background { composerBackground }
-            .padding(.horizontal, AppSpacing.xSmall).padding(.bottom, AppSpacing.xSmall)
+        }.padding(AppSpacing.medium)
     }
-    @ViewBuilder private var composerBackground: some View {
+    @ViewBuilder private var composerSurface: some View {
         if #available(iOS 26, *), !reduceTransparency, contrast != .increased {
-            RoundedRectangle(cornerRadius: AppRadius.composer).fill(.clear)
+            composerContent
                 .glassEffect(.regular.interactive(!reduceMotion), in: RoundedRectangle(cornerRadius: AppRadius.composer))
         } else {
-            RoundedRectangle(cornerRadius: AppRadius.composer).fill(AppTheme.surface)
-                .overlay(RoundedRectangle(cornerRadius: AppRadius.composer).stroke(contrast == .increased ? AppTheme.controlBoundary : AppTheme.divider, lineWidth: 1))
+            composerContent.background {
+                RoundedRectangle(cornerRadius: AppRadius.composer).fill(AppTheme.surface)
+                    .overlay(RoundedRectangle(cornerRadius: AppRadius.composer).stroke(contrast == .increased ? AppTheme.controlBoundary : AppTheme.divider, lineWidth: 1))
+            }
         }
     }
 

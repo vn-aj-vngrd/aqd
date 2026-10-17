@@ -25,14 +25,7 @@ struct TodayEditorView: View {
                                 .accessibilityLabel("\(instance.isVisible ? "Hide" : "Show") \(instance.kind.title) on Home")
                                 .accessibilityValue(instance.isVisible ? "Visible" : "Hidden")
                         }
-                            .listRowBackground(
-                                RoundedRectangle(cornerRadius: AppRadius.field)
-                                    .fill(AppTheme.surface)
-                                    .padding(.vertical, AppSpacing.xSmall)
-                            )
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(top: AppSpacing.small, leading: AppSpacing.medium,
-                                                     bottom: AppSpacing.small, trailing: AppSpacing.medium))
+                            .reorderableSurfaceRow()
                             .accessibilityValue("Position \(index + 1) of \(model.catalog.count)")
                             .moveDisabled(model.locked)
                             .accessibilityAction(named: "Move up") { model.moveInCatalog(instance.id, to: index - 1) }
