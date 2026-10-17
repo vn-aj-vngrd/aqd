@@ -38,9 +38,9 @@ import Testing
     @Test func plannedOutfitIsOfferedUntilLinked() async throws {
         let (state, fixture) = try await loaded()
         let owner = try fixture.store.todayConfiguration().ownerID
+        state.openFit(source: .outfit)
         state.planEntries = [OutfitPlanEntry(id: UUID(), planID: fixture.plan.id, ownerID: owner, day: LocalPlanDay(),
                                              occasion: "", outfitID: fixture.outfit.id, outfitRevision: fixture.outfit.revision, state: .planned)]
-        state.openFit(source: .outfit)
         let editor = try #require(state.fitEditor)
         #expect(editor.plannedOutfit?.id == fixture.outfit.id)
         #expect(editor.guidance == .needsContent)
@@ -51,12 +51,15 @@ import Testing
 
     @Test func savingWithRecordWearNextQueuesWearButNeverRecordsIt() async throws {
         let (state, fixture) = try await loaded()
+        let existing = state.fitMemories.count
         state.openFit(source: .outfit)
         let editor = try #require(state.fitEditor)
         #expect(editor.link(fixture.outfit))
         editor.recordWearNext = true
         await editor.save()
-        #expect(state.fitEditor == nil && state.fitMemories.count == 1)
+        #expect(editor.error == nil, "\(String(describing: editor.error))")
+        #expect(state.fitEditor == nil)
+        #expect(state.fitMemories.count == existing + 1)
         let pending = try #require(state.pendingFitWear)
         #expect(pending.outfitID == fixture.outfit.id)
         let before = try fixture.store.wearRecords().count
@@ -68,11 +71,14 @@ import Testing
 
     @Test func savingWithoutTheToggleQueuesNoWear() async throws {
         let (state, fixture) = try await loaded()
+        let existing = state.fitMemories.count
         state.openFit(source: .outfit)
         let editor = try #require(state.fitEditor)
         #expect(editor.link(fixture.outfit))
         await editor.save()
-        #expect(state.fitMemories.count == 1 && state.pendingFitWear == nil)
+        #expect(editor.error == nil, "\(String(describing: editor.error))")
+        #expect(state.fitMemories.count == existing + 1)
+        #expect(state.pendingFitWear == nil)
         state.openPendingFitWear()
         #expect(state.wearEditor == nil)
     }
