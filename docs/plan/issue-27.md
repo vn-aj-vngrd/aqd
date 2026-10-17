@@ -320,3 +320,5 @@ Owner remove retained-data banner October17: remove the global LocalDataCleanupV
 Recovery-banner source self-review: remove the root view call and unused banner component; conditionally expose existing review/retry actions in Settings. Pending coordinator state, diagnostics, source validation, automatic cleanup and safe recovery are unchanged. No pending reset/restore is executed, cancelled or deleted by this UI change. Original photo-cleanup notice remains separately owned. Cosmetic-only check; no mirrored unit test or device execution.
 
 Signed generic Debug passed `/tmp/aqd-remove-data-banner-debug.log`; docs and whitespace pass. No device tests or app launch.
+
+Global data-banner removal checkpoint `74aab827c7191853596f5bd75cbfdf9e2d80f617` built and installed successfully without app launch, device tests or data-operation execution. Receipt `removeGlobalDataBanner` records source-bound evidence. Recovery remains in Settings and coordinator records are retained. Runtime appearance/recovery gestures remain manual acceptance.

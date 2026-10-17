@@ -625,3 +625,5 @@ Chat turn/header refinement October17 `ba85b5e9bbb313dd73811bde3cf4c23b930399d3`
 Profile backdrop October17 `6915a984ef61a42275734d3ff8a52a96f582629c` removes the forced opaque toolbar background and matches Today native backdrop policy. Signed generic Debug and installation pass; no app launch/device tests/rendered acceptance. See `profileBackdrop` in the issue27/29 unit receipt.
 
 Reset review UI October17 `63a239e2f1c1353d4910206bc02b7905696beecb` shortens first-view copy, groups export/expandable exact impact and retains typed/final destructive confirmation. Signed generic Debug and installation pass. No app launch, actual reset, device tests or rendered acceptance. See `resetReviewUI` in the issue27/29 unit receipt.
+
+Recovery banner removal October17 `74aab827c7191853596f5bd75cbfdf9e2d80f617` removes the global root notice and scopes review/retry actions to Settings. Signed generic Debug and installation pass. No app launch, data operation or device tests; rendered/recovery acceptance unverified. See `removeGlobalDataBanner` in the issue27/29 unit receipt.

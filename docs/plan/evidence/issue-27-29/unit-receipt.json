@@ -1987,5 +1987,21 @@
     "userStoreReset": false,
     "runtimeComplete": false,
     "sourceSHA256": "a04cb97cea08abf84585efd8766453c89d79b43032d4acd211fe925c975e6c9e"
+  },
+  "removeGlobalDataBanner": {
+    "codeCommit": "74aab827c7191853596f5bd75cbfdf9e2d80f617",
+    "debugBuild": "/tmp/aqd-remove-data-banner-debug.log",
+    "debugResult": "BUILD SUCCEEDED",
+    "install": "/tmp/aqd-remove-data-banner-install.json",
+    "installResult": "success",
+    "appLaunched": false,
+    "nativeTestsExecuted": false,
+    "dataOperationExecuted": false,
+    "runtimeComplete": false,
+    "sourceSHA256": {
+      "apps/ios/AQD/AQDApp.swift": "2fc75d295f019481ac1a62c22952312efacbed756504557de7a4179ea4eafca2",
+      "apps/ios/AQD/UI/LocalRestoreView.swift": "45ef9e0de10ece324a815213bee4518fb3f0acb74855554115f77b038faf20c7",
+      "apps/ios/AQD/UI/LocalSettingsView.swift": "07075295d7be315091a1917ded919ffe58b511e000f4a57dcf070e818526c8cb"
+    }
   }
 }

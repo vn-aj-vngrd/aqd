@@ -2740,5 +2740,10 @@
     "codeCommit": "63a239e2f1c1353d4910206bc02b7905696beecb",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false
+  },
+  "removeGlobalDataBanner": {
+    "codeCommit": "74aab827c7191853596f5bd75cbfdf9e2d80f617",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false
   }
 }
