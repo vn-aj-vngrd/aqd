@@ -22,28 +22,18 @@ struct OutfitEditorView: View {
                         PrimaryAction(title: "Open outfit") { model.finish(openOutfit: true) }
                         SecondaryAction(title: "Plan this look") { model.planSavedOutfit() }
                     } else {
-                        Button { nameEditing = false; choosing = true } label: {
-                            VStack(alignment: .leading, spacing: AppSpacing.medium) {
-                                HStack {
-                                    Text("Your outfit").font(AppTypography.fieldLabel)
-                                    Spacer()
-                                    Text("\(model.draft.pieceIDs.count) pieces").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                                }
-                                Group {
-                                    if model.draft.pieceIDs.isEmpty {
-                                        OutfitComposition(pieceIDs: []).frame(minHeight: 180)
-                                    } else {
-                                        CollectionArtwork(pieceIDs: model.draft.pieceIDs, height: 220)
-                                    }
-                                }.animation(reduceMotion ? nil : AQDMotion.reflow, value: model.draft.pieceIDs)
-                                HStack {
-                                    Label(model.draft.pieceIDs.isEmpty ? "Choose pieces" : "Change pieces", systemImage: "plus")
-                                    Spacer()
-                                    Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
-                                }.frame(minHeight: 44)
-                            }.foregroundStyle(AppTheme.ink).padding(AppSpacing.screen)
-                                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
-                        }.buttonStyle(.plain).disabled(locked).accessibilityIdentifier("outfit.choosePieces")
+                        VStack(alignment: .leading, spacing: AppSpacing.small) {
+                            HStack {
+                                Text("Your outfit").font(AppTypography.fieldLabel)
+                                Spacer()
+                                Text(model.draft.pieceIDs.count == 1 ? "1 piece" : "\(model.draft.pieceIDs.count) pieces")
+                                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                            }
+                            OutfitCanvas(pieceIDs: model.draft.pieceIDs, isLocked: locked) { id in
+                                nameEditing = false
+                                model.applyManualPieces(model.draft.pieceIDs.filter { $0 != id })
+                            }.accessibilityIdentifier("outfit.canvas")
+                        }
                         LabeledField(title: "Outfit name", text: Binding(get: { model.draft.displayName }, set: { value in model.update { $0.name = value } }),
                                      prompt: "e.g. An easy afternoon", accessibilityID: "outfit.name", editingFocus: $nameEditing).submitLabel(.done).onSubmit { nameEditing = false }.disabled(locked)
                         DisclosureRow(title: "Themes", value: model.draft.themeIDs?.isEmpty == false ? "\(model.draft.themeIDs?.count ?? 0) selected" : "None selected") { nameEditing = false; choosingThemes = true }
@@ -55,6 +45,11 @@ struct OutfitEditorView: View {
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(AppSpacing.screen)
             }.scrollDismissesKeyboard(.interactively).background(AppTheme.canvas)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    if model.saved == nil && !nameEditing {
+                        OutfitPieceTray(model: model) { choosing = true }
+                    }
+                }
                 .navigationTitle(model.saved != nil ? "Outfit saved" : model.draft.baseRevision == 0 ? "Build outfit" : "Edit outfit")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
