@@ -2725,5 +2725,10 @@
     "codeCommit": "66756db481173b2869940ab7508be20ad17f23e3",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false
+  },
+  "chatTurnHeader": {
+    "codeCommit": "ba85b5e9bbb313dd73811bde3cf4c23b930399d3",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false
   }
 }

@@ -1952,5 +1952,17 @@
       "/tmp/aqd-reset-seed-release-exclusion.json": "fc77fb9131ee041501161990f429866b180ae5ed405a714f2698540dfeae783a",
       "/tmp/aqd-reset-seed-install.json": "70e71553f926797418514ab272c7e6702345f2a82bcf6e7e2212e41e34190323"
     }
+  },
+  "chatTurnHeader": {
+    "codeCommit": "ba85b5e9bbb313dd73811bde3cf4c23b930399d3",
+    "debugBuild": "/tmp/aqd-chat-turn-header-debug.log",
+    "debugResult": "BUILD SUCCEEDED",
+    "install": "/tmp/aqd-chat-turn-header-install.json",
+    "installResult": "success",
+    "appLaunched": false,
+    "nativeTestsExecuted": false,
+    "runtimeComplete": false,
+    "sourceSHA256": "9bf9a5c9f763fd10967403b05bc752598cf61d96e512591facab5948f6755ac9",
+    "review": "Single-agent Standards/Spec source review; actual turn scroll, keyboard, title/background and appearance acceptance unverified."
   }
 }
