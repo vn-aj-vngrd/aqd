@@ -34,6 +34,8 @@ public struct AgentActionProposal: Identifiable, Codable, Equatable, Sendable {
     public var receipt: AgentActionReceipt?
     public var toolRequest: AgentMutationRequest?
     public var sources: [AgentSelectedRecord]?
+    /// The assistant attempt that produced this proposal; nil for proposals made before messages were linked.
+    public var attemptID: UUID?
     public init(action: AgentReviewedAction) { id = UUID(); version = 1; self.action = action; status = .proposed }
     public mutating func approve(version: Int) throws {
         guard version == self.version, status == .proposed || status == .executing else { throw PlanValidationError.invalidRecord }

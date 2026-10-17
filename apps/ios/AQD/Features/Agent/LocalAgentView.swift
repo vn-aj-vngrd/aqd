@@ -46,13 +46,9 @@ struct AgentConversationView: View {
     @State private var attachmentPickerPresented = false
     @State private var attachmentImporter: AgentAttachmentImporter
     @State private var aiSettings = false
-    @State private var feedbackEditing: AgentFeedback?
-    @State private var feedbackLibrary: AgentFeedbackLibrary?
-    @State private var voice = false
-    @State private var readAloud = AgentReadAloud()
+    @State private var reviewingID: UUID?
     @Environment(\.scenePhase) private var scenePhase
     @State private var details: AgentMessage?
-    @State private var copied: UUID?
     @State private var followsLatest = true
     @State private var pinnedTurn: UUID?
     @State private var chatScrollPhase = ScrollPhase.idle
@@ -94,11 +90,10 @@ struct AgentConversationView: View {
                     if let index = latestUserIndex { timestamp(before: index) }
                     VStack(alignment: .leading, spacing: AppSpacing.section) {
                         if let index = latestUserIndex {
-                            let message = model.conversation.messages[index]
-                            messageRow(message)
+                            messageBlock(model.conversation.messages[index])
                             messageRows(in: (index + 1)..<model.conversation.messages.count)
                         } else { messageRows(in: 0..<model.conversation.messages.count) }
-                        proposalRows
+                        unlinkedProposalRows
                         if !model.supportsGeneration {
                             AgentAvailabilityContent(availability: model.availability, recheck: model.recheckAvailability,
                                                      showsActions: false)
@@ -112,7 +107,7 @@ struct AgentConversationView: View {
                     }
                     .frame(maxWidth: .infinity, minHeight: max(0, geometry.size.height - 2 * AppSpacing.screen), alignment: .top)
                     .id(latestUserIndex.map { model.conversation.messages[$0].id } ?? model.conversation.id)
-                }.padding(AppSpacing.screen).disabled(voice)
+                }.padding(AppSpacing.screen)
             }.coordinateSpace(name: "agent-message-viewport")
                 .defaultScrollAnchor(.bottom, for: .initialOffset)
                 .modifier(AgentChatScrollEdges())
@@ -149,19 +144,21 @@ struct AgentConversationView: View {
         }.background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
-                if model.supportsGeneration || voice {
+                if model.supportsGeneration {
                     VStack(spacing: AppSpacing.small) {
-                        if isNewConversation && !voice { suggestions }
-                        composer
+                        if isNewConversation && model.conversation.draft.isEmpty && (model.conversation.draftAttachments ?? []).isEmpty {
+                            AgentSuggestionStrip(titles: suggestionTitles, enabled: model.canGenerate, send: sendSuggestion)
+                        }
+                        AgentComposerView(model: model, importer: attachmentImporter, attachmentSource: $attachmentSource, focused: $focused)
                     }
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Back").disabled(model.active || voice || model.attachmentImportCount > 0) }
+                ToolbarItem(placement: .topBarLeading) { Button { if !model.active && model.persist() { close() } } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Back").disabled(model.active || model.attachmentImportCount > 0) }
                 if model.supportsGeneration {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button { model.newConversation(); focused = true } label: { Image(systemName: "square.and.pencil") }
-                            .accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation || voice || model.attachmentImportCount > 0)
+                            .accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation || model.attachmentImportCount > 0)
                     }
                 }
                 if model.supportsGeneration || !model.history.isEmpty || state.store != nil {
@@ -188,10 +185,10 @@ struct AgentConversationView: View {
                                 }
                             }
                             Section {
-                                AccessoryButton("AI settings", systemImage: "sparkles") { readAloud.stop(); aiSettings = true }
+                                AccessoryButton("AI settings", systemImage: "sparkles") { aiSettings = true }
                                     .disabled(model.active || model.hasPendingOperation)
                             }
-                        } label: { Label("More", systemImage: "ellipsis") }.disabled(voice || model.attachmentImportCount > 0)
+                        } label: { Label("More", systemImage: "ellipsis") }.disabled(model.attachmentImportCount > 0)
                     }
                 }
             }.navigationDestination(isPresented: $history) { AgentHistoryView(model: model) { value in if value.revision > 0 { model.open(value.id) }; history = false } }
@@ -203,9 +200,14 @@ struct AgentConversationView: View {
                 } } }.environment(state).appAppearance(state.appearance)
                     .interactiveDismissDisabled(model.hasPendingOperation || state.agentControlsModel?.hasPending == true)
             }
-            .sheet(item: $feedbackEditing) { value in
-                if let feedbackLibrary {
-                    NavigationStack { AgentFeedbackEditor(library: feedbackLibrary, feedback: value) }.environment(state).appAppearance(state.appearance)
+                        .sheet(isPresented: Binding(get: { reviewingID != nil }, set: { if !$0 { reviewingID = nil } })) {
+                if let id = reviewingID {
+                    NavigationStack {
+                        AgentActionReviewView(model: model, id: id).toolbar { ToolbarItem(placement: .cancellationAction) {
+                            Button { reviewingID = nil } label: { Image(systemName: "xmark") }.accessibilityLabel("Close review")
+                        } }
+                    }.environment(state).appAppearance(state.appearance).tint(AppTheme.ink)
+                        .interactiveDismissDisabled(model.hasPendingOperation)
                 }
             }
             .sheet(item: $details) { message in NavigationStack { Form {
@@ -235,11 +237,8 @@ struct AgentConversationView: View {
                     if let value = deletingConversation { model.delete(value) }; deletingConversation = nil
                 }
             } message: { Text("Deletes its messages and draft on this iPhone. Saved pieces, outfits and plans stay.") }
-            .onDisappear { readAloud.stop(); if !attachmentPickerPresented { attachmentImporter.cancel() } }
-            .onChange(of: scenePhase) { _, phase in if phase != .active { readAloud.stop() }; if phase == .background { attachmentImporter.cancel() } }
-            .onChange(of: model.conversation.id) { _, _ in readAloud.stop() }
-            .onChange(of: model.active) { _, active in if active { readAloud.stop() } }
-            .onChange(of: voice) { _, recording in if recording { readAloud.stop() } }
+            .onDisappear { if !attachmentPickerPresented { attachmentImporter.cancel() } }
+            .onChange(of: scenePhase) { _, phase in if phase == .background { attachmentImporter.cancel() } }
             .onAppear { if automaticallyFocusComposer && model.supportsGeneration && model.conversation.messages.isEmpty && !didFocus { didFocus = true; focused = true } }
     }
     private var isNewConversation: Bool {
@@ -262,125 +261,30 @@ struct AgentConversationView: View {
         }
     }
 
-    private var suggestions: some View {
-        VStack(spacing: AppSpacing.xSmall) {
-            suggestion("Tonight’s look", symbol: "moon.stars")
-            suggestion("Plan my week", symbol: "calendar")
-            suggestion("Rediscover unworn pieces", symbol: "sparkles")
-        }.padding(.horizontal, AppSpacing.section)
+    private var suggestionTitles: [String] {
+        guard !state.ownedPieces.isEmpty else { return ["How do I start my closet?", "What can you help with?"] }
+        var titles = [Calendar.current.component(.hour, from: Date()) >= 16 ? "Tonight’s look" : "What should I wear today?"]
+        if !state.outfits.isEmpty { titles += ["Plan my week", "Make a theme from my outfits"] }
+        return titles + ["Rediscover unworn pieces"]
     }
 
-    private func suggestion(_ title: String, symbol: String) -> some View {
-        Button { model.updateDraft(title); focused = true } label: {
-            HStack(spacing: AppSpacing.medium) {
-                Image(systemName: symbol).foregroundStyle(AppTheme.controlIcon)
-                    .frame(width: AppControlMetrics.disclosureLane).accessibilityHidden(true)
-                Text(title).foregroundStyle(AppTheme.ink).multilineTextAlignment(.leading)
-                Spacer(minLength: 0)
-            }.font(AppTypography.body).frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
-                .contentShape(Rectangle())
-        }.buttonStyle(.plain).disabled(!model.canGenerate)
+    private func sendSuggestion(_ title: String) {
+        guard model.canGenerate else { return }
+        model.updateDraft(title); model.send()
     }
 
-    @ViewBuilder private func messageRow(_ message: AgentMessage) -> some View {
-        if message.role == .user {
-            HStack(alignment: .top, spacing: 0) {
-                Spacer(minLength: AppControlMetrics.minimumTarget)
-                VStack(alignment: .trailing, spacing: AppSpacing.small) {
-                    if let attachments = message.attachments, !attachments.isEmpty { AgentAttachmentStrip(attachments: attachments) }
-                    if !message.source.isEmpty {
-                        Text(message.source).textSelection(.enabled)
-                            .padding(.horizontal, AppSpacing.large).padding(.vertical, AppSpacing.medium)
-                            .background(AppTheme.messageBubble, in: RoundedRectangle(cornerRadius: AppRadius.composer))
-                            .accessibilityLabel("You: " + message.source)
-                    }
-                }
-            }.frame(maxWidth: .infinity, alignment: .trailing)
-        } else {
-            VStack(alignment: .leading, spacing: AppSpacing.small) {
-                AgentMarkdownBody(source: AgentMarkdownPolicy.conversationalText(message.source))
-                if message.isActive {
-                    AgentWorkingIndicator(
-                        title: message.status == .stopping ? "Stopping…" : model.slow ? "Still working…" : message.source.isEmpty ? "Thinking…" : "Writing…",
-                        animates: message.status != .stopping)
-                } else {
-                    if message.status != .complete {
-                        Text("Incomplete response").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    }
-                    if let reason = message.failureReason { Text(reason).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
-                    responseActions(message)
-                    if readAloud.errorMessageID == message.id, let error = readAloud.error {
-                        Text(error).font(AppTypography.supporting).foregroundStyle(AppTheme.error)
-                    }
-                }
-            }.frame(maxWidth: .infinity, alignment: .leading)
+    private func canRegenerate(_ message: AgentMessage) -> Bool {
+        message.role == .assistant && message.id == model.conversation.messages.last?.id && model.canGenerate
+    }
+
+    private func messageBlock(_ message: AgentMessage) -> some View {
+        VStack(alignment: .leading, spacing: AppSpacing.medium) {
+            AgentMessageRow(message: message, slow: model.slow, canRegenerate: canRegenerate(message),
+                            retry: { model.send(retrying: message.id) }, showDetails: { details = message })
+            ForEach(model.conversation.proposals(for: message)) { proposal in
+                AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, review: { reviewingID = proposal.id }, dismiss: { model.cancelProposal(proposal.id) })
+            }
         }
-    }
-
-    private func responseActions(_ message: AgentMessage) -> some View {
-        let reading = readAloud.messageID == message.id
-        let hasText = !message.source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        return HStack(spacing: 0) {
-            Button { copy(message, markdown: false) } label: {
-                responseIcon(copied == message.id ? "checkmark" : "square.on.square")
-            }.accessibilityLabel(copied == message.id ? "Response copied" : "Copy response").disabled(!hasText)
-            Button { rate(message, rating: .helpful) } label: {
-                responseIcon(reaction(message)?.rating == .helpful ? "hand.thumbsup.fill" : "hand.thumbsup")
-            }.accessibilityLabel("Helpful response").accessibilityValue(reaction(message)?.rating == .helpful ? "Selected" : "Not selected")
-                .disabled(!hasText || model.active || model.hasPendingOperation)
-            Button { rate(message, rating: .notHelpful) } label: {
-                responseIcon(reaction(message)?.rating == .notHelpful ? "hand.thumbsdown.fill" : "hand.thumbsdown")
-            }.accessibilityLabel("Not helpful").accessibilityValue(reaction(message)?.rating == .notHelpful ? "Selected" : "Not selected")
-                .disabled(!hasText || model.active || model.hasPendingOperation)
-            Button { readAloud.toggle(message) } label: {
-                responseIcon(reading ? "stop.circle" : "speaker.wave.2")
-            }.accessibilityLabel(reading ? "Stop reading" : "Read aloud").disabled(!hasText)
-            Menu {
-                Section(AgentChatTimestamp.label(for: message.createdAt)) {
-                    AccessoryButton(reading ? "Stop reading" : "Read aloud", systemImage: reading ? "stop.circle" : "speaker.wave.2") { readAloud.toggle(message) }.disabled(!hasText)
-                    AccessoryButton("Copy Markdown", systemImage: "doc.text") { copy(message, markdown: true) }.disabled(!hasText)
-                }
-                Section("Response") {
-                    if message.id == model.conversation.messages.last?.id {
-                        AccessoryButton("Try again", systemImage: "arrow.clockwise") { readAloud.stop(); model.send(retrying: message.id) }.disabled(!model.canGenerate)
-                    }
-                    AccessoryButton("Report a problem", systemImage: "flag") { editFeedback(message, report: true) }
-                        .disabled(model.active || model.hasPendingOperation)
-                    AccessoryButton("Response details", systemImage: "info.circle") { readAloud.stop(); details = message }
-                }
-            } label: { responseIcon("ellipsis") }.accessibilityLabel("Response options")
-        }.buttonStyle(.plain).padding(.leading, -AppSpacing.medium)
-    }
-
-    private func reaction(_ message: AgentMessage) -> AgentFeedback? {
-        message.feedback?.first { $0.attemptID == message.attemptID }
-    }
-    private func feedbackValue(_ message: AgentMessage) -> AgentFeedback {
-        reaction(message) ?? AgentFeedback(conversationID: model.conversation.id, messageID: message.id, attemptID: message.attemptID, diagnostics: message.diagnostics)
-    }
-    private func rate(_ message: AgentMessage, rating: AgentFeedbackRating) {
-        var value = feedbackValue(message)
-        if value.rating == rating {
-            if !value.isReport && value.comment.isEmpty && value.reasons.isEmpty { _ = model.saveFeedback(value, removing: true); return }
-            value.rating = nil
-        } else { value.rating = rating }
-        value.updatedAt = Date()
-        if model.saveFeedback(value), rating == .notHelpful, value.rating != nil { editFeedback(message, report: false) }
-    }
-    private func editFeedback(_ message: AgentMessage, report: Bool) {
-        do {
-            readAloud.stop()
-            let library = try AgentFeedbackLibrary(agent: model, controls: state.agentControlsModel)
-            var value = feedbackValue(model.conversation.messages.first { $0.id == message.id } ?? message)
-            if report { value.isReport = true }
-            feedbackLibrary = library; feedbackEditing = value
-        } catch { model.error = "Feedback couldn’t load. Your response is retained. Try again." }
-    }
-
-    private func responseIcon(_ name: String) -> some View {
-        Image(systemName: name).font(.system(size: 16, weight: .regular)).foregroundStyle(AppTheme.controlIcon)
-            .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
-            .contentShape(Rectangle())
     }
 
     private var latestUserIndex: Int? { model.conversation.messages.lastIndex { $0.role == .user } }
@@ -398,98 +302,13 @@ struct AgentConversationView: View {
     private func messageRows(in range: Range<Int>) -> some View {
         ForEach(Array(model.conversation.messages.enumerated()).filter { range.contains($0.offset) }, id: \.element.id) { index, message in
             timestamp(before: index)
-            messageRow(message).id(message.id)
+            messageBlock(message).id(message.id)
         }
     }
-    private var proposalRows: some View {
-        ForEach(model.conversation.proposals ?? []) { proposal in
-            NavigationLink { AgentActionReviewView(model: model, id: proposal.id).secondaryPage() } label: {
-                HStack(spacing: AppSpacing.medium) {
-                    Image(systemName: proposal.status == .succeeded ? "checkmark.circle" : "square.and.pencil")
-                        .foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
-                    VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                        Text(proposal.action.title).foregroundStyle(AppTheme.ink)
-                        Text(proposal.status == .succeeded ? "Saved locally" : proposal.status == .cancelled ? "Cancelled" : proposal.status == .executing ? "Check save result" : "Not saved · Tap to review")
-                            .font(.footnote).foregroundStyle(AppTheme.secondary)
-                    }
-                    Spacer(minLength: AppSpacing.small)
-                    Image(systemName: "chevron.right").font(.footnote).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
-                }.frame(minHeight: AppControlMetrics.minimumTarget)
-                    .padding(AppSpacing.medium).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
-            }
+    private var unlinkedProposalRows: some View {
+        ForEach(model.conversation.unlinkedProposals) { proposal in
+            AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, review: { reviewingID = proposal.id }, dismiss: { model.cancelProposal(proposal.id) })
         }
-    }
-
-    private var canSend: Bool {
-        model.canGenerate && (!model.conversation.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !(model.conversation.draftAttachments ?? []).isEmpty)
-    }
-
-    private var composer: some View {
-        composerSurface
-            .padding(.horizontal, AppSpacing.large).padding(.bottom, AppSpacing.small)
-    }
-
-    private var composerContent: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.small) {
-            if voice {
-                AgentVoiceView(model: model, isPresented: $voice)
-            } else {
-            if !(model.conversation.draftAttachments ?? []).isEmpty || !attachmentImporter.pending.isEmpty {
-                AgentAttachmentStrip(attachments: model.conversation.draftAttachments ?? [], pending: attachmentImporter.pending, order: attachmentImporter.order,
-                                     remove: model.removeAttachment, cancelImport: attachmentImporter.remove, locked: model.active || model.hasPendingOperation)
-            }
-            TextField("Ask Agent…", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical)
-                .lineLimit(1...6).focused($focused).padding(.horizontal, AppSpacing.xSmall)
-                .accessibilityLabel("Message Agent")
-            HStack(spacing: AppSpacing.small) {
-                Menu {
-                    ForEach(AgentAttachmentSource.allCases) { source in
-                        AccessoryButton(source.rawValue, systemImage: source.icon) {
-                            readAloud.stop(); focused = false; attachmentSource = source
-                        }
-                    }
-                } label: {
-                    Image(systemName: "plus")
-                        .padding(.leading, AppSpacing.xSmall)
-                        .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget, alignment: .leading)
-                        .contentShape(Rectangle())
-                }
-                    .accessibilityLabel("Add camera, photo or file").disabled(!model.supportsGeneration || model.active || model.hasPendingOperation || attachmentImporter.count >= AgentAttachment.maximumCount || state.agentControlsModel?.hasPending == true)
-                Spacer(minLength: AppSpacing.small)
-                if AgentVoiceModel.isSupported {
-                    Button { readAloud.stop(); focused = false; voice = true } label: { Image(systemName: "mic").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }.accessibilityLabel("Voice input").disabled(model.active || model.hasPendingOperation || model.attachmentImportCount > 0)
-                }
-                Button { if model.active { model.stop() } else { model.send() } } label: {
-                    Image(systemName: model.active ? "stop.fill" : "arrow.up")
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(model.active || canSend ? AppTheme.onPrimary : AppTheme.secondary)
-                        .frame(width: 32, height: 32)
-                        .background(model.active || canSend ? AppTheme.primaryFill : AppTheme.divider, in: Circle())
-                        .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
-                        .contentShape(Rectangle())
-                }.buttonStyle(.plain).accessibilityLabel(model.active ? "Stop response" : "Send to Agent")
-                    .disabled(!model.active && !canSend)
-            }
-            }
-        }.padding(AppSpacing.medium)
-    }
-    @ViewBuilder private var composerSurface: some View {
-        if #available(iOS 26, *), !reduceTransparency, contrast != .increased {
-            composerContent
-                .glassEffect(.regular.interactive(!reduceMotion), in: RoundedRectangle(cornerRadius: AppRadius.composer))
-        } else {
-            composerContent.background {
-                RoundedRectangle(cornerRadius: AppRadius.composer).fill(AppTheme.surface)
-                    .overlay(RoundedRectangle(cornerRadius: AppRadius.composer).stroke(contrast == .increased ? AppTheme.controlBoundary : AppTheme.divider, lineWidth: 1))
-            }
-        }
-    }
-
-    private func copy(_ message: AgentMessage, markdown: Bool) {
-        let source = AgentMarkdownPolicy.conversationalText(message.source)
-        let value = markdown ? (message.status == .complete ? "" : "Incomplete response\n\n") + source : AgentMarkdownPolicy.plainText(source, incomplete: message.status != .complete)
-        UIPasteboard.general.string = value
-        if UIPasteboard.general.string == value { copied = message.id; UIAccessibility.post(notification: .announcement, argument: "Response copied") }
     }
 }
 struct AgentAvailabilityContent: View {

@@ -61,7 +61,7 @@ import AQDCore
         case .plan(let draft): sourceIDs = draft.slots.compactMap { $0.outfit?.id }
         default: sourceIDs = []
         }
-        proposal.toolRequest = request
+        proposal.toolRequest = request; proposal.attemptID = attemptID
         proposal.sources = try Set(sourceIDs).map { id in
             guard let outfit = outfits.first(where: { $0.id == id }) else { throw PieceStore.StoreError.staleRevision }
             return AgentSelectedRecord(id: id, kind: .outfit, revision: outfit.revision)

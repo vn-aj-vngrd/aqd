@@ -35,4 +35,26 @@ struct AgentConversationTests {
         #expect(conversation.messages[1].status == .complete)
         #expect(conversation.messages[1].versions.first?.source == "A **relaxed")
     }
+    @Test func aProposalStaysLinkedToItsMessageThroughRetryAndReload() throws {
+        var conversation = AgentConversation(ownerID: UUID())
+        conversation.draft = "Make an outfit"
+        let attempt = try conversation.beginAttempt()
+        try conversation.append("Here is a draft.", attemptID: attempt)
+        try conversation.complete(attemptID: attempt)
+        var proposal = AgentActionProposal(action: .outfit(OutfitDraft(ownerID: conversation.ownerID)))
+        proposal.attemptID = attempt
+        conversation.proposals = [proposal]
+        let message = conversation.messages[1]
+        #expect(conversation.proposals(for: message).map(\.id) == [proposal.id])
+        #expect(conversation.proposals(for: conversation.messages[0]).isEmpty && conversation.unlinkedProposals.isEmpty)
+
+        let retry = try conversation.retry(messageID: message.id)
+        #expect(retry != attempt)
+        #expect(conversation.proposals(for: conversation.messages[1]).map(\.id) == [proposal.id])
+
+        let data = try JSONEncoder().encode(conversation)
+        let reloaded = try JSONDecoder().decode(AgentConversation.self, from: data)
+        #expect(reloaded.proposals(for: reloaded.messages[1]).map(\.id) == [proposal.id])
+        #expect(reloaded.unlinkedProposals.isEmpty)
+    }
 }

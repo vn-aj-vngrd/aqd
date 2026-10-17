@@ -5,6 +5,7 @@ public enum AgentMessageRole: String, Codable, Sendable { case user, assistant }
 public struct AgentResponseVersion: Codable, Equatable, Sendable {
     public let source: String
     public let status: AgentMessageStatus
+    public var attemptID: UUID?
 }
 public struct AgentMessage: Identifiable, Codable, Equatable, Sendable {
     public let id: UUID
@@ -69,6 +70,17 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
         return first.source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? first.attachments?.first?.name ?? "Attachment" : String(first.source.prefix(80))
     }
     public var draftPrompt: String { ([draft] + (draftAttachments ?? []).map(\.promptText)).filter { !$0.isEmpty }.joined(separator: "\n") }
+    /// Proposals made by this message's current or earlier attempts, so a retry never orphans a review card.
+    public func proposals(for message: AgentMessage) -> [AgentActionProposal] {
+        guard message.role == .assistant else { return [] }
+        let attempts = Set(([message.attemptID] + message.versions.map(\.attemptID)).compactMap { $0 })
+        return (proposals ?? []).filter { $0.attemptID.map(attempts.contains) ?? false }
+    }
+    /// Proposals not linked to any message, shown after the last message.
+    public var unlinkedProposals: [AgentActionProposal] {
+        let linked = Set(messages.flatMap { proposals(for: $0).map(\.id) })
+        return (proposals ?? []).filter { !linked.contains($0.id) }
+    }
     public mutating func beginAttempt() throws -> UUID {
         try AgentAttachment.validate(draftAttachments ?? [])
         guard !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !(draftAttachments ?? []).isEmpty else { throw PlanValidationError.invalidRecord }
@@ -95,7 +107,7 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
     public mutating func retry(messageID: UUID) throws -> UUID {
         guard !messages.contains(where: \.isActive), let i = messages.firstIndex(where: { $0.id == messageID && $0.role == .assistant && !$0.isActive }), i == messages.count - 1 else { throw PlanValidationError.invalidRecord }
         let attempt = UUID()
-        messages[i].versions.append(AgentResponseVersion(source: messages[i].source, status: messages[i].status))
+        messages[i].versions.append(AgentResponseVersion(source: messages[i].source, status: messages[i].status, attemptID: messages[i].attemptID))
         messages[i].source = ""; messages[i].status = .waiting; messages[i].attemptID = attempt
         messages[i].firstTextSeconds = nil; messages[i].elapsedSeconds = nil
         messages[i].failureReason = nil; messages[i].diagnostics = nil
