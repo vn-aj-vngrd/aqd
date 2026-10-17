@@ -60,3 +60,47 @@ struct PlannerPresentationTests {
         #expect(summary.isPast)
     }
 }
+
+struct PlannerQueryTests {
+    private let zone = "Asia/Manila"
+    private func day(_ d: Int) -> LocalPlanDay { LocalPlanDay(year: 2026, month: 10, day: d, timeZoneID: zone) }
+    private func entry(_ state: PlanEntryState, outfit: UUID? = nil, review: Bool = false) -> OutfitPlanEntry {
+        OutfitPlanEntry(id: UUID(), planID: UUID(), ownerID: UUID(), day: day(1), occasion: "", outfitID: outfit,
+                        outfitRevision: outfit == nil ? nil : 1, state: state, requiresReview: review)
+    }
+    private func plan(_ name: String, _ start: Int, routine: Bool = false, trip: Bool = false) -> PlanDefinition {
+        PlanDefinition(ownerID: UUID(), name: name, start: day(start), end: day(start + 1),
+                       routine: routine ? RoutineConfiguration() : nil, trip: trip ? TripConfiguration() : nil)
+    }
+
+    @Test func statusFilterSelectsEntries() {
+        let outfit = UUID()
+        let entries = [entry(.planned, outfit: outfit), entry(.unassigned), entry(.worn, outfit: outfit), entry(.skipped), entry(.planned, outfit: outfit, review: true)]
+        func count(_ status: PlannerQuery.Status) -> Int { PlannerQuery(status: status).apply(to: entries, outfitRevisions: [outfit: 1]).count }
+        #expect(count(.all) == 5 && count(.open) == 3 && count(.toChoose) == 1)
+        #expect(count(.needsReview) == 1 && count(.worn) == 1 && count(.skipped) == 1)
+    }
+
+    @Test func kindFilterAndSortOrderPlans() {
+        let plans = [plan("Beta", 9, trip: true), plan("alpha", 3), plan("Gamma", 6, routine: true)]
+        #expect(PlannerQuery(kind: .trips).apply(to: plans).map(\.name) == ["Beta"])
+        #expect(PlannerQuery(kind: .routines).apply(to: plans).map(\.name) == ["Gamma"])
+        #expect(PlannerQuery(sort: .soonest).apply(to: plans).map(\.name) == ["alpha", "Gamma", "Beta"])
+        #expect(PlannerQuery(sort: .latest).apply(to: plans).map(\.name) == ["Beta", "Gamma", "alpha"])
+        #expect(PlannerQuery(sort: .name).apply(to: plans).map(\.name) == ["alpha", "Beta", "Gamma"])
+        #expect(PlannerQuery().isDefault && !PlannerQuery(kind: .trips).isDefault)
+    }
+
+    @Test func searchMatchesNamesDestinationsOccasionsAndOutfits() {
+        let outfit = UUID()
+        var trip = plan("Weekend", 4, trip: true); trip.trip?.destination = "Café Lisbon"
+        let plans = [trip, plan("Office", 5)]
+        #expect(PlannerQuery(text: " cafe ").apply(to: plans).map(\.name) == ["Weekend"])
+        #expect(PlannerQuery(text: "zzz").apply(to: plans).isEmpty)
+        var withOccasion = entry(.planned, outfit: outfit); withOccasion.occasion = "Dinner"
+        let entries = [withOccasion, entry(.skipped)]
+        #expect(PlannerQuery(text: "dinn").apply(to: entries).count == 1)
+        #expect(PlannerQuery(text: "linen").apply(to: entries, outfitNames: [outfit: "Linen set"]).count == 1)
+        #expect(PlannerQuery(text: "").apply(to: entries).count == 2)
+    }
+}

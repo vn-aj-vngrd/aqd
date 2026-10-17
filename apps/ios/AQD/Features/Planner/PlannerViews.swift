@@ -4,16 +4,20 @@ import SwiftUI
 struct LocalPlannerView: View {
     @Environment(AppState.self) private var state
     @State private var showPast = false
+    @State private var query = PlannerQuery()
     private var zone: TimeZone { TimeZone(identifier: state.plannerDay.timeZoneID) ?? .current }
     private var today: LocalPlanDay { LocalPlanDay(timeZone: zone) }
+    private var outfitNames: [UUID: String] { Dictionary(state.outfits.map { ($0.id, $0.displayName) }, uniquingKeysWith: { first, _ in first }) }
+    private var dayQuery: PlannerQuery { PlannerQuery(status: query.status) }
     private var entries: [OutfitPlanEntry] {
-        state.planEntries.filter { $0.day.key == state.plannerDay.key }
+        dayQuery.apply(to: state.planEntries.filter { $0.day.key == state.plannerDay.key }, outfitRevisions: outfitRevisions)
             .sorted { ($0.state == .worn || $0.state == .skipped ? 1 : 0) < ($1.state == .worn || $1.state == .skipped ? 1 : 0) }
     }
     private var outfitRevisions: [UUID: Int] { Dictionary(state.outfits.map { ($0.id, $0.revision) }, uniquingKeysWith: { first, _ in first }) }
     private var markers: [String: PlannerDayMarker] { PlannerPresentation.markers(for: state.planEntries, outfitRevisions: outfitRevisions) }
     private var visibleDays: [LocalPlanDay] { (try? PlannerCalendar.days(containing: state.plannerDay, mode: state.plannerMode)) ?? [] }
-    private var groups: PlannerPresentation.PlanGroups { PlannerPresentation.group(state.planDefinitions, visible: visibleDays, today: today) }
+    private var filteredPlans: [PlanDefinition] { query.apply(to: state.planDefinitions) }
+    private var groups: PlannerPresentation.PlanGroups { PlannerPresentation.group(filteredPlans, visible: visibleDays, today: today) }
     private var summaries: [UUID: PlannerPresentation.PlanSummary] {
         Dictionary(PlannerPresentation.summaries(plans: state.planDefinitions, entries: state.planEntries, today: today,
                                                  outfitRevisions: outfitRevisions).map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
@@ -36,20 +40,25 @@ struct LocalPlannerView: View {
         NavigationStack(path: $state.plannerPath) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    PlannerCalendarHeader(day: $state.plannerDay, mode: $state.plannerMode, counts: counts, markers: markers)
-                    dayHeader
-                    if let error = state.planError {
-                        SemanticFeedback(role: .danger, message: error)
-                        Button("Retry plans") { state.reloadPlanEntries() }.frame(minHeight: 44)
+                    if query.isSearching {
+                        searchResults
+                    } else {
+                        PlannerCalendarHeader(day: $state.plannerDay, mode: $state.plannerMode, counts: counts, markers: markers)
+                        dayHeader
+                        if let error = state.planError {
+                            SemanticFeedback(role: .danger, message: error)
+                            Button("Retry plans") { state.reloadPlanEntries() }.frame(minHeight: 44)
+                        }
+                        savedBanner
+                        dayEntries
+                        plansSection
                     }
-                    savedBanner
-                    dayEntries
-                    plansSection
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 24)
             }
             .scrollIndicators(.hidden)
+            .searchable(text: $query.text, prompt: "Search plans, trips and outfits")
             .padding(.top, AppSpacing.large).background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: PlannerRoute.self) { route in
                 switch route {
@@ -69,6 +78,7 @@ struct LocalPlannerView: View {
                         AccessoryButton("Plan an event or trip", systemImage: "suitcase") { state.openPlanAuthoring(day: state.plannerDay, trip: true) }
                     } label: { Label("Add to Planner", systemImage: "plus") }.tint(AppTheme.ink)
                 }
+                ToolbarItem(placement: .topBarTrailing) { filterMenu }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Today") { withAnimation { state.plannerDay = today } }
                         .tint(AppTheme.ink).disabled(isToday).accessibilityHint("Jumps to today")
@@ -76,6 +86,48 @@ struct LocalPlannerView: View {
             }
             .onAppear { state.reloadPlanEntries(); state.reloadOutfits() }
         }.tint(AppTheme.ink)
+    }
+
+    private var filterMenu: some View {
+        Menu {
+            Section("Show entries") {
+                ForEach(PlannerQuery.Status.allCases, id: \.self) { option($0.rawValue, $0, $query.status) }
+            }
+            Section("Show plans") {
+                ForEach(PlannerQuery.Kind.allCases, id: \.self) { option($0.rawValue, $0, $query.kind) }
+            }
+            Section("Sort plans by") {
+                ForEach(PlannerQuery.Sort.allCases, id: \.self) { option($0.rawValue, $0, $query.sort) }
+            }
+            if !query.isDefault {
+                Button("Reset filters", systemImage: "arrow.counterclockwise") { query = PlannerQuery(text: query.text) }
+            }
+        } label: {
+            Label("Filter and sort", systemImage: query.isFiltering ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease")
+        }.tint(AppTheme.ink).accessibilityValue(query.isFiltering ? "Filters on" : "No filters")
+    }
+
+    private func option<Value: Equatable>(_ title: String, _ value: Value, _ selection: Binding<Value>) -> some View {
+        Toggle(title, isOn: Binding(get: { selection.wrappedValue == value }, set: { if $0 { selection.wrappedValue = value } }))
+    }
+
+    /// Search spans every date, so results carry their date and sit apart from the calendar.
+    @ViewBuilder private var searchResults: some View {
+        let matchedEntries = query.apply(to: state.planEntries, outfitRevisions: outfitRevisions, outfitNames: outfitNames)
+            .sorted { $0.day.key == $1.day.key ? $0.id.uuidString < $1.id.uuidString : $0.day.key < $1.day.key }
+        let matchedPlans = query.apply(to: state.planDefinitions)
+        if matchedEntries.isEmpty && matchedPlans.isEmpty {
+            ContentUnavailableView.search(text: query.searchTerm)
+        }
+        if !matchedPlans.isEmpty {
+            planGroup("Plans", matchedPlans)
+        }
+        if !matchedEntries.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Entries").font(AppTypography.section)
+                ForEach(matchedEntries) { PlanDayCard(entry: $0, outfitRevisions: outfitRevisions, showDate: true) }
+            }
+        }
     }
 
     private var dayHeader: some View {
@@ -108,7 +160,13 @@ struct LocalPlannerView: View {
     }
 
     @ViewBuilder private var dayEntries: some View {
-        if entries.isEmpty && state.planError == nil {
+        if entries.isEmpty && state.planError == nil && query.status != .all {
+            VStack(spacing: 12) {
+                AppEmptyState("No \(query.status.rawValue.lowercased())", systemImage: "line.3.horizontal.decrease",
+                    description: Text("No entries on this day match the filter."), fillsAvailableSpace: false)
+                Button("Show all entries") { query.status = .all }.frame(minHeight: 44)
+            }.frame(maxWidth: .infinity)
+        } else if entries.isEmpty && state.planError == nil {
             VStack(spacing: 12) {
                 AppEmptyState("Nothing planned", systemImage: "calendar",
                     description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear."), fillsAvailableSpace: false)
@@ -179,6 +237,7 @@ struct PlanDayCard: View {
     @Environment(AppState.self) private var state
     let entry: OutfitPlanEntry
     let outfitRevisions: [UUID: Int]
+    var showDate = false
     @State private var actions = PlanEntryActions()
     private var outfit: Outfit? { state.outfits.first { $0.id == entry.outfitID } }
     private var isOpen: Bool { entry.state == .planned || entry.state == .unassigned }
@@ -187,7 +246,7 @@ struct PlanDayCard: View {
     var body: some View {
         VStack(spacing: 0) {
             NavigationLink(value: PlannerRoute.entry(entry.id)) {
-                PlanAgendaRow(entry: entry, embedded: true)
+                PlanAgendaRow(entry: entry, showDate: showDate, embedded: true)
             }.buttonStyle(.plain)
             if isOpen {
                 HStack(spacing: 8) {
