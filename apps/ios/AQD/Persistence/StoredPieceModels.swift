@@ -186,3 +186,15 @@ final class StoredPhotoCleanup {
 
     init(photoID: UUID) { id = photoID }
 }
+
+extension WardrobePiece {
+    /// The piece as `StoredPiece` keeps it. The organization category is carried by drafts and receipts but is not a
+    /// stored column, so receipt checks compare against this form rather than the raw snapshot.
+    var persistedForm: WardrobePiece {
+        let stored = PieceDetails(color: details.color, brand: details.brand, size: details.size, fit: details.fit, material: details.material,
+                                  season: details.season, condition: details.condition, ownershipAge: details.ownershipAge,
+                                  tags: details.tags, notes: details.notes, priorWearCount: details.priorWearCount)
+        return WardrobePiece(id: id, name: name, category: category, photoID: photoID, details: stored, availability: availability,
+                             revision: revision, isArchived: isArchived, createdAt: createdAt, updatedAt: updatedAt, photoRecipe: photoRecipe)
+    }
+}
