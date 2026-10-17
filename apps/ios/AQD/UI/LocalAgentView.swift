@@ -396,7 +396,12 @@ struct AgentConversationView: View {
                             readAloud.stop(); focused = false; attachmentSource = source
                         }
                     }
-                } label: { Image(systemName: "plus").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget) }
+                } label: {
+                    Image(systemName: "plus")
+                        .padding(.leading, AppSpacing.xSmall)
+                        .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget, alignment: .leading)
+                        .contentShape(Rectangle())
+                }
                     .accessibilityLabel("Add camera, photo or file").disabled(!model.supportsGeneration || model.active || model.hasPendingOperation || attachmentImporter.count >= AgentAttachment.maximumCount || state.agentControlsModel?.hasPending == true)
                 Spacer(minLength: AppSpacing.small)
                 if AgentVoiceModel.isSupported {
