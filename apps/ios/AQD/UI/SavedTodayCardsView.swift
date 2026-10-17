@@ -50,7 +50,7 @@ struct SavedTodayCardsView: View {
                 }
             }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle(title).navigationBarTitleDisplayMode(.inline)
                 .onAppear { reload(); if let selection { reader.scrollTo(selection); focused = selection } }
-                .alert("Delete this saved \(request?.card.kind == .personalPhoto ? "photo" : "note")?", isPresented: $confirming) {
+                .appConfirmation("Delete this saved \(request?.card.kind == .personalPhoto ? "photo" : "note")?", isPresented: $confirming) {
                     Button("Cancel", role: .cancel) { request = nil; focused = selection }
                     Button("Delete", role: .destructive) { completeDeletion() }
                 } message: {

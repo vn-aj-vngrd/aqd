@@ -6,6 +6,7 @@ struct LocalEraseView: View {
     let onInstall: (PieceStore, LocalDataCoordinator, Int) -> Void
     @State private var phrase = ""
     @State private var confirm = false
+    @State private var showsImpact = true
     @FocusState private var confirmationFocused: Bool
     var body: some View {
         NavigationStack {
@@ -20,7 +21,7 @@ struct LocalEraseView: View {
                     Text("Keep AQD open while your local data resets.")
                 case .complete:
                     Text("AQD is ready for a fresh start.").font(.title2)
-                    Text("Return to Welcome to begin onboarding. AQD will finish removing its old files after you continue; any cleanup that needs attention will stay visible.")
+                    Text("Return to Welcome to begin onboarding. AQD will finish its file cleanup after you continue; recovery is available in Settings.")
                 case .failed, .newer:
                     Text("Reset wasn’t completed").font(.title2)
                     Text(model.error ?? "Your previous local records are retained.").foregroundStyle(AppTheme.error)
@@ -50,7 +51,7 @@ struct LocalEraseView: View {
                 .toolbar { ToolbarItem(placement: .cancellationAction) { if model.phase != .complete {
                     Button { if model.cancel() { onCancel() } } label: { Image(systemName: "xmark") }.buttonBorderShape(.circle).accessibilityLabel("Cancel").disabled(model.phase == .committing)
                 } } }
-                .alert("Reset all AQD data?", isPresented: $confirm) {
+                .appConfirmation("Reset all AQD data?", isPresented: $confirm) {
                     Button("Cancel", role: .cancel) {}
                     Button("Reset data", role: .destructive) { model.resetData(confirmation: phrase) }
                 } message: { Text("Permanently replaces all local AQD records and schedules AQD-only file cleanup. Original Photos and exported archives stay. No automatic recovery.") }
@@ -68,7 +69,7 @@ struct LocalEraseView: View {
             }
 
             VStack(alignment: .leading, spacing: 0) {
-                DisclosureGroup {
+                DisclosureGroup(isExpanded: $showsImpact) {
                     VStack(alignment: .leading, spacing: AppSpacing.medium) {
                         Text("Your closet, outfits, plans, wear history, fits, chats, feedback, profile, settings, drafts and AQD photo copies will be removed. iPhone permission settings stay unchanged.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
@@ -90,7 +91,7 @@ struct LocalEraseView: View {
                         Text("Export a copy first")
                         Spacer(minLength: AppSpacing.medium)
                         Image(systemName: "chevron.forward").font(AppTypography.disclosure)
-                            .foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                            .foregroundStyle(AppTheme.ink).accessibilityHidden(true)
                     }.font(AppTypography.body).foregroundStyle(AppTheme.ink)
                         .frame(minHeight: AppControlMetrics.minimumTarget)
                         .padding(.horizontal, AppControlMetrics.fieldPadding)

@@ -2,114 +2,224 @@ import SwiftUI
 import UIKit
 
 extension View {
-    /// App-owned discard confirmation; callbacks retain the existing draft recovery.
+    /// App-owned confirmations share one appearance; system permission prompts stay native.
+    func appConfirmation<Actions: View, Message: View>(
+        _ title: String, isPresented: Binding<Bool>,
+        @ViewBuilder actions: @escaping () -> Actions,
+        @ViewBuilder message: @escaping () -> Message
+    ) -> some View {
+        modifier(AppConfirmationPresentation(title: title, isPresented: isPresented,
+                                             actions: actions, message: message))
+    }
+
+    func appConfirmation<Actions: View>(
+        _ title: String, isPresented: Binding<Bool>,
+        @ViewBuilder actions: @escaping () -> Actions
+    ) -> some View {
+        appConfirmation(title, isPresented: isPresented, actions: actions, message: { EmptyView() })
+    }
+
     func draftDiscardConfirmation(isPresented: Binding<Bool>, title: String,
                                   message: String, discard: @escaping () -> Void) -> some View {
-        modifier(DraftDiscardConfirmation(isPresented: isPresented, title: title,
-                                          message: message, discard: discard))
+        appConfirmation(title, isPresented: isPresented) {
+            Button("Keep editing", role: .cancel) {}
+            Button("Discard draft", role: .destructive, action: discard)
+        } message: { Text(message) }
     }
 }
 
-private struct DraftDiscardConfirmation: ViewModifier {
-    @Binding var isPresented: Bool
+private struct AppConfirmationPresentation<Actions: View, Message: View>: ViewModifier {
     let title: String
-    let message: String
-    let discard: () -> Void
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Binding var isPresented: Bool
+    let actions: () -> Actions
+    let message: () -> Message
 
     func body(content: Content) -> some View {
-        content
-            .disabled(isPresented)
-            .accessibilityHidden(isPresented)
-            .overlay {
-                if isPresented {
-                    ZStack {
-                        Color.black.opacity(0.22).ignoresSafeArea()
-                            .contentShape(Rectangle())
-                            .onTapGesture {} // An outside tap never discards or dismisses.
-                            .accessibilityHidden(true)
-                        let dialog = DraftDiscardCard(title: title, message: message,
-                                         cancel: { isPresented = false },
-                                         discard: {
-                            // Match native alerts: close before invoking the operation.
-                            // A failed discard remains in the editor with its error.
-                            isPresented = false
-                            discard()
-                        })
-                        ViewThatFits(in: .vertical) {
-                            dialog.fixedSize(horizontal: false, vertical: true)
-                            ScrollView { dialog }.scrollBounceBehavior(.basedOnSize)
-                        }.padding(AppSpacing.section)
-                    }
-                    .transition(reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.96)))
-                }
+        content.background {
+            ConfirmationPresenter(isPresented: $isPresented) { perform in
+                AppConfirmationCard(title: title, perform: perform, actions: actions, message: message)
             }
-            .animation(reduceMotion ? nil : .easeInOut(duration: 0.18), value: isPresented)
+        }
     }
 }
 
-private struct DraftDiscardCard: View {
+/// Over-full-screen presentation keeps the editor visible in UIKit's lifecycle.
+/// A fullScreenCover would fire onDisappear and cancel in-progress editor work.
+private struct ConfirmationPresenter<Dialog: View>: UIViewControllerRepresentable {
+    @Binding var isPresented: Bool
+    let dialog: (@escaping (@escaping () -> Void) -> Void) -> Dialog
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+    func makeUIViewController(context: Context) -> ConfirmationAnchor {
+        let anchor = ConfirmationAnchor()
+        anchor.onReady = { [weak coordinator = context.coordinator, weak anchor] in
+            if let anchor { coordinator?.update(from: anchor) }
+        }
+        return anchor
+    }
+    func updateUIViewController(_ anchor: ConfirmationAnchor, context: Context) {
+        context.coordinator.parent = self
+        context.coordinator.update(from: anchor)
+    }
+    static func dismantleUIViewController(_ anchor: ConfirmationAnchor, coordinator: Coordinator) {
+        anchor.onReady = nil
+        coordinator.host?.dismiss(animated: false)
+        coordinator.host = nil
+    }
+
+    @MainActor final class Coordinator {
+        var parent: ConfirmationPresenter
+        var host: UIHostingController<Dialog>?
+        private var dismissing = false
+        init(_ parent: ConfirmationPresenter) { self.parent = parent }
+
+        func update(from anchor: ConfirmationAnchor) {
+            guard !dismissing else { return }
+            guard parent.isPresented else {
+                if host != nil { close(action: nil) }
+                return
+            }
+            let content = parent.dialog { [weak self] action in self?.close(action: action) }
+            if let host {
+                host.rootView = content
+                host.overrideUserInterfaceStyle = parent.colorScheme == .dark ? .dark : .light
+                return
+            }
+            guard anchor.viewIfLoaded?.window != nil else { return }
+            let controller = UIHostingController(rootView: content)
+            controller.modalPresentationStyle = .overFullScreen
+            controller.modalTransitionStyle = .crossDissolve
+            controller.overrideUserInterfaceStyle = parent.colorScheme == .dark ? .dark : .light
+            controller.view.backgroundColor = .clear
+            controller.view.accessibilityViewIsModal = true
+            controller.isModalInPresentation = true
+            host = controller
+            anchor.present(controller, animated: !parent.reduceMotion)
+        }
+
+        private func close(action: (() -> Void)?) {
+            guard let host, !dismissing else { return }
+            dismissing = true
+            host.dismiss(animated: !parent.reduceMotion) { [self] in
+                self.host = nil
+                // Consume reviewed optional targets before clearing their binding, and
+                // wait for dismissal so an action can present Photos or another sheet.
+                action?()
+                parent.isPresented = false
+                dismissing = false
+            }
+        }
+    }
+}
+
+private final class ConfirmationAnchor: UIViewController {
+    var onReady: (() -> Void)?
+    override func loadView() {
+        view = UIView()
+        view.backgroundColor = .clear
+        view.isUserInteractionEnabled = false
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        onReady?()
+    }
+}
+
+private struct AppConfirmationCard<Actions: View, Message: View>: View {
     let title: String
-    let message: String
-    let cancel: () -> Void
-    let discard: () -> Void
+    let perform: (@escaping () -> Void) -> Void
+    @ViewBuilder let actions: () -> Actions
+    @ViewBuilder let message: () -> Message
     @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @AccessibilityFocusState private var titleFocused: Bool
-
+    @State private var cancelAction: (() -> Void)?
     private let shape = RoundedRectangle(cornerRadius: AppRadius.composer, style: .continuous)
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.large) {
-            VStack(alignment: .leading, spacing: AppSpacing.small) {
-                Text(title).font(.headline).foregroundStyle(AppTheme.ink)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .accessibilityAddTraits(.isHeader).accessibilityFocused($titleFocused)
-                Text(message).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }.padding(.horizontal, AppSpacing.medium)
-            if typeSize.isAccessibilitySize {
-                VStack(spacing: AppSpacing.small) { cancelButton; discardButton }
-            } else {
-                HStack(spacing: AppSpacing.small) { cancelButton; discardButton }
-            }
+        ZStack {
+            Color.black.opacity(0.22).ignoresSafeArea().accessibilityHidden(true)
+            ViewThatFits(in: .vertical) {
+                card.fixedSize(horizontal: false, vertical: true)
+                ScrollView { card }.scrollBounceBehavior(.basedOnSize)
+            }.padding(AppSpacing.section)
         }
-        .padding(AppSpacing.large)
-        .frame(maxWidth: 340)
-        .background {
-            if reduceTransparency { shape.fill(AppTheme.surface) }
-            else { shape.fill(.regularMaterial) }
-        }
-        .overlay(shape.stroke(AppTheme.glassEdge, lineWidth: 1))
-        .shadow(color: AppTheme.controlShadow, radius: AppSpacing.section, y: AppSpacing.small)
         .accessibilityElement(children: .contain)
         .accessibilityAddTraits(.isModal)
-        .accessibilityAction(.escape, cancel)
+        // Escape activates the original cancel cleanup rather than only hiding the card.
+        .accessibilityAction(.escape) { cancelAction?() }
         .onAppear {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             titleFocused = true
         }
     }
 
-    private var cancelButton: some View {
-        Button(role: .cancel, action: cancel) {
-            buttonLabel("Keep editing", color: AppTheme.ink, emphasized: true)
-        }.buttonStyle(.plain).keyboardShortcut(.cancelAction)
+    private var card: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.large) {
+            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                Text(title).font(.headline).foregroundStyle(AppTheme.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityAddTraits(.isHeader).accessibilityFocused($titleFocused)
+                message().font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }.padding(.horizontal, AppSpacing.medium)
+            ViewThatFits(in: .horizontal) {
+                if !typeSize.isAccessibilitySize {
+                    HStack(spacing: AppSpacing.small) { actions().fixedSize(horizontal: true, vertical: false) }
+                }
+                VStack(spacing: AppSpacing.small) { actions() }
+            }
+            .buttonStyle(ConfirmationActionStyle(perform: perform, registerCancel: { cancelAction = $0 }))
+        }
+        .padding(AppSpacing.large).frame(maxWidth: 340)
+        .background {
+            if reduceTransparency { shape.fill(AppTheme.surface) }
+            else { shape.fill(.regularMaterial) }
+        }
+        .overlay(shape.stroke(AppTheme.glassEdge, lineWidth: 1))
+        .shadow(color: AppTheme.controlShadow, radius: AppSpacing.section, y: AppSpacing.small)
     }
+}
 
-    private var discardButton: some View {
-        Button(role: .destructive, action: discard) {
-            buttonLabel("Discard draft", color: AppTheme.error, emphasized: false)
-        }.buttonStyle(.plain)
+/// Keep the same actions and roles while replacing system alert button chrome.
+private struct ConfirmationActionStyle: PrimitiveButtonStyle {
+    let perform: (@escaping () -> Void) -> Void
+    let registerCancel: (@escaping () -> Void) -> Void
+    @Environment(\.isEnabled) private var isEnabled
+    func makeBody(configuration: Configuration) -> some View {
+        Button(role: configuration.role) {
+            perform { configuration.trigger() }
+        } label: {
+            configuration.label
+                .font(configuration.role == .cancel ? .body.weight(.semibold) : AppTypography.body)
+                .foregroundStyle(configuration.role == .destructive ? AppTheme.error : AppTheme.ink)
+                .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, AppSpacing.medium).padding(.vertical, AppSpacing.medium)
+                .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
+                .background(AppTheme.imageGround, in: Capsule()).contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .opacity(isEnabled ? 1 : 0.45)
+        .onAppear {
+            if configuration.role == .cancel {
+                registerCancel { perform { configuration.trigger() } }
+            }
+        }
+        .modifier(ConfirmationCancelAction(isCancel: configuration.role == .cancel, action: {
+            perform { configuration.trigger() }
+        }))
     }
+}
 
-    private func buttonLabel(_ title: String, color: Color, emphasized: Bool) -> some View {
-        Text(title).font(emphasized ? .body.weight(.semibold) : AppTypography.body)
-            .foregroundStyle(color).multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, AppSpacing.medium).padding(.vertical, AppSpacing.medium)
-            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
-            .background(AppTheme.imageGround, in: Capsule())
-            .contentShape(Capsule())
+private struct ConfirmationCancelAction: ViewModifier {
+    let isCancel: Bool
+    let action: () -> Void
+    func body(content: Content) -> some View {
+        if isCancel {
+            content.keyboardShortcut(.cancelAction)
+                .accessibilityAction(.escape, action)
+        } else { content }
     }
 }

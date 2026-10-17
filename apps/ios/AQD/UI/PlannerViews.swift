@@ -212,7 +212,7 @@ struct LocalPlanEntryView: View {
             .navigationDestination(isPresented: $viewingWear) {
                 if let wearID = entry?.wearRecordID { LocalWearDetailView(id: wearID) }
             }
-            .alert("Remove from Planner?", isPresented: $confirming) {
+            .appConfirmation("Remove from Planner?", isPresented: $confirming) {
                 Button("Remove entry", role: .destructive, action: remove)
                 Button("Cancel", role: .cancel) { removal = nil }
             } message: { Text("Removes this entry only. Your outfits, recorded wear, other dates and routine stay.") }

@@ -389,7 +389,7 @@ struct PiecePersistenceTests {
 
     // Postimplementation observation guard; no test-first RED is claimed.
     @Test(arguments: [0, 2])
-    func heldPhotoCleanupFooterObservesActualFailureAndRecovery(pendingRequests: Int) async throws {
+    func heldSettingsPhotoRecoveryObservesActualFailureAndRecovery(pendingRequests: Int) async throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let state = AppState(store: try PieceStore(directory: directory))
         defer { state.store = nil }
@@ -397,9 +397,9 @@ struct PiecePersistenceTests {
         let markerBytes = try Data(contentsOf: marker)
         try #require(state.photoCleanupError == nil)
 
-        // Construct once, just like the native root builders. Never replace
+        // Construct once, like the Settings recovery row. Never replace
         // rootView: the existing SwiftUI body must observe both transitions.
-        let host = UIHostingController(rootView: PhotoCleanupRecoveryView().environment(state))
+        let host = UIHostingController(rootView: SettingsPhotoRecoveryView().environment(state))
         let heldView = try #require(host.view)
         heldView.frame = CGRect(x: 0, y: 0, width: 390, height: 1000)
         let proposal = CGSize(width: 390, height: 1000)

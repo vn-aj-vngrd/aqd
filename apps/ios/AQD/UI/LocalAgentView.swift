@@ -229,7 +229,7 @@ struct AgentConversationView: View {
                 Text("Generated text cannot change your records. Only an explicit review and saved receipt can do that.")
                 }.listRowBackground(AppTheme.surface)
             }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarSaveAction(title: "Done") { details = nil } } } }.appAppearance(state.appearance) }
-            .alert("Delete this conversation?", isPresented: Binding(get: { deletingConversation != nil }, set: { if !$0 { deletingConversation = nil } })) {
+            .appConfirmation("Delete this conversation?", isPresented: Binding(get: { deletingConversation != nil }, set: { if !$0 { deletingConversation = nil } })) {
                 Button("Cancel", role: .cancel) { deletingConversation = nil }
                 Button("Delete conversation", role: .destructive) {
                     if let value = deletingConversation { model.delete(value) }; deletingConversation = nil
@@ -607,7 +607,7 @@ struct AgentHistoryView: View {
                 }
 
             }
-            .alert("Delete this conversation?", isPresented: Binding(get: { selected != nil }, set: { if !$0 { selected = nil } })) {
+            .appConfirmation("Delete this conversation?", isPresented: Binding(get: { selected != nil }, set: { if !$0 { selected = nil } })) {
                 Button("Cancel", role: .cancel) { selected = nil }
                 Button("Delete conversation", role: .destructive) { if let selected { model.delete(selected) }; selected = nil }
             } message: { Text("Deletes this conversation, its draft and responses on this iPhone. Saved pieces, outfits and plans stay.") }

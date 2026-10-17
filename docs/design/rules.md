@@ -46,3 +46,6 @@ For navigation, custom transitions, loading/feedback, onboarding or animation re
 ## Navigation exits
 
 Use one exit per outcome: Back for pushed destinations/nested steps, leading glass Back for standalone forms and setup, Close/Done for read-only sheets, and trailing Cancel for search. Remove equivalent body dismissal actions. Keep native discard protection for unsaved edits and retain parent drafts when stepping back. See [Native presentations](native-presentations.md#one-exit-per-screen) for each existing flow.
+
+
+Owner override October17: app-authored alerts and confirmations use the shared custom confirmation card (including destructive, discard, permission-help and input dialogs). Preserve titles, scope, explicit cancel actions, destructive text, validation, reviewed operation targets, modal accessibility, minimum44 targets and semantic dark/Reduce Transparency colors. Cards adapt action layout for long labels and accessibility text. System permissions, media pickers and sharing retain OS presentation. Reset impact opens expanded; export disclosure matches ink-colored disclosure control.

@@ -258,7 +258,7 @@ struct OutfitDetailView: View {
                     }
                 }
             }
-            .confirmationDialog("Delete this outfit?", isPresented: $deletePresented, titleVisibility: .visible) {
+            .appConfirmation("Delete this outfit?", isPresented: $deletePresented) {
                 Button("Delete outfit", role: .destructive) { if let deleteReview { apply(deleteReview) } }
                 Button("Cancel", role: .cancel) { deleteReview = nil }
             } message: { Text(deletionMessage) }

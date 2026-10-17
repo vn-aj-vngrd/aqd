@@ -34,7 +34,7 @@ struct LocalWearDetailView: View {
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle("Wear record").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
             .onAppear { state.reloadWear() }
-            .confirmationDialog("Undo this wear?", isPresented: $confirmingUndo, titleVisibility: .visible) {
+            .appConfirmation("Undo this wear?", isPresented: $confirmingUndo) {
                 Button("Undo wear", role: .destructive, action: undo)
                 Button("Cancel", role: .cancel) { request = nil }
             } message: { Text("Removes this record and its counted wears. All existing linked plan entries return to Planned. Deleted plans stay deleted.") }

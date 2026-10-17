@@ -199,7 +199,7 @@ struct FitEditorView: View {
                 .navigationDestination(isPresented: $timezone) {
                     TimezoneChooser(current: model.draft.value.day.timeZoneID) { zone in model.update { $0.day.timeZoneID = zone }; return model.error == nil }
                 }
-                .alert("Remove this fit photo?", isPresented: $removePhoto) {
+                .appConfirmation("Remove this fit photo?", isPresented: $removePhoto) {
                     Button("Cancel", role: .cancel) {}
                     Button("Remove photo", role: .destructive) { model.removePhoto() }
                 } message: { Text("Changes this draft only until Save. Keep an outfit link or add another photo to save the fit. Original Photos are unchanged.") }
@@ -344,7 +344,7 @@ struct FitMemoryDetailView: View {
                     }
                 } label: { Label("More", systemImage: "ellipsis") }
             } } }
-            .alert("Delete this memory?", isPresented: $confirming) {
+            .appConfirmation("Delete this memory?", isPresented: $confirming) {
                 Button("Cancel", role: .cancel) { request = nil }
                 Button("Delete memory", role: .destructive, action: delete)
             } message: { Text("Removes only this local memory and unshared AQD photo copies. Your outfit, wear history, other memories and original Photos stay.") }

@@ -404,7 +404,7 @@ struct PieceDetailView: View {
         .sheet(isPresented: $deleteDecision) {
             if let piece { PieceDeletionView(piece: piece) { deleteDecision = false; dismiss() } }
         }
-        .confirmationDialog("Archive \(reviewedArchive?.displayName ?? "this piece")?", isPresented: $archiveDecision, titleVisibility: .visible) {
+        .appConfirmation("Archive \(reviewedArchive?.displayName ?? "this piece")?", isPresented: $archiveDecision) {
             Button("Archive") {
                 if let reviewedArchive { setArchive(true, expectedRevision: reviewedArchive.revision, operation: archiveOperationID) }
             }

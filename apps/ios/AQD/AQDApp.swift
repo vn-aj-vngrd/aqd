@@ -148,7 +148,7 @@ private struct AppRootView: View {
         #endif
         .tint(AppTheme.actionText)
         .onChange(of: scenePhase) { _, phase in if phase != .active { state.weatherClient?.suspend() } }
-        .alert("Saved data unavailable", isPresented: Binding(
+        .appConfirmation("Saved data unavailable", isPresented: Binding(
             get: { state.collectionError != nil },
             set: { if !$0 { state.collectionError = nil } }
         )) {
@@ -203,33 +203,8 @@ private struct AppRootView: View {
         })) { rootContent(PrivateTourView()) }
     }
 
-    /// Keep incomplete cleanup visible and retryable on every native destination,
-    /// including the full-screen Agent, without obscuring its navigation controls.
+    /// Root destinations own their content. Background recovery notices belong to Settings.
     private func rootContent(_ content: some View) -> AnyView {
-        AnyView(VStack(spacing: 0) {
-            content
-            PhotoCleanupRecoveryView()
-        }.environment(state))
-    }
-}
-
-/// Native root builders run once. Observe cleanup in this view's body so later
-/// Discard/Back/Open failures and successful retries update the held controllers.
-struct PhotoCleanupRecoveryView: View {
-    @Environment(AppState.self) private var state
-
-    var body: some View {
-        if let error = state.photoCleanupError {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(error).font(.subheadline).foregroundStyle(AppTheme.warning)
-                Button { state.retryPhotoCleanup() } label: {
-                    Text("Retry photo cleanup").frame(minHeight: 44)
-                        .contentShape(Rectangle())
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(16).background(AppTheme.canvas)
-            .fixedSize(horizontal: false, vertical: true)
-        }
+        AnyView(content.environment(state))
     }
 }

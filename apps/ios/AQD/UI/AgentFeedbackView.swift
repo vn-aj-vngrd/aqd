@@ -201,7 +201,7 @@ struct AgentFeedbackEditor: View {
                 }
             }.interactiveDismissDisabled(changed || library.hasPending)
             .draftDiscardConfirmation(isPresented: $discard, title: "Discard feedback changes?", message: "Your saved feedback stays unchanged.") { dismiss() }
-            .alert("Delete this feedback?", isPresented: $deleting) {
+            .appConfirmation("Delete this feedback?", isPresented: $deleting) {
                 Button("Cancel", role: .cancel) {}
                 Button("Delete feedback", role: .destructive) { if library.save(draft, removing: true) { dismiss() } }
             } message: { Text("Removes this feedback from AQD on this iPhone. Your chat and wardrobe stay.") }

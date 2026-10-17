@@ -149,7 +149,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
                     Button { dirty ? (discardDecision = true) : leave() } label: {
                         Image(systemName: "chevron.backward")
                     }.disabled(applying).accessibilityLabel("Back").accessibilityIdentifier("photo.editor.back")
-                    .confirmationDialog("Discard photo edits?", isPresented: $discardDecision, titleVisibility: .visible) {
+                    .appConfirmation("Discard photo edits?", isPresented: $discardDecision) {
                         Button("Discard edits", role: .destructive) { leave() }
                         Button("Cancel", role: .cancel) {}
                     } message: {

@@ -284,8 +284,7 @@ private struct StyleColorSelectionView: View {
             } footer: { Text("Choose any. Changes stay in your draft until you save preferences.") }
         }.scrollContentBackground(.hidden).background(AppTheme.canvas)
             .navigationTitle(field.rawValue).navigationBarTitleDisplayMode(.inline)
-            .alert("Add preference", isPresented: $addingCustom) {
-                TextField("Your preference", text: $custom)
+            .appConfirmation("Add preference", isPresented: $addingCustom) {
                 Button("Add") {
                     let items = ColorPreferences.selections(in: custom)
                     model.update { draft in
@@ -299,6 +298,10 @@ private struct StyleColorSelectionView: View {
                     }
                 }.disabled(ColorPreferences.selections(in: custom).isEmpty || model.pending || model.unknown)
                 Button("Cancel", role: .cancel) {}
+            } message: {
+                TextField("Your preference", text: $custom)
+                    .textFieldStyle(.roundedBorder)
+                    .accessibilityLabel("Your preference")
             }
     }
     private func toggle(_ option: String) {

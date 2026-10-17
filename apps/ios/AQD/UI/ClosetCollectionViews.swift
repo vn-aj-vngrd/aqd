@@ -250,7 +250,7 @@ struct ThemeDetailView: View {
                     }
                 }
             }.onAppear { state.reloadThemes(); state.reloadOutfits() }
-            .confirmationDialog("Delete this theme?", isPresented: $confirming, titleVisibility: .visible) {
+            .appConfirmation("Delete this theme?", isPresented: $confirming) {
                 Button("Delete theme", role: .destructive, action: remove)
                 Button("Cancel", role: .cancel) { deletion = nil }
             } message: { Text("Removes this theme and its memberships. Your outfits, pieces, favorites and wear history stay.") }

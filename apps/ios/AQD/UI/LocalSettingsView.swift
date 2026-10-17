@@ -42,12 +42,21 @@ struct LocalSettingsView: View {
                 Text("Stored on this iPhone with no account or automatic cloud backup. Export a copy to protect against device loss or deleting AQD.")
             }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
                 .listRowBackground(AppTheme.surface)
-            if let recovery = state.localDataCleanupError {
+            if state.localDataCleanupError != nil || state.photoCleanupError != nil {
                 Section {
-                    Button { state.openRestore() } label: { SettingsRow(title: "Review data operation", symbol: "arrow.counterclockwise", disclosure: true) }
-                    Button { state.retryLocalDataCleanup() } label: { SettingsRow(title: "Retry cleanup", symbol: "arrow.clockwise") }
-                } header: { Text("Data recovery") } footer: { Text(recovery) }
-                    .listRowBackground(AppTheme.surface)
+                    if state.localDataCleanupError != nil {
+                        Button { state.openRestore() } label: { SettingsRow(title: "Review data operation", symbol: "arrow.counterclockwise", disclosure: true) }
+                        Button { state.retryLocalDataCleanup() } label: { SettingsRow(title: "Retry cleanup", symbol: "arrow.clockwise") }
+                    }
+                    SettingsPhotoRecoveryView()
+                } header: { Text("Data recovery") } footer: {
+                    VStack(alignment: .leading, spacing: AppSpacing.small) {
+                        if let recovery = state.localDataCleanupError { Text(recovery) }
+                    }
+                }
+                .listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large,
+                                         bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
+                .listRowBackground(AppTheme.surface)
             }
             #if DEBUG
             Section {
@@ -305,3 +314,18 @@ private struct DevelopmentSplashPreview: View {
     }
 }
 #endif
+
+/// Background photo recovery is displayed only inside Settings.
+struct SettingsPhotoRecoveryView: View {
+    @Environment(AppState.self) private var state
+    var body: some View {
+        if let recovery = state.photoCleanupError {
+            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                Text(recovery).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                Button { state.retryPhotoCleanup() } label: {
+                    SettingsRow(title: "Retry photo cleanup", symbol: "photo")
+                }
+            }
+        }
+    }
+}

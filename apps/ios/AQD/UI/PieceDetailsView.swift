@@ -93,7 +93,7 @@ struct PieceDetailsView: View {
                     }
                 }
 
-                .confirmationDialog("Discard these detail changes?", isPresented: $discardDecision, titleVisibility: .visible) {
+                .appConfirmation("Discard these detail changes?", isPresented: $discardDecision) {
                     Button("Discard changes", role: .destructive) { dismiss() }
                     Button("Keep editing", role: .cancel) {}
                 } message: {

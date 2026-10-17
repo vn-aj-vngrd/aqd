@@ -46,7 +46,7 @@ struct LocalRestoreView: View {
                 .toolbar { ToolbarItem(placement: .cancellationAction) { if model.phase != .complete {
                     Button { if model.cancel() { onCancel() } } label: { Image(systemName: "xmark") }.buttonBorderShape(.circle).accessibilityLabel("Cancel").disabled(model.phase == .committing)
                 } } }
-                .alert("Replace this iPhone’s closet?", isPresented: $confirmation) {
+                .appConfirmation("Replace this iPhone’s closet?", isPresented: $confirmation) {
                     Button("Cancel", role: .cancel) {}
                     Button("Replace closet", role: .destructive, action: { model.commit() })
                 } message: { Text("Installs only this validated archive and replaces current AQD records, photos, history, Profile, conversations and drafts. Original Photos and exported copies stay.") }

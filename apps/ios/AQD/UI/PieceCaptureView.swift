@@ -65,7 +65,7 @@ struct PieceCaptureView: View {
                     discardDecision = false
                     model.discard()
                 }
-            .alert("Camera access is off", isPresented: $cameraDenied) {
+            .appConfirmation("Camera access is off", isPresented: $cameraDenied) {
                 Button("Open Settings") {
                     if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
                 }
@@ -74,13 +74,13 @@ struct PieceCaptureView: View {
             } message: {
                 Text("Allow Camera in iPhone Settings to take a photo, or choose an existing photo. Your entered fields are unchanged.")
             }
-            .alert("Camera access is restricted", isPresented: $cameraRestricted) {
+            .appConfirmation("Camera access is restricted", isPresented: $cameraRestricted) {
                 Button("Choose from Photos") { pickerPresented = true }
                 Button("Keep draft", role: .cancel) {}
             } message: {
                 Text("A device restriction prevents camera access. Choose an existing photo or keep this draft. Your entered fields are unchanged.")
             }
-            .alert("Camera isn’t available", isPresented: $cameraUnavailable) {
+            .appConfirmation("Camera isn’t available", isPresented: $cameraUnavailable) {
                 Button("Choose from Photos") { pickerPresented = true }
                 Button("Keep draft", role: .cancel) {}
             }

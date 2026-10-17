@@ -45,7 +45,7 @@ struct PieceDeletionView: View {
                     Button { dismiss() } label: { Image(systemName: "xmark") }.tint(AppTheme.ink)
                         .accessibilityLabel("Cancel deletion").disabled(submitted)
                 } }
-                .confirmationDialog("Delete \(piece.displayName)?", isPresented: $confirming, titleVisibility: .visible) {
+                .appConfirmation("Delete \(piece.displayName)?", isPresented: $confirming) {
                     Button("Delete piece", role: .destructive, action: remove)
                     Button("Cancel", role: .cancel) {}
                 } message: { Text("This deletes the reviewed piece and changes the references shown here. This cannot be undone.") }

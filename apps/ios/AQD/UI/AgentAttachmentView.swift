@@ -122,7 +122,7 @@ struct AgentAttachmentStrip: View {
                 }
             }.padding(.vertical, AppSpacing.xSmall)
         }.frame(height: tileSize + 2 * AppSpacing.xSmall)
-            .alert("Attachment couldn’t load", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
+            .appConfirmation("Attachment couldn’t load", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
             Button("OK", role: .cancel) { importError = nil }
         } message: { Text(importError ?? "Remove this attachment and choose again.") }
             .scrollIndicators(.hidden).defaultScrollAnchor(remove == nil ? .trailing : .leading)
