@@ -272,3 +272,5 @@ Owner composer inner alignment October17: align the visible attachment plus with
 Inner alignment Standards/Spec source self-review: plus glyph and editor text now share the4pt leading inset within existing12pt shell padding.44pt rectangular menu hit bounds stay intact; semantic leading supports layout direction. No changes to outer16pt margin, other controls, attachments, text selection, native glass or domain operations. No cosmetic unit tests added; rendered alignment remains manual review.
 
 Signed generic Debug passed `/tmp/aqd-composer-inner-alignment-debug.log`; docs/whitespace checks pass. Device tests and app launch remain skipped.
+
+Inner composer alignment checkpoint `dcb41a2d44ea986e8c3b590fe921a36c6997189b` built and installed successfully without app launch. Receipt `composerInnerAlignment` records source-bound checks; visual alignment remains manual acceptance.
