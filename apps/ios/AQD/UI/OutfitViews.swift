@@ -94,12 +94,12 @@ struct OutfitEditorView: View {
             HStack(spacing: AppSpacing.small) {
                 ForEach(names, id: \.self) { name in
                     Text(name).font(.subheadline).padding(.horizontal, 12).frame(minHeight: 32)
-                        .background(AppTheme.accentSoft, in: Capsule()).foregroundStyle(AppTheme.ink)
+                        .background(AppTheme.primaryFill, in: Capsule()).foregroundStyle(AppTheme.onPrimary)
                 }
                 Button { hidePicker { choosingThemes = true } } label: {
                     Label(names.isEmpty ? "Add to theme" : "Edit", systemImage: "plus").font(.subheadline)
                         .padding(.horizontal, 12).frame(minHeight: 32)
-                        .background(AppTheme.surface, in: Capsule()).foregroundStyle(AppTheme.actionText)
+                        .background(AppTheme.surface, in: Capsule()).foregroundStyle(AppTheme.ink)
                 }.buttonStyle(.plain).disabled(locked).frame(minHeight: AppControlMetrics.minimumTarget)
                     .accessibilityLabel("Themes").accessibilityValue(names.isEmpty ? "None selected" : names.joined(separator: ", "))
             }

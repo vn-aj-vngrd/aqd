@@ -13,7 +13,8 @@ enum AppTheme {
     static let controlIcon = secondary
     static let imageGround = color(light: 0xF5F4F1, dark: 0x242422)
     static let accent = color(light: 0x8C6A36, dark: 0xD3B47C)
-    // Gold text is reserved for committing or completing an editing action.
+    // Two-role palette: charcoal (ink/primaryFill) owns controls and selection; gold is text-only for
+    // committing actions (Save/Done) and plain links. No gold fills, tints, rings or toggles.
     static let actionText = color(light: 0x765829, dark: 0xD9BD8A)
     static let onAccent = color(light: 0xFFFFFF, dark: 0x1C1C1B)
     static let primaryFill = color(light: 0x292826, dark: 0xF2F0EB)

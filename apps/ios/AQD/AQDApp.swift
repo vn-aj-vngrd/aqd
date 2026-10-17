@@ -146,7 +146,7 @@ private struct AppRootView: View {
 
         }
         #endif
-        .tint(AppTheme.actionText)
+        .tint(AppTheme.ink)
         .onChange(of: scenePhase) { _, phase in if phase != .active { state.weatherClient?.suspend() } }
         .appConfirmation("Saved data unavailable", isPresented: Binding(
             get: { state.collectionError != nil },
