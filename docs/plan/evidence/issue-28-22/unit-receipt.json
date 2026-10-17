@@ -151,5 +151,27 @@
     "Synthetic unit provider/mark/media fixtures are not Apple or garment-quality evidence.",
     "Full archive/restore/erase integration remains issue29.",
     "Repository release does not imply signed distribution, TestFlight or App Store publication."
-  ]
+  ],
+  "edgeToEdgeFitGallery": {
+    "codeCommit": "16931423fcc5ecf080dbae06ae4bc5a5d7580aef",
+    "checkedOn": "2026-10-17",
+    "signedGenericDebug": {
+      "result": "BUILD SUCCEEDED",
+      "log": "/tmp/aqd-profile-gallery-debug.log"
+    },
+    "install": {
+      "result": "Succeeded",
+      "receipt": "/tmp/aqd-profile-gallery-install.json"
+    },
+    "nativeTests": "Skipped by owner",
+    "renderedAcceptance": false,
+    "liveVoiceRecognition": "Unverified",
+    "launch": "Not attempted; owner opens app",
+    "review": "Self-review against standards and requested scope; no remaining findings",
+    "sourceSHA256": {
+      "apps/ios/AQD/UI/FitJournalViews.swift": "4c0d40682746775d20cca26483fc7d3da8a18c5c48c0af14cc4efc2f32a24390",
+      "apps/ios/AQD/UI/LocalProfileView.swift": "d6aa9e17fa6493292ec1f1a3946730bc63b45de3bb218f04d406dd6dee2df884"
+    },
+    "concurrentDialog": "Preserved and excluded from clean snapshot build"
+  }
 }

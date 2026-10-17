@@ -1547,5 +1547,28 @@
       "apps/ios/Core/Sources/AQDCore/AgentContextSnapshot.swift": "f1bf739504bec1c17b896ba98199fae8c872e6121cfa1e074634a14600e1d3b6",
       "apps/ios/Core/Tests/AQDCoreTests/AgentContextTests.swift": "3f89847d39438d330f06781c84625edcf66c9799b224fb5c91c1ea1fe2be5dc5"
     }
+  },
+  "inlineVoiceRecorder": {
+    "codeCommit": "1ea20149b063d8138d596240fc11934f4dd7b336",
+    "checkedOn": "2026-10-17",
+    "signedGenericDebug": {
+      "result": "BUILD SUCCEEDED",
+      "log": "/tmp/aqd-inline-voice-final-debug.log"
+    },
+    "install": {
+      "result": "Succeeded",
+      "receipt": "/tmp/aqd-inline-voice-final-install.json"
+    },
+    "nativeTests": "Skipped by owner",
+    "renderedAcceptance": false,
+    "liveVoiceRecognition": "Unverified",
+    "launch": "Not attempted; owner opens app",
+    "review": "Self-review against standards and requested scope; no remaining findings",
+    "sourceSHA256": {
+      "apps/ios/AQD/AgentVoiceModel.swift": "7d0d1343f984f4985a6081240101c23a7e51bedda6cbce38971adaad2242d3e6",
+      "apps/ios/AQD/UI/AgentVoiceView.swift": "729aa7fa382f08699738e8333a73d4563d973fb0f349d0ecaabfc51df8732426",
+      "apps/ios/AQD/UI/LocalAgentView.swift": "3dc4909f55209690ad0cda7deb71114acb078da36fa8c3865d01f421d8783c82"
+    },
+    "concurrentDialog": "Preserved and excluded from clean snapshot build"
   }
 }

@@ -2641,5 +2641,15 @@
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false,
     "scope": "Centered empty chat; bottom icon suggestions; visible bubbles; compact voice; conversational Markdown; Pin/Archive/Restore, destructive Delete and history filters."
+  },
+  "inlineVoiceRecorder": {
+    "codeCommit": "1ea20149b063d8138d596240fc11934f4dd7b336",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false
+  },
+  "edgeToEdgeFitGallery": {
+    "codeCommit": "16931423fcc5ecf080dbae06ae4bc5a5d7580aef",
+    "receipt": "docs/plan/evidence/issue-28-22/unit-receipt.json",
+    "runtimeComplete": false
   }
 }

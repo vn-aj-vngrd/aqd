@@ -62,3 +62,5 @@ Owner requested Instagram-like edge-to-edge fit media with square corners and us
 Profile gallery October17 source review: symbol/label selected traits, at-least44pt tabs, Dynamic Type single-column fallback, square clipped 3:4 media, unmodified snapshot/photo access, no persistence/schema changes, read-error retry and distinct filtered empty states inspected. Combined memories enter both relevant tabs and ordering remains the stored journal order. Signed generic Debug passed `/tmp/aqd-profile-gallery-debug.log`; docs links/whitespace pass. Device tests skipped by owner; no app launch/UI automation or rendered claim. Concurrent custom discard files preserved and excluded from clean snapshot.
 
 Final gallery build installed successfully (`/tmp/aqd-profile-gallery-install.json`), including committed inline voice recorder. Owner opens AQD manually.
+
+Gallery code checkpoint: `16931423fcc5ecf080dbae06ae4bc5a5d7580aef`. Source hashes and build/install receipts recorded in issue28/22 unit evidence; runtimeComplete remains false.
