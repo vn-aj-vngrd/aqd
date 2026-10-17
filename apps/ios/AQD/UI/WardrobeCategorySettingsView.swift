@@ -40,16 +40,14 @@ struct WardrobeCategorySettingsView: View {
         }.listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)
             .navigationTitle("Categories").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     Button {
                         withAnimation { editMode = editMode.isEditing ? .inactive : .active }
                     } label: {
                         if editMode.isEditing { Image(systemName: "checkmark") }
-                        else { Text("Edit") }
-                    }.tint(AppTheme.ink).neutralToolbarGlass().disabled(!loaded)
+                        else { Image(systemName: "pencil") }
+                    }.tint(AppTheme.ink).disabled(!loaded)
                         .accessibilityLabel(editMode.isEditing ? "Finish editing categories" : "Edit categories")
-                }
-                ToolbarItem(placement: .topBarTrailing) {
                     Button { editing = WardrobeCategory(name: "", type: .tops) } label: { Label("Add category", systemImage: "plus") }
                         .disabled(!loaded || categories.count >= 64)
                 }
