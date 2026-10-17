@@ -3,60 +3,28 @@ import SwiftUI
 
 struct OutfitEditorView: View {
     @Bindable var model: OutfitEditorModel
-    @State private var choosing = false
     @State private var discard = false
     @State private var choosingThemes = false
+    @State private var pickerWanted = false
+    @State private var detent = OutfitPickerSheet.peek
     @FocusState private var nameEditing: Bool
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var locked: Bool { model.pending || model.unknown || model.generating }
+    private var pickerVisible: Binding<Bool> {
+        Binding(get: { pickerWanted && model.saved == nil && !choosingThemes && !discard && !nameEditing }, set: { _ in })
+    }
+
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: AppSpacing.large) {
-                    if let saved = model.saved {
-                        OutfitComposition(pieceIDs: saved.pieceIDs)
-                        Text("Outfit saved").font(AppTypography.section)
-                        Text(saved.displayName).font(AppTypography.body)
-                        Text("Only you. Saving an outfit doesn’t plan a day or record wear.")
-                            .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        PrimaryAction(title: "Open outfit") { model.finish(openOutfit: true) }
-                        SecondaryAction(title: "Plan this look") { model.planSavedOutfit() }
-                    } else {
-                        VStack(alignment: .leading, spacing: AppSpacing.small) {
-                            HStack {
-                                Text("Your outfit").font(AppTypography.fieldLabel)
-                                Spacer()
-                                Text(model.draft.pieceIDs.count == 1 ? "1 piece" : "\(model.draft.pieceIDs.count) pieces")
-                                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                            }
-                            OutfitCanvas(pieceIDs: model.draft.pieceIDs, isLocked: locked) { id in
-                                nameEditing = false
-                                model.applyManualPieces(model.draft.pieceIDs.filter { $0 != id })
-                            }.accessibilityIdentifier("outfit.canvas")
-                        }
-                        LabeledField(title: "Outfit name", text: Binding(get: { model.draft.displayName }, set: { value in model.update { $0.name = value } }),
-                                     prompt: "e.g. An easy afternoon", accessibilityID: "outfit.name", editingFocus: $nameEditing).submitLabel(.done).onSubmit { nameEditing = false }.disabled(locked)
-                        DisclosureRow(title: "Themes", value: model.draft.themeIDs?.isEmpty == false ? "\(model.draft.themeIDs?.count ?? 0) selected" : "None selected") { nameEditing = false; choosingThemes = true }
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field)).disabled(locked)
-                        if model.needsPieceReview {
-                            SemanticFeedback(role: .warning, message: "Pieces changed. Open Change pieces to review the current records before saving.")
-                        }
-                    }
-                    if let error = model.error { SemanticFeedback(role: .danger, message: error) }
-                }.padding(AppSpacing.screen)
-            }.scrollDismissesKeyboard(.interactively).background(AppTheme.canvas)
-                .safeAreaInset(edge: .bottom, spacing: 0) {
-                    if model.saved == nil && !nameEditing {
-                        OutfitPieceTray(model: model) { choosing = true }
-                    }
-                }
+            Group {
+                if let saved = model.saved { savedContent(saved) } else { builder }
+            }.background(AppTheme.canvas)
                 .navigationTitle(model.saved != nil ? "Outfit saved" : model.draft.baseRevision == 0 ? "Build outfit" : "Edit outfit")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: model.saved == nil ? .topBarLeading : .topBarTrailing) {
                         Button {
                             if model.saved != nil { model.finish() }
-                            else if model.hasUnsavedChanges { discard = true }
+                            else if model.hasUnsavedChanges { hidePicker { discard = true } }
                             else { model.discard() }
                         } label: { if model.saved == nil { Image(systemName: "xmark") } else { Text("Done") } }
                             .accessibilityLabel(model.saved == nil ? "Cancel outfit" : "Done").tint(AppTheme.ink).disabled(locked)
@@ -75,24 +43,81 @@ struct OutfitEditorView: View {
                         }
                     }
                 }
-                .navigationDestination(isPresented: $choosing) { OutfitPieceChooser(model: model) }
                 .navigationDestination(isPresented: $choosingThemes) { OutfitThemeChooser(model: model) }
         }.interactiveDismissDisabled()
+            .sheet(isPresented: pickerVisible) {
+                OutfitPickerSheet(model: model, detent: $detent)
+                    .presentationDetents([OutfitPickerSheet.peek, .medium, .large], selection: $detent)
+                    .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+                    .presentationDragIndicator(.visible)
+                    .interactiveDismissDisabled()
+            }
+            .task { try? await Task.sleep(for: .milliseconds(500)); pickerWanted = true }
+            .onChange(of: choosingThemes) { _, on in if !on { pickerWanted = true } }
+            .onChange(of: discard) { _, on in if !on { pickerWanted = true } }
             .draftDiscardConfirmation(isPresented: $discard, title: "Discard outfit draft?", message: "Your saved outfits and pieces stay unchanged.") {
                 model.discard()
                 if model.state.outfitEditor == nil { discard = false }
             }
     }
-}
 
-private struct OutfitPieceChooser: View {
-    @Bindable var model: OutfitEditorModel
-    var body: some View {
-        OwnedPieceChooser(pieces: model.state.pieces, initialSelection: model.draft.pieceIDs,
-                          error: model.error, isLocked: model.pending || model.unknown || model.generating,
-                          showsComposition: true) { ids in
-            model.applyManualPieces(ids)
-        }.onAppear { model.state.reloadPieces() }
+    /// A sheet cannot sit under a push or confirmation, so let it leave first.
+    private func hidePicker(then action: @escaping () -> Void) {
+        nameEditing = false
+        pickerWanted = false
+        Task { try? await Task.sleep(for: .milliseconds(400)); action() }
+    }
+
+    private var builder: some View {
+        GeometryReader { geometry in
+            VStack(alignment: .leading, spacing: AppSpacing.medium) {
+                TextField("Name your outfit", text: Binding(get: { model.draft.displayName }, set: { value in model.update { $0.name = value } }))
+                    .font(.title2.weight(.medium)).focused($nameEditing).submitLabel(.done)
+                    .onSubmit { nameEditing = false }.disabled(locked).accessibilityIdentifier("outfit.name")
+                themeChips
+                if model.needsPieceReview {
+                    SemanticFeedback(role: .warning, message: "Pieces changed. Review the current pieces before saving.")
+                }
+                if let error = model.error { SemanticFeedback(role: .danger, message: error) }
+                OutfitCanvas(pieceIDs: model.draft.pieceIDs, isLocked: locked) { id in
+                    model.applyManualPieces(model.draft.pieceIDs.filter { $0 != id })
+                }.accessibilityIdentifier("outfit.canvas")
+                    .padding(.bottom, detent == OutfitPickerSheet.peek ? 272 - geometry.safeAreaInsets.bottom : geometry.size.height * 0.45)
+                    .animation(.smooth(duration: 0.25), value: detent)
+            }.padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small)
+        }
+    }
+
+    private var themeChips: some View {
+        let names = (model.draft.themeIDs ?? []).compactMap { id in model.state.themes.first { $0.id == id }?.displayName }
+        return ScrollView(.horizontal) {
+            HStack(spacing: AppSpacing.small) {
+                ForEach(names, id: \.self) { name in
+                    Text(name).font(.subheadline).padding(.horizontal, 12).frame(minHeight: 32)
+                        .background(AppTheme.accentSoft, in: Capsule()).foregroundStyle(AppTheme.ink)
+                }
+                Button { hidePicker { choosingThemes = true } } label: {
+                    Label(names.isEmpty ? "Add to theme" : "Edit", systemImage: "plus").font(.subheadline)
+                        .padding(.horizontal, 12).frame(minHeight: 32)
+                        .background(AppTheme.surface, in: Capsule()).foregroundStyle(AppTheme.actionText)
+                }.buttonStyle(.plain).disabled(locked).frame(minHeight: AppControlMetrics.minimumTarget)
+                    .accessibilityLabel("Themes").accessibilityValue(names.isEmpty ? "None selected" : names.joined(separator: ", "))
+            }
+        }.scrollIndicators(.hidden)
+    }
+
+    private func savedContent(_ saved: Outfit) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppSpacing.large) {
+                OutfitComposition(pieceIDs: saved.pieceIDs)
+                Text("Outfit saved").font(AppTypography.section)
+                Text(saved.displayName).font(AppTypography.body)
+                Text("Only you. Saving an outfit doesn’t plan a day or record wear.")
+                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                PrimaryAction(title: "Open outfit") { model.finish(openOutfit: true) }
+                SecondaryAction(title: "Plan this look") { model.planSavedOutfit() }
+            }.padding(AppSpacing.screen)
+        }
     }
 }
 

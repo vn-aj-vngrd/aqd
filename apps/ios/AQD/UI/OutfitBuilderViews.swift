@@ -6,8 +6,17 @@ struct OutfitCanvas: View {
     @Environment(AppState.self) private var state
     let pieceIDs: [UUID]
     var isLocked = false
-    var height: CGFloat = 340
     var remove: (UUID) -> Void
+
+    private var ordered: [UUID] {
+        let order = state.pieceCategories.map(\.id)
+        func rank(_ id: UUID) -> Int {
+            guard let piece = state.ownedPieces.first(where: { $0.id == id }),
+                  let category = state.category(for: piece)?.id, let index = order.firstIndex(of: category) else { return order.count }
+            return index
+        }
+        return pieceIDs.enumerated().sorted { (rank($0.element), $0.offset) < (rank($1.element), $1.offset) }.map(\.element)
+    }
 
     var body: some View {
         Group {
@@ -21,26 +30,27 @@ struct OutfitCanvas: View {
                 layout.padding(AppSpacing.medium)
             }
         }
-        .frame(height: height)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
         .animation(.smooth(duration: 0.28), value: pieceIDs)
     }
 
     @ViewBuilder private var layout: some View {
         let gap: CGFloat = 8
-        switch pieceIDs.count {
+        let ids = ordered
+        switch ids.count {
         case 1:
-            tile(pieceIDs[0])
+            tile(ids[0])
         case 2:
-            HStack(spacing: gap) { tile(pieceIDs[0]); tile(pieceIDs[1]) }
+            HStack(spacing: gap) { tile(ids[0]); tile(ids[1]) }
         case 3:
             HStack(spacing: gap) {
-                tile(pieceIDs[0])
-                VStack(spacing: gap) { tile(pieceIDs[1]); tile(pieceIDs[2]) }
+                tile(ids[0])
+                VStack(spacing: gap) { tile(ids[1]); tile(ids[2]) }
             }
         default:
-            let columns = pieceIDs.count <= 4 ? 2 : 3
-            let rows = stride(from: 0, to: pieceIDs.count, by: columns).map { Array(pieceIDs[$0..<min($0 + columns, pieceIDs.count)]) }
+            let columns = ids.count <= 4 ? 2 : 3
+            let rows = stride(from: 0, to: ids.count, by: columns).map { Array(ids[$0..<min($0 + columns, ids.count)]) }
             VStack(spacing: gap) {
                 ForEach(rows.indices, id: \.self) { row in
                     HStack(spacing: gap) {
@@ -73,58 +83,86 @@ struct OutfitCanvas: View {
     }
 }
 
-/// Bottom tray for adding owned pieces to the draft with one tap each.
-struct OutfitPieceTray: View {
+/// Resizable picker shown over the builder: a peek row, then a searchable grid.
+struct OutfitPickerSheet: View {
+    static let peek = PresentationDetent.height(272)
     @Bindable var model: OutfitEditorModel
-    var seeAll: () -> Void
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Binding var detent: PresentationDetent
     @State private var categoryID: String?
+    @State private var query = ""
+    @Environment(\.dynamicTypeSize) private var typeSize
 
-    private var pieces: [WardrobePiece] {
-        model.state.pieces.filter { categoryID == nil || model.state.category(for: $0)?.id == categoryID }
-    }
+    private var isPeek: Bool { detent == Self.peek }
     private var locked: Bool { model.pending || model.unknown || model.generating }
+    private var pieces: [WardrobePiece] {
+        let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        return model.state.pieces.filter { piece in
+            (categoryID == nil || model.state.category(for: piece)?.id == categoryID)
+                && (needle.isEmpty || "\(piece.displayName) \(piece.details.color) \(piece.details.brand)".localizedCaseInsensitiveContains(needle))
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.small) {
             HStack {
-                Text("Add pieces").font(AppTypography.fieldLabel)
+                Text("Add pieces").font(AppTypography.section)
                 Spacer()
-                Button("See all", action: seeAll).font(AppTypography.supporting.weight(.medium))
-                    .foregroundStyle(AppTheme.actionText).frame(minHeight: AppControlMetrics.minimumTarget)
-                    .accessibilityLabel("See all pieces")
-            }.padding(.bottom, -8)
+                Text("\(model.draft.pieceIDs.count) in outfit").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }.padding(.top, AppSpacing.large)
+            if !isPeek { searchField }
             ScrollView(.horizontal) {
                 HStack(spacing: AppSpacing.small) {
                     chip(nil)
                     ForEach(model.state.pieceCategories) { chip($0) }
                 }.padding(.trailing, AppSpacing.screen)
             }.scrollIndicators(.hidden).frame(height: AppControlMetrics.minimumTarget)
-                .mask(LinearGradient(stops: [.init(color: .black, location: 0.9), .init(color: .clear, location: 1)], startPoint: .leading, endPoint: .trailing))
-            if pieces.isEmpty {
-                Text(model.state.pieces.isEmpty ? "Add pieces to your closet to build an outfit." : "No pieces in this category.")
-                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    .frame(maxWidth: .infinity, minHeight: 140, alignment: .center)
-            } else {
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: AppSpacing.medium) {
-                        ForEach(pieces) { piece in tile(piece) }
-                    }.padding(.vertical, 2)
-                }.scrollIndicators(.hidden).frame(height: 148)
-            }
+                .mask(LinearGradient(stops: [.init(color: .black, location: 0.92), .init(color: .clear, location: 1)], startPoint: .leading, endPoint: .trailing))
+            content
         }
-        .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small).padding(.bottom, AppSpacing.small)
-        .background(.regularMaterial)
-        .overlay(alignment: .top) { Divider() }
+        .padding(.horizontal, AppSpacing.screen)
         .sensoryFeedback(.selection, trigger: model.draft.pieceIDs)
+        .animation(.smooth(duration: 0.25), value: isPeek)
     }
 
-    private func tile(_ piece: WardrobePiece) -> some View {
+    @ViewBuilder private var content: some View {
+        if pieces.isEmpty {
+            Text(model.state.pieces.isEmpty ? "Add pieces to your closet to build an outfit." : "No matching pieces.")
+                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                .frame(maxWidth: .infinity, minHeight: 120)
+            Spacer(minLength: 0)
+        } else if isPeek {
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: AppSpacing.medium) {
+                    ForEach(pieces) { tile($0, width: 88, height: 112) }
+                }.padding(.vertical, 2)
+            }.scrollIndicators(.hidden)
+        } else {
+            ScrollView {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: AppSpacing.medium), count: typeSize.isAccessibilitySize ? 2 : 3), spacing: AppSpacing.medium) {
+                    ForEach(pieces) { tile($0, width: nil, height: 128) }
+                }.padding(.bottom, AppSpacing.screen)
+            }.scrollDismissesKeyboard(.interactively)
+        }
+    }
+
+    private var searchField: some View {
+        HStack(spacing: AppSpacing.small) {
+            Image(systemName: "magnifyingglass").foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+            TextField("Search your pieces", text: $query).submitLabel(.search)
+            if !query.isEmpty {
+                Button { query = "" } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(AppTheme.secondary) }
+                    .buttonStyle(.plain).accessibilityLabel("Clear search")
+            }
+        }.padding(.horizontal, AppControlMetrics.fieldPadding).frame(height: 44)
+            .background(AppTheme.surface, in: Capsule())
+    }
+
+    private func tile(_ piece: WardrobePiece, width: CGFloat?, height: CGFloat) -> some View {
         let isSelected = model.draft.pieceIDs.contains(piece.id)
         return Button { toggle(piece) } label: {
             VStack(spacing: 4) {
                 PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
-                    .frame(width: 96, height: 120)
+                    .frame(maxWidth: width ?? .infinity).frame(height: height)
                     .overlay(RoundedRectangle(cornerRadius: AppRadius.group).strokeBorder(isSelected ? AppTheme.accent : .clear, lineWidth: 2))
                     .overlay(alignment: .topTrailing) {
                         if isSelected {
@@ -133,9 +171,8 @@ struct OutfitPieceTray: View {
                         }
                     }
                     .opacity(isSelected ? 0.75 : 1)
-                Text(piece.displayName).font(AppTypography.metadata).lineLimit(1)
-                    .foregroundStyle(AppTheme.secondary).frame(width: 96)
-            }
+                Text(piece.displayName).font(AppTypography.metadata).lineLimit(1).foregroundStyle(AppTheme.secondary)
+            }.frame(width: width)
         }.buttonStyle(.plain).disabled(locked)
             .accessibilityLabel(piece.displayName)
             .accessibilityValue(isSelected ? "In outfit" : "Not in outfit")
