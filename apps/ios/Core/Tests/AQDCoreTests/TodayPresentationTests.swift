@@ -62,4 +62,29 @@ struct TodayPresentationTests {
         #expect(try JSONDecoder().decode(TodayWidgetOptions.self, from: data).actions == [.addFit, .recordWear])
         #expect(TodayWidgetOptions().actions == nil, "an unconfigured card falls back to the defaults")
     }
+
+    @Test func aCardShowsOneTitleNeverTheKindAndItsOwn() {
+        #expect(TodayPresentation.title(kind: "Note", contentTitle: "A thought for today") == "A thought for today")
+        #expect(TodayPresentation.title(kind: "Note", contentTitle: nil) == "Note")
+        #expect(TodayPresentation.title(kind: "Photo", contentTitle: "   ") == "Photo", "a blank title falls back to the kind")
+        #expect(TodayPresentation.title(kind: "Theme", contentTitle: "Weekday") == "Weekday")
+    }
+
+    @Test func theEyebrowAppearsOnlyWhenItAddsInformation() {
+        #expect(TodayPresentation.header(kind: "Theme", contentTitle: "Weekday", context: nil) == .init(eyebrow: "Theme", title: "Weekday"), "the kind labels a named card")
+        #expect(TodayPresentation.header(kind: "Weather", contentTitle: "Manila", context: nil).eyebrow == "Weather")
+        #expect(TodayPresentation.header(kind: "Week in wear", contentTitle: nil, context: "Oct 18 to 24") == .init(eyebrow: "Oct 18 to 24", title: "Week in wear"))
+        #expect(TodayPresentation.header(kind: "Quick actions", contentTitle: nil, context: nil) == .init(eyebrow: nil, title: "Quick actions"), "nothing useful to add")
+    }
+
+    @Test func theEyebrowNeverRepeatsTheTitle() {
+        #expect(TodayPresentation.header(kind: "Theme", contentTitle: "theme", context: nil).eyebrow == nil)
+        #expect(TodayPresentation.header(kind: "Upcoming plans", contentTitle: nil, context: "UPCOMING PLANS").eyebrow == nil)
+        #expect(TodayPresentation.header(kind: "Today's look", contentTitle: nil, context: "  ").eyebrow == nil)
+    }
+
+    @Test func personalCardsShowTheirOwnTitleAloneOrTheKindAlone() {
+        #expect(TodayPresentation.header(kind: "Note", contentTitle: "A thought for today", context: "Note", personal: true) == .init(eyebrow: nil, title: "A thought for today"))
+        #expect(TodayPresentation.header(kind: "Photo", contentTitle: nil, context: nil, personal: true) == .init(eyebrow: nil, title: "Photo"))
+    }
 }

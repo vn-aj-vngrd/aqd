@@ -51,4 +51,31 @@ public enum TodayPresentation {
     public static func upcoming(_ entries: [OutfitPlanEntry], today: LocalPlanDay, hidingToday: Bool) -> [OutfitPlanEntry] {
         hidingToday ? entries.filter { $0.day.key != today.key } : entries
     }
+
+    /// A card's header: an optional small label above one title.
+    public struct Header: Equatable, Sendable {
+        public let eyebrow: String?
+        public let title: String
+    }
+
+    /// The title is the content's own name when it has one, otherwise the kind label. The eyebrow adds
+    /// context (a range, a month, "Theme") and is dropped when it would only repeat the title or says nothing.
+    /// Personal notes and photos never get an eyebrow: their own title stands alone.
+    public static func header(kind: String, contentTitle: String?, context: String?, personal: Bool = false) -> Header {
+        func clean(_ value: String?) -> String? {
+            let text = value?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            return text.isEmpty ? nil : text
+        }
+        let own = clean(contentTitle)
+        let title = own ?? kind
+        if personal { return Header(eyebrow: nil, title: title) }
+        let candidate = clean(context) ?? (own == nil ? nil : kind)
+        guard let candidate, candidate.caseInsensitiveCompare(title) != .orderedSame else { return Header(eyebrow: nil, title: title) }
+        return Header(eyebrow: candidate, title: title)
+    }
+
+    /// Kept for callers that only need the single title.
+    public static func title(kind: String, contentTitle: String?) -> String {
+        header(kind: kind, contentTitle: contentTitle, context: nil).title
+    }
 }

@@ -35,8 +35,9 @@ Personal cards are never uploaded, published or sent to Agent. Photo cards use t
 
 ## Reading the stack
 
-- Each card has one title and no eyebrow. Metadata uses separate lines or commas, never a middle dot.
+- Card anatomy (see DESIGN.md): optional uppercase eyebrow, one title, content, at most one quiet action. `TodayPresentation.header` decides both lines: the content's own name (outfit, theme, piece, place, note or photo title) is the title and the kind label becomes the eyebrow; otherwise the kind is the title and the eyebrow is a useful context (week range, month, "Next 7 days") or absent. The eyebrow never repeats the title; personal notes and photos never have one. Metadata uses separate lines or commas, never a middle dot.
 - Today's look leads with one primary button chosen by `TodayPresentation.look`: Record wear for a current plan, Review plan when the outfit changed or is flagged, Choose outfit when the outfit is gone, Build outfit or Add piece with no plan. The outfit opens from its picture; Plan details is the only quiet link. Worn and skipped looks offer no button.
 - Upcoming plans show short relative days (Today, Tomorrow, then Mon, Oct 19) and skip today's entry while a Today's look card already shows it.
 - Closet in use names the month, not a date range, and keeps one short sentence when there is nothing to show.
 - Quick actions are compact capsules, each at least 44 pt tall, two per row.
+- Note and Photo cards open their full card from anywhere on the card. A photo fills the card width at 4:5 (16 radius) with its caption below; the caption clamps to four lines and shows a quiet trailing "Read more" only when text is actually cut off.

@@ -80,3 +80,7 @@ Semantic labels, traits and values on every control; keyboard-safe editing; ligh
 ## Detail screens and empty states
 
 Piece, outfit and theme details share one structure: a hero (photo card, composition or theme cover), a status or info line, the primary action, then sections (pieces, themes, "In outfits") with thumbnails. Related records link to their own detail. Options live in one trailing More menu with Edit first and destructive actions last. Every empty list offers exactly one next action: Add a piece, Build an outfit, Create a theme, or Clear filters when filters hide content.
+
+## Card anatomy
+
+Every Today card reads the same way, top to bottom: an optional eyebrow, one title, the content, at most one quiet action. The eyebrow is small, grey, uppercased (metadata size, semibold, 0.5 tracking) and appears only when it adds information: a range or month ("Oct 18 to 24"), a source ("Theme", "Weather"), a scope ("Next 7 days"). It never repeats the title, never shows a generic kind word over a card that has its own title, and is omitted when it has nothing to say. The title is the content's own name when it has one, otherwise the kind label, and is announced once. Content leads: photos and outfits are large with 16 radius; long text clamps to four lines and shows a quiet "Read more" only when it is cut off. The one action is a trailing text link or the card's single primary button, never a chevron row under every card. Spacing is 16 between header and content and 20 inside the card.
