@@ -298,3 +298,9 @@ Chat turn/header Standards/Spec source self-review: user IDs, chronological mess
 Final chat turn/header signed generic Debug passed `/tmp/aqd-chat-turn-header-debug.log`; docs/whitespace checks pass. Message save/send/stop/tool code is unchanged. No device tests, app launch or gesture/rendered acceptance performed.
 
 Chat turn/header checkpoint `ba85b5e9bbb313dd73811bde3cf4c23b930399d3` built and installed successfully, without app launch or device tests. Receipt `chatTurnHeader` records the source/build/install boundary. Reset Data and DEBUG sample seeding remain included from the preceding checkpoint; no current data was reset or seeded. Actual gestures/rendered acceptance remain manual.
+
+Owner Profile backdrop correction October17: match Today native navigation/scroll-edge layering instead of Profile forced opaque navigation material, which creates a hard cutoff over the scrolling identity header. Remove only the two Profile toolbarBackground overrides; retain canvas, title-free toolbar, identity spacing, controls, journal and all destinations. Cosmetic source/build/install checks, no device tests/app launch.
+
+Profile backdrop Standards/Spec self-review: the native background policy now matches Today exactly, with no UIKit-wide mutation or authored overlay. Identity/header/grid geometry, semantic light/dark canvas, toolbar labels and destinations are unchanged. Source-only cosmetic correction; no mirrored unit test added. Device scrolling, backdrop and appearance acceptance remain unverified.
+
+Profile backdrop signed generic Debug passed `/tmp/aqd-profile-backdrop-debug.log`; docs/whitespace pass. No device tests or app launch.
