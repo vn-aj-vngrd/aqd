@@ -811,15 +811,18 @@ extension CaptureModel {
                 if self.acceptBackground(outcome.prepared, input: input, crop: outcome.crop) {
                     self.cutoutState = .applied
                     self.photoHints = outcome.hints
+                    self.opensCutout = CutoutMode.reviewsAfterCutout
                 } else { self.cutoutState = .failed }
             } catch BackgroundPhotoError.noForeground {
                 guard !Task.isCancelled, let self, self.backgroundSourceIsCurrent(input) else { return }
                 let size = Self.pixelSize(of: input.data)
                 self.cutoutState = .noSubject
                 self.photoHints = PhotoQuality.assess(pixelWidth: size.width, pixelHeight: size.height, subjectFound: false)
+                self.opensCutout = CutoutMode.reviewsAfterCutout
             } catch {
                 guard !Task.isCancelled, let self, self.backgroundSourceIsCurrent(input) else { return }
                 self.cutoutState = .failed
+                self.opensCutout = CutoutMode.reviewsAfterCutout
             }
         }
     }

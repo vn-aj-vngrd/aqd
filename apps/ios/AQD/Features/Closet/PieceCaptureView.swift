@@ -117,6 +117,9 @@ struct PieceCaptureView: View {
         .onAppear {
             if model.opensCutout { model.opensCutout = false; showBackgroundRemoval = true }
         }
+        .onChange(of: model.opensCutout) { _, requested in
+            if requested { model.opensCutout = false; showBackgroundRemoval = true }
+        }
         .onDisappear { model.cancelImport() }
     }
 

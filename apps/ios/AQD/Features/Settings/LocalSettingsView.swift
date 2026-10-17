@@ -337,6 +337,7 @@ struct SettingsPhotoRecoveryView: View {
 /// Whether a new piece photo is cut out automatically. A device preference, so it is not part of exported data.
 struct LocalCutoutSettingsView: View {
     @State private var mode = CutoutMode.current
+    @State private var review = CutoutMode.reviewsAfterCutout
 
     var body: some View {
         List {
@@ -354,6 +355,11 @@ struct LocalCutoutSettingsView: View {
                         .accessibilityAddTraits(mode == value ? [.isSelected] : [])
                 }
             } footer: { Text("Cutouts are made on this iPhone. Your original photo is always kept, so you can refine a cutout or go back to it.") }
+                .listRowBackground(AppTheme.surface)
+            Section {
+                Toggle("Review after cutting out", isOn: Binding(get: { review }, set: { review = $0; CutoutMode.reviewsAfterCutout = $0 }))
+                    .tint(AppTheme.ink).frame(minHeight: 44)
+            } footer: { Text("Opens the editor right after a cutout so you can refine it before saving. Crop and Cut out are always one tap away on the photo, in every mode.") }
                 .listRowBackground(AppTheme.surface)
         }.listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)
             .navigationTitle("Photo cutout").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
