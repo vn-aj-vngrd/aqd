@@ -82,7 +82,7 @@ struct OutfitEditorView: View {
                 OutfitCanvas(pieceIDs: model.draft.pieceIDs, isLocked: locked) { id in
                     model.applyManualPieces(model.draft.pieceIDs.filter { $0 != id })
                 }.accessibilityIdentifier("outfit.canvas")
-                    .padding(.bottom, detent == OutfitPickerSheet.peek ? 272 - geometry.safeAreaInsets.bottom : geometry.size.height * 0.45)
+                    .padding(.bottom, detent == OutfitPickerSheet.peek ? 272 + AppSpacing.large : geometry.size.height * 0.5 + 72)
                     .animation(.smooth(duration: 0.25), value: detent)
             }.padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small)
         }
