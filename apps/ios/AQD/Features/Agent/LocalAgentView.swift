@@ -49,6 +49,9 @@ struct AgentConversationView: View {
     @State private var reviewingID: UUID?
     @Environment(\.scenePhase) private var scenePhase
     @State private var details: AgentMessage?
+    @State private var feedbackEditing: AgentFeedback?
+    @State private var feedbackLibrary: AgentFeedbackLibrary?
+    @State private var readAloud = AgentReadAloud()
     @State private var followsLatest = true
     @State private var pinnedTurn: UUID?
     @State private var chatScrollPhase = ScrollPhase.idle
@@ -87,7 +90,9 @@ struct AgentConversationView: View {
                         Button("Retry operation") { model.retryPending() }.frame(minHeight: AppControlMetrics.minimumTarget)
                     }
                     messageRows(in: 0..<(latestUserIndex ?? 0))
-                    if let index = latestUserIndex { timestamp(before: index) }
+                    if let index = latestUserIndex, model.conversation.messages.indices.contains(index) {
+                        timestamp(for: model.conversation.messages[index], after: index > 0 ? model.conversation.messages[index - 1].createdAt : nil)
+                    }
                     VStack(alignment: .leading, spacing: AppSpacing.section) {
                         if let index = latestUserIndex {
                             messageBlock(model.conversation.messages[index])
@@ -142,7 +147,6 @@ struct AgentConversationView: View {
         }
             }
         }.background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
                 if model.supportsGeneration {
                     VStack(spacing: AppSpacing.small) {
@@ -210,8 +214,14 @@ struct AgentConversationView: View {
                         .interactiveDismissDisabled(model.hasPendingOperation)
                 }
             }
+            .sheet(item: $feedbackEditing) { value in
+                if let feedbackLibrary {
+                    NavigationStack { AgentFeedbackEditor(library: feedbackLibrary, feedback: value) }.environment(state).appAppearance(state.appearance)
+                }
+            }
             .sheet(item: $details) { message in NavigationStack { Form {
                 Group {
+                if let reason = message.failureReason { Text(reason).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).textSelection(.enabled) }
                 LabeledContent("Runtime", value: "On-device")
                 LabeledContent("Received", value: message.createdAt.displayTimestamp())
                 LabeledContent("Response time", value: message.elapsedSeconds.map { String(format: "%.1f s", $0) } ?? "Unavailable")
@@ -279,6 +289,31 @@ struct AgentConversationView: View {
         model.updateDraft(title); model.send()
     }
 
+    private func reaction(_ message: AgentMessage) -> AgentFeedback? {
+        message.feedback?.first { $0.attemptID == message.attemptID }
+    }
+    private func feedbackValue(_ message: AgentMessage) -> AgentFeedback {
+        reaction(message) ?? AgentFeedback(conversationID: model.conversation.id, messageID: message.id, attemptID: message.attemptID, diagnostics: message.diagnostics)
+    }
+    private func rate(_ message: AgentMessage, rating: AgentFeedbackRating) {
+        var value = feedbackValue(message)
+        if value.rating == rating {
+            if !value.isReport && value.comment.isEmpty && value.reasons.isEmpty { _ = model.saveFeedback(value, removing: true); return }
+            value.rating = nil
+        } else { value.rating = rating }
+        value.updatedAt = Date()
+        if model.saveFeedback(value), rating == .notHelpful, value.rating != nil { editFeedback(message, report: false) }
+    }
+    private func editFeedback(_ message: AgentMessage, report: Bool) {
+        do {
+            readAloud.stop()
+            let library = try AgentFeedbackLibrary(agent: model, controls: state.agentControlsModel)
+            var value = feedbackValue(model.conversation.messages.first { $0.id == message.id } ?? message)
+            if report { value.isReport = true }
+            feedbackLibrary = library; feedbackEditing = value
+        } catch { model.error = "Feedback couldn’t load. Your response is retained. Try again." }
+    }
+
     private func canRegenerate(_ message: AgentMessage) -> Bool {
         message.role == .assistant && message.id == model.conversation.messages.last?.id && model.canGenerate
     }
@@ -286,7 +321,9 @@ struct AgentConversationView: View {
     private func messageBlock(_ message: AgentMessage) -> some View {
         VStack(alignment: .leading, spacing: AppSpacing.medium) {
             AgentMessageRow(message: message, slow: model.slow, canRegenerate: canRegenerate(message),
-                            retry: { model.send(retrying: message.id) }, showDetails: { details = message })
+                            rating: reaction(message)?.rating, reading: readAloud.messageID == message.id, canRate: !model.active && !model.hasPendingOperation,
+                            retry: { readAloud.stop(); model.send(retrying: message.id) }, showDetails: { readAloud.stop(); details = message },
+                            rate: { rate(message, rating: $0) }, toggleRead: { readAloud.toggle(message) }, report: { editFeedback(message, report: true) })
             ForEach(model.conversation.proposals(for: message)) { proposal in
                 AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) })
             }
@@ -295,9 +332,8 @@ struct AgentConversationView: View {
 
     private var latestUserIndex: Int? { model.conversation.messages.lastIndex { $0.role == .user } }
 
-    @ViewBuilder private func timestamp(before index: Int) -> some View {
-        let message = model.conversation.messages[index]
-        if AgentChatTimestamp.startsGroup(message.createdAt, after: index > 0 ? model.conversation.messages[index - 1].createdAt : nil) {
+    @ViewBuilder private func timestamp(for message: AgentMessage, after previous: Date?) -> some View {
+        if AgentChatTimestamp.startsGroup(message.createdAt, after: previous) {
             TimelineView(.periodic(from: .now, by: 60)) { timeline in
                 Text(AgentChatTimestamp.label(for: message.createdAt, relativeTo: timeline.date))
                     .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
@@ -306,8 +342,9 @@ struct AgentConversationView: View {
         }
     }
     private func messageRows(in range: Range<Int>) -> some View {
-        ForEach(Array(model.conversation.messages.enumerated()).filter { range.contains($0.offset) }, id: \.element.id) { index, message in
-            timestamp(before: index)
+        let messages = model.conversation.messages
+        return ForEach(Array(messages.enumerated()).filter { range.contains($0.offset) }, id: \.element.id) { index, message in
+            timestamp(for: message, after: index > 0 ? messages[index - 1].createdAt : nil)
             messageBlock(message).id(message.id)
         }
     }
@@ -437,10 +474,10 @@ struct AgentHistoryView: View {
     }
 }
 
-/// Keep the chat canvas uninterrupted beneath its native toolbar controls.
+/// Fade messages under the toolbar so its controls stay readable while the chat scrolls.
 private struct AgentChatScrollEdges: ViewModifier {
     @ViewBuilder func body(content: Content) -> some View {
-        if #available(iOS 26, *) { content.scrollEdgeEffectHidden(true, for: .top) }
+        if #available(iOS 26, *) { content.scrollEdgeEffectStyle(.soft, for: .top) }
         else { content }
     }
 }

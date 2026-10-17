@@ -6,29 +6,28 @@ struct AgentWorkingIndicator: View {
     var animates = true
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorSchemeContrast) private var contrast
-    @Environment(\.scenePhase) private var scenePhase
+
+    private var label: some View {
+        Text(title).font(AppTypography.supporting).fixedSize(horizontal: false, vertical: true)
+    }
 
     var body: some View {
-        Text(title)
-            .font(AppTypography.supporting)
-            .foregroundStyle(contrast == .increased ? AppTheme.ink : AppTheme.secondary)
-            .fixedSize(horizontal: false, vertical: true)
-            .overlay {
-                if animates && !reduceMotion && contrast != .increased && scenePhase == .active {
-                    TimelineView(.animation(minimumInterval: 1.0 / 30)) { timeline in
-                        GeometryReader { geometry in
-                            let width = geometry.size.width
-                            let phase = timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 1.8) / 1.8
-                            LinearGradient(colors: [.clear, AppTheme.ink, .clear], startPoint: .leading, endPoint: .trailing)
-                                .frame(width: width * 0.65)
-                                .offset(x: width * (phase * 1.65 - 0.65))
+        Group {
+            if animates && !reduceMotion && contrast != .increased {
+                TimelineView(.animation) { timeline in
+                    let phase = timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 1.6) / 1.6
+                    let start = phase * 2.2 - 0.6
+                    label.foregroundStyle(AppTheme.secondary.opacity(0.55))
+                        .overlay {
+                            label.foregroundStyle(AppTheme.ink)
+                                .mask(LinearGradient(colors: [.clear, .white, .clear], startPoint: UnitPoint(x: start, y: 0.5), endPoint: UnitPoint(x: start + 0.6, y: 0.5)))
                         }
-                    }
-                    .mask(Text(title).font(AppTypography.supporting).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading))
-                    .allowsHitTesting(false).accessibilityHidden(true)
                 }
+            } else {
+                label.foregroundStyle(contrast == .increased ? AppTheme.ink : AppTheme.secondary)
             }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(title)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
     }
 }
