@@ -4,14 +4,14 @@ import SwiftUI
 struct LocalPlannerView: View {
     @Environment(AppState.self) private var state
     @State private var showPast = false
+    @State private var searching = false
     @State private var query = PlannerQuery()
     private var zone: TimeZone { TimeZone(identifier: state.plannerDay.timeZoneID) ?? .current }
     private var today: LocalPlanDay { LocalPlanDay(timeZone: zone) }
     private var outfitNames: [UUID: String] { Dictionary(state.outfits.map { ($0.id, $0.displayName) }, uniquingKeysWith: { first, _ in first }) }
     private var dayQuery: PlannerQuery { PlannerQuery(status: query.status) }
     private var entries: [OutfitPlanEntry] {
-        dayQuery.apply(to: state.planEntries.filter { $0.day.key == state.plannerDay.key }, outfitRevisions: outfitRevisions)
-            .sorted { ($0.state == .worn || $0.state == .skipped ? 1 : 0) < ($1.state == .worn || $1.state == .skipped ? 1 : 0) }
+        PlannerPresentation.openFirst(dayQuery.apply(to: state.planEntries.filter { $0.day.key == state.plannerDay.key }, outfitRevisions: outfitRevisions))
     }
     private var outfitRevisions: [UUID: Int] { Dictionary(state.outfits.map { ($0.id, $0.revision) }, uniquingKeysWith: { first, _ in first }) }
     private var markers: [String: PlannerDayMarker] { PlannerPresentation.markers(for: state.planEntries, outfitRevisions: outfitRevisions) }
@@ -39,26 +39,26 @@ struct LocalPlannerView: View {
         @Bindable var state = state
         NavigationStack(path: $state.plannerPath) {
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: AppSpacing.section) {
                     if query.isSearching {
                         searchResults
                     } else {
-                        PlannerCalendarHeader(day: $state.plannerDay, mode: $state.plannerMode, counts: counts, markers: markers)
+                        PlannerCalendarHeader(day: $state.plannerDay, mode: $state.plannerMode, counts: counts, markers: markers,
+                                              onToday: isToday ? nil : { withAnimation { state.plannerDay = today } })
                         dayHeader
                         if let error = state.planError {
                             SemanticFeedback(role: .danger, message: error)
-                            Button("Retry plans") { state.reloadPlanEntries() }.frame(minHeight: 44)
+                            SecondaryAction(title: "Retry plans", compact: true) { state.reloadPlanEntries() }
                         }
                         savedBanner
                         dayEntries
                         plansSection
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 24)
+                .padding(.horizontal, AppSpacing.screen)
+                .padding(.bottom, AppSpacing.section)
             }
             .scrollIndicators(.hidden)
-            .searchable(text: $query.text, prompt: "Search plans, trips and outfits")
             .padding(.top, AppSpacing.large).background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: PlannerRoute.self) { route in
                 switch route {
@@ -70,24 +70,29 @@ struct LocalPlannerView: View {
             }
             .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Menu {
-                        AccessoryButton("Plan one day", systemImage: "calendar") { state.openPlan(day: state.plannerDay) }
-                        AccessoryButton("Plan several days", systemImage: "calendar.badge.plus") { state.openPlanAuthoring(day: state.plannerDay) }
-                        AccessoryButton("Create a routine", systemImage: "repeat") { state.openPlanAuthoring(day: state.plannerDay, routine: true) }
-                        AccessoryButton("Plan an event or trip", systemImage: "suitcase") { state.openPlanAuthoring(day: state.plannerDay, trip: true) }
-                    } label: { Label("Add to Planner", systemImage: "plus") }.tint(AppTheme.ink)
+                if !searching {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { searching = true } label: { Label("Search planner", systemImage: "magnifyingglass") }
+                            .tint(AppTheme.ink).accessibilityIdentifier("planner.search")
+                    }
+                    ToolbarItem(placement: .topBarLeading) {
+                        Menu {
+                            AccessoryButton("Plan one day", systemImage: "calendar") { state.openPlan(day: state.plannerDay) }
+                            AccessoryButton("Plan several days", systemImage: "calendar.badge.plus") { state.openPlanAuthoring(day: state.plannerDay) }
+                            AccessoryButton("Create a routine", systemImage: "repeat") { state.openPlanAuthoring(day: state.plannerDay, routine: true) }
+                            AccessoryButton("Plan an event or trip", systemImage: "suitcase") { state.openPlanAuthoring(day: state.plannerDay, trip: true) }
+                        } label: { Label("Add to Planner", systemImage: "plus") }
+                            .tint(AppTheme.ink).accessibilityIdentifier("planner.add")
+                    }
                 }
                 ToolbarItem(placement: .topBarTrailing) { filterMenu }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Today") { withAnimation { state.plannerDay = today } }
-                        .tint(AppTheme.ink).disabled(isToday).accessibilityHint("Jumps to today")
-                }
             }
+            .modifier(PlannerSearchField(query: $query.text, active: $searching))
             .onAppear { state.reloadPlanEntries(); state.reloadOutfits() }
         }.tint(AppTheme.ink)
     }
 
+    /// Same icon everywhere; it fills while a filter hides content. In search every section still applies to the results.
     private var filterMenu: some View {
         Menu {
             Section("Show entries") {
@@ -104,7 +109,7 @@ struct LocalPlannerView: View {
             }
         } label: {
             Label("Filter and sort", systemImage: query.isFiltering ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease")
-        }.tint(AppTheme.ink).accessibilityValue(query.isFiltering ? "Filters on" : "No filters")
+        }.tint(AppTheme.ink).accessibilityIdentifier("planner.filter").accessibilityValue(query.isFiltering ? "Filters on" : "No filters")
     }
 
     private func option<Value: Equatable>(_ title: String, _ value: Value, _ selection: Binding<Value>) -> some View {
@@ -123,7 +128,7 @@ struct LocalPlannerView: View {
             planGroup("Plans", matchedPlans)
         }
         if !matchedEntries.isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: AppSpacing.medium) {
                 Text("Entries").font(AppTypography.section)
                 ForEach(matchedEntries) { PlanDayCard(entry: $0, outfitRevisions: outfitRevisions, showDate: true) }
             }
@@ -131,18 +136,12 @@ struct LocalPlannerView: View {
     }
 
     private var dayHeader: some View {
-        HStack(alignment: .firstTextBaseline) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(isToday ? "Today" : selectedDateLabel).font(AppTypography.section)
-                Text(isToday ? "\(selectedDateLabel) · \(daySummary)" : daySummary)
-                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-            }
-            Spacer(minLength: 12)
-            Button { state.openPlan(day: state.plannerDay) } label: {
-                Label("Plan", systemImage: "plus").font(AppTypography.supporting)
-            }.buttonStyle(.bordered).buttonBorderShape(.capsule).tint(AppTheme.ink).frame(minHeight: 44)
-                .accessibilityLabel("Plan this day")
-        }.accessibilityElement(children: .contain)
+        VStack(alignment: .leading, spacing: 2) {
+            Text(isToday ? "Today" : selectedDateLabel).font(AppTypography.section)
+            Text(isToday ? "\(selectedDateLabel) · \(daySummary)" : daySummary)
+                .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+        }.frame(maxWidth: .infinity, alignment: .leading).accessibilityElement(children: .combine)
+            .accessibilityIdentifier("planner.dayHeader")
     }
 
     @ViewBuilder private var savedBanner: some View {
@@ -152,7 +151,8 @@ struct LocalPlannerView: View {
                     Text("Plan saved · \(recent.day.displayDate)")
                     Spacer()
                     if state.planUndoPending || (state.planUndoDeadline ?? .distantPast) >= context.date {
-                        Button(state.planUndoPending ? "Check Undo" : "Undo") { state.undoRecentPlan() }.frame(minHeight: 44)
+                        Button(state.planUndoPending ? "Check Undo" : "Undo") { state.undoRecentPlan() }
+                            .foregroundStyle(AppTheme.ink).frame(minHeight: AppControlMetrics.minimumTarget)
                     }
                 }.font(AppTypography.supporting)
             }
@@ -161,19 +161,17 @@ struct LocalPlannerView: View {
 
     @ViewBuilder private var dayEntries: some View {
         if entries.isEmpty && state.planError == nil && query.status != .all {
-            VStack(spacing: 12) {
+            VStack(spacing: AppSpacing.small) {
                 AppEmptyState("No \(query.status.rawValue.lowercased())", systemImage: "line.3.horizontal.decrease",
                     description: Text("No entries on this day match the filter."), fillsAvailableSpace: false)
-                Button("Show all entries") { query.status = .all }.frame(minHeight: 44)
+                SecondaryAction(title: "Show all entries", compact: true) { query.status = .all }
             }.frame(maxWidth: .infinity)
         } else if entries.isEmpty && state.planError == nil {
-            VStack(spacing: 12) {
+            VStack(spacing: AppSpacing.medium) {
                 AppEmptyState("Nothing planned", systemImage: "calendar",
                     description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear."), fillsAvailableSpace: false)
-                Button { state.openPlan(day: state.plannerDay) } label: {
-                    Text("Plan this day").frame(minWidth: 160, minHeight: 44)
-                }.buttonStyle(.borderedProminent).buttonBorderShape(.capsule).tint(AppTheme.primaryFill)
-                    .foregroundStyle(AppTheme.onPrimary)
+                PrimaryAction(title: "Plan this day", compact: true) { state.openPlan(day: state.plannerDay) }
+                    .frame(maxWidth: 240).accessibilityIdentifier("planner.emptyPlan")
             }.frame(maxWidth: .infinity)
         }
         ForEach(entries) { entry in PlanDayCard(entry: entry, outfitRevisions: outfitRevisions) }
@@ -185,43 +183,44 @@ struct LocalPlannerView: View {
         if !groups.upcoming.isEmpty { planGroup("Upcoming", groups.upcoming) }
         if !groups.past.isEmpty {
             DisclosureGroup(isExpanded: $showPast) {
-                VStack(spacing: 8) { ForEach(groups.past) { planRow($0) } }.padding(.top, 8)
+                VStack(spacing: 0) { ForEach(groups.past) { planRow($0) } }
             } label: { Text("Past · \(groups.past.count)").font(AppTypography.section) }
                 .tint(AppTheme.ink).foregroundStyle(AppTheme.ink)
         }
     }
 
     private func planGroup(_ title: String, _ plans: [PlanDefinition]) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title).font(AppTypography.section)
+        VStack(alignment: .leading, spacing: 0) {
+            Text(title).font(AppTypography.section).padding(.bottom, AppSpacing.small)
             ForEach(plans) { planRow($0) }
         }
     }
 
+    /// Flat row: name, then kind and range, then what still needs a decision. No kind icon competes with status.
     private func planRow(_ plan: PlanDefinition) -> some View {
         let summary = summaries[plan.id]
         let kind = summary?.kind ?? .plan
-        let symbol = kind == .trip ? "suitcase" : kind == .routine ? "repeat" : "calendar"
         let range = plan.start.key == plan.end.key ? plan.start.displayDate : "\(plan.start.displayDate) – \(plan.end.displayDate)"
+        let kindLabel = kind == .trip ? "Trip · " : kind == .routine ? "Routine · " : ""
         var status: [String] = []
         if let summary {
             if summary.gaps > 0 { status.append("\(summary.gaps) to choose") }
             if summary.needsReview > 0 { status.append("\(summary.needsReview) to review") }
         }
         return NavigationLink(value: kind == .trip && !(summary?.isPast ?? false) ? PlannerRoute.packing(plan.id) : PlannerRoute.plan(plan.id)) {
-            HStack(spacing: 12) {
-                Image(systemName: symbol).frame(width: 28).accessibilityHidden(true)
+            HStack(spacing: AppSpacing.medium) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(plan.name.isEmpty ? "Untitled plan" : plan.name).font(AppTypography.body)
-                    Text(range).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                    Text(kindLabel + range).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                     if !status.isEmpty {
                         Text(status.joined(separator: " · ")).font(AppTypography.metadata).foregroundStyle(AppTheme.warning)
                     }
                 }.frame(maxWidth: .infinity, alignment: .leading)
-                Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
-            }.foregroundStyle(AppTheme.ink).padding(14).frame(minHeight: 54)
-                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
-        }.buttonStyle(.plain)
+                Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary)
+                    .frame(width: AppControlMetrics.disclosureLane).accessibilityHidden(true)
+            }.foregroundStyle(AppTheme.ink).padding(.vertical, AppSpacing.small).frame(minHeight: AppControlMetrics.rowHeight)
+                .contentShape(Rectangle())
+        }.buttonStyle(.plain).accessibilityIdentifier("planner.plan.\(plan.name)")
             .contextMenu {
                 AccessoryButton("Open plan", systemImage: "calendar") { state.plannerPath.append(.plan(plan.id)) }
                 AccessoryButton("Review dates", systemImage: "list.bullet") { state.plannerPath.append(.dates(plan.id, false)) }
@@ -232,7 +231,22 @@ struct LocalPlannerView: View {
     }
 }
 
-/// One day entry with its next actions in view: no detour through a detail page to record wear or skip.
+/// Search chrome exists only while the owner explicitly opens search, as in Closet.
+private struct PlannerSearchField: ViewModifier {
+    @Binding var query: String
+    @Binding var active: Bool
+
+    @ViewBuilder func body(content: Content) -> some View {
+        if active {
+            content.searchable(text: $query, isPresented: $active, placement: .navigationBarDrawer(displayMode: .always),
+                               prompt: "Search plans, trips and outfits")
+        } else {
+            content
+        }
+    }
+}
+
+/// One day entry with its single next step in view; Skip, Edit and the rest sit in one ellipsis menu.
 struct PlanDayCard: View {
     @Environment(AppState.self) private var state
     let entry: OutfitPlanEntry
@@ -241,50 +255,51 @@ struct PlanDayCard: View {
     @State private var actions = PlanEntryActions()
     private var outfit: Outfit? { state.outfits.first { $0.id == entry.outfitID } }
     private var isOpen: Bool { entry.state == .planned || entry.state == .unassigned }
-    private var stale: Bool { PlannerPresentation.isStale(entry, outfitRevisions: outfitRevisions) }
+    private var next: PlannerPresentation.NextAction? { PlannerPresentation.nextAction(for: entry, outfitRevisions: outfitRevisions) }
+    private var identifier: String { "planner.card.\((outfit?.displayName ?? "unassigned").replacingOccurrences(of: " ", with: "-"))" }
 
     var body: some View {
         VStack(spacing: 0) {
             NavigationLink(value: PlannerRoute.entry(entry.id)) {
                 PlanAgendaRow(entry: entry, showDate: showDate, embedded: true)
             }.buttonStyle(.plain)
-            if isOpen {
-                HStack(spacing: 8) {
-                    if entry.state == .unassigned {
-                        Button { state.openPlan(editing: entry) } label: { Text("Choose outfit").frame(maxWidth: .infinity, minHeight: 36) }
-                            .buttonStyle(.borderedProminent).tint(AppTheme.primaryFill).foregroundStyle(AppTheme.onPrimary)
-                    } else if stale {
-                        Button { state.openPlan(editing: entry) } label: { Text("Review").frame(maxWidth: .infinity, minHeight: 36) }
-                            .buttonStyle(.borderedProminent).tint(AppTheme.primaryFill).foregroundStyle(AppTheme.onPrimary)
-                    } else {
-                        Button { state.openWear(outfitID: entry.outfitID, entry: entry) } label: {
-                            Text("Record wear").frame(maxWidth: .infinity, minHeight: 36)
-                        }.buttonStyle(.borderedProminent).tint(AppTheme.primaryFill).foregroundStyle(AppTheme.onPrimary)
-                    }
-                    Button { actions.skip(entry, state: state) } label: {
-                        Text(actions.isSkipPending ? "Check skip" : "Skip").frame(minWidth: 64, minHeight: 36)
-                    }.buttonStyle(.bordered).tint(AppTheme.ink)
+            if isOpen, let next {
+                HStack(spacing: AppSpacing.small) {
+                    Button { perform(next) } label: {
+                        Text(next.rawValue).font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
+                            .padding(.horizontal, AppSpacing.large).frame(minHeight: 36)
+                            .glassControlSurface(Capsule())
+                            .frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+                    }.buttonStyle(.plain)
+                    Spacer(minLength: 0)
                     Menu {
                         AccessoryButton("Edit plan", systemImage: AppSymbols.edit) { state.openPlan(editing: entry) }
-                        if entry.state == .planned && !stale {
-                            AccessoryButton("Change outfit", systemImage: "arrow.triangle.2.circlepath") { state.openPlan(editing: entry) }
-                        }
-                        if entry.state == .unassigned || stale {
+                        if next != .recordWear {
                             AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: entry.outfitID, entry: entry) }
                         }
-                    } label: { Image(systemName: "ellipsis").frame(width: 44, height: 36) }
-                        .buttonStyle(.bordered).tint(AppTheme.ink).accessibilityLabel("More plan options")
-                }.controlSize(.regular).padding(.horizontal, 14).padding(.bottom, 14)
+                        AccessoryButton(actions.isSkipPending ? "Check skip result" : "Skip this date", systemImage: "forward.end") {
+                            actions.skip(entry, state: state)
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis").foregroundStyle(AppTheme.ink)
+                            .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+                    }.accessibilityLabel("More plan options")
+                }.padding(.horizontal, AppSpacing.medium).padding(.bottom, AppSpacing.small)
             }
             if let error = actions.error {
                 SemanticFeedback(role: .danger, message: error).padding(.horizontal, 14).padding(.bottom, 14)
             }
         }
-        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
+        .accessibilityIdentifier(identifier)
         .contextMenu {
             AccessoryButton("Open plan", systemImage: "calendar") { state.plannerPath.append(.entry(entry.id)) }
-            AccessoryButton("Edit plan", systemImage: AppSymbols.edit) { state.openPlan(editing: entry) }
-                .disabled(!isOpen)
+            if isOpen {
+                AccessoryButton("Edit plan", systemImage: AppSymbols.edit) { state.openPlan(editing: entry) }
+                AccessoryButton(actions.isSkipPending ? "Check skip result" : "Skip this date", systemImage: "forward.end") {
+                    actions.skip(entry, state: state)
+                }
+            }
         } preview: {
             CollectionContextPreview(title: outfit?.displayName ?? "Outfit unassigned", detail: entry.day.displayDate) {
                 if let outfit {
@@ -294,6 +309,13 @@ struct PlanDayCard: View {
                         .frame(maxWidth: .infinity).frame(height: 180)
                 }
             }.environment(state)
+        }
+    }
+
+    private func perform(_ action: PlannerPresentation.NextAction) {
+        switch action {
+        case .chooseOutfit, .review: state.openPlan(editing: entry)
+        case .recordWear: state.openWear(outfitID: entry.outfitID, entry: entry)
         }
     }
 }

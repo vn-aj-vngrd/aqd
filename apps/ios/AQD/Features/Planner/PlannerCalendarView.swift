@@ -11,6 +11,8 @@ struct PlannerCalendarView: View {
     var countLabel = "plans"
     /// When present, cells show plan state instead of a bare count.
     var markers: [String: PlannerDayMarker]?
+    /// Shown as a plain text button beside the month title while the selected day is not today.
+    var onToday: (() -> Void)?
     @Environment(\.calendar) private var calendar
     @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -23,13 +25,20 @@ struct PlannerCalendarView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Button { chooseDate = true } label: {
-                Text(formatted((try? day.date()) ?? Date(), style: .dateTime.month(.wide).year()))
-                    .font(AppTypography.section).foregroundStyle(AppTheme.ink)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-                    .contentShape(Rectangle())
-            }.buttonStyle(.plain).accessibilityHint("Choose a date")
+            HStack(spacing: AppSpacing.medium) {
+                Button { chooseDate = true } label: {
+                    Text(formatted((try? day.date()) ?? Date(), style: .dateTime.month(.wide).year()))
+                        .font(AppTypography.section).foregroundStyle(AppTheme.ink)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        .contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityHint("Choose a date")
+                if let onToday {
+                    Button("Today", action: onToday).font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                        .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+                        .accessibilityHint("Jumps to today").accessibilityIdentifier("planner.today")
+                }
+            }
             HStack(spacing: 8) {
                 Menu {
                     Picker("Calendar view", selection: Binding(get: { mode }, set: { value in
@@ -56,8 +65,7 @@ struct PlannerCalendarView: View {
                     weekDays
                     ScrollView(.horizontal) { weekDays }
                         .scrollIndicators(.hidden)
-                }.padding(8).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
-                    .transition(.opacity)
+                }.transition(.opacity)
             } else {
                 VStack(spacing: 12) {
                 if !typeSize.isAccessibilitySize {
@@ -70,7 +78,7 @@ struct PlannerCalendarView: View {
                 }
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: typeSize.isAccessibilitySize ? 3 : 7), spacing: 8) {
                     ForEach(days, id: \.key) { dateCell($0, showWeekday: typeSize.isAccessibilitySize) }
-                }.padding(8).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                }
                 }.transition(.opacity)
             }
             if let error { SemanticFeedback(role: .danger, message: error) }
@@ -183,15 +191,16 @@ struct PlannerCalendarHeader: View {
     let counts: [String: Int]
     var countLabel = "plans"
     var markers: [String: PlannerDayMarker]?
+    var onToday: (() -> Void)?
     @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         if typeSize.isAccessibilitySize && mode == .month {
             ScrollView {
-                PlannerCalendarView(day: $day, mode: $mode, counts: counts, countLabel: countLabel, markers: markers)
+                PlannerCalendarView(day: $day, mode: $mode, counts: counts, countLabel: countLabel, markers: markers, onToday: onToday)
             }
         } else {
-            PlannerCalendarView(day: $day, mode: $mode, counts: counts, countLabel: countLabel, markers: markers)
+            PlannerCalendarView(day: $day, mode: $mode, counts: counts, countLabel: countLabel, markers: markers, onToday: onToday)
         }
     }
 }
