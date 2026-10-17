@@ -2656,5 +2656,16 @@
     "codeCommit": "f89a2230ff160a4b5aa7692aad58672e1957630d",
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "runtimeComplete": false
+  },
+  "chatTimestampReadAloud": {
+    "codeCommit": "41a1c1d5f514bc2ecb3039829b039f1918fe1cc2",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false
+  },
+  "profileChatMenuRefinement": {
+    "codeCommit": "1e646370c83cdd34eeef1c873187304979529468",
+    "profileCodeCommit": "3ae5cb12409587553624aaa004bb0480c76f4cf4",
+    "receipt": "docs/plan/evidence/issue-28-22/unit-receipt.json",
+    "runtimeComplete": false
   }
 }

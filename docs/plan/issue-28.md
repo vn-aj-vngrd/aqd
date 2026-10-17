@@ -74,3 +74,5 @@ Profile/menu follow-up October17: signed generic Debug passed `/tmp/aqd-profile-
 Profile Add (+) follows the selected collection: Add fit for journal tabs, Add outfit for Outfits. New outfit creation reuses the existing local builder and returns to the selected Outfits gallery. Saved fit anchors switch back to All fits.
 
 Final Profile/menu Debug passed `/tmp/aqd-profile-menu-polish-final-debug.log`, including context-aware Add and current shared danger glyph source. Header/grid selection owns one shared state; outfit editing/creation reuse existing builder sheets, and actual Outfit gallery uses Profile-local value navigation. No new Core/persistence changes after timestamp88-test result.
+
+Profile tab/surface code checkpoint: `3ae5cb12409587553624aaa004bb0480c76f4cf4`. Final integrated build installed successfully (`/tmp/aqd-profile-menu-polish-final-install.json`); no app launch or device test.

@@ -173,5 +173,28 @@
       "apps/ios/AQD/UI/LocalProfileView.swift": "d6aa9e17fa6493292ec1f1a3946730bc63b45de3bb218f04d406dd6dee2df884"
     },
     "concurrentDialog": "Preserved and excluded from clean snapshot build"
+  },
+  "profileChatMenuRefinement": {
+    "codeCommit": "1e646370c83cdd34eeef1c873187304979529468",
+    "profileCodeCommit": "3ae5cb12409587553624aaa004bb0480c76f4cf4",
+    "signedGenericDebug": "/tmp/aqd-profile-menu-polish-final-debug.log",
+    "buildResult": "BUILD SUCCEEDED",
+    "install": "/tmp/aqd-profile-menu-polish-final-install.json",
+    "installResult": "Succeeded",
+    "nativeTests": "Skipped by owner",
+    "runtimeComplete": false,
+    "launch": "Not attempted; owner opens app",
+    "review": "Self-reviewed scope, selected tab ownership, local Outfit routes, independent read errors, shared semantic colors and danger original-image tint; no remaining findings",
+    "sourceSHA256": {
+      "apps/ios/AQD/UI/AppActions.swift": "8cc84eca601a7f9241a719c1a4481942b60b7380edc1f992923d2843468166bc",
+      "apps/ios/AQD/UI/ClosetCollectionViews.swift": "ee3c65b64ca532459c371523b1523ad83176e8517a3ae47d7c2d208caf11b7aa",
+      "apps/ios/AQD/UI/FitJournalViews.swift": "200cacb550d8a8f6a00f7d90724545d53a4a29ea2d138280185140a249a612dc",
+      "apps/ios/AQD/UI/LocalAgentView.swift": "84021e3646fda41f260df1a7f38c6e9f794276b0c52e650db1f4180daf2a6d8c",
+      "apps/ios/AQD/UI/LocalProfileView.swift": "cd44c129733807c4d2b16439557232f80d4c9871dd6d4864a7c7cd4808e5814c"
+    },
+    "excludedConcurrentFiles": [
+      "apps/ios/AQD/UI/DraftDiscardSheet.swift",
+      "docs/design/native-presentations.md"
+    ]
   }
 }

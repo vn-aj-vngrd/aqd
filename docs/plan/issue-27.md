@@ -186,3 +186,7 @@ Owner requested separate Conversations navigation, Current conversation group wi
 Profile/menu follow-up October17: signed generic Debug passed `/tmp/aqd-profile-menu-polish-debug.log`; source-only review checks actual Outfits collection and Profile-local routes, independent fit/outfit read-error recovery, reusable square gallery variant with existing edit/plan/wear actions, icon-only selected/accessibility labels, solid semantic light/dark surfaces and increased-contrast boundary, and explicit original-image danger glyph tint. Existing mutation/retry guards remain. Docs/whitespace pass. Device tests skipped by owner; rendered light/dark and audio checks unverified. Concurrent custom discard edits preserved and excluded from build.
 
 Final Profile/menu Debug passed `/tmp/aqd-profile-menu-polish-final-debug.log`, including context-aware Add and current shared danger glyph source. Header/grid selection owns one shared state; outfit editing/creation reuse existing builder sheets, and actual Outfit gallery uses Profile-local value navigation. No new Core/persistence changes after timestamp88-test result.
+
+Chat menu code checkpoint: `1e646370c83cdd34eeef1c873187304979529468`. Final integrated build installed successfully (`/tmp/aqd-profile-menu-polish-final-install.json`); no app launch or device test.
+
+Timestamp/Read Aloud code checkpoint: `41a1c1d5f514bc2ecb3039829b039f1918fe1cc2`. Core88 and its own Debug/install are recorded separately from later Profile/menu corrections.
