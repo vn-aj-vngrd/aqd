@@ -9,6 +9,8 @@ struct PlannerCalendarView: View {
     @Binding var mode: PlannerCalendarMode
     let counts: [String: Int]
     var countLabel = "plans"
+    /// When present, cells show plan state instead of a bare count.
+    var markers: [String: PlannerDayMarker]?
     @Environment(\.calendar) private var calendar
     @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -119,7 +121,8 @@ struct PlannerCalendarView: View {
         let date = (try? value.date()) ?? Date()
         let selected = value.key == day.key
         let today = value.key == LocalPlanDay(timeZone: zone).key
-        let count = counts[value.key, default: 0]
+        let count = markers.map { $0[value.key]?.total ?? 0 } ?? counts[value.key, default: 0]
+        let marker = markers?[value.key]
         var displayCalendar = calendar
         displayCalendar.timeZone = zone
         let number = displayCalendar.component(.day, from: date)
@@ -128,7 +131,11 @@ struct PlannerCalendarView: View {
             VStack(spacing: 4) {
                 if showWeekday { Text(formatted(date, style: .dateTime.weekday(.narrow))).font(AppTypography.metadata) }
                 Text(number.formatted()).font(AppTypography.body)
-                Circle().fill(count > 0 ? (selected ? AppTheme.onPrimary : AppTheme.ink) : .clear).frame(width: 4, height: 4)
+                if markers != nil {
+                    PlannerDayMarks(marker: marker, tint: selected ? AppTheme.onPrimary : AppTheme.ink)
+                } else {
+                    Circle().fill(count > 0 ? (selected ? AppTheme.onPrimary : AppTheme.ink) : .clear).frame(width: 4, height: 4)
+                }
             }.frame(minWidth: 44, maxWidth: .infinity, minHeight: showWeekday ? 64 : 44)
                 .foregroundStyle(selected ? AppTheme.onPrimary : AppTheme.ink)
                 .background {
@@ -142,8 +149,15 @@ struct PlannerCalendarView: View {
                     }
                 }
         }.buttonStyle(.plain).accessibilityLabel(fullDate)
-            .accessibilityValue("\(today ? "Today. " : "")\(count) \(countLabel)\(selected ? ". Selected" : "")")
+            .accessibilityValue("\(today ? "Today. " : "")\(marker.map(Self.describe) ?? "\(count) \(countLabel)")\(selected ? ". Selected" : "")")
             .accessibilityAddTraits(selected ? [.isSelected] : [])
+    }
+    private static func describe(_ marker: PlannerDayMarker) -> String {
+        if marker.isEmpty { return "Nothing planned" }
+        let parts = [(marker.planned, "planned"), (marker.gaps, "without an outfit"), (marker.worn, "worn"),
+                     (marker.skipped, "skipped"), (marker.needsReview, "needs review")]
+            .filter { $0.0 > 0 }.map { "\($0.0) \($0.1)" }
+        return parts.joined(separator: ", ")
     }
     private func formatted(_ date: Date, style: Date.FormatStyle) -> String {
         var style = style; style.timeZone = zone
@@ -162,15 +176,32 @@ struct PlannerCalendarHeader: View {
     @Binding var mode: PlannerCalendarMode
     let counts: [String: Int]
     var countLabel = "plans"
+    var markers: [String: PlannerDayMarker]?
     @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         if typeSize.isAccessibilitySize && mode == .month {
             ScrollView {
-                PlannerCalendarView(day: $day, mode: $mode, counts: counts, countLabel: countLabel)
+                PlannerCalendarView(day: $day, mode: $mode, counts: counts, countLabel: countLabel, markers: markers)
             }
         } else {
-            PlannerCalendarView(day: $day, mode: $mode, counts: counts, countLabel: countLabel)
+            PlannerCalendarView(day: $day, mode: $mode, counts: counts, countLabel: countLabel, markers: markers)
         }
+    }
+}
+
+/// Quiet charcoal marks: dot = planned, ring = no outfit yet, check = worn, small bar = needs review.
+struct PlannerDayMarks: View {
+    let marker: PlannerDayMarker?
+    let tint: Color
+    var body: some View {
+        HStack(spacing: 3) {
+            if let marker, !marker.isEmpty {
+                if marker.planned > 0 { Circle().fill(tint).frame(width: 5, height: 5) }
+                if marker.gaps > 0 { Circle().stroke(tint, lineWidth: 1).frame(width: 5, height: 5) }
+                if marker.worn > 0 { Image(systemName: "checkmark").font(.system(size: 6, weight: .bold)) }
+                if marker.needsReview > 0 { Capsule().fill(tint).frame(width: 7, height: 2) }
+            }
+        }.foregroundStyle(tint).frame(height: 6).accessibilityHidden(true)
     }
 }

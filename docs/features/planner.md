@@ -2,6 +2,12 @@
 
 Planner is the third root (Week default, Month alternate, selected date preserved). Planner organizes intent, History records actual use, Stats explains it. Back restores origin, scroll and selection. Nothing here needs an account.
 
+## Planner root
+
+- The calendar marks each day by state, not count: dot planned, ring no outfit yet, check worn, bar needs review. The selected day shows a plain summary ("2 planned · 1 to choose") and a Today button returns to the current date.
+- Each open entry carries its next action on the card: Choose outfit for a gap, Review when its outfit changed, otherwise Record wear, plus Skip. Worn and skipped entries sink below open ones.
+- Plans are grouped by the visible range (This week or This month), Upcoming, and a collapsed Past. Each row shows kind, full range and what still needs a decision; an upcoming trip opens its packing list.
+
 ## Plans
 
 - A plan has an ID, name, inclusive date range, explicit timezone and optional event or routine. An entry has its own ID, local date, occasion, optional outfit and a state: unassigned, planned, worn, skipped. Several entries can share a date. Assigning is not wearing.
