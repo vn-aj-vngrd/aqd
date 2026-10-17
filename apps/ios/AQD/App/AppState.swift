@@ -76,6 +76,8 @@ final class AppState {
     var fitMemories: [FitMemory] = []
     var fitError: String?
     var fitAnchor: UUID?
+    /// Set when a saved fit asked to open Record wear once its sheet has closed.
+    var pendingFitWear: (outfitID: UUID?, day: LocalPlanDay)?
     var localIdentity: LocalProfileIdentity?
     var identityError: String?
     var settings: LocalSettings?

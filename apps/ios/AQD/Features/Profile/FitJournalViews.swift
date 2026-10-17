@@ -72,19 +72,29 @@ enum FitJournalTab: String, CaseIterable {
 struct FitJournalGrid: View {
     @State private var openedMemoryID: UUID?
     @Binding var tab: FitJournalTab
+    @Binding var query: FitJournalQuery
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
     private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: 2, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3) }
-    private var memories: [FitMemory] { tab == .photos ? state.fitMemories.filter { $0.photoID != nil } : state.fitMemories }
+    private var searching: Bool { query.isSearching }
+    private var memories: [FitMemory] {
+        FitJournalQuery(content: tab == .photos && !searching ? .photos : .all, sort: query.sort, text: query.text).apply(to: state.fitMemories)
+    }
+    private var sections: [FitMonthSection] { FitJournalPresentation.sections(memories) }
+    private func monthTitle(_ section: FitMonthSection) -> String {
+        var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(identifier: "UTC") ?? .current
+        guard let date = calendar.date(from: DateComponents(year: section.year, month: section.month, day: 1)) else { return section.id }
+        return date.formatted(Date.FormatStyle(timeZone: calendar.timeZone).month(.wide).year())
+    }
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            tabs
-            if let error = state.fitError, tab != .outfits {
+            if !searching { tabs }
+            if let error = state.fitError, tab != .outfits || searching {
                 VStack(alignment: .leading, spacing: AppSpacing.medium) {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry journal") { state.reloadFits() }.frame(minHeight: 44)
                 }.padding(AppSpacing.screen)
-            } else if tab == .outfits {
+            } else if tab == .outfits && !searching {
                 if let error = state.outfitError {
                     VStack(alignment: .leading, spacing: AppSpacing.medium) {
                         SemanticFeedback(role: .danger, message: error)
@@ -98,11 +108,18 @@ struct FitJournalGrid: View {
                         ForEach(state.outfits) { outfit in OutfitCollectionCard(outfit: outfit, gallery: true) }
                     }
                 }
+            } else if memories.isEmpty && searching {
+                ContentUnavailableView.search(text: query.searchTerm).padding(.vertical, AppSpacing.section)
             } else if memories.isEmpty {
                 emptyState.padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.section)
             } else {
-                LazyVGrid(columns: columns, spacing: 2) {
-                    ForEach(memories) { memory in
+                orderRow
+                ForEach(sections) { section in
+                    Text(monthTitle(section)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                        .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.medium).padding(.bottom, AppSpacing.small)
+                        .accessibilityAddTraits(.isHeader)
+                    LazyVGrid(columns: columns, spacing: 2) {
+                    ForEach(section.memories) { memory in
                         NavigationLink { FitMemoryDetailView(id: memory.id).secondaryPage() } label: {
                             FitMemoryArtwork(memory: memory, thumbnail: true)
                         }.buttonStyle(.plain).id(memory.id)
@@ -118,11 +135,30 @@ struct FitJournalGrid: View {
                             }
                             .accessibilityLabel("\(memory.day.key), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.displayName ?? "unlinked"), \(memory.displayNote)")
                     }
+                    }
                 }
             }
         }.navigationDestination(isPresented: Binding(get: { openedMemoryID != nil }, set: { if !$0 { openedMemoryID = nil } })) {
             if let id = openedMemoryID { FitMemoryDetailView(id: id).secondaryPage() }
         }
+    }
+    /// Count and order on one quiet line, like Closet's collection summary.
+    private var orderRow: some View {
+        HStack {
+            Text("\(memories.count) \(memories.count == 1 ? "fit" : "fits")").font(AppTypography.fieldLabel)
+            Spacer(minLength: 12)
+            Menu {
+                Picker("Order", selection: $query.sort) {
+                    ForEach(FitJournalQuery.Sort.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Text(query.sort.rawValue)
+                    Image(systemName: "chevron.up.chevron.down").font(AppTypography.metadata).accessibilityHidden(true)
+                }.font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).frame(minHeight: 44)
+            }.tint(AppTheme.ink).accessibilityLabel("Order fits").accessibilityValue(query.sort.rawValue)
+                .accessibilityIdentifier("profile.fits.order")
+        }.padding(.horizontal, AppSpacing.screen)
     }
     private var tabs: some View {
         HStack(alignment: .bottom, spacing: 0) {
@@ -159,6 +195,7 @@ struct FitEditorView: View {
     @State private var removePhoto = false
     @State private var timezone = false
     @State private var editingPhoto = false
+    @State private var showDate = false
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -173,7 +210,9 @@ struct FitEditorView: View {
                             .disabled(model.locked)
                         if model.draft.value.note.count > 500 { SemanticFeedback(role: .danger, message: "Keep the note within 500 characters. Your full text is retained.") }
                         dateDetails
-                        Label("Private memory · Wear is recorded separately", systemImage: "lock")
+                        wearNext
+                        guidanceLine
+                        Label("Private memory. Wear is recorded separately.", systemImage: "lock")
                             .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
@@ -206,7 +245,7 @@ struct FitEditorView: View {
         SharedPhotoSourceButton(title: model.draft.value.photoID == nil ? "Add fit photo" : "Change fit photo",
             selectionToken: model.importID, locked: model.locked,
             onEdit: model.draft.value.photoID == nil ? nil : { editingPhoto = true },
-            onRemove: model.draft.value.photoID == nil ? nil : { removePhoto = true }, onData: model.importPhoto, label: label)
+            onRemove: model.draft.value.photoID == nil ? nil : { removePhoto = true }, launch: $model.launch, onData: model.importPhoto, label: label)
     }
 
     private func sourceLabel(_ title: String, systemImage: String) -> some View {
@@ -257,22 +296,66 @@ struct FitEditorView: View {
                 Spacer()
                 AppChip(title: "No outfit", isSelected: model.draft.value.outfit == nil) { _ = model.link(nil) }.disabled(model.locked)
             }.padding(.bottom, -AppSpacing.small)
+            if let planned = model.plannedOutfit {
+                Button { _ = model.link(planned) } label: {
+                    HStack {
+                        Label("Planned for this day: \(planned.displayName)", systemImage: "calendar").font(AppTypography.supporting)
+                        Spacer(minLength: 8)
+                        Text("Use").font(AppTypography.fieldLabel)
+                    }.foregroundStyle(AppTheme.ink).padding(.horizontal, 14).frame(minHeight: 48)
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                }.buttonStyle(.plain).disabled(model.locked).accessibilityIdentifier("fit.usePlanned")
+            }
             OutfitSelectionStrip(outfits: model.state.outfits, selectedID: model.draft.value.outfit?.id, locked: model.locked) { outfit in
                 _ = model.link(outfit)
             }
         }
     }
+    private var dateSummary: String {
+        let day = model.draft.value.day
+        return day.key == LocalPlanDay(timeZone: TimeZone(identifier: day.timeZoneID) ?? .current).key ? "Today" : day.displayDate
+    }
+    /// The date rarely changes, and the timezone almost never: both stay one tap away instead of crowding the capture.
     private var dateDetails: some View {
-        VStack(spacing: 0) {
-            ThemedDatePicker("Date", selection: Binding(get: { (try? model.draft.value.day.date()) ?? Date() }, set: { date in
-                let zone = TimeZone(identifier: model.draft.value.day.timeZoneID) ?? .current
-                model.update { $0.day = LocalPlanDay(date: date, timeZone: zone) }
-            }), displayedComponents: .date)
-                .environment(\.timeZone, TimeZone(identifier: model.draft.value.day.timeZoneID) ?? .current)
-                .padding(.horizontal, 14).frame(minHeight: 54)
-            Divider().padding(.leading, 14)
-            DisclosureRow(title: "Timezone", value: model.draft.value.day.timeZoneID) { timezone = true }
-        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).disabled(model.locked)
+        DisclosureGroup(isExpanded: $showDate) {
+            VStack(spacing: 0) {
+                Divider()
+                ThemedDatePicker("Date", selection: Binding(get: { (try? model.draft.value.day.date()) ?? Date() }, set: { date in
+                    let zone = TimeZone(identifier: model.draft.value.day.timeZoneID) ?? .current
+                    model.update { $0.day = LocalPlanDay(date: date, timeZone: zone) }
+                }), displayedComponents: .date)
+                    .environment(\.timeZone, TimeZone(identifier: model.draft.value.day.timeZoneID) ?? .current)
+                    .frame(minHeight: 54)
+                Divider()
+                DisclosureRow(title: "Timezone", value: model.draft.value.day.timeZoneID) { timezone = true }
+            }
+        } label: {
+            HStack { Text("Date").font(AppTypography.body); Spacer(); Text(dateSummary).foregroundStyle(AppTheme.secondary) }
+                .frame(minHeight: 44)
+        }.tint(AppTheme.ink).foregroundStyle(AppTheme.ink).padding(.horizontal, 14).padding(.vertical, 4)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).disabled(model.locked)
+            .accessibilityIdentifier("fit.date")
+    }
+    /// Offered only with an outfit, since wear needs pieces. Saving never records wear; it opens Record wear to confirm.
+    @ViewBuilder private var wearNext: some View {
+        if model.draft.value.outfit != nil {
+            Toggle(isOn: $model.recordWearNext) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Record wear next").font(AppTypography.body)
+                    Text("Opens Record wear after saving. Nothing counts until you confirm there.")
+                        .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                }
+            }.tint(AppTheme.primaryFill).disabled(model.locked).padding(.horizontal, 14).padding(.vertical, 8)
+                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                .accessibilityIdentifier("fit.recordWearNext")
+        }
+    }
+    /// One plain line for what is missing, never red: the first thing a new fit needs is content.
+    @ViewBuilder private var guidanceLine: some View {
+        if !model.locked, model.guidance == .needsContent {
+            Text("Add a photo or choose an outfit to save.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                .accessibilityIdentifier("fit.guidance")
+        }
     }
 }
 

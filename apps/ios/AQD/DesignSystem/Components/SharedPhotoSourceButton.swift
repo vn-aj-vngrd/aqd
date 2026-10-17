@@ -2,6 +2,9 @@ import AVFoundation
 import PhotosUI
 import SwiftUI
 
+/// A source an editor can open directly, without the person first tapping the source menu.
+enum PhotoSourceLaunch { case photos, camera }
+
 /// One native photo-source Menu shared by every editor. The default label is a compact row
 /// (or round icon); pass `label` to make a hero image the menu trigger instead.
 struct SharedPhotoSourceButton<Label: View>: View {
@@ -11,6 +14,8 @@ struct SharedPhotoSourceButton<Label: View>: View {
     var iconOnly = false
     var onEdit: (() -> Void)? = nil
     var onRemove: (() -> Void)? = nil
+    /// Set to `.photos` or `.camera` to open that source directly, e.g. when the editor was opened from a source choice.
+    var launch: Binding<PhotoSourceLaunch?>? = nil
     let onData: (Data) -> Void
     @ViewBuilder let label: () -> Label
     @State private var cameraResult: (data: Data, token: UUID)?
@@ -52,6 +57,11 @@ struct SharedPhotoSourceButton<Label: View>: View {
             }
         }
         .onChange(of: selectionToken) { _, _ in cancel(); item = nil }
+        .task(id: launch?.wrappedValue) {
+            guard let request = launch?.wrappedValue else { return }
+            launch?.wrappedValue = nil
+            switch request { case .photos: if !locked { photos = true }; case .camera: openCamera() }
+        }
         .onDisappear { cancel() }
     }
     private func cancel() { loadTask?.cancel(); loadTask = nil; loading = false }
@@ -68,9 +78,10 @@ struct SharedPhotoSourceButton<Label: View>: View {
 
 extension SharedPhotoSourceButton where Label == SharedPhotoSourceRowLabel {
     init(title: String, selectionToken: UUID, locked: Bool = false, iconOnly: Bool = false,
-         onEdit: (() -> Void)? = nil, onRemove: (() -> Void)? = nil, onData: @escaping (Data) -> Void) {
+         onEdit: (() -> Void)? = nil, onRemove: (() -> Void)? = nil, launch: Binding<PhotoSourceLaunch?>? = nil,
+         onData: @escaping (Data) -> Void) {
         self.init(title: title, selectionToken: selectionToken, locked: locked, iconOnly: iconOnly,
-                  onEdit: onEdit, onRemove: onRemove, onData: onData,
+                  onEdit: onEdit, onRemove: onRemove, launch: launch, onData: onData,
                   label: { SharedPhotoSourceRowLabel(title: title, iconOnly: iconOnly) })
     }
 }

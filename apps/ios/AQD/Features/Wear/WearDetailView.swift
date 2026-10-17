@@ -14,7 +14,11 @@ struct LocalWearDetailView: View {
             VStack(alignment: .leading, spacing: 20) {
                 if let record {
                     Text(record.day.key).font(AppTypography.section)
-                    Text("\(record.pieces.count) pieces · \(record.day.timeZoneID)").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    HStack {
+                        Text("\(record.pieces.count) pieces")
+                        Spacer(minLength: 12)
+                        Text(record.day.timeZoneID)
+                    }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     OutfitComposition(pieceIDs: record.pieces.map(\.id))
                     NavigationLink("View recorded pieces") { RecordedWearPiecesView(record: record) }.frame(minHeight: 44)
                     PrimaryAction(title: "Correct record") { state.openWear(correcting: record) }.disabled(request != nil || state.wearEditor != nil)

@@ -175,7 +175,7 @@ private struct AppRootView: View {
             }
         }
         .sheet(item: $state.todayEditor) { model in TodayEditorView(model: model).environment(state) }
-        .sheet(item: $state.fitEditor) { model in FitEditorView(model: model).environment(state) }
+        .sheet(item: $state.fitEditor, onDismiss: { state.openPendingFitWear() }) { model in FitEditorView(model: model).environment(state) }
         .sheet(item: $state.identityEditor) { model in LocalIdentityEditorView(model: model).environment(state) }
         .sheet(item: $state.themeEditor, onDismiss: { state.reloadThemes(); state.reloadOutfits() }) { model in
             ThemeEditorView(model: model).environment(state)

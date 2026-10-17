@@ -5,6 +5,7 @@ struct LocalProfileView: View {
     @Environment(AppState.self) private var state
     @State private var categories = false
     @State private var journalTab: FitJournalTab = .all
+    @State private var query = FitJournalQuery()
     @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(\.colorSchemeContrast) private var contrast
     var body: some View {
@@ -13,30 +14,42 @@ struct LocalProfileView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppSpacing.section) {
-                        identityHeader.padding(.horizontal, AppSpacing.screen)
-                        profileActions.padding(.horizontal, AppSpacing.screen)
+                        if !query.isSearching {
+                            identityHeader.padding(.horizontal, AppSpacing.screen)
+                            profileActions.padding(.horizontal, AppSpacing.screen)
+                        }
                         if let error = state.identityError {
                             VStack(alignment: .leading, spacing: AppSpacing.small) {
                                 SemanticFeedback(role: .danger, message: error)
                                 Button("Retry profile") { state.reloadIdentity() }.frame(minHeight: 44)
                             }.padding(.horizontal, AppSpacing.screen)
                         }
-                        FitJournalGrid(tab: $journalTab)
+                        FitJournalGrid(tab: $journalTab, query: $query)
                     }.padding(.top, AppSpacing.headerGap).padding(.bottom, AppSpacing.screen)
                 }.onChange(of: state.fitAnchor) { _, id in
                     if let id { journalTab = .all; DispatchQueue.main.async { proxy.scrollTo(id, anchor: .center) } }
                 }
-            }.background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
+            }.searchable(text: $query.text, prompt: "Search fits")
+                .background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            if journalTab == .outfits { state.buildOutfit() } else { state.openFit() }
-                        } label: { Label(journalTab == .outfits ? "Add outfit" : "Add fit", systemImage: "plus") }
-                            .accessibilityIdentifier(journalTab == .outfits ? "profile.addOutfit" : "profile.addFit")
+                        Menu {
+                            Button("Take photo", systemImage: "camera") { state.openFit(source: .camera) }
+                                .accessibilityIdentifier("profile.addFit.camera")
+                            Button("Choose from Photos", systemImage: "photo.on.rectangle") { state.openFit(source: .photos) }
+                                .accessibilityIdentifier("profile.addFit.photos")
+                            Button("From an outfit", systemImage: "hanger") { state.openFit(source: .outfit) }
+                                .disabled(state.outfits.isEmpty).accessibilityIdentifier("profile.addFit.outfit")
+                            Divider()
+                            Button("Build an outfit", systemImage: "square.stack") { state.buildOutfit() }
+                                .accessibilityIdentifier("profile.addOutfit")
+                        } label: { Label("Add fit", systemImage: "plus") }
+                            .accessibilityIdentifier("profile.addFit")
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
                             AccessoryButton("Style", systemImage: "slider.horizontal.3") { state.openStyle(source: .profile) }
+                            AccessoryButton("Wear history", systemImage: "clock.arrow.circlepath") { state.profileHistory = true }
                             AccessoryButton("Categories", systemImage: "square.grid.2x2") { categories = true }
                             AccessoryButton("Settings", systemImage: "gearshape") { state.profileSettings = true }
                         } label: { Label("More", systemImage: "ellipsis") }
@@ -112,16 +125,20 @@ struct LocalProfileView: View {
     }
     private var profileStats: some View {
         HStack(alignment: .top, spacing: 0) {
-            profileStat("Fits", count: state.fitError == nil ? state.fitMemories.count : nil)
-            profileStat("Outfits", count: state.outfitError == nil ? state.outfits.count : nil)
-            profileStat("Pieces", count: state.pieceReadError == nil ? state.pieces.count : nil)
+            profileStat("Fits", count: state.fitError == nil ? state.fitMemories.count : nil) { journalTab = .all }
+            profileStat("Outfits", count: state.outfitError == nil ? state.outfits.count : nil) { journalTab = .outfits }
+            profileStat("Pieces", count: state.pieceReadError == nil ? state.pieces.count : nil) { state.selection = 1 }
         }.frame(maxWidth: .infinity)
     }
-    private func profileStat(_ title: String, count: Int?) -> some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-            Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit()
-            Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-        }.frame(maxWidth: .infinity, alignment: .leading).accessibilityElement(children: .ignore)
+    private func profileStat(_ title: String, count: Int?, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit()
+                Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+            }.frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading).contentShape(Rectangle())
+        }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityElement(children: .ignore)
             .accessibilityLabel(count.map { "\($0) \(title.lowercased())" } ?? "\(title) unavailable")
+            .accessibilityHint(title == "Pieces" ? "Opens Closet" : "Shows \(title.lowercased()) below")
+            .accessibilityIdentifier("profile.stat.\(title.lowercased())")
     }
 }

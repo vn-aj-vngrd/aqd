@@ -68,7 +68,7 @@ struct LocalWearInsightsView: View {
                                 let total = PieceWearSummary(piece: piece, records: state.wearRecords)
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(piece.displayName).font(AppTypography.fieldLabel).truncated()
-                                    Text("\(total.total) total · \(total.recorded) recorded · \(total.priorEstimate ?? 0) earlier estimate")
+                                    Text("\(total.total) total, \(total.recorded) recorded, \(total.priorEstimate ?? 0) earlier estimate")
                                         .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                                 }
                             }

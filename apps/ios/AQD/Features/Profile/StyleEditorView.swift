@@ -191,7 +191,7 @@ struct StyleEditorView: View {
 
     private var review: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("\(model.draft.answeredCount) of 6 questions answered\(model.draft.answers.allDeclined ? " · All declined" : "")").font(.subheadline)
+            Text("\(model.draft.answeredCount) of 6 questions answered\(model.draft.answers.allDeclined ? ", all declined" : "")").font(.subheadline)
             ForEach([Array(0..<3), Array(3..<6)], id: \.self) { group in
                 VStack(spacing: 0) {
                     ForEach(group, id: \.self) { step in

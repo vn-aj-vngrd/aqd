@@ -2,6 +2,9 @@ import AQDCore
 import Foundation
 import Observation
 
+/// Where a new fit starts: straight into the camera or Photos, or from an existing outfit.
+enum FitCaptureSource { case camera, photos, outfit }
+
 @MainActor @Observable
 final class FitEditorModel: Identifiable {
     let id: UUID
@@ -14,6 +17,10 @@ final class FitEditorModel: Identifiable {
     var importing = false
     var completedPhotoImportID: UUID?
     var importID = UUID()
+    /// A source chosen before the editor opened (Take photo / Photos); consumed once by the hero.
+    var launch: PhotoSourceLaunch?
+    /// Opens Record wear for this fit after saving. Wear is still only recorded when the person confirms there.
+    var recordWearNext = false
     private var importTask: Task<Void, Never>?
     init(state: AppState, draft: FitDraft) throws {
         self.state = state; self.draft = draft; id = draft.id; saved = try state.store?.savedFit(for: draft)
@@ -22,6 +29,13 @@ final class FitEditorModel: Identifiable {
         saved == nil && (pending || unknown || importing || error != nil || draft.hasChanges)
     }
     var locked: Bool { pending || unknown || saved != nil }
+    /// The outfit already planned for this fit's day, when it is still owned and not yet linked.
+    var plannedOutfit: Outfit? {
+        guard draft.value.outfit == nil,
+              let id = FitJournalPresentation.plannedOutfitID(on: draft.value.day, entries: state.planEntries) else { return nil }
+        return state.outfits.first { $0.id == id }
+    }
+    var guidance: FitJournalPresentation.SaveGuidance { FitJournalPresentation.guidance(for: draft.value) }
     var canSave: Bool { !locked && !importing && (draft.base == nil || draft.hasChanges) && (try? draft.result()) != nil }
     func update(_ change: (inout FitMemory) -> Void) {
         guard !locked else { return }; var value = draft; change(&value.value); draft = value
@@ -70,7 +84,10 @@ final class FitEditorModel: Identifiable {
             guard let retained, retained.id == draft.id, retained.operationID == draft.operationID,
                   retained.base == draft.base else { throw PieceStore.StoreError.staleDraft }
             try store.finishFitDraft(discarding ? retained : draft, discarding: discarding)
-            if let saved { state.fitAnchor = saved.id }
+            if let saved {
+                state.fitAnchor = saved.id
+                if recordWearNext, !discarding { state.pendingFitWear = (saved.outfit?.id, saved.day) }
+            }
             state.fitEditor = nil; state.reloadFits(); state.retryPhotoCleanup()
         } catch { self.error = "This task could not close. The fit and draft are retained; retry." }
     }
@@ -81,7 +98,7 @@ extension AppState {
         do { fitMemories = try store?.fitMemories() ?? []; fitError = nil }
         catch { fitError = "Your fit journal could not be read. Keep your local data and retry." }
     }
-    func openFit(_ memory: FitMemory? = nil) {
+    func openFit(_ memory: FitMemory? = nil, source: FitCaptureSource? = nil) {
         guard !hasActiveEditor else { return }
         do {
             guard let store else { throw PieceStore.StoreError.corruptStore }
@@ -91,8 +108,20 @@ extension AppState {
                 if let memory { guard try store.fitMemories().contains(memory) else { throw PieceStore.StoreError.staleRevision } }
                 draft = FitDraft(ownerID: try store.todayConfiguration().ownerID, base: memory); try store.saveFitDraft(draft)
             }
-            reloadOutfits(); reloadPieces(); fitEditor = try FitEditorModel(state: self, draft: draft)
+            reloadOutfits(); reloadPieces(); reloadPlanEntries()
+            let editor = try FitEditorModel(state: self, draft: draft)
+            if draft.value.photoID == nil, draft.base == nil {
+                switch source { case .camera: editor.launch = .camera; case .photos: editor.launch = .photos; default: break }
+            }
+            fitEditor = editor
         } catch { fitError = "This fit task could not open. Your saved journal is unchanged." }
+    }
+    /// Called once the fit sheet has closed, so Record wear never competes with the dismissing sheet.
+    func openPendingFitWear() {
+        guard let request = pendingFitWear else { return }
+        pendingFitWear = nil
+        let outfitID = request.outfitID.flatMap { id in (try? store?.outfit(id: id)).flatMap { $0 } }?.id
+        openWear(outfitID: outfitID, day: request.day)
     }
     func resumeFit() {
         guard entry.page == .main else { return }

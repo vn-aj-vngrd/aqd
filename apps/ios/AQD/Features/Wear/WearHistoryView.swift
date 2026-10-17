@@ -68,7 +68,13 @@ struct WearAgendaRow: View {
             OutfitComposition(pieceIDs: record.pieces.map(\.id), pieceHeight: 56, limit: 2).frame(width: 64, height: 80).clipped()
             VStack(alignment: .leading, spacing: 4) {
                 Text(record.pieces.map(\.displayName).joined(separator: ", ")).font(AppTypography.body).foregroundStyle(AppTheme.ink)
-                Text("\(record.day.key) · \(record.pieces.count) pieces · Recorded").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                HStack {
+                    Text(record.day.key)
+                    Spacer(minLength: 12)
+                    Text("\(record.pieces.count) pieces")
+                }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("\(record.day.key), \(record.pieces.count) pieces, recorded")
             }.frame(maxWidth: .infinity, alignment: .leading)
             Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).frame(width: 22).accessibilityHidden(true)
         }.padding(14).frame(minHeight: 108).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))

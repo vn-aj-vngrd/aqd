@@ -7,10 +7,10 @@ struct LocalDataSummaryView: View {
         "\(value) \(value == 1 ? singular : plural)"
     }
     private var rows: [(String, String, String)] {
-        [("Closet", "tshirt", [count(summary.pieces, "piece", "pieces"), count(summary.outfits, "outfit", "outfits"), count(summary.themes, "theme", "themes")].joined(separator: " · ")),
-         ("Planner", "calendar", [count(summary.plans, "plan", "plans"), count(summary.entries, "planned date", "planned dates")].joined(separator: " · ")),
-         ("Memories & wear", "photo.stack", [count(summary.fits, "fit memory", "fit memories"), count(summary.wear, "wear record", "wear records")].joined(separator: " · ")),
-         ("Personal content", "text.bubble", [count(summary.conversations, "conversation", "conversations"), count(summary.personalCards, "personal card", "personal cards"), count(summary.drafts, "draft", "drafts")].joined(separator: " · "))]
+        [("Closet", "tshirt", [count(summary.pieces, "piece", "pieces"), count(summary.outfits, "outfit", "outfits"), count(summary.themes, "theme", "themes")].joined(separator: ", ")),
+         ("Planner", "calendar", [count(summary.plans, "plan", "plans"), count(summary.entries, "planned date", "planned dates")].joined(separator: ", ")),
+         ("Memories & wear", "photo.stack", [count(summary.fits, "fit memory", "fit memories"), count(summary.wear, "wear record", "wear records")].joined(separator: ", ")),
+         ("Personal content", "text.bubble", [count(summary.conversations, "conversation", "conversations"), count(summary.personalCards, "personal card", "personal cards"), count(summary.drafts, "draft", "drafts")].joined(separator: ", "))]
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
