@@ -45,6 +45,8 @@ actor PhotoPreparer {
     private static let maximumInputBytes = 64 * 1_024 * 1_024
     private static let maximumPixels = 40_000_000
     private static let maximumDimension = 32_768
+    /// Sources above `maximumPixels` are downsampled while decoding; above this they are refused outright.
+    private static let maximumSourcePixels = 200_000_000
 
     func prepare(data: Data) throws -> PreparedPhoto {
         guard data.count <= Self.maximumInputBytes else {
@@ -80,10 +82,16 @@ actor PhotoPreparer {
                   width > 0, height > 0 else {
                 throw PhotoPreparationError.invalidMedia
             }
+            // Very large sources (a 48-megapixel iPhone capture) are decoded straight to a bounded size rather than rejected;
+            // only absurd sources are refused. Everything at or under the budget keeps its full resolution.
             guard width <= Self.maximumDimension, height <= Self.maximumDimension,
-                  width <= Self.maximumPixels / height else {
+                  width <= Self.maximumSourcePixels / height else {
                 throw PhotoPreparationError.pixelLimitExceeded
             }
+            let longestSide = max(width, height)
+            let decodeSide = width * height <= Self.maximumPixels ? longestSide
+                : Int(Double(longestSide) * (Double(Self.maximumPixels) / Double(width * height)).squareRoot() * 0.98)
+            let scale = Double(decodeSide) / Double(longestSide)
             let orientation = (properties[kCGImagePropertyOrientation] as? NSNumber)?.intValue ?? 1
             guard (1...8).contains(orientation) else {
                 throw PhotoPreparationError.invalidMedia
@@ -93,8 +101,9 @@ actor PhotoPreparer {
             let expectedHeight = swapsAxes ? width : height
             // ImageIO applies all eight EXIF rotations/reflections. Setting the
             // limit to the full source extent means no intentional downsampling.
-            guard let upright = transformedImage(source: source, maximumSize: max(width, height)),
-                  upright.width == expectedWidth, upright.height == expectedHeight,
+            guard let upright = transformedImage(source: source, maximumSize: decodeSide),
+                  abs(upright.width - Int((Double(expectedWidth) * scale).rounded())) <= 1,
+                  abs(upright.height - Int((Double(expectedHeight) * scale).rounded())) <= 1,
                   CGImageSourceGetStatusAtIndex(source, 0) == .statusComplete else {
                 // Never substitute a silently reduced/cropped original.
                 throw PhotoPreparationError.invalidMedia

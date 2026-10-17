@@ -3,6 +3,7 @@ import CoreGraphics
 import Foundation
 import ImageIO
 import Testing
+import UIKit
 import UniformTypeIdentifiers
 @testable import AQD
 
@@ -185,5 +186,20 @@ struct PhotoPreparationTests {
         ] as CFDictionary)
         #expect(CGImageDestinationFinalize(destination))
         return data as Data
+    }
+
+    @Test func aPhotoOverThePixelBudgetIsScaledDownInsteadOfRejected() async throws {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.opaque = true
+        let size = CGSize(width: 6_600, height: 6_200)  // 40.9 megapixels, just over the budget
+        let image = UIGraphicsImageRenderer(size: size, format: format).image { context in
+            UIColor.systemTeal.setFill(); context.fill(CGRect(origin: .zero, size: size))
+        }
+        let data = try #require(image.jpegData(compressionQuality: 0.5))
+        let prepared = try await PhotoPreparer().prepare(data: data)
+        #expect(prepared.pixelWidth * prepared.pixelHeight <= 40_000_000)
+        #expect(abs(Double(prepared.pixelWidth) / Double(prepared.pixelHeight) - 6_600.0 / 6_200.0) < 0.01, "the aspect ratio is preserved")
+        #expect(prepared.pixelWidth > 5_000, "it stays high resolution")
     }
 }
