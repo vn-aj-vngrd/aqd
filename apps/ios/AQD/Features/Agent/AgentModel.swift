@@ -191,6 +191,8 @@ import Observation
         guard !active, !hasPendingOperation, let i = conversation.proposals?.firstIndex(where: { $0.id == id }),
               let proposal = conversation.proposals?[i], proposal.version == version,
               proposal.status == .proposed || proposal.status == .executing else { return }
+        // A new piece from a photo is saved only through the Closet editor, which owns the full-quality photo.
+        if case .piece(let change) = proposal.action, change.isNewPiece { return }
         do {
             if let request = proposal.toolRequest {
                 let preferences = try store.localSettings().agentPreferences ?? AgentPreferences()

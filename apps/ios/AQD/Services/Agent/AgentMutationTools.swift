@@ -142,6 +142,7 @@ extension AgentToolbox {
             case .editPlan: AgentEditPlanTool(handlers: handlers)
             case .recordWear: AgentRecordWearTool(handlers: handlers)
             case .editProfile: AgentEditProfileTool(handlers: handlers)
+            case .addPieceFromPhoto: AgentAddPieceFromPhotoTool(handlers: handlers)
             }
         }
     }

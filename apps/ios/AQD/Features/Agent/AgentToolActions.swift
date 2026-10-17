@@ -64,6 +64,7 @@ import AQDCore
         let themes = needs.contains(.themes) ? try store.themes() : []
         let plans = needs.contains(.planner) ? try store.planDefinitions() : []
         let entries = needs.contains(.planner) ? try store.planEntries() : []
+        if request.kind == .addPiece { try validatePhotoAttachment(request.attachmentID) }
         try Self.validateTarget(request, revision: revision, ownerID: conversation.ownerID, pieces: pieces, outfits: outfits, themes: themes, plans: plans,
             identity: needs.contains(.profile) ? try store.localIdentity() : nil)
         let action = try request.prepare(ownerID: conversation.ownerID, pieces: pieces, outfits: outfits, themes: themes,
@@ -87,9 +88,32 @@ import AQDCore
         return "Prepared review \(proposal.id): \(action.title). No domain changes applied. Ask the user to open this review card and tap Apply. Never claim it is saved."
     }
 
+    /// Records the receipt once the Closet editor acknowledges the save. A repeat for the same proposal never adds a second receipt.
+    func completeAddedPiece(_ id: UUID, piece: WardrobePiece) {
+        guard let i = conversation.proposals?.firstIndex(where: { $0.id == id }), conversation.proposals?[i].status == .proposed || conversation.proposals?[i].status == .executing,
+              case .piece(let change) = conversation.proposals?[i].action, change.isNewPiece else { return }
+        conversation.proposals?[i].receipt = AgentActionReceipt(recordID: piece.id, kind: "piece")
+        conversation.proposals?[i].status = .succeeded; _ = persist()
+    }
+
+    /// Review for a new piece is the Closet editor itself, so the photo keeps full quality and nothing is written until Save there.
+    func openAddedPieceEditor(_ proposal: AgentActionProposal, in state: AppState) {
+        guard proposal.status == .proposed, case .piece(let change) = proposal.action, change.isNewPiece else { return }
+        let id = proposal.id
+        if !state.addPiece(prefilled: change.draft, onSaved: { [weak self] piece in self?.completeAddedPiece(id, piece: piece) }) {
+            error = "Finish or close the open editor before reviewing this piece."
+        }
+    }
+
     func appendToolStep(_ step: AgentToolStep, attemptID: UUID) {
         guard let i = conversation.messages.lastIndex(where: { $0.attemptID == attemptID && $0.isActive }) else { return }
         conversation.messages[i].toolSteps = (conversation.messages[i].toolSteps ?? []) + [step]
+    }
+
+    /// The piece draft is guessed from a photo the user attached in this conversation, never from an invented ID.
+    private func validatePhotoAttachment(_ id: UUID?) throws {
+        let attached = (conversation.draftAttachments ?? []) + conversation.messages.flatMap { $0.attachments ?? [] }
+        guard let id, attached.contains(where: { $0.id == id && $0.kind == .image }) else { throw AgentToolRejection.invalidArguments }
     }
 
     /// Unknown IDs and stale revisions are refused before any proposal exists.
@@ -114,7 +138,7 @@ import AQDCore
             guard let plan = plans.first(where: { $0.id == id }) else { throw AgentToolRejection.unknownRecord(id) }
             current = plan.revision
         case .updateProfile: current = identity?.revision
-        case .createOutfit, .createTheme, .createPlan, .recordWear: current = nil
+        case .createOutfit, .createTheme, .createPlan, .recordWear, .addPiece: current = nil
         }
         if let current {
             guard let revision else { throw AgentToolRejection.revisionRequired }

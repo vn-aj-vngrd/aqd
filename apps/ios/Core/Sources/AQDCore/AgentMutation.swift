@@ -1,14 +1,14 @@
 import Foundation
 
 public enum AgentMutationKind: String, Codable, CaseIterable, Sendable {
-    case editPiece, createOutfit, editOutfit, createTheme, editTheme, createPlan, editPlan, recordWear, setAvailability, updateProfile
+    case addPiece, editPiece, createOutfit, editOutfit, createTheme, editTheme, createPlan, editPlan, recordWear, setAvailability, updateProfile
     public var requiredSources: [AgentDataSource] {
         switch self {
         case .createOutfit, .editOutfit: [.pieces, .outfits]
         case .createTheme, .editTheme: [.themes, .outfits]
         case .createPlan, .editPlan: [.planner, .outfits, .pieces]
         case .recordWear: [.wear, .pieces]
-        case .setAvailability, .editPiece: [.pieces]
+        case .setAvailability, .editPiece, .addPiece: [.pieces]
         case .updateProfile: [.profile]
         }
     }
@@ -33,11 +33,14 @@ public struct AgentMutationRequest: Codable, Equatable, Sendable {
     public var date: String?
     public var assignments: [AgentPlanAssignment]
     public var availability: PieceAvailability?
+    public var category: String?
+    public var attachmentID: UUID?
     public init(kind: AgentMutationKind, targetID: UUID? = nil, name: String? = nil, caption: String? = nil, color: String? = nil, brand: String? = nil,
                 pieceIDs: [UUID] = [], outfitIDs: [UUID] = [], date: String? = nil,
-                assignments: [AgentPlanAssignment] = [], availability: PieceAvailability? = nil) {
+                assignments: [AgentPlanAssignment] = [], availability: PieceAvailability? = nil, category: String? = nil, attachmentID: UUID? = nil) {
         self.kind = kind; self.targetID = targetID; self.name = name; self.caption = caption; self.color = color; self.brand = brand
         self.pieceIDs = pieceIDs; self.outfitIDs = outfitIDs; self.date = date; self.assignments = assignments; self.availability = availability
+        self.category = category; self.attachmentID = attachmentID
     }
     public func prepare(ownerID: UUID, pieces: [WardrobePiece] = [], outfits: [Outfit] = [], themes: [OutfitTheme] = [],
                         plans: [PlanDefinition] = [], entries: [OutfitPlanEntry] = [], identity: LocalProfileIdentity? = nil,
@@ -52,6 +55,15 @@ public struct AgentMutationRequest: Codable, Equatable, Sendable {
             guard result.key == text else { throw PlanValidationError.invalidDay }; _ = try result.date(); return result
         }
         switch kind {
+        case .addPiece:
+            guard let attachmentID else { throw PlanValidationError.invalidRecord }
+            // Guesses only: an unknown category or empty name stays blank for the user to classify in the editor.
+            let guess = category?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ?? ""
+            let type = PieceCategory.allCases.first { $0.rawValue.lowercased() == guess || String($0.rawValue.lowercased().dropLast()) == guess }
+            var draft = PieceDraft(name: name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "", category: type)
+            draft.details.color = color ?? ""; draft.details.brand = brand ?? ""
+            try draft.details.validated()
+            return .piece(AgentPieceChange(draft: draft, attachmentID: attachmentID))
         case .editPiece:
             guard let piece = pieces.first(where: { $0.id == targetID && !$0.isArchived }), name != nil || color != nil || brand != nil else { throw PlanValidationError.invalidRecord }
             var draft = PieceDraft(itemID: piece.id, name: piece.name, category: piece.category, photoID: piece.photoID, baseRevision: piece.revision,
