@@ -53,6 +53,13 @@ enum AgentProviderError: Error {
     }
 }
 
+/// Names the provider step that threw so an unclassified model failure can be traced.
+struct AgentStageError: Error, CustomStringConvertible {
+    let stage: String
+    let underlying: any Error
+    var description: String { "\(stage): \(underlying)" }
+}
+
 @MainActor enum NativeAgentProvider {
     private static let instructions = """
     You are AQD's on-device wardrobe assistant. Be warm, direct and conversational. Match the user's language. Answer first with concrete advice in short paragraphs; use light Markdown and sparing emojis, and avoid em dashes, filler and generic praise.
@@ -72,6 +79,7 @@ enum AgentProviderError: Error {
     static func streamAttached(prompt: String, responseTokens: Int, attachments: [AgentAttachment], tools selection: AgentToolSelection? = nil) -> AsyncThrowingStream<String, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task { @MainActor in
+                var stage = "check availability"
                 do {
                     #if canImport(FoundationModels)
                     if #available(iOS 26, *) {
@@ -89,17 +97,22 @@ enum AgentProviderError: Error {
                         var tools: [any Tool] = selection.map { AgentToolbox.makeTools($0.ids, handlers: $0.handlers) } ?? []
                         if #available(iOS 26.4, *) {
                             let model = SystemLanguageModel.default
-                            let input = try await model.tokenCount(for: prepared)
-                            let system = try await model.tokenCount(for: Instructions(instructions))
+                            stage = "count prompt tokens"
+                            // Token counting can fail while the model service is unavailable; estimate then and let generation report real limits.
+                            let input = (try? await model.tokenCount(for: prepared)) ?? prompt.count / 3 + 1
+                            stage = "count instruction tokens"
+                            let system = (try? await model.tokenCount(for: Instructions(instructions))) ?? instructions.count / 3 + 1
+                            stage = "fit tools"
                             if let selection {
                                 // Offer as many of the routed tools as fit, most relevant first.
                                 let kept = try await AgentToolbox.fit(selection.ids, measure: { ids in
-                                    ids.isEmpty ? 0 : try await model.tokenCount(for: AgentToolbox.makeTools(ids, handlers: selection.handlers))
+                                    ids.isEmpty ? 0 : ((try? await model.tokenCount(for: AgentToolbox.makeTools(ids, handlers: selection.handlers))) ?? ids.count * 250)
                                 }, fits: { fits(input: input, system: system, tools: $0, response: responseTokens, contextSize: model.contextSize) })
                                 tools = AgentToolbox.makeTools(kept, handlers: selection.handlers)
                             }
-                            guard fits(input: input, system: system, tools: tools.isEmpty ? 0 : try await model.tokenCount(for: tools), response: responseTokens, contextSize: model.contextSize) else { throw AgentProviderError.contextLimit }
+                            guard fits(input: input, system: system, tools: tools.isEmpty ? 0 : ((try? await model.tokenCount(for: tools)) ?? tools.count * 250), response: responseTokens, contextSize: model.contextSize) else { throw AgentProviderError.contextLimit }
                         }
+                        stage = "generate"
                         let session = LanguageModelSession(tools: tools, instructions: instructions)
                         for try await response in session.streamResponse(to: prepared, options: GenerationOptions(maximumResponseTokens: responseTokens)) {
                             try Task.checkCancellation(); continuation.yield(response.content)
@@ -108,7 +121,10 @@ enum AgentProviderError: Error {
                     }
                     #endif
                     throw CocoaError(.featureUnsupported)
-                } catch { continuation.finish(throwing: AgentProviderError.map(error)) }
+                } catch {
+                    let mapped = AgentProviderError.map(error)
+                    continuation.finish(throwing: mapped is AgentProviderError || mapped is CancellationError ? mapped : AgentStageError(stage: stage, underlying: mapped))
+                }
             }
             continuation.onTermination = { _ in task.cancel() }
         }
