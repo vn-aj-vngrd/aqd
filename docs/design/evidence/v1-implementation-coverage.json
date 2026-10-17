@@ -2690,5 +2690,10 @@
     "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
     "syntheticEvaluation": "docs/plan/evidence/issue-27-29/agent-attachment-evaluation.json",
     "runtimeComplete": false
+  },
+  "agentComposerSpacing": {
+    "codeCommit": "dc3ecc0133d490638ea4378651d2e6db3e3df529",
+    "receipt": "docs/plan/evidence/issue-27-29/unit-receipt.json",
+    "runtimeComplete": false
   }
 }
