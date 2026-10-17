@@ -129,14 +129,6 @@ struct OwnedPieceChooser: View {
     }
 
     private func categoryButton(_ value: WardrobeCategory?) -> some View {
-        Button { categoryID = value?.id } label: {
-            HStack(spacing: 6) {
-                if categoryID == value?.id { Image(systemName: "checkmark") }
-                Text(value?.name ?? "All pieces")
-            }.font(.subheadline).padding(.horizontal, 12).padding(.vertical, 6)
-                .frame(minHeight: 44)
-                .foregroundStyle(categoryID == value?.id ? AppTheme.onPrimary : AppTheme.ink)
-                .background(categoryID == value?.id ? AppTheme.primaryFill : AppTheme.surface, in: Capsule())
-        }.buttonStyle(.plain).accessibilityAddTraits(categoryID == value?.id ? [.isSelected] : [])
+        AppChip(title: value?.name ?? "All pieces", isSelected: categoryID == value?.id) { categoryID = value?.id }
     }
 }

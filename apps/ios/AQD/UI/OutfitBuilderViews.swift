@@ -124,8 +124,10 @@ struct OutfitPickerSheet: View {
             Button { detent = isCollapsed ? Self.peek : Self.collapsed } label: {
                 HStack(spacing: AppSpacing.small) {
                     Text("Add pieces").font(.headline)
-                    Text("\(model.draft.pieceIDs.count) in outfit").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     Spacer()
+                    if isCollapsed {
+                        Text("\(model.draft.pieceIDs.count) in outfit").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    }
                     Image(systemName: isCollapsed ? "chevron.up" : "chevron.down")
                         .font(.footnote.weight(.semibold)).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
                 }.frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
@@ -215,12 +217,6 @@ struct OutfitPickerSheet: View {
     }
 
     private func chip(_ value: WardrobeCategory?) -> some View {
-        let selected = categoryID == value?.id
-        return Button { categoryID = value?.id } label: {
-            Text(value?.name ?? "All").font(.subheadline).padding(.horizontal, 12).padding(.vertical, 6)
-                .frame(minHeight: AppControlMetrics.minimumTarget)
-                .foregroundStyle(selected ? AppTheme.onPrimary : AppTheme.ink)
-                .background(selected ? AppTheme.primaryFill : AppTheme.surface, in: Capsule())
-        }.buttonStyle(.plain).accessibilityAddTraits(selected ? [.isSelected] : [])
+        AppChip(title: value?.name ?? "All", isSelected: categoryID == value?.id) { categoryID = value?.id }
     }
 }
