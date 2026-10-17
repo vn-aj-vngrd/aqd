@@ -17,6 +17,8 @@ public struct AgentMessage: Identifiable, Codable, Equatable, Sendable {
     public var elapsedSeconds: Double?
     public var contextSummary: String?
     public var failureReason: String?
+    public var diagnostics: AgentResponseDiagnostics?
+    public var feedback: [AgentFeedback]?
     public var versions: [AgentResponseVersion] = []
     public init(role: AgentMessageRole, source: String, status: AgentMessageStatus, attemptID: UUID? = nil) {
         id = UUID(); self.role = role; self.source = source; self.status = status; self.attemptID = attemptID; createdAt = Date()
@@ -37,6 +39,7 @@ public struct AgentSelectedRecord: Identifiable, Codable, Equatable, Sendable {
     }
 }
 public struct AgentContext: Codable, Equatable, Sendable {
+    public var automatic: Bool? = true
     public var scope: AgentContextScope = .closet
     public var includesWear = false
     public var includesStyle = false
@@ -97,6 +100,12 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
         guard Set(actions.map(\.id)).count == actions.count,
               actions.allSatisfy({ $0.version == 1 && ($0.status == .succeeded) == ($0.receipt != nil) }) else { throw PlanValidationError.invalidRecord }
         for (i, message) in messages.enumerated() {
+            try message.diagnostics?.validated()
+            let feedback = message.feedback ?? []
+            guard Set(feedback.map(\.id)).count == feedback.count,
+                  Set(feedback.compactMap(\.attemptID)).count == feedback.count,
+                  feedback.allSatisfy({ message.role == .assistant && $0.conversationID == id && $0.messageID == message.id }) else { throw PlanValidationError.invalidRecord }
+            for value in feedback { try value.validated() }
             guard message.role == (i.isMultiple(of: 2) ? .user : .assistant),
                   message.role == .assistant || message.status == .complete,
                   message.role == .user || message.attemptID != nil,

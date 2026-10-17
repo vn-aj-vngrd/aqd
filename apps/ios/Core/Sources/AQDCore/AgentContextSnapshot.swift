@@ -1,6 +1,6 @@
 import Foundation
 
-public enum AgentContextError: Error { case selectionRequired }
+public enum AgentContextError: Error { case selectionRequired, budgetExceeded }
 
 public struct AgentContextSnapshot: Codable, Equatable, Sendable {
     public struct Piece: Codable, Equatable, Sendable {
