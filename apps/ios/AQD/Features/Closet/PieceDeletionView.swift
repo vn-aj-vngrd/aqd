@@ -25,7 +25,7 @@ struct PieceDeletionView: View {
                         Text("\(impact.themeRevisions.count) themes contain affected outfits")
                         Text("\(impact.futurePlanRevisions.count) future plans become unassigned")
                         ForEach(state.planEntries.filter { impact.futurePlanRevisions[$0.id] != nil }) { plan in
-                            Text("\(plan.day.key) · \(plan.occasion)")
+                            Text("\(plan.day.key), \(plan.occasion)")
                         }
                         Text("Empty outfits and their theme memberships are removed. Future plans keep their dates and occasions for re-selection. Original Photos and historical wear snapshots stay. Unreferenced AQD photos are removed.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
@@ -54,7 +54,7 @@ struct PieceDeletionView: View {
 
     private func outfitImpactLabel(_ outfit: Outfit) -> String {
         let effect = outfit.pieceIDs.count == 1 ? "removed when empty" : "remaining pieces retained"
-        return outfit.displayName + " · " + effect
+        return outfit.displayName + ", " + effect
     }
 
     private func review() {

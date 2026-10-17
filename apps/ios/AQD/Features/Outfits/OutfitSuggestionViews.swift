@@ -14,7 +14,7 @@ struct OutfitReadinessContent: View {
                     .foregroundStyle(AppTheme.secondary)
             }
             ForEach(model.readiness.form.categories, id: \.self) { category in
-                Label("\(category.rawValue) · \(model.readiness.missingCategories.contains(category) ? "Needed" : "Available")",
+                Label("\(category.rawValue), \(model.readiness.missingCategories.contains(category) ? "Needed" : "Available")",
                       systemImage: model.readiness.missingCategories.contains(category) ? "plus.circle" : "checkmark.circle")
                     .frame(minHeight: 44)
             }

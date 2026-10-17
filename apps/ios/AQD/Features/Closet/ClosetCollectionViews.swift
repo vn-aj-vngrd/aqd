@@ -25,7 +25,7 @@ struct PieceCollectionGrid: View {
         } label: {
             ClosetCard(title: piece.displayName, detail: [state.categoryName(for: piece), piece.details.color,
                 piece.isArchived ? "Archived" : ""]
-                .filter { !$0.isEmpty }.joined(separator: " · ")) {
+                .filter { !$0.isEmpty }.joined(separator: ", ")) {
                 PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                     .frame(maxWidth: .infinity).frame(height: 134).clipped()
                     .overlay(alignment: selection == nil ? .topTrailing : .topLeading) { PieceAvailabilityBadge(piece: piece) }
@@ -154,7 +154,7 @@ struct OutfitCollectionCard: View {
                     .accessibilityLabel("\(outfit.displayName), \(outfit.pieceIDs.count) pieces")
             } else {
                 let memberships = state.themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.displayName)
-                ClosetCard(title: outfit.displayName, detail: (["\(outfit.pieceIDs.count) pieces"] + memberships).joined(separator: " · "), favorite: outfit.isFavorite) {
+                ClosetCard(title: outfit.displayName, detail: (["\(outfit.pieceIDs.count) pieces"] + memberships).joined(separator: ", "), favorite: outfit.isFavorite) {
                     CollectionArtwork(pieceIDs: outfit.pieceIDs)
                 }
             }
@@ -255,7 +255,7 @@ struct ThemeDetailView: View {
                     ThemeCover(outfits: members, height: 180).padding(AppSpacing.small).frame(maxWidth: .infinity)
                         .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
                         .accessibilityLabel("\(theme.displayName) cover, \(members.count) outfits")
-                    Text(theme.outfitIDs.count == 1 ? "1 outfit · Private theme" : "\(theme.outfitIDs.count) outfits · Private theme").foregroundStyle(AppTheme.secondary)
+                    Text(theme.outfitIDs.count == 1 ? "1 outfit, private theme" : "\(theme.outfitIDs.count) outfits, private theme").foregroundStyle(AppTheme.secondary)
                     if !theme.description.isEmpty { Text(theme.displayDescription) }
                     if let error = state.outfitError {
                         SemanticFeedback(role: .danger, message: error)

@@ -16,8 +16,8 @@ final class OutfitEditorModel: Identifiable {
     var suggestionAvailability = OutfitSuggestions.availability()
     var proposalSource: String? {
         switch draft.proposalSource {
-        case .rules: "Rule-based combination · Review before saving"
-        case .appleIntelligence: "Apple Intelligence · On-device draft · Review before saving"
+        case .rules: "Rule-based combination. Review before saving."
+        case .appleIntelligence: "Apple Intelligence on-device draft. Review before saving."
         case nil: nil
         }
     }

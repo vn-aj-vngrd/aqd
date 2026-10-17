@@ -260,7 +260,10 @@ struct OutfitDetailView: View {
             if let outfit = state.outfits.first(where: { $0.id == id }) {
                 VStack(alignment: .leading, spacing: 20) {
                     OutfitComposition(pieceIDs: outfit.pieceIDs)
-                    Text("\(outfit.pieceIDs.count) pieces · Private on this iPhone").foregroundStyle(AppTheme.secondary)
+                    VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                        Text("\(outfit.pieceIDs.count) pieces")
+                        Text("Private on this iPhone")
+                    }.foregroundStyle(AppTheme.secondary)
                     if outfit.isFavorite { Label("Favorite", systemImage: "heart.fill").foregroundStyle(AppTheme.ink) }
                     themeChips(for: outfit)
                     PrimaryAction(title: "Plan outfit") { state.openPlan(outfitID: outfit.id) }.disabled(pendingMutation != nil)
@@ -363,7 +366,7 @@ private struct OutfitPieceRow: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(piece.displayName).font(AppTypography.body).foregroundStyle(AppTheme.ink).truncated()
                         Text([state.categoryName(for: piece), PieceStatus(piece).isNotable ? PieceStatus(piece).title : ""]
-                            .filter { !$0.isEmpty }.joined(separator: " · "))
+                            .filter { !$0.isEmpty }.joined(separator: ", "))
                             .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
                     }
                     Spacer(minLength: AppSpacing.small)
