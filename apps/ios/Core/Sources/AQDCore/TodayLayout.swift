@@ -12,7 +12,8 @@ public enum TodayAction: String, CaseIterable, Codable, Sendable {
         case .openCloset: "Open Closet"
         }
     }
-    public static let defaults: [Self] = [.addPiece, .buildOutfit, .planner]
+    /// Four commands lay out as a clean two by two. Cards that saved their own actions keep them.
+    public static let defaults: [Self] = [.addPiece, .buildOutfit, .planner, .recordWear]
 }
 public enum TodayLayoutError: Error, Equatable {
     case invalidContent, invalidPeriod, selectionRequired, minimumOne, invalidOwner, staleRevision

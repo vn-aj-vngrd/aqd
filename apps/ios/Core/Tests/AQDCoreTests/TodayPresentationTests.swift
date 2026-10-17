@@ -50,4 +50,16 @@ struct TodayPresentationTests {
         #expect(TodayPresentation.upcoming(entries, today: day, hidingToday: true).map(\.day.key) == ["2026-10-19"])
         #expect(TodayPresentation.upcoming(entries, today: day, hidingToday: false).count == 2)
     }
+
+    @Test func quickActionsDefaultToFourExplicitCommands() {
+        #expect(TodayAction.defaults == [.addPiece, .buildOutfit, .planner, .recordWear])
+        #expect(Set(TodayAction.defaults).count == 4)
+    }
+
+    @Test func aCardThatSavedItsOwnActionsKeepsThem() throws {
+        let options = TodayWidgetOptions(actions: [.addFit, .recordWear])
+        let data = try JSONEncoder().encode(options)
+        #expect(try JSONDecoder().decode(TodayWidgetOptions.self, from: data).actions == [.addFit, .recordWear])
+        #expect(TodayWidgetOptions().actions == nil, "an unconfigured card falls back to the defaults")
+    }
 }

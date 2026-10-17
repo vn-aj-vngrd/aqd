@@ -4,6 +4,7 @@ import SwiftUI
 struct TodayCard: View {
     let instance: TodayWidgetInstance
     @Environment(AppState.self) private var state
+    @Environment(\.dynamicTypeSize) private var typeSize
     private var today: LocalPlanDay { LocalPlanDay() }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -43,7 +44,8 @@ struct TodayCard: View {
                 Button { state.openFit() } label: { TodayCardActionLabel(title: "Add fit") }.frame(minHeight: 44)
             }
         case .quickActions:
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: AppSpacing.small)], alignment: .leading, spacing: AppSpacing.small) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: AppSpacing.small), count: typeSize.isAccessibilitySize ? 1 : 2),
+                          alignment: .leading, spacing: AppSpacing.small) {
                 ForEach(instance.options?.actions ?? TodayAction.defaults, id: \.self) { action in
                     Button { perform(action) } label: {
                         Text(action.title).font(.subheadline).foregroundStyle(AppTheme.ink).truncated()
