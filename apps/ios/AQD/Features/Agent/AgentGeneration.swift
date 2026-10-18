@@ -103,7 +103,8 @@ struct AgentTurnRefused: Error {}
             : provider(repair.render(), turn.plan.responseTokens)
         try await streamPass(response, attempt: attempt, conversationID: conversationID, start: start, lastSave: &lastSave)
         guard let j = conversation.messages.lastIndex(where: { $0.attemptID == attempt && $0.role == .assistant }) else { return }
-        let second = check.violations(in: conversation.messages[j].source, hasCards: cards > 0)
+        // Identifiers are removed when the reply is finalized, so they never count against it.
+        let second = check.violations(in: conversation.messages[j].source, hasCards: cards > 0).filter { !$0.isLeak }
         conversation.messages[j].diagnostics?.groundingViolations = Array(second.map(\.label).prefix(32))
         if !second.isEmpty { conversation.messages[j].groundingNote = AgentGroundingRepair.note }
     }

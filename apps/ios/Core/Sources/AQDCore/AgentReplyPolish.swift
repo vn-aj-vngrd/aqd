@@ -6,6 +6,17 @@ public enum AgentReplyPolish {
     private static let openers = ["sure", "sure thing", "certainly", "of course", "absolutely", "great question", "good question", "happy to help", "no problem", "okay", "ok", "got it", "definitely", "great", "awesome", "perfect"]
     private static let closers = ["let me know", "feel free to ask", "feel free to reach", "feel free to let", "hope this helps", "i hope this", "don t hesitate", "do not hesitate", "happy to help", "is there anything else", "anything else i can", "just ask"]
 
+    private static let handleToken = #"(?<![A-Za-z0-9])(?:pl|p|o|t)\d{1,3}(?![A-Za-z0-9])"#
+
+    /// A sentence built around a repeated handle ("The app shows photos of p3.") says nothing without it; it goes when other sentences remain.
+    static func droppingIdentifierSentences(_ text: String) -> String {
+        text.components(separatedBy: "\n").map { line in
+            guard line.range(of: handleToken, options: .regularExpression) != nil, line.trimmingCharacters(in: .whitespaces).range(of: #"^([-*•]|\d+[.)])\s"#, options: .regularExpression) == nil else { return line }
+            let kept = sentences(of: line).filter { $0.range(of: handleToken, options: .regularExpression) == nil }
+            return kept.isEmpty ? line : kept.joined(separator: " ")
+        }.joined(separator: "\n")
+    }
+
     /// Removes handles (p3, o12), UUIDs and revision numbers the model repeated from its context. Names stay.
     public static func scrubIdentifiers(_ text: String) -> String {
         var value = AgentMarkdownPolicy.hidingIdentifiers(text)
@@ -18,7 +29,7 @@ public enum AgentReplyPolish {
     }
 
     public static func polish(_ text: String, cardTitles: [String] = []) -> String {
-        var value = text.replacingOccurrences(of: " · ", with: ", ").replacingOccurrences(of: "·", with: ",")
+        var value = scrubIdentifiers(droppingIdentifierSentences(text)).replacingOccurrences(of: " · ", with: ", ").replacingOccurrences(of: "·", with: ",")
         value = removingCardLists(value, cardTitles: cardTitles)
         var lines = value.components(separatedBy: "\n")
         func isItem(_ line: String) -> Bool { line.trimmingCharacters(in: .whitespaces).range(of: #"^([-*•]|\d+[.)])\s"#, options: .regularExpression) != nil }

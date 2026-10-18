@@ -28,6 +28,10 @@ struct AgentReplyPolishTests {
         #expect(!AgentReplyPolish.polish("A·B").contains("·"))
     }
 
+    @Test func polishingAlsoRemovesIdentifiers() {
+        #expect(AgentReplyPolish.polish("Black blazer works well. The app shows photos of p3. Should we explore more from o2?") == "Black blazer works well.")
+        #expect(AgentReplyPolish.polish("Only p3 here") == "Only here")
+    }
     @Test func repeatedHandlesAndIdsAreScrubbedButNamesStay() {
         #expect(AgentReplyPolish.scrubIdentifiers("The trip includes Beach sunset dinner (o5 Boracay arrival) and p12 Black blazer.") == "The trip includes Beach sunset dinner (Boracay arrival) and Black blazer.")
         #expect(AgentReplyPolish.scrubIdentifiers("Wear o9 today , then pl1.") == "Wear today, then.")
