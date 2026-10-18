@@ -10,7 +10,7 @@ struct FitMemoryArtwork: View {
             GeometryReader { geometry in
                 thumbnailContent(size: geometry.size)
                     .frame(width: geometry.size.width, height: geometry.size.height)
-                    .background(AppTheme.imageGround).clipped()
+                    .background(AppTheme.surface).clipped()
             }.aspectRatio(3 / 4, contentMode: .fit).clipShape(RoundedRectangle(cornerRadius: AppRadius.group))
         } else {
             Group {

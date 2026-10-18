@@ -149,8 +149,8 @@ struct OutfitCollectionCard: View {
                 GeometryReader { geometry in
                     CollectionArtwork(pieceIDs: outfit.pieceIDs, height: max(0, geometry.size.height - 16))
                         .padding(8).frame(width: geometry.size.width, height: geometry.size.height)
-                        .background(AppTheme.imageGround).clipped()
-                }.aspectRatio(3 / 4, contentMode: .fit)
+                        .background(AppTheme.surface).clipped()
+                }.aspectRatio(3 / 4, contentMode: .fit).clipShape(RoundedRectangle(cornerRadius: AppRadius.group))
                     .accessibilityLabel("\(outfit.displayName), \(outfit.pieceIDs.count) pieces")
             } else {
                 let memberships = state.themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.displayName)
