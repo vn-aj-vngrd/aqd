@@ -50,7 +50,7 @@ struct AppChip: View {
 
     var body: some View {
         Button(action: action) {
-            Text(title).font(.subheadline)
+            Text(title).font(.subheadline).truncated()
                 .padding(.horizontal, AppSpacing.medium).frame(minHeight: 32)
                 .foregroundStyle(isSelected ? AppTheme.onPrimary : AppTheme.ink)
                 .background { if isSelected { Capsule().fill(AppTheme.primaryFill) } }

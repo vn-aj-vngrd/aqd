@@ -114,8 +114,8 @@ struct LocalProfileView: View {
     private func profileStat(_ title: String, count: Int?, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit()
-                Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit().truncated()
+                Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
             }.frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading).contentShape(Rectangle())
         }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityElement(children: .ignore)
             .accessibilityLabel(count.map { "\($0) \(title.lowercased())" } ?? "\(title) unavailable")
