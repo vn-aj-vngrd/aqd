@@ -107,7 +107,7 @@ struct LocalProfileView: View {
     private var profileStats: some View {
         HStack(alignment: .top, spacing: 0) {
             profileStat("Fits", count: state.fitError == nil ? state.fitMemories.count : nil) { journalTab = .all }
-            profileStat("Outfits", count: state.outfitError == nil ? state.outfits.count : nil) { journalTab = .outfits }
+            profileStat("Outfits", count: state.outfitError == nil ? state.outfits.count : nil) { state.closetScope = "Outfits"; state.selection = 1 }
             profileStat("Pieces", count: state.pieceReadError == nil ? state.pieces.count : nil) { state.selection = 1 }
         }.frame(maxWidth: .infinity)
     }
@@ -119,7 +119,7 @@ struct LocalProfileView: View {
             }.frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading).contentShape(Rectangle())
         }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityElement(children: .ignore)
             .accessibilityLabel(count.map { "\($0) \(title.lowercased())" } ?? "\(title) unavailable")
-            .accessibilityHint(title == "Pieces" ? "Opens Closet" : "Shows \(title.lowercased()) below")
+            .accessibilityHint(title == "Fits" ? "Shows fits below" : "Opens Closet")
             .accessibilityIdentifier("profile.stat.\(title.lowercased())")
     }
 }

@@ -74,20 +74,9 @@ struct FitJournalGrid: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: AppSpacing.small, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3) }
     private var memories: [FitMemory] {
-        FitJournalQuery(content: tab == .photos ? .photos : .all, sort: query.sort).apply(to: state.fitMemories)
+        FitJournalQuery(content: tab == .photos ? .photos : tab == .outfits ? .outfitOnly : .all, sort: query.sort).apply(to: state.fitMemories)
     }
     private var sections: [FitMonthSection] { FitJournalPresentation.sections(memories) }
-    /// Outfits grouped by the month they were last updated, in the same order the fits use.
-    private var outfitSections: [(title: String, outfits: [Outfit])] {
-        let ordered = state.outfits.sorted { query.sort == .newest ? $0.updatedAt > $1.updatedAt : $0.updatedAt < $1.updatedAt }
-        var result: [(title: String, outfits: [Outfit])] = []
-        for outfit in ordered {
-            let title = outfit.updatedAt.formatted(.dateTime.month(.wide).year())
-            if let last = result.indices.last, result[last].title == title { result[last].outfits.append(outfit) }
-            else { result.append((title, [outfit])) }
-        }
-        return result
-    }
     private func monthTitle(_ section: FitMonthSection) -> String {
         var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(identifier: "UTC") ?? .current
         guard let date = calendar.date(from: DateComponents(year: section.year, month: section.month, day: 1)) else { return section.id }
@@ -96,31 +85,11 @@ struct FitJournalGrid: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             tabs
-            if let error = state.fitError, tab != .outfits {
+            if let error = state.fitError {
                 VStack(alignment: .leading, spacing: AppSpacing.medium) {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry journal") { state.reloadFits() }.frame(minHeight: 44)
                 }.padding(AppSpacing.screen)
-            } else if tab == .outfits {
-                if let error = state.outfitError {
-                    VStack(alignment: .leading, spacing: AppSpacing.medium) {
-                        SemanticFeedback(role: .danger, message: error)
-                        Button("Retry outfits") { state.reloadOutfits() }.frame(minHeight: 44)
-                    }.padding(AppSpacing.screen)
-                } else if state.outfits.isEmpty {
-                    AppEmptyState("No outfits yet", systemImage: "hanger", description: Text("Use Add outfit (+) above to build a look from your pieces."), fillsAvailableSpace: false)
-                        .frame(maxWidth: .infinity).padding(AppSpacing.screen)
-                } else {
-                    orderRow(count: state.outfits.count, singular: "saved outfit", plural: "saved outfits")
-                    ForEach(outfitSections, id: \.title) { section in
-                        Text(section.title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                            .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.medium).padding(.bottom, AppSpacing.small)
-                            .accessibilityAddTraits(.isHeader)
-                        LazyVGrid(columns: columns, spacing: AppSpacing.small) {
-                            ForEach(section.outfits) { outfit in OutfitCollectionCard(outfit: outfit, gallery: true) }
-                        }.padding(.horizontal, AppSpacing.screen)
-                    }
-                }
             } else if memories.isEmpty {
                 emptyState.padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.section)
             } else {
@@ -180,7 +149,7 @@ struct FitJournalGrid: View {
     private var emptyState: some View {
         AppEmptyState(tab == .all ? "A little space for your style" : "No fit photos yet",
                       systemImage: "photo.stack",
-                      description: Text(tab == .all ? "Use Add fit (+) above to keep a photo or outfit here. Memories stay private." : "Add a photo to a fit to see it here. Your other fits are in All fits."),
+                      description: Text(tab == .all ? "Use Add fit (+) above to keep a photo or outfit here. Memories stay private." : (tab == .photos ? "Add a photo to a fit to see it here. Your other fits are in All fits." : "Fits you link to an outfit without a photo show here. Your other fits are in All fits.")),
                       fillsAvailableSpace: false)
             .frame(maxWidth: .infinity).accessibilityIdentifier("profile.fits.empty")
     }
