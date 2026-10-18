@@ -431,7 +431,7 @@ struct LocalPlanEntryView: View {
                             AccessoryButton(skipActions.isSkipPending ? "Check skip result" : "Skip this date", systemImage: "forward.end") { skipActions.skip(entry, state: state) }
                                 .disabled(removal != nil)
                             Section {
-                                Button("Remove from Planner", systemImage: "trash", role: .destructive) {
+                                DestructiveMenuButton("Remove from Planner") {
                                     removal = PlanEntryDeletionRequest(entry: entry); confirming = true
                                 }.disabled(removal != nil || skipActions.isSkipPending)
                             }

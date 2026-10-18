@@ -352,7 +352,6 @@ private struct TodayPersonalDetail: View {
                 if let instance, let card = instance.options?.personal {
                     if card.kind == .personalPhoto { TodayPersonalPhoto(card: card).frame(minHeight: 200) }
                     Text(card.text).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
-                    Text("Private on this iPhone").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }
             }.padding(20)
         }
@@ -361,7 +360,7 @@ private struct TodayPersonalDetail: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 if let instance, instance.options?.personal != nil {
-                    Button { state.openTodayEditor(); state.todayEditor?.begin(instance) } label: { Image(systemName: AppSymbols.edit) }.accessibilityLabel("Edit card")
+                    Button { state.openTodayEditor(); state.todayEditor?.directEdit = true; state.todayEditor?.begin(instance) } label: { Image(systemName: AppSymbols.edit) }.accessibilityLabel("Edit card")
                 }
             }
         }

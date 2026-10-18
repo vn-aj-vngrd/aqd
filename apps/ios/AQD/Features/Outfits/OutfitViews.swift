@@ -257,10 +257,7 @@ struct OutfitDetailView: View {
             if let outfit = state.outfits.first(where: { $0.id == id }) {
                 VStack(alignment: .leading, spacing: 20) {
                     OutfitComposition(pieceIDs: outfit.pieceIDs)
-                    VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                        Text("\(outfit.pieceIDs.count) pieces")
-                        Text("Private on this iPhone")
-                    }.foregroundStyle(AppTheme.secondary)
+                    Text("\(outfit.pieceIDs.count) pieces").foregroundStyle(AppTheme.secondary)
                     if outfit.isFavorite { Label("Favorite", systemImage: "heart.fill").foregroundStyle(AppTheme.ink) }
                     themeChips(for: outfit)
                     PrimaryAction(title: "Plan outfit") { state.openPlan(outfitID: outfit.id) }.disabled(pendingMutation != nil)
@@ -296,12 +293,14 @@ struct OutfitDetailView: View {
                             AccessoryButton(outfit.isFavorite ? "Remove from Favorites" : "Add to Favorites", systemImage: outfit.isFavorite ? "heart.slash" : "heart") {
                                 apply(OutfitMutationRequest(outfit: outfit, action: .favorite(!outfit.isFavorite)))
                             }
-                            Button("Delete outfit", systemImage: "trash", role: .destructive) {
-                                do {
-                                    guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-                                    deleteReview = try store.outfitDeletionReview(id: id)
-                                    deletePresented = true
-                                } catch { self.error = "The current deletion impact couldn’t be reviewed. Your outfit is retained." }
+                            Section {
+                                DestructiveMenuButton("Delete outfit") {
+                                    do {
+                                        guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
+                                        deleteReview = try store.outfitDeletionReview(id: id)
+                                        deletePresented = true
+                                    } catch { self.error = "The current deletion impact couldn’t be reviewed. Your outfit is retained." }
+                                }
                             }
                         } label: { Label("More outfit options", systemImage: "ellipsis") }
                             .tint(AppTheme.ink).disabled(pendingMutation != nil)

@@ -35,7 +35,7 @@ struct TodayEditorView: View {
                     }
                 }
                 if let error = model.error { Section { SemanticFeedback(role: .danger, message: error) }.listRowBackground(AppTheme.surface) }
-            }.environment(\.editMode, .constant(.active)).listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden)
+            }.opacity(model.directEdit ? 0 : 1).environment(\.editMode, .constant(.active)).listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden)
                 .background(AppTheme.canvas)
                 .animation(reduceMotion ? nil : AQDMotion.reflow, value: model.catalog.map(\.id))
                 .navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)

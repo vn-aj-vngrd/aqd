@@ -257,8 +257,7 @@ struct PieceCaptureView: View {
                     Menu {
                         Button("Choose from Photos", systemImage: "photo.on.rectangle") { nameEditing = false; pickerPresented = true }
                         Button("Take photo", systemImage: "camera") { nameEditing = false; requestCamera() }
-                        Divider()
-                        Button("Remove photo", systemImage: "trash", role: .destructive) { model.removePhoto(); photoFocused = true }
+                        Section { DestructiveMenuButton("Remove photo") { model.removePhoto(); photoFocused = true } }
                     } label: {
                         Image(systemName: "ellipsis").font(.body.weight(.medium)).foregroundStyle(AppTheme.ink)
                             .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)

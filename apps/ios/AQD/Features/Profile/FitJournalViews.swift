@@ -417,7 +417,7 @@ struct FitMemoryDetailView: View {
                             NavigationLink(value: ClosetRoute.outfit(snapshot.id)) { AccessoryLabel("Open linked outfit", systemImage: "square.stack") }
                         }
                         Section {
-                            Button("Delete memory", systemImage: "trash", role: .destructive) { request = FitDeletionRequest(memory: memory); confirming = true }
+                            DestructiveMenuButton("Delete memory") { request = FitDeletionRequest(memory: memory); confirming = true }
                         }
                     }
                 } label: { Label("More", systemImage: "ellipsis") }

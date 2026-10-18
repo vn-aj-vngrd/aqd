@@ -183,9 +183,9 @@ struct AgentConversationView: View {
                                     AccessoryButton(model.conversation.isArchived ? "Restore" : "Archive", systemImage: "archivebox") {
                                         model.setOrganization(model.conversation, archived: !model.conversation.isArchived)
                                     }.disabled(model.active || model.hasPendingOperation)
-                                    Button(role: .destructive) {
-                                        if model.persist() { deletingConversation = model.conversation }
-                                    } label: { AccessoryLabel("Delete", systemImage: "trash", destructive: true) }
+                                }
+                                Section {
+                                    DestructiveMenuButton("Delete") { if model.persist() { deletingConversation = model.conversation } }
                                         .disabled(model.active || model.hasPendingOperation)
                                 }
                             }
@@ -468,7 +468,7 @@ struct AgentHistoryView: View {
                         AccessoryButton("Open conversation", systemImage: "bubble.left") { open(value) }.disabled(model.active || model.hasPendingOperation)
                         AccessoryButton(value.isPinned ? "Unpin" : "Pin", systemImage: value.isPinned ? "pin.slash" : "pin") { model.setOrganization(value, pinned: !value.isPinned) }.disabled(model.active || model.hasPendingOperation)
                         AccessoryButton(value.isArchived ? "Restore" : "Archive", systemImage: "archivebox") { model.setOrganization(value, archived: !value.isArchived) }.disabled(model.active || model.hasPendingOperation)
-                        Button(role: .destructive) { selected = value } label: { AccessoryLabel("Delete", systemImage: "trash", destructive: true) }.disabled(model.active || model.hasPendingOperation)
+                        Section { DestructiveMenuButton("Delete") { selected = value }.disabled(model.active || model.hasPendingOperation) }
                     } preview: {
                         VStack(alignment: .leading, spacing: AppSpacing.medium) {
                             Text(value.title).font(AppTypography.section).lineLimit(2)

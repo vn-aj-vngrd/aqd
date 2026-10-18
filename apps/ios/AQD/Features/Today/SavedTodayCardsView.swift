@@ -44,7 +44,7 @@ struct SavedTodayCardsView: View {
                             }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 8)
                         }.buttonStyle(.plain).disabled(pending || request != nil || model.locked)
                         Menu {
-                            Button(card.kind == .personalNote ? "Delete saved note" : "Delete saved photo", role: .destructive) { review(card) }
+                            DestructiveMenuButton(card.kind == .personalNote ? "Delete saved note" : "Delete saved photo") { review(card) }
                         } label: { Label("More for \(label(card))", systemImage: "ellipsis").labelStyle(.iconOnly).frame(width: 44, height: 44) }.disabled(pending || request != nil || model.locked)
                     }.id(card.id).accessibilityFocused($focused, equals: card.id)
                 }

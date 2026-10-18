@@ -168,7 +168,7 @@ struct OutfitCollectionCard: View {
                 AccessoryButton("Plan outfit", systemImage: "calendar") { state.openPlan(outfitID: outfit.id) }
                 AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: outfit.id) }
                 if let theme {
-                    Button("Remove from \(theme.displayName)", systemImage: "minus.circle", role: .destructive) { state.remove(outfit, from: theme) }
+                    Section { DestructiveMenuButton("Remove from \(theme.displayName)", systemImage: "minus.circle") { state.remove(outfit, from: theme) } }
                 }
             } preview: {
                 CollectionContextPreview(title: outfit.displayName, detail: "\(outfit.pieceIDs.count) pieces") {
@@ -278,8 +278,8 @@ struct ThemeDetailView: View {
                             AccessoryButton("Edit theme", systemImage: AppSymbols.edit) { state.openTheme(editing: theme) }
                             AccessoryButton("Add outfits", systemImage: "plus") { state.openTheme(editing: theme, chooseOutfits: true) }
                             AccessoryButton("Build an outfit", systemImage: "square.stack") { state.buildOutfit(themeID: theme.id) }
-                            Button("Delete theme", systemImage: "trash", role: .destructive) {
-                                deletion = ThemeDeletionRequest(theme: theme); confirming = true
+                            Section {
+                                DestructiveMenuButton("Delete theme") { deletion = ThemeDeletionRequest(theme: theme); confirming = true }
                             }
                         } label: { Label("More theme options", systemImage: "ellipsis") }.tint(AppTheme.ink).disabled(submitted)
                     }

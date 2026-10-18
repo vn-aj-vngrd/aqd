@@ -155,6 +155,15 @@ struct ToolbarForwardAction: View {
     }
 }
 
+/// The one destructive menu item: red icon and title, always placed in its own `Section` so a divider sits above it.
+struct DestructiveMenuButton: View {
+    let title: String
+    let systemImage: String
+    let action: () -> Void
+    init(_ title: String, systemImage: String = "trash", action: @escaping () -> Void) { self.title = title; self.systemImage = systemImage; self.action = action }
+    var body: some View { Button(role: .destructive, action: action) { AccessoryLabel(title, systemImage: systemImage, destructive: true) } }
+}
+
 /// Native menu symbols resolve semantic gray or danger color for the selected appearance.
 struct AccessoryLabel: View {
     let title: String

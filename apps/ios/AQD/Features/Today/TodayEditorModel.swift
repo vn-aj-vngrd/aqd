@@ -107,6 +107,8 @@ import Observation
            draft.value.instances.contains(where: { $0.id != nested.id && $0.kind == nested.kind }) { return false }
         return (try? nested.validatedContent(ownerID: draft.base.ownerID)) != nil
     }
+    /// True when a single card is edited straight from its detail page: Done saves the layout and closes, so Customize Today never shows.
+    var directEdit = false
     func applyNested() {
         guard canApply else { return }
         cancelImport()
@@ -120,8 +122,12 @@ import Observation
             else { draft.value.instances.append(nested) }
             draft.nested = nil; draft.nestedBase = nil
         }
+        if directEdit { Task { await save() } }
     }
-    func cancelNested() { cancelImport(); update { $0.nested = nil; $0.nestedBase = nil } }
+    func cancelNested() {
+        cancelImport(); update { $0.nested = nil; $0.nestedBase = nil }
+        if directEdit { finish(discarding: true) }
+    }
     func move(_ id: UUID, by offset: Int) {
         update { draft in
             guard let index = draft.value.instances.firstIndex(where: { $0.id == id }), draft.value.instances.indices.contains(index + offset) else { return }

@@ -7,6 +7,7 @@ struct LocalProfileView: View {
     @State private var journalTab: FitJournalTab = .all
     @State private var query = FitJournalQuery()
     @Environment(\.dynamicTypeSize) private var typeSize
+    @State private var previewingProfile = false
     var body: some View {
         @Bindable var state = state
         NavigationStack {
@@ -94,11 +95,14 @@ struct LocalProfileView: View {
         Text(state.localIdentity?.name ?? "Your profile").font(AppTypography.detailTitle).lineLimit(2)
     }
     private var profileAvatar: some View {
-        Button { state.openIdentity() } label: {
+        Button { previewingProfile = true } label: {
             LocalIdentityAvatar(photoID: state.localIdentity?.photoID, recipe: state.localIdentity?.photoRecipe ?? .fitOriginal)
                 .frame(width: 88, height: 88)
-        }.buttonStyle(.plain).accessibilityLabel("Edit profile photo")
+        }.buttonStyle(.plain).accessibilityLabel("Open profile").accessibilityHint("Shows your profile with an edit action")
             .accessibilityIdentifier("profile.avatar.edit")
+            .sheet(isPresented: $previewingProfile) {
+                ProfilePreviewView { state.openIdentity() }.appAppearance(state.appearance)
+            }
     }
     private var profileStats: some View {
         HStack(alignment: .top, spacing: 0) {
