@@ -216,7 +216,7 @@ struct LocalPlannerView: View {
             HStack(spacing: AppSpacing.medium) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(plan.name.isEmpty ? "Untitled plan" : plan.name).font(AppTypography.body)
-                    PlannerMetaLine(leading: range, trailing: kindLabel, leadingFont: AppTypography.metadata)
+                    Text(kindLabel.map { "\($0), \(range)" } ?? range).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                     if !status.isEmpty {
                         Text(status.joined(separator: ", ")).font(AppTypography.metadata).foregroundStyle(AppTheme.warning)
                     }
