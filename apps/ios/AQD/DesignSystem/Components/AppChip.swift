@@ -13,8 +13,8 @@ extension View {
 extension View {
     /// The one compact tappable control: glass capsule, 32 pt visible height inside a 44 pt target, one font.
     /// `fullWidth` stretches it to equal-width rows and keeps the full 44 pt height.
-    func compactControl(fullWidth: Bool = false) -> some View {
-        font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.ink).lineLimit(1)
+    func compactControl(fullWidth: Bool = false, tint: Color = AppTheme.ink) -> some View {
+        font(.subheadline.weight(.medium)).foregroundStyle(tint).lineLimit(1)
             .padding(.horizontal, AppSpacing.medium)
             .frame(maxWidth: fullWidth ? .infinity : nil, minHeight: fullWidth ? AppControlMetrics.minimumTarget : 32)
             .glassControlSurface(Capsule())

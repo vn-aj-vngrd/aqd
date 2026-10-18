@@ -21,14 +21,16 @@ struct LocalWearDetailView: View {
                     }.font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     OutfitComposition(pieceIDs: record.pieces.map(\.id))
                     NavigationLink("View recorded pieces") { RecordedWearPiecesView(record: record) }.frame(minHeight: 44)
-                    PrimaryAction(title: "Correct record") { state.openWear(correcting: record) }.disabled(request != nil || state.wearEditor != nil)
-                    Button("Undo this wear", role: .destructive) {
-                        request = HistoryMutation(action: .undoWear(record)); confirmingUndo = true
-                    }.frame(minHeight: 44).disabled(request != nil || state.wearEditor != nil)
+                    HStack(spacing: AppSpacing.small) {
+                        Button { state.openWear(correcting: record) } label: { Label("Edit wear", systemImage: AppSymbols.edit).compactControl(fullWidth: true) }.buttonStyle(.plain)
+                        Button {
+                            request = HistoryMutation(action: .undoWear(record)); confirmingUndo = true
+                        } label: { Label("Undo wear", systemImage: "arrow.uturn.backward").compactControl(fullWidth: true, tint: AppTheme.error) }.buttonStyle(.plain)
+                    }.disabled(request != nil || state.wearEditor != nil)
                     if state.wearEditor != nil {
-                        Text("Finish or discard your open wear draft before correcting or undoing this record.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        Text("Finish or discard your open wear draft before editing or undoing this record.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     }
-                    Text("Correction changes this record without adding a wear. A changed day, timezone or item set returns linked intentions to Planned; it never moves your plan.")
+                    Text("Editing updates this record without adding a new wear. If the day, timezone or pieces change, any linked plan entries go back to Planned. Your plan itself never moves.")
                         .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 } else { AppEmptyState("Wear record unavailable", systemImage: "clock") }
                 if let error {
