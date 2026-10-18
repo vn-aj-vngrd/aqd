@@ -107,6 +107,7 @@ import UIKit
         guard let message = model.conversation.messages.last, message.role == .assistant else { observation.failure = "no reply"; return observation }
         observation.reply = message.source
         observation.intent = message.diagnostics?.intent
+        observation.intentSource = message.diagnostics?.intentSource
         observation.toolCalls = message.diagnostics?.toolCalls ?? []
         observation.firstViolations = message.diagnostics?.firstViolations
         observation.proposals = model.conversation.proposals(for: message).map { Self.kind($0.action) }
