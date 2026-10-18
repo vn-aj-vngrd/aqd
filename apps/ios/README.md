@@ -16,6 +16,7 @@ IOS_DESTINATION="platform=iOS,id=$AQD_DEVICE_UDID" \
 - Use `IOS_DERIVED_DATA` for a task-owned build directory and run native work serially.
 - Install and launch for a manual check: `xcrun devicectl device install app --device <udid> <AQD.app>` then `xcrun devicectl device process launch --terminate-existing --device <udid> com.aqd.private`.
 - Command-line builds reformat `AQD.xcodeproj/project.pbxproj`; restore it with `git checkout` before committing.
+- Agent quality eval (Debug, on the phone): `xcrun devicectl device process launch --terminate-existing --device <udid> com.aqd.private --aqd-agent-eval --aqd-agent-eval-label <name>` runs the golden prompts through the real Agent against the sample closet in a throwaway store and writes `Documents/AQD-agent-eval-<name>.json`; copy it with `xcrun devicectl device copy from --domain-type appDataContainer --domain-identifier com.aqd.private`. Add `--aqd-agent-eval-rescore <earlier-name>` to score an earlier run's replies with today's checks. Keep the phone unlocked; it never touches your own closet.
 - The runner refuses simulators and unconfirmed readiness. End-to-end UI tests are deferred to issue #30.
 
 ## Data boundary
