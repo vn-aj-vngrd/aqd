@@ -28,6 +28,8 @@ public struct AgentEvalObservation: Codable, Equatable, Sendable {
     /// Tool names in call order. A trailing " (app)" marks work the app did when the model did not.
     public var toolCalls: [String] = []
     public var proposals: [String] = []
+    /// Names the prepared reviews carry (an outfit, theme, plan or trip name): the Agent's own suggestions, not claims about the closet.
+    public var proposalNames: [String] = []
     public var question = false
     public var cards: [String] = []
     public var failure: String?
@@ -87,6 +89,17 @@ public struct AgentEvalReport: Codable, Equatable, Sendable {
         return rates
     }
 
+    /// Who made the call that satisfied each passing tool check: the model, the router that ran before it, or a fallback the app ran after it.
+    public var toolSources: (model: Int, router: Int, app: Int) {
+        var counts = (model: 0, router: 0, app: 0)
+        for result in cases where result.checks["tool"] == .pass {
+            guard let example = AgentEvalSuite.cases.first(where: { $0.id == result.id }), !example.tools.isEmpty else { continue }
+            guard let call = result.observation.toolCalls.first(where: { example.tools.contains(AgentEvalScorer.bare($0)) }) else { continue }
+            if call.hasSuffix("(router)") { counts.router += 1 } else if call.hasSuffix("(app)") { counts.app += 1 } else { counts.model += 1 }
+        }
+        return counts
+    }
+
     /// A markdown table for an issue comment.
     public var markdown: String {
         let rates = summary
@@ -97,18 +110,23 @@ public struct AgentEvalReport: Codable, Equatable, Sendable {
         }
         let overall = rates["allChecks"] ?? AgentEvalRate()
         lines.append("| every check on a case | \(overall.passed) of \(overall.total) | " + String(format: "%.0f%%", overall.percent) + " |")
+        let sources = toolSources
+        lines.append("")
+        lines.append("Correct tool chosen by the model in \(sources.model) cases, by the router before the model in \(sources.router), by an app fallback after the model in \(sources.app).")
         return lines.joined(separator: "\n")
     }
 }
 
 public enum AgentEvalScorer {
+    /// A tool name without its source marker: " (app)" for a fallback the app ran after the model, " (router)" for work done before it.
+    public static func bare(_ call: String) -> String { call.components(separatedBy: " (").first ?? call }
     /// Scores one observed turn against its case and the owner's real records.
     public static func score(_ example: AgentEvalCase, observation: AgentEvalObservation, catalog: AgentNameCatalog) -> AgentEvalCaseResult {
         var checks: [String: AgentEvalOutcome] = [:]
         func set(_ check: AgentEvalCheck, _ outcome: AgentEvalOutcome) { checks[check.rawValue] = outcome }
         func expect(_ check: AgentEvalCheck, _ wanted: Bool?, _ actual: Bool) { set(check, wanted.map { $0 == actual ? .pass : .fail } ?? .notApplicable) }
         let reply = observation.reply
-        let calls = observation.toolCalls.map { $0.replacingOccurrences(of: " (app)", with: "") }
+        let calls = observation.toolCalls.map(Self.bare)
         let answered = !reply.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || observation.question || !observation.proposals.isEmpty
         set(.completed, observation.failure == nil && answered ? .pass : .fail)
         if let wanted = example.intent, let actual = observation.intent { set(.intent, wanted == actual ? .pass : .fail) } else { set(.intent, .notApplicable) }
@@ -118,10 +136,10 @@ public enum AgentEvalScorer {
         expect(.proposal, example.proposal, !observation.proposals.isEmpty)
         expect(.question, example.question, observation.question)
         expect(.cards, example.cards, !observation.cards.isEmpty)
+        var known = catalog; known.proposed = observation.proposalNames
+        let violations = AgentGroundingCheck(catalog: known).violations(in: reply, hasCards: !observation.cards.isEmpty)
         // Cards on screen while the words say nothing was found is a contradiction the owner sees at once.
-        let denies = ["couldn't find", "couldn’t find", "could not find", "don't see any", "don’t see any", "no matching", "didn't find", "didn’t find", "don't have any", "don’t have any", "nothing matching"]
-        set(.consistent, observation.cards.isEmpty ? .notApplicable : denies.contains { reply.localizedCaseInsensitiveContains($0) } ? .fail : .pass)
-        let violations = AgentGroundingCheck(catalog: catalog).violations(in: reply)
+        set(.consistent, observation.cards.isEmpty ? .notApplicable : violations.contains { $0.isContradiction } ? .fail : .pass)
         set(.noLeak, violations.contains { $0.isLeak } ? .fail : .pass)
         set(.noInvented, violations.contains { $0.isInvention } ? .fail : .pass)
         set(.counts, violations.contains { $0.isCount } ? .fail : .pass)

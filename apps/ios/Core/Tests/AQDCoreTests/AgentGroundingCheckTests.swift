@@ -101,3 +101,39 @@ struct AgentEvalScorerTests {
         #expect(try JSONDecoder().decode(AgentEvalReport.self, from: data).cases.count == 1)
     }
 }
+
+struct AgentGroundingRepairTests {
+    let catalog = AgentGroundingCheckTests.catalog
+    @Test func repairPromptNamesTheProblemsAndOnlyRealNames() {
+        let parts = AgentGroundingRepair.prompt(request: "What goes with my blazer?", previousReply: "Try the **Linen top** (p3).", violations: [.invented("Linen top"), .leak("p3")], catalog: catalog, cardsShown: 0)
+        let text = parts.render()
+        #expect(text.contains("Linen top") && text.contains("internal codes") && text.contains("Black blazer") && text.contains("user: What goes with my blazer?"))
+    }
+    @Test func contradictionsAndCountsAreExplained() {
+        let text = AgentGroundingRepair.prompt(request: "Show black", previousReply: "none", violations: [.contradiction("couldn’t find"), .count("12 outfits")], catalog: AgentNameCatalog(), cardsShown: 9).render()
+        #expect(text.contains("showing 9 matching cards") && text.contains("12 outfits") && text.contains("Name no specific pieces"))
+    }
+    @Test func denyingResultsWhileCardsShowIsAViolationOnlyWhenCardsShow() {
+        let check = AgentGroundingCheck(catalog: catalog)
+        #expect(check.violations(in: "I couldn’t find any black pieces.", hasCards: true) == [.contradiction("couldn’t find")])
+        #expect(check.violations(in: "I couldn’t find any black pieces.").isEmpty)
+    }
+}
+
+struct AgentGroundingScopeTests {
+    let check = AgentGroundingCheck(catalog: AgentGroundingCheckTests.catalog)
+    @Test func headingsDaysDatesAndOptionsAreNotNameClaims() {
+        #expect(check.violations(in: "**Arrival** is easy.\n**Saturday – Relaxed vibe**\n**Daily highlights**\n- Extend to 31 October").isEmpty)
+        #expect(check.violations(in: "How long is the trip?\n1. One week\n2. Three days\n3. A Red Tunic").isEmpty)
+    }
+    @Test func titleCaseNamesAndGarmentNamesAreHeldToTheCloset() {
+        #expect(check.violations(in: "Try **Beach Vibes** today.") == [.invented("Beach Vibes")])
+        #expect(check.violations(in: "Try the **Linen top** today.") == [.invented("Linen top")])
+        #expect(check.violations(in: "Try **Beach** today.").isEmpty)
+    }
+    @Test func aProposedNameIsTheAgentsOwnSuggestion() {
+        var catalog = AgentGroundingCheckTests.catalog
+        catalog.proposed = ["Beach Vibes"]
+        #expect(AgentGroundingCheck(catalog: catalog).violations(in: "Here is a theme: **Beach Vibes**.").isEmpty)
+    }
+}

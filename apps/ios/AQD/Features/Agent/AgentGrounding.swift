@@ -29,6 +29,16 @@ import Foundation
             }
             catalog.counts["wears"] = wears
         }
+        catalog.proposed = (conversation.proposals ?? []).flatMap { proposal -> [String] in
+            switch proposal.action {
+            case .outfit(let draft): [draft.name]
+            case .theme(let draft): [draft.name]
+            case .plan(let draft): [draft.plan.name]
+            case .trip(let draft): [draft.name, draft.theme.name] + draft.days.map { $0.outfit.name }
+            case .piece(let change): [change.draft.name]
+            case .wear, .availability, .profile: []
+            }
+        }
         return catalog
     }
 }

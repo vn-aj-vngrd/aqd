@@ -32,12 +32,14 @@ public struct AgentNameCatalog: Equatable, Sendable {
     public var outfits: [String]
     public var themes: [String]
     public var plans: [String]
+    /// Names of reviews prepared this turn: a proposed theme or outfit name is the Agent's own suggestion, not an invented record.
+    public var proposed: [String] = []
     /// Counts the owner's closet really has, by noun ("pieces", "outfits", "themes", "plans", "wears", and category plurals such as "tops").
     public var counts: [String: Set<Int>]
     public init(pieces: [Piece] = [], outfits: [String] = [], themes: [String] = [], plans: [String] = [], counts: [String: Set<Int>] = [:]) {
         self.pieces = pieces; self.outfits = outfits; self.themes = themes; self.plans = plans; self.counts = counts
     }
-    public var allNames: [String] { pieces.map(\.name) + outfits + themes + plans }
+    public var allNames: [String] { pieces.map(\.name) + outfits + themes + plans + proposed }
 }
 
 /// A problem found in a finished reply.
@@ -48,13 +50,16 @@ public enum AgentGroundingViolation: Equatable, Hashable, Sendable {
     case leak(String)
     /// A number about the closet that disagrees with the trusted totals.
     case count(String)
+    /// The reply says nothing matched while the app is showing matching cards.
+    case contradiction(String)
 
     public var label: String {
-        switch self { case .invented(let v): "invented: " + v; case .leak(let v): "leak: " + v; case .count(let v): "count: " + v }
+        switch self { case .invented(let v): "invented: " + v; case .leak(let v): "leak: " + v; case .count(let v): "count: " + v; case .contradiction(let v): "contradiction: " + v }
     }
     public var isInvention: Bool { if case .invented = self { true } else { false } }
     public var isLeak: Bool { if case .leak = self { true } else { false } }
     public var isCount: Bool { if case .count = self { true } else { false } }
+    public var isContradiction: Bool { if case .contradiction = self { true } else { false } }
 }
 
 /// Checks a finished reply against the owner's records: names in bold, lists or quotes must exist, a colour and garment must exist together,
@@ -105,13 +110,17 @@ public struct AgentGroundingCheck: Sendable {
         return pattern.matches(in: text, range: NSRange(text.startIndex..., in: text)).compactMap { Range($0.range(at: group), in: text).map { String(text[$0]) } }
     }
 
-    public func violations(in reply: String) -> [AgentGroundingViolation] {
+    static let denials = ["couldn't find", "couldn’t find", "could not find", "don't see any", "don’t see any", "no matching", "didn't find", "didn’t find", "don't have any", "don’t have any", "nothing matching", "no results"]
+
+    /// `hasCards` is true when the app is showing matching cards next to the reply.
+    public func violations(in reply: String, hasCards: Bool = false) -> [AgentGroundingViolation] {
         var found: [AgentGroundingViolation] = []
         func add(_ value: AgentGroundingViolation) { if !found.contains(value) { found.append(value) } }
         for value in matches(Self.uuidPattern, in: reply) + matches(Self.handlePattern, in: reply) + matches(Self.revisionPattern, in: reply) { add(.leak(value)) }
-        for span in claims(in: reply) where !isGrounded(span) { add(.invented(span)) }
+        for span in claims(in: reply) where looksLikeName(span) && !isGrounded(span) { add(.invented(span)) }
         for pair in uncoveredColorGarments(in: reply) { add(.invented(pair)) }
         for value in unmatchedCounts(in: reply) { add(.count(value)) }
+        if hasCards, let phrase = Self.denials.first(where: { reply.localizedCaseInsensitiveContains($0) }) { add(.contradiction(phrase)) }
         return found
     }
 
@@ -120,7 +129,9 @@ public struct AgentGroundingCheck: Sendable {
         var spans: [String] = []
         spans += matches(Self.boldPattern, in: reply, group: 1)
         spans += matches(Self.quotePattern, in: reply, group: 1)
-        for item in matches(Self.listPattern, in: reply, group: 1) {
+        // Short list entries beside a question are the answers on offer, not claims about the closet.
+        let listsAreOptions = reply.contains("?")
+        for item in listsAreOptions ? [] : matches(Self.listPattern, in: reply, group: 1) {
             var text = item.replacingOccurrences(of: "**", with: "")
             for separator in [" - ", " – ", " — ", ":", " (", ","] { if let range = text.range(of: separator) { text = String(text[..<range.lowerBound]) } }
             spans.append(text)
@@ -130,6 +141,20 @@ public struct AgentGroundingCheck: Sendable {
             let words = span.split(separator: " ").count
             return !span.isEmpty && words <= 6 && seen.insert(AgentText.normalize(span)).inserted
         }
+    }
+
+    static let days: Set<String> = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", "today", "tomorrow"]
+
+    /// Only a span that reads like a record name is held to the closet: it has a garment or color word, or is a Title Case name of two or more words.
+    /// Headings, days, dates and answer options are not names.
+    func looksLikeName(_ span: String) -> Bool {
+        if span.contains(where: \.isNumber) { return false }
+        let words = span.split(separator: " ").map(String.init)
+        guard let first = words.first else { return false }
+        if Self.days.contains(AgentText.normalize(first)) { return false }
+        let stems = AgentText.stems(span)
+        if stems.contains(where: { Self.colors.contains($0) || Self.groups[$0] != nil }) { return true }
+        return words.count >= 2 && words.allSatisfy { $0.first?.isUppercase == true }
     }
 
     func isGrounded(_ span: String) -> Bool {
