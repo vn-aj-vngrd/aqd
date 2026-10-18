@@ -186,10 +186,11 @@ import Observation
             error = "The conversation changed. Reopen its current version before deleting."
         } catch { self.error = "Deletion wasn’t confirmed. Retry checks the same conversation operation. Saved outfits and plans are unaffected." }
     }
-    func propose(_ action: AgentReviewedAction) {
+    func propose(_ action: AgentReviewedAction, attemptID: UUID? = nil) {
         guard !active, !hasPendingOperation else { return }
         do {
             var proposal = AgentActionProposal(action: action)
+            proposal.attemptID = attemptID
             let outfitIDs: [UUID]
             switch action { case .theme(let draft): outfitIDs = draft.outfitIDs; case .plan(let draft): outfitIDs = draft.slots.compactMap { $0.outfit?.id }; default: outfitIDs = [] }
             let outfits = try store.outfits()
@@ -345,6 +346,9 @@ import Observation
             let attempt = try messageID.map { try conversation.retry(messageID: $0) } ?? conversation.beginAttempt()
             conversation.messages[conversation.messages.count - 1].contextSummary = contextSummary
             conversation.messages[conversation.messages.count - 1].diagnostics = diagnostics
+            if let diagnostics, diagnostics.included > 0 || !diagnostics.sources.isEmpty {
+                appendToolStep(AgentToolStep(tool: "context", summary: "Read \(diagnostics.included) closet record" + (diagnostics.included == 1 ? "" : "s"), count: diagnostics.included), attemptID: attempt)
+            }
             guard persist() else {
                 conversation.messages[conversation.messages.count - 1].diagnostics?.failure = .storage
                 conversation.interruptActiveAttempt(); return
@@ -380,6 +384,8 @@ import Observation
                         }
                     }
                     try Task.checkCancellation(); try conversation.complete(attemptID: attempt)
+                    attachMentionedRecords(attemptID: attempt)
+                    attachIntentVisuals(attemptID: attempt)
                 } catch {
                     if let i = conversation.messages.firstIndex(where: { $0.attemptID == attempt }) {
                         if conversation.messages[i].status != .interrupted {

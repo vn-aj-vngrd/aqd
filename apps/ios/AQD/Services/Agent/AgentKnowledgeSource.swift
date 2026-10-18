@@ -25,6 +25,27 @@ import Foundation
         let wear = read(.wear) { try store.wearRecords().filter { $0.day.key <= LocalPlanDay(date: now).key } }
         let fits = read(.journal) { try store.fitMemories() }
         let cards = read(.today) { try store.todayPersonalCards() }
+        if preferences.allows(.profile), let identity = try? store.localIdentity(), let first = identity.name?.split(separator: " ").first {
+            facts.insert("The owner's first name is \(first). Greet and address them by it naturally, not in every sentence.", at: 1)
+        }
+        var overview: [String] = []
+        if preferences.allows(.pieces), !unavailable.contains(.pieces) {
+            let active = pieces.filter { !$0.isArchived }
+            let byCategory = Dictionary(grouping: active, by: { $0.category.rawValue }).map { "\($0.value.count) \($0.key.lowercased())" }.sorted()
+            overview.append("\(active.count) active pieces" + (byCategory.isEmpty ? "" : " (" + byCategory.joined(separator: ", ") + ")"))
+        }
+        if preferences.allows(.outfits), !unavailable.contains(.outfits) { overview.append("\(outfits.count) outfits") }
+        if preferences.allows(.themes), !unavailable.contains(.themes) { overview.append("\(themes.count) themes") }
+        if preferences.allows(.planner), !unavailable.contains(.planner) { overview.append("\(plans.count) plans") }
+        if preferences.allows(.planner), preferences.allows(.outfits), preferences.allows(.pieces),
+           let entry = entries.first(where: { $0.day.key == LocalPlanDay(date: now).key && $0.outfitID != nil }),
+           let outfit = outfits.first(where: { $0.id == entry.outfitID }) {
+            let names = outfit.pieceIDs.compactMap { id in pieces.first { $0.id == id }?.displayName }
+            if !names.isEmpty {
+                facts.append("Today's planned outfit is \(outfit.displayName): " + names.joined(separator: ", ") + ". When asked what to wear today, recommend this outfit first using exactly these names.")
+            }
+        }
+        if !overview.isEmpty { facts.append("Closet overview: " + overview.joined(separator: ", ") + ". Use tools for the rest; never say you cannot see their closet.") }
         var chats: [AgentConversation] = []
         if preferences.allows(.pastChats) || preferences.allows(.feedback) {
             do { chats = try store.agentConversations() }

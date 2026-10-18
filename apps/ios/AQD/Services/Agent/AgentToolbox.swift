@@ -4,7 +4,15 @@ import AQDCore
 enum AgentWearWindow: String, Sendable { case thisMonth, lastMonth }
 
 /// Feature-owned implementations the model-facing tools call. Each runs on the main actor against the store.
+/// What the owner asked to see. Empty strings mean "any".
+struct AgentShowRequest: Sendable {
+    enum Kind: String, Sendable { case pieces, outfits, themes, plans }
+    var kind: Kind
+    var color = "", category = "", brand = "", availability = "", query = ""
+}
+
 struct AgentToolHandlers: Sendable {
+    var show: @MainActor @Sendable (_ request: AgentShowRequest) throws -> String
     var find: @MainActor @Sendable (_ query: String, _ kinds: [AgentDataSource]) throws -> String
     var wearStats: @MainActor @Sendable (_ window: AgentWearWindow, _ pieceIDs: [UUID]) throws -> String
     var weather: @MainActor @Sendable (_ day: String) throws -> String
@@ -14,12 +22,13 @@ struct AgentToolHandlers: Sendable {
 
 enum AgentToolID: String, CaseIterable, Sendable {
     case findRecords, wearStats, weatherFor, editCloset, editOutfit, editTheme, editPlan, proposePlan, recordWear, editProfile, addPieceFromPhoto
-    case suggestOutfit, proposeOutfit, proposeTheme, relabel
+    case suggestOutfit, proposeOutfit, proposeTheme, relabel, showRecords
 
-    var isProposal: Bool { ![.findRecords, .wearStats, .weatherFor].contains(self) }
+    var isProposal: Bool { ![.findRecords, .showRecords, .wearStats, .weatherFor].contains(self) }
     fileprivate var keywords: [String] {
         switch self {
         case .findRecords: ["find", "show", "list", "which", "what do i have", "my ", "own", "have"]
+        case .showRecords: ["show", "preview", "image", "photo", "picture", "see", "display", "look at", "list", "all my", "all the", "which", "see my", "display", "pieces", "outfits", "themes", "plans", "color", "colour", "green", "black", "white", "blue", "red", "brand", "available"]
         case .wearStats: ["wear", "worn", "wore", "unworn", "how many", "how often", "most", "least", "stats", "rediscover"]
         case .weatherFor: ["weather", "rain", "temperature", "cold", "hot", "warm", "forecast", "tomorrow", "umbrella"]
         case .editCloset: ["rename", "laundry", "unavailable", "available", "color", "colour", "brand", "piece", "shirt", "shoe"]

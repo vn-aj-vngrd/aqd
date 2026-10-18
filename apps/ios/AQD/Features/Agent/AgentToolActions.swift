@@ -41,6 +41,58 @@ import AQDCore
         appendToolStep(.lookup(result.recordIDs.reduce(into: [:]) { counts, id in sources[id].map { counts[$0, default: 0] += 1 } }), attemptID: attemptID)
         return result.text + "\nOmitted records: \(result.omitted). Never infer missing IDs."
     }
+    /// Draws matching records in the chat as cards and tells the model what was shown.
+    /// The records a show request matches, as chat cards. Shared by the tool and by the visual fallback for a reply that named nothing.
+    func showResults(_ request: AgentShowRequest) throws -> (label: String, items: [AgentResultItem]) {
+        let preferences = try store.localSettings().agentPreferences ?? AgentPreferences()
+        func has(_ value: String, _ needle: String) -> Bool {
+            let needle = needle.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            return needle.isEmpty || value.lowercased().contains(needle)
+        }
+        var items: [AgentResultItem] = []
+        var label = ""
+        switch request.kind {
+        case .pieces:
+            guard preferences.allows(.pieces) else { throw AgentToolRejection.invalidArguments }
+            let pieces = try store.pieces().filter { !$0.isArchived }.filter {
+                has($0.details.color, request.color) && has($0.category.rawValue, request.category) && has($0.details.brand, request.brand)
+                    && has($0.availability.rawValue, request.availability)
+                    && has([$0.name, $0.details.tags.joined(separator: " "), $0.details.notes].joined(separator: " "), request.query)
+            }
+            label = "piece"
+            items = pieces.map { AgentResultItem(id: $0.id, kind: .piece, title: $0.displayName, subtitle: [$0.details.color, $0.category.rawValue].filter { !$0.isEmpty }.joined(separator: ", "), photoIDs: [$0.photoID]) }
+        case .outfits:
+            guard preferences.allows(.outfits) else { throw AgentToolRejection.invalidArguments }
+            let pieces = preferences.allows(.pieces) ? try store.pieces() : []
+            let outfits = try store.outfits().filter { has([$0.name, $0.occasion ?? "", $0.mood ?? ""].joined(separator: " "), request.query) }
+            label = "outfit"
+            items = outfits.map { outfit in
+                AgentResultItem(id: outfit.id, kind: .outfit, title: outfit.displayName, subtitle: [outfit.occasion, outfit.mood].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "),
+                                photoIDs: outfit.pieceIDs.prefix(4).compactMap { id in pieces.first { $0.id == id }?.photoID }, pieceIDs: outfit.pieceIDs)
+            }
+        case .themes:
+            guard preferences.allows(.themes) else { throw AgentToolRejection.invalidArguments }
+            label = "theme"
+            items = try store.themes().filter { has($0.name, request.query) }.map { AgentResultItem(id: $0.id, kind: .theme, title: $0.displayName, subtitle: "\($0.outfitIDs.count) outfits") }
+        case .plans:
+            guard preferences.allows(.planner) else { throw AgentToolRejection.invalidArguments }
+            label = "plan"
+            items = try store.planDefinitions().filter { has($0.name, request.query) }.map { AgentResultItem(id: $0.id, kind: .plan, title: $0.name, subtitle: "\($0.start.key) to \($0.end.key)") }
+        }
+        return (label, items)
+    }
+
+    func showToolRecords(_ request: AgentShowRequest, conversationID: UUID, attemptID: UUID) throws -> String {
+        try validateToolAttempt(conversationID: conversationID, attemptID: attemptID)
+        let (label, items) = try showResults(request)
+        let shown = Array(items.prefix(12))
+        let filters = [request.color, request.category, request.brand, request.availability, request.query].filter { !$0.isEmpty }.joined(separator: ", ")
+        let noun = items.count == 1 ? label : label + "s"
+        let summary = items.isEmpty ? "No \(label)s" + (filters.isEmpty ? "" : " matching \(filters)") : "Showing \(shown.count) of \(items.count) \(noun)" + (filters.isEmpty ? "" : " matching \(filters)")
+        appendToolStep(AgentToolStep(tool: "showRecords", summary: summary, count: shown.count, results: shown.isEmpty ? nil : shown), attemptID: attemptID)
+        return items.isEmpty ? "No \(label)s match. Say so briefly and suggest a broader search."
+            : "The app is now showing \(shown.count) of \(items.count) matching \(noun) as cards in the chat: " + shown.map(\.title).joined(separator: ", ") + ". Do not repeat the list; add a one-sentence takeaway."
+    }
     func prepareToolChange(_ request: AgentMutationRequest, revision: Int? = nil, conversationID: UUID, attemptID: UUID) throws -> String {
         do {
             let message = try makeToolProposal(request, revision: revision, conversationID: conversationID, attemptID: attemptID)
@@ -106,6 +158,87 @@ import AQDCore
         if !state.addPiece(prefilled: change.draft, onSaved: { [weak self] piece in self?.completeAddedPiece(id, piece: piece) }) {
             error = "Finish or close the open editor before reviewing this piece."
         }
+    }
+
+    /// Pieces and outfits the reply names are shown as cards, so a suggestion never arrives as text alone.
+    func attachMentionedRecords(attemptID: UUID) {
+        guard let i = conversation.messages.lastIndex(where: { $0.attemptID == attemptID && $0.role == .assistant }),
+              !(conversation.messages[i].toolSteps ?? []).contains(where: { !($0.results ?? []).isEmpty }),
+              let preferences = try? store.localSettings().agentPreferences ?? AgentPreferences() else { return }
+        let text = conversation.messages[i].source.lowercased()
+        guard !text.isEmpty else { return }
+        let colors: Set<String> = ["black", "white", "blue", "navy", "red", "green", "olive", "yellow", "orange", "pink", "purple", "brown", "tan", "beige", "cream", "ivory", "grey", "gray", "maroon", "burgundy", "khaki", "denim", "gold", "silver"]
+        /// Whole-name match on word boundaries. A colour word right before the name means a different piece ("blue cotton shirt" is not "Cotton shirt" in maroon).
+        func position(_ name: String, color: String = "") -> String.Index? {
+            let needle = name.trimmingCharacters(in: .whitespaces).lowercased()
+            guard needle.count >= 3, let pattern = try? NSRegularExpression(pattern: "(?<![\\p{L}\\p{N}])" + NSRegularExpression.escapedPattern(for: needle) + "(?![\\p{L}\\p{N}])") else { return nil }
+            for match in pattern.matches(in: text, range: NSRange(text.startIndex..., in: text)) {
+                guard let range = Range(match.range, in: text) else { continue }
+                let before = text[..<range.lowerBound].split(whereSeparator: { !$0.isLetter }).last.map(String.init) ?? ""
+                if colors.contains(before), !needle.contains(before), !color.lowercased().contains(before) { continue }
+                return range.lowerBound
+            }
+            return nil
+        }
+        var found: [(String.Index, AgentResultItem)] = []
+        let pieces = preferences.allows(.pieces) ? ((try? store.pieces()) ?? []) : []
+        for piece in pieces where !piece.isArchived {
+            if let at = position(piece.displayName, color: piece.details.color) {
+                found.append((at, AgentResultItem(id: piece.id, kind: .piece, title: piece.displayName, subtitle: [piece.details.color, piece.category.rawValue].filter { !$0.isEmpty }.joined(separator: ", "), photoIDs: [piece.photoID])))
+            }
+        }
+        if preferences.allows(.outfits) {
+            for outfit in (try? store.outfits()) ?? [] {
+                if let at = position(outfit.displayName) {
+                    found.append((at, AgentResultItem(id: outfit.id, kind: .outfit, title: outfit.displayName, subtitle: [outfit.occasion, outfit.mood].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "),
+                                                      photoIDs: outfit.pieceIDs.prefix(4).compactMap { id in pieces.first { $0.id == id }?.photoID }, pieceIDs: outfit.pieceIDs)))
+                }
+            }
+        }
+        let items = Array(found.sorted { $0.0 < $1.0 }.map(\.1).prefix(8))
+        guard !items.isEmpty else { return }
+        let noun = items.count == 1 ? "item" : "items"
+        let step = AgentToolStep(tool: "mentioned", summary: "Showing \(items.count) \(noun) from your closet", count: items.count, results: items)
+        conversation.messages[i].toolSteps = (conversation.messages[i].toolSteps ?? []) + [step]
+    }
+
+    /// A request to see records, or "what should I wear today", always gets pictures, even when the model answered in text alone.
+    func attachIntentVisuals(attemptID: UUID) {
+        guard let i = conversation.messages.lastIndex(where: { $0.attemptID == attemptID && $0.role == .assistant }),
+              !(conversation.messages[i].toolSteps ?? []).contains(where: { !($0.results ?? []).isEmpty }),
+              let prompt = conversation.messages[..<i].last(where: { $0.role == .user })?.source.lowercased(), !prompt.isEmpty,
+              let preferences = try? store.localSettings().agentPreferences ?? AgentPreferences() else { return }
+        func mentions(_ words: [String]) -> Bool { words.contains { prompt.contains($0) } }
+        var items: [AgentResultItem] = [], summary = ""
+        if mentions(["wear today", "wear tonight", "outfit today", "outfit for today", "look today", "today's look", "tonight's look", "wear for today", "what to wear"]),
+           preferences.allows(.planner), preferences.allows(.outfits) {
+            let today = LocalPlanDay().key
+            let pieces = preferences.allows(.pieces) ? ((try? store.pieces()) ?? []) : []
+            let reply = conversation.messages[i].source.lowercased()
+            if let entry = ((try? store.planEntries()) ?? []).first(where: { $0.day.key == today && $0.outfitID != nil }),
+               let outfit = ((try? store.outfits()) ?? []).first(where: { $0.id == entry.outfitID }),
+               // The card must match what the reply says: show the planned outfit only when the reply names it or one of its pieces.
+               reply.contains(outfit.displayName.lowercased()) || outfit.pieceIDs.contains(where: { id in pieces.first { $0.id == id }.map { reply.contains($0.displayName.lowercased()) } ?? false }) {
+                items = [AgentResultItem(id: outfit.id, kind: .outfit, title: outfit.displayName, subtitle: entry.occasion,
+                                         photoIDs: outfit.pieceIDs.prefix(4).compactMap { id in pieces.first { $0.id == id }?.photoID }, pieceIDs: outfit.pieceIDs)]
+                summary = "Showing today’s planned outfit"
+            }
+        }
+        if items.isEmpty, mentions(["show", "list", "all my", "all the", "see my", "display", "preview", "which"]) {
+            let kind: AgentShowRequest.Kind? = mentions(["theme"]) ? .themes : mentions(["outfit", "look"]) ? .outfits : mentions(["plan"]) ? .plans : mentions(["piece", "clothes", "shirt", "top", "trouser", "pant", "dress", "shoe", "bottom", "layer", "jacket", "accessor"]) ? .pieces : nil
+            if let kind {
+                var request = AgentShowRequest(kind: kind)
+                let colors = ["black", "white", "blue", "navy", "red", "green", "olive", "yellow", "orange", "pink", "purple", "brown", "tan", "beige", "cream", "ivory", "grey", "gray", "maroon", "burgundy", "khaki", "charcoal"]
+                request.color = colors.first(where: { prompt.contains($0) }) ?? ""
+                let categories: [(String, String)] = [("top", "Tops"), ("shirt", "Tops"), ("bottom", "Bottoms"), ("trouser", "Bottoms"), ("pant", "Bottoms"), ("dress", "Dresses"), ("layer", "Layers"), ("jacket", "Layers"), ("shoe", "Shoes"), ("accessor", "Accessories")]
+                request.category = categories.first(where: { prompt.contains($0.0) })?.1 ?? ""
+                if let result = try? showResults(request), !result.items.isEmpty {
+                    items = Array(result.items.prefix(12)); summary = "Showing \(items.count) of \(result.items.count) \(result.label)" + (result.items.count == 1 ? "" : "s")
+                }
+            }
+        }
+        guard !items.isEmpty else { return }
+        conversation.messages[i].toolSteps = (conversation.messages[i].toolSteps ?? []) + [AgentToolStep(tool: "showRecords", summary: summary, count: items.count, results: items)]
     }
 
     func appendToolStep(_ step: AgentToolStep, attemptID: UUID) {
@@ -232,6 +365,10 @@ import AQDCore
         guard conversation.context.automatic == true, conversation.context.scope == .closet else { return nil }
         let ids = AgentToolbox.route(prompt, weatherAvailable: freshToolWeather() != nil)
         let handlers = AgentToolHandlers(
+            show: { [weak self] request in
+                guard let self else { throw CancellationError() }
+                return try self.showToolRecords(request, conversationID: conversationID, attemptID: attemptID)
+            },
             find: { [weak self] query, kinds in
                 guard let self else { throw CancellationError() }
                 return try self.lookupToolRecords(query, kinds: kinds, conversationID: conversationID, attemptID: attemptID)

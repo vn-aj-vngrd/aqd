@@ -26,14 +26,16 @@ import UIKit
 
     @Test func aRepeatedSaveAcknowledgementCreatesOnePieceAndOneReceipt() throws {
         let (model, store, proposal) = try makeModel()
-        guard case .piece(var change) = proposal.action else { Issue.record("Expected piece"); return }
+        guard case .piece(let change) = proposal.action else { Issue.record("Expected piece"); return }
         let data = try #require(UIGraphicsImageRenderer(size: CGSize(width: 20, height: 30)).image { _ in }.jpegData(compressionQuality: 1))
-        change.draft.photoID = try store.acceptPhoto(PreparedPhoto(id: UUID(), originalData: data, thumbnailData: data, pixelWidth: 20, pixelHeight: 30))
+        var draft = change.draft
+        draft.photoID = try store.acceptPhoto(PreparedPhoto(id: UUID(), originalData: data, thumbnailData: data, pixelWidth: 20, pixelHeight: 30))
         let operationID = UUID()
         // The first save's acknowledgement was lost; the retry reuses the operation and must find the same piece.
-        let first = try store.savePiece(change.draft, operationID: operationID)
-        let retry = try store.savePiece(change.draft, operationID: operationID)
-        #expect(first.id == retry.id && (try store.pieces().count) == 1)
+        let first = try store.savePiece(draft, operationID: operationID)
+        let retry = try store.savePiece(draft, operationID: operationID)
+        let count = try store.pieces().count
+        #expect(first.id == retry.id && count == 1)
         model.completeAddedPiece(proposal.id, piece: first)
         model.completeAddedPiece(proposal.id, piece: retry)
         let saved = try #require(model.conversation.proposals?.first)

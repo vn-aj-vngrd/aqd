@@ -23,6 +23,28 @@ struct AgentFindRecordsTool: Tool {
 }
 
 @available(iOS 26, *)
+struct AgentShowRecordsTool: Tool {
+    let name = "showRecords"
+    let description = "Show the owner's pieces, outfits, themes or plans in the chat as cards, optionally filtered. Use for requests like show all green pieces or list my tops. The app draws the cards, so do not repeat the list."
+    let handlers: AgentToolHandlers
+    @Generable enum Kind { case pieces, outfits, themes, plans }
+    @Generable struct Arguments {
+        var kind: Kind
+        @Guide(description: "Color name such as green; empty for any") var color: String
+        @Guide(description: "Category: Tops, Bottoms, Dresses, Layers, Shoes, Accessories; empty for any") var category: String
+        @Guide(description: "Brand; empty for any") var brand: String
+        @Guide(description: "Available, Laundry or Unavailable; empty for any") var availability: String
+        @Guide(description: "Words to match in names, tags, occasion or mood; empty for none") var query: String
+    }
+    func call(arguments: Arguments) async throws -> String {
+        let kind: AgentShowRequest.Kind = switch arguments.kind { case .pieces: .pieces; case .outfits: .outfits; case .themes: .themes; case .plans: .plans }
+        return try await AgentToolbox.result {
+            try handlers.show(AgentShowRequest(kind: kind, color: arguments.color, category: arguments.category, brand: arguments.brand, availability: arguments.availability, query: arguments.query))
+        }
+    }
+}
+
+@available(iOS 26, *)
 struct AgentWearStatsTool: Tool {
     let name = "wearStats"
     let description = "Recorded wear totals for a month, and per-piece counts. Plans and estimates are not recorded wear. Read only."

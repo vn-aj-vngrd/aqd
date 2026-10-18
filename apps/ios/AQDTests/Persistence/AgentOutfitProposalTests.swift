@@ -7,6 +7,8 @@ import Testing
     @Test func applyingTheSameApprovalTwiceSavesOneOutfitWithAReceipt() async throws {
         let fixture = try await LocalDataFixture()
         let model = try AgentModel(store: fixture.store)
+        // An unrelated unsaved outfit draft would legitimately block approval; start from a clean editor.
+        if let leftover = try fixture.store.outfitDraft() { try fixture.store.discardOutfitDraft(id: leftover.id) }
         let before = try fixture.store.outfits().count
         let request = AgentMutationRequest(kind: .createOutfit, name: "Agent look", pieceIDs: [fixture.piece.id], occasion: "Coffee")
         let action = try request.prepare(ownerID: model.conversation.ownerID, pieces: fixture.store.pieces())

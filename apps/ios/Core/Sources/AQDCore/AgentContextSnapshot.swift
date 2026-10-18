@@ -69,12 +69,13 @@ public struct AgentContextSnapshot: Codable, Equatable, Sendable {
         guard allowed.count <= maximumPieces else { throw AgentContextError.selectionRequired }
         return Self(pieces: allowed.map { Piece(id: $0.id, revision: $0.revision, name: $0.name, category: $0.category, color: $0.details.color) }, totalEligible: eligible.count, scope: context.scope)
     }
-    public var summary: String { scope == .general ? "General styling · No closet or wear access" : "\(pieces.count) of \(totalEligible) eligible pieces · Names, categories and colors · No photos or private notes" }
+    public var summary: String { scope == .general ? "General styling, no closet or wear access" : "\(pieces.count) of \(totalEligible) eligible pieces, with names, categories and colors, without photos or private notes" }
 }
 
 public enum AgentMarkdownPolicy {
     /// Code-bearing replies keep their literal source; generation instructions govern their punctuation.
     public static func conversationalText(_ source: String) -> String {
+        let source = hidingIdentifiers(source)
         guard source.contains("—"), !source.contains("`"), !source.contains("~~~"),
               !source.components(separatedBy: "\n").contains(where: { $0.hasPrefix("    ") || $0.hasPrefix("\t") }),
               let tokens = try? NSRegularExpression(pattern: #"(?i:https?)://[^\s)]+|[ \t]*—[ \t]*"#) else { return source }
@@ -84,6 +85,14 @@ public enum AgentMarkdownPolicy {
             value.replaceSubrange(range, with: ", ")
         }
         return value
+    }
+
+    /// Record IDs are for tools, never for the owner: drop "ID <uuid> –" labels and bare UUIDs from displayed text.
+    public static func hidingIdentifiers(_ source: String) -> String {
+        let uuid = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+        guard source.range(of: uuid, options: [.regularExpression, .caseInsensitive]) != nil,
+              let pattern = try? NSRegularExpression(pattern: #"(?i)\(?\s*(?:\b(?:record\s+)?ID\b\s*[:=#]?\s*)?"# + uuid + #"\s*\)?\s*(?:[–—:-]\s*)?"#) else { return source }
+        return pattern.stringByReplacingMatches(in: source, range: NSRange(source.startIndex..., in: source), withTemplate: "")
     }
 
     public static func spokenText(_ source: String) -> String {

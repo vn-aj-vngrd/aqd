@@ -167,7 +167,7 @@ import AQDCore
         try store.saveIdentityDraft(identity); _ = try store.saveIdentity(identity); try store.finishIdentityDraft(identity)
         let lookup = try model.lookupToolRecords("Van profile", conversationID: model.conversation.id, attemptID: attempt)
         #expect(lookup.contains(model.conversation.ownerID.uuidString))
-        _ = try model.prepareToolChange(.init(kind: .updateProfile, caption: "New bio"), conversationID: model.conversation.id, attemptID: attempt)
+        _ = try model.prepareToolChange(.init(kind: .updateProfile, caption: "New bio"), revision: try store.localIdentity()?.revision, conversationID: model.conversation.id, attemptID: attempt)
         var preferences = AgentPreferences(); preferences.set(.profile, enabled: false)
         _ = try store.saveLocalSettings(LocalSettingsRequest(base: store.localSettings(), agentPreferences: preferences))
         let hidden = try model.lookupToolRecords("Van profile", conversationID: model.conversation.id, attemptID: attempt)
@@ -205,5 +205,15 @@ import AQDCore
         #expect(!AgentToolbox.route("will it rain tomorrow", weatherAvailable: false).contains(.weatherFor))
         #expect(AgentToolbox.route("rename and plan and log the profile outfit theme", weatherAvailable: true).count <= 3)
         #expect(AgentToolStep.lookup([.pieces: 6]).summary == "Looked up 6 pieces")
+    }
+}
+
+@MainActor extension AgentMutationToolPersistenceTests {
+    @Test func showRecordsReportsAnEmptyClosetAsAStepWithoutCards() throws {
+        let (_, model, attempt) = try activeModel()
+        let reply = try model.showToolRecords(AgentShowRequest(kind: .pieces, color: "green"), conversationID: model.conversation.id, attemptID: attempt)
+        let step = try #require(model.conversation.messages.last { $0.attemptID == attempt }?.toolSteps?.last)
+        #expect(step.tool == "showRecords" && step.results == nil && step.summary.contains("No pieces"))
+        #expect(reply.contains("No piece"))
     }
 }

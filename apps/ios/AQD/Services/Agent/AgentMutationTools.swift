@@ -134,6 +134,7 @@ extension AgentToolbox {
         ids.map { id -> any Tool in
             switch id {
             case .findRecords: AgentFindRecordsTool(handlers: handlers)
+            case .showRecords: AgentShowRecordsTool(handlers: handlers)
             case .wearStats: AgentWearStatsTool(handlers: handlers)
             case .weatherFor: AgentWeatherTool(handlers: handlers)
             case .editCloset: AgentEditClosetTool(handlers: handlers)
