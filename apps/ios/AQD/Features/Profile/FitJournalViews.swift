@@ -11,7 +11,7 @@ struct FitMemoryArtwork: View {
                 thumbnailContent(size: geometry.size)
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .background(AppTheme.imageGround).clipped()
-            }.aspectRatio(3 / 4, contentMode: .fit)
+            }.aspectRatio(3 / 4, contentMode: .fit).clipShape(RoundedRectangle(cornerRadius: AppRadius.group))
         } else {
             Group {
                 if let id = memory.photoID {
@@ -72,7 +72,7 @@ struct FitJournalGrid: View {
     @Binding var query: FitJournalQuery
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
-    private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: 2, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3) }
+    private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: AppSpacing.small, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3) }
     private var memories: [FitMemory] {
         FitJournalQuery(content: tab == .photos ? .photos : .all, sort: query.sort).apply(to: state.fitMemories)
     }
@@ -100,9 +100,9 @@ struct FitJournalGrid: View {
                     AppEmptyState("No outfits yet", systemImage: "hanger", description: Text("Use Add outfit (+) above to build a look from your pieces."), fillsAvailableSpace: false)
                         .frame(maxWidth: .infinity).padding(AppSpacing.screen)
                 } else {
-                    LazyVGrid(columns: columns, spacing: 2) {
+                    LazyVGrid(columns: columns, spacing: AppSpacing.small) {
                         ForEach(state.outfits) { outfit in OutfitCollectionCard(outfit: outfit, gallery: true) }
-                    }
+                    }.padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.medium)
                 }
             } else if memories.isEmpty {
                 emptyState.padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.section)
@@ -112,7 +112,7 @@ struct FitJournalGrid: View {
                     Text(monthTitle(section)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                         .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.medium).padding(.bottom, AppSpacing.small)
                         .accessibilityAddTraits(.isHeader)
-                    LazyVGrid(columns: columns, spacing: 2) {
+                    LazyVGrid(columns: columns, spacing: AppSpacing.small) {
                     ForEach(section.memories) { memory in
                         NavigationLink { FitMemoryDetailView(id: memory.id).secondaryPage() } label: {
                             FitMemoryArtwork(memory: memory, thumbnail: true)
@@ -129,7 +129,7 @@ struct FitJournalGrid: View {
                             }
                             .accessibilityLabel("\(memory.day.display(.full)), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.displayName ?? "unlinked"), \(memory.displayNote)")
                     }
-                    }
+                    }.padding(.horizontal, AppSpacing.screen)
                 }
             }
         }.navigationDestination(isPresented: Binding(get: { openedMemoryID != nil }, set: { if !$0 { openedMemoryID = nil } })) {
@@ -158,7 +158,7 @@ struct FitJournalGrid: View {
     private var tabs: some View {
         AppSegmentedControl(selection: Binding(get: { tab.rawValue }, set: { value in tab = FitJournalTab(rawValue: value) ?? .all }),
                             options: FitJournalTab.allCases.map(\.rawValue), accessibilityTitle: "Fit journal view", identifierPrefix: "profile.fits.tab")
-            .padding(.horizontal, AppSpacing.screen)
+            .padding(.horizontal, AppSpacing.screen).padding(.bottom, AppSpacing.small)
     }
     private var emptyState: some View {
         AppEmptyState(tab == .all ? "A little space for your style" : "No fit photos yet",
