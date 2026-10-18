@@ -331,6 +331,12 @@ final class AppState {
         return pieceCategories.first { $0.id == defaultID && $0.type == piece.category }
     }
 
+    /// Categories that hold at least one piece; filters never offer an empty one. `keeping` stays so an active filter can be cleared.
+    func categoriesWithPieces(keeping selected: String? = nil) -> [WardrobeCategory] {
+        let used = Set(pieces.compactMap { category(for: $0)?.id })
+        return pieceCategories.filter { used.contains($0.id) || $0.id == selected }
+    }
+
     func categoryName(for piece: WardrobePiece) -> String {
         category(for: piece)?.name ?? WardrobeCategory.defaults.first { $0.type == piece.category }?.name ?? piece.category.rawValue
     }

@@ -139,7 +139,7 @@ struct OutfitPickerSheet: View {
                 ScrollView(.horizontal) {
                     HStack(spacing: AppSpacing.small) {
                         chip(nil)
-                        ForEach(model.state.pieceCategories) { chip($0) }
+                        ForEach(model.state.categoriesWithPieces(keeping: categoryID)) { chip($0) }
                     }.padding(.trailing, AppSpacing.screen)
                 }.scrollIndicators(.hidden).frame(height: AppControlMetrics.minimumTarget)
                     .mask(LinearGradient(stops: [.init(color: .black, location: 0.92), .init(color: .clear, location: 1)], startPoint: .leading, endPoint: .trailing))

@@ -213,7 +213,7 @@ struct ClosetView: View {
         ScrollView(.horizontal) {
             HStack(spacing: AppSpacing.small) {
                 AppChip(title: "All", isSelected: category == nil) { category = nil }
-                ForEach(state.pieceCategories) { value in
+                ForEach(state.categoriesWithPieces(keeping: category)) { value in
                     AppChip(title: value.name, isSelected: category == value.id) { category = value.id }
                 }
             }.padding(.horizontal, 20)
@@ -287,6 +287,11 @@ struct ClosetView: View {
                 }
             }.padding(20)
         }.scrollPosition(id: Binding(get: { state.closetPieceAnchor }, set: { state.closetPieceAnchor = $0 }))
+            // A chip that was not opened before starts at the top and leading edge, not at the last chip's scroll position.
+            .id("pieces-\(category ?? "all")-\(availability.map { "\($0)" } ?? "any")-\(archived)")
+            .onChange(of: category) { state.closetPieceAnchor = nil }
+            .onChange(of: availability) { state.closetPieceAnchor = nil }
+            .onChange(of: archived) { state.closetPieceAnchor = nil }
         }
     }
     private func refresh() {
