@@ -294,7 +294,7 @@ struct PlanDayCard: View {
             if isOpen, let next {
                 HStack(spacing: AppSpacing.small) {
                     Button { perform(next) } label: {
-                        Text(next.rawValue).compactControl()
+                        Label(next.rawValue, systemImage: nextSymbol(next)).compactControl()
                     }.buttonStyle(.plain)
                     Spacer(minLength: 0)
                     Menu {
@@ -334,6 +334,14 @@ struct PlanDayCard: View {
                         .frame(maxWidth: .infinity).frame(height: 180)
                 }
             }.environment(state)
+        }
+    }
+
+    private func nextSymbol(_ action: PlannerPresentation.NextAction) -> String {
+        switch action {
+        case .chooseOutfit: "tshirt"
+        case .review: "doc.text.magnifyingglass"
+        case .recordWear: "checkmark.circle"
         }
     }
 
