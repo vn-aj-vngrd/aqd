@@ -17,8 +17,11 @@ enum AppTheme {
     static let onAccent = color(light: 0xFFFFFF, dark: 0x1C1C1B)
     static let primaryFill = color(light: 0x292826, dark: 0xF2F0EB)
     static let onPrimary = color(light: 0xFFFFFF, dark: 0x242321)
-    static let segmentSelection = color(light: 0xE8E8E8, dark: 0x454545)
-    static let messageBubble = segmentSelection
+    static let segmentSelection = color(light: 0xECEBE7, dark: 0x454545)
+    /// The owner's chat bubble: a whisper darker than the canvas, never a mid grey.
+    static let messageBubble = color(light: 0xF0EEEA, dark: 0x3A3A37)
+    /// Unread marker in lists. Blue is reserved for this signal.
+    static let unreadIndicator = color(light: 0x2F6BFF, dark: 0x6E9BFF)
     static let divider = color(light: 0xE4E2DC, dark: 0x4A4842)
     static let controlBoundary = color(light: 0x807B72, dark: 0x969187)
     static let error = color(light: 0xD4142A, dark: 0xFF6472)
@@ -33,6 +36,16 @@ enum AppTheme {
     static let regularGlass = color(light: 0xFFFFFF, dark: 0x2B2B29, lightAlpha: 0.88, darkAlpha: 0.94)
     static let glassEdge = color(light: 0xFFFFFF, dark: 0xFFFFFF, lightAlpha: 0.70, darkAlpha: 0.12)
     static let segmentTrack = color(light: 0x767680, dark: 0x767680, lightAlpha: 0.10, darkAlpha: 0.24)
+    /// Dims content behind a custom modal.
+    static let scrim = color(light: 0x000000, dark: 0x000000, lightAlpha: 0.22, darkAlpha: 0.22)
+    static let scrimSoft = color(light: 0x000000, dark: 0x000000, lightAlpha: 0.12, darkAlpha: 0.12)
+    // Photo and camera chrome: drawn over pictures, so it stays the same in light and dark.
+    static let onMedia = color(light: 0xFFFFFF, dark: 0xFFFFFF)
+    static let mediaChip = color(light: 0x000000, dark: 0x000000, lightAlpha: 0.65, darkAlpha: 0.65)
+    static let mediaMask = color(light: 0x000000, dark: 0x000000, lightAlpha: 0.40, darkAlpha: 0.40)
+    static let mediaWash = color(light: 0x808080, dark: 0x808080, lightAlpha: 0.08, darkAlpha: 0.08)
+    static let transparencyLight = color(light: 0xF7F7F7, dark: 0xF7F7F7)
+    static let transparencyDark = color(light: 0xE0E0E0, dark: 0xE0E0E0)
     static let controlShadow = color(light: 0x141416, dark: 0x000000, lightAlpha: 0.08, darkAlpha: 0.22)
 
     private static func color(light: UInt32, dark: UInt32, lightAlpha: Double = 1, darkAlpha: Double = 1) -> Color {

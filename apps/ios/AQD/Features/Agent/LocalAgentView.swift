@@ -430,7 +430,7 @@ struct AgentHistoryView: View {
         switch AgentHistoryPresentation.status(value) {
         case .loading: ProgressView().controlSize(.mini).frame(width: 12).accessibilityLabel("Responding")
         case .complete:
-            Circle().fill(model.isUnread(value) ? Color.blue : AppTheme.secondary.opacity(0.35)).frame(width: 7, height: 7).frame(width: 12)
+            Circle().fill(model.isUnread(value) ? AppTheme.unreadIndicator : AppTheme.secondary.opacity(0.35)).frame(width: 7, height: 7).frame(width: 12)
                 .accessibilityLabel(model.isUnread(value) ? "Unread response" : "Read")
         case .empty: Color.clear.frame(width: 12, height: 7).accessibilityHidden(true)
         case .incomplete: Image(systemName: "exclamationmark.circle").font(.footnote).foregroundStyle(AppTheme.error).frame(width: 12).accessibilityLabel("Response incomplete")

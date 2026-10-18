@@ -24,7 +24,7 @@ struct PrivateTourView: View {
                                 .ignoresSafeArea()
                         }
                     }.allowsHitTesting(false).accessibilityHidden(true)
-                    Color.black.opacity(0.12).ignoresSafeArea().allowsHitTesting(false).accessibilityHidden(true)
+                    AppTheme.scrimSoft.ignoresSafeArea().allowsHitTesting(false).accessibilityHidden(true)
                     TourCard().padding(.horizontal, 16).padding(.bottom, 20)
                         .frame(maxHeight: max(0, geometry.size.height - 20), alignment: .bottom)
                 }

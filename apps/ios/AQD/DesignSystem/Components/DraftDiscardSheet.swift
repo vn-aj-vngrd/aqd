@@ -149,7 +149,7 @@ private struct AppConfirmationCard<Actions: View, Message: View>: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.22).ignoresSafeArea().accessibilityHidden(true)
+            AppTheme.scrim.ignoresSafeArea().accessibilityHidden(true)
             ViewThatFits(in: .vertical) {
                 card.fixedSize(horizontal: false, vertical: true)
                 ScrollView { card }.scrollBounceBehavior(.basedOnSize)

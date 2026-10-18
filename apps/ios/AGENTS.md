@@ -44,4 +44,5 @@ AQDTests/         Mirrors the layers: App, DesignSystem, Features, Persistence, 
 - `swiftlint lint --quiet` (config `.swiftlint.yml`): errors fail the commit hook; warnings (line length 160, file length 800, force unwraps, complexity) are targets for code you touch. No inline disables without a reason on the same line.
 - `swiftformat .` (config `.swiftformat`): whitespace only. Never reformat files you did not change.
 - `node scripts/check-ios-layers.mjs`: import and folder rules above.
+- `node scripts/check-ios-colors.mjs`: no literal colors in UI code; every color is an `AppTheme` token.
 - Install once: `brew install swiftlint swiftformat`. Editors and agents can use `sourcekit-lsp` from the Xcode toolchain for diagnostics and navigation.
