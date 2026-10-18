@@ -302,7 +302,9 @@ struct LocalPrivacySettingsView: View {
         }.padding(20) }.background(AppTheme.canvas).navigationTitle("Help and privacy").navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 ActionFooter {
-                    SecondaryAction(title: "Open iPhone Settings") { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } }
+                    Button { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } } label: {
+                        GlassActionLabel(title: "Open iPhone Settings", systemImage: "gearshape")
+                    }.buttonStyle(.plain)
                 }
             }
     }
