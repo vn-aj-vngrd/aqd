@@ -25,6 +25,9 @@ import Foundation
         let wear = read(.wear) { try store.wearRecords().filter { $0.day.key <= LocalPlanDay(date: now).key } }
         let fits = read(.journal) { try store.fitMemories() }
         let cards = read(.today) { try store.todayPersonalCards() }
+        if preferences.allows(.profile), let identity = try? store.localIdentity(), let first = identity.name?.split(separator: " ").first {
+            facts.insert("The owner's first name is \(first). Use it sparingly: in a first greeting or once in a while, never in every reply.", at: 1)
+        }
         var overview: [String] = []
         if preferences.allows(.pieces), !unavailable.contains(.pieces) {
             let active = pieces.filter { !$0.isArchived }

@@ -281,10 +281,12 @@ struct AgentConversationView: View {
         }
     }
 
-    /// Time-of-day welcome; the Agent screen never uses the owner's name.
+    /// Time-of-day welcome by first name; the name never leaves the device.
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
-        return hour < 5 ? "Hello" : hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening"
+        let salutation = hour < 5 ? "Hello" : hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening"
+        let first = state.localIdentity?.name?.split(separator: " ").first.map(String.init)
+        return first.map { "\(salutation), \($0)" } ?? salutation
     }
 
     private var suggestionTitles: [String] {
