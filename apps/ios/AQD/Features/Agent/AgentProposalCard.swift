@@ -53,7 +53,7 @@ struct AgentProposalCard: View {
             thumbnails
             if case .plan(let draft) = proposal.action { planGrid(draft) }
             if case .trip(let draft) = proposal.action { tripDays(draft) }
-            Text(proposal.status == .executing ? "Check save result" : "Not saved yet. Review before it changes anything.")
+            Text(proposal.status == .executing ? "Check save result" : proposal.action.savesSummary + " Not saved yet.")
                 .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             AdaptiveActions { iconsOnly in
                 Button(action: review) {

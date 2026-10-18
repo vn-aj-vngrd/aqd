@@ -17,6 +17,8 @@ struct AgentMessageRow: View {
     let report: () -> Void
     var saveLook: (([UUID]) -> Void)?
     var iterate: ((String) -> Void)?
+    var performFailure: ((AgentFailure.Action) -> Void)?
+    var actionsLocked = false
     @State private var copied = false
 
     var body: some View {
@@ -44,10 +46,16 @@ struct AgentMessageRow: View {
     private var assistantRow: some View {
         VStack(alignment: .leading, spacing: AppSpacing.medium) {
             AgentActivityView(message: message, title: "", animates: message.status != .stopping)
+            AgentRejectionNotes(steps: message.toolSteps ?? [])
             AgentResultsView(steps: message.toolSteps ?? [], saveLook: saveLook, iterate: iterate)
             if hasText { AgentMarkdownBody(source: AgentMarkdownPolicy.conversationalText(message.source)) }
+            if let note = message.groundingNote, !message.isActive {
+                Label(note, systemImage: "exclamationmark.triangle").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }
             if message.isActive {
                 EmptyView()
+            } else if didFail, let failure = message.failure, let performFailure {
+                AgentFailureView(failure: failure, perform: performFailure, locked: actionsLocked)
             } else if didFail {
                 failureBubble
             } else {

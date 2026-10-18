@@ -8,7 +8,7 @@ struct AgentActivityView: View {
     let animates: Bool
     @State private var expanded = false
 
-    private var steps: [AgentToolStep] { (message.toolSteps ?? []).filter { $0.question == nil } }
+    private var steps: [AgentToolStep] { (message.toolSteps ?? []).filter { $0.question == nil && $0.rejection == nil } }
 
     var body: some View {
         if message.isActive { live } else if !steps.isEmpty || (message.elapsedSeconds ?? 0) >= 2 { finished }

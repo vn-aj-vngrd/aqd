@@ -302,6 +302,19 @@ struct AgentConversationView: View {
         else { reviewingID = proposal.id }
     }
 
+    private func performFailure(_ action: AgentFailure.Action, message: AgentMessage) {
+        readAloud.stop()
+        switch action {
+        case .openSettings:
+            if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+        case .shorten, .edit:
+            model.reviseLastRequest(); focused = true
+        default:
+            model.performFailureAction(action, messageID: message.id)
+            if action == .newChat { focused = true }
+        }
+    }
+
     private func sendSuggestion(_ title: String) {
         guard model.canGenerate else { return }
         model.updateDraft(title); model.send()
@@ -352,7 +365,8 @@ struct AgentConversationView: View {
                             retry: { readAloud.stop(); model.send(retrying: message.id) }, showDetails: { readAloud.stop(); details = message },
                             rate: { rate(message, rating: $0) }, toggleRead: { readAloud.toggle(message) }, report: { editFeedback(message, report: true) },
                             saveLook: model.canGenerate ? { saveLook($0, message: message) } : nil,
-                            iterate: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion($0) } : nil)
+                            iterate: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion($0) } : nil,
+                            performFailure: message.id == model.conversation.messages.last?.id ? { performFailure($0, message: message) } : nil, actionsLocked: model.active || model.hasPendingOperation)
             if let question = openQuestion(for: message) {
                 AgentQuestionCard(question: question, send: { sendSuggestion($0) }).id(message.id)
             } else if let (question, answer) = answeredQuestion(for: message) {
