@@ -353,11 +353,21 @@ struct AgentConversationView: View {
                             rate: { rate(message, rating: $0) }, toggleRead: { readAloud.toggle(message) }, report: { editFeedback(message, report: true) },
                             saveLook: model.canGenerate ? { saveLook($0, message: message) } : nil,
                             iterate: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion($0) } : nil)
+            if let question = openQuestion(for: message) {
+                AgentQuestionCard(question: question, choose: { sendSuggestion($0) }, typeAnswer: { focused = true })
+            }
             ForEach(model.conversation.proposals(for: message)) { proposal in
                 AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) },
-                                 tryAnother: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion("Show me a different option") } : nil)
+                                 tryAnother: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion("Show me a different option") } : nil,
+                                 setTripOptions: { theme, plan in model.setTripOptions(proposal.id, includeTheme: theme, includePlan: plan) })
             }
         }
+    }
+
+    /// Only the latest reply can still be answered; once the owner moves on the buttons disappear.
+    private func openQuestion(for message: AgentMessage) -> AgentQuestion? {
+        guard message.role == .assistant, message.id == model.conversation.messages.last?.id, !message.isActive, model.canGenerate, !model.active else { return nil }
+        return (message.toolSteps ?? []).last { $0.question != nil }?.question
     }
 
     private var latestUserIndex: Int? { model.conversation.messages.lastIndex { $0.role == .user } }

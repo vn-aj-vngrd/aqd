@@ -1,13 +1,14 @@
 import Foundation
 
 public enum AgentMutationKind: String, Codable, CaseIterable, Sendable {
-    case addPiece, editPiece, createOutfit, editOutfit, createTheme, editTheme, createPlan, editPlan, recordWear, setAvailability, updateProfile, relabel
+    case addPiece, editPiece, createOutfit, editOutfit, createTheme, editTheme, createPlan, editPlan, recordWear, setAvailability, updateProfile, relabel, createTrip
     public var requiredSources: [AgentDataSource] {
         switch self {
         case .createOutfit, .editOutfit: [.pieces, .outfits]
         case .createTheme, .editTheme: [.themes, .outfits]
         case .relabel: [.outfits, .themes, .pieces]
         case .createPlan, .editPlan: [.planner, .outfits, .pieces]
+        case .createTrip: [.pieces, .outfits, .themes, .planner]
         case .recordWear: [.wear, .pieces]
         case .setAvailability, .editPiece, .addPiece: [.pieces]
         case .updateProfile: [.profile]
@@ -43,15 +44,16 @@ public struct AgentMutationRequest: Codable, Equatable, Sendable {
     public var rangeStart: String?
     public var rangeEnd: String?
     public var attachmentID: UUID?
+    public var trip: AgentTripSpec?
     public init(kind: AgentMutationKind, targetID: UUID? = nil, name: String? = nil, caption: String? = nil, color: String? = nil, brand: String? = nil,
                 pieceIDs: [UUID] = [], outfitIDs: [UUID] = [], date: String? = nil,
                 assignments: [AgentPlanAssignment] = [], availability: PieceAvailability? = nil,
                 occasion: String? = nil, mood: String? = nil, themeDescription: String? = nil, pinnedIDs: [UUID]? = nil,
-                category: String? = nil, attachmentID: UUID? = nil, rangeStart: String? = nil, rangeEnd: String? = nil) {
+                category: String? = nil, attachmentID: UUID? = nil, rangeStart: String? = nil, rangeEnd: String? = nil, trip: AgentTripSpec? = nil) {
         self.kind = kind; self.targetID = targetID; self.name = name; self.caption = caption; self.color = color; self.brand = brand
         self.pieceIDs = pieceIDs; self.outfitIDs = outfitIDs; self.date = date; self.assignments = assignments; self.availability = availability
         self.occasion = occasion; self.mood = mood; self.themeDescription = themeDescription; self.pinnedIDs = pinnedIDs
-        self.category = category; self.attachmentID = attachmentID; self.rangeStart = rangeStart; self.rangeEnd = rangeEnd
+        self.category = category; self.attachmentID = attachmentID; self.rangeStart = rangeStart; self.rangeEnd = rangeEnd; self.trip = trip
     }
     private static func day(_ text: String, timeZone: TimeZone) throws -> LocalPlanDay {
         let parts = text.split(separator: "-", omittingEmptySubsequences: false).compactMap { Int($0) }
@@ -142,6 +144,9 @@ public struct AgentMutationRequest: Codable, Equatable, Sendable {
                 draft.slots[i].outfit = outfit; draft.slots[i].unassignedByChoice = false
             }
             draft.reviewing = true; try draft.validatedForSave(outfits: outfits, existing: entries); return .plan(draft)
+        case .createTrip:
+            guard let trip, trip.days.count <= TripOutfitComposer.maximumDays else { throw PlanValidationError.invalidRecord }
+            return .trip(try AgentTripDraft(ownerID: ownerID, name: name ?? "", spec: trip, pieces: pieces, outfits: outfits, themes: themes, existing: entries, timeZone: timeZone))
         case .recordWear:
             guard let date, Set(pieceIDs).isSubset(of: Set(pieces.map(\.id))) else { throw WearValidationError.piecesRequired }
             let draft = OutfitWearDraft(ownerID: ownerID, pieces: pieces.filter { pieceIDs.contains($0.id) }, day: try day(date))

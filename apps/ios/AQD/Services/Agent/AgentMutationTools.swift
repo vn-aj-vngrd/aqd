@@ -142,6 +142,8 @@ extension AgentToolbox {
             case .editTheme: AgentEditThemeTool(handlers: handlers)
             case .editPlan: AgentEditPlanTool(handlers: handlers)
             case .proposePlan: AgentProposePlanTool(handlers: handlers)
+            case .proposeTrip: AgentProposeTripTool(handlers: handlers)
+            case .askUser: AgentAskUserTool(handlers: handlers)
             case .recordWear: AgentRecordWearTool(handlers: handlers)
             case .editProfile: AgentEditProfileTool(handlers: handlers)
             case .suggestOutfit, .proposeOutfit, .proposeTheme, .relabel: makeOutfitTool(id, handlers: handlers) ?? AgentFindRecordsTool(handlers: handlers)

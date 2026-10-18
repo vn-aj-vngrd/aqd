@@ -9,6 +9,7 @@ struct AgentProposalCard: View {
     let review: () -> Void
     let dismiss: () -> Void
     var tryAnother: (() -> Void)?
+    var setTripOptions: ((_ includeTheme: Bool?, _ includePlan: Bool?) -> Void)?
 
     private var detail: String {
         switch proposal.action {
@@ -19,6 +20,7 @@ struct AgentProposalCard: View {
         case .availability(let change): change.pieceName
         case .piece(let change): change.draft.name
         case .profile: "Name and bio"
+        case .trip(let draft): "\(draft.name), \(draft.days.count) \(draft.days.count == 1 ? "day" : "days")"
         }
     }
 
@@ -36,6 +38,7 @@ struct AgentProposalCard: View {
             Text(detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             thumbnails
             if case .plan(let draft) = proposal.action { planGrid(draft) }
+            if case .trip(let draft) = proposal.action { tripDays(draft) }
             Text(proposal.status == .executing ? "Check save result" : "Not saved yet. Review before it changes anything.")
                 .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             ScrollView(.horizontal) {
@@ -88,6 +91,44 @@ struct AgentProposalCard: View {
                 Text("+\(draft.slots.count - 7) more days").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             }
         }
+    }
+
+    /// One row per day: its label over the pieces of that day's look, then what saving will do.
+    private func tripDays(_ draft: AgentTripDraft) -> some View {
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
+            ForEach(Array(draft.days.enumerated()), id: \.element.id) { index, day in
+                HStack(spacing: AppSpacing.small) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(day.label).font(AppTypography.supporting.weight(.medium)).foregroundStyle(AppTheme.ink).truncated()
+                        Text(day.day?.displayDate ?? "Day \(index + 1)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
+                    }.frame(maxWidth: .infinity, alignment: .leading)
+                    HStack(spacing: 4) {
+                        ForEach(day.outfit.pieceIDs.prefix(4), id: \.self) { id in
+                            if let piece = pieces.first(where: { $0.id == id }) {
+                                PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(width: 36, height: 44)
+                                    .clipShape(RoundedRectangle(cornerRadius: AppRadius.photo)).accessibilityLabel(piece.displayName)
+                            }
+                        }
+                    }
+                }
+                .padding(AppSpacing.small)
+                .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group, style: .continuous))
+                .accessibilityElement(children: .combine)
+            }
+            if proposal.status == .proposed, let setTripOptions {
+                HStack(spacing: AppSpacing.small) {
+                    optionChip("Outfits", symbol: "checkmark", on: true, locked: true) {}
+                    optionChip("Theme", symbol: draft.includeTheme ? "checkmark" : "plus", on: draft.includeTheme) { setTripOptions(!draft.includeTheme, nil) }
+                    if draft.canPlan { optionChip("Planner", symbol: draft.includePlan ? "checkmark" : "plus", on: draft.includePlan) { setTripOptions(nil, !draft.includePlan) } }
+                }
+            }
+        }
+    }
+
+    private func optionChip(_ title: String, symbol: String, on: Bool, locked: Bool = false, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: symbol).compactControl(tint: on ? AppTheme.ink : AppTheme.secondary)
+        }.buttonStyle(.plain).disabled(locked || self.locked).accessibilityValue(on ? "Included" : "Not included")
     }
 
     private static func weekdayInitial(_ day: LocalPlanDay) -> String {

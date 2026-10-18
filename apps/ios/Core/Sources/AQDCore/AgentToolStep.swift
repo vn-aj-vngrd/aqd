@@ -25,6 +25,37 @@ public struct AgentResultItem: Identifiable, Codable, Equatable, Sendable {
     }
 }
 
+/// One question the Agent needs answered, shown as tappable answers. The owner may always type something else.
+public struct AgentQuestion: Codable, Equatable, Sendable {
+    public let prompt: String
+    public let options: [String]
+    public init?(prompt: String, options: [String]) {
+        let cleaned = options.map { $0.trimmingCharacters(in: .whitespacesAndNewlines.union(CharacterSet(charactersIn: "?.!"))) }.filter { !$0.isEmpty && $0.count <= 40 }
+        var seen = Set<String>(), unique: [String] = []
+        for option in cleaned where seen.insert(option.lowercased()).inserted { unique.append(option) }
+        let text = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty, text.count <= 200, (2...4).contains(unique.count) else { return nil }
+        self.prompt = text; self.options = unique
+    }
+
+    /// Reads "…, 3 days, 5 days or a full week?" from the end of a reply. Nil unless the reply ends in one short question that lists answers.
+    public static func fromReply(_ reply: String) -> AgentQuestion? {
+        let text = reply.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard text.hasSuffix("?"), text.filter({ $0 == "?" }).count == 1 else { return nil }
+        let body = String(text.dropLast())
+        let start = body.lastIndex(where: { ".!\n".contains($0) }).map { body.index(after: $0) } ?? body.startIndex
+        let sentence = String(body[start...]).trimmingCharacters(in: .whitespaces)
+        guard sentence.count <= 200, sentence.range(of: " or ", options: .caseInsensitive) != nil || sentence.contains(",") else { return nil }
+        let tail = sentence.components(separatedBy: CharacterSet(charactersIn: ":—–")).last ?? sentence
+        var parts = tail.replacingOccurrences(of: " or ", with: ",", options: .caseInsensitive).split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+        guard parts.count >= 2 else { return nil }
+        // The first answer is glued to the question: keep as many trailing words as the next answer has.
+        let width = max(1, parts[1].split(separator: " ").count)
+        parts[0] = parts[0].split(separator: " ").suffix(width).joined(separator: " ")
+        return AgentQuestion(prompt: sentence + "?", options: parts)
+    }
+}
+
 /// One collapsed tool call in an assistant message, such as "Looked up 6 pieces". It never carries record text.
 public struct AgentToolStep: Identifiable, Codable, Equatable, Sendable {
     public let id: UUID
@@ -35,8 +66,10 @@ public struct AgentToolStep: Identifiable, Codable, Equatable, Sendable {
     public var rejection: String?
     /// Records the tool displayed in the chat, newest tool call last.
     public var results: [AgentResultItem]?
-    public init(tool: String, summary: String, count: Int = 0, rejection: String? = nil, results: [AgentResultItem]? = nil) {
-        id = UUID(); self.tool = tool; self.summary = summary; self.count = count; self.rejection = rejection; self.results = results
+    /// Set by the askUser tool or read from a reply that ends in a question with answers.
+    public var question: AgentQuestion?
+    public init(tool: String, summary: String, count: Int = 0, rejection: String? = nil, results: [AgentResultItem]? = nil, question: AgentQuestion? = nil) {
+        id = UUID(); self.tool = tool; self.summary = summary; self.count = count; self.rejection = rejection; self.results = results; self.question = question
     }
 
     public static func lookup(_ counts: [AgentDataSource: Int]) -> AgentToolStep {
@@ -66,8 +99,8 @@ public enum AgentToolRejection: Error, Equatable, Sendable {
 
     public var reason: String {
         switch self {
-        case .malformedID(let value): "“\(value)” is not a record ID. Call findRecords and copy the exact ID."
-        case .unknownRecord(let id): "No record has ID \(id.uuidString). Call findRecords for exact IDs; never guess."
+        case .malformedID(let value): "“\(value)” is not a record ID. Call findRecords with its name and use the ID it returns. Never ask the owner for an ID; they never see IDs."
+        case .unknownRecord(let id): "No record has ID \(id.uuidString). Call findRecords for exact IDs; never guess and never ask the owner for one."
         case .missingTarget: "This change needs the ID of the record to edit. Call findRecords first."
         case .revisionRequired: "Pass the revision shown by findRecords with the ID."
         case .staleRevision(let expected, let current): "The record is at revision \(current), not \(expected). It changed since the lookup. Call findRecords again."

@@ -17,14 +17,15 @@ struct AgentToolHandlers: Sendable {
     var wearStats: @MainActor @Sendable (_ window: AgentWearWindow, _ pieceIDs: [UUID]) throws -> String
     var weather: @MainActor @Sendable (_ day: String) throws -> String
     var prepare: @MainActor @Sendable (_ request: AgentMutationRequest, _ revision: Int?) throws -> String
+    var ask: @MainActor @Sendable (_ question: String, _ options: [String]) throws -> String
     var suggestOutfit: @MainActor @Sendable (_ occasion: String?, _ mood: String?, _ pinnedIDs: [UUID]) async throws -> String
 }
 
 enum AgentToolID: String, CaseIterable, Sendable {
     case findRecords, wearStats, weatherFor, editCloset, editOutfit, editTheme, editPlan, proposePlan, recordWear, editProfile, addPieceFromPhoto
-    case suggestOutfit, proposeOutfit, proposeTheme, relabel, showRecords
+    case suggestOutfit, proposeOutfit, proposeTheme, relabel, showRecords, proposeTrip, askUser
 
-    var isProposal: Bool { ![.findRecords, .showRecords, .wearStats, .weatherFor].contains(self) }
+    var isProposal: Bool { ![.findRecords, .showRecords, .wearStats, .weatherFor, .askUser].contains(self) }
     fileprivate var keywords: [String] {
         switch self {
         case .findRecords: ["find", "show", "list", "which", "what do i have", "my ", "own", "have"]
@@ -34,13 +35,15 @@ enum AgentToolID: String, CaseIterable, Sendable {
         case .editCloset: ["rename", "laundry", "unavailable", "available", "color", "colour", "brand", "piece", "shirt", "shoe"]
         case .editOutfit: ["outfit", "look", "combine"]
         case .editTheme: ["theme", "collection"]
-        case .editPlan: ["edit plan", "change plan", "update plan", "swap", "trip", "pack", "routine"]
-        case .proposePlan: ["plan", "week", "schedule", "days", "next", "outfits for"]
+        case .editPlan: ["edit plan", "change plan", "update plan", "swap", "routine"]
+        case .proposePlan: ["plan", "week", "schedule", "next"]
         case .recordWear: ["wore", "wearing", "log", "record"]
         case .editProfile: ["profile", "bio", "my name"]
         case .suggestOutfit: ["suggest", "recommend", "should i wear", "what to wear", "idea", "occasion", "mood", "pair", "go with", "outfit"]
         case .proposeOutfit: ["new outfit", "an outfit", "outfit from", "put together", "combine", "save this outfit", "create outfit", "make outfit"]
         case .proposeTheme: ["theme", "collection", "group", "gather", "set of outfits"]
+        case .askUser: []
+        case .proposeTrip: ["trip", "vacation", "holiday", "getaway", "travel", "pack", "itinerary", "weekend away", "days in", "going to", "flying", "resort", "beach", "honeymoon", "outfits for"]
         case .relabel: ["name", "label", "rename", "call", "title", "occasion", "mood", "unnamed"]
         case .addPieceFromPhoto: ["photo", "picture", "image", "attach", "new piece", "add this", "to my closet"]
         }
@@ -51,7 +54,7 @@ enum AgentToolID: String, CaseIterable, Sendable {
 /// which keeps the tool definitions small enough for the on-device context window.
 enum AgentToolbox {
     static let maximumTools = 3
-    private static let writeVerbs = ["save", "create", "make", "add", "rename", "change", "edit", "update", "set", "mark", "plan", "record", "log", "put", "remove", "move", "suggest", "recommend", "should i wear", "label", "name", "group"]
+    private static let writeVerbs = ["save", "create", "make", "add", "rename", "change", "edit", "update", "set", "mark", "plan", "record", "log", "put", "remove", "move", "suggest", "recommend", "should i wear", "label", "name", "group", "trip", "pack", "vacation", "holiday", "itinerary", "getaway"]
 
     /// Most relevant first. A change request always carries `findRecords`, because edits need exact IDs and revisions.
     static func route(_ prompt: String, weatherAvailable: Bool) -> [AgentToolID] {
@@ -59,6 +62,7 @@ enum AgentToolbox {
         let wantsChange = writeVerbs.contains { text.contains($0) }
         var scored: [(tool: AgentToolID, score: Int)] = AgentToolID.allCases.compactMap { tool in
             if tool == .weatherFor && !weatherAvailable { return nil }
+            if tool == .askUser { return nil }
             if tool.isProposal && !wantsChange { return nil }
             let hits = tool.keywords.filter { text.contains($0) }.count
             return tool == .findRecords ? (tool, hits + 1) : hits > 0 ? (tool, hits + 1) : nil
@@ -70,7 +74,13 @@ enum AgentToolbox {
             let rest = chosen.filter { $0 != lead && $0 != .findRecords }
             chosen = [lead, .findRecords] + rest
         }
-        return Array(chosen.prefix(maximumTools))
+        var picked = Array(chosen.prefix(maximumTools))
+        // A change that may be missing details can ask for them as tappable answers; it is the first tool dropped when space is short.
+        if picked.contains(where: \.isProposal) {
+            if picked.count == maximumTools { picked.removeLast() }
+            picked.append(.askUser)
+        }
+        return picked
     }
 
     /// Drops the least relevant tools until their measured definitions fit. Returns an empty list when none fit.
@@ -93,7 +103,7 @@ enum AgentToolbox {
         do { return try await body() }
         catch is CancellationError { throw CancellationError() }
         catch let rejection as AgentToolRejection { return "No proposal prepared. " + rejection.reason }
-        catch { return "No change prepared or applied. Arguments, source access, dates, conflicts or records could not be validated. Ask the user to clarify or use the manual editor. Do not claim success." }
+        catch { return "No change prepared or applied. Arguments, source access, dates, conflicts or records could not be validated. If a detail is missing, call askUser with one short question and tappable answers. Never ask the owner for an ID or code; look it up with findRecords. Do not claim success." }
     }
 }
 

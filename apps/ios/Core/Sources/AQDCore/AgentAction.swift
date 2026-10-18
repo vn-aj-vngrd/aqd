@@ -17,9 +17,9 @@ public struct AgentPieceChange: Codable, Equatable, Sendable {
     public var isNewPiece: Bool { attachmentID != nil }
 }
 public enum AgentReviewedAction: Codable, Equatable, Sendable {
-    case outfit(OutfitDraft), theme(ThemeDraft), plan(PlanAuthoringDraft), wear(OutfitWearDraft), availability(AgentAvailabilityChange), profile(LocalIdentityDraft), piece(AgentPieceChange)
+    case outfit(OutfitDraft), theme(ThemeDraft), plan(PlanAuthoringDraft), wear(OutfitWearDraft), availability(AgentAvailabilityChange), profile(LocalIdentityDraft), piece(AgentPieceChange), trip(AgentTripDraft)
     public var title: String {
-        switch self { case .outfit: "Review outfit"; case .theme: "Review theme"; case .plan: "Review plan"; case .wear: "Review recorded wear"; case .availability: "Review piece availability"; case .profile: "Review profile"; case .piece: "Review piece" }
+        switch self { case .outfit: "Review outfit"; case .theme: "Review theme"; case .plan: "Review plan"; case .wear: "Review recorded wear"; case .availability: "Review piece availability"; case .profile: "Review profile"; case .piece: "Review piece"; case .trip: "Review trip looks" }
     }
 }
 public enum AgentActionStatus: String, Codable, Sendable { case proposed, executing, succeeded, cancelled }
@@ -32,7 +32,7 @@ public struct AgentActionReceipt: Codable, Equatable, Sendable {
 public struct AgentActionProposal: Identifiable, Codable, Equatable, Sendable {
     public let id: UUID
     public let version: Int
-    public let action: AgentReviewedAction
+    public var action: AgentReviewedAction
     public var status: AgentActionStatus
     public var receipt: AgentActionReceipt?
     public var toolRequest: AgentMutationRequest?

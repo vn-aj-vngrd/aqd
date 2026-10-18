@@ -16,7 +16,7 @@ struct PreviewSampleContentTests {
         try store.saveTodayDraft(legacy); _ = try store.saveTodayLayout(legacy); try store.finishTodayDraft(legacy)
         let base = try store.todayConfiguration(), pieces = try store.pieces(), outfits = try store.outfits(), fits = try store.fitMemories()
         let result = try await PreviewSampleContent.addAllWidgets(store: store, outputDirectory: output)
-        #expect(result.addedKinds.count == 9)
+        #expect(result.addedKinds.count == TodayWidgetKind.allCases.count - 3)
         let reopened = try PieceStore(directory: store.localDirectory)
         let saved = try reopened.todayConfiguration()
         #expect(saved == result.configuration)
@@ -39,7 +39,7 @@ struct PreviewSampleContentTests {
         _ = try reopened.saveTodayLayout(restored); try reopened.finishTodayDraft(restored)
         _ = try await PreviewSampleContent.addAllWidgets(store: reopened, outputDirectory: output)
         #expect(try reopened.todayPersonalCards() == originalPersonal)
-        #expect(try reopened.todayConfiguration().instances.count == 12)
+        #expect(try reopened.todayConfiguration().instances.count == TodayWidgetKind.allCases.count)
     }
 
     @Test func realisticContextsPreserveEditedAndRetainedSamplesAndRepeatWithoutWrites() async throws {

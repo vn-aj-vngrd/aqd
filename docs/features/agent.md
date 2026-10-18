@@ -18,6 +18,12 @@ The model is on-device (Foundation Models) when the device is eligible and ready
 
 Ownership and revisions are validated when an action runs, not only when the prompt is built. Notes, generated text and imported metadata cannot authorize a tool call. Photos and private notes are not model context.
 
+## Trips and questions
+
+A trip request ("plan outfits for 3 days in Boracay") becomes one review with a different outfit for each day, up to 7. The app picks varied available pieces (spread across days, dresses and separates alternating, steered by the day's occasion); the model supplies only the day labels. The owner chooses what saving does: the outfits always, plus an optional theme that groups them and, when dates were given, an optional Planner trip. Each step has its own receipt, so applying again after an interruption resumes without duplicates. If the model answers a clear trip request without preparing the review, the app prepares it from the request.
+
+When something essential is missing the Agent asks one question at a time as tappable answers (the `askUser` tool, or answers read from a reply that ends in one question), with "Something else" to type. Only the latest reply keeps its buttons. The Agent never asks the owner for an ID or code.
+
 ## Proposals and execution
 
 A proposal has a stable ID, capability, exact target IDs and revisions, proposed changes, source limits and status. Approval binds to that version; changed targets, content or source revisions require a fresh review. Execution uses an idempotency key (proposed → approved → executing → succeeded, failed or cancelled), runs the same domain operations as app buttons, and shows receipts linking real saved records. Unknown outcomes are reported honestly and retries check prior completion first. Cancel stops generation and unapproved writes; a committed write is not rolled back. Bulk plan application is all-or-nothing.

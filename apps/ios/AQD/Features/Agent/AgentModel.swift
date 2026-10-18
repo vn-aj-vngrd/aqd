@@ -252,6 +252,8 @@ import Observation
                 let value = try store.savePlanAuthoring(draft)
                 if try store.planAuthoringDraft() == draft { try store.finishPlanAuthoring(draft) }
                 receipt = AgentActionReceipt(recordID: value.plan.id, kind: "plan")
+            case .trip(let draft):
+                receipt = try applyTrip(draft)
             case .wear(let draft):
                 if try store.savedWear(for: draft) == nil { guard try store.wearDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }; try store.saveWearDraft(draft) }
                 let value = try store.saveWear(draft)
@@ -389,6 +391,8 @@ import Observation
                     try Task.checkCancellation(); try conversation.complete(attemptID: attempt)
                     attachMentionedRecords(attemptID: attempt)
                     attachIntentVisuals(attemptID: attempt)
+                    ensureTripProposal(attemptID: attempt)
+                    ensureQuestion(attemptID: attempt)
                 } catch {
                     if let i = conversation.messages.firstIndex(where: { $0.attemptID == attempt }) {
                         if conversation.messages[i].status != .interrupted {

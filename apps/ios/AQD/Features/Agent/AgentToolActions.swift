@@ -247,6 +247,22 @@ import AQDCore
         conversation.messages[i].toolSteps = (conversation.messages[i].toolSteps ?? []) + [AgentToolStep(tool: "showRecords", summary: summary, count: items.count, results: items)]
     }
 
+    func askToolQuestion(_ prompt: String, options: [String], conversationID: UUID, attemptID: UUID) throws -> String {
+        try validateToolAttempt(conversationID: conversationID, attemptID: attemptID)
+        guard let question = AgentQuestion(prompt: prompt, options: options) else { throw AgentToolRejection.invalidArguments }
+        appendToolStep(AgentToolStep(tool: "askUser", summary: "Asked a question", count: 1, question: question), attemptID: attemptID)
+        return "The app is showing the question with tappable answers: \(question.options.joined(separator: ", ")). Reply with at most one short sentence, do not repeat the question or the answers, and wait for the owner."
+    }
+
+    /// A reply that ends by asking something with answers always gets tappable answers, even when the model did not call askUser.
+    func ensureQuestion(attemptID: UUID) {
+        guard let i = conversation.messages.lastIndex(where: { $0.attemptID == attemptID && $0.role == .assistant }),
+              !(conversation.messages[i].toolSteps ?? []).contains(where: { $0.question != nil }),
+              (conversation.proposals ?? []).allSatisfy({ $0.attemptID != attemptID }),
+              let question = AgentQuestion.fromReply(conversation.messages[i].source) else { return }
+        conversation.messages[i].toolSteps = (conversation.messages[i].toolSteps ?? []) + [AgentToolStep(tool: "askUser", summary: "Asked a question", count: 1, question: question)]
+    }
+
     func appendToolStep(_ step: AgentToolStep, attemptID: UUID) {
         guard let i = conversation.messages.lastIndex(where: { $0.attemptID == attemptID && $0.isActive }) else { return }
         conversation.messages[i].toolSteps = (conversation.messages[i].toolSteps ?? []) + [step]
@@ -284,7 +300,7 @@ import AQDCore
             guard let id = request.targetID else { throw AgentToolRejection.missingTarget }
             guard let found = outfits.first(where: { $0.id == id })?.revision ?? themes.first(where: { $0.id == id })?.revision else { throw AgentToolRejection.unknownRecord(id) }
             current = found
-        case .createOutfit, .createTheme, .createPlan, .recordWear, .addPiece: current = nil
+        case .createOutfit, .createTheme, .createPlan, .createTrip, .recordWear, .addPiece: current = nil
         }
         if let current {
             guard let revision else { throw AgentToolRejection.revisionRequired }
@@ -387,6 +403,9 @@ import AQDCore
             }, prepare: { [weak self] request, revision in
                 guard let self else { throw CancellationError() }
                 return try self.prepareToolChange(request, revision: revision, conversationID: conversationID, attemptID: attemptID)
+            }, ask: { [weak self] question, options in
+                guard let self else { throw CancellationError() }
+                return try self.askToolQuestion(question, options: options, conversationID: conversationID, attemptID: attemptID)
             }, suggestOutfit: { [weak self] occasion, mood, pinnedIDs in
                 guard let self else { throw CancellationError() }
                 return try await self.suggestToolOutfit(occasion: occasion, mood: mood, pinnedIDs: pinnedIDs, conversationID: conversationID, attemptID: attemptID)

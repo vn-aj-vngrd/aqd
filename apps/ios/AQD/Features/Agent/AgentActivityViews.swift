@@ -8,7 +8,7 @@ struct AgentActivityView: View {
     let animates: Bool
     @State private var expanded = false
 
-    private var steps: [AgentToolStep] { message.toolSteps ?? [] }
+    private var steps: [AgentToolStep] { (message.toolSteps ?? []).filter { $0.question == nil } }
 
     var body: some View {
         if message.isActive { live } else if !steps.isEmpty || (message.elapsedSeconds ?? 0) >= 2 { finished }
@@ -238,5 +238,35 @@ struct AgentLookActions: View {
                 }
             }
         }.scrollIndicators(.hidden)
+    }
+}
+
+/// One question from the Agent as tappable answers, plus a way to type something else. Shown only while it is the latest unanswered turn.
+struct AgentQuestionCard: View {
+    let question: AgentQuestion
+    let choose: (String) -> Void
+    let typeAnswer: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
+            Text(question.prompt).font(AppTypography.body.weight(.medium)).foregroundStyle(AppTheme.ink).fixedSize(horizontal: false, vertical: true)
+            VStack(spacing: AppSpacing.small) {
+                ForEach(question.options, id: \.self) { option in
+                    Button { choose(option) } label: {
+                        HStack {
+                            Text(option).truncated()
+                            Spacer(minLength: AppSpacing.small)
+                            Image(systemName: "arrow.up").font(.caption.weight(.semibold)).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                        }.compactControl(fullWidth: true)
+                    }.buttonStyle(.plain)
+                }
+                Button(action: typeAnswer) {
+                    Label("Something else", systemImage: "pencil").compactControl(fullWidth: true, tint: AppTheme.secondary)
+                }.buttonStyle(.plain)
+            }
+        }
+        .padding(AppSpacing.medium).frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous))
+        .accessibilityElement(children: .contain)
     }
 }

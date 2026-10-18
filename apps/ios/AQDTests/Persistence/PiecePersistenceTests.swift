@@ -609,7 +609,7 @@ struct PiecePersistenceTests {
         if todayWasCommitted { #expect(first == today) }
         #expect(first.revision == 1)
         #expect(first.instances.map(\.kind) == TodayWidgetKind.allCases)
-        #expect(Set(first.instances.map(\.id)).count == 12)
+        #expect(Set(first.instances.map(\.id)).count == TodayWidgetKind.allCases.count)
         #expect(try #require(recovered).pieces().isEmpty)
         #expect(try #require(recovered).latestDraft() == nil)
         #expect(try !#require(recovered).hasPendingPhotoCleanup())
