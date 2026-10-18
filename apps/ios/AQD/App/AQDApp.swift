@@ -123,8 +123,11 @@ private struct AppRootView: View {
             if process.arguments.contains("--aqd-agent-eval"), !process.arguments.contains("--aqd-ui-testing"), agentEval == nil {
                 let flag = process.arguments.firstIndex(of: "--aqd-agent-eval-label").map { $0 + 1 }
                 let label = flag.flatMap { process.arguments.indices.contains($0) ? process.arguments[$0] : nil } ?? "run"
-                let runner = AgentClosetEvalRunner(); agentEval = runner
-                await runner.run(label: label)
+                let suite = process.arguments.firstIndex(of: "--aqd-agent-eval-suite").map { $0 + 1 }.flatMap { process.arguments.indices.contains($0) ? process.arguments[$0] : nil } ?? "golden"
+                let runner = AgentClosetEvalRunner(suite: suite); agentEval = runner
+                if let source = process.arguments.firstIndex(of: "--aqd-agent-eval-rescore").map({ $0 + 1 }).flatMap({ process.arguments.indices.contains($0) ? process.arguments[$0] : nil }) {
+                    await runner.rescore(label: label, from: source)
+                } else { await runner.run(label: label) }
             }
             if process.arguments.contains("--aqd-refresh-transparent-samples"), !process.arguments.contains("--aqd-ui-testing"), let store = state.store {
                 state.isOpening = true

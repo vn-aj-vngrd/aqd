@@ -55,6 +55,19 @@ struct AgentGroundingCheckTests {
 
 struct AgentEvalScorerTests {
     let catalog = AgentGroundingCheckTests.catalog
+    @Test func heldOutSuiteIsSeparateAndComparableInSize() {
+        let golden = Set(AgentEvalSuite.cases.map(\.id)), heldOut = AgentEvalSuite.heldOut
+        #expect(heldOut.count >= 40 && heldOut.allSatisfy { !golden.contains($0.id) } && Set(heldOut.map(\.id)).count == heldOut.count)
+        let prompts = Set(AgentEvalSuite.cases.flatMap(\.turns))
+        #expect(heldOut.allSatisfy { example in !example.turns.contains { prompts.contains($0) } })
+        let second = AgentEvalSuite.heldOutTwo
+        #expect(second.count >= 30 && second.allSatisfy { !golden.contains($0.id) && !heldOut.map(\.id).contains($0.id) })
+        #expect(second.allSatisfy { example in !example.turns.contains { prompts.contains($0) || heldOut.flatMap(\.turns).contains($0) } })
+        let third = AgentEvalSuite.heldOutThree
+        let earlier = Set(AgentEvalSuite.cases.flatMap(\.turns) + heldOut.flatMap(\.turns) + second.flatMap(\.turns))
+        #expect(third.count >= 30 && third.allSatisfy { example in !example.turns.contains { earlier.contains($0) } } && Set(AgentEvalSuite.all.map(\.id)).count == AgentEvalSuite.all.count)
+        #expect(AgentEvalSuite.suite(named: "heldout").count == heldOut.count && AgentEvalSuite.suite(named: "golden").count == AgentEvalSuite.cases.count)
+    }
     @Test func goldenSetCoversTheRequiredCategories() {
         let cases = AgentEvalSuite.cases
         #expect(cases.count >= 40 && Set(cases.map(\.id)).count == cases.count)
