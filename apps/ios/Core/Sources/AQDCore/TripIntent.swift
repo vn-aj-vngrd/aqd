@@ -11,9 +11,9 @@ public struct TripIntent: Equatable, Sendable {
     private static let words = ["one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7]
     private static let beach = ["beach", "island", "boracay", "bali", "hawaii", "cebu", "palawan", "phuket", "maldives", "resort", "snorkel", "siargao", "coron", "el nido", "tulum", "cancun"]
 
-    public static func parse(_ prompt: String) -> TripIntent? {
+    /// The number of days a request names ("3 days", "four-night", "a weekend", "a week"), or nil.
+    public static func dayCount(in prompt: String) -> Int? {
         let text = prompt.lowercased()
-        guard triggers.contains(where: { text.contains($0) }) else { return nil }
         var count: Int?
         if let match = text.range(of: #"(\d+)\s*[- ]?\s*(?:day|days|night|nights)"#, options: .regularExpression) {
             count = Int(text[match].prefix { $0.isNumber })
@@ -24,6 +24,21 @@ public struct TripIntent: Equatable, Sendable {
         if count == nil, text.contains("weekend") { count = 3 }
         if count == nil, text.range(of: #"\b(a|one|1)[- ]week\b"#, options: .regularExpression) != nil { count = 7 }
         guard let count, count >= 1 else { return nil }
+        return min(count, TripOutfitComposer.maximumDays)
+    }
+
+    /// Whether a request names dates (a month or a numeric date), which the model path can place on the Planner.
+    public static func mentionsDates(_ prompt: String) -> Bool {
+        let text = prompt.lowercased()
+        let months = ["january", "february", "march", "april", "june", "july", "august", "september", "october", "november", "december", "jan ", "feb ", "apr ", "jun ", "jul ", "aug ", "sep ", "oct ", "nov ", "dec "]
+        return months.contains { text.contains($0) } || text.range(of: #"\b\d{1,2}[/-]\d{1,2}\b"#, options: .regularExpression) != nil
+    }
+
+    /// `requireTrigger` is false once the request is already known to be about a trip; then only the days and place matter.
+    public static func parse(_ prompt: String, requireTrigger: Bool = true) -> TripIntent? {
+        let text = prompt.lowercased()
+        guard !requireTrigger || triggers.contains(where: { text.contains($0) }) else { return nil }
+        guard let count = dayCount(in: prompt) else { return nil }
         var place = ""
         let stop: Set<String> = ["My", "The", "A", "An", "Plan", "Please", "Can", "Could", "What", "Make", "Build", "Help", "I"]
         if let regex = try? NSRegularExpression(pattern: #"\b(?:to|in|at|for)\s+([A-Z][\p{L}]+(?:\s+[A-Z][\p{L}]+)*)"#) {
@@ -33,7 +48,7 @@ public struct TripIntent: Equatable, Sendable {
                 if !stop.contains(candidate.components(separatedBy: " ").first ?? candidate) { place = candidate; break }
             }
         }
-        return TripIntent(days: min(count, TripOutfitComposer.maximumDays), destination: String(place.prefix(60)))
+        return TripIntent(days: count, destination: String(place.prefix(60)))
     }
 
     /// A sensible spread of days. Labels are shown to the owner; occasions steer the outfit composer.

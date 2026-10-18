@@ -97,3 +97,18 @@ struct AgentQuestionChoiceTests {
         #expect(question.answer(choices: [], note: "Surprise me") == "Surprise me")
     }
 }
+
+struct TripIntentDayTests {
+    @Test func daysAreReadWithOrWithoutATripWord() {
+        #expect(TripIntent.dayCount(in: "Plan outfits for 3 days in Boracay") == 3 && TripIntent.dayCount(in: "four-night stay") == 4)
+        #expect(TripIntent.dayCount(in: "Pack for a weekend in Baguio") == 3 && TripIntent.dayCount(in: "a week away") == 7)
+        #expect(TripIntent.dayCount(in: "Plan a trip for me") == nil && TripIntent.dayCount(in: "30 days in Japan") == TripOutfitComposer.maximumDays)
+        #expect(TripIntent.parse("Plan outfits for 3 days in Boracay") == nil)
+        #expect(TripIntent.parse("Plan outfits for 3 days in Boracay", requireTrigger: false) == TripIntent(days: 3, destination: "Boracay"))
+        #expect(TripIntent.parse("Plan outfits for my trip to Cebu. 3 days")?.destination == "Cebu")
+    }
+    @Test func datesAreRecognisedSoTheModelCanPlaceTheTrip() {
+        #expect(TripIntent.mentionsDates("A 4 day trip to Tokyo starting March 3") && TripIntent.mentionsDates("trip 10/12 to 10/15"))
+        #expect(!TripIntent.mentionsDates("3 days in Boracay") && !TripIntent.mentionsDates("What may I wear on the trip"))
+    }
+}
