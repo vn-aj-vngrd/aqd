@@ -257,7 +257,7 @@ struct WeatherReadingView: View {
                let zone = TimeZone(identifier: reading.day.timeZoneID), LocalPlanDay(date: date, timeZone: zone) == reading.day {
                 Text(Measurement(value: temperature, unit: UnitTemperature.celsius), format: .measurement(width: .abbreviated, usage: .weather))
             }
-            Text("Low \(Measurement(value: reading.lowCelsius, unit: UnitTemperature.celsius).formatted(.measurement(width: .abbreviated, usage: .weather))) · High \(Measurement(value: reading.highCelsius, unit: UnitTemperature.celsius).formatted(.measurement(width: .abbreviated, usage: .weather)))")
+            Text("Low \(Measurement(value: reading.lowCelsius, unit: UnitTemperature.celsius).formatted(.measurement(width: .abbreviated, usage: .weather))), High \(Measurement(value: reading.highCelsius, unit: UnitTemperature.celsius).formatted(.measurement(width: .abbreviated, usage: .weather)))")
             if let chance = reading.precipitationChance { Text("Rain chance \(chance.formatted(.percent))") }
             Text("Updated \(reading.fetchedAt.displayTimestamp())").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
         }

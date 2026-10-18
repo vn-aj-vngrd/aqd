@@ -17,7 +17,7 @@ enum OutfitSuggestionAvailability: Equatable {
     case available, unsupported, intelligenceOff, preparing, localeUnavailable, awaitingQualification
     var message: String {
         switch self {
-        case .available: "Apple Intelligence · On device. Uses confirmed piece details. Review before saving; no photo upload."
+        case .available: "Apple Intelligence runs on device. Uses confirmed piece details. Review before saving; no photo upload."
         case .unsupported: "On-device AI isn’t supported here. Your closet and manual outfits still work."
         case .intelligenceOff: "Turn on Apple Intelligence in iPhone Settings to use on-device suggestions. Manual creation stays available."
         case .preparing: "Apple Intelligence is preparing its on-device model. Check again or build manually."

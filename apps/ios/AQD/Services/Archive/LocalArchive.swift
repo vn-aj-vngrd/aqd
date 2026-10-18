@@ -18,7 +18,7 @@ struct LocalArchiveSummary: Codable, Equatable, Sendable {
     let conversations: Int
     let personalCards: Int
     let drafts: Int
-    var description: String { "\(pieces) pieces · \(outfits) outfits · \(themes) themes · \(plans) plans / \(entries) dates · \(wear) wear records · \(fits) fit memories · \(conversations) conversations · \(personalCards) personal cards · \(drafts) drafts" }
+    var description: String { "\(pieces) pieces, \(outfits) outfits, \(themes) themes, \(plans) plans with \(entries) dates, \(wear) wear records, \(fits) fit memories, \(conversations) conversations, \(personalCards) personal cards and \(drafts) drafts" }
 }
 struct LocalArchiveFile: Sendable { let path: String; let data: Data }
 struct LocalArchiveHeader: Codable, Sendable {
