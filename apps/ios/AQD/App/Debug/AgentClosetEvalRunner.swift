@@ -32,12 +32,15 @@ import UIKit
                 _ = try store.savePiece(PieceDraft(itemID: blouse.id, name: blouse.name, category: blouse.category, photoID: blouse.photoID, baseRevision: blouse.revision,
                                                    details: details, availability: blouse.availability, photoRecipe: blouse.photoRecipe), operationID: UUID())
             }
-            let model = try AgentModel(store: store)
+            var model = try AgentModel(store: store)
             model.availability = OutfitSuggestions.modelAvailability()
             var current = AgentEvalReport(label: label)
             for example in AgentEvalSuite.cases {
                 status = example.id
+                NSLog("AQD-EVAL start %@", example.id)
+                if model.active { model = try AgentModel(store: store); model.availability = OutfitSuggestions.modelAvailability() }
                 let observation = await observe(example, in: model)
+                NSLog("AQD-EVAL done %@ failure=%@", example.id, observation.failure ?? "none")
                 current.cases.append(AgentEvalScorer.score(example, observation: observation, catalog: model.nameCatalog()))
                 done += 1; report = current
                 try write(current, label: label)
@@ -63,9 +66,13 @@ import UIKit
             model.updateDraft(turn); model.send()
             guard model.conversation.messages.count > before else { observation.failure = "not started: " + (model.error ?? "unavailable"); return observation }
             let began = clock.now
+            var stopped = false
             while model.active {
                 try? await Task.sleep(for: .milliseconds(100))
-                if began.duration(to: clock.now) > .seconds(150) { model.stop(); observation.failure = "eval timeout" }
+                let waited = began.duration(to: clock.now)
+                if waited > .seconds(150), !stopped { model.stop(); stopped = true; observation.failure = "eval timeout" }
+                // A reply that ignores Stop is abandoned: the next case runs on a fresh model over the same store.
+                if waited > .seconds(200) { observation.failure = "eval hung"; NSLog("AQD-EVAL hung on %@", example.id); return observation }
             }
         }
         guard let message = model.conversation.messages.last, message.role == .assistant else { observation.failure = "no reply"; return observation }
