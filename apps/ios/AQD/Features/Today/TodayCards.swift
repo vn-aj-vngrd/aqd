@@ -137,7 +137,7 @@ struct TodayCard: View {
         let look = TodayPresentation.look(entry: entry, outfitRevision: outfit?.revision, hasPieces: !state.pieces.isEmpty)
         if let outfit {
             NavigationLink(value: ClosetRoute.outfit(outfit.id)) {
-                OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 110, limit: 4)
+                OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 110, limit: 4, ground: AppTheme.imageGround)
             }.buttonStyle(.plain).accessibilityLabel("Open outfit \(outfit.displayName)")
             VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
                 if !entry.occasion.isEmpty { Text(entry.occasion).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
@@ -525,7 +525,7 @@ private struct TodayAgendaRow: View {
     private var needsReview: Bool { entry.requiresReview || (outfit != nil && outfit?.revision != entry.outfitRevision) }
     var body: some View {
         HStack(spacing: AppSpacing.medium) {
-            if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 48, limit: 2).frame(width: 56, height: 64).clipped() }
+            if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 48, limit: 2, ground: AppTheme.imageGround).frame(width: 56, height: 64).clipped() }
             VStack(alignment: .leading, spacing: 2) {
                 Text(outfit?.displayName ?? "Outfit not chosen").font(AppTypography.body).foregroundStyle(AppTheme.ink).truncated()
                 Text([dayLabel, entry.occasion].filter { !$0.isEmpty }.joined(separator: ", "))

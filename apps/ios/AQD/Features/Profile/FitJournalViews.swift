@@ -267,7 +267,7 @@ struct FitEditorView: View {
                 }
             }
             .frame(maxWidth: .infinity).frame(minHeight: hasMedia ? 280 : 240, maxHeight: hasMedia ? 340 : 260)
-            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
             .clipShape(RoundedRectangle(cornerRadius: AppRadius.field))
             .overlay(alignment: .bottomTrailing) {
                 // A small, separate menu: the system glass menu morphs cleanly from a compact control.

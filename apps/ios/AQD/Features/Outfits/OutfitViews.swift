@@ -133,7 +133,8 @@ struct OutfitComposition: View {
     let pieceIDs: [UUID]
     var pieceHeight: CGFloat = 130
     var limit: Int? = nil
-    var ground: Color = AppTheme.imageGround
+    /// Pieces sit on white when the composition is on the page, and on the soft ground when it already sits inside a white card.
+    var ground: Color = AppTheme.surface
     private var shownIDs: [UUID] { limit.map { Array(pieceIDs.prefix($0)) } ?? pieceIDs }
     @Environment(\.dynamicTypeSize) private var typeSize
 

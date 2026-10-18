@@ -241,7 +241,7 @@ struct PieceCaptureView: View {
                 }
             }
             .frame(maxWidth: .infinity).frame(height: image == nil ? 280 : 320)
-            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
             .overlay(alignment: .bottomLeading) {
                 if image != nil {
                     HStack(spacing: AppSpacing.small) {

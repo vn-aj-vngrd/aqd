@@ -87,7 +87,7 @@ struct PlanAuthoringView: View {
                 Text("Choose a valid range").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             }
         }.frame(maxWidth: .infinity).padding(.vertical, 20).padding(.horizontal, 16)
-            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 16))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
             .accessibilityElement(children: .combine)
     }
     private var fields: some View {

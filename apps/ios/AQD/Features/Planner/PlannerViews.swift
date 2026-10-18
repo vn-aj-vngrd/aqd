@@ -382,7 +382,7 @@ struct PlanAgendaRow: View {
     }
     var body: some View {
         HStack(spacing: 12) {
-            if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 56, limit: 2).frame(width: 64, height: 80).clipped() }
+            if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 56, limit: 2, ground: AppTheme.imageGround).frame(width: 64, height: 80).clipped() }
             VStack(alignment: .leading, spacing: 4) {
                 Text(outfit?.displayName ?? "Outfit unassigned").font(AppTypography.body).foregroundStyle(AppTheme.ink)
                 if showDate { Text(entry.day.displayDate).font(AppTypography.supporting) }

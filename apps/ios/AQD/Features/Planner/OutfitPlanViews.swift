@@ -38,7 +38,7 @@ struct OutfitPlanEditorView: View {
                 }.foregroundStyle(AppTheme.ink)
             }
         }.frame(maxWidth: .infinity).frame(height: 224)
-            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
             .animation(.smooth(duration: 0.25), value: model.draft.outfit?.id)
     }
 

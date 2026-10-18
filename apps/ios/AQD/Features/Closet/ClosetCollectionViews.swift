@@ -253,7 +253,7 @@ struct ThemeDetailView: View {
                     if let message = state.themeError { SemanticFeedback(role: .danger, message: message) }
                     let members = state.outfits.filter { theme.outfitIDs.contains($0.id) }
                     ThemeCover(outfits: members, height: 180).padding(AppSpacing.small).frame(maxWidth: .infinity)
-                        .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
                         .accessibilityLabel("\(theme.displayName) cover, \(members.count) outfits")
                     Text(theme.outfitIDs.count == 1 ? "1 outfit, private theme" : "\(theme.outfitIDs.count) outfits, private theme").foregroundStyle(AppTheme.secondary)
                     if !theme.description.isEmpty { Text(theme.displayDescription) }
