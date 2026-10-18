@@ -8,6 +8,7 @@ struct AgentComposerView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorSchemeContrast) private var contrast
     @Bindable var model: AgentModel
+    @State private var addOpen = false
     @Bindable var importer: AgentAttachmentImporter
     @Binding var attachmentSource: AgentAttachmentSource?
     var focused: FocusState<Bool>.Binding
@@ -16,8 +17,33 @@ struct AgentComposerView: View {
         model.canGenerate && (!model.conversation.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !(model.conversation.draftAttachments ?? []).isEmpty)
     }
 
+    /// The text after a leading "/" while the draft is a single slash command.
+    private var slashQuery: String? {
+        let draft = model.conversation.draft
+        guard draft.hasPrefix("/"), !draft.contains("\n"), model.supportsGeneration, !model.active else { return nil }
+        return String(draft.dropFirst())
+    }
+
     var body: some View {
-        surface.padding(.horizontal, AppSpacing.large).padding(.bottom, AppSpacing.small)
+        VStack(spacing: AppSpacing.small) {
+            if addOpen && slashQuery == nil {
+                AgentAddMenu { choice in
+                    addOpen = false
+                    switch choice {
+                    case .source(let source): focused.wrappedValue = false; attachmentSource = source
+                    case .tools: model.updateDraft("/"); focused.wrappedValue = true
+                    }
+                }.transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .bottomLeading)))
+            }
+            if let query = slashQuery {
+                AgentSlashMenu(query: query) { model.updateDraft($0.prompt); focused.wrappedValue = true }
+                    .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .bottom)))
+            }
+            surface
+        }.padding(.horizontal, AppSpacing.large).padding(.bottom, AppSpacing.small)
+            .animation(reduceMotion ? nil : .easeOut(duration: 0.15), value: slashQuery != nil)
+            .animation(reduceMotion ? nil : .easeOut(duration: 0.15), value: addOpen)
+            .onChange(of: model.conversation.draft) { _, _ in addOpen = false }
     }
 
     private var content: some View {
@@ -26,7 +52,7 @@ struct AgentComposerView: View {
                 AgentAttachmentStrip(attachments: model.conversation.draftAttachments ?? [], pending: importer.pending, order: importer.order,
                                      remove: model.removeAttachment, cancelImport: importer.remove, locked: model.active || model.hasPendingOperation)
             }
-            TextField("Ask Agent…", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical)
+            TextField("Ask Agent, or type / for tools", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical)
                 .lineLimit(1...6).focused(focused).padding(.horizontal, AppSpacing.xSmall)
                 .accessibilityLabel("Message Agent")
             HStack(spacing: AppSpacing.small) {
@@ -38,15 +64,11 @@ struct AgentComposerView: View {
     }
 
     private var addMenu: some View {
-        Menu {
-            ForEach(AgentAttachmentSource.allCases) { source in
-                AccessoryButton(source.rawValue, systemImage: source.icon) { focused.wrappedValue = false; attachmentSource = source }
-            }
-        } label: {
-            Image(systemName: "plus").padding(.leading, AppSpacing.xSmall)
+        Button { addOpen.toggle() } label: {
+            Image(systemName: "plus").rotationEffect(.degrees(addOpen ? 45 : 0)).padding(.leading, AppSpacing.xSmall)
                 .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget, alignment: .leading)
                 .contentShape(Rectangle())
-        }.accessibilityLabel("Add camera, photo or file")
+        }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityLabel("Add photos, files or tools").accessibilityValue(addOpen ? "Open" : "Closed")
             .disabled(!model.supportsGeneration || model.active || model.hasPendingOperation || importer.count >= AgentAttachment.maximumCount || state.agentControlsModel?.hasPending == true)
     }
 

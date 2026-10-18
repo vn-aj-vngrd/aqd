@@ -7,7 +7,7 @@ import UniformTypeIdentifiers
 enum AgentAttachmentSource: String, CaseIterable, Identifiable {
     case camera = "Camera", photos = "Photos", files = "Files"
     var id: Self { self }
-    var icon: String { switch self { case .camera: "camera"; case .photos: "photo"; case .files: "paperclip" } }
+    var icon: String { switch self { case .camera: "camera"; case .photos: "photo"; case .files: "folder" } }
 }
 
 /// Native pickers return directly to the composer rather than an intermediate form.

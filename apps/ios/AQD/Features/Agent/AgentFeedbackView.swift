@@ -201,10 +201,9 @@ struct AgentFeedbackEditor: View {
                 }
             }.interactiveDismissDisabled(changed || library.hasPending)
             .draftDiscardConfirmation(isPresented: $discard, title: "Discard feedback changes?", message: "Your saved feedback stays unchanged.") { dismiss() }
-            .appConfirmation("Delete this feedback?", isPresented: $deleting) {
-                Button("Cancel", role: .cancel) {}
-                Button("Delete feedback", role: .destructive) { if library.save(draft, removing: true) { dismiss() } }
-            } message: { Text("Removes this feedback from AQD on this iPhone. Your chat and wardrobe stay.") }
+            .deleteConfirmation("feedback", isPresented: $deleting, message: "Removes this feedback from AQD on this iPhone. Your chat and wardrobe stay.") {
+                if library.save(draft, removing: true) { dismiss() }
+            }
     }
     private var exportText: String? {
         struct Export: Encodable { let appVersion: String; let appBuild: String; let systemVersion: String; let report: AgentFeedbackReport }

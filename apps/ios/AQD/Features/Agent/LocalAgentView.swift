@@ -49,6 +49,7 @@ struct AgentConversationView: View {
     @State private var reviewingID: UUID?
     @Environment(\.scenePhase) private var scenePhase
     @State private var details: AgentMessage?
+    @State private var capabilities = false
     @State private var feedbackEditing: AgentFeedback?
     @State private var feedbackLibrary: AgentFeedbackLibrary?
     @State private var readAloud = AgentReadAloud()
@@ -114,6 +115,8 @@ struct AgentConversationView: View {
                     .id(latestUserIndex.map { model.conversation.messages[$0].id } ?? model.conversation.id)
                 }.padding(AppSpacing.screen)
             }.coordinateSpace(name: "agent-message-viewport")
+                .scrollDismissesKeyboard(.interactively)
+                .onTapGesture { focused = false }
                 .defaultScrollAnchor(.bottom, for: .initialOffset)
                 .modifier(AgentChatScrollEdges())
                 .id(model.conversation.id)
@@ -125,10 +128,14 @@ struct AgentConversationView: View {
                     } else { pinnedTurn = nil; proxy.scrollTo("latest", anchor: .bottom) }
                 }
                 .onChange(of: model.conversation.messages.last?.attemptID) { _, _ in
+                    // Sending scrolls the new question to the top once; the reply then streams below it without moving it.
                     guard model.active, let index = latestUserIndex else { return }
                     let id = model.conversation.messages[index].id
                     pinnedTurn = id
                     withAnimation(reduceMotion ? nil : AQDMotion.reflow) { proxy.scrollTo(id, anchor: .top) }
+                }
+                .onChange(of: model.conversation.messages.last?.toolSteps?.count) { _, _ in
+                    if pinnedTurn == nil && followsLatest && chatScrollPhase == .idle { proxy.scrollTo("latest", anchor: .bottom) }
                 }
                 .onChange(of: model.conversation.messages.last?.source) { _, _ in
                     if pinnedTurn == nil && followsLatest && chatScrollPhase == .idle { proxy.scrollTo("latest", anchor: .bottom) }
@@ -189,8 +196,9 @@ struct AgentConversationView: View {
                                 }
                             }
                             Section {
-                                AccessoryButton("AI settings", systemImage: "sparkles") { aiSettings = true }
+                                AccessoryButton("Settings", systemImage: "gearshape") { aiSettings = true }
                                     .disabled(model.active || model.hasPendingOperation)
+                                AccessoryButton("Help", systemImage: "questionmark.circle") { capabilities = true }
                             }
                         } label: { Label("More", systemImage: "ellipsis") }.disabled(model.attachmentImportCount > 0)
                     }
@@ -199,7 +207,7 @@ struct AgentConversationView: View {
             .modifier(AgentAttachmentPicker(model: model, importer: attachmentImporter, source: $attachmentSource, presented: $attachmentPickerPresented))
             .sheet(isPresented: $aiSettings) {
                 NavigationStack { AgentSettingsView().toolbar { ToolbarItem(placement: .cancellationAction) {
-                    Button { aiSettings = false } label: { Image(systemName: "xmark") }.accessibilityLabel("Close AI settings")
+                    Button { aiSettings = false } label: { Image(systemName: "xmark") }.accessibilityLabel("Close settings")
                         .disabled(model.hasPendingOperation || state.agentControlsModel?.hasPending == true)
                 } } }.environment(state).appAppearance(state.appearance)
                     .interactiveDismissDisabled(model.hasPendingOperation || state.agentControlsModel?.hasPending == true)
@@ -213,6 +221,10 @@ struct AgentConversationView: View {
                     }.environment(state).appAppearance(state.appearance).tint(AppTheme.ink)
                         .interactiveDismissDisabled(model.hasPendingOperation)
                 }
+            }
+            .sheet(isPresented: $capabilities) {
+                AgentCapabilitiesSheet(enabled: model.canGenerate, choose: { capabilities = false; sendSuggestion($0.prompt) }, close: { capabilities = false })
+                    .environment(state).appAppearance(state.appearance)
             }
             .sheet(item: $feedbackEditing) { value in
                 if let feedbackLibrary {
@@ -241,12 +253,11 @@ struct AgentConversationView: View {
                 Text("Generated text cannot change your records. Only an explicit review and saved receipt can do that.")
                 }.listRowBackground(AppTheme.surface)
             }.contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Response details").toolbar { ToolbarItem(placement: .confirmationAction) { ToolbarSaveAction(title: "Done") { details = nil } } } }.appAppearance(state.appearance) }
-            .appConfirmation("Delete this conversation?", isPresented: Binding(get: { deletingConversation != nil }, set: { if !$0 { deletingConversation = nil } })) {
-                Button("Cancel", role: .cancel) { deletingConversation = nil }
-                Button("Delete conversation", role: .destructive) {
-                    if let value = deletingConversation { model.delete(value) }; deletingConversation = nil
-                }
-            } message: { Text("Deletes its messages and draft on this iPhone. Saved pieces, outfits and plans stay.") }
+            .deleteConfirmation("conversation", isPresented: Binding(get: { deletingConversation != nil }, set: { if !$0 { deletingConversation = nil } }),
+                                message: "Deletes its messages and draft on this iPhone. Saved pieces, outfits and plans stay.",
+                                cancel: { deletingConversation = nil }) {
+                if let value = deletingConversation { model.delete(value) }; deletingConversation = nil
+            }
             .onDisappear { if !attachmentPickerPresented { attachmentImporter.cancel() } }
             .onChange(of: scenePhase) { _, phase in if phase == .background { attachmentImporter.cancel() } }
             .onChange(of: model.conversation.messages.last?.status) { _, _ in if !history { model.markCurrentRead() } }
@@ -266,12 +277,22 @@ struct AgentConversationView: View {
                     if model.hasPendingOperation || model.error != nil {
                         Button("Retry operation") { model.retryPending() }.frame(minHeight: AppControlMetrics.minimumTarget)
                     }
-                    Text("What would you like to wear?").font(.title2.weight(.medium))
-                        .multilineTextAlignment(.center).accessibilityAddTraits(.isHeader)
+                    VStack(spacing: AppSpacing.xSmall) {
+                        Text(greeting).font(.title.weight(.semibold))
+                        Text("Ready when you are.").font(.title3).foregroundStyle(AppTheme.secondary)
+                    }.multilineTextAlignment(.center).accessibilityElement(children: .combine).accessibilityAddTraits(.isHeader)
                 }.padding(.horizontal, AppSpacing.screen)
                     .frame(maxWidth: .infinity, minHeight: geometry.size.height)
-            }.scrollIndicators(.hidden)
+            }.scrollIndicators(.hidden).scrollDismissesKeyboard(.interactively).onTapGesture { focused = false }
         }
+    }
+
+    /// Time-of-day welcome by first name; the name never leaves the device.
+    private var greeting: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        let salutation = hour < 5 ? "Hello" : hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening"
+        let first = state.localIdentity?.name?.split(separator: " ").first.map(String.init)
+        return first.map { "\(salutation), \($0)" } ?? salutation
     }
 
     private var suggestionTitles: [String] {
@@ -317,6 +338,15 @@ struct AgentConversationView: View {
         } catch { model.error = "Feedback couldn’t load. Your response is retained. Try again." }
     }
 
+    /// Turns a suggested look into an outfit draft the owner reviews and applies like any other Agent change.
+    private func saveLook(_ pieceIDs: [UUID], message: AgentMessage) {
+        let request = AgentMutationRequest(kind: .createOutfit, name: "Suggested look", pieceIDs: pieceIDs)
+        guard let action = try? request.prepare(ownerID: model.conversation.ownerID, pieces: state.ownedPieces) else {
+            model.error = "That look can’t be saved right now. Some pieces may be unavailable."; return
+        }
+        model.propose(action, attemptID: message.attemptID)
+    }
+
     private func canRegenerate(_ message: AgentMessage) -> Bool {
         message.role == .assistant && message.id == model.conversation.messages.last?.id && model.canGenerate
     }
@@ -326,7 +356,8 @@ struct AgentConversationView: View {
             AgentMessageRow(message: message, slow: model.slow, canRegenerate: canRegenerate(message),
                             rating: reaction(message)?.rating, reading: readAloud.messageID == message.id, canRate: !model.active && !model.hasPendingOperation,
                             retry: { readAloud.stop(); model.send(retrying: message.id) }, showDetails: { readAloud.stop(); details = message },
-                            rate: { rate(message, rating: $0) }, toggleRead: { readAloud.toggle(message) }, report: { editFeedback(message, report: true) })
+                            rate: { rate(message, rating: $0) }, toggleRead: { readAloud.toggle(message) }, report: { editFeedback(message, report: true) },
+                            saveLook: model.canGenerate ? { saveLook($0, message: message) } : nil)
             ForEach(model.conversation.proposals(for: message)) { proposal in
                 AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) })
             }
@@ -412,18 +443,14 @@ struct AgentHistoryView: View {
     }
     var body: some View {
         List {
-            if let error = model.error { Text(error).foregroundStyle(AppTheme.error) }
+            if let error = model.error { Text(error).foregroundStyle(AppTheme.error).listRowSeparator(.hidden) }
             if model.hasPendingOperation || model.error != nil {
                 Button(model.hasPendingOperation ? "Retry operation" : "Try again") {
                     if model.hasPendingOperation { model.retryPending() } else { model.reloadHistory() }
-                }
+                }.listRowSeparator(.hidden)
             }
-            if conversations.isEmpty {
-                AppEmptyState(filter == .active ? "No active conversations" : filter == .pinned ? "No pinned conversations" : filter == .archived ? "No archived conversations" : "No conversations yet",
-                              systemImage: filter == .pinned ? "pin" : filter == .archived ? "archivebox" : "bubble.left",
-                              description: Text(filter == .pinned ? "Pin a conversation from its options to keep it close." : "Conversations stay on this iPhone."))
-            }
-            if filter != .active { Text(filter.rawValue).font(.subheadline).foregroundStyle(AppTheme.secondary).listRowBackground(Color.clear) }
+            if filter != .active && !conversations.isEmpty { Text(filter.rawValue).font(.subheadline).foregroundStyle(AppTheme.secondary).listRowBackground(Color.clear).listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 0, leading: AppSpacing.screen, bottom: 4, trailing: AppSpacing.screen)) }
             ForEach(conversations) { value in
                 Button { open(value) } label: {
                     HStack(spacing: AppSpacing.small) {
@@ -460,7 +487,14 @@ struct AgentHistoryView: View {
                         Button(value.isArchived ? "Restore" : "Archive", systemImage: "archivebox") { model.setOrganization(value, archived: !value.isArchived) }.tint(AppTheme.secondary)
                     }.disabled(model.active || model.hasPendingOperation)
             }
-        }.listStyle(.plain).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle("Conversations")
+        }.listStyle(.plain).listRowSeparator(.hidden).listSectionSeparator(.hidden).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)
+            .overlay {
+                if conversations.isEmpty {
+                    AppEmptyState(filter == .active ? "No active conversations" : filter == .pinned ? "No pinned conversations" : filter == .archived ? "No archived conversations" : "No conversations yet",
+                                  systemImage: filter == .pinned ? "pin" : filter == .archived ? "archivebox" : "bubble.left",
+                                  description: Text(filter == .pinned ? "Pin a conversation from its options to keep it close." : filter == .archived ? "Archive a conversation to tuck it away here." : "Conversations stay on this iPhone."))
+                }
+            }.navigationTitle("Conversations")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) { Button { model.newConversation(); open(model.conversation) } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New conversation").disabled(model.active || model.hasPendingOperation) }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -472,10 +506,9 @@ struct AgentHistoryView: View {
                         .accessibilityLabel("Filter conversations").accessibilityValue(filter.rawValue)
                 }
             }
-            .appConfirmation("Delete this conversation?", isPresented: Binding(get: { selected != nil }, set: { if !$0 { selected = nil } })) {
-                Button("Cancel", role: .cancel) { selected = nil }
-                Button("Delete conversation", role: .destructive) { if let selected { model.delete(selected) }; selected = nil }
-            } message: { Text("Deletes this conversation, its draft and responses on this iPhone. Saved pieces, outfits and plans stay.") }
+            .deleteConfirmation("conversation", isPresented: Binding(get: { selected != nil }, set: { if !$0 { selected = nil } }),
+                                message: "Deletes its messages and draft on this iPhone. Saved pieces, outfits and plans stay.",
+                                cancel: { selected = nil }) { if let selected { model.delete(selected) }; selected = nil }
     }
 }
 

@@ -10,10 +10,10 @@ struct AgentSettingsView: View {
             if let controls { AgentSettingsForm(controls: controls) }
             else if error == nil { ProgressView("Loading…") }
             else {
-                AppEmptyState("AI settings couldn’t load", systemImage: "sparkle", description: Text(error ?? "Your saved data stays on this iPhone."))
+                AppEmptyState("Settings couldn’t load", systemImage: "gearshape", description: Text(error ?? "Your saved data stays on this iPhone."))
                     .overlay(alignment: .bottom) { Button("Try again", action: load).padding(AppSpacing.screen) }
             }
-        }.navigationTitle("AI settings").navigationBarTitleDisplayMode(.inline).background(AppTheme.canvas).task { load() }
+        }.navigationTitle("Settings").navigationBarTitleDisplayMode(.inline).background(AppTheme.canvas).task { load() }
     }
     private func load() {
         do { guard let store = state.store else { throw PieceStore.StoreError.corruptStore }; if state.agentControlsModel == nil { state.agentControlsModel = try AgentControlsModel(store: store) }; controls = state.agentControlsModel; state.agentModel?.controls = controls; controls?.reload(); error = nil }

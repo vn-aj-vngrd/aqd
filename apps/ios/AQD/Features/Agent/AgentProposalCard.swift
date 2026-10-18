@@ -24,7 +24,7 @@ struct AgentProposalCard: View {
     var body: some View {
         switch proposal.status {
         case .succeeded: receiptRow
-        case .cancelled: quietRow(symbol: "xmark.circle", text: "Dismissed · \(detail)")
+        case .cancelled: quietRow(symbol: "xmark.circle", text: "Dismissed. \(detail)")
         case .proposed, .executing: reviewCard
         }
     }
@@ -35,7 +35,7 @@ struct AgentProposalCard: View {
             Text(detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             thumbnails
             if case .plan(let draft) = proposal.action { planGrid(draft) }
-            Text(proposal.status == .executing ? "Check save result" : "Not saved · Review before it changes anything")
+            Text(proposal.status == .executing ? "Check save result" : "Not saved yet. Review before it changes anything.")
                 .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             HStack(spacing: AppSpacing.small) {
                 Button(action: review) {
@@ -96,7 +96,8 @@ struct AgentProposalCard: View {
             HStack(spacing: AppSpacing.medium) {
                 Image(systemName: "checkmark.circle").foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                    Text("Saved locally · \(detail)").foregroundStyle(AppTheme.ink)
+                    Text("Saved locally").foregroundStyle(AppTheme.ink)
+                    Text(detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     if let receipt = proposal.receipt {
                         Text(receipt.acknowledgedAt.displayTimestamp()).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                     }

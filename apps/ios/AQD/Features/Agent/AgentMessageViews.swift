@@ -15,6 +15,7 @@ struct AgentMessageRow: View {
     let rate: (AgentFeedbackRating) -> Void
     let toggleRead: () -> Void
     let report: () -> Void
+    var saveLook: (([UUID]) -> Void)?
     @State private var copied = false
 
     var body: some View {
@@ -40,12 +41,12 @@ struct AgentMessageRow: View {
     private var didFail: Bool { message.status == .failed || message.status == .interrupted }
 
     private var assistantRow: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.small) {
+        VStack(alignment: .leading, spacing: AppSpacing.medium) {
+            AgentActivityView(message: message, title: "", animates: message.status != .stopping)
+            AgentResultsView(steps: message.toolSteps ?? [], saveLook: saveLook)
             if hasText { AgentMarkdownBody(source: AgentMarkdownPolicy.conversationalText(message.source)) }
             if message.isActive {
-                AgentWorkingIndicator(
-                    title: message.status == .stopping ? "Stopping…" : slow ? "Still working…" : message.source.isEmpty ? "Thinking…" : "Writing…",
-                    animates: message.status != .stopping)
+                EmptyView()
             } else if didFail {
                 failureBubble
             } else {
@@ -79,18 +80,11 @@ struct AgentMessageRow: View {
                 .accessibilityLabel("Helpful response").accessibilityValue(rating == .helpful ? "Selected" : "Not selected").disabled(!hasText || !canRate)
             Button { rate(.notHelpful) } label: { icon(rating == .notHelpful ? "hand.thumbsdown.fill" : "hand.thumbsdown") }
                 .accessibilityLabel("Not helpful").accessibilityValue(rating == .notHelpful ? "Selected" : "Not selected").disabled(!hasText || !canRate)
-            Button(action: toggleRead) { icon(reading ? "stop.circle" : "speaker.wave.2") }
-                .accessibilityLabel(reading ? "Stop reading" : "Read aloud").disabled(!hasText)
-            if canRegenerate {
-                Button(action: retry) { icon("arrow.clockwise") }.accessibilityLabel("Regenerate response")
-            }
             Menu {
-                Section(AgentChatTimestamp.label(for: message.createdAt)) {
-                    AccessoryButton(reading ? "Stop reading" : "Read aloud", systemImage: reading ? "stop.circle" : "speaker.wave.2", action: toggleRead).disabled(!hasText)
-                    AccessoryButton("Copy Markdown", systemImage: "doc.text") { copy(markdown: true) }.disabled(!hasText)
-                    AccessoryButton("Report a problem", systemImage: "flag", action: report).disabled(!canRate)
-                    AccessoryButton("Response details", systemImage: "info.circle", action: showDetails)
-                }
+                AccessoryButton(reading ? "Stop reading" : "Read aloud", systemImage: reading ? "stop.circle" : "speaker.wave.2", action: toggleRead).disabled(!hasText)
+                if canRegenerate { AccessoryButton("Try again", systemImage: "arrow.clockwise", action: retry) }
+                AccessoryButton("Report a problem", systemImage: "flag", action: report).disabled(!canRate)
+                AccessoryButton("Details", systemImage: "info.circle", action: showDetails)
             } label: { icon("ellipsis") }.accessibilityLabel("Response options")
         }.buttonStyle(.plain).padding(.leading, -AppSpacing.medium)
     }

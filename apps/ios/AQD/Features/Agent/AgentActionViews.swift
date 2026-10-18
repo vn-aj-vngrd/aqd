@@ -14,7 +14,7 @@ struct AgentActionReviewView: View {
             VStack(alignment: .leading, spacing: 20) {
                 if let proposal {
                     Text(proposal.action.title).font(AppTypography.section)
-                    Text(proposal.status == .succeeded ? "Saved locally" : "Draft · Not confirmed saved").foregroundStyle(AppTheme.secondary)
+                    Text(proposal.status == .succeeded ? "Saved locally" : "Draft, not confirmed saved").foregroundStyle(AppTheme.secondary)
                     preview(proposal.action)
                     if let error = model.error { Text(error).foregroundStyle(AppTheme.error); Button("Check conversation save") { model.retryPending() }.frame(minHeight: 44) }
                     if let receipt = proposal.receipt, proposal.status == .succeeded {
@@ -59,7 +59,7 @@ struct AgentActionReviewView: View {
         case .outfit(let draft): Text(draft.displayName).font(.headline); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }
         case .plan(let draft):
             Text(draft.plan.name).font(.headline)
-            Text("\(draft.plan.start.displayDate) – \(draft.plan.end.displayDate) · \(draft.slots.filter { $0.outfit != nil }.count) of \(draft.slots.count) days planned. All days save together or not at all.")
+            Text("\(draft.plan.start.displayDate) – \(draft.plan.end.displayDate), \(draft.slots.filter { $0.outfit != nil }.count) of \(draft.slots.count) days planned. All days save together or not at all.")
                 .font(.footnote).foregroundStyle(AppTheme.secondary)
             ForEach(draft.slots) { slot in VStack(alignment: .leading) { Text(slot.day.displayDate); Text(slot.day.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary); Text(slot.outfit?.displayName ?? "Intentionally unassigned") } }
         case .wear(let draft): Text(draft.day.displayDate); Text(draft.day.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }; Text("Records actual wear. This is separate from a plan or fit memory.")
