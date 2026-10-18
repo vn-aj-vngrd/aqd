@@ -151,9 +151,12 @@ struct TodayCard: View {
 
     @ViewBuilder private func lookActions(_ look: TodayPresentation.Look, entry: OutfitPlanEntry?, outfit: Outfit?) -> some View {
         if look.primary == .recordWear, let entry, let outfit {
+            // Two compact glass pills sharing the card width, like the App Store card footer.
             HStack(spacing: AppSpacing.small) {
-                NavigationLink { LocalPlanEntryView(id: entry.id).secondaryPage() } label: { SecondaryActionLabel(title: "Plan details") }.buttonStyle(.plain)
-                PrimaryAction(title: "Record wear", compact: true) { state.openWear(outfitID: outfit.id, day: entry.day, entry: entry) }.accessibilityIdentifier("today.look.primary")
+                NavigationLink { LocalPlanEntryView(id: entry.id).secondaryPage() } label: { Text("Plan details").compactControl(fullWidth: true) }.buttonStyle(.plain)
+                Button { state.openWear(outfitID: outfit.id, day: entry.day, entry: entry) } label: {
+                    Label("Record wear", systemImage: "checkmark.circle").compactControl(fullWidth: true)
+                }.buttonStyle(.plain).accessibilityIdentifier("today.look.primary")
             }
         } else {
             lookActionStack(look, entry: entry, outfit: outfit)
