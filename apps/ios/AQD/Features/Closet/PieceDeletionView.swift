@@ -15,23 +15,13 @@ struct PieceDeletionView: View {
     var body: some View {
         NavigationStack {
             ScrollView(.vertical, showsIndicators: true) {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Review what this changes before deleting.").font(AppTypography.body)
+                VStack(alignment: .leading, spacing: AppSpacing.section) {
+                    header
                     if let impact {
-                        Text("\(impact.outfitRevisions.count) saved outfits affected").font(AppTypography.section)
-                        ForEach(state.outfits.filter { impact.outfitRevisions[$0.id] != nil }) { outfit in
-                            Text(outfitImpactLabel(outfit))
-                        }
-                        Text("\(impact.themeRevisions.count) themes contain affected outfits")
-                        Text("\(impact.futurePlanRevisions.count) future plans become unassigned")
-                        ForEach(state.planEntries.filter { impact.futurePlanRevisions[$0.id] != nil }) { plan in
-                            Text("\(plan.day.displayDate), \(plan.occasion)")
-                        }
-                        Text("Empty outfits and their theme memberships are removed. Future plans keep their dates and occasions for re-selection. Original Photos and historical wear snapshots stay. Unreferenced AQD photos are removed.")
+                        impactSummary(impact)
+                        Text("Original Photos and historical wear snapshots stay. Photos that only AQD kept are removed. This cannot be undone.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        Button(role: .destructive) { confirming = true } label: {
-                            Text("Delete \(piece.displayName)").frame(maxWidth: .infinity, minHeight: 48)
-                        }.buttonStyle(.borderedProminent).tint(AppTheme.dangerFill)
+                        PrimaryAction(title: "Delete piece", role: .destructive) { confirming = true }
                     }
                     if let error {
                         SemanticFeedback(role: .danger, message: error)
@@ -39,17 +29,60 @@ struct PieceDeletionView: View {
                             if submitted { remove() } else { review() }
                         }.frame(minHeight: 44)
                     }
-                }.padding(20)
+                }.padding(AppSpacing.screen)
             }.background(AppTheme.canvas).navigationTitle("Delete piece").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Image(systemName: "xmark") }.tint(AppTheme.ink)
                         .accessibilityLabel("Cancel deletion").disabled(submitted)
                 } }
-                .appConfirmation("Delete \(piece.displayName)?", isPresented: $confirming) {
-                    Button("Delete piece", role: .destructive, action: remove)
-                    Button("Cancel", role: .cancel) {}
-                } message: { Text("This deletes the reviewed piece and changes the references shown here. This cannot be undone.") }
+                .deleteConfirmation("piece", isPresented: $confirming, message: "This deletes \(piece.displayName) and changes the references shown here. This cannot be undone.", delete: remove)
         }.interactiveDismissDisabled(submitted).onAppear(perform: review)
+    }
+
+    private var header: some View {
+        HStack(spacing: AppSpacing.medium) {
+            PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(width: 72, height: 84)
+            VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                Text(piece.displayName).font(AppTypography.section).foregroundStyle(AppTheme.ink)
+                Text("Review what changes before you delete it.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
+    @ViewBuilder private func impactSummary(_ impact: PieceDeletionImpact) -> some View {
+        let outfits = state.outfits.filter { impact.outfitRevisions[$0.id] != nil }
+        let plans = state.planEntries.filter { impact.futurePlanRevisions[$0.id] != nil }
+        if outfits.isEmpty && impact.themeRevisions.isEmpty && plans.isEmpty {
+            impactRow("checkmark.circle", "Nothing else changes", "No outfit, theme or future plan uses this piece.", [])
+        } else {
+            VStack(spacing: AppSpacing.medium) {
+                if !outfits.isEmpty {
+                    impactRow("square.stack", count(outfits.count, "outfit") + " affected", "An outfit is removed only when this was its last piece.", outfits.map(outfitImpactLabel))
+                }
+                if !impact.themeRevisions.isEmpty {
+                    impactRow("folder", count(impact.themeRevisions.count, "theme") + " updated", "Themes lose any outfit that is removed.", [])
+                }
+                if !plans.isEmpty {
+                    impactRow("calendar", count(plans.count, "future plan") + " unassigned", "Dates and occasions stay so you can choose again.", plans.map { "\($0.day.displayDate), \($0.occasion)" })
+                }
+            }
+        }
+    }
+
+    private func count(_ value: Int, _ noun: String) -> String { "\(value) \(noun)" + (value == 1 ? "" : "s") }
+
+    private func impactRow(_ symbol: String, _ title: String, _ detail: String, _ items: [String]) -> some View {
+        HStack(alignment: .top, spacing: AppSpacing.medium) {
+            Image(systemName: symbol).font(.system(size: 18)).foregroundStyle(AppTheme.controlIcon).frame(width: 26).accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                Text(title).font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                Text(detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                ForEach(items, id: \.self) { Text($0).font(AppTypography.supporting).foregroundStyle(AppTheme.ink) }
+            }
+            Spacer(minLength: 0)
+        }.padding(AppSpacing.medium).frame(maxWidth: .infinity, alignment: .leading)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field)).accessibilityElement(children: .combine)
     }
 
     private func outfitImpactLabel(_ outfit: Outfit) -> String {

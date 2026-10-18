@@ -259,10 +259,8 @@ struct PlanDefinitionView: View {
                 if let error = state.planError { SemanticFeedback(role: .danger, message: error); Button("Retry plans") { state.reloadPlanEntries() } }
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle(plan?.name ?? "Plan").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
-            .appConfirmation("Delete this plan and its entries?", isPresented: $confirmingDeletion) {
-                Button("Delete plan", role: .destructive, action: deletePlan)
-                Button("Cancel", role: .cancel) { deletion = nil }
-            } message: { Text("Actual wear and its counts stay in history. Outfits and pieces stay in Closet.") }
+            .deleteConfirmation("plan", isPresented: $confirmingDeletion, message: "Removes the plan and its entries. Actual wear and its counts stay in history. Outfits and pieces stay in Closet.",
+                                cancel: { deletion = nil }, delete: deletePlan)
             .onAppear { state.reloadPlanEntries(); state.reloadOutfits() }
             .toolbar {
                 if plan != nil { ToolbarItem(placement: .topBarTrailing) {

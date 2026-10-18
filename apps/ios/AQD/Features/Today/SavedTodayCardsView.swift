@@ -50,12 +50,9 @@ struct SavedTodayCardsView: View {
                 }
             }.scrollContentBackground(.hidden).background(AppTheme.canvas).navigationTitle(title).navigationBarTitleDisplayMode(.inline)
                 .onAppear { reload(); if let selection { reader.scrollTo(selection); focused = selection } }
-                .appConfirmation("Delete this saved \(request?.card.kind == .personalPhoto ? "photo" : "note")?", isPresented: $confirming) {
-                    Button("Cancel", role: .cancel) { request = nil; focused = selection }
-                    Button("Delete", role: .destructive) { completeDeletion() }
-                } message: {
-                    Text("\(request.map { label($0.card) } ?? "Selected card") will be removed from AQD’s saved cards.\(request?.undo != nil ? " This also releases the layout Undo that retains this card." : "") Original Photos, other cards, wardrobe, journal and exported copies are unaffected. Removing a widget alone does not delete its saved card.")
-                }
+                .deleteConfirmation(request?.card.kind == .personalPhoto ? "saved photo" : "saved note", isPresented: $confirming,
+                                    message: "\(request.map { label($0.card) } ?? "Selected card") will be removed from AQD’s saved cards.\(request?.undo != nil ? " This also releases the layout Undo that retains this card." : "") Original Photos, other cards, wardrobe, journal and exported copies are unaffected. Removing a widget alone does not delete its saved card.",
+                                    cancel: { request = nil; focused = selection }) { completeDeletion() }
         }
     }
     private func label(_ card: TodayPersonalCard) -> String { card.title.isEmpty ? card.kind == .personalNote ? "Untitled note" : "Untitled photo" : card.title }
