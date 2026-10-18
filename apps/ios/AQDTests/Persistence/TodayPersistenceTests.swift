@@ -11,7 +11,7 @@ struct TodayPersistenceTests {
         var store: PieceStore? = try PieceStore(directory: directory)
         let first = try #require(store).todayConfiguration()
         #expect(first.instances.map(\.kind) == TodayWidgetKind.allCases)
-        #expect(Set(first.instances.map(\.id)).count == 12)
+        #expect(Set(first.instances.map(\.id)).count == TodayWidgetKind.allCases.count)
         #expect(try #require(store).todayConfiguration() == first)
         store = nil
         let readOnly = try PieceStore(directory: directory, allowsSave: false)

@@ -75,6 +75,7 @@ extension TodayWidgetKind {
         case .todayLook: "tshirt"
         case .weekInWear: "calendar"
         case .closetInUse: "chart.bar"
+        case .wearInsights: "chart.xyaxis.line"
         case .upcomingPlans: "calendar.badge.clock"
         case .wearAgain: "arrow.clockwise"
         case .favoriteOutfits: "star"

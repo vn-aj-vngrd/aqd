@@ -52,7 +52,7 @@ struct TodayLayoutPersistenceTests {
     @Test func visibilityIsDraftOnlyReversibleAndSurvivesSaveWithoutDroppingSettings() async throws {
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         let state = AppState(store: store), base = try store.todayConfiguration()
-        #expect(base.instances.count == 12 && base.instances.allSatisfy(\.isVisible))
+        #expect(base.instances.count == TodayWidgetKind.allCases.count && base.instances.allSatisfy(\.isVisible))
         state.openTodayEditor(); let model = try #require(state.todayEditor)
         let instance = try #require(model.catalog.first)
         model.setVisibility(instance.id, visible: false)
@@ -65,7 +65,7 @@ struct TodayLayoutPersistenceTests {
         #expect(state.todayEditor == nil)
         let reopened = try PieceStore(directory: store.localDirectory)
         let saved = try reopened.todayConfiguration()
-        #expect(saved.instances.count == 12)
+        #expect(saved.instances.count == TodayWidgetKind.allCases.count)
         #expect(saved.instances.first?.id == instance.id)
         #expect(saved.instances.first?.isVisible == false)
         #expect(saved.instances.first?.options == instance.options)
@@ -146,7 +146,7 @@ struct TodayLayoutPersistenceTests {
         model.begin(legacy)
         #expect(model.canApply)
         model.cancelNested()
-        #expect(try store.todayConfiguration().instances.count == 12)
+        #expect(try store.todayConfiguration().instances.count == TodayWidgetKind.allCases.count)
     }
 
     @Test func everyWidgetCanConfigureReorderDuplicateRestoreAndSaveWithoutChangingWear() async throws {

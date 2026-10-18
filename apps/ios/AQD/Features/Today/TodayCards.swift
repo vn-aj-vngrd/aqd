@@ -57,6 +57,7 @@ struct TodayCard: View {
             if let month = try? (instance.options?.period ?? TodaySources.completedMonth(before: today)), let date = try? month.date() {
                 context = date.formatted(Date.FormatStyle(timeZone: TimeZone(identifier: month.timeZoneID) ?? .current).month(.wide).year())
             }
+        case .wearInsights: context = (instance.options?.insights ?? WearInsightsOptions()).period.title
         case .upcomingPlans:
             context = instance.options?.pinnedID != nil ? nil : "Next \(instance.options?.upcomingDays ?? 7) days"
         default: break
@@ -69,6 +70,7 @@ struct TodayCard: View {
         case .todayLook: look
         case .weekInWear: week
         case .closetInUse: utilization
+        case .wearInsights: wearInsights
         case .upcomingPlans: upcoming
         case .wearAgain: wearAgain
         case .favoriteOutfits: favorites
@@ -208,6 +210,82 @@ struct TodayCard: View {
             NavigationLink { LocalWearInsightsView(initialMonth: month).secondaryPage() } label: { TodayCardActionLabel(title: "View this month") }.frame(minHeight: 44)
         }
     }
+    /// Wear insights: the owner's chosen period and metrics, from recorded wear only.
+    @ViewBuilder private var wearInsights: some View {
+        if let error = state.wearError ?? state.pieceReadError { failure(error) { state.reloadWear(); state.reloadPieces() } }
+        else {
+            let options = instance.options?.insights ?? WearInsightsOptions()
+            let report = WearInsightsReport.make(period: options.period, today: today, pieces: state.pieces, outfits: state.outfits, records: state.wearRecords)
+            if report.isEmpty && !options.metrics.contains(.unworn) {
+                Text("No wear recorded in this period yet.").foregroundStyle(AppTheme.secondary)
+            } else {
+                VStack(alignment: .leading, spacing: AppSpacing.large) {
+                    ForEach(options.metrics, id: \.self) { metric in insightBlock(metric, report) }
+                }.frame(maxWidth: .infinity, alignment: .leading)
+            }
+            NavigationLink { LocalWearInsightsView(initialMonth: today).secondaryPage() } label: { TodayCardActionLabel(title: "View insights") }.frame(minHeight: 44)
+        }
+    }
+
+    @ViewBuilder private func insightBlock(_ metric: WearInsightsOptions.Metric, _ report: WearInsightsReport) -> some View {
+        switch metric {
+        case .summary:
+            HStack(alignment: .top, spacing: 0) {
+                insightStat(report.days, report.days == 1 ? "day" : "days")
+                insightStat(report.occasions, report.occasions == 1 ? "look" : "looks")
+                insightStat(report.piecesUsed, report.piecesUsed == 1 ? "piece" : "pieces")
+            }
+        case .mostWorn:
+            insightList("Most worn", report.mostWorn.map { ($0.name, "\($0.count)×") }, empty: "Nothing recorded yet.")
+        case .unworn:
+            insightList("Not worn yet", report.unworn.map { ($0.name, "") }, empty: "Every active piece was worn.", footnote: report.unwornCount > 3 ? "and \(report.unwornCount - 3) more" : nil)
+        case .outfits:
+            insightList("Top outfits", report.outfits.map { ($0.name, "\($0.count)×") }, empty: "No saved outfit was worn.")
+        case .categories:
+            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                Text("By category").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                let top = max(1, report.categories.map(\.count).max() ?? 1)
+                ForEach(report.categories, id: \.category) { share in
+                    HStack(spacing: AppSpacing.small) {
+                        Text(share.category.rawValue).font(AppTypography.supporting).truncated().frame(width: 92, alignment: .leading)
+                        GeometryReader { proxy in
+                            Capsule().fill(AppTheme.ink).frame(width: max(6, proxy.size.width * CGFloat(share.count) / CGFloat(top)), height: 8).frame(maxHeight: .infinity)
+                        }.frame(height: 14)
+                        Text("\(share.count)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).monospacedDigit()
+                    }
+                }
+                if report.categories.isEmpty { Text("Nothing recorded yet.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+            }
+        case .streak:
+            HStack(spacing: AppSpacing.small) {
+                Image(systemName: "flame").foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                Text(report.streak == 0 ? "No wear streak right now" : "\(report.streak)-day wear streak").font(AppTypography.body)
+            }
+        }
+    }
+
+    private func insightStat(_ value: Int, _ label: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("\(value)").font(.title2.weight(.semibold)).monospacedDigit()
+            Text(label).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+        }.frame(maxWidth: .infinity, alignment: .leading).accessibilityElement(children: .combine)
+    }
+
+    private func insightList(_ title: String, _ rows: [(String, String)], empty: String, footnote: String? = nil) -> some View {
+        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+            Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+            if rows.isEmpty { Text(empty).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                HStack(spacing: AppSpacing.small) {
+                    Text(row.0).font(AppTypography.body).truncated()
+                    Spacer(minLength: AppSpacing.small)
+                    if !row.1.isEmpty { Text(row.1).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).monospacedDigit() }
+                }
+            }
+            if let footnote { Text(footnote).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+        }
+    }
+
     @ViewBuilder private var upcoming: some View {
         if let error = state.planError { failure(error) { state.reloadPlanEntries() } }
         else if let entries = try? TodaySources.upcoming(state.planEntries, days: instance.options?.upcomingDays ?? 7, planID: instance.options?.pinnedID) {

@@ -15,7 +15,8 @@ import UIKit
         let receiptURL = outputDirectory.appendingPathComponent("AQD-all-widgets.json")
         let base = try store.todayConfiguration()
         let missing = TodayWidgetKind.allCases.filter { kind in !base.instances.contains { $0.kind == kind } }
-        if missing.isEmpty {
+        let hidden = base.instances.contains { !$0.isVisible }
+        if missing.isEmpty && !hidden {
             let receipt = WidgetReceipt(addedKinds: [], configuration: base, backup: nil)
             if !FileManager.default.fileExists(atPath: receiptURL.path) { try write(try JSONEncoder().encode(receipt), to: receiptURL) }
             return receipt
@@ -41,8 +42,12 @@ import UIKit
                 options.personal = personal.first(where: { $0.kind == kind }) ?? TodayPersonalCard(ownerID: base.ownerID, kind: kind, title: "A little inspiration", text: "A favorite look for the week.", photoID: photoID, photoRecipe: recipe)
             default: break
             }
-            draft.value.instances.append(TodayWidgetInstance(kind: kind, options: options))
+            let instance = TodayWidgetInstance(kind: kind, options: options)
+            // Wear insights sits right under Today's look; everything else goes to the end.
+            if kind == .wearInsights, let look = draft.value.instances.firstIndex(where: { $0.kind == .todayLook }) { draft.value.instances.insert(instance, at: look + 1) }
+            else { draft.value.instances.append(instance) }
         }
+        for index in draft.value.instances.indices { draft.value.instances[index].isHidden = nil }
         let stamp = try store.mutationStamp()
         let archive = try await LocalArchiveService.create(store: store)
         guard try store.mutationStamp() == stamp else { throw Failure.changedStore }
