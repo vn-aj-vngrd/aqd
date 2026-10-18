@@ -1,6 +1,6 @@
 # AQD
 
-Private, on-device iPhone closet app (SwiftUI, deploys iOS 18, builds with Xcode 27). Roots: Today · Closet · Planner · Agent · Profile. V1 is local-only (no account, backend or cloud AI). V2 is the connected extension, kept as a backlog in [product](docs/product.md).
+Private, on-device iPhone closet app (SwiftUI, deploys iOS 18, builds with Xcode 27). Roots: Today, Closet, Planner, Agent, Profile. V1 is local-only (no account, backend or cloud AI). V2 is the connected extension, kept as a backlog in [product](docs/product.md).
 
 ## Read by task
 

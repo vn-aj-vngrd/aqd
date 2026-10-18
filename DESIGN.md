@@ -6,7 +6,7 @@ Source of truth for AQD UI. Code is the token source: `apps/ios/AQD/UI/AppTheme.
 
 Premium through restraint: clothing photography, precise alignment, quiet opaque surfaces and native interaction. Character comes from content and proportion, not boxes or ornament. Use real clothing photos, never flat garment illustrations. Roots prioritize their task.
 
-Roots: **Today · Closet · Planner · Agent · Profile** as five equal icon-only native tabs with explicit accessibility names. Agent opens full screen and returns to its source.
+Roots: **Today, Closet, Planner, Agent, Profile** as five equal icon-only native tabs with explicit accessibility names. Agent opens full screen and returns to its source.
 
 ## Color
 
@@ -71,7 +71,7 @@ Build outfit specifics: the canvas stays pinned and fills the space above the pi
 
 Show full-source Fit photos and compositions of actual pieces; preserve proportions. Missing media shows a quiet category symbol and name. Task copy: Add piece, Build outfit, Review changes, Save outfit. Explain privacy at the affected choice. AI output stays a draft until a saved receipt.
 
-- **No dot separators.** Never join metadata with " · ". Use spacing, a trailing-aligned value, separate lines, or commas for VoiceOver labels.
+- **No dot separators, anywhere.** Never join metadata, statuses, counts or labels with " · " (middle dot) in UI text, Agent steps, receipts, summaries or accessibility labels. Split with spacing, a trailing-aligned value, separate lines or a comma, or shorten the label. A sample-data name prefix is data, not a separator.
 - **One date format.** Never print an ISO date (`2026-10-16`) or hand-format a date in a view. Use `LocalPlanDay.display(_:)` from Core: compact "Oct 16", standard "Fri, Oct 16" (rows and metadata), full "Friday, October 16" (headers and VoiceOver), relative "Today / Yesterday / Tomorrow". Ranges use `LocalPlanDay.displayRange` ("Oct 16 – 20"), moments in time use `Date.displayTimestamp()` ("Oct 16, 2:30 PM"). The year appears only when it is not the current year, and a day keeps the timezone it was recorded with.
 
 ## Accessibility and privacy guardrails

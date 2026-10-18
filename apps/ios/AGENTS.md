@@ -33,6 +33,7 @@ AQDTests/         Mirrors the layers: App, DesignSystem, Features, Persistence, 
 - **Features.** View models are `@Observable` types named `*Model.swift` and never import SwiftUI. Views are `*View.swift` or `*Views.swift`. Name files after their main type, one primary type per file.
 - **Sharing.** Features do not call each other's views or models. Shared behavior moves down into DesignSystem, Services or Core. Navigation between features goes through `AppState`.
 - **State.** Each draft and navigation selection has one owner. Check draft and request identity before applying async results. Keep UI and storage on the main actor and media work in the isolated preparer.
+- **Labels.** No middle-dot (" · ") separators in any UI string; follow the no-dot rule in [DESIGN.md](../../DESIGN.md).
 - **Safety.** No `try!`, forced casts, or force unwraps outside tests. Typed errors at domain seams. A receipt reports an acknowledged write only.
 - **Guards.** Deployment is iOS 18. Guard iOS 26+ APIs with `#available` and a flat fallback. Verify new APIs against the installed SDK.
 - **Tests.** Swift Testing for new tests, following the neighboring suite. Test through the public interface, including failed and unknown-completion writes. Mirror the source layer in `AQDTests`.
