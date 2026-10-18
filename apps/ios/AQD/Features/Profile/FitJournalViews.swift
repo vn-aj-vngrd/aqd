@@ -111,7 +111,7 @@ struct FitJournalGrid: View {
                     AppEmptyState("No outfits yet", systemImage: "hanger", description: Text("Use Add outfit (+) above to build a look from your pieces."), fillsAvailableSpace: false)
                         .frame(maxWidth: .infinity).padding(AppSpacing.screen)
                 } else {
-                    orderRow(count: state.outfits.count, singular: "outfit", plural: "outfits")
+                    orderRow(count: state.outfits.count, singular: "saved outfit", plural: "saved outfits")
                     ForEach(outfitSections, id: \.title) { section in
                         Text(section.title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                             .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.medium).padding(.bottom, AppSpacing.small)
