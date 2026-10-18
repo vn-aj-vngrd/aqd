@@ -28,6 +28,6 @@ struct TimezoneChooser: View {
                 }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle("Timezone").navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $query, prompt: "Search timezones").tint(AppTheme.ink)
+            .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search timezones").tint(AppTheme.ink)
     }
 }
