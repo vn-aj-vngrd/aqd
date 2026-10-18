@@ -79,10 +79,20 @@ public struct OutfitPlanDraft: Identifiable, Codable, Equatable, Sendable {
     public var allowsOverlap: Bool?
     public var baseEntry: OutfitPlanEntry?
     public var parentPlanID: UUID?
+    public var initialDay: LocalPlanDay?
+    public var initialOutfit: Outfit?
+
+    public var hasChanges: Bool {
+        if let baseEntry {
+            return day != baseEntry.day || occasion != baseEntry.occasion || outfit?.id != baseEntry.outfitID || weather != nil
+        }
+        guard let initialDay else { return true }
+        return day != initialDay || outfit != initialOutfit || !occasion.isEmpty || unassignedByChoice == true || weather != nil || allowsOverlap == true
+    }
 
     public init(ownerID: UUID, outfit: Outfit? = nil, day: LocalPlanDay = LocalPlanDay(), planID: UUID? = nil) {
         id = UUID(); entryID = UUID(); self.planID = planID ?? UUID(); parentPlanID = planID; operationID = UUID()
-        self.ownerID = ownerID; self.outfit = outfit; self.day = day; occasion = ""
+        self.ownerID = ownerID; self.outfit = outfit; self.day = day; occasion = ""; initialDay = day; initialOutfit = outfit
     }
 
     public init(editing entry: OutfitPlanEntry, outfit: Outfit?) {

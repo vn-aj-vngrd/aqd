@@ -1,109 +1,87 @@
-# AQD design system
+# Design system
 
-Visual foundations for the intended app, not proof of implementation. [Status](docs/delivery/implementation-status.md) and [verification](docs/delivery/verification.md) own observed capability and evidence.
-
-## Authority
-
-[iOS Paper](https://app.paper.design/file/01M3SM2KBHBZG6MA0Q744Y9NW0) owns tokens, component masters and composition; [web Paper](https://app.paper.design/file/01M3W6P0PN9SSQ1J3N6V23A9WK) owns landing/admin references. Product releases own phase scope, features own behavior, design contracts own visual/interaction requirements. [Design router](docs/design/README.md) selects the affected branch. Update the affected specification with authorized design changes; static canvas review never establishes native behavior.
+Source of truth for AQD UI. Code is the token source: `apps/ios/AQD/UI/AppTheme.swift`, `AppMetrics.swift`. This document defines intent and rules; when they disagree, fix the code or update this file in the same change.
 
 ## Direction
 
-Premium through restraint: clothing photography, precise alignment, quiet opaque semantic surfaces and native interaction. Cool neutrals/graphite in light appearance, neutral charcoal in dark; crisp blue for primary actions and selection. Brand character comes from content and proportion, not boxes or separators around every explanation. Use photographic pieces/looks, not childish flat garment illustrations. Landing may be expressive; roots prioritize their tasks.
+Premium through restraint: clothing photography, precise alignment, quiet opaque surfaces and native interaction. Character comes from content and proportion, not boxes or ornament. Use real clothing photos, never flat garment illustrations. Roots prioritize their task.
 
-Today · Closet · Planner · Agent · Profile are the shared destination identities. Detailed navigation and source returns belong to [V1 flow](docs/design/v1-flow.md) and [V2 flow](docs/design/v2-flow.md), not this foundation. The Today house glyph remains unchanged.
+Roots: **Today, Closet, Planner, Agent, Profile** as five equal icon-only native tabs with explicit accessibility names. Agent opens full screen and returns to its source.
 
 ## Color
 
-| Role / light Paper token | Light | Dark |
+Charcoal is the only control, selection and tint color. Gold is a brand mark only (logo Q, welcome art), never UI. App-wide tint is `ink`.
+
+| Role | Light | Dark |
 | --- | --- | --- |
-| Canvas / `--color-canvas` | `#F5F5F7` | `#1C1C1E` |
-| Surface / `--color-surface` | `#FFFFFF` | `#2C2C2E` |
-| Primary text / `--color-ink` | `#292C30` | `#F2F2F7` |
-| Supporting text / `--color-secondary` | `#686C72` | `#B8B8BD` |
-| Divider / `--color-line` | `#E2E5E9` | `#48484A` |
-| Image ground / `--color-image-ground` | `#F0F0EE` | `#242426` |
-| Primary accent / `--color-accent` | `#006FEE` | `#338EF7` |
-| Action text / `--color-action-text` | `#005BC4` | `#66AAF9` |
-| On accent / `--color-on-accent` | `#FFFFFF` | `#1C1C1E` |
-| Soft selection / `--color-accent-soft` | `#E6F1FE` | `#142B47` |
-| Control boundary / `--color-control-border` | `#7B8088` | `#8E8E93` |
-| Regular glass / `--color-glass` | `rgb(255 255 255 / 88%)` | `rgb(44 44 46 / 94%)` |
-| Prominent glass / `--color-glass-prominent` | `var(--color-accent)` | `var(--color-night-accent)` |
-| Glass edge / `--color-glass-edge` | `rgb(255 255 255 / 70%)` | `rgb(255 255 255 / 12%)` |
-| Segment track / `--color-segment-track` | `rgb(118 118 128 / 10%)` | `rgb(118 118 128 / 24%)` |
-| Control shadow / `--color-shadow` | `rgb(20 20 22 / 8%)` | `rgb(0 0 0 / 22%)` |
-| Error / destructive / `--color-error` | `#D4142A` | `#FF6472` |
-| Danger fill / `--color-danger-fill` | `#E02335` | `#FF6472` |
-| Error surface / `--color-error-soft` | `#FFF0F2` | `#422027` |
-| Success / `--color-success` | `#416451` | `#B8D0BF` |
-| Success surface / `--color-success-soft` | `#E8EFEA` | `#293B30` |
-| Warning / `--color-warning` | `#795B2E` | `#DCC7A2` |
-| Warning surface / `--color-warning-soft` | `#F3EEE4` | `#403728` |
-| Information / `--color-info` | `#005BC4` | `#66AAF9` |
-| Information surface / `--color-info-soft` | `#E6F1FE` | `#142B47` |
+| Canvas | `#F7F7F5` | `#1C1C1B` |
+| Surface (cards, fields) | `#FFFFFF` | `#2B2B29` |
+| Image ground | `#F5F4F1` | `#242422` |
+| Ink (text, tint) | `#242321` | `#F3F1EB` |
+| Secondary text | `#6A6863` | `#BCB9B1` |
+| Divider | `#E4E2DC` | `#4A4842` |
+| Control boundary | `#807B72` | `#969187` |
+| Primary fill / on primary | `#292826` / `#FFFFFF` | `#F2F0EB` / `#242321` |
+| Error, success, warning | `#D4142A`, `#416451`, `#795B2E` | `#FF6472`, `#B8D0BF`, `#DCC7A2` |
 
-Dark partners use `--color-night-*`; existing `--color-dark`, `--color-dark-surface`, `--color-dark-ink`, `--color-dark-secondary` alias night counterparts. Preserve all 25 paired roles and token usage descriptions even without dark phone duplicates. Native dark support remains required.
+Text targets 4.5:1 (3:1 large); meaningful control boundaries 3:1. Color is never the only cue: selection also uses a checkmark, fill or weight. Success means an acknowledged completion, warning means risk needing review, red means destructive or failed.
 
-Primary labels use white on light accent, dark ink on dark accent. Primary content buttons are solid without blur/shadow; secondary actions are plain regular-weight action-text without fill/border/blur/shadow. Soft-blue Back/View outfit capsules retain flat accent-soft treatment. Menus/disabled controls stay neutral. Selection also has check/fill/weight/label. Success means acknowledged completion, warning means risk/unknown requiring reconciliation, destructive intent uses red. Native alerts keep system semantics without injected icons. [Feedback](docs/design/components.md#app-owned-semantic-feedback) owns app-message variants; explanations remain unboxed, related actionable lists use opaque surfaces.
+## Type, space, shape
 
-Text targets 4.5:1 (3:1 large), meaningful control boundaries 3:1; color is never the sole cue. Recorded solid ratios: primary 4.66:1 light/5.15:1 dark, action text on soft fill 5.58:1, supporting text >4.5:1, boundaries 3.58:1/4.27:1, status foregrounds >4.5:1 on matching grounds. White/danger-fill 4.71:1; error/soft 4.83:1. These do not certify translucent content. Paper alpha/edge/shadow tokens are approximations; runtime materials own optics and accessibility adaptation.
+System font with Dynamic Type. Root title 32 medium; section 22 medium; detail title 20 medium; body and action 17; supporting 15; metadata 13.
 
-## Typography
+Space scale 4, 8, 12, 16, 20, 24, 32, 40, 48. Screen inset 20. Related controls 8–12, groups 16–24. Photos 4 radius; fields 16; grouped surfaces 12; composer 28; pills for buttons and chips. Hit targets are at least 44 pt even when the visual is smaller. At accessibility sizes labels wrap, actions stack and grids become one column.
 
-Apple system font and semantic Dynamic Type; SF Pro in implementation, Helvetica Neue only for Paper preview, not a production dependency.
+## Components
 
-| Style | Base size / line, pt | Weight | Native role |
-| --- | --- | --- | --- |
-| Brand introduction | 36 / 40 | Regular | Scaled system text, landing only |
-| Root title | 32 / 38 | Medium | Large title |
-| Detail title | 20 / 26 | Medium | Navigation title |
-| Section | 22 / 28 | Medium | Title 2 |
-| Body / action | 17 / 24 | Regular / Medium | Body / headline |
-| Supporting | 15 / 21 | Regular | Subheadline |
-| Metadata | 13 / 18 | Regular | Footnote |
+Reuse these; a hand-built equivalent is a defect.
 
-Display tracking `-0.025em`; body system tracking; small wordmark medium with `0.10em`. Native tab labels use OS type. Accessibility text wraps labels, stacks action peers and collapses grids to one column; preserve useful images rather than shrinking the layout.
+| Need | Component |
+| --- | --- |
+| Primary action (50 pt, solid) / secondary (plain text) | `PrimaryAction`, `SecondaryAction`, in `ActionStack` and `ActionFooter` |
+| Confirm in a sheet toolbar | `ToolbarSaveAction`: native prominent capsule, charcoal fill |
+| Selectable pill (category, filter) | `AppChip` |
+| Compact tappable white control or round icon button | `glassControlSurface(shape)` |
+| Text input, picker with label and validation | `LabeledField`, `LabeledControl` |
+| Disclosure row, grouped rows | `DisclosureRow`, `SurfaceGroup` |
+| Photo source | Empty: direct Take photo and Photos buttons. With a photo: a compact ellipsis menu (`SharedPhotoSourceButton`) plus visible Crop and Cut out buttons. Never use a large card as a menu label: the system glass menu morphs from its anchor and clips. |
+| Pick one outfit / several pieces inline | `OutfitSelectionStrip`, `PieceSelectionStrip`, with `selectionIndicator` |
+| Theme cover collage | `ThemeCover` |
+| Empty, error, progress | `AppEmptyState`, `SemanticFeedback`, `OperationProgress` |
+| Confirmations and alerts | `appConfirmation`, `draftDiscardConfirmation`: one shared card, 20 pt padding, text aligned with buttons, no native `.alert` or `.confirmationDialog` |
 
-## Layout and shape
+**Glass.** Compact controls use native interactive regular glass on iOS 26+. Reduce Transparency, Increase Contrast and older systems fall back to a flat white surface with a divider hairline. No hand-drawn shadows. Rows, cards and fields stay flat and opaque; never put glass on glass or on ordinary content.
 
-Phone reference 390 × 844 pt with native status/safe areas. Screen inset 20 pt (brand 24). Space scale: 4, 8, 12, 16, 20, 24, 32, 40, 48. Related controls 8–12, groups 16–24, transitions 32–40.
+**Fields.** Opaque, 16 radius, 14 padding, persistent label, no border, blur or shadow; keep focus, invalid, disabled and Increase Contrast states. Labels omit Required and Optional.
 
-Paper navigation reference: 66-point bar, 16-point side/26-point bottom insets, indicator 8 points above bottom. Five equal slots, centered icons, explicit Today/Closet/Planner/Agent/Profile accessibility names and selected traits. Hit areas ≥44 × 44, nonoverlapping. Anchor chrome to viewport, not content height; keep tour actions above it and final content scroll-reachable. Native uses OS tab bar/safe areas with device, keyboard and accessibility adaptation, not those fixed coordinates.
+## Add and edit modal pattern
 
-Photography corners 4 pt; inputs 16 (multiline composer 28); grouped surfaces 12; contained compositions 12–16; sheets system corners. Pills for buttons/filters/native chrome; ordinary content has no shadow/outline. Choose separator or elevation by function, never a trailing separator after the last/only row.
+Every Add, Create, Plan and Record editor follows this structure.
 
-Primary content action: 50-point base height, 17-point medium label, 20-point horizontal padding. Secondary/cancel: plain regular action-text, ≥44 target. One action dominates; loading preserves label/width and prevents duplicate submission. Primary/secondary stacks have a dedicated 12-point gap independent of section spacing. Three-action tertiary alternatives use a plain 50-point safe-area footer, not a competing primary.
+1. **Hero first.** A live preview of what is being made tops the sheet: photo card, outfit canvas, theme cover or chosen-outfit preview. It uses the image ground with 16 radius, updates as choices change, and its empty state says what to do next.
+2. **Choose inline, never push.** Select owned content on the same screen with chips, selection strips or a resizable detent sheet (Build outfit: collapsed, peek, medium, large). A simple choice never pushes a chooser or nests a sheet in a push.
+3. **Photo sources are direct.** Empty state shows Take photo and Photos; a compact menu handles replace and remove. No popovers, no large menu anchors.
+4. **Compact fields,** name first, optional detail last (a More details row or sheet).
+5. **Toolbar confirm.** Close (x) leading, Save trailing. When Save is unavailable, one plain secondary line says what is missing (not red). A dirty close uses the shared discard confirmation.
+6. **Save and return.** Save closes the sheet and returns to the list with the new item in view and a success haptic. No receipt screen, and no save that opens another editor or pushes a detail. Related tasks (Style this, Add to theme) are offered where the item lives, not chained after a save.
 
-Opaque fields use 16 corners/14 padding without decorative border/blur/shadow; preserve focus/invalid/disabled/Increase Contrast. Compact filters are 32-point visuals with 6 vertical/12 horizontal padding, 14/20 labels, 6 inner gap. Segments have a 2-point inset, 32-point segments/36-point rail; only selected segment filled/medium. Visual compactness never shrinks ≥44 native targets; Dynamic Type expands. Selected square checkboxes use accent/white check without gray outline; unchecked uses control-border. [Components](docs/design/components.md) owns reusable rows/settings and detailed states.
-
-## Transparency · Native iOS
-
-Native-first: OS owns controls, material, presentation adaptation and dismissal; AQD owns content, hierarchy and semantic tint. Ordinary content stays opaque; use one justified functional glass shell, never extra glass on native glass or a painted current-OS replica. Reduced Transparency keeps usable opaque semantic surfaces.
-
-[Native iOS](docs/design/native-ios.md) owns deployment/build targets, API guards/fallbacks and icon-only-tab feasibility; [presentations](docs/design/native-presentations.md) owns exits, risk/confirmation and source restoration; [Liquid Glass](docs/design/liquid-glass.md) owns material choices. Native critical confirmations retain explicit Cancel/destructive roles; routine supported cancellation writes nothing. Exact target/impact, typed/auth review, dirty-draft protection and unknown-write reconciliation remain required. Source-kit inspection/import is not AQD runtime certification.
-
-## Apply the foundations
-
-Foundations is the reusable token/component library, not a product funnel. Full phones, feature menus, walkthroughs and accessibility examples belong to phase reference areas. Preserve canonical IDs when moving references. Tokens update live; structural clones require synchronization and rendered review under [procedure](docs/design/rules.md).
-
-Load only the affected [design branch](docs/design/README.md): native API work reads native-ios; materials read Liquid Glass; presentation/exits read native-presentations; motion reads motion policy/assignments; assets read provenance. Shared components own geometry/states/accessibility; feature contracts own behavior.
+Build outfit specifics: the canvas stays pinned and fills the space above the picker, ordering garments large (layers, tops, dresses, bottoms) with shoes and accessories in a smaller strip; the picker lists unselected pieces first; a new outfit's name defaults to "<Weekday> look".
 
 ## Imagery and copy
 
-Use authorized clothing photography and compositions of actual included pieces; preserve proportions/details, full-image Fit until explicitly reviewed crop. Community imagery is explicitly published. Missing media uses quiet category symbol/name. Reference photos/cutouts/names/counts/chats are illustrative, not user records or cleared production assets; [asset mapping](docs/references/assets.md) owns licensing/identity/replacement.
+Show full-source Fit photos and compositions of actual pieces; preserve proportions. Missing media shows a quiet category symbol and name. Task copy: Add piece, Build outfit, Review changes, Save outfit. Explain privacy at the affected choice. AI output stays a draft until a saved receipt.
 
-Task copy: Add piece, Build outfit, Review changes, Save outfit, Publish look. Explain privacy at the affected choice. AI output remains a draft until a persisted receipt. Human chat stays separate from Agent. Keep leading AI badges 8 points from task labels; icons follow [catalog](docs/design/icons.md).
+- **No dot separators, anywhere.** Never join metadata, statuses, counts or labels with " · " (middle dot) in UI text, Agent steps, receipts, summaries or accessibility labels. Split with spacing, a trailing-aligned value, separate lines or a comma, or shorten the label. A sample-data name prefix is data, not a separator.
+- **One date format.** Never print an ISO date (`2026-10-16`) or hand-format a date in a view. Use `LocalPlanDay.display(_:)` from Core: compact "Oct 16", standard "Fri, Oct 16" (rows and metadata), full "Friday, October 16" (headers and VoiceOver), relative "Today / Yesterday / Tomorrow". Ranges use `LocalPlanDay.displayRange` ("Oct 16 – 20"), moments in time use `Date.displayTimestamp()` ("Oct 16, 2:30 PM"). The year appears only when it is not the current year, and a day keeps the timezone it was recorded with.
 
-## Completion boundary
+## Accessibility and privacy guardrails
 
-Releases own phase scope/acceptance, features own behavior; [screen map](docs/design/screens.md) owns canonical route classification and [manifests](docs/design/paper-manifest.json) recorded locators, not runtime proof. Static review does not establish keyboard/accessibility, durability, performance or services. Every changed UI inventory gets [DQ acceptance](docs/design/quality-criteria.md); required implementation acceptance cannot be waived by calling it deferred.
+Semantic labels, traits and values on every control; keyboard-safe editing; light and dark; Reduce Motion replaces transitions with fades. No implicit wear, publication, body-use, AI or weather consent, and no private-photo upload. Weather-free private journeys work offline.
 
-Privacy/release guardrails remain inline: no implicit wear, publication, body-use/AI/weather consent or private-photo uploads; weather-free private journeys stay offline-complete. Numerical weather is blocked until Apple-required assets/legal placement pass; current hidden attribution row/details-only placement is unverified. Withhold numbers rather than treating Paper slots as certified branding. [Weather policy](docs/product/v1-release.md#optional-live-weather-contract) owns budgets/privacy/attribution gates; [weather UI](docs/design/weather-context.md) owns states and caller returns.
+## Detail screens and empty states
 
-## Today and action-field refinement · October7
+Piece, outfit and theme details share one structure: a hero (photo card, composition or theme cover), a status or info line, the primary action, then sections (pieces, themes, "In outfits") with thumbnails. Related records link to their own detail. Options live in one trailing More menu with Edit first and destructive actions last. Every empty list offers exactly one next action: Add a piece, Build an outfit, Create a theme, or Clear filters when filters hide content.
 
-[Today](docs/design/today.md) owns current customization; [standalone action fields](docs/design/components.md#today-stack-and-standalone-action-fields--current-october7) own reusable geometry. [Original refinement receipt](docs/delivery/archive/design-foundations-2026-10-07.md#today-and-action-field-refinement--october7) is historical provenance only.
+## Card anatomy
 
-### Compact controls and flat forms — October 6, 2026
-
-Current cross-cutting controls are above; [capture](docs/design/capture-photo.md) owns photo/validation behavior. [Original refinement](docs/delivery/archive/design-foundations-2026-10-07.md#compact-controls-and-flat-forms--october-6-2026) preserves detailed historical wording. Other repair/provenance bodies from this foundation are retained in the [dated snapshot](docs/delivery/archive/design-foundations-2026-10-07.md), not routine implementation instructions.
+Every Today card reads the same way, top to bottom: an optional eyebrow, one title, the content, at most one quiet action. The eyebrow is small, grey, uppercased (metadata size, semibold, 0.5 tracking) and appears only when it adds information: a range or month ("Oct 18 to 24"), a source ("Theme", "Weather"), a scope ("Next 7 days"). It never repeats the title, never shows a generic kind word over a card that has its own title, and is omitted when it has nothing to say. The title is the content's own name when it has one, otherwise the kind label, and is announced once. Content leads: photos and outfits are large with 16 radius; long text clamps to four lines and shows a quiet "Read more" only when it is cut off. The one action is a trailing text link or the card's single primary button, never a chevron row under every card. Spacing is 16 between header and content and 20 inside the card.

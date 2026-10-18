@@ -19,7 +19,7 @@ import SwiftData
     func value() throws -> LocalIdentityDraft {
         let value = try JSONDecoder().decode(LocalIdentityDraft.self, from: payload)
         guard value.id == id else { throw PieceStore.StoreError.invalidRecord }
-        _ = try value.result(); return value
+        try value.validatedForRetention(); return value
     }
 }
 @Model final class StoredIdentitySave {

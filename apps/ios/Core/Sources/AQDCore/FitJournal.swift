@@ -30,8 +30,8 @@ public struct FitMemory: Identifiable, Codable, Equatable, Sendable {
     public var outfit: FitOutfitSnapshot?
     public var note: String
     public var revision: Int
-    public init(ownerID: UUID) {
-        id = UUID(); self.ownerID = ownerID; day = LocalPlanDay(); photoRecipe = .fitOriginal; note = ""; revision = 1
+    public init(id: UUID = UUID(), ownerID: UUID) {
+        self.id = id; self.ownerID = ownerID; day = LocalPlanDay(); photoRecipe = .fitOriginal; note = ""; revision = 1
     }
     public func validated(requireContent: Bool = true) throws {
         _ = try day.date(); try photoRecipe.validated()
@@ -49,8 +49,9 @@ public struct FitDraft: Identifiable, Codable, Equatable, Sendable {
     public let operationID: UUID
     public let base: FitMemory?
     public var value: FitMemory
+    public var initialDay: LocalPlanDay?
     public init(ownerID: UUID, base: FitMemory? = nil) {
-        id = UUID(); operationID = UUID(); self.base = base; value = base ?? FitMemory(ownerID: ownerID)
+        id = UUID(); operationID = UUID(); self.base = base; value = base ?? FitMemory(ownerID: ownerID); initialDay = value.day
     }
     public func validated(requireContent: Bool = true) throws {
         try value.validated(requireContent: requireContent)
@@ -65,7 +66,7 @@ public struct FitDraft: Identifiable, Codable, Equatable, Sendable {
     }
     public var hasChanges: Bool {
         if let base { return base != value }
-        return value.photoID != nil || value.outfit != nil || !value.note.isEmpty || value.day != LocalPlanDay()
+        return value.photoID != nil || value.outfit != nil || !value.note.isEmpty || value.day != (initialDay ?? LocalPlanDay())
     }
 }
 

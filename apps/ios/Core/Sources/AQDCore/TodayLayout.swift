@@ -12,7 +12,8 @@ public enum TodayAction: String, CaseIterable, Codable, Sendable {
         case .openCloset: "Open Closet"
         }
     }
-    public static let defaults: [Self] = [.addPiece, .buildOutfit, .planner]
+    /// Four commands lay out as a clean two by two. Cards that saved their own actions keep them.
+    public static let defaults: [Self] = [.addPiece, .buildOutfit, .planner, .recordWear]
 }
 public enum TodayLayoutError: Error, Equatable {
     case invalidContent, invalidPeriod, selectionRequired, minimumOne, invalidOwner, staleRevision
@@ -79,7 +80,7 @@ public extension TodayWidgetInstance {
         var options = options
         let copied = options?.personal?.independentCopy()
         options?.personal = copied
-        return Self(kind: kind, options: options)
+        return Self(kind: kind, options: options, isVisible: isVisible)
     }
 }
 public struct TodayLayoutDraft: Identifiable, Codable, Equatable, Sendable {
@@ -104,7 +105,7 @@ public struct TodayLayoutDraft: Identifiable, Codable, Equatable, Sendable {
     public func validated(requireContent: Bool = false) throws {
         try base.validated(); try value.validated()
         guard base.ownerID == value.ownerID, base.revision == value.revision, base.revision < Int.max else { throw TodayLayoutError.invalidOwner }
-        for instance in value.instances { try instance.validatedContent(ownerID: base.ownerID, requireContent: requireContent) }
+        for instance in value.instances { try instance.validatedContent(ownerID: base.ownerID, requireContent: requireContent && instance.options != nil) }
         let personalIDs = value.instances.compactMap { $0.options?.personal?.id }
         guard Set(personalIDs).count == personalIDs.count else { throw TodayLayoutError.invalidContent }
         if let nested { try nested.validatedContent(ownerID: base.ownerID, requireContent: false) }

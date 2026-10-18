@@ -1,6 +1,0 @@
-Expected: Line 7 after rotation
-Visible editor OCR: Line 5 wardrobe note
-Line 6 wardrobe note
-Line 7 after rotation
-Viewport: (96.0, 78.0, 764.0, 64.0)
-App: (0.0, 0.0, 956.0, 440.0), screenshot: (956.0, 440.0), orientation: 2

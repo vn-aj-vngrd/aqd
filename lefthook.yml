@@ -2,6 +2,15 @@ pre-commit:
   commands:
     whitespace:
       run: git diff --cached --check
+    ios-layers:
+      glob: "apps/ios/**/*.swift"
+      run: node scripts/check-ios-layers.mjs
+    swiftlint:
+      glob: "apps/ios/**/*.swift"
+      run: command -v swiftlint >/dev/null && (cd apps/ios && swiftlint lint --quiet {staged_files}) || echo "swiftlint not installed; run brew install swiftlint"
+    swiftformat:
+      glob: "apps/ios/**/*.swift"
+      run: command -v swiftformat >/dev/null && swiftformat --lint --config apps/ios/.swiftformat {staged_files} || echo "swiftformat not installed; run brew install swiftformat"
     tooling:
       glob: "{scripts/**,package.json,pnpm-lock.yaml,lefthook.yml,.releaserc.json,.github/workflows/**}"
       run: pnpm check

@@ -1458,7 +1458,7 @@ final class NativeFlowTests: XCTestCase {
             row.tap()
         }
         let switches = settings.switches.matching(NSPredicate(format: "label == %@", title))
-        for _ in 0..<8 where switches.count == 0 { settings.swipeUp() }
+        for _ in 0..<8 where switches.count == 0 { settings.swipeUp() } // swiftlint:disable:this empty_count -- XCUIElementQuery has no isEmpty
         guard switches.count == 1, switches.firstMatch.isHittable else {
             XCTFail("Expected one readable public Settings switch: \(title), \(settings.debugDescription)")
             return nil

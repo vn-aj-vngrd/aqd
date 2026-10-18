@@ -1,2 +1,0 @@
-# S3 correction: rounded height boundary, restart, units, custom picker and saved Settings return.
-AQDUITests/BodyFlowTests/testHeightUnitsCustomUseCancelDoneAndSavedSettingsRelaunch

@@ -26,11 +26,14 @@ public struct TodayWidgetInstance: Identifiable, Codable, Equatable, Sendable {
     public let id: UUID
     public var kind: TodayWidgetKind
     public var options: TodayWidgetOptions?
+    public var isHidden: Bool?
+    public var isVisible: Bool { isHidden != true }
 
-    public init(id: UUID = UUID(), kind: TodayWidgetKind, options: TodayWidgetOptions? = nil) {
+    public init(id: UUID = UUID(), kind: TodayWidgetKind, options: TodayWidgetOptions? = nil, isVisible: Bool = true) {
         self.id = id
         self.kind = kind
         self.options = options
+        isHidden = isVisible ? nil : true
     }
 }
 
@@ -48,7 +51,7 @@ public struct TodayConfiguration: Codable, Equatable, Sendable {
         self.ownerID = ownerID
         schemaVersion = 1
         revision = 1
-        instances = [.todayLook, .weekInWear, .closetInUse].map { TodayWidgetInstance(kind: $0) }
+        instances = TodayWidgetKind.allCases.map { TodayWidgetInstance(kind: $0) }
     }
 
     public func validated() throws {
