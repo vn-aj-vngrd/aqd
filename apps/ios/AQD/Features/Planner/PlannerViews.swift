@@ -166,33 +166,32 @@ struct LocalPlannerView: View {
                 SecondaryAction(title: "Show all entries", compact: true) { query.status = .all }
             }.frame(maxWidth: .infinity)
         } else if entries.isEmpty && state.planError == nil {
-            VStack(spacing: AppSpacing.medium) {
-                AppEmptyState("Nothing planned", systemImage: "calendar",
-                    description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear."), fillsAvailableSpace: false)
-                PrimaryAction(title: "Plan this day", compact: true) { state.openPlan(day: state.plannerDay) }
-                    .frame(maxWidth: 240).accessibilityIdentifier("planner.emptyPlan")
-            }.frame(maxWidth: .infinity)
+            AppEmptyState("Nothing planned", systemImage: "calendar",
+                description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear."), fillsAvailableSpace: false)
+                .frame(maxWidth: .infinity).padding(.vertical, AppSpacing.section)
         }
         ForEach(entries) { entry in PlanDayCard(entry: entry, outfitRevisions: outfitRevisions) }
     }
 
     @ViewBuilder private var plansSection: some View {
-        let groups = groups
-        if !groups.inRange.isEmpty { planGroup(state.plannerMode == .week ? "This week" : "This month", groups.inRange) }
-        if !groups.upcoming.isEmpty { planGroup("Upcoming", groups.upcoming) }
-        if filteredPlans.isEmpty && !state.planDefinitions.isEmpty && query.isFiltering {
-            VStack(spacing: AppSpacing.small) {
-                AppEmptyState("No plans match", systemImage: "line.3.horizontal.decrease",
-                    description: Text("The plan filter hides every plan."), fillsAvailableSpace: false)
-                SecondaryAction(title: "Clear filters", compact: true) { query = PlannerQuery(text: query.text) }
-            }.frame(maxWidth: .infinity)
-        }
-        if !groups.past.isEmpty {
-            DisclosureGroup(isExpanded: $showPast) {
-                VStack(spacing: 0) { ForEach(groups.past) { planRow($0) } }
-            } label: { PlannerMetaLine(leading: "Past", trailing: "\(groups.past.count)", leadingFont: AppTypography.section) }
-                .tint(AppTheme.ink).foregroundStyle(AppTheme.ink)
-        }
+        VStack(alignment: .leading, spacing: AppSpacing.section) {
+            let groups = groups
+            if !groups.inRange.isEmpty { planGroup(state.plannerMode == .week ? "This week" : "This month", groups.inRange) }
+            if !groups.upcoming.isEmpty { planGroup("Upcoming", groups.upcoming) }
+            if filteredPlans.isEmpty && !state.planDefinitions.isEmpty && query.isFiltering {
+                VStack(spacing: AppSpacing.small) {
+                    AppEmptyState("No plans match", systemImage: "line.3.horizontal.decrease",
+                        description: Text("The plan filter hides every plan."), fillsAvailableSpace: false)
+                    SecondaryAction(title: "Clear filters", compact: true) { query = PlannerQuery(text: query.text) }
+                }.frame(maxWidth: .infinity)
+            }
+            if !groups.past.isEmpty {
+                DisclosureGroup(isExpanded: $showPast) {
+                    VStack(spacing: 0) { ForEach(groups.past) { planRow($0) } }
+                } label: { PlannerMetaLine(leading: "Past", trailing: "\(groups.past.count)", leadingFont: AppTypography.section) }
+                    .tint(AppTheme.ink).foregroundStyle(AppTheme.ink)
+            }
+        }.padding(.top, AppSpacing.large)
     }
 
     private func planGroup(_ title: String, _ plans: [PlanDefinition]) -> some View {
