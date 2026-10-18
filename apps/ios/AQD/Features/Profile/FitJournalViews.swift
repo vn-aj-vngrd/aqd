@@ -77,6 +77,17 @@ struct FitJournalGrid: View {
         FitJournalQuery(content: tab == .photos ? .photos : .all, sort: query.sort).apply(to: state.fitMemories)
     }
     private var sections: [FitMonthSection] { FitJournalPresentation.sections(memories) }
+    /// Outfits grouped by the month they were last updated, in the same order the fits use.
+    private var outfitSections: [(title: String, outfits: [Outfit])] {
+        let ordered = state.outfits.sorted { query.sort == .newest ? $0.updatedAt > $1.updatedAt : $0.updatedAt < $1.updatedAt }
+        var result: [(title: String, outfits: [Outfit])] = []
+        for outfit in ordered {
+            let title = outfit.updatedAt.formatted(.dateTime.month(.wide).year())
+            if let last = result.indices.last, result[last].title == title { result[last].outfits.append(outfit) }
+            else { result.append((title, [outfit])) }
+        }
+        return result
+    }
     private func monthTitle(_ section: FitMonthSection) -> String {
         var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(identifier: "UTC") ?? .current
         guard let date = calendar.date(from: DateComponents(year: section.year, month: section.month, day: 1)) else { return section.id }
@@ -100,14 +111,20 @@ struct FitJournalGrid: View {
                     AppEmptyState("No outfits yet", systemImage: "hanger", description: Text("Use Add outfit (+) above to build a look from your pieces."), fillsAvailableSpace: false)
                         .frame(maxWidth: .infinity).padding(AppSpacing.screen)
                 } else {
-                    LazyVGrid(columns: columns, spacing: AppSpacing.small) {
-                        ForEach(state.outfits) { outfit in OutfitCollectionCard(outfit: outfit, gallery: true) }
-                    }.padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.medium)
+                    orderRow(count: state.outfits.count, singular: "outfit", plural: "outfits")
+                    ForEach(outfitSections, id: \.title) { section in
+                        Text(section.title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.medium).padding(.bottom, AppSpacing.small)
+                            .accessibilityAddTraits(.isHeader)
+                        LazyVGrid(columns: columns, spacing: AppSpacing.small) {
+                            ForEach(section.outfits) { outfit in OutfitCollectionCard(outfit: outfit, gallery: true) }
+                        }.padding(.horizontal, AppSpacing.screen)
+                    }
                 }
             } else if memories.isEmpty {
                 emptyState.padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.section)
             } else {
-                orderRow
+                orderRow(count: memories.count, singular: "fit", plural: "fits")
                 ForEach(sections) { section in
                     Text(monthTitle(section)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                         .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.medium).padding(.bottom, AppSpacing.small)
@@ -137,9 +154,9 @@ struct FitJournalGrid: View {
         }
     }
     /// Count and order on one quiet line, like Closet's collection summary.
-    private var orderRow: some View {
+    private func orderRow(count: Int, singular: String, plural: String) -> some View {
         HStack {
-            Text("\(memories.count) \(memories.count == 1 ? "fit" : "fits")").font(AppTypography.fieldLabel)
+            Text("\(count) \(count == 1 ? singular : plural)").font(AppTypography.fieldLabel)
             Spacer(minLength: 12)
             Menu {
                 Picker("Order", selection: $query.sort) {
@@ -150,7 +167,7 @@ struct FitJournalGrid: View {
                     Text(query.sort.rawValue)
                     Image(systemName: "chevron.up.chevron.down").font(AppTypography.metadata).accessibilityHidden(true)
                 }.font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).frame(minHeight: 44)
-            }.tint(AppTheme.ink).accessibilityLabel("Order fits").accessibilityValue(query.sort.rawValue)
+            }.tint(AppTheme.ink).accessibilityLabel("Order \(plural)").accessibilityValue(query.sort.rawValue)
                 .accessibilityIdentifier("profile.fits.order")
         }.padding(.horizontal, AppSpacing.screen)
     }
