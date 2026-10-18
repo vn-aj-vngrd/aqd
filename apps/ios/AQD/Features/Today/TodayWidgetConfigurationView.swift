@@ -3,7 +3,9 @@ import SwiftUI
 
 struct TodayWidgetConfigurationView: View {
     private var confirmation: some View {
-        ToolbarSaveAction(title: "Done") { model.applyNested() }.disabled(!model.canApply)
+        // Editing one card saves straight away, so it says Save and waits for a real change; inside Customize Today it still says Done.
+        ToolbarSaveAction(title: model.directEdit ? "Save" : "Done", isPending: model.directEdit && model.pending) { model.applyNested() }
+            .disabled(!model.canApply || (model.directEdit && model.draft.nested == model.draft.nestedBase))
     }
 
     @Bindable var model: TodayEditorModel
@@ -38,7 +40,7 @@ struct TodayWidgetConfigurationView: View {
         }.tint(AppTheme.ink).interactiveDismissDisabled()
         .sheet(item: $themeTask, onDismiss: { model.state.reloadThemes() }) { task in
             ThemeEditorView(model: task, didSave: { theme in model.nested { $0.options?.pinnedID = theme.id }; model.state.reloadThemes() })
-        }.draftDiscardConfirmation(isPresented: $discard, title: "Discard widget edits?", message: "Your previous Today draft is retained.") { model.cancelNested(); discard = false }
+        }.draftDiscardConfirmation(isPresented: $discard, title: model.directEdit ? "Discard changes?" : "Discard widget edits?", message: model.directEdit ? "Your saved card stays as it was." : "Your previous Today draft is retained.") { model.cancelNested(); discard = false }
     }
     @ViewBuilder private func configuration(_ instance: TodayWidgetInstance) -> some View {
         switch instance.kind {
