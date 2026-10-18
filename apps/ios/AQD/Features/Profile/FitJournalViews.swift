@@ -64,9 +64,6 @@ struct FitMemoryArtwork: View {
 
 enum FitJournalTab: String, CaseIterable {
     case all = "All fits", photos = "Photos", outfits = "Outfits"
-    var symbol: String {
-        switch self { case .all: "square.grid.3x3.fill"; case .photos: "photo"; case .outfits: "hanger" }
-    }
 }
 
 struct FitJournalGrid: View {
@@ -157,21 +154,11 @@ struct FitJournalGrid: View {
                 .accessibilityIdentifier("profile.fits.order")
         }.padding(.horizontal, AppSpacing.screen)
     }
+    /// The same glass segmented control Closet uses for its collections.
     private var tabs: some View {
-        HStack(alignment: .bottom, spacing: 0) {
-            ForEach(FitJournalTab.allCases, id: \.self) { item in
-                Button { tab = item } label: {
-                    VStack(spacing: 0) {
-                        Image(systemName: item.symbol).font(.system(size: 22, weight: .regular))
-                            .symbolRenderingMode(.monochrome)
-                            .frame(maxWidth: .infinity, minHeight: 48)
-                        Rectangle().fill(tab == item ? AppTheme.ink : .clear).frame(height: 2)
-                    }.foregroundStyle(tab == item ? AppTheme.ink : AppTheme.controlIcon).contentShape(Rectangle())
-                }.buttonStyle(.plain).accessibilityLabel(item.rawValue)
-                    .accessibilityAddTraits(tab == item ? .isSelected : [])
-                    .accessibilityIdentifier("profile.fits.tab.\(item == .all ? "all" : item == .photos ? "photos" : "outfits")")
-            }
-        }.padding(.bottom, 2)
+        AppSegmentedControl(selection: Binding(get: { tab.rawValue }, set: { value in tab = FitJournalTab(rawValue: value) ?? .all }),
+                            options: FitJournalTab.allCases.map(\.rawValue), accessibilityTitle: "Fit journal view", identifierPrefix: "profile.fits.tab")
+            .padding(.horizontal, AppSpacing.screen)
     }
     private var emptyState: some View {
         AppEmptyState(tab == .all ? "A little space for your style" : "No fit photos yet",
