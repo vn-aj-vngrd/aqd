@@ -4,6 +4,13 @@ import Testing
 
 struct AgentIntentTests {
     static let table: [(String, AgentIntent)] = [
+        // phrasing found by the held-out check
+        ("What blue things do I own?", .show), ("Which pieces are in the laundry?", .show), ("Is there anything made of leather in my closet?", .find), ("Where's my camel cardigan?", .find),
+        ("Which of my pieces get worn the least?", .stats), ("What have I been wearing most lately?", .stats), ("What should I put on tomorrow?", .whatToWear),
+        ("Help me dress for a job interview", .suggestOutfit), ("Put my Tan strappy sandals in the laundry", .editPiece), ("Put my bag in the laundry", .editPiece), ("Help me with my taxes", .outOfScope),
+        ("Is my sun hat still in my closet?", .find), ("What haven't I worn at all this month?", .stats), ("What am I wearing tomorrow?", .whatToWear), ("Pick a look for a beach day", .suggestOutfit),
+        ("Going to Palawan for a week, help me choose outfits", .planTrip), ("Outfits for the next 4 days please", .planDays), ("Plan the coming week for me", .planDays),
+        ("Change the name of Date night to Evening out", .relabel), ("Flag my Burgundy block heels as unavailable", .editPiece), ("I put on the Sunday market look today", .recordWear),
         // chat
         ("Hi", .chat), ("hello there", .chat), ("Good morning", .chat), ("Thanks!", .chat), ("What can you help me with?", .chat), ("What can you do?", .chat), ("who are you", .chat), ("ok", .chat), ("Hello, my closet is new.", .chat),
         // show

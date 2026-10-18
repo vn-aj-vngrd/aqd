@@ -45,6 +45,14 @@ struct AgentCommandTests {
         #expect(AgentCommand.parse("Plan my outfits for the next 30 days") == nil)
         #expect(AgentCommand.parse("Plan outfits for Monday to Wednesday") == nil)
     }
+    @Test func looserPhrasingOfTheSameCommands() {
+        #expect(AgentCommand.parse("Change the name of Date night to Evening out") == .rename(target: "Date night", to: "Evening out"))
+        #expect(AgentCommand.parse("Flag my Burgundy block heels as unavailable") == .setAvailability(target: "Burgundy block heels", value: "unavailable"))
+        #expect(AgentCommand.parse("Move my Black fitted tank to the laundry pile") == .setAvailability(target: "Black fitted tank", value: "laundry"))
+        #expect(AgentCommand.parse("I put on the Sunday market look today") == .recordWear(subjects: ["Sunday market look"], dayOffset: 0))
+        #expect(AgentCommand.parse("Outfits for the next 4 days please") == .planDays(count: 4))
+        #expect(AgentCommand.parse("Plan the coming week for me") == .planDays(count: 7))
+    }
     @Test func requestsThatAreNotCompleteCommandsFallThroughToTheModel() {
         for prompt in ["Show my black pieces", "What should I wear today?", "Suggest an outfit for brunch", "Plan a vacation", "Mark it", "hello", "Plan a trip for me"] {
             #expect(AgentCommand.parse(prompt) == nil, "\(prompt)")
