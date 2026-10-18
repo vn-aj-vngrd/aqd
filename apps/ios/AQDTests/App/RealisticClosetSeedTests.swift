@@ -23,4 +23,15 @@ import Testing
         _ = try await RealisticClosetSeed.run(store: store, outputDirectory: output)
         #expect(try counts() == [specCount, 26, 12, 13, 10, 5])
     }
+
+    @Test func agentContextNamesEveryPieceOutfitAndThemeWithinTheRequestBudget() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let store = try PieceStore(directory: root.appendingPathComponent("store"))
+        _ = try await RealisticClosetSeed.run(store: store, outputDirectory: root.appendingPathComponent("receipts"))
+        let result = try AgentKnowledgeSource.build(store: store, preferences: AgentPreferences(), query: "What should I wear today?", currentConversationID: UUID(),
+                                                    weather: nil, selection: nil, maximumCharacters: 5200, maximumRecords: 6)
+        #expect(result.retrieval.text.count <= 5200)
+        #expect(result.catalog.contains("51 pieces") && result.catalog.contains("26 outfits") && result.catalog.contains("12 themes"))
+        for name in ["Classic white tee", "Straw tote bag", "Coral bikini set", "Boracay trip", "Wedding guest"] { #expect(result.retrieval.text.contains(name)) }
+    }
 }

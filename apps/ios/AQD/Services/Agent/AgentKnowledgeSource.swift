@@ -7,6 +7,8 @@ import Foundation
         let retrieval: AgentRetrievalResult
         let unavailable: [AgentDataSource]
         let sources: [AgentDataSource]
+        /// What the whole-closet index covers, such as "51 pieces, 26 outfits, 12 themes".
+        var catalog = ""
     }
     static func build(store: PieceStore, preferences: AgentPreferences, query: String, currentConversationID: UUID,
                       weather: WeatherClient?, selection: WeatherSelection?, maximumCharacters: Int, maximumRecords: Int, now: Date = Date()) throws -> Result {
@@ -150,8 +152,33 @@ import Foundation
         }
         unavailable = AgentDataSource.allCases.filter { unavailable.contains($0) }
         if !unavailable.isEmpty { facts.append("Unavailable sources, not zero records: " + unavailable.map(\.rawValue).joined(separator: ", ")) }
+        // A compact index of the whole closet (names only, grouped) so the model knows everything that exists without the full records.
+        // It takes whatever room the other facts and a few detailed records leave inside the request budget.
+        var catalogParts: [String] = []
+        let reservedForRecords = 1000
+        let room = max(0, maximumCharacters - facts.joined().count - facts.count * 4 - 160 - reservedForRecords)
+        func capped(_ text: String, _ limit: Int) -> String { text.count <= limit ? text : String(text.prefix(max(0, limit - 1))) + "…" }
+        if room > 200 {
+            if preferences.allows(.pieces), !unavailable.contains(.pieces) {
+                let active = pieces.filter { !$0.isArchived }
+                let groups = PieceCategory.allCases.compactMap { category -> String? in
+                    let names = active.filter { $0.category == category }.map { $0.displayName + ($0.availability == .available ? "" : " (\($0.availability.rawValue))") }
+                    return names.isEmpty ? nil : "\(category.rawValue): " + names.joined(separator: ", ")
+                }
+                if !groups.isEmpty { facts.append(capped("All pieces. " + groups.joined(separator: "; "), Int(Double(room) * 0.58))); catalogParts.append("\(active.count) pieces") }
+            }
+            if preferences.allows(.outfits), !unavailable.contains(.outfits), !outfits.isEmpty {
+                facts.append(capped("All outfits: " + outfits.map(\.displayName).joined(separator: ", "), Int(Double(room) * 0.27))); catalogParts.append("\(outfits.count) outfits")
+            }
+            if preferences.allows(.themes), !unavailable.contains(.themes), !themes.isEmpty {
+                facts.append(capped("All themes: " + themes.map(\.displayName).joined(separator: ", "), Int(Double(room) * 0.10))); catalogParts.append("\(themes.count) themes")
+            }
+            if preferences.allows(.planner), !unavailable.contains(.planner), !plans.isEmpty {
+                facts.append(capped("Plans: " + plans.map { "\($0.name) \($0.start.key) to \($0.end.key)" }.joined(separator: ", "), Int(Double(room) * 0.05))); catalogParts.append("\(plans.count) plans")
+            }
+        }
         let result = try AgentRetrieval.select(query: query, records: records, facts: facts, maximumCharacters: maximumCharacters, maximumRecords: maximumRecords)
         used += result.sources
-        return Result(retrieval: result, unavailable: unavailable, sources: AgentDataSource.allCases.filter { used.contains($0) })
+        return Result(retrieval: result, unavailable: unavailable, sources: AgentDataSource.allCases.filter { used.contains($0) }, catalog: catalogParts.joined(separator: ", "))
     }
 }
