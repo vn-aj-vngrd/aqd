@@ -162,9 +162,9 @@ import AQDCore
 
     /// A reply that asks the owner questions while they are planning has nothing to show yet.
     private func isClarifyingReply(index i: Int) -> Bool {
-        guard conversation.messages[i].source.contains("?"),
-              let prompt = conversation.messages[..<i].last(where: { $0.role == .user })?.source.lowercased() else { return false }
-        return ["plan", "trip", "vacation", "travel", "holiday", "next month", "next week", "pack"].contains { prompt.contains($0) }
+        let text = conversation.messages[i].source.trimmingCharacters(in: .whitespacesAndNewlines)
+        let questions = text.filter { $0 == "?" }.count
+        return questions >= 2 || (questions == 1 && text.count < 240 && text.hasSuffix("?"))
     }
 
     /// Pieces and outfits the reply names are shown as cards, so a suggestion never arrives as text alone.
