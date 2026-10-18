@@ -16,6 +16,7 @@ struct AgentMessageRow: View {
     let toggleRead: () -> Void
     let report: () -> Void
     var saveLook: (([UUID]) -> Void)?
+    var iterate: ((String) -> Void)?
     @State private var copied = false
 
     var body: some View {
@@ -43,7 +44,7 @@ struct AgentMessageRow: View {
     private var assistantRow: some View {
         VStack(alignment: .leading, spacing: AppSpacing.medium) {
             AgentActivityView(message: message, title: "", animates: message.status != .stopping)
-            AgentResultsView(steps: message.toolSteps ?? [], saveLook: saveLook)
+            AgentResultsView(steps: message.toolSteps ?? [], saveLook: saveLook, iterate: iterate)
             if hasText { AgentMarkdownBody(source: AgentMarkdownPolicy.conversationalText(message.source)) }
             if message.isActive {
                 EmptyView()

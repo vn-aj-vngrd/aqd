@@ -160,13 +160,20 @@ import AQDCore
         }
     }
 
+    /// A reply that asks the owner questions while they are planning has nothing to show yet.
+    private func isClarifyingReply(index i: Int) -> Bool {
+        guard conversation.messages[i].source.contains("?"),
+              let prompt = conversation.messages[..<i].last(where: { $0.role == .user })?.source.lowercased() else { return false }
+        return ["plan", "trip", "vacation", "travel", "holiday", "next month", "next week", "pack"].contains { prompt.contains($0) }
+    }
+
     /// Pieces and outfits the reply names are shown as cards, so a suggestion never arrives as text alone.
     func attachMentionedRecords(attemptID: UUID) {
         guard let i = conversation.messages.lastIndex(where: { $0.attemptID == attemptID && $0.role == .assistant }),
               !(conversation.messages[i].toolSteps ?? []).contains(where: { !($0.results ?? []).isEmpty }),
               let preferences = try? store.localSettings().agentPreferences ?? AgentPreferences() else { return }
         let text = conversation.messages[i].source.lowercased()
-        guard !text.isEmpty else { return }
+        guard !text.isEmpty, !isClarifyingReply(index: i) else { return }
         let colors: Set<String> = ["black", "white", "blue", "navy", "red", "green", "olive", "yellow", "orange", "pink", "purple", "brown", "tan", "beige", "cream", "ivory", "grey", "gray", "maroon", "burgundy", "khaki", "denim", "gold", "silver"]
         /// Whole-name match on word boundaries. A colour word right before the name means a different piece ("blue cotton shirt" is not "Cotton shirt" in maroon).
         func position(_ name: String, color: String = "") -> String.Index? {
@@ -206,6 +213,7 @@ import AQDCore
     func attachIntentVisuals(attemptID: UUID) {
         guard let i = conversation.messages.lastIndex(where: { $0.attemptID == attemptID && $0.role == .assistant }),
               !(conversation.messages[i].toolSteps ?? []).contains(where: { !($0.results ?? []).isEmpty }),
+              !isClarifyingReply(index: i),
               let prompt = conversation.messages[..<i].last(where: { $0.role == .user })?.source.lowercased(), !prompt.isEmpty,
               let preferences = try? store.localSettings().agentPreferences ?? AgentPreferences() else { return }
         func mentions(_ words: [String]) -> Bool { words.contains { prompt.contains($0) } }

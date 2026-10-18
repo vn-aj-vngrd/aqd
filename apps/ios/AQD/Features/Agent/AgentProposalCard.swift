@@ -8,6 +8,7 @@ struct AgentProposalCard: View {
     var pieces: [WardrobePiece] = []
     let review: () -> Void
     let dismiss: () -> Void
+    var tryAnother: (() -> Void)?
 
     private var detail: String {
         switch proposal.action {
@@ -37,17 +38,21 @@ struct AgentProposalCard: View {
             if case .plan(let draft) = proposal.action { planGrid(draft) }
             Text(proposal.status == .executing ? "Check save result" : "Not saved yet. Review before it changes anything.")
                 .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-            HStack(spacing: AppSpacing.small) {
-                Button(action: review) {
-                    Text(proposal.status == .executing ? "Check result" : "Review").frame(minHeight: AppControlMetrics.minimumTarget).padding(.horizontal, AppSpacing.large)
-                        .foregroundStyle(AppTheme.onPrimary).background(AppTheme.primaryFill, in: Capsule())
-                }.buttonStyle(.plain)
-                if proposal.status == .proposed {
-                    Button(action: dismiss) {
-                        Text("Dismiss").frame(minHeight: AppControlMetrics.minimumTarget).padding(.horizontal, AppSpacing.large).contentShape(Rectangle())
-                    }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).disabled(locked)
+            ScrollView(.horizontal) {
+                HStack(spacing: AppSpacing.small) {
+                    Button(action: review) {
+                        Label(proposal.status == .executing ? "Check result" : "Review and save", systemImage: "checkmark.circle")
+                            .font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.onPrimary).padding(.horizontal, AppSpacing.medium)
+                            .frame(minHeight: 32).background(AppTheme.primaryFill, in: Capsule()).frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+                    }.buttonStyle(.plain)
+                    if proposal.status == .proposed {
+                        if let tryAnother {
+                            Button(action: tryAnother) { Label("Try another", systemImage: "arrow.triangle.2.circlepath").compactControl() }.buttonStyle(.plain).disabled(locked)
+                        }
+                        Button(action: dismiss) { Label("Dismiss", systemImage: "xmark").compactControl() }.buttonStyle(.plain).disabled(locked)
+                    }
                 }
-            }
+            }.scrollIndicators(.hidden)
         }.padding(AppSpacing.medium).frame(maxWidth: .infinity, alignment: .leading)
             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
             .accessibilityElement(children: .contain)

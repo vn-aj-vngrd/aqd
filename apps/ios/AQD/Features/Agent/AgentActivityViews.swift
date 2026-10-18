@@ -69,6 +69,7 @@ struct AgentStepRow: View {
 struct AgentResultsView: View {
     let steps: [AgentToolStep]
     var saveLook: (([UUID]) -> Void)?
+    var iterate: ((String) -> Void)?
     @Environment(AppState.self) private var state
     @State private var previewing: AgentResultItem?
 
@@ -82,7 +83,7 @@ struct AgentResultsView: View {
                 }
             } else if step.tool == "mentioned", pieces.count >= 2 {
                 AgentLookPreview(pieces: pieces, others: (step.results ?? []).filter { $0.kind != .piece },
-                                 open: { previewing = $0 }, save: saveLook.map { save in { save(pieces.map(\.id)) } })
+                                 open: { previewing = $0 }, save: saveLook.map { save in { save(pieces.map(\.id)) } }, iterate: iterate)
             } else {
             VStack(alignment: .leading, spacing: AppSpacing.small) {
                 Text(step.summary).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
@@ -161,6 +162,7 @@ struct AgentLookPreview: View {
     let others: [AgentResultItem]
     let open: (AgentResultItem) -> Void
     let save: (() -> Void)?
+    var iterate: ((String) -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.medium) {
@@ -170,9 +172,7 @@ struct AgentLookPreview: View {
                 Text("Suggested look").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                 Text(pieces.map(\.title).joined(separator: " + ")).font(AppTypography.body).foregroundStyle(AppTheme.ink).fixedSize(horizontal: false, vertical: true)
             }
-            if let save {
-                Button(action: save) { Label("Save as outfit", systemImage: "plus").compactControl() }.buttonStyle(.plain)
-            }
+            AgentLookActions(save: save, iterate: iterate)
             if !others.isEmpty {
                 ScrollView(.horizontal) { LazyHStack(spacing: AppSpacing.small) { ForEach(others) { item in Button { open(item) } label: { AgentResultCard(item: item) }.buttonStyle(.plain) } } }.scrollIndicators(.hidden)
             }
@@ -193,5 +193,26 @@ struct AgentOutfitCard: View {
                 if !item.subtitle.isEmpty { Text(item.subtitle).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
             }
         }.frame(maxWidth: .infinity, alignment: .leading).accessibilityElement(children: .combine).accessibilityHint("Opens a larger preview")
+    }
+}
+
+/// What an owner can do with a suggestion: keep it, ask for another, or steer it. Nothing is saved until they choose to.
+struct AgentLookActions: View {
+    let save: (() -> Void)?
+    let iterate: ((String) -> Void)?
+    private let refinements = ["Make it dressier", "Make it more casual", "Swap the shoes", "Add a layer", "Use a different top"]
+
+    var body: some View {
+        ScrollView(.horizontal) {
+            HStack(spacing: AppSpacing.small) {
+                if let save { Button(action: save) { Label("Save outfit", systemImage: "plus.circle").compactControl() }.buttonStyle(.plain) }
+                if let iterate {
+                    Button { iterate("Show me a different option") } label: { Label("Try another", systemImage: "arrow.triangle.2.circlepath").compactControl() }.buttonStyle(.plain)
+                    Menu {
+                        ForEach(refinements, id: \.self) { text in AccessoryButton(text, systemImage: "slider.horizontal.3") { iterate(text) } }
+                    } label: { Label("Adjust", systemImage: "slider.horizontal.3").compactControl() }
+                }
+            }
+        }.scrollIndicators(.hidden)
     }
 }

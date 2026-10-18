@@ -144,12 +144,7 @@ struct AgentConversationView: View {
                     chatScrollPhase = phase
                     if phase == .interacting { pinnedTurn = nil }
                 }
-                .overlay(alignment: .bottomTrailing) { if !followsLatest { Button {
-                    pinnedTurn = nil; followsLatest = true; proxy.scrollTo("latest", anchor: .bottom)
-                } label: {
-                    Image(systemName: "arrow.down").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
-                        .background(AppTheme.surface, in: Circle())
-                }.accessibilityLabel("Jump to latest").padding(AppSpacing.large) } }
+
         }
         }
             }
@@ -357,9 +352,11 @@ struct AgentConversationView: View {
                             rating: reaction(message)?.rating, reading: readAloud.messageID == message.id, canRate: !model.active && !model.hasPendingOperation,
                             retry: { readAloud.stop(); model.send(retrying: message.id) }, showDetails: { readAloud.stop(); details = message },
                             rate: { rate(message, rating: $0) }, toggleRead: { readAloud.toggle(message) }, report: { editFeedback(message, report: true) },
-                            saveLook: model.canGenerate ? { saveLook($0, message: message) } : nil)
+                            saveLook: model.canGenerate ? { saveLook($0, message: message) } : nil,
+                            iterate: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion($0) } : nil)
             ForEach(model.conversation.proposals(for: message)) { proposal in
-                AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) })
+                AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) },
+                                 tryAnother: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion("Show me a different option") } : nil)
             }
         }
     }
