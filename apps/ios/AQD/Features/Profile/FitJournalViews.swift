@@ -19,7 +19,7 @@ struct FitMemoryArtwork: View {
                         Image(uiImage: image).resizable().scaledToFit().accessibilityLabel("Private fit photo")
                     } else { unavailable }
                 } else if let snapshot = memory.outfit {
-                    OutfitComposition(pieceIDs: snapshot.pieces.map(\.id), pieceHeight: 160)
+                    OutfitComposition(pieceIDs: snapshot.pieces.map(\.id), pieceHeight: 110)
                 } else { Text("No fit content") }
             }.frame(maxWidth: .infinity).background(AppTheme.surface)
         }
@@ -353,7 +353,8 @@ struct FitMemoryDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 if let memory {
-                    FitMemoryArtwork(memory: memory).frame(minHeight: 240, maxHeight: 360)
+                    FitMemoryArtwork(memory: memory).frame(minHeight: memory.photoID == nil ? 0 : 240, maxHeight: memory.photoID == nil ? .infinity : 360)
+                        .clipShape(RoundedRectangle(cornerRadius: AppRadius.card))
                     VStack(alignment: .leading, spacing: 12) {
                         Text(memory.day.display(.full)).font(AppTypography.detailTitle)
                         if !memory.note.isEmpty { Text(memory.displayNote).font(AppTypography.body) }
