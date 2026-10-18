@@ -73,23 +73,36 @@ struct AgentResultsView: View {
     @Environment(AppState.self) private var state
     @State private var previewing: AgentResultItem?
 
+    /// Results whose records were since deleted or replaced (a reseeded closet, a removed piece) are dropped, never drawn as empty boxes.
+    private func current(_ step: AgentToolStep) -> [AgentResultItem] {
+        (step.results ?? []).filter { item in
+            switch item.kind {
+            case .piece: state.ownedPieces.contains { $0.id == item.id }
+            case .outfit: state.outfits.contains { $0.id == item.id }
+            case .theme: state.themes.contains { $0.id == item.id }
+            case .plan: true
+            }
+        }
+    }
+
     var body: some View {
-        ForEach(steps.filter { !($0.results ?? []).isEmpty }) { step in
-            let pieces = (step.results ?? []).filter { $0.kind == .piece }
-            let outfits = (step.results ?? []).filter { $0.kind == .outfit && !$0.pieceIDs.isEmpty }
+        ForEach(steps.filter { !current($0).isEmpty }) { step in
+            let results = current(step)
+            let pieces = results.filter { $0.kind == .piece }
+            let outfits = results.filter { $0.kind == .outfit && !$0.pieceIDs.isEmpty }
             if !outfits.isEmpty {
                 VStack(alignment: .leading, spacing: AppSpacing.medium) {
                     ForEach(outfits) { outfit in Button { previewing = outfit } label: { AgentOutfitCard(item: outfit) }.buttonStyle(.plain) }
                 }
             } else if step.tool == "mentioned", pieces.count >= 2 {
-                AgentLookPreview(pieces: pieces, others: (step.results ?? []).filter { $0.kind != .piece },
+                AgentLookPreview(pieces: pieces, others: results.filter { $0.kind != .piece },
                                  open: { previewing = $0 }, save: saveLook.map { save in { save(pieces.map(\.id)) } }, iterate: iterate)
             } else {
             VStack(alignment: .leading, spacing: AppSpacing.small) {
                 Text(step.summary).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: AppSpacing.small) {
-                        ForEach(step.results ?? []) { item in
+                        ForEach(results) { item in
                             Button { previewing = item } label: { AgentResultCard(item: item) }.buttonStyle(.plain).accessibilityHint("Opens a larger preview")
                         }
                     }

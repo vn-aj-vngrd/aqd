@@ -164,7 +164,7 @@ import AQDCore
     private func isClarifyingReply(index i: Int) -> Bool {
         let text = conversation.messages[i].source.trimmingCharacters(in: .whitespacesAndNewlines)
         let questions = text.filter { $0 == "?" }.count
-        return questions >= 2 || (questions == 1 && text.count < 240 && text.hasSuffix("?"))
+        return questions >= 2 || text.contains("\n1.")
     }
 
     /// Pieces and outfits the reply names are shown as cards, so a suggestion never arrives as text alone.
@@ -173,7 +173,9 @@ import AQDCore
               !(conversation.messages[i].toolSteps ?? []).contains(where: { !($0.results ?? []).isEmpty }),
               let preferences = try? store.localSettings().agentPreferences ?? AgentPreferences() else { return }
         let text = conversation.messages[i].source.lowercased()
-        guard !text.isEmpty, !isClarifyingReply(index: i) else { return }
+        guard !text.isEmpty else { return }
+        // While the reply is asking questions, an outfit name is more likely an activity ("park walk") than a suggestion.
+        let clarifying = isClarifyingReply(index: i)
         let colors: Set<String> = ["black", "white", "blue", "navy", "red", "green", "olive", "yellow", "orange", "pink", "purple", "brown", "tan", "beige", "cream", "ivory", "grey", "gray", "maroon", "burgundy", "khaki", "denim", "gold", "silver"]
         /// Whole-name match on word boundaries. A colour word right before the name means a different piece ("blue cotton shirt" is not "Cotton shirt" in maroon).
         func position(_ name: String, color: String = "") -> String.Index? {
@@ -194,7 +196,7 @@ import AQDCore
                 found.append((at, AgentResultItem(id: piece.id, kind: .piece, title: piece.displayName, subtitle: [piece.details.color, piece.category.rawValue].filter { !$0.isEmpty }.joined(separator: ", "), photoIDs: [piece.photoID])))
             }
         }
-        if preferences.allows(.outfits) {
+        if preferences.allows(.outfits), !clarifying {
             for outfit in (try? store.outfits()) ?? [] {
                 if let at = position(outfit.displayName) {
                     found.append((at, AgentResultItem(id: outfit.id, kind: .outfit, title: outfit.displayName, subtitle: [outfit.occasion, outfit.mood].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", "),
@@ -213,7 +215,6 @@ import AQDCore
     func attachIntentVisuals(attemptID: UUID) {
         guard let i = conversation.messages.lastIndex(where: { $0.attemptID == attemptID && $0.role == .assistant }),
               !(conversation.messages[i].toolSteps ?? []).contains(where: { !($0.results ?? []).isEmpty }),
-              !isClarifyingReply(index: i),
               let prompt = conversation.messages[..<i].last(where: { $0.role == .user })?.source.lowercased(), !prompt.isEmpty,
               let preferences = try? store.localSettings().agentPreferences ?? AgentPreferences() else { return }
         func mentions(_ words: [String]) -> Bool { words.contains { prompt.contains($0) } }
@@ -222,11 +223,8 @@ import AQDCore
            preferences.allows(.planner), preferences.allows(.outfits) {
             let today = LocalPlanDay().key
             let pieces = preferences.allows(.pieces) ? ((try? store.pieces()) ?? []) : []
-            let reply = conversation.messages[i].source.lowercased()
             if let entry = ((try? store.planEntries()) ?? []).first(where: { $0.day.key == today && $0.outfitID != nil }),
-               let outfit = ((try? store.outfits()) ?? []).first(where: { $0.id == entry.outfitID }),
-               // The card must match what the reply says: show the planned outfit only when the reply names it or one of its pieces.
-               reply.contains(outfit.displayName.lowercased()) || outfit.pieceIDs.contains(where: { id in pieces.first { $0.id == id }.map { reply.contains($0.displayName.lowercased()) } ?? false }) {
+               let outfit = ((try? store.outfits()) ?? []).first(where: { $0.id == entry.outfitID }) {
                 items = [AgentResultItem(id: outfit.id, kind: .outfit, title: outfit.displayName, subtitle: entry.occasion,
                                          photoIDs: outfit.pieceIDs.prefix(4).compactMap { id in pieces.first { $0.id == id }?.photoID }, pieceIDs: outfit.pieceIDs)]
                 summary = "Showing today’s planned outfit"
