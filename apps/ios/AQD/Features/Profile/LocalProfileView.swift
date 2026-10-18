@@ -43,12 +43,18 @@ struct LocalProfileView: View {
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
-                            AccessoryButton("Edit profile", systemImage: "person.crop.circle") { state.openIdentity() }
-                            AccessoryButton("Style", systemImage: "slider.horizontal.3") { state.openStyle(source: .profile) }
-                            AccessoryButton("Wear history", systemImage: "clock.arrow.circlepath") { state.profileHistory = true }
-                            AccessoryButton("Wear insights", systemImage: "chart.bar") { state.profileInsights = true }
-                            AccessoryButton("Categories", systemImage: "square.grid.2x2") { categories = true }
-                            AccessoryButton("Settings", systemImage: "gearshape") { state.profileSettings = true }
+                            Section {
+                                AccessoryButton("Edit profile", systemImage: "person.crop.circle") { state.openIdentity() }
+                                AccessoryButton("Style", systemImage: "slider.horizontal.3") { state.openStyle(source: .profile) }
+                            }
+                            Section {
+                                AccessoryButton("Wear history", systemImage: "clock.arrow.circlepath") { state.profileHistory = true }
+                                AccessoryButton("Wear insights", systemImage: "chart.bar") { state.profileInsights = true }
+                            }
+                            Section {
+                                AccessoryButton("Categories", systemImage: "square.grid.2x2") { categories = true }
+                                AccessoryButton("Settings", systemImage: "gearshape") { state.profileSettings = true }
+                            }
                         } label: { Label("More", systemImage: "ellipsis") }
                     }
                 }
