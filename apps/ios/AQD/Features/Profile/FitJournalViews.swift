@@ -40,7 +40,7 @@ struct FitMemoryArtwork: View {
                         ForEach(Array(pieces.dropFirst(row * 2).prefix(2)), id: \.id) { piece in
                             Group {
                                 if let saved = state.ownedPieces.first(where: { $0.id == piece.id }) {
-                                    PieceThumbnail(photoID: saved.photoID, recipe: saved.photoRecipe)
+                                    PieceThumbnail(photoID: saved.photoID, recipe: saved.photoRecipe, ground: .clear)
                                 } else {
                                     Image(systemName: "photo.badge.exclamationmark").foregroundStyle(AppTheme.secondary)
                                 }

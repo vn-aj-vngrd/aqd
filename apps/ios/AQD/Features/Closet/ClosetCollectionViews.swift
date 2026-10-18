@@ -89,7 +89,8 @@ struct CollectionArtwork: View {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: columns), spacing: 6) {
                 ForEach(shown, id: \.self) { id in
                     if let piece = state.ownedPieces.first(where: { $0.id == id }) {
-                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                        // Pieces sit straight on the tile or card ground; a box behind each piece made a box inside a box.
+                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe, ground: .clear)
                             .frame(maxWidth: .infinity).frame(height: height).clipped()
                             .accessibilityLabel(piece.displayName)
                     } else {
