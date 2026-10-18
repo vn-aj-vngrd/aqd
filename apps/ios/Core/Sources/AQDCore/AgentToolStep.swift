@@ -25,17 +25,54 @@ public struct AgentResultItem: Identifiable, Codable, Equatable, Sendable {
     }
 }
 
-/// One question the Agent needs answered, shown as tappable answers. The owner may always type something else.
+/// One question the Agent needs answered, shown as a choice card: a short header, the question, answers with an optional
+/// one-line detail, an optional recommended answer and single or multiple choice. The owner can always type something else.
 public struct AgentQuestion: Codable, Equatable, Sendable {
     public let prompt: String
     public let options: [String]
-    public init?(prompt: String, options: [String]) {
-        let cleaned = options.map { $0.trimmingCharacters(in: .whitespacesAndNewlines.union(CharacterSet(charactersIn: "?.!"))) }.filter { !$0.isEmpty && $0.count <= 40 }
-        var seen = Set<String>(), unique: [String] = []
-        for option in cleaned where seen.insert(option.lowercased()).inserted { unique.append(option) }
+    /// A chip above the question, such as "Trip length". At most 24 characters.
+    public var header: String?
+    /// One line under each answer, aligned with `options`; empty strings mean no detail.
+    public var details: [String]?
+    /// The answer the Agent suggests, drawn first and marked.
+    public var recommended: String?
+    public var multiSelect: Bool?
+
+    public init?(prompt: String, options: [String], header: String? = nil, details: [String]? = nil, recommended: String? = nil, multiSelect: Bool = false) {
+        let trim: (String) -> String = { $0.trimmingCharacters(in: .whitespacesAndNewlines.union(CharacterSet(charactersIn: "?.!"))) }
+        var seen = Set<String>(), unique: [(String, String)] = []
+        for (index, option) in options.enumerated() {
+            let label = trim(option)
+            guard !label.isEmpty, label.count <= 40, seen.insert(label.lowercased()).inserted else { continue }
+            let detail = details.flatMap { index < $0.count ? $0[index].trimmingCharacters(in: .whitespacesAndNewlines) : nil } ?? ""
+            unique.append((label, String(detail.prefix(80))))
+        }
         let text = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, text.count <= 200, (2...4).contains(unique.count) else { return nil }
-        self.prompt = text; self.options = unique
+        // The recommended answer leads, as in a default choice.
+        let pick = recommended.map(trim).flatMap { value in unique.firstIndex { $0.0.lowercased() == value.lowercased() } }
+        if let pick, pick > 0 { unique.insert(unique.remove(at: pick), at: 0) }
+        self.prompt = text; self.options = unique.map(\.0)
+        let lines = unique.map(\.1)
+        self.details = lines.contains { !$0.isEmpty } ? lines : nil
+        self.recommended = pick.map { _ in unique[0].0 }
+        let chip = header?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        self.header = chip.isEmpty ? nil : String(chip.prefix(24))
+        self.multiSelect = multiSelect ? true : nil
+    }
+
+    public func detail(at index: Int) -> String? {
+        guard let details, index < details.count, !details[index].isEmpty else { return nil }
+        return details[index]
+    }
+
+    /// The text sent back for the chosen answers and any typed note.
+    public func answer(choices: [String], note: String) -> String {
+        let typed = note.trimmingCharacters(in: .whitespacesAndNewlines)
+        let picked = options.filter(choices.contains)
+        let list = picked.count > 1 ? picked.dropLast().joined(separator: ", ") + " and " + (picked.last ?? "") : picked.first ?? ""
+        if list.isEmpty { return typed }
+        return typed.isEmpty ? list : "\(list). \(typed)"
     }
 
     /// Reads "…, 3 days, 5 days or a full week?" from the end of a reply. Nil unless the reply ends in one short question that lists answers.

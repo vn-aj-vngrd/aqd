@@ -17,7 +17,7 @@ struct AgentToolHandlers: Sendable {
     var wearStats: @MainActor @Sendable (_ window: AgentWearWindow, _ pieceIDs: [UUID]) throws -> String
     var weather: @MainActor @Sendable (_ day: String) throws -> String
     var prepare: @MainActor @Sendable (_ request: AgentMutationRequest, _ revision: Int?) throws -> String
-    var ask: @MainActor @Sendable (_ question: String, _ options: [String]) throws -> String
+    var ask: @MainActor @Sendable (_ question: AgentQuestion) throws -> String
     var suggestOutfit: @MainActor @Sendable (_ occasion: String?, _ mood: String?, _ pinnedIDs: [UUID]) async throws -> String
 }
 

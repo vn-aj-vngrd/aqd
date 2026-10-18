@@ -354,7 +354,9 @@ struct AgentConversationView: View {
                             saveLook: model.canGenerate ? { saveLook($0, message: message) } : nil,
                             iterate: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion($0) } : nil)
             if let question = openQuestion(for: message) {
-                AgentQuestionCard(question: question, choose: { sendSuggestion($0) }, typeAnswer: { focused = true })
+                AgentQuestionCard(question: question, send: { sendSuggestion($0) }).id(message.id)
+            } else if let (question, answer) = answeredQuestion(for: message) {
+                AgentAnsweredQuestion(question: question, answer: answer)
             }
             ForEach(model.conversation.proposals(for: message)) { proposal in
                 AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) },
@@ -368,6 +370,14 @@ struct AgentConversationView: View {
     private func openQuestion(for message: AgentMessage) -> AgentQuestion? {
         guard message.role == .assistant, message.id == model.conversation.messages.last?.id, !message.isActive, model.canGenerate, !model.active else { return nil }
         return (message.toolSteps ?? []).last { $0.question != nil }?.question
+    }
+
+    /// The question a reply asked and the owner's next message, which answered it.
+    private func answeredQuestion(for message: AgentMessage) -> (AgentQuestion, String)? {
+        guard message.role == .assistant, let question = (message.toolSteps ?? []).last(where: { $0.question != nil })?.question,
+              let i = model.conversation.messages.firstIndex(where: { $0.id == message.id }), i + 1 < model.conversation.messages.count,
+              model.conversation.messages[i + 1].role == .user else { return nil }
+        return (question, model.conversation.messages[i + 1].source)
     }
 
     private var latestUserIndex: Int? { model.conversation.messages.lastIndex { $0.role == .user } }

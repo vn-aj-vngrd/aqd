@@ -247,9 +247,8 @@ import AQDCore
         conversation.messages[i].toolSteps = (conversation.messages[i].toolSteps ?? []) + [AgentToolStep(tool: "showRecords", summary: summary, count: items.count, results: items)]
     }
 
-    func askToolQuestion(_ prompt: String, options: [String], conversationID: UUID, attemptID: UUID) throws -> String {
+    func askToolQuestion(_ question: AgentQuestion, conversationID: UUID, attemptID: UUID) throws -> String {
         try validateToolAttempt(conversationID: conversationID, attemptID: attemptID)
-        guard let question = AgentQuestion(prompt: prompt, options: options) else { throw AgentToolRejection.invalidArguments }
         appendToolStep(AgentToolStep(tool: "askUser", summary: "Asked a question", count: 1, question: question), attemptID: attemptID)
         return "The app is showing the question with tappable answers: \(question.options.joined(separator: ", ")). Reply with at most one short sentence, do not repeat the question or the answers, and wait for the owner."
     }
@@ -403,9 +402,9 @@ import AQDCore
             }, prepare: { [weak self] request, revision in
                 guard let self else { throw CancellationError() }
                 return try self.prepareToolChange(request, revision: revision, conversationID: conversationID, attemptID: attemptID)
-            }, ask: { [weak self] question, options in
+            }, ask: { [weak self] question in
                 guard let self else { throw CancellationError() }
-                return try self.askToolQuestion(question, options: options, conversationID: conversationID, attemptID: attemptID)
+                return try self.askToolQuestion(question, conversationID: conversationID, attemptID: attemptID)
             }, suggestOutfit: { [weak self] occasion, mood, pinnedIDs in
                 guard let self else { throw CancellationError() }
                 return try await self.suggestToolOutfit(occasion: occasion, mood: mood, pinnedIDs: pinnedIDs, conversationID: conversationID, attemptID: attemptID)

@@ -79,3 +79,21 @@ struct AgentQuestionTests {
         #expect(AgentQuestion(prompt: "Pick?", options: ["A", "a", "B"])?.options == ["A", "B"])
     }
 }
+
+struct AgentQuestionChoiceTests {
+    @Test func recommendedAnswerLeadsAndKeepsItsDetail() throws {
+        let question = try #require(AgentQuestion(prompt: "How long is the trip?", options: ["3 days", "5 days", "A week"], header: "Trip length",
+                                                  details: ["Weekend", "", "Most variety"], recommended: "5 days"))
+        #expect(question.options == ["5 days", "3 days", "A week"])
+        #expect(question.recommended == "5 days")
+        #expect(question.detail(at: 1) == "Weekend")
+        #expect(question.detail(at: 0) == nil)
+        #expect(question.header == "Trip length")
+    }
+    @Test func answerJoinsChoicesInOrderWithANote() throws {
+        let question = try #require(AgentQuestion(prompt: "Which days?", options: ["Beach", "Dinner", "Hiking"], multiSelect: true))
+        #expect(question.answer(choices: ["Hiking", "Beach"], note: "") == "Beach and Hiking")
+        #expect(question.answer(choices: ["Dinner"], note: "somewhere dressy") == "Dinner. somewhere dressy")
+        #expect(question.answer(choices: [], note: "Surprise me") == "Surprise me")
+    }
+}
