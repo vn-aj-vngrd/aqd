@@ -121,8 +121,10 @@ struct OutfitEditorView: View {
                 Text(saved.displayName).font(AppTypography.body)
                 Text("Only you. Saving an outfit doesn’t plan a day or record wear.")
                     .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                PrimaryAction(title: "Open outfit") { model.finish(openOutfit: true) }
-                SecondaryAction(title: "Plan this look") { model.planSavedOutfit() }
+                HStack(spacing: AppSpacing.small) {
+                    Button { model.finish(openOutfit: true) } label: { Label("Open outfit", systemImage: "square.stack").compactControl(fullWidth: true) }.buttonStyle(.plain)
+                    Button { model.planSavedOutfit() } label: { Label("Plan this look", systemImage: "calendar").compactControl(fullWidth: true) }.buttonStyle(.plain)
+                }
             }.padding(AppSpacing.screen)
         }
     }
@@ -261,8 +263,10 @@ struct OutfitDetailView: View {
                     Text("\(outfit.pieceIDs.count) pieces").foregroundStyle(AppTheme.secondary)
                     if outfit.isFavorite { Label("Favorite", systemImage: "heart.fill").foregroundStyle(AppTheme.ink) }
                     themeChips(for: outfit)
-                    PrimaryAction(title: "Plan outfit") { state.openPlan(outfitID: outfit.id) }.disabled(pendingMutation != nil)
-                    SecondaryAction(title: "Record wear") { state.openWear(outfitID: outfit.id) }.disabled(pendingMutation != nil)
+                    HStack(spacing: AppSpacing.small) {
+                        Button { state.openPlan(outfitID: outfit.id) } label: { Label("Plan outfit", systemImage: "calendar").compactControl(fullWidth: true) }.buttonStyle(.plain)
+                        Button { state.openWear(outfitID: outfit.id) } label: { Label("Record wear", systemImage: "checkmark.circle").compactControl(fullWidth: true) }.buttonStyle(.plain)
+                    }.disabled(pendingMutation != nil)
                     VStack(alignment: .leading, spacing: AppSpacing.medium) {
                         Text("Pieces").font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
                         VStack(spacing: 0) {
