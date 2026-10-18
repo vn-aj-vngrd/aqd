@@ -246,8 +246,7 @@ struct FitEditorView: View {
     }
 
     private func sourceLabel(_ title: String, systemImage: String) -> some View {
-        Label(title, systemImage: systemImage).font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.ink)
-            .padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.minimumTarget).glassControlSurface(Capsule())
+        Label(title, systemImage: systemImage).compactControl()
     }
 
     private var mediaContent: some View {
@@ -423,10 +422,8 @@ struct FitMemoryDetailView: View {
                     }
                 } label: { Label("More", systemImage: "ellipsis") }
             } } }
-            .appConfirmation("Delete this memory?", isPresented: $confirming) {
-                Button("Cancel", role: .cancel) { request = nil }
-                Button("Delete memory", role: .destructive, action: delete)
-            } message: { Text("Removes only this local memory and unshared AQD photo copies. Your outfit, wear history, other memories and original Photos stay.") }
+            .deleteConfirmation("memory", isPresented: $confirming, message: "Removes only this local memory and unshared AQD photo copies. Your outfit, wear history, other memories and original Photos stay.",
+                                cancel: { request = nil }, delete: delete)
     }
     private func delete() {
         guard let request else { return }

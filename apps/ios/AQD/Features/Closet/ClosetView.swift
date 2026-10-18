@@ -253,8 +253,7 @@ struct ClosetView: View {
 
     private func bulkButton(_ title: String, _ symbol: String, id: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Label(title, systemImage: symbol).font(.subheadline).foregroundStyle(AppTheme.ink)
-                .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget).glassControlSurface(Capsule())
+            Label(title, systemImage: symbol).compactControl(fullWidth: true)
         }.buttonStyle(.plain).disabled(selected.isEmpty).opacity(selected.isEmpty ? 0.5 : 1).accessibilityIdentifier(id)
     }
 
@@ -493,9 +492,7 @@ struct PieceDetailView: View {
     private func statusChip(_ piece: WardrobePiece) -> some View {
         let status = PieceStatus(piece), text = status.title, symbol = status.symbol
         return Button { availabilityPresented = true } label: {
-            Label(text, systemImage: symbol).font(.subheadline).foregroundStyle(AppTheme.ink)
-                .padding(.horizontal, AppSpacing.medium).frame(minHeight: 32).glassControlSurface(Capsule())
-                .frame(minHeight: AppControlMetrics.minimumTarget)
+            Label(text, systemImage: symbol).compactControl()
         }.buttonStyle(.plain).disabled(piece.isArchived || deleteInFlight)
             .accessibilityLabel("Availability: \(text)").accessibilityHint("Changes whether you can wear this piece now")
     }

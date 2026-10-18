@@ -7,7 +7,6 @@ struct LocalProfileView: View {
     @State private var journalTab: FitJournalTab = .all
     @State private var query = FitJournalQuery()
     @Environment(\.dynamicTypeSize) private var typeSize
-    @Environment(\.colorSchemeContrast) private var contrast
     var body: some View {
         @Bindable var state = state
         NavigationStack {
@@ -15,7 +14,6 @@ struct LocalProfileView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppSpacing.section) {
                         identityHeader.padding(.horizontal, AppSpacing.screen)
-                        profileActions.padding(.horizontal, AppSpacing.screen)
                         if let error = state.identityError {
                             VStack(alignment: .leading, spacing: AppSpacing.small) {
                                 SemanticFeedback(role: .danger, message: error)
@@ -45,8 +43,10 @@ struct LocalProfileView: View {
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
+                            AccessoryButton("Edit profile", systemImage: "person.crop.circle") { state.openIdentity() }
                             AccessoryButton("Style", systemImage: "slider.horizontal.3") { state.openStyle(source: .profile) }
                             AccessoryButton("Wear history", systemImage: "clock.arrow.circlepath") { state.profileHistory = true }
+                            AccessoryButton("Wear insights", systemImage: "chart.bar") { state.profileInsights = true }
                             AccessoryButton("Categories", systemImage: "square.grid.2x2") { categories = true }
                             AccessoryButton("Settings", systemImage: "gearshape") { state.profileSettings = true }
                         } label: { Label("More", systemImage: "ellipsis") }
@@ -58,32 +58,6 @@ struct LocalProfileView: View {
                 .navigationDestination(isPresented: $categories) { WardrobeCategorySettingsView().secondaryPage() }
                 .navigationDestination(isPresented: $state.profileSettings) { LocalSettingsView().secondaryPage() }
         }.tint(AppTheme.ink)
-    }
-    private var profileActions: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 8) { editProfile; wearInsights }
-            VStack(spacing: 8) { editProfile; wearInsights }
-        }
-    }
-    private var editProfile: some View {
-        profileAction("Edit profile") { state.openIdentity() }
-            .accessibilityIdentifier("profile.edit")
-    }
-    private var wearInsights: some View {
-        profileAction("Wear insights") { state.profileInsights = true }
-    }
-    private func profileAction(_ title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
-                .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
-                .contentShape(Capsule())
-        }.buttonStyle(.plain)
-            .glassControlSurface(Capsule())
-            .overlay {
-                if contrast == .increased {
-                    Capsule().stroke(AppTheme.controlBoundary, lineWidth: 1)
-                }
-            }
     }
     private var identityHeader: some View {
         VStack(alignment: .leading, spacing: AppSpacing.section) {

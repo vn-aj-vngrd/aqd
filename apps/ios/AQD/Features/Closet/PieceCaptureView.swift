@@ -215,9 +215,7 @@ struct PieceCaptureView: View {
                         .background(AppTheme.primaryFill, in: Capsule())
                 }.buttonStyle(.plain).accessibilityIdentifier("capture.takePhoto")
                 Button { nameEditing = false; pickerPresented = true } label: {
-                    Label("Photos", systemImage: "photo.on.rectangle").font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.ink)
-                        .padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.minimumTarget)
-                        .glassControlSurface(Capsule())
+                    Label("Photos", systemImage: "photo.on.rectangle").compactControl(fullWidth: true)
                 }.buttonStyle(.plain).accessibilityIdentifier("capture.addPhoto")
             }.disabled(model.isImporting || model.isSaving).accessibilityFocused($photoFocused)
         }.padding(AppSpacing.large)
@@ -225,9 +223,7 @@ struct PieceCaptureView: View {
 
     private func photoAction(_ title: String, systemImage: String, id: String, label: String, action: @escaping () -> Void) -> some View {
         Button { nameEditing = false; action() } label: {
-            Label(title, systemImage: systemImage).font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.ink)
-                .padding(.horizontal, AppSpacing.medium).frame(minHeight: AppControlMetrics.minimumTarget)
-                .glassControlSurface(Capsule())
+            Label(title, systemImage: systemImage).compactControl()
         }.buttonStyle(.plain).disabled(model.isImporting || model.isSaving || model.cutoutState == .working)
             .accessibilityLabel(label).accessibilityIdentifier(id)
     }

@@ -294,10 +294,7 @@ struct PlanDayCard: View {
             if isOpen, let next {
                 HStack(spacing: AppSpacing.small) {
                     Button { perform(next) } label: {
-                        Text(next.rawValue).font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
-                            .padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.minimumTarget)
-                            .glassControlSurface(Capsule())
-                            .contentShape(Rectangle())
+                        Text(next.rawValue).compactControl()
                     }.buttonStyle(.plain)
                     Spacer(minLength: 0)
                     Menu {

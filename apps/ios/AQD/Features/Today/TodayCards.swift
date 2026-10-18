@@ -97,9 +97,7 @@ struct TodayCard: View {
                           alignment: .leading, spacing: AppSpacing.small) {
                 ForEach(instance.options?.actions ?? TodayAction.defaults, id: \.self) { action in
                     Button { perform(action) } label: {
-                        Label(action.title, systemImage: Self.symbol(for: action)).font(.subheadline).foregroundStyle(AppTheme.ink)
-                            .lineLimit(1).minimumScaleFactor(0.85)
-                            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget).glassControlSurface(Capsule())
+                        Label(action.title, systemImage: Self.symbol(for: action)).minimumScaleFactor(0.85).compactControl(fullWidth: true)
                     }.accessibilityIdentifier("today.action.\(action.title)")
                 }
             }
@@ -152,6 +150,17 @@ struct TodayCard: View {
     }
 
     @ViewBuilder private func lookActions(_ look: TodayPresentation.Look, entry: OutfitPlanEntry?, outfit: Outfit?) -> some View {
+        if look.primary == .recordWear, let entry, let outfit {
+            HStack(spacing: AppSpacing.small) {
+                NavigationLink { LocalPlanEntryView(id: entry.id).secondaryPage() } label: { SecondaryActionLabel(title: "Plan details") }.buttonStyle(.plain)
+                PrimaryAction(title: "Record wear", compact: true) { state.openWear(outfitID: outfit.id, day: entry.day, entry: entry) }.accessibilityIdentifier("today.look.primary")
+            }
+        } else {
+            lookActionStack(look, entry: entry, outfit: outfit)
+        }
+    }
+
+    @ViewBuilder private func lookActionStack(_ look: TodayPresentation.Look, entry: OutfitPlanEntry?, outfit: Outfit?) -> some View {
         switch look.primary {
         case .recordWear:
             if let entry, let outfit { PrimaryAction(title: "Record wear") { state.openWear(outfitID: outfit.id, day: entry.day, entry: entry) }.accessibilityIdentifier("today.look.primary") }
@@ -521,12 +530,8 @@ private struct TodayAgendaRow: View {
 }
 
 /// The card's one quiet action: trailing text, 44 pt target, no chevron row.
+/// Today's card links share the app-wide full-width secondary action.
 private struct TodayCardActionLabel: View {
     let title: String
-    var body: some View {
-        Text(title).font(AppTypography.supporting.weight(.medium)).foregroundStyle(AppTheme.ink)
-            .fixedSize(horizontal: false, vertical: true)
-            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .trailing)
-            .contentShape(Rectangle())
-    }
+    var body: some View { SecondaryActionLabel(title: title) }
 }

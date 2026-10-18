@@ -106,10 +106,8 @@ struct OutfitEditorView: View {
                         .background(AppTheme.primaryFill, in: Capsule()).foregroundStyle(AppTheme.onPrimary)
                 }
                 Button { hidePicker { choosingThemes = true } } label: {
-                    Label(names.isEmpty ? "Add to theme" : "Edit", systemImage: "plus").font(.subheadline)
-                        .padding(.horizontal, 12).frame(minHeight: 32)
-                        .foregroundStyle(AppTheme.ink).glassControlSurface(Capsule())
-                }.buttonStyle(.plain).disabled(locked).frame(minHeight: AppControlMetrics.minimumTarget)
+                    Label(names.isEmpty ? "Add to theme" : "Edit", systemImage: "plus").compactControl()
+                }.buttonStyle(.plain).disabled(locked)
                     .accessibilityLabel("Themes").accessibilityValue(names.isEmpty ? "None selected" : names.joined(separator: ", "))
             }
         }.scrollIndicators(.hidden)
@@ -245,9 +243,7 @@ struct OutfitDetailView: View {
                 HStack(spacing: AppSpacing.small) {
                     ForEach(themes) { theme in
                         NavigationLink(value: ClosetRoute.theme(theme.id)) {
-                            Label(theme.displayName, systemImage: "folder").font(.subheadline).foregroundStyle(AppTheme.ink).truncated()
-                                .padding(.horizontal, AppSpacing.medium).frame(minHeight: 32).glassControlSurface(Capsule())
-                                .frame(minHeight: AppControlMetrics.minimumTarget)
+                            Label(theme.displayName, systemImage: "folder").truncated().compactControl()
                         }.buttonStyle(.plain).accessibilityLabel("Theme \(theme.displayName)")
                     }
                 }
@@ -311,10 +307,7 @@ struct OutfitDetailView: View {
                     }
                 }
             }
-            .appConfirmation("Delete this outfit?", isPresented: $deletePresented) {
-                Button("Delete outfit", role: .destructive) { if let deleteReview { apply(deleteReview) } }
-                Button("Cancel", role: .cancel) { deleteReview = nil }
-            } message: { Text(deletionMessage) }
+            .deleteConfirmation("outfit", isPresented: $deletePresented, message: deletionMessage, cancel: { deleteReview = nil }) { if let deleteReview { apply(deleteReview) } }
             .onAppear { state.reloadOutfits() }
     }
 

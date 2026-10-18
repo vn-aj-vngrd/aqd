@@ -62,6 +62,18 @@ struct SecondaryAction: View {
     }
 }
 
+/// The full-width secondary action: plain text, no border, no glass. Use it as the label of a Button or
+/// NavigationLink next to or under a `PrimaryAction`. Compact controls use `compactControl()` instead.
+struct SecondaryActionLabel: View {
+    let title: String
+    var body: some View {
+        Text(title).font(AppTypography.body).foregroundStyle(AppTheme.ink)
+            .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
+            .contentShape(Rectangle())
+    }
+}
+
 /// Keep authored disabled/pending contrast rather than plain-style automatic
 /// dimming. Native Button still owns activation, keyboard and disabled traits.
 private struct ContentActionStyle: ButtonStyle {
