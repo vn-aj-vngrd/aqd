@@ -178,19 +178,16 @@ struct AgentLookPreview: View {
     var iterate: ((String) -> Void)?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.medium) {
-            Button { open(pieces[0]) } label: { OutfitComposition(pieceIDs: pieces.map(\.id), pieceHeight: 120, limit: 4, ground: AppTheme.surface) }
+        AgentWidgetCard(title: "Suggested look", subtitle: pieces.map(\.title).joined(separator: ", ")) {
+            Button { open(pieces[0]) } label: { OutfitComposition(pieceIDs: pieces.map(\.id), pieceHeight: 120, limit: 4, ground: .clear) }
                 .buttonStyle(.plain).accessibilityLabel("Suggested look: " + pieces.map(\.title).joined(separator: ", ")).accessibilityHint("Opens a larger preview")
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Suggested look").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                Text(pieces.map(\.title).joined(separator: " + ")).font(AppTypography.body).foregroundStyle(AppTheme.ink).fixedSize(horizontal: false, vertical: true)
-            }
             AgentLookActions(save: save, iterate: iterate)
             if !others.isEmpty {
-                ScrollView(.horizontal) { LazyHStack(spacing: AppSpacing.small) { ForEach(others) { item in Button { open(item) } label: { AgentResultCard(item: item) }.buttonStyle(.plain) } } }.scrollIndicators(.hidden)
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: AppSpacing.small) { ForEach(others) { item in Button { open(item) } label: { AgentResultCard(item: item) }.buttonStyle(.plain) } }
+                }.scrollIndicators(.hidden)
             }
-        }.padding(AppSpacing.medium).frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+        }
     }
 }
 
@@ -199,13 +196,27 @@ struct AgentOutfitCard: View {
     let item: AgentResultItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.small) {
-            OutfitComposition(pieceIDs: item.pieceIDs, pieceHeight: 120, limit: 4, ground: AppTheme.surface)
+        AgentWidgetCard(title: item.title, subtitle: item.subtitle) {
+            OutfitComposition(pieceIDs: item.pieceIDs, pieceHeight: 120, limit: 4, ground: .clear)
+        }.accessibilityElement(children: .combine).accessibilityHint("Opens a larger preview")
+    }
+}
+
+/// A rounded white card in the style of a home-screen widget: the label sits inside, above the content.
+struct AgentWidgetCard<Content: View>: View {
+    let title: String
+    var subtitle = ""
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.medium) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(item.title).font(AppTypography.body).foregroundStyle(AppTheme.ink)
-                if !item.subtitle.isEmpty { Text(item.subtitle).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+                Text(title).font(AppTypography.section).foregroundStyle(AppTheme.ink).fixedSize(horizontal: false, vertical: true)
+                if !subtitle.isEmpty { Text(subtitle).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
             }
-        }.frame(maxWidth: .infinity, alignment: .leading).accessibilityElement(children: .combine).accessibilityHint("Opens a larger preview")
+            content()
+        }.padding(AppSpacing.large).frame(maxWidth: .infinity, alignment: .leading)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
     }
 }
 
