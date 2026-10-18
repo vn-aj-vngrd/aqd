@@ -142,8 +142,8 @@ struct ToolbarForwardAction: View {
     let action: () -> Void
     var body: some View {
         if usesGlass {
-            button.neutralToolbarGlass().buttonBorderShape(.circle)
-                .tint(AppTheme.ink).foregroundStyle(AppTheme.ink)
+            // The toolbar already wraps its items in glass; adding another circle here drew a container inside a container.
+            button.tint(AppTheme.ink).foregroundStyle(AppTheme.ink)
         } else {
             button.buttonStyle(.borderedProminent).tint(AppTheme.primaryFill)
                 .foregroundStyle(AppTheme.onPrimary)
@@ -186,11 +186,4 @@ struct AccessoryButton: View {
         self.title = title; self.systemImage = systemImage; self.action = action
     }
     var body: some View { Button(action: action) { AccessoryLabel(title, systemImage: systemImage) } }
-}
-
-extension View {
-    @ViewBuilder func neutralToolbarGlass() -> some View {
-        if #available(iOS 26, *) { buttonStyle(.glass) }
-        else { self }
-    }
 }
