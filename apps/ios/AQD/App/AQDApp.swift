@@ -104,6 +104,21 @@ private struct AppRootView: View {
                 }
                 state.isOpening = false
             }
+            if process.arguments.contains("--aqd-seed-week-of-use"), !process.arguments.contains("--aqd-ui-testing"), let store = state.store {
+                state.isOpening = true
+                do {
+                    let directory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                    _ = try await RealisticClosetSeed.run(store: store, outputDirectory: directory)
+                    state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); state.reloadFits(); state.reloadWear(); state.reloadToday()
+                    state.selection = 1; state.closetScope = "Pieces"
+                } catch {
+                    if let directory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) {
+                        try? LocalArchiveIO.write(Data(String(reflecting: error).utf8), to: directory.appendingPathComponent("AQD-week-seed-error.txt"))
+                    }
+                    state.collectionError = "The week of sample content could not finish. A backup was made first and your other records are untouched."
+                }
+                state.isOpening = false
+            }
             if process.arguments.contains("--aqd-refresh-transparent-samples"), !process.arguments.contains("--aqd-ui-testing"), let store = state.store {
                 state.isOpening = true
                 do {
