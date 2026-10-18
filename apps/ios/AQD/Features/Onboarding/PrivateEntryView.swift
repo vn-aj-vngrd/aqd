@@ -111,32 +111,28 @@ struct WelcomeView: View {
     @State private var previewArrived = false
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                AQDWordmark()
-                WelcomeWardrobe(pose: pose)
-                VStack(alignment: .leading, spacing: AppSpacing.medium) {
-                    Text(welcomeHeadline).font(.largeTitle.weight(.medium)).tracking(-0.8)
+            VStack(spacing: AppSpacing.section) {
+                AQDWordmark().frame(maxWidth: .infinity, alignment: .center).padding(.top, AppSpacing.small)
+                WelcomeWardrobe(pose: pose).padding(AppSpacing.large)
+                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
+                VStack(spacing: AppSpacing.medium) {
+                    Text(welcomeHeadline).font(.largeTitle.weight(.medium)).tracking(-0.8).multilineTextAlignment(.center)
                         .accessibilityAddTraits(.isHeader)
                     Text("Keep your pieces together. Make looks you’ll wear.")
-                        .font(AppTypography.body).foregroundStyle(AppTheme.secondary)
-                }
-            }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
-        }
+                        .font(AppTypography.body).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
+                }.frame(maxWidth: .infinity)
+            }.padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.large)
+        }.scrollIndicators(.hidden)
         .safeAreaInset(edge: .bottom) {
-            ActionFooter {
-                ActionStack {
-                    PrimaryAction(title: "Start my closet") {
-                        if let previewDismiss { previewDismiss(false) }
-                        else { state.updateEntry { $0.page = .introduction } }
-                    }
-                    SecondaryAction(title: "Take a quick tour") {
-                        if let previewDismiss { previewDismiss(true) }
-                        else { state.beginTour(from: .welcome) }
-                    }
-                    Text("Private on this iPhone. No account needed.").font(.footnote).foregroundStyle(AppTheme.secondary)
-                        .frame(maxWidth: .infinity).multilineTextAlignment(.center)
-                }
-            }
+            VStack(spacing: AppSpacing.small) {
+                Button {
+                    if let previewDismiss { previewDismiss(false) } else { state.updateEntry { $0.page = .introduction } }
+                } label: { GlassActionLabel(title: "Start my closet", prominent: true) }.buttonStyle(.plain)
+                Button {
+                    if let previewDismiss { previewDismiss(true) } else { state.beginTour(from: .welcome) }
+                } label: { GlassActionLabel(title: "Take a quick tour") }.buttonStyle(.plain)
+                Text("No account needed.").font(.footnote).foregroundStyle(AppTheme.secondary).padding(.top, AppSpacing.xSmall)
+            }.padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small).padding(.bottom, AppSpacing.small)
         }
         .task(id: scenePhase) {
             guard scenePhase == .active else { settle(); return }

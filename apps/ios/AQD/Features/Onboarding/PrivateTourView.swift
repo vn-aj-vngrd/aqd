@@ -94,7 +94,7 @@ private struct TourCard: View {
                 }
                 if typeSize.isAccessibilitySize { ActionStack { next(step); back } }
                 else { HStack(spacing: 12) { back; next(step) } }
-            }.padding(AppSpacing.screen).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 24))
+            }.padding(AppSpacing.screen).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 .onChange(of: step, initial: true) { _, value in focusedStep = value }
                 .animation(nil, value: step)
         }
@@ -122,13 +122,13 @@ private struct TourCard: View {
         }
     }
     private var back: some View {
-        SecondaryAction(title: "Back", compact: true) { state.updateEntry { $0.backInTour() } }
-            .accessibilityIdentifier("tour.back")
+        Button { state.updateEntry { $0.backInTour() } } label: { GlassActionLabel(title: "Back", height: AppControlMetrics.minimumTarget) }
+            .buttonStyle(.plain).accessibilityIdentifier("tour.back")
     }
     private func next(_ step: Int) -> some View {
-        PrimaryAction(title: step == PrivateEntryState.tourStepCount - 1 ? "Finish tour" : "Next",
-                      compact: true) { state.updateEntry { $0.nextInTour() } }
-            .accessibilityIdentifier("tour.next").id(step)
+        Button { state.updateEntry { $0.nextInTour() } } label: {
+            GlassActionLabel(title: step == PrivateEntryState.tourStepCount - 1 ? "Finish tour" : "Next", prominent: true, height: AppControlMetrics.minimumTarget)
+        }.buttonStyle(.plain).accessibilityIdentifier("tour.next").id(step)
     }
 }
 
