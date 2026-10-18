@@ -166,13 +166,13 @@ struct TodayCard: View {
     @ViewBuilder private func lookActionStack(_ look: TodayPresentation.Look, entry: OutfitPlanEntry?, outfit: Outfit?) -> some View {
         switch look.primary {
         case .recordWear:
-            if let entry, let outfit { PrimaryAction(title: "Record wear") { state.openWear(outfitID: outfit.id, day: entry.day, entry: entry) }.accessibilityIdentifier("today.look.primary") }
+            if let entry, let outfit { TodayGlassAction(title: "Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: outfit.id, day: entry.day, entry: entry) }.accessibilityIdentifier("today.look.primary") }
         case .reviewPlan:
-            if let entry { PrimaryAction(title: "Review plan") { state.openPlan(editing: entry) }.accessibilityIdentifier("today.look.primary") }
+            if let entry { TodayGlassAction(title: "Review plan", systemImage: "doc.text.magnifyingglass") { state.openPlan(editing: entry) }.accessibilityIdentifier("today.look.primary") }
         case .chooseOutfit:
-            if let entry { PrimaryAction(title: "Choose outfit") { state.openPlan(editing: entry) }.accessibilityIdentifier("today.look.primary") }
-        case .buildOutfit: PrimaryAction(title: "Build outfit") { state.buildOutfit() }.accessibilityIdentifier("today.look.primary")
-        case .addPiece: PrimaryAction(title: "Add piece") { state.addPiece() }.accessibilityIdentifier("today.look.primary")
+            if let entry { TodayGlassAction(title: "Choose outfit", systemImage: "tshirt") { state.openPlan(editing: entry) }.accessibilityIdentifier("today.look.primary") }
+        case .buildOutfit: TodayGlassAction(title: "Build outfit", systemImage: "plus.circle") { state.buildOutfit() }.accessibilityIdentifier("today.look.primary")
+        case .addPiece: TodayGlassAction(title: "Add piece", systemImage: "plus.circle") { state.addPiece() }.accessibilityIdentifier("today.look.primary")
         case nil: EmptyView()
         }
         if let entry {
@@ -533,8 +533,18 @@ private struct TodayAgendaRow: View {
 }
 
 /// The card's one quiet action: trailing text, 44 pt target, no chevron row.
-/// Today's card links share the app-wide full-width secondary action.
+/// Every Today card link is the same compact glass pill, full width of the card.
 private struct TodayCardActionLabel: View {
     let title: String
-    var body: some View { SecondaryActionLabel(title: title) }
+    var body: some View { Text(title).compactControl(fullWidth: true) }
+}
+
+/// A compact glass pill with an icon for a card's main action.
+private struct TodayGlassAction: View {
+    let title: String
+    let systemImage: String
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) { Label(title, systemImage: systemImage).compactControl(fullWidth: true) }.buttonStyle(.plain)
+    }
 }
