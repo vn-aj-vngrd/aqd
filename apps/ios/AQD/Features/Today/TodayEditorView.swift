@@ -6,6 +6,13 @@ struct TodayEditorView: View {
     @State private var discard = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     var body: some View {
+        if model.directEdit {
+            // One card edited from its detail page: the card form is the only sheet, with no Customize Today underneath.
+            TodayWidgetConfigurationView(model: model).tint(AppTheme.ink).interactiveDismissDisabled()
+        } else { customize }
+    }
+
+    private var customize: some View {
         NavigationStack {
             List {
                 Section {
@@ -35,7 +42,7 @@ struct TodayEditorView: View {
                     }
                 }
                 if let error = model.error { Section { SemanticFeedback(role: .danger, message: error) }.listRowBackground(AppTheme.surface) }
-            }.opacity(model.directEdit ? 0 : 1).environment(\.editMode, .constant(.active)).listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden)
+            }.environment(\.editMode, .constant(.active)).listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden)
                 .background(AppTheme.canvas)
                 .animation(reduceMotion ? nil : AQDMotion.reflow, value: model.catalog.map(\.id))
                 .navigationTitle("Customize Today").navigationBarTitleDisplayMode(.inline)
