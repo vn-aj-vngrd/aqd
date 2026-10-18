@@ -41,6 +41,8 @@ public struct AgentResponseDiagnostics: Codable, Equatable, Sendable {
     public var failure: AgentFailureCategory?
     /// The classified intent (`AgentIntent` raw value) and the tools the turn called, in order. A " (app)" suffix marks work the app did itself.
     public var intent: String?
+    /// "rules" when a specific rule decided the intent, "model" when the model chose it because no rule was sure.
+    public var intentSource: String?
     public var toolCalls: [String]?
     /// Problems the grounding check found in the first reply, and in the reply that was kept.
     public var firstViolations: [String]?

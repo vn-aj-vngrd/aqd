@@ -39,7 +39,7 @@ struct AgentTurn {
         return conversation.messages.last(where: { $0.role == .user && ($0.attachments ?? []).contains(where: { $0.kind == .image }) })?.attachments?.filter { $0.kind == .image } ?? []
     }
 
-    func buildTurn(retrying messageID: UUID?, preferences: AgentPreferences, qualification: AgentQualification) throws -> AgentTurn {
+    func buildTurn(retrying messageID: UUID?, preferences: AgentPreferences, qualification: AgentQualification, intent decided: (intent: AgentIntent, source: String)? = nil) throws -> AgentTurn {
         let images = turnImages(retrying: messageID)
         let request = messageID == nil ? conversation.draft : conversation.messages.last(where: { $0.role == .user })?.source ?? ""
         let userTurn = messageID == nil ? conversation.draftPrompt : conversation.messages.last(where: { $0.role == .user })?.promptText ?? ""
@@ -50,7 +50,8 @@ struct AgentTurn {
         }
         var prior = conversation
         if messageID != nil, prior.messages.count >= 2 { prior.messages.removeLast(2) }
-        let intent = AgentIntent.classify(request, conversation: prior, hasImage: !images.isEmpty)
+        let decision = decided ?? (AgentIntent.classify(request, conversation: prior, hasImage: !images.isEmpty), "rules")
+        let intent = decision.intent
         let toolIDs = intent.tools(weatherAvailable: freshToolWeather() != nil).compactMap { AgentToolID(rawValue: $0.rawValue) }
         let instructions = AgentInstructions.compose(intent)
         let budget = NativeAgentProvider.budget(instructions: instructions, tools: toolIDs, response: min(qualification.responseTokens, intent.responseTokens))
@@ -78,7 +79,7 @@ struct AgentTurn {
         if let fast { context = fast.steps.contains(where: { $0.question != nil }) ? fast.note : context + "\n" + fast.note }
         let parts = AgentPromptParts(context: context, summary: history.summary ?? (history.lines.isEmpty ? conversation.summary : nil), history: history.lines, userTurn: userTurn, reviews: reviewText)
         var diagnostics = AgentResponseDiagnostics(included: result.retrieval.included, omitted: result.retrieval.omitted, inputCharacters: parts.render().count, sources: result.sources, unavailable: result.unavailable)
-        diagnostics.intent = intent.rawValue
+        diagnostics.intent = intent.rawValue; diagnostics.intentSource = decision.source
         let scripted = intent == .outOfScope ? "That’s outside what I can help with here. I can show or find pieces, suggest outfits, plan trips and days, or check what you wear most." : nil
         return AgentTurn(parts: parts, plan: AgentTurnPlan(intent: intent, instructions: instructions, tools: fast == nil ? toolIDs : [], responseTokens: min(qualification.responseTokens, intent.responseTokens), fast: fast, preflight: preflight, scriptedReply: scripted),
                          contextSummary: "\(result.retrieval.included) relevant records; \(result.retrieval.omitted) not included. " + result.sources.map(\.title).joined(separator: ", "),

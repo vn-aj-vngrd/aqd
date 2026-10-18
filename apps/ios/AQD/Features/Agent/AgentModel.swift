@@ -33,7 +33,9 @@ import Observation
     var slow = false
     var active: Bool { conversation.messages.contains(where: \.isActive) }
     var supportsGeneration: Bool { qualification?.isValid == true && [.available, .awaitingQualification].contains(availability) }
-    var canGenerate: Bool { supportsGeneration && attachmentImportCount == 0 && !active && pending == nil && deletion == nil && metadataSave == nil && controls?.hasPending != true }
+    /// True for the moment the model takes to choose an intent when no rule is sure; sending is paused meanwhile.
+    var classifying = false
+    var canGenerate: Bool { supportsGeneration && attachmentImportCount == 0 && !active && !classifying && pending == nil && deletion == nil && metadataSave == nil && controls?.hasPending != true }
     var hasPendingOperation: Bool { pending != nil || deletion != nil || metadataSave != nil }
     private var pending: (AgentConversation, UUID)?
     private var retention: Task<Void, Never>?
@@ -286,11 +288,32 @@ import Observation
             guard source.kind == .outfit, outfits.contains(where: { $0.id == source.id && $0.revision == source.revision }) else { throw PieceStore.StoreError.staleRevision }
         }
     }
+    /// Sends the draft, or retries a reply. When no rule is sure what the request is, the model chooses its intent first (a moment's pause).
     func send(retrying messageID: UUID? = nil) {
+        guard canGenerate, qualification != nil else { return }
+        guard usesNativeProvider, conversation.context.automatic == true, conversation.context.scope == .closet else { performSend(retrying: messageID); return }
+        let request = messageID == nil ? conversation.draft : conversation.messages.last(where: { $0.role == .user })?.source ?? ""
+        var prior = conversation
+        if messageID != nil, prior.messages.count >= 2 { prior.messages.removeLast(2) }
+        let rules = AgentIntent.decide(request, conversation: prior, hasImage: !turnImages(retrying: messageID).isEmpty)
+        guard !rules.confident else { performSend(retrying: messageID, intent: (rules.intent, "rules")); return }
+        classifying = true
+        let draft = conversation.draft, previous = AgentIntent.context(of: prior).previous
+        Task { [weak self] in
+            let chosen = await AgentIntentClassifier.classify(request, previous: previous)
+            guard let self else { return }
+            classifying = false
+            // An edit, a new chat or a stop during that moment cancels the send.
+            guard conversation.draft == draft, supportsGeneration, !active else { return }
+            performSend(retrying: messageID, intent: chosen.map { ($0, "model") } ?? (rules.intent, "rules"))
+        }
+    }
+
+    func performSend(retrying messageID: UUID? = nil, intent decided: (intent: AgentIntent, source: String)? = nil) {
         guard canGenerate, let qualification else { return }
         do {
             let preferences = try store.localSettings().agentPreferences ?? AgentPreferences()
-            let turn = try buildTurn(retrying: messageID, preferences: preferences, qualification: qualification)
+            let turn = try buildTurn(retrying: messageID, preferences: preferences, qualification: qualification, intent: decided)
             let images = turn.images
             attachmentHandles = Dictionary(uniqueKeysWithValues: images.enumerated().map { ("a\($0.offset + 1)", $0.element.id) })
             let attempt = try messageID.map { try conversation.retry(messageID: $0) } ?? conversation.beginAttempt()

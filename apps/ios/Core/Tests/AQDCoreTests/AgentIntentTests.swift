@@ -11,6 +11,9 @@ struct AgentIntentTests {
         ("Is my sun hat still in my closet?", .find), ("What haven't I worn at all this month?", .stats), ("What am I wearing tomorrow?", .whatToWear), ("Pick a look for a beach day", .suggestOutfit),
         ("Going to Palawan for a week, help me choose outfits", .planTrip), ("Outfits for the next 4 days please", .planDays), ("Plan the coming week for me", .planDays),
         ("Change the name of Date night to Evening out", .relabel), ("Flag my Burgundy block heels as unavailable", .editPiece), ("I put on the Sunday market look today", .recordWear),
+        ("I'd like to look at my bottoms", .show), ("Give me a rundown of my themes", .show), ("Any chance I own a silk scarf?", .find), ("Tell me how often I wore the Ivory sneakers last month", .stats),
+        ("What do I put on this morning?", .whatToWear), ("Four days in Cebu, what do I take?", .planTrip), ("Surprise me with a weekend look", .suggestOutfit),
+        ("I'm meeting friends for brunch, what should I put on?", .suggestOutfit), ("Any outfit ideas for this evening?", .whatToWear),
         // chat
         ("Hi", .chat), ("hello there", .chat), ("Good morning", .chat), ("Thanks!", .chat), ("What can you help me with?", .chat), ("What can you do?", .chat), ("who are you", .chat), ("ok", .chat), ("Hello, my closet is new.", .chat),
         // show
@@ -54,6 +57,11 @@ struct AgentIntentTests {
         var wrong: [String] = []
         for (prompt, expected) in Self.table where AgentIntent.classify(prompt) != expected { wrong.append("\(prompt) -> \(AgentIntent.classify(prompt)) (wanted \(expected))") }
         #expect(wrong.isEmpty, "\(wrong.joined(separator: "\n"))")
+    }
+    @Test func onlySpecificRulesAreConfident() {
+        #expect(AgentIntent.decide("Show my black pieces").confident && AgentIntent.decide("Mark my dress as laundry").confident && AgentIntent.decide("Plan a trip for me").confident)
+        for vague in ["Hello, my closet is new.", "What's the weather like on Mars?", "Banana philosophy of the moon"] { #expect(!AgentIntent.decide(vague).confident, "\(vague)") }
+        #expect(AgentIntent.decide("3 days", previous: .planTrip).confident)
     }
     @Test func imagesAddAPiece() {
         #expect(AgentIntent.classify("add this to my closet", hasImage: true) == .addPiece)
