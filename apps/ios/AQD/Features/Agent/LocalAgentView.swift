@@ -144,7 +144,6 @@ struct AgentConversationView: View {
                     chatScrollPhase = phase
                     if phase == .interacting { pinnedTurn = nil }
                 }
-
         }
         }
             }

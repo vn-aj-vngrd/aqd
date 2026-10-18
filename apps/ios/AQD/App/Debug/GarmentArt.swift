@@ -68,11 +68,11 @@ enum GarmentArt {
     // MARK: Geometry helpers
 
     private struct Node { var end: CGPoint; var c1: CGPoint? = nil; var c2: CGPoint? = nil }
-    private static func P(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: x * size.width, y: y * size.height) }
+    private static func pt(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: x * size.width, y: y * size.height) }
     private static func mirror(_ p: CGPoint) -> CGPoint { CGPoint(x: size.width - p.x, y: p.y) }
-    private static func N(_ x: CGFloat, _ y: CGFloat) -> Node { Node(end: P(x, y)) }
-    private static func C(_ c1x: CGFloat, _ c1y: CGFloat, _ c2x: CGFloat, _ c2y: CGFloat, _ x: CGFloat, _ y: CGFloat) -> Node {
-        Node(end: P(x, y), c1: P(c1x, c1y), c2: P(c2x, c2y))
+    private static func node(_ x: CGFloat, _ y: CGFloat) -> Node { Node(end: pt(x, y)) }
+    private static func curve(_ c1x: CGFloat, _ c1y: CGFloat, _ c2x: CGFloat, _ c2y: CGFloat, _ x: CGFloat, _ y: CGFloat) -> Node {
+        Node(end: pt(x, y), c1: pt(c1x, c1y), c2: pt(c2x, c2y))
     }
 
     /// A symmetric outline from the left half: first node is the top center, last node the bottom center.
@@ -164,7 +164,7 @@ enum GarmentArt {
         ctx.move(to: a); ctx.addLine(to: b); ctx.strokePath(); ctx.restoreGState()
     }
     private static func button(_ ctx: CGContext, _ x: CGFloat, _ y: CGFloat, _ color: CGColor) {
-        let p = P(x, y)
+        let p = pt(x, y)
         ctx.setFillColor(color); ctx.fillEllipse(in: CGRect(x: p.x - 7, y: p.y - 7, width: 14, height: 14))
     }
 
@@ -174,65 +174,65 @@ enum GarmentArt {
         let dark = shade(style.color, -0.28)
         switch shape {
         case .tee:
-            let body = symmetric([N(0.5, 0.2), C(0.46, 0.2, 0.44, 0.15, 0.40, 0.13), N(0.27, 0.17), N(0.12, 0.30), N(0.20, 0.38), N(0.30, 0.31), C(0.30, 0.50, 0.29, 0.70, 0.30, 0.88), N(0.5, 0.88)])
+            let body = symmetric([node(0.5, 0.2), curve(0.46, 0.2, 0.44, 0.15, 0.40, 0.13), node(0.27, 0.17), node(0.12, 0.30), node(0.20, 0.38), node(0.30, 0.31), curve(0.30, 0.50, 0.29, 0.70, 0.30, 0.88), node(0.5, 0.88)])
             paint(body, style, in: ctx)
         case .tank:
-            let body = symmetric([N(0.5, 0.24), C(0.45, 0.24, 0.42, 0.17, 0.38, 0.10), N(0.33, 0.10), C(0.34, 0.20, 0.30, 0.26, 0.30, 0.32), C(0.32, 0.45, 0.29, 0.65, 0.31, 0.88), N(0.5, 0.88)])
+            let body = symmetric([node(0.5, 0.24), curve(0.45, 0.24, 0.42, 0.17, 0.38, 0.10), node(0.33, 0.10), curve(0.34, 0.20, 0.30, 0.26, 0.30, 0.32), curve(0.32, 0.45, 0.29, 0.65, 0.31, 0.88), node(0.5, 0.88)])
             paint(body, style, in: ctx)
         case .cami:
-            let body = symmetric([N(0.5, 0.26), C(0.46, 0.30, 0.42, 0.22, 0.40, 0.10), N(0.385, 0.10), C(0.385, 0.20, 0.33, 0.26, 0.31, 0.34), C(0.33, 0.50, 0.30, 0.70, 0.32, 0.86), N(0.5, 0.88)])
+            let body = symmetric([node(0.5, 0.26), curve(0.46, 0.30, 0.42, 0.22, 0.40, 0.10), node(0.385, 0.10), curve(0.385, 0.20, 0.33, 0.26, 0.31, 0.34), curve(0.33, 0.50, 0.30, 0.70, 0.32, 0.86), node(0.5, 0.88)])
             paint(body, style, in: ctx)
-            line(ctx, P(0.34, 0.34), P(0.66, 0.34), shade(style.color, 0.18), 3)
+            line(ctx, pt(0.34, 0.34), pt(0.66, 0.34), shade(style.color, 0.18), 3)
         case .blouse:
-            let body = symmetric([N(0.5, 0.2), C(0.46, 0.2, 0.44, 0.15, 0.40, 0.13), N(0.27, 0.17), N(0.08, 0.62), N(0.17, 0.66), N(0.31, 0.38), C(0.30, 0.55, 0.29, 0.72, 0.30, 0.86), N(0.5, 0.88)])
+            let body = symmetric([node(0.5, 0.2), curve(0.46, 0.2, 0.44, 0.15, 0.40, 0.13), node(0.27, 0.17), node(0.08, 0.62), node(0.17, 0.66), node(0.31, 0.38), curve(0.30, 0.55, 0.29, 0.72, 0.30, 0.86), node(0.5, 0.88)])
             paint(body, style, in: ctx)
-            line(ctx, P(0.5, 0.2), P(0.5, 0.88), dark, 3)
+            line(ctx, pt(0.5, 0.2), pt(0.5, 0.88), dark, 3)
             for y in stride(from: 0.28, through: 0.8, by: 0.13) { button(ctx, 0.5, y, shade(style.color, -0.35)) }
         case .crop:
-            let body = symmetric([N(0.5, 0.26), C(0.46, 0.26, 0.44, 0.20, 0.40, 0.18), N(0.27, 0.22), N(0.12, 0.34), N(0.20, 0.42), N(0.30, 0.36), C(0.30, 0.46, 0.29, 0.54, 0.31, 0.62), N(0.5, 0.62)])
+            let body = symmetric([node(0.5, 0.26), curve(0.46, 0.26, 0.44, 0.20, 0.40, 0.18), node(0.27, 0.22), node(0.12, 0.34), node(0.20, 0.42), node(0.30, 0.36), curve(0.30, 0.46, 0.29, 0.54, 0.31, 0.62), node(0.5, 0.62)])
             paint(body, style, in: ctx)
         case .cardigan:
-            let body = symmetric([N(0.5, 0.24), C(0.46, 0.20, 0.44, 0.15, 0.40, 0.13), N(0.27, 0.17), N(0.08, 0.62), N(0.17, 0.66), N(0.31, 0.40), C(0.30, 0.58, 0.29, 0.74, 0.30, 0.90), N(0.5, 0.90)])
+            let body = symmetric([node(0.5, 0.24), curve(0.46, 0.20, 0.44, 0.15, 0.40, 0.13), node(0.27, 0.17), node(0.08, 0.62), node(0.17, 0.66), node(0.31, 0.40), curve(0.30, 0.58, 0.29, 0.74, 0.30, 0.90), node(0.5, 0.90)])
             paint(body, style, in: ctx)
-            line(ctx, P(0.5, 0.24), P(0.5, 0.90), dark, 4)
+            line(ctx, pt(0.5, 0.24), pt(0.5, 0.90), dark, 4)
             for y in stride(from: 0.32, through: 0.80, by: 0.12) { button(ctx, 0.5, y, shade(style.color, -0.35)) }
         case .blazer:
-            let body = symmetric([N(0.5, 0.20), N(0.42, 0.12), N(0.27, 0.15), N(0.09, 0.66), N(0.18, 0.70), N(0.31, 0.38), C(0.30, 0.58, 0.29, 0.76, 0.30, 0.90), N(0.5, 0.90)])
+            let body = symmetric([node(0.5, 0.20), node(0.42, 0.12), node(0.27, 0.15), node(0.09, 0.66), node(0.18, 0.70), node(0.31, 0.38), curve(0.30, 0.58, 0.29, 0.76, 0.30, 0.90), node(0.5, 0.90)])
             paint(body, style, in: ctx)
-            let lapel = CGMutablePath(); lapel.move(to: P(0.42, 0.12)); lapel.addLine(to: P(0.50, 0.42)); lapel.addLine(to: P(0.58, 0.12)); lapel.addLine(to: P(0.5, 0.20)); lapel.closeSubpath()
+            let lapel = CGMutablePath(); lapel.move(to: pt(0.42, 0.12)); lapel.addLine(to: pt(0.50, 0.42)); lapel.addLine(to: pt(0.58, 0.12)); lapel.addLine(to: pt(0.5, 0.20)); lapel.closeSubpath()
             paint(lapel, Style(color: shade(style.color, 0.10)), in: ctx, shadow: false)
-            line(ctx, P(0.5, 0.42), P(0.5, 0.90), dark, 3); button(ctx, 0.5, 0.52, shade(style.color, -0.35)); button(ctx, 0.5, 0.64, shade(style.color, -0.35))
+            line(ctx, pt(0.5, 0.42), pt(0.5, 0.90), dark, 3); button(ctx, 0.5, 0.52, shade(style.color, -0.35)); button(ctx, 0.5, 0.64, shade(style.color, -0.35))
         case .jacket:
-            let body = symmetric([N(0.5, 0.18), C(0.46, 0.18, 0.44, 0.13, 0.40, 0.11), N(0.27, 0.15), N(0.10, 0.62), N(0.19, 0.66), N(0.31, 0.38), C(0.30, 0.52, 0.29, 0.62, 0.30, 0.74), N(0.5, 0.74)])
+            let body = symmetric([node(0.5, 0.18), curve(0.46, 0.18, 0.44, 0.13, 0.40, 0.11), node(0.27, 0.15), node(0.10, 0.62), node(0.19, 0.66), node(0.31, 0.38), curve(0.30, 0.52, 0.29, 0.62, 0.30, 0.74), node(0.5, 0.74)])
             paint(body, style, in: ctx)
-            line(ctx, P(0.5, 0.18), P(0.5, 0.74), dark, 3)
-            line(ctx, P(0.34, 0.50), P(0.45, 0.50), dark, 3); line(ctx, P(0.55, 0.50), P(0.66, 0.50), dark, 3)
+            line(ctx, pt(0.5, 0.18), pt(0.5, 0.74), dark, 3)
+            line(ctx, pt(0.34, 0.50), pt(0.45, 0.50), dark, 3); line(ctx, pt(0.55, 0.50), pt(0.66, 0.50), dark, 3)
         case .dress(let length, let sleeves):
             let hem: CGFloat = length == .mini ? 0.66 : length == .midi ? 0.80 : 0.93
             let flare: CGFloat = length == .mini ? 0.26 : length == .midi ? 0.22 : 0.20
-            var left: [Node] = [N(0.5, 0.2), C(0.46, 0.2, 0.44, 0.15, 0.41, 0.10)]
-            if sleeves { left += [N(0.28, 0.14), N(0.14, 0.28), N(0.22, 0.34), N(0.32, 0.27)] } else { left += [N(0.37, 0.10), C(0.37, 0.18, 0.33, 0.24, 0.33, 0.30)] }
-            left += [C(0.34, 0.38, 0.38, 0.40, 0.37, 0.45), C(0.35, 0.52, flare + 0.04, hem - 0.08, flare, hem), N(0.5, hem)]
+            var left: [Node] = [node(0.5, 0.2), curve(0.46, 0.2, 0.44, 0.15, 0.41, 0.10)]
+            if sleeves { left += [node(0.28, 0.14), node(0.14, 0.28), node(0.22, 0.34), node(0.32, 0.27)] } else { left += [node(0.37, 0.10), curve(0.37, 0.18, 0.33, 0.24, 0.33, 0.30)] }
+            left += [curve(0.34, 0.38, 0.38, 0.40, 0.37, 0.45), curve(0.35, 0.52, flare + 0.04, hem - 0.08, flare, hem), node(0.5, hem)]
             paint(symmetric(left), style, in: ctx)
-            line(ctx, P(0.37, 0.45), P(0.63, 0.45), shade(style.color, -0.18), 3)
+            line(ctx, pt(0.37, 0.45), pt(0.63, 0.45), shade(style.color, -0.18), 3)
         case .skirt(let length, let pleated):
             let hem: CGFloat = length == .mini ? 0.52 : length == .midi ? 0.80 : 0.92
-            let body = symmetric([N(0.5, 0.20), N(0.36, 0.20), C(0.35, 0.28, 0.34, 0.30, 0.33, 0.34), C(0.28, 0.5, 0.24, hem - 0.1, 0.20, hem), N(0.5, hem)])
+            let body = symmetric([node(0.5, 0.20), node(0.36, 0.20), curve(0.35, 0.28, 0.34, 0.30, 0.33, 0.34), curve(0.28, 0.5, 0.24, hem - 0.1, 0.20, hem), node(0.5, hem)])
             paint(body, style, in: ctx)
-            line(ctx, P(0.36, 0.2), P(0.64, 0.2), shade(style.color, -0.30), 8)
-            if pleated { for k in 1..<6 { let x = 0.5 - 0.30 + CGFloat(k) * 0.10; line(ctx, P(0.5 + (x - 0.5) * 0.7, 0.34), P(x, hem), shade(style.color, -0.16), 3) } }
+            line(ctx, pt(0.36, 0.2), pt(0.64, 0.2), shade(style.color, -0.30), 8)
+            if pleated { for k in 1..<6 { let x = 0.5 - 0.30 + CGFloat(k) * 0.10; line(ctx, pt(0.5 + (x - 0.5) * 0.7, 0.34), pt(x, hem), shade(style.color, -0.16), 3) } }
         case .pants(let fit):
             let outer: CGFloat = fit == .wide ? 0.17 : fit == .straight ? 0.23 : 0.28
             let leg: CGFloat = fit == .wide ? 0.43 : fit == .straight ? 0.40 : 0.37
-            let body = symmetric([N(0.5, 0.10), N(0.31, 0.10), C(0.31, 0.2, 0.29, 0.26, 0.28, 0.30), C(0.25, 0.5, outer, 0.7, outer, 0.92), N(leg - 0.02, 0.92), C(leg, 0.7, 0.44, 0.52, 0.5, 0.36)])
+            let body = symmetric([node(0.5, 0.10), node(0.31, 0.10), curve(0.31, 0.2, 0.29, 0.26, 0.28, 0.30), curve(0.25, 0.5, outer, 0.7, outer, 0.92), node(leg - 0.02, 0.92), curve(leg, 0.7, 0.44, 0.52, 0.5, 0.36)])
             paint(body, style, in: ctx)
-            line(ctx, P(0.31, 0.11), P(0.69, 0.11), shade(style.color, -0.30), 10)
-            line(ctx, P(0.5, 0.11), P(0.5, 0.36), shade(style.color, -0.22), 3)
+            line(ctx, pt(0.31, 0.11), pt(0.69, 0.11), shade(style.color, -0.30), 10)
+            line(ctx, pt(0.5, 0.11), pt(0.5, 0.36), shade(style.color, -0.22), 3)
             for x in [0.40, 0.60] { button(ctx, x, 0.14, shade(style.color, -0.4)) }
         case .shorts:
-            let body = symmetric([N(0.5, 0.20), N(0.31, 0.20), C(0.31, 0.28, 0.29, 0.32, 0.28, 0.36), C(0.25, 0.48, 0.22, 0.55, 0.21, 0.62), N(0.45, 0.62), C(0.45, 0.52, 0.48, 0.46, 0.5, 0.42)])
+            let body = symmetric([node(0.5, 0.20), node(0.31, 0.20), curve(0.31, 0.28, 0.29, 0.32, 0.28, 0.36), curve(0.25, 0.48, 0.22, 0.55, 0.21, 0.62), node(0.45, 0.62), curve(0.45, 0.52, 0.48, 0.46, 0.5, 0.42)])
             paint(body, style, in: ctx)
-            line(ctx, P(0.31, 0.21), P(0.69, 0.21), shade(style.color, -0.30), 9)
+            line(ctx, pt(0.31, 0.21), pt(0.69, 0.21), shade(style.color, -0.30), 9)
         case .sneakers:
             let sole = CGMutablePath(); sole.addRoundedRect(in: CGRect(x: 120, y: 620, width: 560, height: 70), cornerWidth: 34, cornerHeight: 34)
             let upper = CGMutablePath(); upper.move(to: CGPoint(x: 140, y: 620)); upper.addCurve(to: CGPoint(x: 230, y: 380), control1: CGPoint(x: 120, y: 520), control2: CGPoint(x: 170, y: 400))
@@ -330,7 +330,7 @@ enum GarmentArt {
             paint(bottom, style, in: ctx)
             line(ctx, CGPoint(x: 280, y: 560), CGPoint(x: 220, y: 548), shade(style.color, -0.15), 6); line(ctx, CGPoint(x: 520, y: 560), CGPoint(x: 580, y: 548), shade(style.color, -0.15), 6)
         case .onePiece:
-            let body = symmetric([N(0.5, 0.30), C(0.46, 0.34, 0.42, 0.24, 0.40, 0.12), N(0.385, 0.12), C(0.385, 0.24, 0.35, 0.32, 0.36, 0.40), C(0.40, 0.48, 0.38, 0.52, 0.37, 0.56), C(0.36, 0.64, 0.38, 0.68, 0.40, 0.72), C(0.44, 0.78, 0.47, 0.76, 0.5, 0.80)])
+            let body = symmetric([node(0.5, 0.30), curve(0.46, 0.34, 0.42, 0.24, 0.40, 0.12), node(0.385, 0.12), curve(0.385, 0.24, 0.35, 0.32, 0.36, 0.40), curve(0.40, 0.48, 0.38, 0.52, 0.37, 0.56), curve(0.36, 0.64, 0.38, 0.68, 0.40, 0.72), curve(0.44, 0.78, 0.47, 0.76, 0.5, 0.80)])
             paint(body, style, in: ctx)
         }
     }
