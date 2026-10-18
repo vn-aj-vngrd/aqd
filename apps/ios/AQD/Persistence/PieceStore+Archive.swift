@@ -35,7 +35,8 @@ extension PieceStore {
               Set(owned.map(\.id)).count == owned.count, Set(outfits.map(\.id)).count == outfits.count,
               Set(plans.map(\.id)).count == plans.count, Set(entries.map(\.id)).count == entries.count else { throw StoreError.invalidRecord }
         // Entries created individually predate grouped definitions; their stable plan IDs remain valid.
-        for plan in plans { _ = try packingState(planID: plan.id) }
+        // Only trips carry packing state; a routine or weekly plan has none and must not fail validation.
+        for plan in plans where plan.trip != nil { _ = try packingState(planID: plan.id) }
         for state in try context.fetch(FetchDescriptor<StoredPackingState>()) { guard planIDs.contains(try state.value().planID) else { throw StoreError.invalidRecord } }
         var photoOwners = owned.map { (id: $0.photoID, recipe: $0.photoRecipe) }
         photoOwners += try personalPhotoOwners(in: context) + todayPhotoOwners(in: context)
