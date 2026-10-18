@@ -23,14 +23,17 @@ struct LocalSettingsView: View {
                     SettingsRow(title: "Appearance", symbol: "circle.lefthalf.filled", value: appearanceTitle)
                 }
                 Button { weather = true } label: {
-                    SettingsRow(title: "Weather", symbol: "cloud.sun", value: state.weatherClient?.local?.enabled == true ? state.weatherClient?.local?.place?.name ?? "Place unavailable" : "Off", valueLineLimit: 1, disclosure: true)
+                    SettingsRow(title: "Weather", symbol: "cloud.sun", value: state.weatherClient?.local?.enabled == true ? state.weatherClient?.local?.place?.name.split(separator: ",").first.map { String($0).trimmingCharacters(in: .whitespaces) } ?? "Place unavailable" : "Off", valueLineLimit: 1, disclosure: true)
                 }
             }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
                 .listRowBackground(AppTheme.surface)
-            Section("Assistance & help") {
+            Section("AI") {
                 NavigationLink { AgentSettingsView().secondaryPage() } label: { SettingsRow(title: "AI settings", symbol: "sparkles") }
-                NavigationLink { AgentFeedbackView().secondaryPage() } label: { SettingsRow(title: "Feedback", symbol: "bubble.left") }
                 NavigationLink { LocalAssistanceSettingsView().secondaryPage() } label: { SettingsRow(title: "About Agent", symbol: "sparkle") }
+                NavigationLink { AgentFeedbackView().secondaryPage() } label: { SettingsRow(title: "Feedback", symbol: "bubble.left") }
+            }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
+                .listRowBackground(AppTheme.surface)
+            Section("Help") {
                 NavigationLink { LocalPrivacySettingsView().secondaryPage() } label: { SettingsRow(title: "Help & privacy", symbol: "hand.raised") }
                 Button { state.beginTour(from: .settings) } label: { SettingsRow(title: "App tour", symbol: "play.rectangle", disclosure: true) }
             }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
