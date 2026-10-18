@@ -479,8 +479,11 @@ struct AgentHistoryView: View {
                     .listRowBackground(Color.clear).listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 4, leading: AppSpacing.screen, bottom: 4, trailing: AppSpacing.screen))
                     .swipeActions(allowsFullSwipe: false) {
-                        Button("Delete", role: .destructive) { selected = value }
-                        Button(value.isArchived ? "Restore" : "Archive", systemImage: "archivebox") { model.setOrganization(value, archived: !value.isArchived) }.tint(AppTheme.secondary)
+                        // Same icon-and-label treatment for both; delete is the only red.
+                        Button(role: .destructive) { selected = value } label: { Label("Delete", systemImage: "trash") }.tint(AppTheme.dangerFill)
+                        Button { model.setOrganization(value, archived: !value.isArchived) } label: {
+                            Label(value.isArchived ? "Restore" : "Archive", systemImage: value.isArchived ? "tray.and.arrow.up" : "archivebox")
+                        }.tint(AppTheme.controlIcon)
                     }.disabled(model.active || model.hasPendingOperation)
             }
         }.listStyle(.plain).listRowSeparator(.hidden).listSectionSeparator(.hidden).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)
