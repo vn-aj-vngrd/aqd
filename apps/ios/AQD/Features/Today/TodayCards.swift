@@ -219,7 +219,7 @@ struct TodayCard: View {
             if report.isEmpty && !options.metrics.contains(.unworn) {
                 Text("No wear recorded in this period yet.").foregroundStyle(AppTheme.secondary)
             } else {
-                VStack(alignment: .leading, spacing: AppSpacing.large) {
+                VStack(alignment: .leading, spacing: AppSpacing.large + 4) {
                     ForEach(options.metrics, id: \.self) { metric in insightBlock(metric, report) }
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -230,56 +230,80 @@ struct TodayCard: View {
     @ViewBuilder private func insightBlock(_ metric: WearInsightsOptions.Metric, _ report: WearInsightsReport) -> some View {
         switch metric {
         case .summary:
-            HStack(alignment: .top, spacing: 0) {
-                insightStat(report.days, report.days == 1 ? "day" : "days")
+            HStack(spacing: AppSpacing.small) {
+                insightStat(report.days, report.days == 1 ? "day worn" : "days worn")
                 insightStat(report.occasions, report.occasions == 1 ? "look" : "looks")
-                insightStat(report.piecesUsed, report.piecesUsed == 1 ? "piece" : "pieces")
+                insightStat(report.piecesUsed, report.piecesUsed == 1 ? "piece used" : "pieces used")
             }
         case .mostWorn:
-            insightList("Most worn", report.mostWorn.map { ($0.name, "\($0.count)×") }, empty: "Nothing recorded yet.")
+            insightList("Most worn", report.mostWorn.map { ($0.name, $0.count) }, empty: "Nothing recorded yet.")
         case .unworn:
-            insightList("Not worn yet", report.unworn.map { ($0.name, "") }, empty: "Every active piece was worn.", footnote: report.unwornCount > 3 ? "and \(report.unwornCount - 3) more" : nil)
+            insightList("Not worn yet", report.unworn.map { ($0.name, 0) }, empty: "Every active piece was worn.", footnote: report.unwornCount > 3 ? "and \(report.unwornCount - 3) more" : nil)
         case .outfits:
-            insightList("Top outfits", report.outfits.map { ($0.name, "\($0.count)×") }, empty: "No saved outfit was worn.")
+            insightList("Top outfits", report.outfits.map { ($0.name, $0.count) }, empty: "No saved outfit was worn.")
         case .categories:
             VStack(alignment: .leading, spacing: AppSpacing.small) {
-                Text("By category").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                insightHeading("By category")
                 let top = max(1, report.categories.map(\.count).max() ?? 1)
                 ForEach(report.categories, id: \.category) { share in
                     HStack(spacing: AppSpacing.small) {
                         Text(share.category.rawValue).font(AppTypography.supporting).truncated().frame(width: 92, alignment: .leading)
-                        GeometryReader { proxy in
-                            Capsule().fill(AppTheme.ink).frame(width: max(6, proxy.size.width * CGFloat(share.count) / CGFloat(top)), height: 8).frame(maxHeight: .infinity)
-                        }.frame(height: 14)
-                        Text("\(share.count)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).monospacedDigit()
+                        insightBar(Double(share.count) / Double(top))
+                        Text("\(share.count)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).monospacedDigit().frame(minWidth: 20, alignment: .trailing)
                     }
                 }
                 if report.categories.isEmpty { Text("Nothing recorded yet.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
             }
         case .streak:
             HStack(spacing: AppSpacing.small) {
-                Image(systemName: "flame").foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                Image(systemName: "flame.fill").foregroundStyle(AppTheme.accent).accessibilityHidden(true)
                 Text(report.streak == 0 ? "No wear streak right now" : "\(report.streak)-day wear streak").font(AppTypography.body)
+                Spacer(minLength: 0)
             }
+            .padding(AppSpacing.small + 2)
+            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group, style: .continuous))
         }
+    }
+
+    private func insightHeading(_ title: String) -> some View {
+        Text(title).font(AppTypography.metadata.weight(.semibold)).foregroundStyle(AppTheme.secondary).textCase(.uppercase).tracking(0.6)
+    }
+
+    private func insightBar(_ fraction: Double) -> some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .leading) {
+                Capsule().fill(AppTheme.segmentSelection)
+                Capsule().fill(AppTheme.accent).frame(width: max(8, proxy.size.width * fraction))
+            }
+        }.frame(height: 8)
     }
 
     private func insightStat(_ value: Int, _ label: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text("\(value)").font(.title2.weight(.semibold)).monospacedDigit()
-            Text(label).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-        }.frame(maxWidth: .infinity, alignment: .leading).accessibilityElement(children: .combine)
+            Text("\(value)").font(.title.weight(.semibold)).monospacedDigit().minimumScaleFactor(0.7).lineLimit(1)
+            Text(label).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
+        }
+        .padding(.horizontal, AppSpacing.small + 2).padding(.vertical, AppSpacing.small)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group, style: .continuous))
+        .accessibilityElement(children: .combine)
     }
 
-    private func insightList(_ title: String, _ rows: [(String, String)], empty: String, footnote: String? = nil) -> some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-            Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+    /// Ranked rows: a position, the name, and a bar scaled to the leader. A zero count means an unranked list.
+    private func insightList(_ title: String, _ rows: [(String, Int)], empty: String, footnote: String? = nil) -> some View {
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
+            insightHeading(title)
             if rows.isEmpty { Text(empty).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
-            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
-                HStack(spacing: AppSpacing.small) {
-                    Text(row.0).font(AppTypography.body).truncated()
-                    Spacer(minLength: AppSpacing.small)
-                    if !row.1.isEmpty { Text(row.1).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).monospacedDigit() }
+            let top = max(1, rows.map(\.1).max() ?? 1)
+            ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: AppSpacing.small) {
+                        if row.1 > 0 { Text("\(index + 1)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).monospacedDigit().frame(width: 14, alignment: .leading) }
+                        Text(row.0).font(AppTypography.body).truncated()
+                        Spacer(minLength: AppSpacing.small)
+                        if row.1 > 0 { Text("\(row.1)×").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).monospacedDigit() }
+                    }
+                    if row.1 > 0 { insightBar(Double(row.1) / Double(top)) }
                 }
             }
             if let footnote { Text(footnote).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }

@@ -1,7 +1,7 @@
 import Foundation
 
 public enum TodayWidgetKind: String, CaseIterable, Codable, Sendable {
-    case todayLook, wearInsights, weekInWear, closetInUse, upcomingPlans, wearAgain, favoriteOutfits
+    case todayLook, weekInWear, wearInsights, closetInUse, upcomingPlans, wearAgain, favoriteOutfits
     case theme, fitJournal, weatherContext, quickActions, personalNote, personalPhoto
 
     public var title: String {

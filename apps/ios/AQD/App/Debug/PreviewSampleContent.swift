@@ -43,8 +43,8 @@ import UIKit
             default: break
             }
             let instance = TodayWidgetInstance(kind: kind, options: options)
-            // Wear insights sits right under Today's look; everything else goes to the end.
-            if kind == .wearInsights, let look = draft.value.instances.firstIndex(where: { $0.kind == .todayLook }) { draft.value.instances.insert(instance, at: look + 1) }
+            // Wear insights sits right under Your week in wear; everything else goes to the end.
+            if kind == .wearInsights, let week = draft.value.instances.firstIndex(where: { $0.kind == .weekInWear }) { draft.value.instances.insert(instance, at: week + 1) }
             else { draft.value.instances.append(instance) }
         }
         for index in draft.value.instances.indices { draft.value.instances[index].isHidden = nil }
