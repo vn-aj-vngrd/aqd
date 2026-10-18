@@ -106,7 +106,7 @@ public struct AgentGroundingCheck: Sendable {
     private static let quotePattern = regex(#"[“"]([^”"\n]{2,60})[”"]"#)
     private static let listPattern = try? NSRegularExpression(pattern: #"(?m)^\s*(?:[-*•]|\d+[.)])\s+(.+)$"#)
     private static let countPattern = regex(#"(\d+)\s+(?:(?:active|saved|available|total|recorded|different|unworn|worn|new|favorite|planned)\s+)*(pieces?|items?|garments?|outfits?|looks?|themes?|plans?|tops?|bottoms?|dresses|layers?|shoes?|accessor(?:y|ies))\b"#)
-    private static let completionPattern = regex(#"\b(?:i(?:'|’)?ve|i have|i|we(?:'|’)?ve|we)\s+(?:just\s+|already\s+)?(renamed|saved|updated|changed|created|added|marked|recorded|logged|deleted|removed|set up|applied)\b|\b(?:has|have|is|are)\s+(?:now\s+|been\s+)(?:been\s+)?(renamed|saved|updated|changed|created|added|marked|recorded|logged|deleted|removed|applied)\b|\ball set\b"#)
+    private static let completionPattern = regex(#"\b(?:i(?:'|’)?ve|i have|i|we(?:'|’)?ve|we)\s+(?:just\s+|already\s+)?(renamed|saved|updated|changed|created|added|marked|recorded|logged|deleted|removed|set up|applied)\b|\b(?:has|have|is|are)\s+(?:now\s+|been\s+)(?:been\s+)?(renamed|saved|updated|changed|created|added|marked|recorded|logged|deleted|removed|applied|labell?ed|named|called|relabell?ed)\b|\ball set\b"#)
     private static let wearPattern = regex(#"(?:worn|wore|wear(?:s|ing)?)\s+(?:it\s+|them\s+)?(\d+)\s+times?|(\d+)\s+(?:recorded\s+)?(?:wears|times)\b"#)
 
     private func matches(_ pattern: NSRegularExpression?, in text: String, group: Int = 0) -> [String] {

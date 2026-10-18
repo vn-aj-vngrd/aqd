@@ -147,13 +147,13 @@ struct AgentGroundingRepairTests {
 struct AgentCompletionClaimTests {
     let check = AgentGroundingCheck(catalog: AgentGroundingCheckTests.catalog)
     @Test func sayingAChangeWasMadeIsFlaggedOnlyWhenChangesAreForbidden() {
-        for claim in ["I’ve renamed the Office day outfit.", "I renamed it for you.", "The outfit has been saved.", "Done, I have updated your profile.", "All set!", "We've marked it as laundry."] {
+        for claim in ["I’ve renamed the Office day outfit.", "I renamed it for you.", "The outfit has been saved.", "Done, I have updated your profile.", "All set!", "We've marked it as laundry.", "The Slow Sunday outfit is now labeled Lazy morning."] {
             #expect(check.violations(in: claim, forbidCompletionClaims: true).contains { $0.isFalseClaim }, "\(claim)")
             #expect(check.violations(in: claim).isEmpty, "\(claim)")
         }
     }
     @Test func preparingAReviewIsNotAClaimOfCompletion() {
-        for fine in ["I prepared a review. Nothing is saved until you save it.", "Review is ready: tap Review and save.", "I can rename it once you confirm.", "It will be saved when you tap Save."] {
+        for fine in ["I prepared a review. Nothing is saved until you save it.", "Review is ready: tap Review and save.", "I can rename it once you confirm.", "It will be saved when you tap Save.", "An outfit named Beach walk is ready to review."] {
             #expect(check.violations(in: fine, forbidCompletionClaims: true).isEmpty, "\(fine)")
         }
     }

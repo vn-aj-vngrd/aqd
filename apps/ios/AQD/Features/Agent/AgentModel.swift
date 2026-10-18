@@ -300,7 +300,7 @@ import Observation
         classifying = true
         let draft = conversation.draft, previous = AgentIntent.context(of: prior).previous
         Task { [weak self] in
-            let chosen = await AgentIntentClassifier.classify(request, previous: previous)
+            let chosen = await AgentIntentClassifier.classify(request, rule: rules.intent, previous: previous)
             guard let self else { return }
             classifying = false
             // An edit, a new chat or a stop during that moment cancels the send.

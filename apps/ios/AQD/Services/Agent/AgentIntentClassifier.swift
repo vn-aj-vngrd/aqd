@@ -33,14 +33,18 @@ import FoundationModels
     """
 
     /// First asks whether the request is about the wardrobe at all, which a small model answers reliably, then which intent it is.
-    static func classify(_ request: String, previous: AgentIntent?) async -> AgentIntent? {
+    /// `rule` is what the rules guessed. Only a guess of outOfScope (no clothing word at all) may be confirmed as outside the Agent;
+    /// otherwise the request has a clothing word and the model only picks which wardrobe intent it is.
+    static func classify(_ request: String, rule: AgentIntent, previous: AgentIntent?) async -> AgentIntent? {
         #if canImport(FoundationModels)
         guard #available(iOS 26, *), SystemLanguageModel.default.availability == .available, SystemLanguageModel.default.supportsLocale() else { return nil }
         let text = String(request.prefix(300))
-        guard let domain = await choose(domainInstructions, "Request: " + text, from: ["yes", "no"]) else { return nil }
-        if domain == "no" { return .outOfScope }
+        if rule == .outOfScope {
+            guard let domain = await choose(domainInstructions, "Request: " + text, from: ["yes", "no"]) else { return nil }
+            if domain == "no" { return .outOfScope }
+        }
         let prompt = (previous.map { "The previous request was \($0.rawValue).\n" } ?? "") + "Request: " + text
-        let name = await choose(instructions, prompt, from: AgentIntent.allCases.map(\.rawValue))
+        let name = await choose(instructions, prompt, from: AgentIntent.allCases.filter { $0 != .outOfScope }.map(\.rawValue))
         return name.flatMap(AgentIntent.init(rawValue:))
         #else
         return nil
