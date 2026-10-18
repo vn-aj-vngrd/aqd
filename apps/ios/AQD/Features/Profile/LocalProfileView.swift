@@ -43,15 +43,15 @@ struct LocalProfileView: View {
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
-                            Section {
+                            Section("Profile") {
                                 AccessoryButton("Edit profile", systemImage: "person.crop.circle") { state.openIdentity() }
                                 AccessoryButton("Style", systemImage: "slider.horizontal.3") { state.openStyle(source: .profile) }
                             }
-                            Section {
+                            Section("Wear") {
                                 AccessoryButton("Wear history", systemImage: "clock.arrow.circlepath") { state.profileHistory = true }
                                 AccessoryButton("Wear insights", systemImage: "chart.bar") { state.profileInsights = true }
                             }
-                            Section {
+                            Section("Closet") {
                                 AccessoryButton("Categories", systemImage: "square.grid.2x2") { categories = true }
                                 AccessoryButton("Settings", systemImage: "gearshape") { state.profileSettings = true }
                             }
