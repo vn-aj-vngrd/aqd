@@ -12,11 +12,11 @@ struct AgentSuggestOutfitTool: Tool {
     @Generable struct Arguments {
         var occasion: String?
         var mood: String?
-        @Guide(description: "Exact piece UUIDs that must be in the outfit", .maximumCount(6)) var pinnedIDs: [String]
+        @Guide(description: "Pieces that must be in the outfit, by handle or name", .maximumCount(6)) var pinned: [String]
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            try await handlers.suggestOutfit(arguments.occasion, arguments.mood, try arguments.pinnedIDs.map(AgentToolbox.id))
+            try await handlers.suggestOutfit(arguments.occasion, arguments.mood, try arguments.pinned.map { try handlers.resolve($0, [.piece]).id })
         }
     }
 }
@@ -27,15 +27,15 @@ struct AgentProposeOutfitTool: Tool {
     let description = "Prepare a review to save a new outfit from exact available pieces with a name. Nothing is applied. If a piece is missing, say the closet needs it."
     let handlers: AgentToolHandlers
     @Generable struct Arguments {
-        @Guide(description: "Exact available piece UUIDs from findRecords", .maximumCount(24)) var pieceIDs: [String]
+        @Guide(description: "Available pieces by handle or name", .maximumCount(24)) var pieces: [String]
         @Guide(description: "At most 80 characters") var name: String
         var occasion: String?
         var mood: String?
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            try handlers.prepare(AgentMutationRequest(kind: .createOutfit, name: arguments.name, pieceIDs: try arguments.pieceIDs.map(AgentToolbox.id),
-                                                      occasion: arguments.occasion, mood: arguments.mood), nil, .proposeOutfit)
+            try handlers.prepare(AgentMutationRequest(kind: .createOutfit, name: arguments.name, pieceIDs: try arguments.pieces.map { try handlers.resolve($0, [.piece]).id },
+                                                      occasion: arguments.occasion, mood: arguments.mood), .proposeOutfit)
         }
     }
 }
@@ -47,13 +47,13 @@ struct AgentProposeThemeTool: Tool {
     let handlers: AgentToolHandlers
     @Generable struct Arguments {
         @Guide(description: "At most 80 characters") var name: String
-        @Guide(description: "Exact saved outfit UUIDs from findRecords", .maximumCount(24)) var outfitIDs: [String]
+        @Guide(description: "Saved outfits by handle or name", .maximumCount(24)) var outfits: [String]
         @Guide(description: "At most 160 characters") var description: String?
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            try handlers.prepare(AgentMutationRequest(kind: .createTheme, name: arguments.name, outfitIDs: try arguments.outfitIDs.map(AgentToolbox.id),
-                                                      themeDescription: arguments.description), nil, .proposeTheme)
+            try handlers.prepare(AgentMutationRequest(kind: .createTheme, name: arguments.name, outfitIDs: try arguments.outfits.map { try handlers.resolve($0, [.outfit]).id },
+                                                      themeDescription: arguments.description), .proposeTheme)
         }
     }
 }
@@ -64,16 +64,15 @@ struct AgentRelabelTool: Tool {
     let description = "Prepare a review to rename a saved outfit or theme, or set an outfit's occasion or mood. Pieces and members stay unchanged. Nothing is applied."
     let handlers: AgentToolHandlers
     @Generable struct Arguments {
-        @Guide(description: "Exact outfit or theme UUID from findRecords") var targetID: String
-        @Guide(description: "Revision from findRecords") var revision: Int?
+        @Guide(description: "The saved outfit or theme: its handle such as o2 or t1, or its name") var target: String
         var name: String?
         @Guide(description: "Outfits only") var occasion: String?
         @Guide(description: "Outfits only") var mood: String?
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            try handlers.prepare(AgentMutationRequest(kind: .relabel, targetID: try AgentToolbox.id(arguments.targetID), name: arguments.name,
-                                                      occasion: arguments.occasion, mood: arguments.mood), arguments.revision, .relabel)
+            try handlers.prepare(AgentMutationRequest(kind: .relabel, targetID: try handlers.resolve(arguments.target, [.outfit, .theme]).id, name: arguments.name,
+                                                      occasion: arguments.occasion, mood: arguments.mood), .relabel)
         }
     }
 }

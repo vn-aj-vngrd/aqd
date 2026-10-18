@@ -125,7 +125,7 @@ public struct AgentToolStep: Identifiable, Codable, Equatable, Sendable {
     }
 }
 
-/// Why a tool call produced no proposal. The reason is returned to the model so it can correct itself.
+/// Why a tool call produced no proposal. The reason is returned to the model so it can correct itself; the summary is the quiet step the owner sees.
 public enum AgentToolRejection: Error, Equatable, Sendable {
     case malformedID(String)
     case unknownRecord(UUID)
@@ -133,15 +133,33 @@ public enum AgentToolRejection: Error, Equatable, Sendable {
     case revisionRequired
     case staleRevision(expected: Int, current: Int)
     case invalidArguments
+    /// No record matches what the model named.
+    case notFound(String)
+    /// Several records match; the app asked the owner which one.
+    case ambiguous(String, [String])
 
     public var reason: String {
         switch self {
-        case .malformedID(let value): "“\(value)” is not a record ID. Call findRecords with its name and use the ID it returns. Never ask the owner for an ID; they never see IDs."
-        case .unknownRecord(let id): "No record has ID \(id.uuidString). Call findRecords for exact IDs; never guess and never ask the owner for one."
-        case .missingTarget: "This change needs the ID of the record to edit. Call findRecords first."
-        case .revisionRequired: "Pass the revision shown by findRecords with the ID."
-        case .staleRevision(let expected, let current): "The record is at revision \(current), not \(expected). It changed since the lookup. Call findRecords again."
+        case .malformedID(let value): "“\(value)” is not a piece, outfit, theme or plan. Use a handle such as p3 or the exact name from findRecords. Never ask the owner for a code."
+        case .unknownRecord: "That record is no longer in the closet. Call findRecords to look it up by name."
+        case .missingTarget: "Name the piece, outfit, theme or plan to change. Use findRecords if unsure."
+        case .revisionRequired: "That record could not be read. Call findRecords again."
+        case .staleRevision: "That record changed since you looked it up. Call findRecords again."
         case .invalidArguments: "The arguments could not be validated. Ask the user to clarify or use the manual editor."
+        case .notFound(let value): "Nothing in the closet matches “\(value)”. Call findRecords with its words, or tell the owner it isn't in their closet. Never ask for a code."
+        case .ambiguous(let value, let names): "“\(value)” could mean " + names.joined(separator: " or ") + ". The app is asking the owner which one. Reply with one short sentence and wait; do not ask again."
+        }
+    }
+
+    /// One quiet line for the activity list.
+    public var stepSummary: String {
+        switch self {
+        case .notFound(let value): "Couldn’t find “\(value)” in your closet"
+        case .ambiguous(let value, let names): "“\(value)” matched \(names.count) records, asked you instead"
+        case .malformedID: "Couldn’t match that to your closet"
+        case .unknownRecord, .staleRevision, .revisionRequired: "That record changed, so nothing was prepared"
+        case .missingTarget: "Needed to know which record to change"
+        case .invalidArguments: "Couldn’t prepare a change"
         }
     }
 }

@@ -29,7 +29,8 @@ import Testing
         let store = try PieceStore(directory: root.appendingPathComponent("store"))
         _ = try await RealisticClosetSeed.run(store: store, outputDirectory: root.appendingPathComponent("receipts"))
         let result = try AgentKnowledgeSource.build(store: store, preferences: AgentPreferences(), query: "What should I wear today?", currentConversationID: UUID(),
-                                                    weather: nil, selection: nil, maximumCharacters: 5200, maximumRecords: 6)
+                                                    weather: nil, selection: nil,
+                                                    limits: AgentContextLimits(catalogCharacters: 2800, recordCharacters: 1500, maximumRecords: 6))
         #expect(result.retrieval.text.count <= 5200)
         #expect(result.catalog.contains("51 pieces") && result.catalog.contains("26 outfits") && result.catalog.contains("12 themes"))
         for name in ["Classic white tee", "Straw tote bag", "Coral bikini set", "Boracay trip", "Wedding guest"] { #expect(result.retrieval.text.contains(name)) }
