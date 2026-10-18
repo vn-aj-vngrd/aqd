@@ -53,6 +53,11 @@ struct AgentCommandTests {
         #expect(AgentCommand.parse("Outfits for the next 4 days please") == .planDays(count: 4))
         #expect(AgentCommand.parse("Plan the coming week for me") == .planDays(count: 7))
     }
+    @Test func politeRequestsAreTheSameCommands() {
+        #expect(AgentCommand.parse("Can you plan outfits for the next five days?") == .planDays(count: 5))
+        #expect(AgentCommand.parse("Could you please mark my Black flats as laundry") == .setAvailability(target: "Black flats", value: "laundry"))
+        #expect(AgentCommand.parse("I need you to rename my tee to Basic tee") == .rename(target: "tee", to: "Basic tee"))
+    }
     @Test func requestsThatAreNotCompleteCommandsFallThroughToTheModel() {
         for prompt in ["Show my black pieces", "What should I wear today?", "Suggest an outfit for brunch", "Plan a vacation", "Mark it", "hello", "Plan a trip for me"] {
             #expect(AgentCommand.parse(prompt) == nil, "\(prompt)")

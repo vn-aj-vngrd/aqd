@@ -93,6 +93,8 @@ import UIKit
         for turn in example.turns {
             let before = model.conversation.messages.count
             model.updateDraft(turn); model.send()
+            // The model may spend a moment choosing the intent before the turn starts.
+            for _ in 0..<200 where model.conversation.messages.count == before && (model.classifying || model.error == nil) { try? await Task.sleep(for: .milliseconds(100)) }
             guard model.conversation.messages.count > before else { observation.failure = "not started: " + (model.error ?? "unavailable"); return observation }
             let began = clock.now
             var stopped = false

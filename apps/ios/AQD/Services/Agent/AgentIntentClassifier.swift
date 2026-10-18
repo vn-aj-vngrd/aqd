@@ -23,7 +23,7 @@ import FoundationModels
     recordWear: record what was worn
     profile: change the profile name or bio
     addPiece: add a piece from a photo
-    outOfScope: not about the closet, clothes or style
+    outOfScope: not about the closet, clothes or style, such as questions about people, places, facts, math, code, recipes, news or money
     """
 
     static func classify(_ request: String, previous: AgentIntent?) async -> AgentIntent? {

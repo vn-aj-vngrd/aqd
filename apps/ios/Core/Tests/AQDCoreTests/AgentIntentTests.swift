@@ -14,6 +14,7 @@ struct AgentIntentTests {
         ("I'd like to look at my bottoms", .show), ("Give me a rundown of my themes", .show), ("Any chance I own a silk scarf?", .find), ("Tell me how often I wore the Ivory sneakers last month", .stats),
         ("What do I put on this morning?", .whatToWear), ("Four days in Cebu, what do I take?", .planTrip), ("Surprise me with a weekend look", .suggestOutfit),
         ("I'm meeting friends for brunch, what should I put on?", .suggestOutfit), ("Any outfit ideas for this evening?", .whatToWear),
+        ("Can you show my skirts?", .show), ("Could you please find my gold hoops", .find), ("What kinds of things can I ask you?", .chat), ("Can you plan outfits for the next five days?", .planDays),
         // chat
         ("Hi", .chat), ("hello there", .chat), ("Good morning", .chat), ("Thanks!", .chat), ("What can you help me with?", .chat), ("What can you do?", .chat), ("who are you", .chat), ("ok", .chat), ("Hello, my closet is new.", .chat),
         // show

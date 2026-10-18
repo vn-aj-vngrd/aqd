@@ -97,7 +97,12 @@ struct Rules {
     let hasImage: Bool
 
     init(_ prompt: String, hasImage: Bool) {
-        text = Self.normalize(prompt); padded = " " + text + " "; self.hasImage = hasImage
+        text = Self.normalize(Self.withoutPoliteness(prompt)); padded = " " + text + " "; self.hasImage = hasImage
+    }
+
+    /// "Can you show my skirts" asks for the same thing as "Show my skirts".
+    static func withoutPoliteness(_ prompt: String) -> String {
+        prompt.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: #"(?i)^(?:(?:hey|hi|hello|ok|okay)[,!]?\s+)?(?:please\s+)?(?:(?:can|could|would|will)\s+you\s+(?:please\s+)?|i(?:'|’)?d\s+like\s+you\s+to\s+|i\s+(?:need|want)\s+you\s+to\s+)"#, with: "", options: .regularExpression)
     }
 
     static func normalize(_ value: String) -> String {
@@ -137,7 +142,7 @@ struct Rules {
         let asksQuestion = starts(["how", "what", "when", "which", "why", "did", "do", "does", "have", "has", "tell", "can", "could"])
         // 1. Greetings and questions about the Agent itself.
         if starts(["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening", "thanks", "thank you", "thx", "ok", "okay", "cool", "great", "nice", "bye", "goodbye"]) && size <= 4 { return (.chat, true) }
-        if matches(#"^(what can you (do|help)|who are you|how do you work|what are you|help( me)?$|what do you do|what can i ask)"#) || has(["what can you help me with", "what can you do"]) { return (.chat, true) }
+        if matches(#"^(what can you (do|help)|who are you|how do you work|what are you|help( me)?$|what do you do|what can i ask|what (kinds|sorts|types) of things can (i|you))"#) || has(["what can you help me with", "what can you do"]) { return (.chat, true) }
         // 2. Photos the owner attached to add to the closet.
         if hasImage && (has(["add", "save", "new piece", "closet"]) || size <= 3) { return (.addPiece, true) }
         if matches(#"\badd (this|that|these|a|an)\b.*\b(piece|item|photo|picture|closet)\b"#) || has(["add to my closet", "add it to my closet", "add this to my closet"]) { return (.addPiece, true) }
