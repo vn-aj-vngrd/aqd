@@ -310,6 +310,7 @@ struct PieceThumbnail: View {
     @Environment(AppState.self) private var state
     let photoID: UUID
     var recipe: PhotoEditRecipe = .fit
+    var ground: Color = AppTheme.imageGround
     @State private var image: UIImage?
 
     private struct Request: Equatable {
@@ -322,7 +323,7 @@ struct PieceThumbnail: View {
             if let image { Image(uiImage: image).resizable().scaledToFit() }
             else { Image(systemName: "photo").foregroundStyle(AppTheme.secondary).accessibilityLabel("Photo unavailable") }
         }
-        .background(AppTheme.imageGround)
+        .background(ground)
         .clipShape(RoundedRectangle(cornerRadius: 4))
         .task(id: Request(id: photoID, recipe: recipe)) {
             if let data = try? state.store?.photoThumbnail(id: photoID, recipe: recipe) { image = UIImage(data: data) }

@@ -133,6 +133,7 @@ struct OutfitComposition: View {
     let pieceIDs: [UUID]
     var pieceHeight: CGFloat = 130
     var limit: Int? = nil
+    var ground: Color = AppTheme.imageGround
     private var shownIDs: [UUID] { limit.map { Array(pieceIDs.prefix($0)) } ?? pieceIDs }
     @Environment(\.dynamicTypeSize) private var typeSize
 
@@ -146,7 +147,7 @@ struct OutfitComposition: View {
                     ForEach(shownIDs, id: \.self) { id in
                         if let piece = state.ownedPieces.first(where: { $0.id == id }) {
                             VStack(spacing: 4) {
-                                PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                                PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe, ground: ground)
                                     .frame(height: pieceHeight).accessibilityLabel(piece.displayName)
                                 if piece.isArchived { Text("Archived").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
                             }
@@ -156,7 +157,7 @@ struct OutfitComposition: View {
                     }
                 }.padding(12)
             }
-        }.frame(maxWidth: .infinity).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 4))
+        }.frame(maxWidth: .infinity).background(ground, in: RoundedRectangle(cornerRadius: 4))
     }
 }
 

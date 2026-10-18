@@ -179,7 +179,7 @@ struct AgentLookPreview: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.medium) {
-            Button { open(pieces[0]) } label: { OutfitComposition(pieceIDs: pieces.map(\.id), pieceHeight: 120, limit: 4) }
+            Button { open(pieces[0]) } label: { OutfitComposition(pieceIDs: pieces.map(\.id), pieceHeight: 120, limit: 4, ground: AppTheme.surface) }
                 .buttonStyle(.plain).accessibilityLabel("Suggested look: " + pieces.map(\.title).joined(separator: ", ")).accessibilityHint("Opens a larger preview")
             VStack(alignment: .leading, spacing: 2) {
                 Text("Suggested look").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
@@ -200,7 +200,7 @@ struct AgentOutfitCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.small) {
-            OutfitComposition(pieceIDs: item.pieceIDs, pieceHeight: 120, limit: 4)
+            OutfitComposition(pieceIDs: item.pieceIDs, pieceHeight: 120, limit: 4, ground: AppTheme.surface)
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.title).font(AppTypography.body).foregroundStyle(AppTheme.ink)
                 if !item.subtitle.isEmpty { Text(item.subtitle).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }

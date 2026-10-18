@@ -347,7 +347,8 @@ import Observation
             conversation.messages[conversation.messages.count - 1].contextSummary = contextSummary
             conversation.messages[conversation.messages.count - 1].diagnostics = diagnostics
             if let diagnostics, diagnostics.included > 0 || !diagnostics.sources.isEmpty {
-                appendToolStep(AgentToolStep(tool: "context", summary: "Read \(diagnostics.included) closet record" + (diagnostics.included == 1 ? "" : "s"), count: diagnostics.included), attemptID: attempt)
+                let total = diagnostics.included + diagnostics.omitted
+                appendToolStep(AgentToolStep(tool: "context", summary: diagnostics.omitted > 0 ? "Read the \(diagnostics.included) most relevant of \(total) closet items" : "Read \(diagnostics.included) closet item" + (diagnostics.included == 1 ? "" : "s"), count: diagnostics.included), attemptID: attempt)
             }
             guard persist() else {
                 conversation.messages[conversation.messages.count - 1].diagnostics?.failure = .storage
