@@ -10,6 +10,7 @@ struct AgentProposalCard: View {
     let dismiss: () -> Void
     var tryAnother: (() -> Void)?
     var setTripOptions: ((_ includeTheme: Bool?, _ includePlan: Bool?) -> Void)?
+    @State private var previewing: LookPreview?
 
     private var detail: String {
         switch proposal.action {
@@ -24,7 +25,20 @@ struct AgentProposalCard: View {
         }
     }
 
+    struct LookPreview: Identifiable {
+        let id = UUID()
+        let title: String
+        let subtitle: String
+        let pieceIDs: [UUID]
+    }
+
     var body: some View {
+        content.sheet(item: $previewing) { look in
+            AgentLookSheet(title: look.title, subtitle: look.subtitle, pieceIDs: look.pieceIDs).presentationDetents([.medium, .large])
+        }
+    }
+
+    @ViewBuilder private var content: some View {
         switch proposal.status {
         case .succeeded: receiptRow
         case .cancelled: quietRow(symbol: "xmark.circle", text: "Dismissed. \(detail)")
@@ -41,21 +55,19 @@ struct AgentProposalCard: View {
             if case .trip(let draft) = proposal.action { tripDays(draft) }
             Text(proposal.status == .executing ? "Check save result" : "Not saved yet. Review before it changes anything.")
                 .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-            ScrollView(.horizontal) {
-                HStack(spacing: AppSpacing.small) {
-                    Button(action: review) {
-                        Label(proposal.status == .executing ? "Check result" : "Review and save", systemImage: "checkmark.circle")
-                            .font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.onPrimary).padding(.horizontal, AppSpacing.medium)
-                            .frame(minHeight: 32).background(AppTheme.primaryFill, in: Capsule()).frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
-                    }.buttonStyle(.plain)
-                    if proposal.status == .proposed {
-                        if let tryAnother {
-                            Button(action: tryAnother) { Label("Try another", systemImage: "arrow.triangle.2.circlepath").compactControl() }.buttonStyle(.plain).disabled(locked)
-                        }
-                        Button(action: dismiss) { Label("Dismiss", systemImage: "xmark").compactControl() }.buttonStyle(.plain).disabled(locked)
+            AdaptiveActions { iconsOnly in
+                Button(action: review) {
+                    Label(proposal.status == .executing ? "Check result" : "Review and save", systemImage: "checkmark.circle")
+                        .font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.onPrimary).padding(.horizontal, AppSpacing.medium)
+                        .frame(minHeight: 32).background(AppTheme.primaryFill, in: Capsule()).frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+                }.buttonStyle(.plain)
+                if proposal.status == .proposed {
+                    if let tryAnother {
+                        Button(action: tryAnother) { AdaptiveLabel(title: "Try another", symbol: "arrow.triangle.2.circlepath", iconsOnly: iconsOnly) }.buttonStyle(.plain).disabled(locked)
                     }
+                    Button(action: dismiss) { AdaptiveLabel(title: "Dismiss", symbol: "xmark", iconsOnly: iconsOnly) }.buttonStyle(.plain).disabled(locked)
                 }
-            }.scrollIndicators(.hidden)
+            }
         }.padding(AppSpacing.medium).frame(maxWidth: .infinity, alignment: .leading)
             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             .accessibilityElement(children: .contain)
@@ -65,12 +77,14 @@ struct AgentProposalCard: View {
         if case .outfit(let draft) = proposal.action {
             let shown = draft.pieceIDs.compactMap { id in pieces.first { $0.id == id } }
             if !shown.isEmpty {
+                Button { previewing = LookPreview(title: draft.displayName, subtitle: draft.occasion ?? "", pieceIDs: draft.pieceIDs) } label: {
                 HStack(spacing: AppSpacing.small) {
                     ForEach(shown) { piece in
                         PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(width: 56, height: 64)
                             .clipShape(RoundedRectangle(cornerRadius: AppRadius.field)).accessibilityLabel(piece.displayName)
                     }
                 }
+                }.buttonStyle(.plain).accessibilityHint("Opens a larger preview")
             }
         }
     }
@@ -97,6 +111,7 @@ struct AgentProposalCard: View {
     private func tripDays(_ draft: AgentTripDraft) -> some View {
         VStack(alignment: .leading, spacing: AppSpacing.small) {
             ForEach(Array(draft.days.enumerated()), id: \.element.id) { index, day in
+                Button { previewing = LookPreview(title: day.label, subtitle: day.day?.displayDate ?? "Day \(index + 1)", pieceIDs: day.outfit.pieceIDs) } label: {
                 HStack(spacing: AppSpacing.small) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(day.label).font(AppTypography.supporting.weight(.medium)).foregroundStyle(AppTheme.ink).truncated()
@@ -113,7 +128,8 @@ struct AgentProposalCard: View {
                 }
                 .padding(AppSpacing.small)
                 .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group, style: .continuous))
-                .accessibilityElement(children: .combine)
+                .contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityElement(children: .combine).accessibilityHint("Opens a preview of this look")
             }
             if proposal.status == .proposed, let setTripOptions {
                 HStack(spacing: AppSpacing.small) {

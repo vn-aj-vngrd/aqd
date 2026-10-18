@@ -46,21 +46,41 @@ struct AgentComposerView: View {
             .onChange(of: model.conversation.draft) { _, _ in addOpen = false }
     }
 
+    /// One quiet line until the owner engages: tapping, typing, attaching or a running reply opens the full composer.
+    private var expanded: Bool {
+        focused.wrappedValue || addOpen || model.active || !model.conversation.draft.isEmpty
+            || !(model.conversation.draftAttachments ?? []).isEmpty || !importer.pending.isEmpty
+    }
+
     private var content: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.small) {
+        let open = expanded
+        return VStack(alignment: .leading, spacing: 0) {
             if !(model.conversation.draftAttachments ?? []).isEmpty || !importer.pending.isEmpty {
                 AgentAttachmentStrip(attachments: model.conversation.draftAttachments ?? [], pending: importer.pending, order: importer.order,
                                      remove: model.removeAttachment, cancelImport: importer.remove, locked: model.active || model.hasPendingOperation)
+                    .padding(.bottom, AppSpacing.small)
             }
+            // The field never changes place, so focus survives opening; the buttons slide around it.
             TextField("Ask Agent, or type / for tools", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical)
-                .lineLimit(1...6).focused(focused).padding(.horizontal, AppSpacing.xSmall)
+                .lineLimit(1...6).focused(focused)
+                .padding(.leading, open ? AppSpacing.xSmall : AppControlMetrics.minimumTarget)
+                .padding(.trailing, open ? AppSpacing.xSmall : AppControlMetrics.minimumTarget)
+                .frame(minHeight: AppControlMetrics.minimumTarget, alignment: .leading)
                 .accessibilityLabel("Message Agent")
+            if open { Color.clear.frame(height: AppControlMetrics.minimumTarget) }
+        }
+        .overlay(alignment: open ? .bottom : .center) {
             HStack(spacing: AppSpacing.small) {
                 addMenu
                 Spacer(minLength: AppSpacing.small)
                 sendButton
             }
-        }.padding(AppSpacing.medium)
+        }
+        .padding(.horizontal, open ? AppSpacing.medium : AppSpacing.small)
+        .padding(.vertical, open ? AppSpacing.medium : AppSpacing.xSmall)
+        .contentShape(Rectangle())
+        .onTapGesture { if !open { focused.wrappedValue = true } }
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: open)
     }
 
     private var addMenu: some View {

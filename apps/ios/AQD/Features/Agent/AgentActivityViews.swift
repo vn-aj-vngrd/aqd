@@ -220,6 +220,30 @@ struct AgentWidgetCard<Content: View>: View {
     }
 }
 
+/// One line of compact actions that never scrolls: full labels when they fit, icons alone when they do not.
+struct AdaptiveActions<Content: View>: View {
+    @ViewBuilder let content: (_ iconsOnly: Bool) -> Content
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: AppSpacing.small) { content(false) }.fixedSize(horizontal: true, vertical: false)
+            HStack(spacing: AppSpacing.small) { content(true) }.fixedSize(horizontal: true, vertical: false)
+        }.frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+/// A compact glass control that keeps only its icon when `iconsOnly` is set.
+struct AdaptiveLabel: View {
+    let title: String
+    let symbol: String
+    let iconsOnly: Bool
+
+    var body: some View {
+        if iconsOnly { Image(systemName: symbol).compactControl().accessibilityLabel(title) }
+        else { Label(title, systemImage: symbol).compactControl() }
+    }
+}
+
 /// What an owner can do with a suggestion: keep it, ask for another, or steer it. Nothing is saved until they choose to.
 struct AgentLookActions: View {
     let save: (() -> Void)?
@@ -227,17 +251,15 @@ struct AgentLookActions: View {
     private let refinements = ["Make it dressier", "Make it more casual", "Swap the shoes", "Add a layer", "Use a different top"]
 
     var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: AppSpacing.small) {
-                if let save { Button(action: save) { Label("Save outfit", systemImage: "plus.circle").compactControl() }.buttonStyle(.plain) }
-                if let iterate {
-                    Button { iterate("Show me a different option") } label: { Label("Try another", systemImage: "arrow.triangle.2.circlepath").compactControl() }.buttonStyle(.plain)
-                    Menu {
-                        ForEach(refinements, id: \.self) { text in AccessoryButton(text, systemImage: "slider.horizontal.3") { iterate(text) } }
-                    } label: { Label("Adjust", systemImage: "slider.horizontal.3").compactControl() }
-                }
+        AdaptiveActions { iconsOnly in
+            if let save { Button(action: save) { AdaptiveLabel(title: "Save outfit", symbol: "plus.circle", iconsOnly: iconsOnly) }.buttonStyle(.plain) }
+            if let iterate {
+                Button { iterate("Show me a different option") } label: { AdaptiveLabel(title: "Try another", symbol: "arrow.triangle.2.circlepath", iconsOnly: iconsOnly) }.buttonStyle(.plain)
+                Menu {
+                    ForEach(refinements, id: \.self) { text in AccessoryButton(text, systemImage: "slider.horizontal.3") { iterate(text) } }
+                } label: { AdaptiveLabel(title: "Adjust", symbol: "slider.horizontal.3", iconsOnly: iconsOnly) }
             }
-        }.scrollIndicators(.hidden)
+        }
     }
 }
 
