@@ -1,5 +1,6 @@
 import AQDCore
 import SwiftUI
+import UIKit
 
 /// Bounded local layout motion.
 enum AQDMotion {
@@ -63,12 +64,20 @@ enum AppAppearance: String, CaseIterable, Identifiable {
         case .dark: .dark
         }
     }
+    /// Menus, context-menu previews, popovers and alerts follow the window, not the SwiftUI preference, so the window carries the choice too.
+    @MainActor func applyToWindows() {
+        let style: UIUserInterfaceStyle = switch self { case .system: .unspecified; case .light: .light; case .dark: .dark }
+        for scene in UIApplication.shared.connectedScenes {
+            for window in (scene as? UIWindowScene)?.windows ?? [] where window.overrideUserInterfaceStyle != style { window.overrideUserInterfaceStyle = style }
+        }
+    }
 }
 
 extension View {
     /// Apply to a SwiftUI presentation root; system inherits native appearance.
     func appAppearance(_ appearance: AppAppearance) -> some View {
         preferredColorScheme(appearance.colorScheme)
+            .onChange(of: appearance, initial: true) { _, value in value.applyToWindows() }
     }
 }
 
