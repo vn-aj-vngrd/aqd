@@ -13,6 +13,7 @@ public enum AgentGroundingRepair {
         let counts = violations.compactMap { v -> String? in if case .count(let c) = v { c } else { nil } }
         if !counts.isEmpty { problems.append("These numbers disagree with the closet: " + counts.joined(separator: ", ") + ". Use the totals in the facts, or give no number.") }
         if violations.contains(where: { $0.isContradiction }) { problems.append("The app is showing \(cardsShown) matching cards, so do not say nothing was found.") }
+        if violations.contains(where: { $0.isFalseClaim }) { problems.append("It said a change was made. Nothing is changed until the owner reviews and saves it: say a review is ready, or that nothing was prepared.") }
         var names: [String] = []
         var size = 0
         for name in catalog.allNames where size + name.count + 2 <= nameCharacters { names.append(name); size += name.count + 2 }

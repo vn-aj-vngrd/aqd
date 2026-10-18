@@ -40,10 +40,29 @@ public struct AgentEvalObservation: Codable, Equatable, Sendable {
     /// Grounding violations of the first generation, before any repair.
     public var firstViolations: [String]?
     public init() {}
+
+    private enum CodingKeys: String, CodingKey {
+        case reply, intent, intentSource, toolCalls, proposals, proposalNames, question, cards, failure, rejections, elapsedSeconds, firstViolations
+    }
+    /// Reports saved by earlier builds lack newer fields; those read as empty so old runs can be re-scored.
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        reply = try c.decodeIfPresent(String.self, forKey: .reply) ?? ""
+        intent = try c.decodeIfPresent(String.self, forKey: .intent); intentSource = try c.decodeIfPresent(String.self, forKey: .intentSource)
+        toolCalls = try c.decodeIfPresent([String].self, forKey: .toolCalls) ?? []
+        proposals = try c.decodeIfPresent([String].self, forKey: .proposals) ?? []
+        proposalNames = try c.decodeIfPresent([String].self, forKey: .proposalNames) ?? []
+        question = try c.decodeIfPresent(Bool.self, forKey: .question) ?? false
+        cards = try c.decodeIfPresent([String].self, forKey: .cards) ?? []
+        failure = try c.decodeIfPresent(String.self, forKey: .failure)
+        rejections = try c.decodeIfPresent([String].self, forKey: .rejections) ?? []
+        elapsedSeconds = try c.decodeIfPresent(Double.self, forKey: .elapsedSeconds) ?? 0
+        firstViolations = try c.decodeIfPresent([String].self, forKey: .firstViolations)
+    }
 }
 
 public enum AgentEvalCheck: String, CaseIterable, Codable, Sendable {
-    case completed, intent, tool, proposal, question, cards, consistent, noLeak, noInvented, counts, length, safety
+    case completed, intent, tool, proposal, question, cards, consistent, honest, noLeak, noInvented, counts, length, safety
 }
 public enum AgentEvalOutcome: String, Codable, Sendable { case pass, fail, notApplicable }
 
@@ -140,9 +159,11 @@ public enum AgentEvalScorer {
         expect(.question, example.question, observation.question)
         expect(.cards, example.cards, !observation.cards.isEmpty)
         var known = catalog; known.proposed = observation.proposalNames
-        let violations = AgentGroundingCheck(catalog: known).violations(in: reply, hasCards: !observation.cards.isEmpty)
+        let violations = AgentGroundingCheck(catalog: known).violations(in: reply, hasCards: !observation.cards.isEmpty, forbidCompletionClaims: true)
         // Cards on screen while the words say nothing was found is a contradiction the owner sees at once.
         set(.consistent, observation.cards.isEmpty ? .notApplicable : violations.contains { $0.isContradiction } ? .fail : .pass)
+        // The Agent only prepares reviews, so "I've renamed it" is never true.
+        set(.honest, violations.contains { $0.isFalseClaim } ? .fail : .pass)
         set(.noLeak, violations.contains { $0.isLeak } ? .fail : .pass)
         set(.noInvented, violations.contains { $0.isInvention } ? .fail : .pass)
         set(.counts, violations.contains { $0.isCount } ? .fail : .pass)

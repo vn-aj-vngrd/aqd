@@ -167,7 +167,8 @@ struct Rules {
             return (.theme, true)
         }
         // 7. Trips.
-        if has(["trip", "vacation", "holiday", "getaway", "itinerary", "honeymoon", "staycation", "travelling", "traveling", "travel", "pack", "packing", "flying", "weekend away", "going away", "road trip", "going to", "heading to", "flying to", "visiting"]) || matches(#"\b(\d+|one|two|three|four|five|six|seven) ?-?(day|days|night|nights)\b.*\b(in|to|at)\b"#) { return (.planTrip, true) }
+        if has(["trip", "vacation", "holiday", "getaway", "itinerary", "honeymoon", "staycation", "travelling", "traveling", "travel", "pack", "packing", "flying", "weekend away", "going away", "road trip", "going to", "heading to", "flying to", "visiting", "off to"]) || matches(#"\b(\d+|one|two|three|four|five|six|seven) ?-?(day|days|night|nights)\b.*\b(in|to|at)\b"#)
+            || (matches(#"\b(\d+|one|two|three|four|five|six|seven) ?-?(day|days|night|nights)\b"#) && matches(#"\b(outfits?|pack|packing|bring|take)\b"#) && !has(["plan my", "next", "coming"])) { return (.planTrip, true) }
         // 8. Planning several days.
         if has(["plan", "schedule", "prepare"]) && (has(["week", "days", "month", "weekend", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "next few days", "rest of the week", "outfits"]) || matches(#"\b\d+ days?\b"#)) { return (.planDays, true) }
         if matches(#"\boutfits? for (the )?(next|coming|upcoming) \d* ?days?\b"#) || has(["outfits for the week", "week of outfits"]) { return (.planDays, true) }
@@ -176,7 +177,7 @@ struct Rules {
         // 10. Today's look.
         if matches(#"\b(what|which)( should i| to| do i| can i)? (wear|put on|throw on) (today|tomorrow|tonight|this evening|this morning|now)\b"#) || matches(#"\bwhat (am i|are we) wearing (today|tomorrow|tonight)\b"#) || matches(#"\b(outfit|look|ideas?)\b.*\b(for|this) (today|tonight|tomorrow|this evening|this morning|evening|morning)\b"#) || has(["tonights look", "todays look", "outfit for today", "outfit for tonight", "outfit for tomorrow", "look for today", "look for tonight", "look tonight", "look today", "look tomorrow"]) { return (.whatToWear, true) }
         // 11. Not about clothes at all.
-        if !has(Self.closetWords) && (size >= 3 || matches(#"^(write|code|translate|solve|calculate|compute|book|order|buy|email)\b"#)) { return (.outOfScope, false) }
+        if !has(Self.closetWords) && (size >= 3 || matches(#"^(write|code|translate|solve|calculate|compute|book|order|buy|email)\b"#)) { return (.outOfScope, true) }
         if has(["rain", "umbrella", "forecast", "weather"]) { return (.whatToWear, false) }
         // 12. Suggesting an outfit.
         if has(["suggest", "recommend", "put together", "pair", "style", "goes with", "go with", "match", "dress me", "help me dress", "help me choose", "help me pick", "surprise me"]) || matches(#"^(something|anything)\b.*\b(to wear|for)\b"#) || matches(#"\bdress for\b"#) || matches(#"\b(what|which)( should| can| do) i (wear|put on|throw on)\b"#) || matches(#"\b(pick|choose|select|find me)( me)?( an?| the)? (look|outfit)\b"#) || matches(#"\b(what|which)( should i| to| can i)? wear (to|for|with|on|at)\b"#)
@@ -184,7 +185,7 @@ struct Rules {
         // 13. Seeing and finding records. "Do I own a coat?" is a question to answer; "What do I own in blue?" is a list to show.
         if starts(["find", "search", "look for", "locate"]) || matches(#"^(do|does) (i|my closet) (own|have|got)\b"#) || matches(#"^(where|which of my)\b"#) || matches(#"^(is|are) there (any|anything)\b"#) || matches(#"^(is|are) (my|the)\b.*\b(closet|wardrobe)\b"#) || matches(#"^(any chance|by any chance|am i missing|did i (buy|get))\b"#)
             || has(["tell me about", "details of", "details on", "describe"]) { return (.find, true) }
-        if has(["show", "list", "display", "see", "view", "browse", "preview", "give me", "bring up", "pull up", "open", "look at", "rundown", "overview"]) || matches(#"^(which|what)\b.*\b(do i have|i have|do i own|i own|are available|available)\b"#)
+        if has(["show", "list", "display", "see", "view", "browse", "preview", "give me", "bring up", "pull up", "open", "look at", "rundown", "overview", "pull out"]) || matches(#"^(which|what)\b.*\b(do i have|i have|do i own|i own|are available|available)\b"#)
             || matches(#"^(which|what)\b.*\b(are|is) in\b"#) || matches(#"^(all|every) (my|of my)\b"#) { return (.show, true) }
         if has(["do i own", "do i have", "do i got", "i own"]) { return (.find, true) }
         return (.chat, false)

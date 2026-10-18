@@ -82,13 +82,16 @@ struct AgentTurnRefused: Error {}
         guard let i = conversation.messages.lastIndex(where: { $0.attemptID == attempt && $0.role == .assistant }), turn.diagnostics != nil else { return }
         let check = AgentGroundingCheck(catalog: nameCatalog())
         let cards = (conversation.messages[i].toolSteps ?? []).flatMap { $0.results ?? [] }.count
-        var first = check.violations(in: conversation.messages[i].source, hasCards: cards > 0)
+        // Requests that prepare a review must never be answered as if the change had been made.
+        let changes: Set<AgentIntent> = [.editPiece, .relabel, .theme, .planDays, .planTrip, .suggestOutfit, .recordWear, .profile, .addPiece, .whatToWear]
+        let forbidClaims = changes.contains(turn.plan.intent)
+        var first = check.violations(in: conversation.messages[i].source, hasCards: cards > 0, forbidCompletionClaims: forbidClaims)
         guard !first.isEmpty else { return }
         conversation.messages[i].diagnostics?.firstViolations = Array(first.map(\.label).prefix(32))
         // A repeated handle, id or revision is removed outright; only other problems need the model to try again.
         if first.contains(where: { $0.isLeak }) {
             conversation.messages[i].source = AgentReplyPolish.scrubIdentifiers(conversation.messages[i].source)
-            first = check.violations(in: conversation.messages[i].source, hasCards: cards > 0)
+            first = check.violations(in: conversation.messages[i].source, hasCards: cards > 0, forbidCompletionClaims: forbidClaims)
             guard !first.isEmpty else { conversation.messages[i].diagnostics?.groundingViolations = []; return }
         }
         if let fallback = turn.plan.fast?.fallback, !fallback.isEmpty {
@@ -104,7 +107,7 @@ struct AgentTurnRefused: Error {}
         try await streamPass(response, attempt: attempt, conversationID: conversationID, start: start, lastSave: &lastSave)
         guard let j = conversation.messages.lastIndex(where: { $0.attemptID == attempt && $0.role == .assistant }) else { return }
         // Identifiers are removed when the reply is finalized, so they never count against it.
-        let second = check.violations(in: conversation.messages[j].source, hasCards: cards > 0).filter { !$0.isLeak }
+        let second = check.violations(in: conversation.messages[j].source, hasCards: cards > 0, forbidCompletionClaims: forbidClaims).filter { !$0.isLeak }
         conversation.messages[j].diagnostics?.groundingViolations = Array(second.map(\.label).prefix(32))
         if !second.isEmpty { conversation.messages[j].groundingNote = AgentGroundingRepair.note }
     }

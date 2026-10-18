@@ -106,6 +106,11 @@ struct AgentEvalScorerTests {
         seen.toolCalls = ["proposeTrip (app)"]; seen.proposals = ["trip"]; seen.reply = "Here are your days."
         #expect(AgentEvalScorer.score(trip, observation: seen, catalog: catalog).checks["tool"] == .pass)
     }
+    @Test func observationsSavedByEarlierBuildsStillDecode() throws {
+        let old = #"{"reply":"Hi","toolCalls":["findRecords"],"proposals":[],"question":false,"cards":[],"rejections":[],"elapsedSeconds":2.5}"#
+        let value = try JSONDecoder().decode(AgentEvalObservation.self, from: Data(old.utf8))
+        #expect(value.reply == "Hi" && value.toolCalls == ["findRecords"] && value.proposalNames.isEmpty && value.intentSource == nil)
+    }
     @Test func reportSummarizesPerCheckRatesAndSkipsNotApplicable() throws {
         let example = try #require(AgentEvalSuite.cases.first { $0.id == "chat-hi" })
         var seen = AgentEvalObservation(); seen.reply = "Hello!"
@@ -133,6 +138,21 @@ struct AgentGroundingRepairTests {
         let check = AgentGroundingCheck(catalog: catalog)
         #expect(check.violations(in: "I couldn’t find any black pieces.", hasCards: true) == [.contradiction("couldn’t find")])
         #expect(check.violations(in: "I couldn’t find any black pieces.").isEmpty)
+    }
+}
+
+struct AgentCompletionClaimTests {
+    let check = AgentGroundingCheck(catalog: AgentGroundingCheckTests.catalog)
+    @Test func sayingAChangeWasMadeIsFlaggedOnlyWhenChangesAreForbidden() {
+        for claim in ["I’ve renamed the Office day outfit.", "I renamed it for you.", "The outfit has been saved.", "Done, I have updated your profile.", "All set!", "We've marked it as laundry."] {
+            #expect(check.violations(in: claim, forbidCompletionClaims: true).contains { $0.isFalseClaim }, "\(claim)")
+            #expect(check.violations(in: claim).isEmpty, "\(claim)")
+        }
+    }
+    @Test func preparingAReviewIsNotAClaimOfCompletion() {
+        for fine in ["I prepared a review. Nothing is saved until you save it.", "Review is ready: tap Review and save.", "I can rename it once you confirm.", "It will be saved when you tap Save."] {
+            #expect(check.violations(in: fine, forbidCompletionClaims: true).isEmpty, "\(fine)")
+        }
     }
 }
 

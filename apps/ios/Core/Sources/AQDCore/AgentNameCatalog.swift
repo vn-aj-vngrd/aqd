@@ -52,14 +52,17 @@ public enum AgentGroundingViolation: Equatable, Hashable, Sendable {
     case count(String)
     /// The reply says nothing matched while the app is showing matching cards.
     case contradiction(String)
+    /// The reply says something was changed or saved. The Agent only prepares reviews; nothing changes until the owner saves.
+    case falseClaim(String)
 
     public var label: String {
-        switch self { case .invented(let v): "invented: " + v; case .leak(let v): "leak: " + v; case .count(let v): "count: " + v; case .contradiction(let v): "contradiction: " + v }
+        switch self { case .invented(let v): "invented: " + v; case .leak(let v): "leak: " + v; case .count(let v): "count: " + v; case .contradiction(let v): "contradiction: " + v; case .falseClaim(let v): "claim: " + v }
     }
     public var isInvention: Bool { if case .invented = self { true } else { false } }
     public var isLeak: Bool { if case .leak = self { true } else { false } }
     public var isCount: Bool { if case .count = self { true } else { false } }
     public var isContradiction: Bool { if case .contradiction = self { true } else { false } }
+    public var isFalseClaim: Bool { if case .falseClaim = self { true } else { false } }
 }
 
 /// Checks a finished reply against the owner's records: names in bold, lists or quotes must exist, a colour and garment must exist together,
@@ -103,6 +106,7 @@ public struct AgentGroundingCheck: Sendable {
     private static let quotePattern = regex(#"[“"]([^”"\n]{2,60})[”"]"#)
     private static let listPattern = try? NSRegularExpression(pattern: #"(?m)^\s*(?:[-*•]|\d+[.)])\s+(.+)$"#)
     private static let countPattern = regex(#"(\d+)\s+(?:(?:active|saved|available|total|recorded|different|unworn|worn|new|favorite|planned)\s+)*(pieces?|items?|garments?|outfits?|looks?|themes?|plans?|tops?|bottoms?|dresses|layers?|shoes?|accessor(?:y|ies))\b"#)
+    private static let completionPattern = regex(#"\b(?:i(?:'|’)?ve|i have|i|we(?:'|’)?ve|we)\s+(?:just\s+|already\s+)?(renamed|saved|updated|changed|created|added|marked|recorded|logged|deleted|removed|set up|applied)\b|\b(?:has|have|is|are)\s+(?:now\s+|been\s+)(?:been\s+)?(renamed|saved|updated|changed|created|added|marked|recorded|logged|deleted|removed|applied)\b|\ball set\b"#)
     private static let wearPattern = regex(#"(?:worn|wore|wear(?:s|ing)?)\s+(?:it\s+|them\s+)?(\d+)\s+times?|(\d+)\s+(?:recorded\s+)?(?:wears|times)\b"#)
 
     private func matches(_ pattern: NSRegularExpression?, in text: String, group: Int = 0) -> [String] {
@@ -113,13 +117,15 @@ public struct AgentGroundingCheck: Sendable {
     static let denials = ["couldn't find", "couldn’t find", "could not find", "don't see any", "don’t see any", "no matching", "didn't find", "didn’t find", "don't have any", "don’t have any", "nothing matching", "no results"]
 
     /// `hasCards` is true when the app is showing matching cards next to the reply.
-    public func violations(in reply: String, hasCards: Bool = false) -> [AgentGroundingViolation] {
+    /// `forbidCompletionClaims` is true for a request to change something: the reply may say a review is ready, never that the change was made.
+    public func violations(in reply: String, hasCards: Bool = false, forbidCompletionClaims: Bool = false) -> [AgentGroundingViolation] {
         var found: [AgentGroundingViolation] = []
         func add(_ value: AgentGroundingViolation) { if !found.contains(value) { found.append(value) } }
         for value in matches(Self.uuidPattern, in: reply) + matches(Self.handlePattern, in: reply) + matches(Self.revisionPattern, in: reply) { add(.leak(value)) }
         for span in claims(in: reply) where looksLikeName(span) && !isGrounded(span) { add(.invented(span)) }
         for pair in uncoveredColorGarments(in: reply) { add(.invented(pair)) }
         for value in unmatchedCounts(in: reply) { add(.count(value)) }
+        if forbidCompletionClaims, let match = Self.completionPattern?.firstMatch(in: reply, range: NSRange(reply.startIndex..., in: reply)), let range = Range(match.range, in: reply) { add(.falseClaim(String(reply[range]).lowercased())) }
         if hasCards, let phrase = Self.denials.first(where: { reply.localizedCaseInsensitiveContains($0) }) { add(.contradiction(phrase)) }
         return found
     }
