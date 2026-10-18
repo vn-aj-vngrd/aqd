@@ -20,8 +20,7 @@ struct TodayWidgetConfigurationView: View {
                             .font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
                         VStack(alignment: .leading, spacing: 20) {
                             configuration(instance)
-                        }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).disabled(model.locked)
+                        }.frame(maxWidth: .infinity, alignment: .leading).disabled(model.locked)
                         if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                     }
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
@@ -93,10 +92,15 @@ struct TodayWidgetConfigurationView: View {
         if let card = instance.options?.personal {
             LabeledField(title: "Title, optional", text: Binding(get: { card.title }, set: { title in model.nested { $0.options?.personal?.title = title } }))
             if instance.kind == .personalPhoto {
-                TodayPersonalPhoto(card: card).frame(minHeight: 160, maxHeight: 260)
-                SharedPhotoSourceButton(title: card.photoID == nil ? "Choose photo" : "Replace photo", selectionToken: model.importID, locked: model.locked || model.importing,
-                    onEdit: card.photoID == nil ? nil : { editPhoto = true },
-                    onRemove: card.photoID == nil ? nil : { model.cancelImport(); model.nested { $0.options?.personal?.photoID = nil; $0.options?.personal?.photoRecipe = .fitOriginal } }, onData: model.importPhoto)
+                // The photo is the control: a small glass button on its corner replaces it, instead of a full-width bar below.
+                TodayPersonalPhoto(card: card).frame(minHeight: 160, maxHeight: 260).frame(maxWidth: .infinity)
+                    .overlay(alignment: .bottomTrailing) {
+                        SharedPhotoSourceButton(title: card.photoID == nil ? "Choose photo" : "Replace photo", selectionToken: model.importID, locked: model.locked || model.importing,
+                            iconOnly: true,
+                            onEdit: card.photoID == nil ? nil : { editPhoto = true },
+                            onRemove: card.photoID == nil ? nil : { model.cancelImport(); model.nested { $0.options?.personal?.photoID = nil; $0.options?.personal?.photoRecipe = .fitOriginal } },
+                            onData: model.importPhoto).padding(AppSpacing.small)
+                    }
                 if model.importing { ProgressView("Preparing photo"); Button("Cancel import") { model.cancelImport() }.frame(minHeight: 44) }
             }
             Text(instance.kind == .personalNote ? "Note" : "Caption, optional").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
