@@ -16,7 +16,9 @@ import UIKit
         let base = try store.todayConfiguration()
         let missing = TodayWidgetKind.allCases.filter { kind in !base.instances.contains { $0.kind == kind } }
         let hidden = base.instances.contains { !$0.isVisible }
-        if missing.isEmpty && !hidden {
+        let order = base.instances.map(\.kind)
+        let misplaced = order.firstIndex(of: .wearInsights).map { index in order.firstIndex(of: .weekInWear).map { $0 + 1 != index } ?? false } ?? false
+        if missing.isEmpty && !hidden && !misplaced {
             let receipt = WidgetReceipt(addedKinds: [], configuration: base, backup: nil)
             if !FileManager.default.fileExists(atPath: receiptURL.path) { try write(try JSONEncoder().encode(receipt), to: receiptURL) }
             return receipt
@@ -46,6 +48,11 @@ import UIKit
             // Wear insights sits right under Your week in wear; everything else goes to the end.
             if kind == .wearInsights, let week = draft.value.instances.firstIndex(where: { $0.kind == .weekInWear }) { draft.value.instances.insert(instance, at: week + 1) }
             else { draft.value.instances.append(instance) }
+        }
+        if misplaced, let from = draft.value.instances.firstIndex(where: { $0.kind == .wearInsights }) {
+            let moved = draft.value.instances.remove(at: from)
+            let week = draft.value.instances.firstIndex { $0.kind == .weekInWear } ?? draft.value.instances.endIndex - 1
+            draft.value.instances.insert(moved, at: week + 1)
         }
         for index in draft.value.instances.indices { draft.value.instances[index].isHidden = nil }
         let stamp = try store.mutationStamp()
