@@ -19,11 +19,11 @@ extension View {
         appConfirmation(title, isPresented: isPresented, actions: actions, message: { EmptyView() })
     }
 
-    /// The one delete confirmation: "Delete this <noun>?", the explanation, then the destructive action above Cancel.
+    /// The one delete confirmation: "Delete this <noun>?" names the item, so the red button is just "Delete" and fits on one line.
     func deleteConfirmation(_ noun: String, isPresented: Binding<Bool>, actionTitle: String? = nil, message: String,
                             cancel: @escaping () -> Void = {}, delete: @escaping () -> Void) -> some View {
         appConfirmation("Delete this \(noun)?", isPresented: isPresented) {
-            Button(actionTitle ?? "Delete \(noun)", role: .destructive, action: delete)
+            Button(actionTitle ?? "Delete", role: .destructive, action: delete)
             Button("Cancel", role: .cancel, action: cancel)
         } message: { Text(message) }
     }
