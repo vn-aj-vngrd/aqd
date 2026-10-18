@@ -29,12 +29,12 @@ struct OutfitThemeChooser: View {
                     } label: {
                         HStack(spacing: 12) {
                             ThemeCover(outfits: model.state.outfits.filter { theme.outfitIDs.contains($0.id) }, height: 48).frame(width: 48)
-                                .padding(4).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 8)).accessibilityHidden(true)
+                                .padding(4).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group)).accessibilityHidden(true)
                             Text(theme.displayName).foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, alignment: .leading)
                             Image(systemName: selected.contains(theme.id) ? "checkmark" : "circle")
                                 .frame(width: 22).foregroundStyle(selected.contains(theme.id) ? AppTheme.ink : AppTheme.secondary)
                         }.frame(minHeight: 64).padding(.horizontal, 14)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     }.buttonStyle(.plain).accessibilityValue(selected.contains(theme.id) ? "Selected" : "Not selected")
                 }
 
@@ -168,7 +168,7 @@ struct ThemeEditorView: View {
                                         .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).fixedSize()
                                 }
                             }.padding(AppSpacing.small)
-                                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                                 .animation(.smooth(duration: 0.25), value: model.draft.outfitIDs)
                                 .accessibilityElement(children: .combine)
                                 .accessibilityLabel("Theme cover, \(model.draft.displayName.isEmpty ? "untitled" : model.draft.displayName), \(selectedOutfits.count) outfits")

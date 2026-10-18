@@ -38,7 +38,7 @@ struct OutfitPlanEditorView: View {
                 }.foregroundStyle(AppTheme.ink)
             }
         }.frame(maxWidth: .infinity).frame(height: 224)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             .animation(.smooth(duration: 0.25), value: model.draft.outfit?.id)
     }
 
@@ -71,7 +71,7 @@ struct OutfitPlanEditorView: View {
                             .environment(\.timeZone, TimeZone(identifier: model.draft.day.timeZoneID) ?? .current).labelsHidden()
                             .padding(.horizontal, AppControlMetrics.fieldPadding)
                             .frame(minHeight: AppControlMetrics.rowHeight)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                             .disabled(model.pending || model.unknown)
                         if let plan = namedPlan {
                             Text("Part of \(plan.name). Edit the whole plan to change its date range or timezone.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
@@ -153,8 +153,8 @@ struct PlanUnassignedAction: View {
             .foregroundStyle(AppTheme.ink)
             .padding(AppSpacing.large)
             .frame(maxWidth: .infinity, minHeight: AppControlMetrics.rowHeight)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
-            .contentShape(RoundedRectangle(cornerRadius: AppRadius.field))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
+            .contentShape(RoundedRectangle(cornerRadius: AppRadius.card))
         }.buttonStyle(.plain)
             .accessibilityValue(isSelected ? "Selected" : "Not selected")
             .accessibilityAddTraits(isSelected ? .isSelected : [])

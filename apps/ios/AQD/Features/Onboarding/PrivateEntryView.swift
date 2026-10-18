@@ -60,7 +60,7 @@ struct PrivateEntryView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 EntryIllustration(kind: .privacy)
-                    .padding(12).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 4))
+                    .padding(12).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 Text("Wear what you own.").font(.title.weight(.medium))
                 Text("Keep your pieces, outfits and clothing plans on this iPhone. No account needed.")
                 Text("Your closet has no automatic cloud backup. Device loss or deleting AQD can erase it. Keep a separate copy before deleting AQD or changing devices.")

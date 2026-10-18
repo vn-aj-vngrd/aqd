@@ -137,6 +137,8 @@ struct OutfitComposition: View {
     var limit: Int? = nil
     /// Pieces sit on white when the composition is on the page, and on the soft ground when it already sits inside a white card.
     var ground: Color = AppTheme.surface
+    /// Page-level art rounds like a card; art inside a card passes `AppRadius.group`.
+    var cornerRadius: CGFloat = AppRadius.card
     private var shownIDs: [UUID] { limit.map { Array(pieceIDs.prefix($0)) } ?? pieceIDs }
     @Environment(\.dynamicTypeSize) private var typeSize
 
@@ -160,7 +162,7 @@ struct OutfitComposition: View {
                     }
                 }.padding(12)
             }
-        }.frame(maxWidth: .infinity).background(ground, in: RoundedRectangle(cornerRadius: 4))
+        }.frame(maxWidth: .infinity).background(ground, in: RoundedRectangle(cornerRadius: cornerRadius))
     }
 }
 
@@ -274,7 +276,7 @@ struct OutfitDetailView: View {
                                 if index > 0 { Divider().padding(.leading, 84) }
                                 OutfitPieceRow(pieceID: pieceID)
                             }
-                        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     }
                     if let error { SemanticFeedback(role: .danger, message: error) }
                     if let pendingMutation {

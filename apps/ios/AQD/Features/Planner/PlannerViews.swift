@@ -314,7 +314,7 @@ struct PlanDayCard: View {
                 SemanticFeedback(role: .danger, message: error).padding(.horizontal, 14).padding(.bottom, 14)
             }
         }
-        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
         .accessibilityIdentifier(identifier)
         .contextMenu {
             AccessoryButton("Open plan", systemImage: "calendar") { state.plannerPath.append(.entry(entry.id)) }
@@ -382,7 +382,7 @@ struct PlanAgendaRow: View {
     }
     var body: some View {
         HStack(spacing: 12) {
-            if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 56, limit: 2, ground: AppTheme.imageGround).frame(width: 64, height: 80).clipped() }
+            if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 56, limit: 2, ground: AppTheme.imageGround, cornerRadius: AppRadius.group).frame(width: 64, height: 80).clipped() }
             VStack(alignment: .leading, spacing: 4) {
                 Text(outfit?.displayName ?? "Outfit unassigned").font(AppTypography.body).foregroundStyle(AppTheme.ink)
                 if showDate { Text(entry.day.displayDate).font(AppTypography.supporting) }
@@ -394,7 +394,7 @@ struct PlanAgendaRow: View {
             }.frame(maxWidth: .infinity, alignment: .leading).foregroundStyle(AppTheme.secondary)
             Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).frame(width: 22).accessibilityHidden(true)
         }.padding(14).frame(minHeight: outfit == nil ? 80 : 108)
-            .background { if !embedded { AppTheme.surface.clipShape(RoundedRectangle(cornerRadius: 12)) } }
+            .background { if !embedded { AppTheme.surface.clipShape(RoundedRectangle(cornerRadius: AppRadius.card)) } }
     }
 }
 

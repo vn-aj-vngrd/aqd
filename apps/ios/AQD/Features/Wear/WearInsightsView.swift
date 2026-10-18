@@ -46,7 +46,7 @@ struct LocalWearInsightsView: View {
                             .accessibilityLabel("Daily recorded wear")
                         Text(summary.occasions == 0 ? "No wear recorded this month. Your dated records will build this chart." : "\(summary.itemOccurrences) item wears across \(summary.occasions) wear records.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    }.padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                    }.padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     if let utilization = summary.utilization {
                         VStack(alignment: .leading, spacing: 12) {
                             HStack {
@@ -57,7 +57,7 @@ struct LocalWearInsightsView: View {
                             ProgressView(value: utilization).tint(AppTheme.ink)
                             Text("\(summary.usedActiveCount) of \(summary.activeCount) active pieces worn this month")
                                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        }.padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                        }.padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                         ranking("Most worn", pieces: Array(ranked(summary, descending: true).prefix(5)), summary: summary)
                         ranking("Least worn", pieces: Array(ranked(summary, descending: false).prefix(5)), summary: summary)
                     }
@@ -74,7 +74,7 @@ struct LocalWearInsightsView: View {
                             }
                             Text("Earlier estimates have no recorded date.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                         }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     }
                     Text("Monthly insights use dated wear only. Plans and earlier estimates are excluded. Closet in use counts active pieces only.")
                         .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
@@ -107,7 +107,7 @@ struct LocalWearInsightsView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title).font(AppTypography.detailTitle)
             ForEach(pieces) { piece in periodRow(piece, summary: summary) }
-        }.padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        }.padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
     }
     private var monthTitle: String {
         guard let date = try? month.date(), let zone = TimeZone(identifier: month.timeZoneID) else { return month.key }
@@ -131,7 +131,7 @@ struct LocalWearInsightsView: View {
             Text(value, format: .number).font(.title2.weight(.semibold)).monospacedDigit()
             Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
         }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).accessibilityElement(children: .combine)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card)).accessibilityElement(children: .combine)
     }
     private func reload() {
         state.reloadWear(); state.reloadPieces()

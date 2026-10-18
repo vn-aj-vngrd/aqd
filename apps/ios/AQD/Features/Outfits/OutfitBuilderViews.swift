@@ -43,7 +43,7 @@ struct OutfitCanvas: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
         .animation(.smooth(duration: 0.28), value: pieceIDs)
     }
 

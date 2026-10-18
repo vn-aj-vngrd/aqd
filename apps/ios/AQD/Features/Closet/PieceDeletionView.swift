@@ -82,7 +82,7 @@ struct PieceDeletionView: View {
             }
             Spacer(minLength: 0)
         }.padding(AppSpacing.medium).frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field)).accessibilityElement(children: .combine)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card)).accessibilityElement(children: .combine)
     }
 
     private func outfitImpactLabel(_ outfit: Outfit) -> String {

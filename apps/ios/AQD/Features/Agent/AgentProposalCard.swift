@@ -54,7 +54,7 @@ struct AgentProposalCard: View {
                 }
             }.scrollIndicators(.hidden)
         }.padding(AppSpacing.medium).frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             .accessibilityElement(children: .contain)
     }
 
@@ -110,7 +110,7 @@ struct AgentProposalCard: View {
                 Spacer(minLength: AppSpacing.small)
                 Image(systemName: "chevron.right").font(.footnote).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
             }.frame(minHeight: AppControlMetrics.minimumTarget).padding(AppSpacing.medium).contentShape(Rectangle())
-                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
         }.buttonStyle(.plain).accessibilityHint("Opens the saved receipt")
     }
 

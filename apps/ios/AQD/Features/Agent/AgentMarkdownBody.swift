@@ -24,7 +24,7 @@ struct AgentMarkdownBody: View {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack { Text(block.language.isEmpty ? "Code" : block.language).font(.footnote); Spacer(); Button("Copy code") { UIPasteboard.general.string = block.text }.frame(minHeight: 44) }
                         ScrollView(.horizontal) { Text(block.text).font(.body.monospaced()).textSelection(.enabled) }
-                    }.padding(12).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                    }.padding(12).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 } else if let table = table(block.text) {
                     if textSize.isAccessibilitySize {
                         ForEach(Array(table.rows.enumerated()), id: \.offset) { _, row in

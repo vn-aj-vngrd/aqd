@@ -461,7 +461,7 @@ struct AgentHistoryView: View {
                         }
                         Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
                     }.padding(.horizontal, AppSpacing.large).padding(.vertical, AppSpacing.medium)
-                        .frame(minHeight: 60).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        .frame(minHeight: 60).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 }
                     .disabled(model.hasPendingOperation)
                     .contextMenu {

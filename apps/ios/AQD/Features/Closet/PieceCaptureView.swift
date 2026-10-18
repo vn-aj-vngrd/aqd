@@ -146,7 +146,7 @@ struct PieceCaptureView: View {
                 DisclosureRow(title: "More details", value: "Optional") {
                     nameEditing = false
                     showDetails = true
-                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 if let error = model.errorText {
                     // This legacy channel mixes failures/conflicts/unknown writes.
                     // Keep its exact recovery copy; do not infer a severity from prose.
@@ -241,7 +241,7 @@ struct PieceCaptureView: View {
                 }
             }
             .frame(maxWidth: .infinity).frame(height: image == nil ? 280 : 320)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             .overlay(alignment: .bottomLeading) {
                 if image != nil {
                     HStack(spacing: AppSpacing.small) {

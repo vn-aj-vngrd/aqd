@@ -26,8 +26,8 @@ enum AppRadius {
     static let photo: CGFloat = 4
     static let group: CGFloat = 12
     static let field: CGFloat = 16
-    /// Large rounded cards that read like home-screen widgets.
-    static let card: CGFloat = 24
+    /// Every white surface, card and standalone art area. Inner tiles use `group`; fields keep `field`.
+    static let card: CGFloat = 20
     static let composer: CGFloat = 28
 }
 

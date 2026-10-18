@@ -77,6 +77,6 @@ struct WearAgendaRow: View {
                     .accessibilityLabel("\(record.day.display(.full)), \(record.pieces.count) pieces, recorded")
             }.frame(maxWidth: .infinity, alignment: .leading)
             Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).frame(width: 22).accessibilityHidden(true)
-        }.padding(14).frame(minHeight: 108).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+        }.padding(14).frame(minHeight: 108).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
     }
 }

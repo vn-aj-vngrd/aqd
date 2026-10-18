@@ -23,7 +23,7 @@ struct TodayView: View {
                                   !instances.contains(where: { $0.isVisible && $0.kind == .weatherContext }) {
                             TodayWeatherSummary()
                                 .padding(AppSpacing.large)
-                                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
+                                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                         }
                         ForEach(instances.filter(\.isVisible)) { instance in
                             TimelineView(.periodic(from: .now, by: 60)) { _ in TodayCard(instance: instance) }

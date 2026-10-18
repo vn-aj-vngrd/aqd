@@ -25,7 +25,7 @@ struct TimezoneChooser: View {
                             }.foregroundStyle(AppTheme.ink).frame(minHeight: 54).padding(.horizontal, 14)
                         }.buttonStyle(.plain).accessibilityValue(zone == current ? "Selected" : "Not selected")
                     }
-                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle("Timezone").navigationBarTitleDisplayMode(.inline)
             .searchable(text: $query, prompt: "Search timezones").tint(AppTheme.ink)

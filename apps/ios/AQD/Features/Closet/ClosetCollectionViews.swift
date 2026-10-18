@@ -29,7 +29,7 @@ struct PieceCollectionGrid: View {
                 PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                     .frame(maxWidth: .infinity).frame(height: 134).clipped()
                     .overlay(alignment: selection == nil ? .topTrailing : .topLeading) { PieceAvailabilityBadge(piece: piece) }
-            }.selectionIndicator(chosen, cornerRadius: 16)
+            }.selectionIndicator(chosen, cornerRadius: AppRadius.card)
         }.buttonStyle(.plain).id(piece.id).accessibilityIdentifier("piece.card.\(piece.displayName)")
             .accessibilityValue(selection == nil ? "" : chosen ? "Selected" : "Not selected")
             .accessibilityAddTraits(chosen ? .isSelected : [])
@@ -122,7 +122,7 @@ struct ClosetCard<Artwork: View>: View {
     @ViewBuilder var artwork: () -> Artwork
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            artwork().padding(8).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10)).padding(8)
+            artwork().padding(8).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group)).padding(8)
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 4) {
                     Text(title).font(AppTypography.fieldLabel).truncated()
@@ -132,8 +132,8 @@ struct ClosetCard<Artwork: View>: View {
                 Text(detail).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
             }.padding(.horizontal, 12).padding(.top, 4).padding(.bottom, 12)
         }.frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-            .contentShape(RoundedRectangle(cornerRadius: 16))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
+            .contentShape(RoundedRectangle(cornerRadius: AppRadius.card))
     }
 }
 
@@ -253,7 +253,7 @@ struct ThemeDetailView: View {
                     if let message = state.themeError { SemanticFeedback(role: .danger, message: message) }
                     let members = state.outfits.filter { theme.outfitIDs.contains($0.id) }
                     ThemeCover(outfits: members, height: 180).padding(AppSpacing.small).frame(maxWidth: .infinity)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                         .accessibilityLabel("\(theme.displayName) cover, \(members.count) outfits")
                     Text(theme.outfitIDs.count == 1 ? "1 outfit, private theme" : "\(theme.outfitIDs.count) outfits, private theme").foregroundStyle(AppTheme.secondary)
                     if !theme.description.isEmpty { Text(theme.displayDescription) }

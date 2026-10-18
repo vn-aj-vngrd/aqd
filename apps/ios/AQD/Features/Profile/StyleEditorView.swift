@@ -142,7 +142,7 @@ struct StyleEditorView: View {
                         .disabled(model.pending || model.unknown)
                     if option != StylePreferences.options[step].last { Divider().padding(.leading, 16) }
                 }
-            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             if page == 3 {
                 LabeledField(title: "Comfort preferences", text: answerBinding(\.comfort), prompt: "Fabrics, coverage or anything to avoid")
             }
@@ -174,7 +174,7 @@ struct StyleEditorView: View {
                     }.buttonStyle(.plain)
                     if field != StyleColorField.allCases.last { Divider().padding(.leading, 16) }
                 }
-            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             Button {
                 model.update { $0.answers.colors = ColorPreferences(); $0.answers.colors.declined = true }
             } label: {
@@ -184,7 +184,7 @@ struct StyleEditorView: View {
                     Image(systemName: model.draft.answers.colors.declined ? "checkmark.square.fill" : "square")
                         .foregroundStyle(model.draft.answers.colors.declined ? AppTheme.ink : AppTheme.secondary).accessibilityHidden(true)
                 }.padding(16).frame(maxWidth: .infinity, minHeight: 56).contentShape(Rectangle())
-            }.buttonStyle(.plain).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+            }.buttonStyle(.plain).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 .accessibilityValue(model.draft.answers.colors.declined ? "Selected" : "Not selected")
         }.disabled(model.pending || model.unknown)
     }
@@ -210,7 +210,7 @@ struct StyleEditorView: View {
                         }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityIdentifier("style.review.\(step)")
                             .disabled(model.pending || model.unknown)
                     }
-                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             }
             Text("Your answers stay private on this iPhone. Body details are optional and used for suggestions only when you allow it. No size or virtual try-on guarantee.")
                 .font(.footnote).foregroundStyle(AppTheme.secondary)

@@ -25,6 +25,6 @@ struct LocalDataSummaryView: View {
                 }.padding(14).accessibilityElement(children: .combine)
                 if index < rows.count - 1 { Divider().padding(.leading, 50) }
             }
-        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
     }
 }

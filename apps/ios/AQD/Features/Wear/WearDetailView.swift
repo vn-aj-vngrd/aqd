@@ -67,7 +67,7 @@ private struct RecordedWearPiecesView: View {
                             Text(piece.displayName).font(AppTypography.body)
                             Text(piece.category.rawValue.capitalized).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         }.frame(maxWidth: .infinity, alignment: .leading)
-                    }.padding(14).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                    }.padding(14).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 }
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle("Recorded pieces").navigationBarTitleDisplayMode(.inline)

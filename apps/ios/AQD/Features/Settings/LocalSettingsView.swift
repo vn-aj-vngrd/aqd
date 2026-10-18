@@ -175,7 +175,7 @@ struct LocalStyleSettingsView: View {
                                 }.frame(maxWidth: .infinity, alignment: .leading).padding(AppSpacing.screen)
                                 if index < 5 { Divider().padding(.horizontal, AppSpacing.screen) }
                             }
-                        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                         stylePrivacy
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
                 }
@@ -248,7 +248,7 @@ struct LocalAssistanceSettingsView: View {
                         Image(systemName: "arrow.clockwise").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
                     }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityLabel("Check Agent availability again")
                 }.padding(AppSpacing.large)
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 VStack(alignment: .leading, spacing: AppSpacing.section) {
                     aboutRow("Your wardrobe, in context", symbol: "tshirt", detail: "Uses relevant saved pieces, preferences and recorded wear. Choose what Agent can use in AI settings.")
                     aboutRow("On this iPhone", symbol: "iphone", detail: "Replies are generated on-device. Your conversations aren't sent to an AQD server.")
@@ -261,7 +261,7 @@ struct LocalAssistanceSettingsView: View {
                         Spacer(minLength: AppSpacing.small)
                         Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
                     }.font(AppTypography.body).padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.rowHeight)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 }.buttonStyle(.plain)
                 Text("AI can make mistakes. Check details that matter to you.")
                     .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)

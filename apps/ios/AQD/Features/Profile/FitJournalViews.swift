@@ -267,7 +267,7 @@ struct FitEditorView: View {
                 }
             }
             .frame(maxWidth: .infinity).frame(minHeight: hasMedia ? 280 : 240, maxHeight: hasMedia ? 340 : 260)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             .clipShape(RoundedRectangle(cornerRadius: AppRadius.field))
             .overlay(alignment: .bottomTrailing) {
                 // A small, separate menu: the system glass menu morphs cleanly from a compact control.
@@ -299,7 +299,7 @@ struct FitEditorView: View {
                         Spacer(minLength: 8)
                         Text("Use").font(AppTypography.fieldLabel)
                     }.foregroundStyle(AppTheme.ink).padding(.horizontal, 14).frame(minHeight: 48)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 }.buttonStyle(.plain).disabled(model.locked).accessibilityIdentifier("fit.usePlanned")
             }
             OutfitSelectionStrip(outfits: model.state.outfits, selectedID: model.draft.value.outfit?.id, locked: model.locked) { outfit in
@@ -328,7 +328,7 @@ struct FitEditorView: View {
             HStack { Text("Date").font(AppTypography.body); Spacer(); Text(dateSummary).foregroundStyle(AppTheme.secondary) }
                 .frame(minHeight: 44)
         }.tint(AppTheme.ink).foregroundStyle(AppTheme.ink).padding(.horizontal, 14).padding(.vertical, 4)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).disabled(model.locked)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card)).disabled(model.locked)
             .accessibilityIdentifier("fit.date")
     }
     /// Offered only with an outfit, since wear needs pieces. Saving never records wear; it opens Record wear to confirm.
@@ -341,7 +341,7 @@ struct FitEditorView: View {
                         .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                 }
             }.tint(AppTheme.primaryFill).disabled(model.locked).padding(.horizontal, 14).padding(.vertical, 8)
-                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 .accessibilityIdentifier("fit.recordWearNext")
         }
     }
@@ -375,7 +375,7 @@ struct FitMemoryDetailView: View {
                             Text(memory.day.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         }.font(AppTypography.supporting)
                     }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     if let snapshot = memory.outfit {
                         VStack(alignment: .leading, spacing: 16) {
                             VStack(alignment: .leading, spacing: 4) {
@@ -398,7 +398,7 @@ struct FitMemoryDetailView: View {
                                 Text("Linked outfit unavailable. The recorded snapshot is kept here.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                             }
                         }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     }
                 } else { AppEmptyState("Memory unavailable", systemImage: "photo") }
                 if let error { SemanticFeedback(role: .danger, message: error) }
