@@ -167,17 +167,17 @@ struct Rules {
             return (.theme, true)
         }
         // 7. Trips.
-        if has(["trip", "vacation", "holiday", "getaway", "itinerary", "honeymoon", "staycation", "travelling", "traveling", "travel", "pack", "packing", "flying", "weekend away", "going away", "road trip", "going to", "heading to", "flying to", "visiting", "off to"]) || matches(#"\b(\d+|one|two|three|four|five|six|seven) ?-?(day|days|night|nights)\b.*\b(in|to|at)\b"#)
+        if has(["trip", "vacation", "holiday", "getaway", "itinerary", "honeymoon", "staycation", "travelling", "traveling", "travel", "pack", "packing", "flying", "weekend away", "going away", "road trip", "going to", "heading to", "flying to", "visiting", "off to"]) || matches(#"\b(\d+|one|two|three|four|five|six|seven) ?-?(day|days|night|nights)\b.*\b(in|to|at)\b"#) || matches(#"\b(a|one|1) ?-?(week|weekend|fortnight)\b.*\b(in|to|at)\b"#)
             || (matches(#"\b(\d+|one|two|three|four|five|six|seven) ?-?(day|days|night|nights)\b"#) && matches(#"\b(outfits?|pack|packing|bring|take)\b"#) && !has(["plan my", "next", "coming"])) { return (.planTrip, true) }
         // 8. Planning several days.
         if has(["plan", "schedule", "prepare"]) && (has(["week", "days", "month", "weekend", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "next few days", "rest of the week", "outfits"]) || matches(#"\b\d+ days?\b"#)) { return (.planDays, true) }
         if matches(#"\boutfits? for (the )?(next|coming|upcoming) \d* ?days?\b"#) || has(["outfits for the week", "week of outfits"]) { return (.planDays, true) }
         // 9. Counts and history.
-        if has(Self.stats) || matches(#"\bwhat did i wear\b"#) || matches(#"\b(worn|wearing|wear|wore)\b.*\b(most|least|often|rarely)\b"#) || matches(#"\b(most|least)\b.*\b(worn|wearing)\b"#) || matches(#"\b(havent|have not|hasnt|didnt|did not)\b.*\b(worn|wear)\b"#) || matches(#"\bhow many (times|outfits|pieces|themes|plans|items|clothes|tops|dresses|shoes)\b"#) { return (.stats, true) }
+        if has(Self.stats) || matches(#"\bwhat did i wear\b"#) || matches(#"\b(worn|wearing|wear|wore)\b.*\b(most|least|often|rarely)\b"#) || matches(#"\b(most|least)\b.*\b(worn|wearing)\b"#) || matches(#"\b(wear|worn|wearing|wore)\b.*\b(never|seldom)\b|\b(never|seldom)\b.*\b(wear|worn|wearing|wore)\b"#) || matches(#"\b(havent|have not|hasnt|didnt|did not)\b.*\b(worn|wear)\b"#) || matches(#"\bhow many (times|outfits|pieces|themes|plans|items|clothes|tops|dresses|shoes)\b"#) { return (.stats, true) }
         // 10. Today's look.
         if matches(#"\b(what|which)( should i| to| do i| can i)? (wear|put on|throw on) (today|tomorrow|tonight|this evening|this morning|now)\b"#) || matches(#"\bwhat (am i|are we) wearing (today|tomorrow|tonight)\b"#) || matches(#"\b(outfit|look|ideas?)\b.*\b(for|this) (today|tonight|tomorrow|this evening|this morning|evening|morning)\b"#) || has(["tonights look", "todays look", "outfit for today", "outfit for tonight", "outfit for tomorrow", "look for today", "look for tonight", "look tonight", "look today", "look tomorrow"]) { return (.whatToWear, true) }
         // 11. Not about clothes at all.
-        if !has(Self.closetWords) && (size >= 3 || matches(#"^(write|code|translate|solve|calculate|compute|book|order|buy|email)\b"#)) { return (.outOfScope, true) }
+        if !has(Self.closetWords) && (size >= 3 || matches(#"^(write|code|translate|solve|calculate|compute|book|order|buy|email)\b"#)) { return (.outOfScope, false) }
         if has(["rain", "umbrella", "forecast", "weather"]) { return (.whatToWear, false) }
         // 12. Suggesting an outfit.
         if has(["suggest", "recommend", "put together", "pair", "style", "goes with", "go with", "match", "dress me", "help me dress", "help me choose", "help me pick", "surprise me"]) || matches(#"^(something|anything)\b.*\b(to wear|for)\b"#) || matches(#"\bdress for\b"#) || matches(#"\b(what|which)( should| can| do) i (wear|put on|throw on)\b"#) || matches(#"\b(pick|choose|select|find me)( me)?( an?| the)? (look|outfit)\b"#) || matches(#"\b(what|which)( should i| to| can i)? wear (to|for|with|on|at)\b"#)

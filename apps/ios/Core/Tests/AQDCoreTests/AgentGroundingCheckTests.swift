@@ -69,6 +69,9 @@ struct AgentEvalScorerTests {
         let fourth = AgentEvalSuite.heldOutFour
         let seen = earlier.union(third.flatMap(\.turns))
         #expect(fourth.count >= 30 && fourth.allSatisfy { example in !example.turns.contains { seen.contains($0) } } && Set(AgentEvalSuite.all.map(\.id)).count == AgentEvalSuite.all.count)
+        let fifth = AgentEvalSuite.heldOutFive
+        let seenSoFar = seen.union(fourth.flatMap(\.turns))
+        #expect(fifth.count >= 30 && fifth.allSatisfy { example in !example.turns.contains { seenSoFar.contains($0) } } && Set(AgentEvalSuite.all.map(\.id)).count == AgentEvalSuite.all.count)
         #expect(AgentEvalSuite.suite(named: "heldout").count == heldOut.count && AgentEvalSuite.suite(named: "golden").count == AgentEvalSuite.cases.count)
     }
     @Test func goldenSetCoversTheRequiredCategories() {

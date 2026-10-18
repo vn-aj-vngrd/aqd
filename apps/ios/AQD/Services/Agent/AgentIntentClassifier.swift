@@ -26,22 +26,39 @@ import FoundationModels
     outOfScope: not about the closet, clothes or style, such as questions about people, places, facts, math, code, recipes, news or money
     """
 
+    static let domainInstructions = """
+    Decide whether a request belongs to a personal wardrobe assistant. Answer yes if it is about clothes, outfits, the closet, style, laundry, \
+    wearing or packing clothes, trips or plans for clothes, the assistant itself, or is a greeting or thanks. Answer no for anything else, such as \
+    questions about people, places, facts, news, money, math, code, recipes or health.
+    """
+
+    /// First asks whether the request is about the wardrobe at all, which a small model answers reliably, then which intent it is.
     static func classify(_ request: String, previous: AgentIntent?) async -> AgentIntent? {
         #if canImport(FoundationModels)
         guard #available(iOS 26, *), SystemLanguageModel.default.availability == .available, SystemLanguageModel.default.supportsLocale() else { return nil }
-        let choices = DynamicGenerationSchema(name: "Intent", description: "One intent name", anyOf: AgentIntent.allCases.map(\.rawValue))
-        guard let schema = try? GenerationSchema(root: choices, dependencies: []) else { return nil }
-        let prompt = (previous.map { "The previous request was \($0.rawValue).\n" } ?? "") + "Request: " + String(request.prefix(300))
-        let session = LanguageModelSession(instructions: instructions)
-        let name = try? await withThrowingTaskGroup(of: String.self) { group in
-            group.addTask { try await session.respond(to: prompt, schema: schema, options: GenerationOptions(maximumResponseTokens: 12)).content.value(String.self) }
-            group.addTask { try await Task.sleep(for: .seconds(6)); throw CancellationError() }
-            defer { group.cancelAll() }
-            return try await group.next() ?? ""
-        }
+        let text = String(request.prefix(300))
+        guard let domain = await choose(domainInstructions, "Request: " + text, from: ["yes", "no"]) else { return nil }
+        if domain == "no" { return .outOfScope }
+        let prompt = (previous.map { "The previous request was \($0.rawValue).\n" } ?? "") + "Request: " + text
+        let name = await choose(instructions, prompt, from: AgentIntent.allCases.map(\.rawValue))
         return name.flatMap(AgentIntent.init(rawValue:))
         #else
         return nil
         #endif
     }
+
+    #if canImport(FoundationModels)
+    @available(iOS 26, *)
+    private static func choose(_ instructions: String, _ prompt: String, from choices: [String]) async -> String? {
+        let options = DynamicGenerationSchema(name: "Choice", description: "One of the allowed answers", anyOf: choices)
+        guard let schema = try? GenerationSchema(root: options, dependencies: []) else { return nil }
+        let session = LanguageModelSession(instructions: instructions)
+        return try? await withThrowingTaskGroup(of: String.self) { group in
+            group.addTask { try await session.respond(to: prompt, schema: schema, options: GenerationOptions(maximumResponseTokens: 12)).content.value(String.self) }
+            group.addTask { try await Task.sleep(for: .seconds(6)); throw CancellationError() }
+            defer { group.cancelAll() }
+            return try await group.next() ?? ""
+        }
+    }
+    #endif
 }

@@ -16,6 +16,7 @@ struct AgentIntentTests {
         ("I'm meeting friends for brunch, what should I put on?", .suggestOutfit), ("Any outfit ideas for this evening?", .whatToWear),
         ("Can you show my skirts?", .show), ("Could you please find my gold hoops", .find), ("What kinds of things can I ask you?", .chat), ("Can you plan outfits for the next five days?", .planDays),
         ("I'm off to Baguio for 2 days, help me with outfits", .planTrip), ("Pull out my skirts for me", .show),
+        ("Plan outfits for a week in Cebu", .planTrip), ("Which clothes do I almost never wear?", .stats),
         // chat
         ("Hi", .chat), ("hello there", .chat), ("Good morning", .chat), ("Thanks!", .chat), ("What can you help me with?", .chat), ("What can you do?", .chat), ("who are you", .chat), ("ok", .chat), ("Hello, my closet is new.", .chat),
         // show
@@ -63,8 +64,8 @@ struct AgentIntentTests {
     @Test func onlySpecificRulesAreConfident() {
         #expect(AgentIntent.decide("Show my black pieces").confident && AgentIntent.decide("Mark my dress as laundry").confident && AgentIntent.decide("Plan a trip for me").confident)
         for vague in ["Hello, my closet is new.", "What's the weather like on Mars?"] { #expect(!AgentIntent.decide(vague).confident, "\(vague)") }
-        // Nothing about clothes at all is outside the Agent, with no need to ask the model.
-        #expect(AgentIntent.decide("Banana philosophy of the moon") == (.outOfScope, true))
+        // No clothing word is only a hint of "outside the Agent": the model confirms it.
+        #expect(AgentIntent.decide("Banana philosophy of the moon") == (.outOfScope, false))
         #expect(AgentIntent.decide("3 days", previous: .planTrip).confident)
     }
     @Test func imagesAddAPiece() {
