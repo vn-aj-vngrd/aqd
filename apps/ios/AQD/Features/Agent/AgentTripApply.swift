@@ -64,6 +64,7 @@ import Foundation
         var proposal = AgentActionProposal(action: action)
         proposal.toolRequest = request; proposal.attemptID = attemptID; proposal.sources = []
         conversation.proposals = (conversation.proposals ?? []) + [proposal]
+        calledTools.append("proposeTrip (app)")
         if let i = conversation.messages.lastIndex(where: { $0.attemptID == attemptID && $0.role == .assistant }) {
             conversation.messages[i].toolSteps = (conversation.messages[i].toolSteps ?? []) + [AgentToolStep(tool: "proposal", summary: "Prepared a review: \(action.title)", count: 1)]
         }

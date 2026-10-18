@@ -35,7 +35,7 @@ struct AgentProposeOutfitTool: Tool {
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
             try handlers.prepare(AgentMutationRequest(kind: .createOutfit, name: arguments.name, pieceIDs: try arguments.pieceIDs.map(AgentToolbox.id),
-                                                      occasion: arguments.occasion, mood: arguments.mood), nil)
+                                                      occasion: arguments.occasion, mood: arguments.mood), nil, .proposeOutfit)
         }
     }
 }
@@ -53,7 +53,7 @@ struct AgentProposeThemeTool: Tool {
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
             try handlers.prepare(AgentMutationRequest(kind: .createTheme, name: arguments.name, outfitIDs: try arguments.outfitIDs.map(AgentToolbox.id),
-                                                      themeDescription: arguments.description), nil)
+                                                      themeDescription: arguments.description), nil, .proposeTheme)
         }
     }
 }
@@ -73,7 +73,7 @@ struct AgentRelabelTool: Tool {
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
             try handlers.prepare(AgentMutationRequest(kind: .relabel, targetID: try AgentToolbox.id(arguments.targetID), name: arguments.name,
-                                                      occasion: arguments.occasion, mood: arguments.mood), arguments.revision)
+                                                      occasion: arguments.occasion, mood: arguments.mood), arguments.revision, .relabel)
         }
     }
 }

@@ -39,12 +39,19 @@ public struct AgentResponseDiagnostics: Codable, Equatable, Sendable {
     public var sources: [AgentDataSource]
     public var unavailable: [AgentDataSource]
     public var failure: AgentFailureCategory?
+    /// The classified intent (`AgentIntent` raw value) and the tools the turn called, in order. A " (app)" suffix marks work the app did itself.
+    public var intent: String?
+    public var toolCalls: [String]?
+    /// Problems the grounding check found in the first reply, and in the reply that was kept.
+    public var firstViolations: [String]?
+    public var groundingViolations: [String]?
     public init(included: Int, omitted: Int, inputCharacters: Int, sources: [AgentDataSource], unavailable: [AgentDataSource] = []) {
         self.included = included; self.omitted = omitted; self.inputCharacters = inputCharacters; self.sources = sources; self.unavailable = unavailable
     }
     public func validated() throws {
         guard included >= 0, omitted >= 0, inputCharacters >= 0, promptVersion.count <= 80, retrievalVersion.count <= 80,
-              Set(sources).count == sources.count, Set(unavailable).count == unavailable.count else { throw PlanValidationError.invalidRecord }
+              Set(sources).count == sources.count, Set(unavailable).count == unavailable.count,
+              (toolCalls?.count ?? 0) <= 64, (firstViolations?.count ?? 0) <= 32, (groundingViolations?.count ?? 0) <= 32 else { throw PlanValidationError.invalidRecord }
     }
 }
 public enum AgentFeedbackRating: String, Codable, Sendable { case helpful, notHelpful }

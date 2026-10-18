@@ -20,7 +20,7 @@ struct AgentProposePlanTool: Tool {
             let request = AgentMutationRequest(kind: .createPlan, name: arguments.name,
                 assignments: try arguments.assignments.map { AgentPlanAssignment(date: $0.date, outfitID: try AgentToolbox.id($0.outfitID)) },
                 rangeStart: arguments.start, rangeEnd: arguments.end)
-            return try handlers.prepare(request, nil)
+            return try handlers.prepare(request, nil, .proposePlan)
         }
     }
 }

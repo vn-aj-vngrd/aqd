@@ -19,6 +19,8 @@ import Observation
     private static let streamSaveInterval: Duration = .seconds(1)
     private let provider: @MainActor (String, Int) -> AsyncThrowingStream<String, any Error>
     var toolCalls = 0
+    /// Names of the tools the current turn called, for diagnostics and the eval. The app's own fallbacks carry a " (app)" suffix.
+    var calledTools: [String] = []
     var toolProposals: [(AgentMutationRequest, UUID)] = []
     var stagedPlanDays: [String: [AgentPlanAssignment]] = [:]
     private var generation: Task<Void, Never>?
@@ -358,7 +360,7 @@ import Observation
                 conversation.messages[conversation.messages.count - 1].diagnostics?.failure = .storage
                 conversation.interruptActiveAttempt(); return
             }
-            toolCalls = 0; toolProposals = []; stagedPlanDays = [:]
+            toolCalls = 0; toolProposals = []; stagedPlanDays = [:]; calledTools = []
             let conversationID = conversation.id, start = ContinuousClock.now
             slow = false
             var lastStreamSave: ContinuousClock.Instant?
@@ -393,6 +395,7 @@ import Observation
                     attachIntentVisuals(attemptID: attempt)
                     ensureTripProposal(attemptID: attempt)
                     ensureQuestion(attemptID: attempt)
+                    recordToolCalls(attemptID: attempt)
                 } catch {
                     if let i = conversation.messages.firstIndex(where: { $0.attemptID == attempt }) {
                         if conversation.messages[i].status != .interrupted {
@@ -409,6 +412,7 @@ import Observation
                         conversation.messages[i].failureReason = self.error ?? (conversation.messages[i].status == .stopped ? "Stopped by you. The partial response is retained." : "The response could not finish. Your message and any partial response are retained; try again.")
                     }
                 }
+                recordToolCalls(attemptID: attempt)
                 if let i = conversation.messages.firstIndex(where: { $0.attemptID == attempt }) { conversation.messages[i].elapsedSeconds = seconds(since: start) }
                 _ = persist()
             }
@@ -417,6 +421,10 @@ import Observation
         } catch AgentContextError.selectionRequired {
             self.error = "This request can include up to \(qualification.maximumPieces) pieces. Choose Selected pieces and reduce your selection, or continue Without closet. Your draft is retained."
         } catch { self.error = "Context changed or could not be read. Review the selected records and try again. Your draft is retained." }
+    }
+    func recordToolCalls(attemptID: UUID) {
+        guard let i = conversation.messages.lastIndex(where: { $0.attemptID == attemptID && $0.role == .assistant }), conversation.messages[i].diagnostics != nil else { return }
+        conversation.messages[i].diagnostics?.toolCalls = Array(calledTools.prefix(64))
     }
     private func seconds(since start: ContinuousClock.Instant) -> Double {
         let value = start.duration(to: .now).components

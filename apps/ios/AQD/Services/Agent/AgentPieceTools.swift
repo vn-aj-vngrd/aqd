@@ -20,7 +20,7 @@ struct AgentAddPieceFromPhotoTool: Tool {
         try await AgentToolbox.result {
             let request = AgentMutationRequest(kind: .addPiece, name: arguments.name, color: arguments.color, brand: arguments.brand,
                 category: arguments.category, attachmentID: try AgentToolbox.id(arguments.attachmentID))
-            return try handlers.prepare(request, nil)
+            return try handlers.prepare(request, nil, .addPieceFromPhoto)
         }
     }
 }

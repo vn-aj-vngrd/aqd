@@ -244,6 +244,7 @@ import AQDCore
             }
         }
         guard !items.isEmpty else { return }
+        calledTools.append("showRecords (app)")
         conversation.messages[i].toolSteps = (conversation.messages[i].toolSteps ?? []) + [AgentToolStep(tool: "showRecords", summary: summary, count: items.count, results: items)]
     }
 
@@ -259,6 +260,7 @@ import AQDCore
               !(conversation.messages[i].toolSteps ?? []).contains(where: { $0.question != nil }),
               (conversation.proposals ?? []).allSatisfy({ $0.attemptID != attemptID }),
               let question = AgentQuestion.fromReply(conversation.messages[i].source) else { return }
+        calledTools.append("askUser (app)")
         conversation.messages[i].toolSteps = (conversation.messages[i].toolSteps ?? []) + [AgentToolStep(tool: "askUser", summary: "Asked a question", count: 1, question: question)]
     }
 
@@ -388,25 +390,32 @@ import AQDCore
         let handlers = AgentToolHandlers(
             show: { [weak self] request in
                 guard let self else { throw CancellationError() }
+                self.calledTools.append("showRecords")
                 return try self.showToolRecords(request, conversationID: conversationID, attemptID: attemptID)
             },
             find: { [weak self] query, kinds in
                 guard let self else { throw CancellationError() }
+                self.calledTools.append("findRecords")
                 return try self.lookupToolRecords(query, kinds: kinds, conversationID: conversationID, attemptID: attemptID)
             }, wearStats: { [weak self] window, pieceIDs in
                 guard let self else { throw CancellationError() }
+                self.calledTools.append("wearStats")
                 return try self.wearToolStats(window, pieceIDs: pieceIDs, conversationID: conversationID, attemptID: attemptID)
             }, weather: { [weak self] day in
                 guard let self else { throw CancellationError() }
+                self.calledTools.append("weatherFor")
                 return try self.weatherToolReading(day, conversationID: conversationID, attemptID: attemptID)
-            }, prepare: { [weak self] request, revision in
+            }, prepare: { [weak self] request, revision, tool in
                 guard let self else { throw CancellationError() }
+                self.calledTools.append(tool.rawValue)
                 return try self.prepareToolChange(request, revision: revision, conversationID: conversationID, attemptID: attemptID)
             }, ask: { [weak self] question in
                 guard let self else { throw CancellationError() }
+                self.calledTools.append("askUser")
                 return try self.askToolQuestion(question, conversationID: conversationID, attemptID: attemptID)
             }, suggestOutfit: { [weak self] occasion, mood, pinnedIDs in
                 guard let self else { throw CancellationError() }
+                self.calledTools.append("suggestOutfit")
                 return try await self.suggestToolOutfit(occasion: occasion, mood: mood, pinnedIDs: pinnedIDs, conversationID: conversationID, attemptID: attemptID)
             })
         return AgentToolSelection(ids: ids, handlers: handlers)

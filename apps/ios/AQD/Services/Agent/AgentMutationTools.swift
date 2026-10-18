@@ -26,7 +26,7 @@ struct AgentEditClosetTool: Tool {
             if availability != nil, arguments.name != nil || arguments.color != nil || arguments.brand != nil { throw AgentToolRejection.invalidArguments }
             let request = AgentMutationRequest(kind: availability == nil ? .editPiece : .setAvailability, targetID: try AgentToolbox.id(arguments.pieceID),
                 name: arguments.name, color: arguments.color, brand: arguments.brand, availability: availability)
-            return try handlers.prepare(request, arguments.revision)
+            return try handlers.prepare(request, arguments.revision, .editCloset)
         }
     }
 }
@@ -46,7 +46,7 @@ struct AgentEditOutfitTool: Tool {
         try await AgentToolbox.result {
             let request = AgentMutationRequest(kind: arguments.outfitID == nil ? .createOutfit : .editOutfit, targetID: try arguments.outfitID.map(AgentToolbox.id),
                 name: arguments.name, pieceIDs: try arguments.pieceIDs.map(AgentToolbox.id))
-            return try handlers.prepare(request, arguments.revision)
+            return try handlers.prepare(request, arguments.revision, .editOutfit)
         }
     }
 }
@@ -66,7 +66,7 @@ struct AgentEditThemeTool: Tool {
         try await AgentToolbox.result {
             let request = AgentMutationRequest(kind: arguments.themeID == nil ? .createTheme : .editTheme, targetID: try arguments.themeID.map(AgentToolbox.id),
                 name: arguments.name, outfitIDs: try arguments.outfitIDs.map(AgentToolbox.id))
-            return try handlers.prepare(request, arguments.revision)
+            return try handlers.prepare(request, arguments.revision, .editTheme)
         }
     }
 }
@@ -90,7 +90,7 @@ struct AgentEditPlanTool: Tool {
         try await AgentToolbox.result {
             let request = AgentMutationRequest(kind: arguments.planID == nil ? .createPlan : .editPlan, targetID: try arguments.planID.map(AgentToolbox.id),
                 name: arguments.name, assignments: try arguments.assignments.map { AgentPlanAssignment(date: $0.date, outfitID: try AgentToolbox.id($0.outfitID)) })
-            return try handlers.prepare(request, arguments.revision)
+            return try handlers.prepare(request, arguments.revision, .editPlan)
         }
     }
 }
@@ -106,7 +106,7 @@ struct AgentRecordWearTool: Tool {
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            try handlers.prepare(AgentMutationRequest(kind: .recordWear, pieceIDs: try arguments.pieceIDs.map(AgentToolbox.id), date: arguments.date), nil)
+            try handlers.prepare(AgentMutationRequest(kind: .recordWear, pieceIDs: try arguments.pieceIDs.map(AgentToolbox.id), date: arguments.date), nil, .recordWear)
         }
     }
 }
@@ -123,7 +123,7 @@ struct AgentEditProfileTool: Tool {
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            try handlers.prepare(AgentMutationRequest(kind: .updateProfile, name: arguments.name, caption: arguments.caption), arguments.revision)
+            try handlers.prepare(AgentMutationRequest(kind: .updateProfile, name: arguments.name, caption: arguments.caption), arguments.revision, .editProfile)
         }
     }
 }

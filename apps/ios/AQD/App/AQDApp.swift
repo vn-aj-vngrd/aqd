@@ -34,6 +34,7 @@ private struct AppRootView: View {
     #if DEBUG
     @State private var welcomePreview = false
     @State private var tourAfterWelcome = false
+    @State private var agentEval: AgentClosetEvalRunner?
     #endif
 
     var body: some View {
@@ -119,6 +120,12 @@ private struct AppRootView: View {
                 }
                 state.isOpening = false
             }
+            if process.arguments.contains("--aqd-agent-eval"), !process.arguments.contains("--aqd-ui-testing"), agentEval == nil {
+                let flag = process.arguments.firstIndex(of: "--aqd-agent-eval-label").map { $0 + 1 }
+                let label = flag.flatMap { process.arguments.indices.contains($0) ? process.arguments[$0] : nil } ?? "run"
+                let runner = AgentClosetEvalRunner(); agentEval = runner
+                await runner.run(label: label)
+            }
             if process.arguments.contains("--aqd-refresh-transparent-samples"), !process.arguments.contains("--aqd-ui-testing"), let store = state.store {
                 state.isOpening = true
                 do {
@@ -156,6 +163,9 @@ private struct AppRootView: View {
             state.retryLocalDataCleanup()
         }
         #if DEBUG
+        .fullScreenCover(isPresented: Binding(get: { agentEval != nil }, set: { if !$0 { agentEval = nil } })) {
+            if let agentEval { AgentClosetEvalView(runner: agentEval) }
+        }
         .fullScreenCover(isPresented: $welcomePreview, onDismiss: {
             if tourAfterWelcome {
                 tourAfterWelcome = false

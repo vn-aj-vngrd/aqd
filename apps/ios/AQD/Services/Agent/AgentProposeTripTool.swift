@@ -25,7 +25,7 @@ struct AgentProposeTripTool: Tool {
         try await AgentToolbox.result {
             let spec = AgentTripSpec(destination: arguments.destination, activities: arguments.activities.filter { !$0.isEmpty }, startDate: arguments.startDate,
                 days: try arguments.days.map { TripDayBrief(label: String($0.label.prefix(40)), occasion: $0.occasion, pinnedIDs: try $0.pinnedIDs.map(AgentToolbox.id)) })
-            do { return try handlers.prepare(AgentMutationRequest(kind: .createTrip, name: String(arguments.name.prefix(60)), trip: spec), nil) }
+            do { return try handlers.prepare(AgentMutationRequest(kind: .createTrip, name: String(arguments.name.prefix(60)), trip: spec), nil, .proposeTrip) }
             catch OutfitValidationError.piecesRequired {
                 return "No trip prepared: the available closet cannot make a full outfit (needs tops and bottoms or a dress, plus shoes). Tell the owner what is missing and to add it from Closet."
             }
