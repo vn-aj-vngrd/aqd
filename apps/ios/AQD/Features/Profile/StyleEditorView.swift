@@ -294,12 +294,16 @@ private enum StyleColorField: String, CaseIterable {
     }
 }
 
+/// A pushed choice page with the app's editor pattern: changes stay on this page until Save, and Back leaves them behind.
 private struct StyleColorSelectionView: View {
     @Bindable var model: StyleEditorModel
     let field: StyleColorField
+    @Environment(\.dismiss) private var dismiss
+    @State private var working: String?
     @State private var addingCustom = false
     @State private var custom = ""
-    private var value: String { model.draft.answers.colors[keyPath: field.keyPath] }
+    private var saved: String { model.draft.answers.colors[keyPath: field.keyPath] }
+    private var value: String { working ?? saved }
     private var selected: [String] { ColorPreferences.selections(in: value) }
     private var options: [String] {
         field.options + selected.filter { item in
@@ -308,57 +312,71 @@ private struct StyleColorSelectionView: View {
             if !result.contains(where: { $0.caseInsensitiveCompare(item) == .orderedSame }) { result.append(item) }
         }
     }
+    private var changed: Bool { ColorPreferences.selections(in: value) != ColorPreferences.selections(in: saved) }
+    private var locked: Bool { model.pending || model.unknown }
+
     var body: some View {
-        List {
-            if let error = model.error {
-                Section {
-                    SemanticFeedback(role: model.unknown ? .warning : .danger, message: error)
-                    Button("Retry saving draft") { model.persist() }.disabled(model.pending || model.unknown)
+        ScrollView {
+            VStack(alignment: .leading, spacing: AppSpacing.medium) {
+                if let error = model.error {
+                    SemanticFeedback(role: model.unknown ? .warning : .danger, message: error, contained: true)
+                    Button("Retry saving draft") { model.persist() }.frame(minHeight: 44).disabled(locked)
                 }
-            }
-            Section {
-                ForEach(options, id: \.self) { option in
-                    let isSelected = selected.contains { $0.caseInsensitiveCompare(option) == .orderedSame }
-                    Button { toggle(option) } label: {
-                        HStack(spacing: 12) {
-                            Text(option).foregroundStyle(AppTheme.ink)
-                            Spacer(minLength: 8)
-                            Image(systemName: isSelected ? "checkmark.square.fill" : "square")
-                                .foregroundStyle(isSelected ? AppTheme.ink : AppTheme.secondary).accessibilityHidden(true)
-                        }.frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
-                    }.buttonStyle(.plain).accessibilityValue(isSelected ? "Selected" : "Not selected")
-                        .disabled(model.pending || model.unknown)
-                }
-                Button { custom = ""; addingCustom = true } label: {
-                    Label("Add custom preference", systemImage: "plus").frame(minHeight: 44)
-                }.disabled(model.pending || model.unknown)
-            } footer: { Text("Choose any. Changes stay in your draft until you save preferences.") }
-        }.scrollContentBackground(.hidden).background(AppTheme.canvas)
-            .navigationTitle(field.rawValue).navigationBarTitleDisplayMode(.inline)
-            .appConfirmation("Add preference", isPresented: $addingCustom) {
-                Button("Add") {
-                    let items = ColorPreferences.selections(in: custom)
-                    model.update { draft in
-                        for item in items {
-                            let current = draft.answers.colors[keyPath: field.keyPath]
-                            if !ColorPreferences.selections(in: current).contains(where: { $0.caseInsensitiveCompare(item) == .orderedSame }) {
-                                draft.answers.colors[keyPath: field.keyPath] = ColorPreferences.toggling(item, in: current)
-                            }
-                        }
-                        draft.answers.colors.declined = false
+                Text("Choose any. Nothing changes until you tap Save.")
+                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                VStack(spacing: 0) {
+                    ForEach(options, id: \.self) { option in
+                        let isSelected = selected.contains { $0.caseInsensitiveCompare(option) == .orderedSame }
+                        Button { toggle(option) } label: {
+                            HStack(spacing: 12) {
+                                Text(option).foregroundStyle(AppTheme.ink)
+                                Spacer(minLength: 8)
+                                Image(systemName: isSelected ? "checkmark.square.fill" : "square")
+                                    .foregroundStyle(isSelected ? AppTheme.ink : AppTheme.secondary).accessibilityHidden(true)
+                            }.padding(.horizontal, 16).frame(maxWidth: .infinity, minHeight: 52).contentShape(Rectangle())
+                        }.buttonStyle(.plain).accessibilityLabel(option).accessibilityValue(isSelected ? "Selected" : "Not selected")
+                            .disabled(locked)
+                        Divider().padding(.leading, 16)
                     }
-                }.disabled(ColorPreferences.selections(in: custom).isEmpty || model.pending || model.unknown)
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                TextField("Your preference", text: $custom)
-                    .textFieldStyle(.roundedBorder)
-                    .accessibilityLabel("Your preference")
+                    Button { custom = ""; addingCustom = true } label: {
+                        Label("Add your own", systemImage: "plus").foregroundStyle(AppTheme.ink)
+                            .padding(.horizontal, 16).frame(maxWidth: .infinity, minHeight: 52, alignment: .leading).contentShape(Rectangle())
+                    }.buttonStyle(.plain).disabled(locked)
+                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 20).padding(.top, AppSpacing.small).padding(.bottom, 24)
+        }
+        .background(AppTheme.canvas.ignoresSafeArea())
+        .navigationTitle(field.rawValue).navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                ToolbarSaveAction(title: "Save") { save() }.disabled(!changed || locked)
+                    .accessibilityIdentifier("style.colors.save")
             }
+        }
+        .sensoryFeedback(.selection, trigger: selected)
+        .appConfirmation("Add your own", isPresented: $addingCustom) {
+            Button("Add") {
+                var current = value
+                for item in ColorPreferences.selections(in: custom)
+                where !ColorPreferences.selections(in: current).contains(where: { $0.caseInsensitiveCompare(item) == .orderedSame }) {
+                    current = ColorPreferences.toggling(item, in: current)
+                }
+                working = current
+            }.disabled(ColorPreferences.selections(in: custom).isEmpty || locked)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            TextField("Your preference", text: $custom)
+                .textFieldStyle(.roundedBorder)
+                .accessibilityLabel("Your preference")
+        }
     }
-    private func toggle(_ option: String) {
+    private func toggle(_ option: String) { working = ColorPreferences.toggling(option, in: value) }
+    private func save() {
+        let result = value
         model.update {
-            $0.answers.colors[keyPath: field.keyPath] = ColorPreferences.toggling(option, in: value)
+            $0.answers.colors[keyPath: field.keyPath] = result
             $0.answers.colors.declined = false
         }
+        dismiss()
     }
 }

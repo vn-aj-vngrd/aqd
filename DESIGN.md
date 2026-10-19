@@ -50,6 +50,8 @@ Reuse these; a hand-built equivalent is a defect.
 | Empty, error, progress | `AppEmptyState`, `SemanticFeedback`, `OperationProgress` |
 | Confirmations and alerts | `appConfirmation`, `draftDiscardConfirmation`: one shared card, 20 pt padding, text aligned with buttons, no native `.alert` or `.confirmationDialog` |
 
+**Choice pages.** A page pushed from an editor to pick options keeps its changes on the page: a `ToolbarSaveAction` titled Save sits top right and is enabled only once something changed, and Back leaves without applying anything. Options sit in one surface card under a single line of guidance, with no empty list header above them.
+
 **Loading.** A page that is waiting on content shows `LoadingStatePage`: one centered spinner, a truthful title and one line of context, in the same position as an empty state. It appears after a short delay so fast loads never flash it. Results that are already on screen stay put and show a small inline spinner next to their count while they refresh. Inline operations keep `OperationProgress`.
 
 **Glass.** Compact controls use native interactive regular glass on iOS 26+. Reduce Transparency, Increase Contrast and older systems fall back to a flat white surface with a divider hairline. No hand-drawn shadows. Rows, cards and fields stay flat and opaque; never put glass on glass or on ordinary content.
