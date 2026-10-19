@@ -88,17 +88,18 @@ struct LocalProfileView: View {
     private var profileStats: some View {
         let fits = state.fitError == nil ? state.fitMemories : nil
         let today = LocalPlanDay()
-        return HStack(alignment: .top, spacing: 0) {
+        // Starts on the name's edge, then the same gap between each number, so the row reads as one line of facts.
+        return HStack(alignment: .top, spacing: 28) {
             profileStat("Fits", count: fits?.count, id: "fits")
             profileStat("This month", count: fits.map { FitJournalPresentation.monthCount($0, today: today) }, id: "month")
             profileStat("Day streak", count: fits.map { FitJournalPresentation.streak($0, today: today) }, id: "streak")
-        }.frame(maxWidth: .infinity)
+        }.frame(maxWidth: .infinity, alignment: .leading)
     }
     private func profileStat(_ title: String, count: Int?, id: String) -> some View {
         VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
             Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit().truncated()
             Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
-        }.frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading)
+        }.frame(minHeight: AppControlMetrics.minimumTarget, alignment: .leading).fixedSize(horizontal: true, vertical: false)
             .foregroundStyle(AppTheme.ink).accessibilityElement(children: .ignore)
             .accessibilityLabel(count.map { "\(title), \($0)" } ?? "\(title) unavailable")
             .accessibilityIdentifier("profile.stat.\(id)")
