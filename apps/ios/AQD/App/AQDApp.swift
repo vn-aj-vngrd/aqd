@@ -277,6 +277,7 @@ private struct AppRootView: View {
 
     /// Root destinations own their content. Background recovery notices belong to Settings.
     private func rootContent(_ content: some View) -> AnyView {
-        AnyView(content.environment(state))
+        // Each tab is its own UIKit-hosted tree, so app-wide styles set on the window root must be repeated here.
+        AnyView(content.environment(state).toggleStyle(AppToggleStyle()))
     }
 }
