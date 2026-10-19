@@ -23,12 +23,19 @@ struct AgentContextLimits: Sendable, Equatable {
         var index = AgentRecordIndex()
     }
 
-    /// The handles for a turn: active pieces, outfits, themes and plans from the enabled sources.
+    /// Marks an archived piece in the record index, which keeps them out of the catalog the model reads every turn.
+    static let archivedSuffix = " (archived)"
+
+    /// The handles for a turn: active pieces, then archived ones, outfits, themes and plans from the enabled sources.
     static func recordIndex(pieces: [WardrobePiece], outfits: [Outfit], themes: [OutfitTheme], plans: [PlanDefinition]) -> AgentRecordIndex {
         var drafts: [AgentRecordIndex.Draft] = []
         for piece in pieces where !piece.isArchived {
             drafts.append(.init(kind: .piece, id: piece.id, name: piece.displayName, revision: piece.revision,
                                 attributes: [piece.category.rawValue, piece.details.color, piece.details.material] + piece.details.tags))
+        }
+        // Archived pieces follow the active ones, so active handles never shift. They exist only so a restore can name them.
+        for piece in pieces where piece.isArchived {
+            drafts.append(.init(kind: .piece, id: piece.id, name: piece.displayName + Self.archivedSuffix, revision: piece.revision, attributes: [piece.category.rawValue, "archived"]))
         }
         for outfit in outfits { drafts.append(.init(kind: .outfit, id: outfit.id, name: outfit.displayName, revision: outfit.revision, attributes: [outfit.occasion, outfit.mood].compactMap { $0 })) }
         for theme in themes { drafts.append(.init(kind: .theme, id: theme.id, name: theme.displayName, revision: theme.revision)) }
@@ -189,7 +196,7 @@ struct AgentContextLimits: Sendable, Equatable {
         var catalogParts: [String] = []
         let room = limits.catalogCharacters
         if room > 120 {
-            func lines(_ kind: AgentRecordKind) -> [String] { index.entries(of: kind).map { $0.handle + " " + $0.name } }
+            func lines(_ kind: AgentRecordKind) -> [String] { index.entries(of: kind).filter { !$0.name.hasSuffix(Self.archivedSuffix) }.map { $0.handle + " " + $0.name } }
             let shares: [(AgentRecordKind, String, Double, AgentDataSource, String)] = [
                 (.piece, "Pieces", 0.58, .pieces, "pieces"), (.outfit, "Outfits", 0.27, .outfits, "outfits"), (.theme, "Themes", 0.10, .themes, "themes"), (.plan, "Plans", 0.05, .planner, "plans")]
             for (kind, label, share, source, noun) in shares where preferences.allows(source) && !unavailable.contains(source) {

@@ -131,6 +131,7 @@ import UIKit
         case .plan(let draft): [draft.plan.name]
         case .trip(let draft): [draft.name, draft.theme.name] + draft.days.map { $0.outfit.name }
         case .piece(let change): [change.draft.name]
+        case .tidy(let change): change.items.map(\.name)
         case .wear, .availability, .profile: []
         }
     }
@@ -138,7 +139,7 @@ import UIKit
     private static func kind(_ action: AgentReviewedAction) -> String {
         switch action {
         case .outfit: "outfit"; case .theme: "theme"; case .plan: "plan"; case .wear: "wear"; case .availability: "availability"
-        case .profile: "profile"; case .piece: "piece"; case .trip: "trip"
+        case .profile: "profile"; case .piece: "piece"; case .trip: "trip"; case .tidy: "tidy"
         }
     }
 }

@@ -138,7 +138,7 @@ import AQDCore
         }
         guard toolProposals.count < 4 else { throw AgentContextError.budgetExceeded }
         let needs = request.kind.requiredSources
-        let pieces = needs.contains(.pieces) ? try store.pieces() : []
+        let pieces = needs.contains(.pieces) ? try store.pieces() + (request.kind == .tidyPieces ? store.pieces(archived: true) : []) : []
         if request.wearOutfitID != nil { guard preferences.allows(.outfits) else { throw PieceStore.StoreError.invalidRecord } }
         let outfits = needs.contains(.outfits) || request.wearOutfitID != nil ? try store.outfits() : []
         let themes = needs.contains(.themes) ? try store.themes() : []
@@ -151,7 +151,13 @@ import AQDCore
                                 ownerID: conversation.ownerID, pieces: pieces, outfits: outfits, themes: themes, plans: plans, identity: identity)
         let action = try request.prepare(ownerID: conversation.ownerID, pieces: pieces, outfits: outfits, themes: themes,
             plans: plans, entries: entries, identity: needs.contains(.profile) ? try store.localIdentity() : nil)
-        var proposal = AgentActionProposal(action: action)
+        var reviewed = action
+        // A delete shows what depends on each piece before the owner can approve; the impact is bound to the piece's current revision.
+        if case .tidy(var change) = reviewed, change.op == .delete {
+            for i in change.items.indices { change.items[i].impact = try store.pieceDeletionImpact(id: change.items[i].id) }
+            reviewed = .tidy(change)
+        }
+        var proposal = AgentActionProposal(action: reviewed)
         let sourceIDs: [UUID]
         switch action {
         case .theme(let draft): sourceIDs = draft.outfitIDs
@@ -295,13 +301,18 @@ import AQDCore
             guard let id = request.targetID else { throw AgentToolRejection.missingTarget }
             guard let found = outfits.first(where: { $0.id == id })?.revision ?? themes.first(where: { $0.id == id })?.revision else { throw AgentToolRejection.unknownRecord(id) }
             current = found
+        case .tidyPieces:
+            // Every named piece must exist; its revision is read at prepare time and bound again at approval.
+            guard !request.pieceIDs.isEmpty else { throw AgentToolRejection.missingTarget }
+            if let id = request.pieceIDs.first(where: { id in !pieces.contains { $0.id == id } }) { throw AgentToolRejection.unknownRecord(id) }
+            current = nil
         case .createOutfit, .createTheme, .createPlan, .createTrip, .recordWear, .addPiece: current = nil
         }
         if let current {
             guard let revision else { throw AgentToolRejection.revisionRequired }
             guard revision == current else { throw AgentToolRejection.staleRevision(expected: revision, current: current) }
         }
-        let knownPieces = Set(pieces.filter { !$0.isArchived }.map(\.id)), knownOutfits = Set(outfits.map(\.id))
+        let knownPieces = Set(pieces.filter { request.kind == .tidyPieces || !$0.isArchived }.map(\.id)), knownOutfits = Set(outfits.map(\.id))
         if let id = request.pieceIDs.first(where: { !knownPieces.contains($0) }) { throw AgentToolRejection.unknownRecord(id) }
         if let id = (request.outfitIDs + request.assignments.map(\.outfitID)).first(where: { !knownOutfits.contains($0) }) { throw AgentToolRejection.unknownRecord(id) }
     }
@@ -316,7 +327,7 @@ import AQDCore
         case .editPlan: plans.first { $0.id == request.targetID }?.revision
         case .relabel: outfits.first { $0.id == request.targetID }?.revision ?? themes.first { $0.id == request.targetID }?.revision
         case .updateProfile: identity?.revision
-        case .createOutfit, .createTheme, .createPlan, .createTrip, .recordWear, .addPiece: nil
+        case .createOutfit, .createTheme, .createPlan, .createTrip, .recordWear, .addPiece, .tidyPieces: nil
         }
     }
 

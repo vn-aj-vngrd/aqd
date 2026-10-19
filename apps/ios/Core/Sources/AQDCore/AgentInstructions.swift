@@ -25,6 +25,7 @@ public enum AgentInstructions {
         case .theme: "Call proposeTheme with a short name and saved outfits by name. If unsure which outfits, call askUser."
         case .relabel: "Call relabel with the outfit or theme and the new name, occasion or mood."
         case .editPiece: "Call editCloset with the piece and only the fields to change."
+        case .tidy: "Call tidyCloset with the action (archive, restore or delete) and the pieces by name. Prefer archive unless the owner clearly says delete. If it is unclear which pieces, call findRecords or askUser. Never describe it as done: the owner reviews and approves first."
         case .recordWear: "Call recordWear with the day and the outfit or pieces worn. If the day or what was worn is missing, call askUser."
         case .profile: "Call editProfile with only the fields to change."
         case .addPiece: "Call addPieceFromPhoto with the attached image a1 and only what its text shows."

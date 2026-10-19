@@ -375,7 +375,9 @@ struct AgentConversationView: View {
             ForEach(model.conversation.proposals(for: message)) { proposal in
                 AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) },
                                  tryAnother: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion("Show me a different option") } : nil,
-                                 setTripOptions: { theme, plan in model.setTripOptions(proposal.id, includeTheme: theme, includePlan: plan) })
+                                 setTripOptions: { theme, plan in model.setTripOptions(proposal.id, includeTheme: theme, includePlan: plan) },
+                                 setTidySelection: { item, selected in model.setTidySelection(proposal.id, item: item, selected: selected) },
+                                 undo: model.canUndo(proposal) ? { model.undoProposal(proposal.id); state.reloadPieces() } : nil)
             }
         }
     }
@@ -414,7 +416,9 @@ struct AgentConversationView: View {
     }
     private var unlinkedProposalRows: some View {
         ForEach(model.conversation.unlinkedProposals) { proposal in
-            AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) })
+            AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) },
+                              setTidySelection: { item, selected in model.setTidySelection(proposal.id, item: item, selected: selected) },
+                              undo: model.canUndo(proposal) ? { model.undoProposal(proposal.id); state.reloadPieces() } : nil)
         }
     }
 }

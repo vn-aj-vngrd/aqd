@@ -10,6 +10,10 @@ struct AgentProposalCard: View {
     let dismiss: () -> Void
     var tryAnother: (() -> Void)?
     var setTripOptions: ((_ includeTheme: Bool?, _ includePlan: Bool?) -> Void)?
+    /// Ticks or unticks one piece of a tidy review.
+    var setTidySelection: ((_ item: UUID, _ selected: Bool) -> Void)?
+    /// Present when the applied change can still be put back.
+    var undo: (() -> Void)?
     @State private var previewing: LookPreview?
 
     private var detail: String {
@@ -22,6 +26,7 @@ struct AgentProposalCard: View {
         case .piece(let change): change.draft.name
         case .profile: "Name and bio"
         case .trip(let draft): "\(draft.name), \(draft.days.count) \(draft.days.count == 1 ? "day" : "days")"
+        case .tidy(let change): change.summary
         }
     }
 
@@ -53,6 +58,7 @@ struct AgentProposalCard: View {
             thumbnails
             if case .plan(let draft) = proposal.action { planGrid(draft) }
             if case .trip(let draft) = proposal.action { tripDays(draft) }
+            if case .tidy(let change) = proposal.action { tidyRows(change) }
             Text(proposal.status == .executing ? "Check save result" : proposal.action.savesSummary + " Not saved yet.")
                 .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             AdaptiveActions { iconsOnly in
@@ -141,6 +147,28 @@ struct AgentProposalCard: View {
         }
     }
 
+    /// One tickable row per piece. Unticked pieces are left out when the change is applied.
+    private func tidyRows(_ change: AgentTidyChange) -> some View {
+        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+            ForEach(change.items) { item in
+                let thumbnail = pieces.first { $0.id == item.id }
+                Button { setTidySelection?(item.id, !item.selected) } label: {
+                    HStack(spacing: AppSpacing.small) {
+                        Image(systemName: item.selected ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(item.selected ? (change.op.isDestructive ? AppTheme.error : AppTheme.ink) : AppTheme.secondary).accessibilityHidden(true)
+                        if let thumbnail {
+                            PieceThumbnail(photoID: thumbnail.photoID, recipe: thumbnail.photoRecipe).frame(width: 32, height: 40)
+                                .clipShape(RoundedRectangle(cornerRadius: AppRadius.photo)).accessibilityHidden(true)
+                        }
+                        Text(item.name).font(AppTypography.supporting).foregroundStyle(AppTheme.ink).truncated()
+                        Spacer(minLength: 0)
+                    }.frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+                }.buttonStyle(.plain).disabled(locked || proposal.status != .proposed || setTidySelection == nil)
+                    .accessibilityValue(item.selected ? "Included" : "Left out")
+            }
+        }
+    }
+
     private func optionChip(_ title: String, symbol: String, on: Bool, locked: Bool = false, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(title, systemImage: symbol).compactControl(tint: on ? AppTheme.ink : AppTheme.secondary)
@@ -154,11 +182,29 @@ struct AgentProposalCard: View {
     }
 
     private var receiptRow: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            receiptButton
+            if proposal.receipt?.undoneAt != nil {
+                quietRow(symbol: "arrow.uturn.backward.circle", text: "Undone. \(detail)").padding(.horizontal, AppSpacing.medium)
+            } else if let undo {
+                Button(action: undo) { Label("Undo", systemImage: "arrow.uturn.backward").compactControl(tint: AppTheme.ink) }
+                    .buttonStyle(.plain).disabled(locked).padding(.horizontal, AppSpacing.medium).accessibilityHint("Puts the record back as it was")
+            }
+        }.padding(.bottom, undo != nil || proposal.receipt?.undoneAt != nil ? AppSpacing.small : 0)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
+    }
+
+    private var receiptTitle: String {
+        guard case .tidy(let change) = proposal.action else { return "Saved locally" }
+        switch change.op { case .archive: return "Archived"; case .unarchive: return "Restored"; case .delete: return "Deleted" }
+    }
+
+    private var receiptButton: some View {
         Button(action: review) {
             HStack(spacing: AppSpacing.medium) {
                 Image(systemName: "checkmark.circle").foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                    Text("Saved locally").foregroundStyle(AppTheme.ink)
+                    Text(receiptTitle).foregroundStyle(AppTheme.ink)
                     Text(detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                     if let receipt = proposal.receipt {
                         Text(receipt.acknowledgedAt.displayTimestamp()).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
@@ -167,7 +213,6 @@ struct AgentProposalCard: View {
                 Spacer(minLength: AppSpacing.small)
                 Image(systemName: "chevron.right").font(.footnote).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
             }.frame(minHeight: AppControlMetrics.minimumTarget).padding(AppSpacing.medium).contentShape(Rectangle())
-                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
         }.buttonStyle(.plain).accessibilityHint("Opens the saved receipt")
     }
 

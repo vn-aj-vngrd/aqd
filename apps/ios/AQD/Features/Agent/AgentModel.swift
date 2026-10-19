@@ -228,13 +228,16 @@ import Observation
                 guard conversation.context.automatic == true, conversation.context.scope == .closet,
                       request.kind.requiredSources.allSatisfy(preferences.allows) else { throw PieceStore.StoreError.staleRevision }
             }
+            // Undo needs the record as it was, which only the first attempt can still read; a retry after an unconfirmed save finds it already changed.
+            let firstAttempt = proposal.status == .proposed
             try conversation.proposals?[i].approve(version: version)
             guard persist(), let proposal = conversation.proposals?[i] else { return }
             let receipt: AgentActionReceipt
             switch proposal.action {
             case .piece(let change):
+                let before = firstAttempt ? try priorPieceDraft(change.draft.itemID) : nil
                 let value = try store.savePiece(change.draft, operationID: change.operationID)
-                receipt = AgentActionReceipt(recordID: value.id, kind: "piece")
+                receipt = AgentActionReceipt(recordID: value.id, kind: "piece", undo: before.map { .piece(previous: $0, appliedRevision: value.revision) })
             case .profile(let draft):
                 if try store.savedIdentity(for: draft) == nil {
                     guard try store.localIdentity() == draft.base else { throw PieceStore.StoreError.staleRevision }
@@ -245,8 +248,11 @@ import Observation
                 if try store.identityDraft() == draft { try store.finishIdentityDraft(draft) }
                 receipt = AgentActionReceipt(recordID: value.ownerID, kind: "profile")
             case .availability(let change):
+                let before = firstAttempt ? try priorPieceDraft(change.pieceID)?.availability : nil
                 let piece = try store.setAvailability(id: change.pieceID, value: change.value, expectedRevision: change.expectedRevision, operationID: change.operationID)
-                receipt = AgentActionReceipt(recordID: piece.id, kind: "piece")
+                receipt = AgentActionReceipt(recordID: piece.id, kind: "piece", undo: before.map { .availability(pieceID: piece.id, previous: $0, appliedRevision: piece.revision) })
+            case .tidy(let change):
+                receipt = try applyTidy(change)
             case .theme(let draft):
                 if try store.savedTheme(for: draft) == nil { guard try store.themeDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }; try validateSources(proposal); try store.saveThemeDraft(draft) }
                 let value = try store.saveTheme(draft)
