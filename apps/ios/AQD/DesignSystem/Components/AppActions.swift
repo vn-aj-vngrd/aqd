@@ -212,10 +212,17 @@ struct AccessoryLabel: View {
             Image(uiImage: symbol).renderingMode(.original).accessibilityHidden(true)
         }
     }
+    /// Drawn into a bitmap in the resolved color. A tinted symbol handed straight to SwiftUI keeps its default black, which
+    /// vanished on dark rows; a plain bitmap keeps its color in menus, toggles and lists alike.
     private var symbol: UIImage {
         let traits = UITraitCollection(userInterfaceStyle: colorScheme == .dark ? .dark : .light)
         let color = UIColor(destructive ? AppTheme.error : AppTheme.controlIcon).resolvedColor(with: traits)
-        return UIImage(systemName: systemImage)?.withTintColor(color, renderingMode: .alwaysOriginal) ?? UIImage()
+        let configuration = UIImage.SymbolConfiguration(textStyle: .body)
+        guard let base = UIImage(systemName: systemImage, withConfiguration: configuration)?
+            .withTintColor(color, renderingMode: .alwaysOriginal) else { return UIImage() }
+        let format = UIGraphicsImageRendererFormat.preferred()
+        return UIGraphicsImageRenderer(size: base.size, format: format).image { _ in base.draw(at: .zero) }
+            .withRenderingMode(.alwaysOriginal)
     }
 }
 
