@@ -55,7 +55,7 @@ struct OutfitSuggestionContent: View {
             }
             if let error = model.error { SemanticFeedback(role: .danger, message: error) }
         }
-        .sheet(isPresented: $weather) {
+        .navigationDestination(isPresented: $weather) {
             if let client = model.state.weatherClient {
                 WeatherContextView(client: client, initial: model.draft.weather) { selection in model.update { $0.weather = selection }; return model.draft.weather == selection && model.error == nil }
             }

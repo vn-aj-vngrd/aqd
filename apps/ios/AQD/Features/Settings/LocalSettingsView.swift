@@ -93,7 +93,7 @@ struct LocalSettingsView: View {
             }
         }
         .onAppear { state.reloadSettings() }
-        .sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true } } }
+        .navigationDestination(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true }.secondaryPage() } }
         #if DEBUG
         .fullScreenCover(isPresented: $previewWelcome, onDismiss: {
             if tourAfterWelcome { tourAfterWelcome = false; state.beginTour(from: .settings) }

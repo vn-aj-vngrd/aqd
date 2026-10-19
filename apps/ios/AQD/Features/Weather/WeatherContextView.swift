@@ -33,8 +33,8 @@ struct WeatherContextView: View {
         enabled != (client.local?.enabled ?? false) || place != client.local?.place
     }
     private var selection: WeatherSelection? { place.map { WeatherSelection(place: $0, day: day) } }
+    /// Always pushed onto the caller's navigation stack as a full page; Back leaves without saving.
     var body: some View {
-        NavigationStack {
             Form {
                 Section {
                     Toggle(isOn: $enabled) {
@@ -101,11 +101,8 @@ struct WeatherContextView: View {
                 .navigationDestination(isPresented: $choosingLocation) {
                     WeatherLocationPicker(lookup: lookup, current: place) { choosingLocation = false }
                 }
+                .navigationBarBackButtonHidden(saving || unknown)
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button { cancelFetch(); lookup.cancel(); dismiss() } label: { Image(systemName: "xmark") }
-                            .accessibilityLabel("Cancel weather context").disabled(saving || unknown)
-                    }
                     ToolbarItem(placement: .confirmationAction) {
                         Button(unknown ? "Check result" : persistsPreference ? "Save" : "Done") { apply() }
                             .tint(AppTheme.ink)
@@ -113,7 +110,7 @@ struct WeatherContextView: View {
                             .accessibilityValue(saving ? "Saving" : "")
                     }
                 }
-        }.tint(AppTheme.ink).interactiveDismissDisabled(saving || unknown)
+            .tint(AppTheme.ink)
             .onChange(of: lookup.selected) { _, selected in
                 guard enabled, let selected else { return }; cancelFetch(); place = selected; day.timeZoneID = selected.timeZoneID; choosingLocation = false
                 if client.qualified { fetch(manual: false) }

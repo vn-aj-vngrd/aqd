@@ -499,8 +499,8 @@ struct TodayWeatherNotice: View {
                     }.buttonStyle(.plain).accessibilityLabel("Open Weather setup")
                 }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 if let error = client.setupNoticeError { SemanticFeedback(role: .danger, message: error) }
-            }.sheet(isPresented: $setup) {
-                WeatherContextView(client: client, persistsPreference: true) { _ in true }
+            }.navigationDestination(isPresented: $setup) {
+                WeatherContextView(client: client, persistsPreference: true) { _ in true }.secondaryPage()
             }
         }
     }
@@ -581,9 +581,9 @@ struct TodayWeatherSummary: View {
                     .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             }
         }
-        .sheet(isPresented: $setup) {
+        .navigationDestination(isPresented: $setup) {
             if let client = state.weatherClient {
-                WeatherContextView(client: client, persistsPreference: true) { _ in true }
+                WeatherContextView(client: client, persistsPreference: true) { _ in true }.secondaryPage()
             }
         }
     }

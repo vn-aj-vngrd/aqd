@@ -79,7 +79,7 @@ private struct AgentSettingsForm: View {
             .overlay(alignment: .bottom) {
                 if controls.hasPending { Button("Retry AI settings save") { if controls.retry() { state.reloadSettings() } }.padding(AppSpacing.medium).background(AppTheme.surface, in: Capsule()).padding(AppSpacing.screen) }
             }
-            .sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true }.appAppearance(state.appearance) } }
+            .navigationDestination(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true }.secondaryPage() } }
     }
     private func sourceToggle(_ source: AgentDataSource) -> some View {
         Toggle(isOn: Binding(get: { preferences.allows(source) }, set: { enabled in

@@ -57,7 +57,8 @@ struct AgentContextView: View {
                         }
                     }
                 }
-        }.sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, initial: draft.weather) { value in draft.weather = value; return true } } }
+                .navigationDestination(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, initial: draft.weather) { value in draft.weather = value; return true } } }
+        }
         .tint(AppTheme.ink).interactiveDismissDisabled(model.hasPendingOperation)
     }
     private func matches(_ name: String) -> Bool { query.isEmpty || name.localizedStandardContains(query) }
