@@ -176,8 +176,12 @@ struct PieceCutoutView: View {
             iconButton("arrow.counterclockwise", label: "Reset", enabled: model.edited || model.isTrimmed) { model.reset() }
             Spacer()
             Button { model.showOriginal.toggle() } label: {
-                Image(systemName: model.showOriginal ? "eye.fill" : "eye").foregroundStyle(AppTheme.ink)
-                    .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget).glassControlSurface(Circle())
+                // On (showing the original) is a filled charcoal circle, off is plain glass, so the state reads at a glance.
+                let on = model.showOriginal
+                Image(systemName: on ? "eye.fill" : "eye").foregroundStyle(on ? AppTheme.onPrimary : AppTheme.ink)
+                    .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+                    .background { if on { Circle().fill(AppTheme.primaryFill) } }
+                    .glassControlSurface(Circle())
             }.buttonStyle(.plain).accessibilityLabel("Compare with original").accessibilityValue(model.showOriginal ? "On" : "Off")
         }.padding(AppSpacing.small)
     }
