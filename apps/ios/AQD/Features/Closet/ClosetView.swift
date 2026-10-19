@@ -135,7 +135,7 @@ struct ClosetView: View {
     private func filterOption<Value: Equatable>(_ title: String, value: Value, selection: Binding<Value>) -> some View {
         Toggle(title, isOn: Binding(get: { selection.wrappedValue == value }, set: { checked in
             if checked { selection.wrappedValue = value }
-        }))
+        })).toggleStyle(.automatic)
     }
     private var collectionSummary: ClosetCollectionSummary {
         let summary = collectionSummaryData
@@ -162,7 +162,7 @@ struct ClosetView: View {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
                 Section {
-                    Toggle("Favorites only", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly)
+                    Toggle("Favorites only", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly).toggleStyle(.automatic)
                 }
                 Section("Filter by Theme") {
                     filterOption("All themes", value: Optional<UUID>.none, selection: state.closetSearchActive ? $searchThemeID : $themeID)
@@ -204,7 +204,7 @@ struct ClosetView: View {
     }
 
     private func statusOption(_ title: String, selected: Bool, action: @escaping () -> Void) -> some View {
-        Toggle(title, isOn: Binding(get: { selected }, set: { checked in if checked { action() } }))
+        Toggle(title, isOn: Binding(get: { selected }, set: { checked in if checked { action() } })).toggleStyle(.automatic)
     }
 
     /// Category chips, the same control as the outfit picker's.
@@ -424,9 +424,7 @@ struct PieceDetailView: View {
                         }
                         statusChip(piece)
                     }
-                    PrimaryAction(title: "Style this") { state.buildOutfit(pieceID: piece.id) }
-                        .disabled(piece.isArchived || piece.availability != .available || deleteInFlight)
-                        .accessibilityHint(piece.availability == .available && !piece.isArchived ? "Starts an outfit with this piece" : "Only available pieces can be styled")
+                    styleAction(piece)
                     if !detailRows(piece).isEmpty {
                         VStack(alignment: .leading, spacing: AppSpacing.large) {
                             ForEach(detailRows(piece), id: \.title) { detail($0.title, $0.value) }
@@ -492,10 +490,19 @@ struct PieceDetailView: View {
     }
 
     /// Current availability as a tappable status; tapping opens the availability task.
+    /// The piece's one primary action: a full-width glass button with a centered icon and label.
+    private func styleAction(_ piece: WardrobePiece) -> some View {
+        let enabled = !piece.isArchived && piece.availability == .available && !deleteInFlight
+        return Button { state.buildOutfit(pieceID: piece.id) } label: {
+            GlassActionLabel(title: "Style this", systemImage: "tshirt", height: AppControlMetrics.actionHeight)
+        }.buttonStyle(.plain).disabled(!enabled).opacity(enabled ? 1 : 0.5)
+            .accessibilityHint(enabled ? "Starts an outfit with this piece" : "Only available pieces can be styled")
+    }
+
     private func statusChip(_ piece: WardrobePiece) -> some View {
         let status = PieceStatus(piece), text = status.title, symbol = status.symbol
         return Button { availabilityPresented = true } label: {
-            Label(text, systemImage: symbol).compactControl()
+            Label(text, systemImage: symbol).compactControl(tint: status.tint)
         }.buttonStyle(.plain).disabled(piece.isArchived || deleteInFlight)
             .accessibilityLabel("Availability: \(text)").accessibilityHint("Changes whether you can wear this piece now")
     }

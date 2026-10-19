@@ -11,12 +11,18 @@ enum AppTheme {
     static let ink = color(light: 0x242321, dark: 0xF3F1EB)
     static let secondary = color(light: 0x6A6863, dark: 0xBCB9B1)
     static let controlIcon = secondary
-    static let imageGround = color(light: 0xF5F4F1, dark: 0x242422)
+    static let imageGround = color(light: 0xF5F4F1, dark: 0x363532)
     // Brand mark only (logo Q, welcome artwork). Never a UI control or selection color.
     static let accent = color(light: 0x8C6A36, dark: 0xD3B47C)
     static let onAccent = color(light: 0xFFFFFF, dark: 0x1C1C1B)
     static let primaryFill = color(light: 0x292826, dark: 0xF2F0EB)
     static let onPrimary = color(light: 0xFFFFFF, dark: 0x242321)
+    /// Switch track when on. Ink as a track turned near-white against a white knob in dark mode, so on read as off.
+    static let toggleOn = color(light: 0x3F9B63, dark: 0x3F9B63)
+    /// Selected day in the system calendar, which always draws white numbers on it: dark enough for them in both appearances.
+    static let calendarSelection = color(light: 0x292826, dark: 0x6B6A65)
+    static let toggleOff = color(light: 0x7E7D79, dark: 0x7E7D79)
+    static let toggleKnob = color(light: 0xFFFFFF, dark: 0xFFFFFF)
     static let segmentSelection = color(light: 0xECEBE7, dark: 0x5C5B57)
     /// The owner's chat bubble: a whisper darker than the canvas, never a mid grey.
     static let messageBubble = color(light: 0xF0EEEA, dark: 0x3A3A37)
@@ -31,6 +37,9 @@ enum AppTheme {
     static let dangerFill = color(light: 0xE02335, dark: 0xFF6472)
     static let success = color(light: 0x416451, dark: 0xB8D0BF)
     static let successSurface = color(light: 0xE8EFEA, dark: 0x293B30)
+    // Piece status: lively enough to read at a glance, still calm beside the charcoal UI.
+    static let statusAvailable = color(light: 0x2E7D4F, dark: 0x5FC088)
+    static let statusLaundry = color(light: 0x2F6FB8, dark: 0x6FA8E8)
     static let warning = color(light: 0x795B2E, dark: 0xDCC7A2)
     static let warningSurface = color(light: 0xF3EEE4, dark: 0x403728)
     static let information = secondary

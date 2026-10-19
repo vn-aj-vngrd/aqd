@@ -79,6 +79,7 @@ extension View {
     /// Apply to a SwiftUI presentation root; system inherits native appearance.
     func appAppearance(_ appearance: AppAppearance) -> some View {
         preferredColorScheme(appearance.colorScheme)
+            .toggleStyle(AppToggleStyle())
             .onChange(of: appearance, initial: true) { _, value in value.applyToWindows() }
     }
 }

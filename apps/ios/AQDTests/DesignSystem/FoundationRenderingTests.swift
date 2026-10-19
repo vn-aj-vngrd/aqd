@@ -270,12 +270,18 @@ final class FoundationRenderingTests: XCTestCase {
             (AppTheme.ink, 0x242321, 0xF3F1EB, 1, 1),
             (AppTheme.secondary, 0x6A6863, 0xBCB9B1, 1, 1),
             (AppTheme.divider, 0xE4E2DC, 0x4A4842, 1, 1),
-            (AppTheme.imageGround, 0xF5F4F1, 0x242422, 1, 1),
+            (AppTheme.imageGround, 0xF5F4F1, 0x363532, 1, 1),
             (AppTheme.accent, 0x8C6A36, 0xD3B47C, 1, 1),
             (AppTheme.onAccent, 0xFFFFFF, 0x1C1C1B, 1, 1),
             (AppTheme.primaryFill, 0x292826, 0xF2F0EB, 1, 1),
             (AppTheme.onPrimary, 0xFFFFFF, 0x242321, 1, 1),
             (AppTheme.segmentSelection, 0xECEBE7, 0x5C5B57, 1, 1),
+            (AppTheme.statusAvailable, 0x2E7D4F, 0x5FC088, 1, 1),
+            (AppTheme.statusLaundry, 0x2F6FB8, 0x6FA8E8, 1, 1),
+            (AppTheme.toggleOn, 0x3F9B63, 0x3F9B63, 1, 1),
+            (AppTheme.toggleOff, 0x7E7D79, 0x7E7D79, 1, 1),
+            (AppTheme.toggleKnob, 0xFFFFFF, 0xFFFFFF, 1, 1),
+            (AppTheme.calendarSelection, 0x292826, 0x6B6A65, 1, 1),
             (AppTheme.tabInactive, 0x8A877F, 0x8C8983, 1, 1),
             (AppTheme.messageBubble, 0xF0EEEA, 0x3A3A37, 1, 1),
             (AppTheme.unreadIndicator, 0x2F6BFF, 0x6E9BFF, 1, 1),
@@ -292,7 +298,7 @@ final class FoundationRenderingTests: XCTestCase {
             (AppTheme.warning, 0x795B2E, 0xDCC7A2, 1, 1),
             (AppTheme.warningSurface, 0xF3EEE4, 0x403728, 1, 1),
             (AppTheme.information, 0x6A6863, 0xBCB9B1, 1, 1),
-            (AppTheme.informationSurface, 0xF5F4F1, 0x242422, 1, 1)
+            (AppTheme.informationSurface, 0xF5F4F1, 0x363532, 1, 1)
         ]
         for (index, role) in roles.enumerated() {
             for dark in [false, true] {

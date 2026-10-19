@@ -277,13 +277,13 @@ struct OutfitDetailView: View {
                     }
                     if let error { SemanticFeedback(role: .danger, message: error) }
                     if let pendingMutation {
-                        PrimaryAction(title: "Check previous change") { apply(pendingMutation) }
+                        PrimaryAction(title: "Check previous change", systemImage: "arrow.triangle.2.circlepath") { apply(pendingMutation) }
                     }
                 }.padding(20)
             } else {
                 AppEmptyState("Outfit unavailable", systemImage: "square.stack", description: Text("The outfit is no longer in your closet."))
                 if let pendingMutation {
-                    PrimaryAction(title: "Check previous change") { apply(pendingMutation) }.padding(20)
+                    PrimaryAction(title: "Check previous change", systemImage: "arrow.triangle.2.circlepath") { apply(pendingMutation) }.padding(20)
                 }
             }
         }.background(AppTheme.canvas)
@@ -362,8 +362,8 @@ private struct OutfitPieceRow: View {
                     PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(width: 56, height: 64)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(piece.displayName).font(AppTypography.body).foregroundStyle(AppTheme.ink).truncated()
-                        Text([state.categoryName(for: piece), PieceStatus(piece).isNotable ? PieceStatus(piece).title : ""]
-                            .filter { !$0.isEmpty }.joined(separator: ", "))
+                        (Text(state.categoryName(for: piece)) + Text(PieceStatus(piece).isNotable ? ", " : "")
+                            + Text(PieceStatus(piece).isNotable ? PieceStatus(piece).title : "").foregroundStyle(PieceStatus(piece).tint))
                             .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
                     }
                     Spacer(minLength: AppSpacing.small)

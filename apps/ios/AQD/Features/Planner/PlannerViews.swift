@@ -113,7 +113,7 @@ struct LocalPlannerView: View {
     }
 
     private func option<Value: Equatable>(_ title: String, _ value: Value, _ selection: Binding<Value>) -> some View {
-        Toggle(title, isOn: Binding(get: { selection.wrappedValue == value }, set: { if $0 { selection.wrappedValue = value } }))
+        Toggle(title, isOn: Binding(get: { selection.wrappedValue == value }, set: { if $0 { selection.wrappedValue = value } })).toggleStyle(.automatic)
     }
 
     /// Search spans every date, so results carry their date and sit apart from the calendar.

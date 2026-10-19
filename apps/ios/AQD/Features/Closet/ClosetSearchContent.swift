@@ -26,7 +26,7 @@ struct ClosetSearchContent: View {
                         VStack(alignment: .leading, spacing: 20) {
                             if let error = model.error {
                                 SemanticFeedback(role: .danger, message: error)
-                                PrimaryAction(title: "Retry search") { Task { await model.search(input, debounce: false) } }
+                                PrimaryAction(title: "Retry search", systemImage: "arrow.clockwise") { Task { await model.search(input, debounce: false) } }
                             }
                             if let results = model.results {
                                 HStack(spacing: AppSpacing.small) {
