@@ -19,7 +19,7 @@ Profile is a private dated fit journal plus optional local identity. It is not a
 - Optional name, photo and caption (default "A little of what I wear."; trimmed, ≤160 characters; an explicit empty caption stays hidden). Tapping the avatar opens Edit profile.
 - Edit profile, Wear insights and Add fit are reachable from Profile; More opens Style, Settings and help.
 - First run is one path: Welcome has a single Start button, which opens the style questionnaire; saving it offers Explore AQD (a seven-step, skippable tour that names the button for each action) or Skip the tour. Both end in Closet. Settings can replay the tour at any time.
-- Style preferences use one seven-step questionnaire from onboarding, Settings and Profile: goals, occasions, style, fit and comfort, colors and patterns, optional height and body shape, then review. Each step needs an answer or No preference; unknown stays unknown. Body use for suggestions is off by default and revocable. These are never public or photo-derived.
+- Style preferences use one seven-step questionnaire from onboarding, Settings and Profile: goals, occasions, style, fit and comfort, colors and patterns, optional height and body shape, then review. Each step needs an answer or No preference; unknown stays unknown. Next stays tappable: on an unanswered step it explains what is needed inline, with a haptic and a VoiceOver announcement, instead of sitting dimmed. Body use for suggestions is off by default and revocable. These are never public or photo-derived.
 
 ## Settings
 

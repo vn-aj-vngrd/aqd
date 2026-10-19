@@ -6,6 +6,9 @@ struct StyleEditorView: View {
     @State private var confirmsDiscard = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var savedArrived = false
+    /// Set when Next is tapped on an unanswered step; cleared by answering or changing step.
+    @State private var showsNeed = false
+    @State private var needTaps = 0
     private var page: Int { model.draft.page }
     private let questions = ["What would you like help with?", "What do you dress for?", "What feels like you?", "How do you like clothes to fit?", "Body details, only if you want", "Colors and patterns you enjoy"]
     private let hints = ["Choose up to two, or No preference. Your answers stay private.", "Choose any, or No preference. We won’t infer your schedule.", "Choose any styles you enjoy, or No preference.", "Choose any, or No preference. Suggestions are not a size or try-on guarantee.", "Add optional details, choose Not sure, or decline.", "Choose colors and patterns, or No preference. Your choices stay private."]
@@ -26,16 +29,26 @@ struct StyleEditorView: View {
                             .offset(y: savedArrived || reduceMotion ? 0 : 12)
                             .task { withAnimation(reduceMotion ? nil : .smooth(duration: 0.35)) { savedArrived = true } }
                     } else {
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 10) {
                             Text("Step \(page + 1) of 7").font(.subheadline).foregroundStyle(AppTheme.secondary)
                                 .accessibilityIdentifier("style.progress")
-                            ProgressView(value: Double(page + 1), total: 7).accessibilityHidden(true)
+                            HStack(spacing: 4) {
+                                ForEach(0..<7, id: \.self) { index in
+                                    Capsule().fill(index <= page ? AppTheme.ink : AppTheme.divider).frame(height: 4)
+                                }
+                            }.accessibilityHidden(true)
                         }
                         if page == 6 { review }
                         else {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text(questions[page]).font(AppTypography.section)
                                 Text(hints[page]).foregroundStyle(AppTheme.secondary)
+                                if showsNeed {
+                                    Label(needMessage, systemImage: "exclamationmark.circle")
+                                        .font(AppTypography.supporting).foregroundStyle(AppTheme.warning)
+                                        .transition(.opacity.combined(with: .move(edge: .top)))
+                                        .accessibilityIdentifier("style.need")
+                                }
                             }
                             question
                         }
@@ -74,8 +87,8 @@ struct StyleEditorView: View {
                         ToolbarSaveAction(title: model.unknown ? "Check save" : "Save", isPending: model.pending) { Task { await model.save() } }
                             .disabled(model.pending || (!model.unknown && (!model.draft.isComplete || (model.draft.baseRevision > 0 && !model.hasUnsavedChanges)))).accessibilityLabel(model.unknown ? "Check save" : "Save preferences")
                     } else {
-                        ToolbarForwardAction(title: model.draft.editingFromReview ? "Review preferences" : "Next question", usesGlass: true) { model.next() }
-                            .disabled(!model.draft.isAnswered(page) || model.pending || model.unknown || model.error != nil)
+                        ToolbarForwardAction(title: model.draft.editingFromReview ? "Review preferences" : "Next question", usesGlass: true) { advance() }
+                            .disabled(model.pending || model.unknown || model.error != nil)
                     }
                 }
             }
@@ -95,8 +108,30 @@ struct StyleEditorView: View {
                     confirmsDiscard = false
                     model.discard()
                 }
+            .onChange(of: model.draft.isAnswered(page)) { _, answered in if answered { hideNeed() } }
+            .onChange(of: page) { hideNeed() }
+            .sensoryFeedback(.warning, trigger: needTaps)
             .interactiveDismissDisabled()
         }.tint(AppTheme.ink)
+    }
+
+    /// Next stays tappable. An unanswered step explains what it needs instead of leaving a dimmed button with no reason.
+    private func advance() {
+        guard model.draft.isAnswered(page) else {
+            withAnimation(reduceMotion ? nil : .smooth(duration: 0.25)) { showsNeed = true }
+            needTaps += 1
+            AccessibilityNotification.Announcement(needMessage).post()
+            return
+        }
+        model.next()
+    }
+    private func hideNeed() { withAnimation(reduceMotion ? nil : .smooth(duration: 0.2)) { showsNeed = false } }
+    private var needMessage: String {
+        switch page {
+        case 4: "Fix the details above, or choose Not sure, to continue."
+        case 5: "Choose a color or pattern, or tap No color or pattern preference."
+        default: "Pick at least one, or choose No preference, to continue."
+        }
     }
 
     private var savedContinueTitle: String {
