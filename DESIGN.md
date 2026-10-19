@@ -19,6 +19,7 @@ Charcoal is the only control, selection and tint color. Gold is a brand accent f
 | Image ground | `#F5F4F1` | `#242422` |
 | Ink (text, tint) | `#242321` | `#F3F1EB` |
 | Secondary text | `#6A6863` | `#BCB9B1` |
+| Selected segment / inactive tab icon | `#ECEBE7` / `#8A877F` | `#5C5B57` / `#8C8983` |
 | Divider | `#E4E2DC` | `#4A4842` |
 | Control boundary | `#807B72` | `#969187` |
 | Primary fill / on primary | `#292826` / `#FFFFFF` | `#F2F0EB` / `#242321` |
@@ -49,6 +50,8 @@ Reuse these; a hand-built equivalent is a defect.
 | Theme cover collage | `ThemeCover` |
 | Empty, error, progress | `AppEmptyState`, `SemanticFeedback`, `OperationProgress` |
 | Confirmations and alerts | `appConfirmation`, `draftDiscardConfirmation`: one shared card, 20 pt padding, text aligned with buttons, no native `.alert` or `.confirmationDialog` |
+
+**Empty states.** An empty page or section shows only its symbol, title and one line that names the control that fills it (for example "Tap + and choose Add a piece"). It never carries its own button.
 
 **Choice pages.** A page pushed from an editor to pick options keeps its changes on the page: a `ToolbarSaveAction` titled Save sits top right and is enabled only once something changed, and Back leaves without applying anything. Options sit in one surface card under a single line of guidance, with no empty list header above them.
 

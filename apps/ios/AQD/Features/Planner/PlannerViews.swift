@@ -160,11 +160,9 @@ struct LocalPlannerView: View {
 
     @ViewBuilder private var dayEntries: some View {
         if entries.isEmpty && state.planError == nil && query.status != .all {
-            VStack(spacing: AppSpacing.small) {
-                AppEmptyState("No entries match", systemImage: "line.3.horizontal.decrease",
-                    description: Text("Nothing on this day matches “\(query.status.rawValue)”."), fillsAvailableSpace: false)
-                SecondaryAction(title: "Show all entries", compact: true) { query.status = .all }
-            }.frame(maxWidth: .infinity)
+            AppEmptyState("No entries match", systemImage: "line.3.horizontal.decrease",
+                description: Text("Nothing on this day matches “\(query.status.rawValue)”. Change the filter to see the rest."), fillsAvailableSpace: false)
+                .frame(maxWidth: .infinity)
         } else if entries.isEmpty && state.planError == nil {
             AppEmptyState("Nothing planned", systemImage: "calendar",
                 description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear."), fillsAvailableSpace: false)
@@ -179,11 +177,9 @@ struct LocalPlannerView: View {
             if !groups.inRange.isEmpty { planGroup(state.plannerMode == .week ? "This week" : "This month", groups.inRange) }
             if !groups.upcoming.isEmpty { planGroup("Upcoming", groups.upcoming) }
             if filteredPlans.isEmpty && !state.planDefinitions.isEmpty && query.isFiltering {
-                VStack(spacing: AppSpacing.small) {
-                    AppEmptyState("No plans match", systemImage: "line.3.horizontal.decrease",
-                        description: Text("The plan filter hides every plan."), fillsAvailableSpace: false)
-                    SecondaryAction(title: "Clear filters", compact: true) { query = PlannerQuery(text: query.text) }
-                }.frame(maxWidth: .infinity)
+                AppEmptyState("No plans match", systemImage: "line.3.horizontal.decrease",
+                    description: Text("The plan filter hides every plan. Clear it from the filter button."), fillsAvailableSpace: false)
+                    .frame(maxWidth: .infinity)
             }
             if !groups.past.isEmpty {
                 DisclosureGroup(isExpanded: $showPast) {

@@ -34,10 +34,10 @@ struct NativeTabs: UIViewControllerRepresentable {
         // UIKit owns chrome/geometry; Paper owns the semantic symbol tints.
         // Set the bridge explicitly instead of relying on SwiftUI tint inheritance.
         controller.tabBar.tintColor = UIColor(AppTheme.ink)
-        controller.tabBar.unselectedItemTintColor = UIColor(AppTheme.secondary)
+        controller.tabBar.unselectedItemTintColor = UIColor(AppTheme.tabInactive)
         let appearance = controller.tabBar.standardAppearance
         for layout in [appearance.stackedLayoutAppearance, appearance.inlineLayoutAppearance, appearance.compactInlineLayoutAppearance] {
-            layout.normal.iconColor = UIColor(AppTheme.secondary)
+            layout.normal.iconColor = UIColor(AppTheme.tabInactive)
             layout.selected.iconColor = UIColor(AppTheme.ink)
         }
         controller.tabBar.standardAppearance = appearance

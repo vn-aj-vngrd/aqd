@@ -38,9 +38,8 @@ struct ClosetView: View {
                 } else if scope == "Pieces" {
                     pieceCollection
                 } else if scope == "Outfits" {
-                    OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID, sort: outfitSort, summary: collectionSummary,
-                                         clearFilters: { favoritesOnly = false; themeID = nil })
-                } else { ThemeCollectionView(query: themeQuery, summary: collectionSummary, clearFilters: { themeQuery = ThemeCollectionQuery() }) }
+                    OutfitCollectionView(favoritesOnly: favoritesOnly, themeID: themeID, sort: outfitSort, summary: collectionSummary)
+                } else { ThemeCollectionView(query: themeQuery, summary: collectionSummary) }
             }
             .padding(.top, AppSpacing.large)
             .background(AppTheme.canvas)
@@ -268,9 +267,7 @@ struct ClosetView: View {
             let filtered = category != nil || availability != nil
             EmptyStatePage(title: archived ? "No archived pieces" : !filtered ? "Your closet starts here" : "No matching pieces",
                            systemImage: "tshirt",
-                           description: Text(!filtered ? "Add a photo and a few details. Everything stays on this device." : "Try another category or clear the filters."),
-                           actionTitle: archived ? "Show active pieces" : filtered ? "Clear filters" : "Add a piece",
-                           action: archived ? { archived = false } : filtered ? { category = nil; availability = nil } : { state.addPiece() })
+                           description: Text(archived ? "Pieces you archive appear here." : !filtered ? "Tap + and choose Add a piece. Everything stays on this iPhone." : "Try another category, or clear the filters from the filter button."))
         } else {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.large) {

@@ -1,14 +1,12 @@
 import SwiftUI
 
 /// Informational empty content, centered and scrollable without an action footer.
+/// An empty page explains itself and names the control that fills it; it never carries its own button.
 struct EmptyStatePage: View {
     let title: LocalizedStringKey
     let systemImage: String
     var description: Text? = nil
     var detail: String? = nil
-    /// An empty page always says what to do next: one primary action, or a way to clear what hides the content.
-    var actionTitle: String? = nil
-    var action: (() -> Void)? = nil
 
     var body: some View {
         GeometryReader { geometry in
@@ -16,9 +14,6 @@ struct EmptyStatePage: View {
                 VStack(spacing: 16) {
                     AppEmptyState(title, systemImage: systemImage, description: description, fillsAvailableSpace: false)
                         .fixedSize(horizontal: false, vertical: true)
-                    if let actionTitle, let action {
-                        PrimaryAction(title: actionTitle, action: action).padding(.horizontal, AppSpacing.screen)
-                    }
                     if let detail {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Your retained draft").font(.headline)
