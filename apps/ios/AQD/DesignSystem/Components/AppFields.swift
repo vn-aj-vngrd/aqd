@@ -208,7 +208,7 @@ struct ThemedDatePicker: View {
             }.buttonStyle(.plain).accessibilityLabel(title).accessibilityValue(dateLabel)
                 .popover(isPresented: $presented) {
                     DatePicker(title, selection: $selection, in: lowerBound...upperBound, displayedComponents: .date)
-                        .datePickerStyle(.graphical).labelsHidden().tint(AppTheme.ink)
+                        .datePickerStyle(.graphical).labelsHidden().tint(AppTheme.calendarSelection)
                         .padding(16).frame(width: 320).background(AppTheme.surface)
                         .presentationCompactAdaptation(.popover)
                 }

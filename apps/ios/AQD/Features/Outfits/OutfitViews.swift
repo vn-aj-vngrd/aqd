@@ -277,13 +277,13 @@ struct OutfitDetailView: View {
                     }
                     if let error { SemanticFeedback(role: .danger, message: error) }
                     if let pendingMutation {
-                        PrimaryAction(title: "Check previous change") { apply(pendingMutation) }
+                        PrimaryAction(title: "Check previous change", systemImage: "arrow.triangle.2.circlepath", fitsContent: true) { apply(pendingMutation) }
                     }
                 }.padding(20)
             } else {
                 AppEmptyState("Outfit unavailable", systemImage: "square.stack", description: Text("The outfit is no longer in your closet."))
                 if let pendingMutation {
-                    PrimaryAction(title: "Check previous change") { apply(pendingMutation) }.padding(20)
+                    PrimaryAction(title: "Check previous change", systemImage: "arrow.triangle.2.circlepath", fitsContent: true) { apply(pendingMutation) }.padding(20)
                 }
             }
         }.background(AppTheme.canvas)

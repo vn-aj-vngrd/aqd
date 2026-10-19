@@ -21,7 +21,7 @@ struct PieceDeletionView: View {
                         impactSummary(impact)
                         Text("Original Photos and historical wear snapshots stay. Photos that only AQD kept are removed. This cannot be undone.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        PrimaryAction(title: "Delete piece", role: .destructive) { confirming = true }
+                        PrimaryAction(title: "Delete piece", systemImage: "trash", role: .destructive, fitsContent: true) { confirming = true }
                     }
                     if let error {
                         SemanticFeedback(role: .danger, message: error)

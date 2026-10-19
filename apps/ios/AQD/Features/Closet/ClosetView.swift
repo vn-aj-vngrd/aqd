@@ -424,7 +424,7 @@ struct PieceDetailView: View {
                         }
                         statusChip(piece)
                     }
-                    PrimaryAction(title: "Style this") { state.buildOutfit(pieceID: piece.id) }
+                    PrimaryAction(title: "Style this", systemImage: "tshirt", fitsContent: true) { state.buildOutfit(pieceID: piece.id) }
                         .disabled(piece.isArchived || piece.availability != .available || deleteInFlight)
                         .accessibilityHint(piece.availability == .available && !piece.isArchived ? "Starts an outfit with this piece" : "Only available pieces can be styled")
                     if !detailRows(piece).isEmpty {

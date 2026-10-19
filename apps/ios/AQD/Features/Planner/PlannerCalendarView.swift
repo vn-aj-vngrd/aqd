@@ -94,7 +94,7 @@ struct PlannerCalendarView: View {
                     VStack(spacing: 20) {
                         DatePicker("Select date", selection: Binding(get: { (try? day.date()) ?? Date() }, set: {
                             day = LocalPlanDay(date: $0, timeZone: zone)
-                        }), displayedComponents: .date).datePickerStyle(.graphical).environment(\.timeZone, zone)
+                        }), displayedComponents: .date).datePickerStyle(.graphical).tint(AppTheme.calendarSelection).environment(\.timeZone, zone)
                         Button("Today") { day = LocalPlanDay(timeZone: zone); chooseDate = false }.frame(minHeight: 44)
                     }.padding(20).navigationTitle("Select date").navigationBarTitleDisplayMode(.inline)
                         .toolbar { ToolbarItem(placement: .confirmationAction) {

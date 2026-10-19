@@ -7,6 +7,9 @@ struct PrimaryAction: View {
     var systemImage: String? = nil
     var role: ButtonRole? = nil
     var compact = false
+    /// Closet actions hug their text and icon instead of spanning the screen; `fitAlignment` places them in the row.
+    var fitsContent = false
+    var fitAlignment: Alignment = .leading
     let action: () -> Void
     @Environment(\.isEnabled) private var isEnabled
     private var usesAccent: Bool { isEnabled || isPending }
@@ -30,12 +33,13 @@ struct PrimaryAction: View {
             }
             .padding(.horizontal, AppSpacing.screen)
             .padding(.vertical, compact ? AppSpacing.small : AppSpacing.medium)
-            .frame(maxWidth: .infinity, minHeight: compact ? AppControlMetrics.minimumTarget : AppControlMetrics.actionHeight)
+            .frame(maxWidth: fitsContent ? nil : .infinity, minHeight: compact || fitsContent ? AppControlMetrics.minimumTarget : AppControlMetrics.actionHeight)
             .foregroundStyle(usesAccent ? activeForeground : AppTheme.secondary)
             .background(usesAccent ? (role == .destructive ? AppTheme.dangerFill : AppTheme.primaryFill) : AppTheme.divider, in: Capsule())
             .contentShape(Rectangle())
         }
         .buttonStyle(ContentActionStyle())
+        .frame(maxWidth: fitsContent ? .infinity : nil, alignment: fitAlignment)
         .disabled(isPending)
         .accessibilityLabel(title)
         .accessibilityValue(isPending ? "In progress" : "")

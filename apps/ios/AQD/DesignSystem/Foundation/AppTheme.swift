@@ -11,7 +11,7 @@ enum AppTheme {
     static let ink = color(light: 0x242321, dark: 0xF3F1EB)
     static let secondary = color(light: 0x6A6863, dark: 0xBCB9B1)
     static let controlIcon = secondary
-    static let imageGround = color(light: 0xF5F4F1, dark: 0x242422)
+    static let imageGround = color(light: 0xF5F4F1, dark: 0x363532)
     // Brand mark only (logo Q, welcome artwork). Never a UI control or selection color.
     static let accent = color(light: 0x8C6A36, dark: 0xD3B47C)
     static let onAccent = color(light: 0xFFFFFF, dark: 0x1C1C1B)
@@ -19,7 +19,9 @@ enum AppTheme {
     static let onPrimary = color(light: 0xFFFFFF, dark: 0x242321)
     /// Switch track when on. Ink as a track turned near-white against a white knob in dark mode, so on read as off.
     static let toggleOn = color(light: 0x416451, dark: 0x5FA67C)
-    static let toggleOff = color(light: 0x767680, dark: 0x5A5A57, lightAlpha: 0.28, darkAlpha: 1)
+    /// Selected day in the system calendar, which always draws white numbers on it: dark enough for them in both appearances.
+    static let calendarSelection = color(light: 0x292826, dark: 0x6B6A65)
+    static let toggleOff = color(light: 0x767680, dark: 0x6A6964, lightAlpha: 0.28, darkAlpha: 1)
     static let toggleKnob = color(light: 0xFFFFFF, dark: 0xFFFFFF)
     static let segmentSelection = color(light: 0xECEBE7, dark: 0x5C5B57)
     /// The owner's chat bubble: a whisper darker than the canvas, never a mid grey.

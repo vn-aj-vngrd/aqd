@@ -317,7 +317,7 @@ struct PieceCaptureView: View {
         .safeAreaInset(edge: .bottom) {
             ActionFooter {
                 ActionStack {
-                    PrimaryAction(title: "Done") { model.openCloset() }
+                    PrimaryAction(title: "Done", systemImage: "checkmark", fitsContent: true, fitAlignment: .center) { model.openCloset() }
                         .accessibilityIdentifier("capture.openCloset")
                 }
             }
