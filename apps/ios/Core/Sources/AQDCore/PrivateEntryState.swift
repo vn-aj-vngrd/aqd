@@ -2,7 +2,9 @@ import Foundation
 
 /// Entry/tour metadata only; illustrative content never enters wardrobe records.
 public struct PrivateEntryState: Codable, Equatable, Sendable {
-    public static let tourStepCount = 8
+    public static let tourStepCount = 7
+    /// Tours saved by earlier builds had eight steps; they still load and finish cleanly.
+    private static let legacyTourStepCount = 8
     public enum Page: String, Codable, Sendable { case welcome, introduction, privacy, ready, main }
     public enum TourSource: String, Codable, Sendable { case welcome, introduction, settings, preview }
     public enum TourOutcome: String, Codable, Sendable { case skipped, finished }
@@ -23,7 +25,7 @@ public struct PrivateEntryState: Codable, Equatable, Sendable {
     public func validated() throws {
         guard version == 1 else { throw ValidationError.invalidState }
         if let tour {
-            guard (0..<Self.tourStepCount).contains(tour.step), matches(tour.source) else { throw ValidationError.invalidState }
+            guard (0..<Self.legacyTourStepCount).contains(tour.step), matches(tour.source) else { throw ValidationError.invalidState }
         }
     }
     private func matches(_ source: TourSource) -> Bool {
@@ -48,7 +50,8 @@ public struct PrivateEntryState: Codable, Equatable, Sendable {
         if current.step < Self.tourStepCount - 1 { tour?.step += 1 }
         else {
             tour = nil; tourOutcome = tourOutcome ?? .finished
-            if current.source != .settings && current.source != .preview { page = .ready; readyTourSource = current.source }
+            // Finishing the first-run tour opens the app itself, so the owner starts using it straight away.
+            if current.source != .settings && current.source != .preview { page = .main }
         }
     }
     public mutating func skipTour() {

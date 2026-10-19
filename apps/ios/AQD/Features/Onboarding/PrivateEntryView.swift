@@ -112,7 +112,7 @@ struct WelcomeView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: AppSpacing.section) {
-                AQDMark().frame(maxWidth: .infinity, alignment: .center).padding(.top, AppSpacing.small)
+                AQDMark(size: 120).frame(maxWidth: .infinity, alignment: .center)
                 WelcomeWardrobe(pose: pose).padding(.horizontal, AppSpacing.small)
                 VStack(spacing: AppSpacing.medium) {
                     Text(welcomeHeadline).font(.largeTitle.weight(.medium)).tracking(-0.8).multilineTextAlignment(.center)
@@ -125,12 +125,10 @@ struct WelcomeView: View {
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: AppSpacing.small) {
                 Button {
-                    if let previewDismiss { previewDismiss(false) } else { state.updateEntry { $0.page = .introduction } }
+                    if let previewDismiss { previewDismiss(false) } else { state.openStyle(source: .onboarding) }
                 } label: { GlassActionLabel(title: "Start my closet", prominent: true) }.buttonStyle(.plain)
-                Button {
-                    if let previewDismiss { previewDismiss(true) } else { state.beginTour(from: .welcome) }
-                } label: { GlassActionLabel(title: "Take a quick tour") }.buttonStyle(.plain)
-                Text("No account needed.").font(.footnote).foregroundStyle(AppTheme.secondary).padding(.top, AppSpacing.xSmall)
+                    .accessibilityIdentifier("welcome.start")
+                Text("Private on this iPhone. No account needed.").font(.footnote).foregroundStyle(AppTheme.secondary).padding(.top, AppSpacing.xSmall)
             }.padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small).padding(.bottom, AppSpacing.small)
         }
         .task(id: scenePhase) {

@@ -1,12 +1,13 @@
 <!doctype html><meta charset="utf-8">
-<!-- Renders the AQD glass Q. Usage: open with ?look=icon (full-bleed app icon) or ?look=launch (flat canvas ground) and screenshot at 1024x1024. -->
+<!-- Renders the AQD glass Q. ?look=icon (full-bleed app icon) or ?look=launch (flat canvas ground): screenshot at 1024x1024.
+     ?look=mark-dark or ?look=mark-light: transparent Q for in-app use; the PNG data URL is written into the page, read it with --dump-dom. -->
 <style>html,body{margin:0;background:#1C1C1B}canvas{display:block;width:1024px;height:1024px}</style>
 <canvas id="c" width="1024" height="1024"></canvas>
 <script id="fs" type="x-shader/x-fragment">
 precision highp float;
 uniform vec2 uRes;
 uniform vec3 uBgTop, uBgBot, uAbs, uCaustic, uBand;
-uniform float uLight, uAmb, uShadow, uFlat;
+uniform float uLight, uAmb, uShadow, uFlat, uCut;
 
 mat2 rot(float a){ float c = cos(a), s = sin(a); return mat2(c, -s, s, c); }
 float smin(float a, float b, float k){ float h = clamp(.5 + .5 * (b - a) / k, 0., 1.); return mix(b, a, h) - k * h * (1. - h); }
@@ -81,6 +82,7 @@ void main(){
     if (t > 5.2) break;
   }
   vec3 col;
+  if (hit < 0.5 && uCut > 0.5) { gl_FragColor = vec4(0.); return; }
   if (hit < 0.5) {
     col = backdrop(uv, 0.);
     float ds = map(vec3(uv - vec2(0.05, -0.085), 0.));
@@ -121,16 +123,23 @@ void main(){
 <script>
 const look=new URLSearchParams(location.search).get("look")||"icon";
 const lin=h=>[1,3,5].map(i=>Math.pow(parseInt(h.slice(i,i+2),16)/255,2.2));
-const L={icon:{top:"#2A2A28",bot:"#121211",flat:0,shadow:.5},launch:{top:"#1C1C1B",bot:"#1C1C1B",flat:1,shadow:.5}}[look];
-const gl=document.getElementById("c").getContext("webgl",{preserveDrawingBuffer:true,antialias:false});
+const base={abs:[0.62,0.65,0.72],band:[0.55,0.53,0.50],amb:0,cut:0,shadow:.5};
+const L=Object.assign({},base,{icon:{top:"#2A2A28",bot:"#121211",flat:0},launch:{top:"#1C1C1B",bot:"#1C1C1B",flat:1},
+  "mark-dark":{top:"#1C1C1B",bot:"#1C1C1B",flat:1,cut:1},
+  "mark-light":{top:"#F7F7F5",bot:"#F7F7F5",flat:1,cut:1,abs:[7.5,7.6,7.8],band:[0,0,0],amb:0.12}}[look]);
+const cut=L.cut>0, R=cut?2048:1024;
+const cv=document.getElementById("c"); cv.width=cv.height=R;
+const gl=cv.getContext("webgl",{preserveDrawingBuffer:true,antialias:false,premultipliedAlpha:true});gl.viewport(0,0,R,R);
 function sh(t,s){const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o));return o}
 const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,"attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}"));
 gl.attachShader(p,sh(gl.FRAGMENT_SHADER,document.getElementById("fs").textContent));gl.linkProgram(p);gl.useProgram(p);
 gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
 const a=gl.getAttribLocation(p,"a");gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
 const U=n=>gl.getUniformLocation(p,n);
-gl.uniform2f(U("uRes"),1024,1024);gl.uniform3fv(U("uBgTop"),lin(L.top));gl.uniform3fv(U("uBgBot"),lin(L.bot));
-gl.uniform3fv(U("uAbs"),[0.62,0.65,0.72]);gl.uniform3fv(U("uCaustic"),[0.14,0.13,0.12]);gl.uniform3fv(U("uBand"),[0.55,0.53,0.50]);
-gl.uniform1f(U("uLight"),0);gl.uniform1f(U("uAmb"),0);gl.uniform1f(U("uShadow"),L.shadow);gl.uniform1f(U("uFlat"),L.flat);
+gl.uniform2f(U("uRes"),R,R);gl.uniform3fv(U("uBgTop"),lin(L.top));gl.uniform3fv(U("uBgBot"),lin(L.bot));
+gl.uniform3fv(U("uAbs"),L.abs);gl.uniform3fv(U("uCaustic"),[0.14,0.13,0.12]);gl.uniform3fv(U("uBand"),L.band);
+gl.uniform1f(U("uLight"),cut&&look==="mark-light"?1:0);gl.uniform1f(U("uAmb"),L.amb);gl.uniform1f(U("uShadow"),L.shadow);gl.uniform1f(U("uFlat"),L.flat);gl.uniform1f(U("uCut"),L.cut);
 gl.drawArrays(gl.TRIANGLES,0,3);
+if(cut){const o=document.createElement("canvas");o.width=o.height=1024;const x=o.getContext("2d");x.imageSmoothingQuality="high";x.drawImage(cv,0,0,1024,1024);
+const pre=document.createElement("pre");pre.id="png";pre.textContent=o.toDataURL("image/png");document.body.appendChild(pre);}
 </script>

@@ -82,7 +82,7 @@ struct StyleEditorView: View {
             .safeAreaInset(edge: .bottom) {
                 if model.saved != nil {
                     ActionFooter {
-                        SecondaryAction(title: "Open my closet") { model.finish(openCloset: true) }
+                        SecondaryAction(title: model.draft.source == .onboarding ? "Skip the tour" : "Open my closet") { model.finish(openCloset: true) }
                             .accessibilityIdentifier("style.saved.closet")
                         Text("You can edit your preferences from Profile → Style.")
                             .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
@@ -101,7 +101,7 @@ struct StyleEditorView: View {
 
     private var savedContinueTitle: String {
         switch model.draft.source {
-        case .onboarding: "Take the tour"
+        case .onboarding: "Explore AQD"
         case .profile: "Back to Profile"
         case .settings: "Back to Settings"
         }
@@ -111,12 +111,12 @@ struct StyleEditorView: View {
             AQDMark()
             EntryIllustration(kind: .ready)
             VStack(alignment: .leading, spacing: 16) {
-                Label("Preferences saved", systemImage: "checkmark.circle")
+                Label(model.draft.source == .onboarding ? "You’re all set" : "Preferences saved", systemImage: "checkmark.circle")
                     .font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
                 Text("A closet that feels\nmore like you.")
                     .font(.largeTitle).tracking(-0.64).fixedSize(horizontal: false, vertical: true)
                 Text(model.draft.source == .onboarding
-                     ? "Your choices are saved on this iPhone.\nNext, take a quick look around."
+                     ? "Your choices are saved on this iPhone.\nTake a one-minute look around, or skip it."
                      : "Your choices are saved on this iPhone.\nKeep exploring your closet, your way.")
                     .foregroundStyle(AppTheme.secondary).fixedSize(horizontal: false, vertical: true)
             }

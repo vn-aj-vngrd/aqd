@@ -101,12 +101,11 @@ struct ActionFooter<Content: View>: View {
     }
 }
 
-/// The glass Q, identical to the packaged Home Screen icon and clipped to the same continuous corner shape.
+/// The glass Q on a transparent ground, with a darker glass in light appearance. The art keeps padding around the letter.
 struct AQDMark: View {
-    var size: CGFloat = 88
+    var size: CGFloat = 112
     var body: some View {
         Image("BrandMark").resizable().scaledToFit().frame(width: size, height: size)
-            .clipShape(.rect(cornerRadius: size * 0.2237, style: .continuous))
             .accessibilityLabel("AQD")
     }
 }

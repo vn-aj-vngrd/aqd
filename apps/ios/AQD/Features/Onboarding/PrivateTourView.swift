@@ -12,8 +12,6 @@ struct PrivateTourView: View {
                     Group {
                         if tour.step == 5 {
                             tourAgent(readState)
-                        } else if tour.step == 7 {
-                            screen(NavigationStack { LocalSettingsView() }, state: readState)
                         } else {
                             NativeTabs(selection: .constant(tour.step == 0 ? 0 : tour.step < 4 ? 1 : tour.step == 4 ? 2 : 4),
                                        today: { screen(TodayView(), state: readState) },
@@ -29,7 +27,7 @@ struct PrivateTourView: View {
                         .frame(maxHeight: max(0, geometry.size.height - 20), alignment: .bottom)
                 }
                 }
-            } else { ProgressView("Opening tour") }
+            } else { LoadingStatePage(title: "Opening tour") }
         }.background(AppTheme.canvas).interactiveDismissDisabled()
             .onAppear { if readState == nil { readState = state.makeTourReadState() }; selectPreview() }
             .onChange(of: state.entry.tour?.step) { selectPreview() }
@@ -73,16 +71,22 @@ private struct TourCard: View {
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
     @AccessibilityFocusState private var focusedStep: Int?
-    private let titles = ["Your day, your way", "Build your closet", "Put outfits together", "Organize with themes", "Plan ahead", "Meet your Agent", "Keep your fit memories", "Make AQD yours"]
-    private let explanations = [
-        ["Today brings together your planned look, recent wear, favorites and fit journal.", "Record wear only when you actually wear something. Planning never changes your wear history.", "Customize Today to show, hide and reorder widgets. Weather is optional."],
-        ["Use + to add a piece from Photos or the camera. Review its crop, name and category before saving.", "Search, sort and filter your pieces. Open a piece for details, availability and wear history.", "Long-press a card for its available actions. Manage your categories in Settings."],
-        ["Switch to Outfits and use + to build a look from your saved pieces.", "Favorite looks you return to, organize them into themes, or plan a date to wear them.", "Edit an outfit whenever you need. Changed planned compositions require a fresh review."],
-        ["Themes collect outfits for work, evenings, travel or whatever makes sense to you.", "Create a theme, choose its outfits and add an optional description.", "Filter your themes and open one to explore its looks. Your pieces stay in Closet."],
-        ["Planner shows your saved intentions in Week or Month. Select a date to see its entries.", "Use + for one day, several days, a routine, or an event or trip. Assign an outfit or leave a date unassigned.", "Review overlaps before saving. Trips include a packing list; recording actual wear is always a separate action."],
-        ["Ask for ideas or help exploring your wardrobe. Text responses use Apple Intelligence on this iPhone when ready.", "Use + to choose My closet, Selected pieces or Without closet, and manage Style or wear context.", "Local tools prepare exact changes for your review. A chat reply never saves, deletes or records anything by itself."],
-        ["Use Profile + to add a fit photo or link an outfit. Crop your photo and add a private note.", "Fit memories and recorded wear are separate. Wear insights and history use your actual records.", "Edit your avatar, name and caption. Your profile and journal stay private on this iPhone."],
-        ["Open Profile options for Style and Settings. Choose appearance, categories and optional weather.", "Your data controls include export, reviewed restore and erasing local data. Keep a backup before replacing data.", "Replay this tour from Settings whenever you need. No account or cloud model is required for your private closet."]
+    /// One idea per step, then the exact control that does it.
+    private let steps: [(title: String, detail: String, symbol: String, action: String)] = [
+        ("Your day at a glance", "Today shows your planned look, what you wore this week and what’s coming up.",
+         "square.grid.2x2", "Tap the grid button to choose and arrange your cards."),
+        ("Add your pieces", "Take a photo or choose one from Photos, then give it a name and category.",
+         "plus", "In Closet, tap + and choose Add a piece."),
+        ("Make outfits", "Put your pieces together into looks you’ll actually wear.",
+         "square.stack", "Tap + and choose Build an outfit."),
+        ("Group looks into themes", "Keep outfits for work, weekends or a trip in one place.",
+         "folder", "Tap + and choose Create a theme."),
+        ("Plan what to wear", "Give a day, a routine or a trip its outfits. Trips come with a packing list.",
+         "calendar", "In Planner, tap + to plan."),
+        ("Ask your Agent", "Ask for an outfit, a trip plan or what you haven’t worn lately. Nothing changes until you tap Apply.",
+         "sparkle", "Open the Agent tab and ask in your own words."),
+        ("Yours, privately", "Your fit journal, style and settings live in Profile. Everything stays on this iPhone.",
+         "play.rectangle", "Replay this tour anytime from Settings.")
     ]
     var body: some View {
         if let tour = state.entry.tour {
@@ -99,25 +103,43 @@ private struct TourCard: View {
                 .animation(nil, value: step)
         }
     }
+    /// The first-run tour ends in Closet, where adding a piece is the next real step.
+    private func openClosetAfterFirstRun() {
+        if state.entry.tour == nil, state.entry.page == .main, state.entry.tourOutcome != nil, !state.profileSettings { state.selection = 1 }
+    }
     private func explanation(_ step: Int) -> some View {
-        VStack(alignment: .leading, spacing: AppSpacing.medium) {
+        let item = steps[min(step, steps.count - 1)]
+        return VStack(alignment: .leading, spacing: AppSpacing.medium) {
             HStack(spacing: 12) {
-                Text("\(step + 1) of \(PrivateEntryState.tourStepCount)").font(.subheadline).foregroundStyle(AppTheme.secondary)
+                progress(step)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Step \(step + 1) of \(PrivateEntryState.tourStepCount)")
                     .accessibilityFocused($focusedStep, equals: step)
                 Spacer(minLength: 0)
-                Button { state.updateEntry { $0.skipTour() } } label: {
-                    Image(systemName: "xmark").font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(AppTheme.secondary)
-                        .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
+                Button { state.updateEntry { $0.skipTour() }; openClosetAfterFirstRun() } label: {
+                    Text("Skip").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                        .frame(minWidth: AppControlMetrics.minimumTarget, minHeight: AppControlMetrics.minimumTarget)
                         .contentShape(Rectangle())
                 }.buttonStyle(.plain).accessibilityLabel("Skip tour").accessibilityIdentifier("tour.skip")
             }
             VStack(alignment: .leading, spacing: 8) {
-                Text(titles[step]).font(AppTypography.section)
-                ForEach(explanations[step], id: \.self) { detail in
-                    Text(detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+                Text(item.title).font(AppTypography.section).accessibilityAddTraits(.isHeader)
+                Text(item.detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            HStack(spacing: 12) {
+                Image(systemName: item.symbol).font(.system(size: 15, weight: .medium)).foregroundStyle(AppTheme.ink)
+                    .frame(width: 32, height: 32).background(AppTheme.canvas, in: Circle()).accessibilityHidden(true)
+                Text(item.action).font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+    private func progress(_ step: Int) -> some View {
+        HStack(spacing: 4) {
+            ForEach(0..<PrivateEntryState.tourStepCount, id: \.self) { index in
+                Capsule().fill(index == step ? AppTheme.ink : AppTheme.divider)
+                    .frame(width: index == step ? 18 : 6, height: 6)
             }
         }
     }
@@ -126,8 +148,11 @@ private struct TourCard: View {
             .buttonStyle(.plain).accessibilityIdentifier("tour.back")
     }
     private func next(_ step: Int) -> some View {
-        Button { state.updateEntry { $0.nextInTour() } } label: {
-            GlassActionLabel(title: step == PrivateEntryState.tourStepCount - 1 ? "Finish tour" : "Next", prominent: true, height: AppControlMetrics.minimumTarget)
+        Button {
+            state.updateEntry { $0.nextInTour() }
+            if step >= PrivateEntryState.tourStepCount - 1 { openClosetAfterFirstRun() }
+        } label: {
+            GlassActionLabel(title: step == PrivateEntryState.tourStepCount - 1 ? "Done" : "Next", prominent: true, height: AppControlMetrics.minimumTarget)
         }.buttonStyle(.plain).accessibilityIdentifier("tour.next").id(step)
     }
 }
