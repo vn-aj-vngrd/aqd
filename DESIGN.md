@@ -23,7 +23,7 @@ Charcoal is the only control, selection and tint color. Gold is a brand accent f
 | Divider | `#E4E2DC` | `#4A4842` |
 | Control boundary | `#807B72` | `#969187` |
 | Primary fill / on primary | `#292826` / `#FFFFFF` | `#F2F0EB` / `#242321` |
-| Switch on / off track, calendar selection | `#416451` / `#767680` at 28%, `#292826` | `#5FA67C` / `#6A6964`, `#6B6A65` |
+| Switch on / off track (same in both), calendar selection | `#3F9B63` / `#7E7D79`, `#292826` | same, `#6B6A65` |
 | Piece status available / laundry | `#2E7D4F` / `#2F6FB8` | `#5FC088` / `#6FA8E8` |
 | Error, success, warning | `#D4142A`, `#416451`, `#795B2E` | `#FF6472`, `#B8D0BF`, `#DCC7A2` |
 

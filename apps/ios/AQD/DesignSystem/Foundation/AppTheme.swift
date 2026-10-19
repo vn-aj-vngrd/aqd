@@ -18,10 +18,10 @@ enum AppTheme {
     static let primaryFill = color(light: 0x292826, dark: 0xF2F0EB)
     static let onPrimary = color(light: 0xFFFFFF, dark: 0x242321)
     /// Switch track when on. Ink as a track turned near-white against a white knob in dark mode, so on read as off.
-    static let toggleOn = color(light: 0x416451, dark: 0x5FA67C)
+    static let toggleOn = color(light: 0x3F9B63, dark: 0x3F9B63)
     /// Selected day in the system calendar, which always draws white numbers on it: dark enough for them in both appearances.
     static let calendarSelection = color(light: 0x292826, dark: 0x6B6A65)
-    static let toggleOff = color(light: 0x767680, dark: 0x6A6964, lightAlpha: 0.28, darkAlpha: 1)
+    static let toggleOff = color(light: 0x7E7D79, dark: 0x7E7D79)
     static let toggleKnob = color(light: 0xFFFFFF, dark: 0xFFFFFF)
     static let segmentSelection = color(light: 0xECEBE7, dark: 0x5C5B57)
     /// The owner's chat bubble: a whisper darker than the canvas, never a mid grey.
