@@ -110,18 +110,25 @@ struct WelcomeView: View {
     @State private var pose: WelcomeWardrobe.Pose = .settled
     @State private var previewArrived = false
     var body: some View {
-        ScrollView {
-            VStack(spacing: AppSpacing.section) {
-                AQDMark(size: 120).frame(maxWidth: .infinity, alignment: .center)
-                WelcomeWardrobe(pose: pose).padding(.horizontal, AppSpacing.small)
-                VStack(spacing: AppSpacing.medium) {
-                    Text(welcomeHeadline).font(.largeTitle.weight(.medium)).tracking(-0.8).multilineTextAlignment(.center)
-                        .accessibilityAddTraits(.isHeader)
-                    Text("Keep your pieces together. Make looks you’ll wear.")
-                        .font(AppTypography.body).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
-                }.frame(maxWidth: .infinity)
-            }.padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.large)
-        }.scrollIndicators(.hidden)
+        GeometryReader { geometry in
+            ScrollView {
+                // Brand, then the closet, then the promise sitting just above the button, so nothing floats in empty space.
+                VStack(spacing: AppSpacing.section) {
+                    brand
+                    Spacer(minLength: 0)
+                    WelcomeWardrobe(pose: pose).padding(.horizontal, AppSpacing.small)
+                    Spacer(minLength: 0)
+                    VStack(spacing: AppSpacing.small) {
+                        Text(welcomeHeadline).font(.largeTitle.weight(.medium)).tracking(-0.8).multilineTextAlignment(.center)
+                            .accessibilityAddTraits(.isHeader)
+                        Text("Keep your pieces together. Make looks you’ll wear.")
+                            .font(AppTypography.body).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
+                    }.frame(maxWidth: .infinity)
+                }
+                .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small).padding(.bottom, AppSpacing.medium)
+                .frame(minHeight: geometry.size.height)
+            }.scrollIndicators(.hidden)
+        }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: AppSpacing.small) {
                 Button {
@@ -153,6 +160,15 @@ struct WelcomeView: View {
         }
         .onChange(of: reduceMotion) { _, reduced in if reduced { settle() } }
         .onDisappear { settle() }
+    }
+    /// A small lockup: the glass Q beside the name, like a maker's label rather than a hero.
+    private var brand: some View {
+        HStack(spacing: 2) {
+            AQDMark(size: 40).accessibilityHidden(true)
+            Text("AQD").font(.system(size: 19, weight: .semibold)).tracking(3).foregroundStyle(AppTheme.ink)
+        }
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore).accessibilityLabel("AQD").accessibilityAddTraits(.isHeader)
     }
     private var welcomeHeadline: AttributedString {
         var text = AttributedString("More from what you already own.")
