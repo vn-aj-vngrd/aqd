@@ -362,8 +362,8 @@ private struct OutfitPieceRow: View {
                     PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(width: 56, height: 64)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(piece.displayName).font(AppTypography.body).foregroundStyle(AppTheme.ink).truncated()
-                        Text([state.categoryName(for: piece), PieceStatus(piece).isNotable ? PieceStatus(piece).title : ""]
-                            .filter { !$0.isEmpty }.joined(separator: ", "))
+                        (Text(state.categoryName(for: piece)) + Text(PieceStatus(piece).isNotable ? ", " : "")
+                            + Text(PieceStatus(piece).isNotable ? PieceStatus(piece).title : "").foregroundStyle(PieceStatus(piece).tint))
                             .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
                     }
                     Spacer(minLength: AppSpacing.small)

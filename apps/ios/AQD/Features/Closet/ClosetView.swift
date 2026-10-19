@@ -502,7 +502,7 @@ struct PieceDetailView: View {
     private func statusChip(_ piece: WardrobePiece) -> some View {
         let status = PieceStatus(piece), text = status.title, symbol = status.symbol
         return Button { availabilityPresented = true } label: {
-            Label(text, systemImage: symbol).compactControl()
+            Label(text, systemImage: symbol).compactControl(tint: status.tint)
         }.buttonStyle(.plain).disabled(piece.isArchived || deleteInFlight)
             .accessibilityLabel("Availability: \(text)").accessibilityHint("Changes whether you can wear this piece now")
     }

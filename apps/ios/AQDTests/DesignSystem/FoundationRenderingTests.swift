@@ -276,6 +276,8 @@ final class FoundationRenderingTests: XCTestCase {
             (AppTheme.primaryFill, 0x292826, 0xF2F0EB, 1, 1),
             (AppTheme.onPrimary, 0xFFFFFF, 0x242321, 1, 1),
             (AppTheme.segmentSelection, 0xECEBE7, 0x5C5B57, 1, 1),
+            (AppTheme.statusAvailable, 0x2E7D4F, 0x5FC088, 1, 1),
+            (AppTheme.statusLaundry, 0x2F6FB8, 0x6FA8E8, 1, 1),
             (AppTheme.toggleOn, 0x416451, 0x5FA67C, 1, 1),
             (AppTheme.toggleOff, 0x767680, 0x6A6964, 0.28, 1),
             (AppTheme.toggleKnob, 0xFFFFFF, 0xFFFFFF, 1, 1),

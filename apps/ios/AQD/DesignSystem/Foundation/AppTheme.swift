@@ -37,6 +37,9 @@ enum AppTheme {
     static let dangerFill = color(light: 0xE02335, dark: 0xFF6472)
     static let success = color(light: 0x416451, dark: 0xB8D0BF)
     static let successSurface = color(light: 0xE8EFEA, dark: 0x293B30)
+    // Piece status: lively enough to read at a glance, still calm beside the charcoal UI.
+    static let statusAvailable = color(light: 0x2E7D4F, dark: 0x5FC088)
+    static let statusLaundry = color(light: 0x2F6FB8, dark: 0x6FA8E8)
     static let warning = color(light: 0x795B2E, dark: 0xDCC7A2)
     static let warningSurface = color(light: 0xF3EEE4, dark: 0x403728)
     static let information = secondary

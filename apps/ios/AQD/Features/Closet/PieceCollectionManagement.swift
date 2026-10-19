@@ -48,7 +48,8 @@ struct PieceAvailabilityView: View {
                 Section {
                     ForEach(PieceAvailability.allCases, id: \.self) { value in
                         Button { save(value) } label: {
-                            HStack {
+                            HStack(spacing: AppSpacing.medium) {
+                                Image(systemName: value.symbol).foregroundStyle(value.tint).frame(width: 24).accessibilityHidden(true)
                                 Text(value == .laundry ? "In the laundry" : value.rawValue.capitalized)
                                 Spacer()
                                 if piece.availability == value { Image(systemName: "checkmark").foregroundStyle(AppTheme.ink) }

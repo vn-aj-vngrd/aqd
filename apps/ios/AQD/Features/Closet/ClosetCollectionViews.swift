@@ -57,14 +57,7 @@ struct PieceCollectionGrid: View {
 struct PieceAvailabilityBadge: View {
     let piece: WardrobePiece
     private var status: PieceStatus { PieceStatus(piece) }
-    private var tint: Color {
-        switch status {
-        case .available: AppTheme.success
-        case .unavailable: AppTheme.error
-        case .laundry: AppTheme.information
-        case .archived: AppTheme.secondary
-        }
-    }
+    private var tint: Color { status.tint }
     @ViewBuilder var body: some View {
         if status.isNotable {
             Image(systemName: status.symbol).font(.system(size: 11, weight: .semibold)).foregroundStyle(tint)

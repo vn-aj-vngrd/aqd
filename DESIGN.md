@@ -24,9 +24,10 @@ Charcoal is the only control, selection and tint color. Gold is a brand accent f
 | Control boundary | `#807B72` | `#969187` |
 | Primary fill / on primary | `#292826` / `#FFFFFF` | `#F2F0EB` / `#242321` |
 | Switch on / off track, calendar selection | `#416451` / `#767680` at 28%, `#292826` | `#5FA67C` / `#6A6964`, `#6B6A65` |
+| Piece status available / laundry | `#2E7D4F` / `#2F6FB8` | `#5FC088` / `#6FA8E8` |
 | Error, success, warning | `#D4142A`, `#416451`, `#795B2E` | `#FF6472`, `#B8D0BF`, `#DCC7A2` |
 
-Switches use the one `AppToggleStyle` (set by `appAppearance`): green track with a white knob when on, gray outlined track when off. System date pickers take `calendarSelection` as tint so their white day numbers stay readable. Text targets 4.5:1 (3:1 large); meaningful control boundaries 3:1. Color is never the only cue: selection also uses a checkmark, fill or weight. Success means an acknowledged completion, warning means risk needing review, red means destructive or failed.
+Switches use the one `AppToggleStyle` (set by `appAppearance`): green track with a white knob when on, gray outlined track when off. System date pickers take `calendarSelection` as tint so their white day numbers stay readable. Text targets 4.5:1 (3:1 large); meaningful control boundaries 3:1. Color is never the only cue: selection also uses a checkmark, fill or weight. Piece status has one color each through `PieceStatus.tint`: green available, blue in the laundry, red unavailable, gray archived. Success means an acknowledged completion, warning means risk needing review, red means destructive or failed.
 
 ## Type, space, shape
 
