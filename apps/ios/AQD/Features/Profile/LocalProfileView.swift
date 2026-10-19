@@ -3,8 +3,6 @@ import SwiftUI
 
 struct LocalProfileView: View {
     @Environment(AppState.self) private var state
-    @State private var categories = false
-    @State private var journalTab: FitJournalTab = .all
     @State private var query = FitJournalQuery()
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var previewingProfile = false
@@ -21,10 +19,10 @@ struct LocalProfileView: View {
                                 Button("Retry profile") { state.reloadIdentity() }.frame(minHeight: 44)
                             }.padding(.horizontal, AppSpacing.screen)
                         }
-                        FitJournalGrid(tab: $journalTab, query: $query)
+                        FitJournalGrid(query: $query)
                     }.padding(.top, AppSpacing.headerGap).padding(.bottom, AppSpacing.screen)
                 }.onChange(of: state.fitAnchor) { _, id in
-                    if let id { journalTab = .all; DispatchQueue.main.async { proxy.scrollTo(id, anchor: .center) } }
+                    if let id { DispatchQueue.main.async { proxy.scrollTo(id, anchor: .center) } }
                 }
             }.background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
                 .toolbar {
@@ -34,26 +32,17 @@ struct LocalProfileView: View {
                             .accessibilityIdentifier("profile.addFit")
                     }
                     ToolbarItem(placement: .topBarTrailing) {
+                        // Only what is about her: who she is, her style answers and the app's settings.
                         Menu {
-                            Section("Profile") {
-                                AccessoryButton("Edit profile", systemImage: "person.crop.circle") { state.openIdentity() }
-                                AccessoryButton("Style", systemImage: "slider.horizontal.3") { state.openStyle(source: .profile) }
-                            }
-                            Section("Wear") {
-                                AccessoryButton("Wear history", systemImage: "clock.arrow.circlepath") { state.profileHistory = true }
-                                AccessoryButton("Wear insights", systemImage: "chart.bar") { state.profileInsights = true }
-                            }
-                            Section("Closet") {
-                                AccessoryButton("Categories", systemImage: "square.grid.2x2") { categories = true }
-                                AccessoryButton("Settings", systemImage: "gearshape") { state.profileSettings = true }
-                            }
+                            AccessoryButton("Edit profile", systemImage: "person.crop.circle") { state.openIdentity() }
+                            AccessoryButton("Style", systemImage: "slider.horizontal.3") { state.openStyle(source: .profile) }
+                            AccessoryButton("Settings", systemImage: "gearshape") { state.profileSettings = true }
                         } label: { Label("More", systemImage: "ellipsis") }
                     }
                 }
                 .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
                 .navigationDestination(isPresented: $state.profileInsights) { LocalWearInsightsView().secondaryPage() }
                 .navigationDestination(isPresented: $state.profileHistory) { LocalWearHistoryView().secondaryPage() }
-                .navigationDestination(isPresented: $categories) { WardrobeCategorySettingsView().secondaryPage() }
                 .navigationDestination(isPresented: $state.profileSettings) { LocalSettingsView().secondaryPage() }
         }.tint(AppTheme.ink)
     }
@@ -95,22 +84,23 @@ struct LocalProfileView: View {
                 ProfilePreviewView { state.openIdentity() }.appAppearance(state.appearance)
             }
     }
+    /// Numbers about her fits, not her closet: how many, how many this month, and how many days in a row.
     private var profileStats: some View {
-        HStack(alignment: .top, spacing: 0) {
-            profileStat("Fits", count: state.fitError == nil ? state.fitMemories.count : nil) { journalTab = .all }
-            profileStat("Outfits", count: state.outfitError == nil ? state.outfits.count : nil) { state.closetScope = "Outfits"; state.selection = 1 }
-            profileStat("Pieces", count: state.pieceReadError == nil ? state.pieces.count : nil) { state.selection = 1 }
+        let fits = state.fitError == nil ? state.fitMemories : nil
+        let today = LocalPlanDay()
+        return HStack(alignment: .top, spacing: 0) {
+            profileStat("Fits", count: fits?.count, id: "fits")
+            profileStat("This month", count: fits.map { FitJournalPresentation.monthCount($0, today: today) }, id: "month")
+            profileStat("Day streak", count: fits.map { FitJournalPresentation.streak($0, today: today) }, id: "streak")
         }.frame(maxWidth: .infinity)
     }
-    private func profileStat(_ title: String, count: Int?, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit().truncated()
-                Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
-            }.frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading).contentShape(Rectangle())
-        }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityElement(children: .ignore)
-            .accessibilityLabel(count.map { "\($0) \(title.lowercased())" } ?? "\(title) unavailable")
-            .accessibilityHint(title == "Fits" ? "Shows fits below" : "Opens Closet")
-            .accessibilityIdentifier("profile.stat.\(title.lowercased())")
+    private func profileStat(_ title: String, count: Int?, id: String) -> some View {
+        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+            Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit().truncated()
+            Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
+        }.frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading)
+            .foregroundStyle(AppTheme.ink).accessibilityElement(children: .ignore)
+            .accessibilityLabel(count.map { "\(title), \($0)" } ?? "\(title) unavailable")
+            .accessibilityIdentifier("profile.stat.\(id)")
     }
 }

@@ -62,19 +62,14 @@ struct FitMemoryArtwork: View {
     }
 }
 
-enum FitJournalTab: String, CaseIterable {
-    case all = "All fits", photos = "Photos", outfits = "Outfits"
-}
-
 struct FitJournalGrid: View {
     @State private var openedMemoryID: UUID?
-    @Binding var tab: FitJournalTab
     @Binding var query: FitJournalQuery
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
     private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: AppSpacing.small, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3) }
     private var memories: [FitMemory] {
-        FitJournalQuery(content: tab == .photos ? .photos : tab == .outfits ? .outfitOnly : .all, sort: query.sort).apply(to: state.fitMemories)
+        FitJournalQuery(sort: query.sort).apply(to: state.fitMemories)
     }
     private var sections: [FitMonthSection] { FitJournalPresentation.sections(memories) }
     private func monthTitle(_ section: FitMonthSection) -> String {
@@ -84,7 +79,6 @@ struct FitJournalGrid: View {
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            tabs
             if let error = state.fitError {
                 VStack(alignment: .leading, spacing: AppSpacing.medium) {
                     SemanticFeedback(role: .danger, message: error)
@@ -140,16 +134,10 @@ struct FitJournalGrid: View {
                 .accessibilityIdentifier("profile.fits.order")
         }.padding(.horizontal, AppSpacing.screen)
     }
-    /// The same glass segmented control Closet uses for its collections.
-    private var tabs: some View {
-        AppSegmentedControl(selection: Binding(get: { tab.rawValue }, set: { value in tab = FitJournalTab(rawValue: value) ?? .all }),
-                            options: FitJournalTab.allCases.map(\.rawValue), accessibilityTitle: "Fit journal view", identifierPrefix: "profile.fits.tab")
-            .padding(.horizontal, AppSpacing.screen).padding(.bottom, AppSpacing.small)
-    }
     private var emptyState: some View {
-        AppEmptyState(tab == .all ? "A little space for your style" : "No fit photos yet",
+        AppEmptyState("A little space for your style",
                       systemImage: "photo.stack",
-                      description: Text(tab == .all ? "Tap + to post what you wore today. A photo is optional." : (tab == .photos ? "Add a photo to a fit to see it here. Your other fits are in All fits." : "Fits you link to an outfit without a photo show here. Your other fits are in All fits.")),
+                      description: Text("Tap + to post what you wore today. A photo is optional."),
                       fillsAvailableSpace: false)
             .frame(maxWidth: .infinity).accessibilityIdentifier("profile.fits.empty")
     }
