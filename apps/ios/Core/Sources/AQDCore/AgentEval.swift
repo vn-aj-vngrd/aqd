@@ -507,8 +507,8 @@ extension AgentEvalSuite {
         make("edit-outfit-swap", "editOutfit", ["Swap the Black ballet flats for my Ivory sneakers in Office day"], intent: "editOutfit", tools: ["editOutfit"], proposal: true),
         make("edit-theme-add", "editTheme", ["Add Beach walk to my Resort theme"], intent: "editTheme", tools: ["editTheme"], proposal: true),
         make("edit-theme-remove", "editTheme", ["Take Poolside lunch out of the Resort theme"], intent: "editTheme", tools: ["editTheme"], proposal: true),
-        make("edit-plan-day", "editPlan", ["Change Wednesday in This week to the Rainy day outfit"], intent: "editPlan", tools: ["editPlan"], proposal: true),
-        make("edit-plan-missing", "editPlan", ["Change Wednesday in Nowhere plan to the Rainy day outfit"], intent: "editPlan", proposal: false),
+        make("edit-plan-day", "editPlan", ["Change Wednesday in This week to the Office day outfit"], intent: "editPlan", tools: ["editPlan"], proposal: true),
+        make("edit-plan-missing", "editPlan", ["Change Wednesday in Nowhere plan to the Office day outfit"], intent: "editPlan", proposal: false),
         make("edit-outfit-ambiguous", "editOutfit", ["Add my blazer to the Office day outfit"], intent: "editOutfit", tools: ["askUser", "findRecords"], proposal: false, question: true)
     ]
 }

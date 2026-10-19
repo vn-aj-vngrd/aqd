@@ -118,15 +118,20 @@ enum AgentPreflight {
                 request = AgentMutationRequest(kind: .createTheme, name: name ?? about.prefix(1).uppercased() + about.dropFirst() + " looks", outfitIDs: outfits.map(\.id)); tool = .proposeTheme
             }
         } catch let rejection as AgentToolRejection {
-            return rejectionPath(rejection, target: target)
+            var path = rejectionPath(rejection, target: target)
+            // A name that fits nothing or two things is answered by the app, never left for the model to describe.
+            switch command { case .addTo, .removeFrom, .swapIn, .setPlanDay, .tidy: path.exact = true; default: break }
+            return path
         }
         var path = try prepareRouted(request, tool: tool, target: target, attempt: attempt, conversationID: conversationID)
         switch command {
         case .addTo, .removeFrom, .swapIn, .setPlanDay:
             // The sentence is the app's own, so what it says always matches what approving does.
-            if path != nil, let proposal = conversation.proposals?.last(where: { $0.attemptID == attempt }) {
+            if path != nil {
                 path?.exact = true
-                path?.fallback = "I prepared a review. " + proposal.effectiveAction.savesSummary + " Review it below; nothing is saved yet."
+                if let proposal = conversation.proposals?.last(where: { $0.attemptID == attempt }) {
+                    path?.fallback = "I prepared a review. " + proposal.effectiveAction.savesSummary + " Review it below; nothing is saved yet."
+                }
             }
         default: break
         }
