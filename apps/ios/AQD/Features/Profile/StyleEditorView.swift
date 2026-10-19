@@ -108,7 +108,7 @@ struct StyleEditorView: View {
     }
     private var savedContent: some View {
         VStack(alignment: .leading, spacing: AppSpacing.section) {
-            AQDWordmark()
+            AQDMark()
             EntryIllustration(kind: .ready)
             VStack(alignment: .leading, spacing: 16) {
                 Label("Preferences saved", systemImage: "checkmark.circle")

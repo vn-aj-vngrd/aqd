@@ -101,17 +101,13 @@ struct ActionFooter<Content: View>: View {
     }
 }
 
-/// Shared wordmark; the gold Q matches the packaged Home Screen icon.
-struct AQDWordmark: View {
+/// The glass Q, identical to the packaged Home Screen icon and clipped to the same continuous corner shape.
+struct AQDMark: View {
+    var size: CGFloat = 88
     var body: some View {
-        Text(mark).font(.system(size: 44)).tracking(0.5)
+        Image("BrandMark").resizable().scaledToFit().frame(width: size, height: size)
+            .clipShape(.rect(cornerRadius: size * 0.2237, style: .continuous))
             .accessibilityLabel("AQD")
-    }
-    private var mark: AttributedString {
-        var text = AttributedString("AQD")
-        text.foregroundColor = AppTheme.ink
-        if let range = text.range(of: "Q") { text[range].foregroundColor = AppTheme.accent }
-        return text
     }
 }
 

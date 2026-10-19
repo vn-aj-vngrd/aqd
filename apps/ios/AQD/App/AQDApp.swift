@@ -40,8 +40,12 @@ private struct AppRootView: View {
     var body: some View {
         Group {
             if state.isOpening {
-                Color("LaunchCanvas").ignoresSafeArea()
-                    .accessibilityLabel("Opening your closet").accessibilityIdentifier("entry.splash")
+                ZStack {
+                    Color("LaunchCanvas").ignoresSafeArea()
+                    Image("LaunchMark").resizable().scaledToFit().frame(width: 200, height: 200).accessibilityHidden(true)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Opening your closet").accessibilityIdentifier("entry.splash")
                     .transition(.opacity)
             } else if let error = state.openingError {
                 CenteredPageContent {

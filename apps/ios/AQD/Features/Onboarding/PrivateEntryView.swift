@@ -112,7 +112,7 @@ struct WelcomeView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: AppSpacing.section) {
-                AQDWordmark().frame(maxWidth: .infinity, alignment: .center).padding(.top, AppSpacing.small)
+                AQDMark().frame(maxWidth: .infinity, alignment: .center).padding(.top, AppSpacing.small)
                 WelcomeWardrobe(pose: pose).padding(.horizontal, AppSpacing.small)
                 VStack(spacing: AppSpacing.medium) {
                     Text(welcomeHeadline).font(.largeTitle.weight(.medium)).tracking(-0.8).multilineTextAlignment(.center)

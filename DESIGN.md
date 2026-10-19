@@ -10,7 +10,7 @@ Roots: **Today, Closet, Planner, Agent, Profile** as five equal icon-only native
 
 ## Color
 
-Charcoal is the only control, selection and tint color. Gold is a brand mark only (logo Q, welcome art), never UI. App-wide tint is `ink`.
+Charcoal is the only control, selection and tint color. Gold is a brand accent for welcome art only, never UI. The logo is the smoked glass Q on charcoal, with no color of its own. App-wide tint is `ink`.
 
 | Role | Light | Dark |
 | --- | --- | --- |

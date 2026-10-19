@@ -16,7 +16,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" image="LaunchMark" translatesAutoresizingMaskIntoConstraints="NO" id="AQD-launch-wordmark">
-                                <rect key="frame" x="148" y="406" width="144" height="144"/>
+                                <rect key="frame" x="120" y="378" width="200" height="200"/>
                                 <accessibility key="accessibilityConfiguration" label="AQD"/>
                             </imageView>
                         </subviews>
@@ -25,8 +25,8 @@
                         <constraints>
                             <constraint firstItem="AQD-launch-wordmark" firstAttribute="centerX" secondItem="AQD-launch-view" secondAttribute="centerX" id="AQD-launch-center-x"/>
                             <constraint firstItem="AQD-launch-wordmark" firstAttribute="centerY" secondItem="AQD-launch-view" secondAttribute="centerY" id="AQD-launch-center-y"/>
-                            <constraint firstItem="AQD-launch-wordmark" firstAttribute="width" constant="144" id="AQD-launch-width"/>
-                            <constraint firstItem="AQD-launch-wordmark" firstAttribute="height" constant="144" id="AQD-launch-height"/>
+                            <constraint firstItem="AQD-launch-wordmark" firstAttribute="width" constant="200" id="AQD-launch-width"/>
+                            <constraint firstItem="AQD-launch-wordmark" firstAttribute="height" constant="200" id="AQD-launch-height"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -36,8 +36,6 @@
     </scenes>
     <resources>
         <image name="LaunchMark" width="1024" height="1024"/>
-        <namedColor name="LaunchCanvas"><color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/></namedColor>
-        <namedColor name="LaunchInk"><color red="0.141176" green="0.137255" blue="0.129412" alpha="1" colorSpace="custom" customColorSpace="sRGB"/></namedColor>
-        <namedColor name="LaunchGold"><color red="0.549020" green="0.415686" blue="0.211765" alpha="1" colorSpace="custom" customColorSpace="sRGB"/></namedColor>
+        <namedColor name="LaunchCanvas"><color red="0.109804" green="0.109804" blue="0.105882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/></namedColor>
     </resources>
 </document>
