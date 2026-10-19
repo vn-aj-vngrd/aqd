@@ -37,6 +37,8 @@ final class AppState {
     var restoreModel: LocalRestoreModel?
     /// True when restore or reset was opened from Settings, where it is pushed as a page instead of covering the app.
     var restoreInSettings = false
+    /// True while the launch splash covers the app, so entrances underneath wait for it to leave.
+    var showingSplash = true
     /// Swaps in a replaced closet; set by the root view so a pushed page can finish an install.
     var installReplacement: ((PieceStore, LocalDataCoordinator, Int) -> Void)?
     var localDataCleanupError: String?

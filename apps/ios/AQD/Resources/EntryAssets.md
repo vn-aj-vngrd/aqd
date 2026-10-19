@@ -6,4 +6,4 @@ The logo is a smoked glass Q on the dark canvas (`#1C1C1B`). `AQDMark` shows the
 
 The existing Welcome garment atlas and six Tour images are illustrative assets, never saved wardrobe or fit records. No network access is required to render entry screens.
 
-`LaunchCanvas` is `#1C1C1B` in both appearances, so the launch is always the dark canvas. The in-app opening screen shows the same canvas and mark for continuity. No artificial launch delay is added.
+`LaunchCanvas` is `#1C1C1B` in both appearances, so the launch is always the dark canvas. `LaunchSplash` continues from the static launch at the same size and position: a highlight crosses the glass while it turns slightly, then the mark lifts and dissolves as the app fades in. It holds for about a second (longer only if the closet is still opening); Reduce Motion and UI tests skip the hold and only cross-fade. The Welcome entrance starts after the splash leaves.

@@ -325,12 +325,14 @@ struct LocalPrivacySettingsView: View {
 #if DEBUG
 private struct DevelopmentSplashPreview: View {
     @Environment(\.dismiss) private var dismiss
+    @State private var exiting = false
     var body: some View {
-        ZStack {
-            Color("LaunchCanvas").ignoresSafeArea()
-            Image("LaunchMark").resizable().scaledToFit().frame(width: 200, height: 200).accessibilityLabel("AQD")
-        }.task {
-            do { try await Task.sleep(for: .seconds(1.2)); dismiss() } catch { }
+        LaunchSplash(exiting: exiting).accessibilityLabel("AQD").task {
+            do {
+                try await Task.sleep(for: .seconds(1.15))
+                withAnimation(.easeIn(duration: 0.4)) { exiting = true }
+                try await Task.sleep(for: .seconds(0.45)); dismiss()
+            } catch { }
         }
     }
 }

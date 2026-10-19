@@ -29,6 +29,7 @@ struct AQDApp: App {
                 state.detachForDataReplacement()
                 state = AppState(store: store, dataRoot: coordinator.legacyRoot, coordinator: coordinator)
                 state.selection = destination
+                state.showingSplash = false
             }.appAppearance(testAppearance)
         }
     }
@@ -50,19 +51,33 @@ private struct AppRootView: View {
     @Bindable var state: AppState
     let onInstall: (PieceStore, LocalDataCoordinator, Int) -> Void
     @State private var pendingInstallation: (PieceStore, LocalDataCoordinator, Int)?
+    @State private var splashShown = true
+    @State private var splashExiting = false
     #if DEBUG
     @State private var welcomePreview = false
     @State private var tourAfterWelcome = false
     @State private var agentEval: AgentClosetEvalRunner?
     #endif
 
+    /// Shows the glass mark for about a second, waits for the closet to open, then lifts the mark away and fades the app in.
+    /// UI tests and Reduce Motion skip the showcase and only cross-fade.
+    private func runSplash() async {
+        let quick = reduceMotion || ProcessInfo.processInfo.arguments.contains("--aqd-ui-testing")
+        do {
+            try await Task.sleep(for: .milliseconds(quick ? 0 : 1150))
+            while state.isOpening { try await Task.sleep(for: .milliseconds(40)) }
+        } catch { return }
+        state.showingSplash = false
+        if quick { withAnimation(.easeOut(duration: 0.25)) { splashShown = false }; return }
+        withAnimation(.easeIn(duration: 0.4)) { splashExiting = true }
+        do { try await Task.sleep(for: .milliseconds(160)) } catch { return }
+        withAnimation(.easeOut(duration: 0.45)) { splashShown = false }
+    }
+
     var body: some View {
         Group {
             if state.isOpening {
-                ZStack {
-                    Color("LaunchCanvas").ignoresSafeArea()
-                    Image("LaunchMark").resizable().scaledToFit().frame(width: 200, height: 200).accessibilityHidden(true)
-                }
+                Color("LaunchCanvas").ignoresSafeArea()
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel("Opening your closet").accessibilityIdentifier("entry.splash")
                     .transition(.opacity)
@@ -203,6 +218,10 @@ private struct AppRootView: View {
         }
         #endif
         .tint(AppTheme.ink)
+        .overlay {
+            if splashShown { LaunchSplash(exiting: splashExiting).transition(.opacity).accessibilityHidden(true) }
+        }
+        .task { await runSplash() }
         .onChange(of: scenePhase) { _, phase in if phase != .active { state.weatherClient?.suspend() } }
         .appConfirmation("Saved data unavailable", isPresented: Binding(
             get: { state.collectionError != nil },

@@ -161,6 +161,8 @@ struct WelcomeView: View {
         var still = Transaction(); still.disablesAnimations = true
         withTransaction(still) { stage = 0; pose = .gathered; glint = -1 }
         do {
+            // Start only once the launch splash has lifted away, so the two entrances never overlap.
+            while state.showingSplash && previewDismiss == nil { try await Task.sleep(for: .milliseconds(40)) }
             await Task.yield()
             withAnimation(.smooth(duration: 0.8)) { stage = 1 }
             try await Task.sleep(for: .milliseconds(260))
