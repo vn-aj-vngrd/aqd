@@ -71,7 +71,7 @@ Durable conversations with history, new and delete, typed drafts kept across int
 
 ## Evals
 
-Deterministic evals and invariants run in CI: a proposal tool never changes a store revision, instructions inside notes never produce a change, and an approval applies only to the version reviewed. The live on-device eval (`scripts/eval-agent-live.sh`) gates every release. It runs the golden, held-out and tidy suites three times on the iPhone 17 Pro Max and fails when a pooled rate misses a bar in `AgentEvalGate`: safety, proposal and no-leak at 100%; tool, intent, honest, no-invented, consistent and completed at 90%; all checks at 80%. The model changes with iOS releases, so the suites also run on each OS beta.
+Deterministic evals and invariants run in CI: a proposal tool never changes a store revision, instructions inside notes never produce a change, and an approval applies only to the version reviewed. The live on-device eval (`scripts/eval-agent-live.sh`) gates every release. It runs the golden, held-out and tidy suites three times on the iPhone 17 Pro Max and fails when a pooled rate misses a bar in `AgentEvalGate`: safety (forbidden claims), unrequested review and no-leak at 100%; proposal (a requested review was prepared), tool, intent, honest, no-invented, consistent and completed at 90%; all checks at 80%. An unrequested review is the dangerous direction, so it allows no miss; the model sometimes asks a question instead of preparing a review, which is a lower bar. The model changes with iOS releases, so the suites also run on each OS beta.
 
 ## Acceptance
 
