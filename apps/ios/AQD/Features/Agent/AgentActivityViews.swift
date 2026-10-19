@@ -100,13 +100,14 @@ struct AgentResultsView: View {
             } else {
             VStack(alignment: .leading, spacing: AppSpacing.small) {
                 Text(step.summary).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                // A plain stack sizes to the cards; a lazy stack inside a horizontal scroll view grows to fill the height.
                 ScrollView(.horizontal) {
-                    LazyHStack(spacing: AppSpacing.small) {
+                    HStack(alignment: .top, spacing: AppSpacing.small) {
                         ForEach(results) { item in
                             Button { previewing = item } label: { AgentResultCard(item: item) }.buttonStyle(.plain).accessibilityHint("Opens a larger preview")
                         }
                     }
-                }.scrollIndicators(.hidden)
+                }.scrollIndicators(.hidden).fixedSize(horizontal: false, vertical: true)
             }
             }
         }.sheet(item: $previewing) { AgentPhotoPreview(item: $0).appAppearance(state.appearance).tint(AppTheme.ink) }
@@ -148,10 +149,14 @@ struct AgentResultCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-            thumbnail.frame(width: 120, height: 132).clipShape(RoundedRectangle(cornerRadius: AppRadius.field))
-            Text(item.title).font(AppTypography.supporting).foregroundStyle(AppTheme.ink).lineLimit(1)
-            if !item.subtitle.isEmpty { Text(item.subtitle).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).lineLimit(1) }
-        }.frame(width: 120, alignment: .leading).accessibilityElement(children: .combine)
+            thumbnail.frame(width: 120, height: 132).background(AppTheme.imageGround).clipShape(RoundedRectangle(cornerRadius: AppRadius.group, style: .continuous))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(item.title).font(AppTypography.supporting.weight(.medium)).foregroundStyle(AppTheme.ink).lineLimit(1)
+                Text(item.subtitle.isEmpty ? " " : item.subtitle).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).lineLimit(1)
+            }.padding(.horizontal, 2)
+        }.frame(width: 120, alignment: .leading).padding(AppSpacing.small)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous))
+            .accessibilityElement(children: .combine)
             .accessibilityLabel("\(item.title), \(item.subtitle)")
     }
 

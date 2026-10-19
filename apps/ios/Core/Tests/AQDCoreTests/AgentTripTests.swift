@@ -112,3 +112,19 @@ struct TripIntentDayTests {
         #expect(!TripIntent.mentionsDates("3 days in Boracay") && !TripIntent.mentionsDates("What may I wear on the trip"))
     }
 }
+
+struct AgentWearAnswerTests {
+    @Test func readsTheFocusOfAWearQuestion() {
+        #expect(AgentWearAnswer.focus("Rediscover unworn pieces", namesPiece: false) == .unworn)
+        #expect(AgentWearAnswer.focus("What do I wear most?", namesPiece: false) == .mostWorn)
+        #expect(AgentWearAnswer.focus("How often did I wear my ivory sneakers", namesPiece: true) == .named)
+        #expect(AgentWearAnswer.focus("Wear stats", namesPiece: false) == .overview)
+    }
+    @Test func writesNaturalSentences() {
+        #expect(AgentWearAnswer.unworn(count: 22, active: 51, period: "this month").hasPrefix("You haven’t worn 22 of your 51 pieces this month."))
+        #expect(AgentWearAnswer.mostWorn([("Ivory sneakers", 5), ("Black tee", 3), ("Jeans", 2)], period: "this month")
+                == "Your most worn piece this month is Ivory sneakers, 5 times. Close behind: Black tee and Jeans.")
+        #expect(AgentWearAnswer.named("Ivory sneakers", count: 1, period: "this month") == "You’ve worn Ivory sneakers once this month.")
+        #expect(AgentWearAnswer.overview(looks: 10, used: 29, active: 51, period: "this month") == "This month you’ve recorded 10 looks and worn 29 of your 51 pieces.")
+    }
+}

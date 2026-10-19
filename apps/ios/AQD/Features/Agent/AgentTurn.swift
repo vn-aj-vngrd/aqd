@@ -220,18 +220,55 @@ struct AgentTurn {
         return AgentFastPath(steps: [step], calls: [Self.routed("showRecords")], note: note, fallback: fallback)
     }
 
+    /// Wear questions are answered by the app: the right pieces as cards and a plain sentence built from recorded wear.
+    /// The model only rephrases that sentence; if it strays, the sentence itself is the reply.
     private func statsFastPath(_ text: String, index: AgentRecordIndex) -> AgentFastPath? {
         let lower = text.lowercased()
-        guard ["worn", "wear", "wore", "unworn", "rediscover", "least", "most", "never"].contains(where: lower.contains) else {
+        guard ["worn", "wear", "wore", "unworn", "rediscover", "least", "most", "never", "often", "forgotten"].contains(where: lower.contains) else {
             return AgentFastPath(note: "Answer from the Closet totals above, using them exactly. If the total is not there, say it is unknown.", fallback: "")
         }
-        let window: AgentWearWindow = AgentShowQuery.wantsLastMonth(text) ? .lastMonth : .thisMonth
-        let named = index.mentions(in: text, kinds: [.piece]).prefix(4).map(\.id)
-        guard let (stats, count) = try? wearStatsText(window, pieceIDs: Array(named)) else { return nil }
-        let step = AgentToolStep(tool: "wearStats", summary: "Checked wear for \(window == .thisMonth ? "this month" : "last month")", count: count)
-        let lines = stats.components(separatedBy: "\n")
-        return AgentFastPath(steps: [step], calls: [Self.routed("wearStats")], note: "Wear facts (use exactly these numbers and add none):\n\(stats)\nAnswer in one or two short sentences.",
-                             fallback: lines.count > 1 && !named.isEmpty ? lines.dropFirst().joined(separator: " ") : lines.prefix(2).joined(separator: " "))
+        guard let preferences = try? store.localSettings().agentPreferences ?? AgentPreferences(), preferences.allows(.pieces), preferences.allows(.wear),
+              let pieces = try? store.pieces(), let records = try? store.wearRecords() else { return nil }
+        let lastMonth = AgentShowQuery.wantsLastMonth(text)
+        let today = LocalPlanDay()
+        var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(identifier: today.timeZoneID) ?? .current
+        let month = lastMonth ? LocalPlanDay(date: calendar.date(byAdding: .month, value: -1, to: (try? today.date()) ?? Date()) ?? Date(), timeZone: calendar.timeZone) : today
+        let past = records.filter { $0.day.key <= today.key }
+        guard let summary = try? WearPeriodSummary(month: month, pieces: pieces, records: past) else { return nil }
+        let period = AgentWearAnswer.period(lastMonth)
+        let active = pieces.filter { !$0.isArchived }
+        var lastWorn: [UUID: LocalPlanDay] = [:]
+        for record in past { for piece in record.pieces where (lastWorn[piece.id]?.key ?? "") < record.day.key { lastWorn[piece.id] = record.day } }
+        func card(_ piece: WardrobePiece, _ subtitle: String) -> AgentResultItem {
+            AgentResultItem(id: piece.id, kind: .piece, title: piece.displayName, subtitle: subtitle, photoIDs: [piece.photoID])
+        }
+        let named = index.mentions(in: text, kinds: [.piece]).prefix(4).compactMap { match in active.first { $0.id == match.id } }
+        let sentence: String, items: [AgentResultItem], summaryLine: String
+        switch AgentWearAnswer.focus(text, namesPiece: !named.isEmpty) {
+        case .unworn:
+            let unworn = active.filter { summary.counts[$0.id, default: 0] == 0 }
+                .sorted { (lastWorn[$0.id]?.key ?? "") < (lastWorn[$1.id]?.key ?? "") }
+            sentence = AgentWearAnswer.unworn(count: unworn.count, active: active.count, period: period)
+            items = unworn.prefix(12).map { card($0, lastWorn[$0.id].map { "Last worn \($0.displayDate)" } ?? "Not worn yet") }
+            summaryLine = "Pieces not worn \(period)"
+        case .mostWorn:
+            let ranked = active.filter { summary.counts[$0.id, default: 0] > 0 }.sorted { summary.counts[$0.id, default: 0] > summary.counts[$1.id, default: 0] }.prefix(6)
+            sentence = AgentWearAnswer.mostWorn(ranked.map { ($0.displayName, summary.counts[$0.id, default: 0]) }, period: period)
+            items = ranked.map { card($0, "Worn \(summary.counts[$0.id, default: 0])×") }
+            summaryLine = "Most worn \(period)"
+        case .named:
+            sentence = named.map { AgentWearAnswer.named($0.displayName, count: summary.counts[$0.id, default: 0], period: period) }.joined(separator: " ")
+            items = named.map { card($0, "Worn \(summary.counts[$0.id, default: 0])× \(period)") }
+            summaryLine = "Checked wear \(period)"
+        case .overview:
+            sentence = AgentWearAnswer.overview(looks: summary.occasions, used: summary.usedActiveCount, active: summary.activeCount, period: period)
+            items = []
+            summaryLine = "Checked wear \(period)"
+        }
+        let step = AgentToolStep(tool: "wearStats", summary: summaryLine, count: items.count, results: items.isEmpty ? nil : items)
+        return AgentFastPath(steps: [step], calls: [Self.routed("wearStats")],
+                             note: "The app's answer (exact, from recorded wear): \"\(sentence)\" Rewrite it warmly in at most two short sentences with the same numbers and names, adding nothing. The pieces are shown as cards; do not list them.",
+                             fallback: sentence)
     }
 
     private func plannedLookFastPath(_ text: String) -> AgentFastPath? {
