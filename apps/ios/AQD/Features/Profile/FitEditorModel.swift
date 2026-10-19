@@ -19,11 +19,12 @@ final class FitEditorModel: Identifiable {
     var importID = UUID()
     /// A source chosen before the editor opened (Take photo / Photos); consumed once by the hero.
     var launch: PhotoSourceLaunch?
-    /// Opens Record wear for this fit after saving. Wear is still only recorded when the person confirms there.
-    var recordWearNext = false
+    /// Posting with an outfit also counts it as worn on the fit's day. On by default for a new post; the person can turn it off.
+    var recordWearNext: Bool
     private var importTask: Task<Void, Never>?
     init(state: AppState, draft: FitDraft) throws {
         self.state = state; self.draft = draft; id = draft.id; saved = try state.store?.savedFit(for: draft)
+        recordWearNext = draft.base == nil
     }
     var hasUnsavedChanges: Bool {
         saved == nil && (pending || unknown || importing || error != nil || draft.hasChanges)
@@ -86,7 +87,7 @@ final class FitEditorModel: Identifiable {
             try store.finishFitDraft(discarding ? retained : draft, discarding: discarding)
             if let saved {
                 state.fitAnchor = saved.id
-                if recordWearNext, !discarding { state.pendingFitWear = (saved.outfit?.id, saved.day) }
+                if recordWearNext, !discarding, let outfitID = saved.outfit?.id { state.recordWearForPostedFit(outfitID: outfitID, day: saved.day) }
             }
             state.fitEditor = nil; state.reloadFits(); state.retryPhotoCleanup()
         } catch { self.error = "This task could not close. The fit and draft are retained; retry." }
@@ -117,6 +118,22 @@ extension AppState {
         } catch { fitError = "This fit task could not open. Your saved journal is unchanged." }
     }
     /// Called once the fit sheet has closed, so Record wear never competes with the dismissing sheet.
+    /// Counts a posted fit's outfit as worn in the same step. A day already recorded stays as it is; anything that needs a
+    /// decision (a missing piece, an unfinished Record wear) opens Record wear prefilled instead of guessing.
+    func recordWearForPostedFit(outfitID: UUID, day: LocalPlanDay) {
+        do {
+            guard let store, let outfit = try store.outfit(id: outfitID) else { return }
+            let owned = try store.ownedPiecesForWear()
+            let pieces = outfit.pieceIDs.compactMap { id in owned.first { $0.id == id } }
+            guard pieces.count == outfit.pieceIDs.count, try store.wearDraft() == nil else { pendingFitWear = (outfitID, day); return }
+            let draft = OutfitWearDraft(ownerID: try store.todayConfiguration().ownerID, outfitID: outfit.id, pieces: pieces, day: day)
+            if try store.wearRecords().contains(where: { $0.duplicateKey == draft.duplicateKey }) { return }
+            try store.saveWearDraft(draft)
+            _ = try store.saveWear(draft)
+            try store.finishWearDraft(draft)
+            reloadWear(); reloadToday()
+        } catch { pendingFitWear = (outfitID, day) }
+    }
     func openPendingFitWear() {
         guard let request = pendingFitWear else { return }
         pendingFitWear = nil

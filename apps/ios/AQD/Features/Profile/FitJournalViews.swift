@@ -149,7 +149,7 @@ struct FitJournalGrid: View {
     private var emptyState: some View {
         AppEmptyState(tab == .all ? "A little space for your style" : "No fit photos yet",
                       systemImage: "photo.stack",
-                      description: Text(tab == .all ? "Use Add fit (+) above to keep a photo or outfit here. Memories stay private." : (tab == .photos ? "Add a photo to a fit to see it here. Your other fits are in All fits." : "Fits you link to an outfit without a photo show here. Your other fits are in All fits.")),
+                      description: Text(tab == .all ? "Tap + to post what you wore today. A photo is optional." : (tab == .photos ? "Add a photo to a fit to see it here. Your other fits are in All fits." : "Fits you link to an outfit without a photo show here. Your other fits are in All fits.")),
                       fillsAvailableSpace: false)
             .frame(maxWidth: .infinity).accessibilityIdentifier("profile.fits.empty")
     }
@@ -157,7 +157,7 @@ struct FitJournalGrid: View {
 
 struct FitEditorView: View {
     private var confirmation: some View {
-        ToolbarSaveAction(title: model.unknown ? "Check result" : "Save", isPending: model.pending) { Task { await model.save() } }.disabled(!model.unknown && !model.canSave)
+        ToolbarSaveAction(title: model.unknown ? "Check result" : model.draft.base == nil ? "Post" : "Save", isPending: model.pending) { Task { await model.save() } }.disabled(!model.unknown && !model.canSave)
     }
 
     @Bindable var model: FitEditorModel
@@ -175,19 +175,19 @@ struct FitEditorView: View {
 
                     } else {
                         mediaContent
-                        LabeledField(title: "Private note", text: Binding(get: { model.draft.value.displayNote }, set: { value in model.update { $0.note = value } }),
-                                     prompt: "What would you like to remember?", multiline: true, characterLimit: TextAreaLimits.fitNote)
+                        LabeledField(title: "Caption", text: Binding(get: { model.draft.value.displayNote }, set: { value in model.update { $0.note = value } }),
+                                     prompt: "How did it feel? Where did you go?", multiline: true, characterLimit: TextAreaLimits.fitNote)
                             .disabled(model.locked)
-                        if model.draft.value.note.count > 500 { SemanticFeedback(role: .danger, message: "Keep the note within 500 characters. Your full text is retained.") }
+                        if model.draft.value.note.count > 500 { SemanticFeedback(role: .danger, message: "Keep the caption within 500 characters. Your full text is retained.") }
                         dateDetails
                         wearNext
                         guidanceLine
-                        Label("Private memory. Wear is recorded separately.", systemImage: "lock")
+                        Label("Only you can see this. It stays on this iPhone.", systemImage: "lock")
                             .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                     }
                     if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                 }.padding(20)
-            }.background(AppTheme.canvas).onAppear { model.state.reloadOutfits(); model.state.reloadPieces() }.navigationTitle(model.draft.base == nil ? "Add fit" : "Edit fit").navigationBarTitleDisplayMode(.inline)
+            }.background(AppTheme.canvas).onAppear { model.state.reloadOutfits(); model.state.reloadPieces() }.navigationTitle(model.draft.base == nil ? "New fit" : "Edit fit").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 if model.saved == nil { confirmation }
             } }.tint(AppTheme.ink)
@@ -228,8 +228,8 @@ struct FitEditorView: View {
                     VStack(spacing: AppSpacing.medium) {
                         Image(systemName: "camera").font(.system(size: 34, weight: .light))
                             .foregroundStyle(AppTheme.ink).accessibilityHidden(true)
-                        Text("Add a photo").font(AppTypography.detailTitle)
-                        Text("Or link an outfit below to keep a look you want to remember.")
+                        Text("Add a photo, if you like").font(AppTypography.detailTitle)
+                        Text("Or just pick what you wore below.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
                         // The source button stays mounted so the two direct choices can open it.
                         photoSource { EmptyView() }.frame(height: 0).accessibilityHidden(true)
@@ -261,14 +261,14 @@ struct FitEditorView: View {
                 }
             }
             HStack {
-                Text("Outfit").font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
+                Text("What I wore").font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
                 Spacer()
                 AppChip(title: "No outfit", isSelected: model.draft.value.outfit == nil) { _ = model.link(nil) }.disabled(model.locked)
             }.padding(.bottom, -AppSpacing.small)
             if let planned = model.plannedOutfit {
                 Button { _ = model.link(planned) } label: {
                     HStack {
-                        Label("Planned for this day: \(planned.displayName)", systemImage: "calendar").font(AppTypography.supporting)
+                        Label("Planned: \(planned.displayName)", systemImage: "calendar").font(AppTypography.supporting)
                         Spacer(minLength: 8)
                         Text("Use").font(AppTypography.fieldLabel)
                     }.foregroundStyle(AppTheme.ink).padding(.horizontal, 14).frame(minHeight: 48)
@@ -304,13 +304,13 @@ struct FitEditorView: View {
             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card)).disabled(model.locked)
             .accessibilityIdentifier("fit.date")
     }
-    /// Offered only with an outfit, since wear needs pieces. Saving never records wear; it opens Record wear to confirm.
+    /// Offered only with an outfit, since wear needs pieces. On by default for a new post, so posting a fit also documents the wear.
     @ViewBuilder private var wearNext: some View {
         if model.draft.value.outfit != nil {
             Toggle(isOn: $model.recordWearNext) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Record wear next").font(AppTypography.body)
-                    Text("Opens Record wear after saving. Nothing counts until you confirm there.")
+                    Text("Count as worn").font(AppTypography.body)
+                    Text("Adds this outfit to your wear history for \(wornDayText).")
                         .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                 }
             }.tint(AppTheme.primaryFill).disabled(model.locked).padding(.horizontal, 14).padding(.vertical, 8)
@@ -318,10 +318,14 @@ struct FitEditorView: View {
                 .accessibilityIdentifier("fit.recordWearNext")
         }
     }
+    private var wornDayText: String {
+        let text = model.draft.value.day.display(.relative)
+        return ["Today", "Yesterday"].contains(text) ? text.lowercased() : text
+    }
     /// One plain line for what is missing, never red: the first thing a new fit needs is content.
     @ViewBuilder private var guidanceLine: some View {
         if !model.locked, model.guidance == .needsContent {
-            Text("Add a photo or choose an outfit to save.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            Text("Add a photo or pick what you wore to post.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 .accessibilityIdentifier("fit.guidance")
         }
     }

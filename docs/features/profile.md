@@ -4,13 +4,13 @@ Profile is a private dated fit journal plus optional local identity. It is not a
 
 ## Fit journal
 
-- A **fit memory** has a stable ID, an editable calendar date (default today) with timezone, an optional local photo, an optional linked outfit and a private note ≤500 characters. Save needs a photo **or** an outfit.
+- A **fit** (fit memory) is a private post about what she wore: a stable ID, an editable calendar date (default today) with timezone, an optional local photo, an optional linked outfit ("What I wore") and a caption ≤500 characters. Posting needs a photo **or** an outfit.
 - Without a photo the linked outfit's real piece composition is shown, never a fabricated wearer photo. Linking stores a minimal outfit snapshot (names, ordered pieces, categories) that survives outfit edits and deletion.
-- **Add fit** starts from a source: the Profile **+** menu offers Take photo, Choose from Photos and From an outfit, and the editor opens already on that source. It follows the [modal pattern](../../DESIGN.md#add-and-edit-modal-pattern): a hero photo card (native source menu), an inline outfit strip with a No outfit chip, a note, then a collapsed Date row (date and timezone). Over-limit notes keep their text with inline validation; nothing is truncated silently.
+- Profile's **+** has one job: **Post a fit**. It opens the New fit composer directly, with no menu. The composer follows the [modal pattern](../../DESIGN.md#add-and-edit-modal-pattern): an optional photo card (Take photo and Photos), a What I wore strip with a No outfit chip, a caption, then a collapsed Date row (date and timezone). The confirm action reads Post for a new fit and Save for an edit. Over-limit captions keep their text with inline validation; nothing is truncated silently.
 - When an outfit is already planned for the fit's day, one tap on "Planned for this day" links it. One plain line says what a new fit still needs ("Add a photo or choose an outfit to save.").
-- With an outfit linked, an off-by-default **Record wear next** toggle opens Record wear after saving. Saving never records wear; the count changes only when the wear is confirmed there. Fits are not shared or exported from the journal.
+- With an outfit linked, **Count as worn** (on by default for a new post, off when editing) records that outfit as worn on the fit's day in the same step. A day already recorded for that outfit is left as it is. When a piece is missing or another Record wear is unfinished, Record wear opens prefilled instead. Fits are not shared or exported from the journal.
 - The journal groups fits by month, and orders them newest or oldest first. Profile has no search. The Fits, Outfits and Pieces counts open their lists; Wear history is under More.
-- Adding, editing or deleting a memory never records wear or changes counts. Only an explicit Record wear does.
+- Wear is recorded only by Count as worn on a post or by an explicit Record wear. Editing or deleting a fit never changes wear.
 - Deleting a memory removes only that memory and unshared photo copies; the outfit, wear history and original Photos stay.
 - Profile shows real counts of Fits, Outfits and active Pieces, or an unavailable state on read errors.
 
@@ -28,5 +28,5 @@ Appearance (System, Light, Dark), permission guidance, local profile and prefere
 ## Acceptance
 
 - Save a photo-only, outfit-only and photo-plus-outfit memory; date-only cannot save.
-- A memory keeps its outfit snapshot after the outfit is deleted and never counts as wear.
+- A memory keeps its outfit snapshot after the outfit is deleted. Posting with Count as worn records the wear once; turning it off records none.
 - Export, restore and erase work as reviewed, replacing data only after staged validation.

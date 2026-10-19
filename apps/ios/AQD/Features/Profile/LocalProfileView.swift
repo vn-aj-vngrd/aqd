@@ -29,17 +29,8 @@ struct LocalProfileView: View {
             }.background(AppTheme.canvas).navigationTitle("").navigationBarTitleDisplayMode(.inline).onAppear { state.reloadIdentity(); state.reloadFits(); state.reloadOutfits(); state.reloadPieces() }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Menu {
-                            Button("Take photo", systemImage: "camera") { state.openFit(source: .camera) }
-                                .accessibilityIdentifier("profile.addFit.camera")
-                            Button("Choose from Photos", systemImage: "photo.on.rectangle") { state.openFit(source: .photos) }
-                                .accessibilityIdentifier("profile.addFit.photos")
-                            Button("From an outfit", systemImage: "hanger") { state.openFit(source: .outfit) }
-                                .disabled(state.outfits.isEmpty).accessibilityIdentifier("profile.addFit.outfit")
-                            Divider()
-                            Button("Build an outfit", systemImage: "square.stack") { state.buildOutfit() }
-                                .accessibilityIdentifier("profile.addOutfit")
-                        } label: { Label("Add fit", systemImage: "plus") }
+                        // One job for Profile's +: post what you wore. The photo is optional inside the composer.
+                        Button { state.openFit() } label: { Label("Post a fit", systemImage: "plus") }
                             .accessibilityIdentifier("profile.addFit")
                     }
                     ToolbarItem(placement: .topBarTrailing) {
