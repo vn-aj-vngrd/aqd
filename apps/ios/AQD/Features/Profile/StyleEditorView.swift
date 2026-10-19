@@ -151,7 +151,7 @@ struct StyleEditorView: View {
 
     private var savedContinueTitle: String {
         switch model.draft.source {
-        case .onboarding: "Explore AQD"
+        case .onboarding: "Show me around"
         case .profile: "Back to Profile"
         case .settings: "Back to Settings"
         }

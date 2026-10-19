@@ -69,12 +69,14 @@ final class StyleEditorModel: Identifiable {
         if saved != nil && openCloset {
             state.openClosetDestination()
             state.profileSettings = false
-            state.reloadEntryAfterStyle = true
+            // Swap what sits under the closing sheet now, so it slides away onto the closet instead of flashing Welcome.
+            state.reloadEntry()
             state.styleEditor = nil
             return
         }
         if draft.source == .onboarding {
-            if saved != nil { state.reloadEntryAfterStyle = true }
+            // Under the closing sheet the tour is already in place, so Show me around goes straight into it.
+            if saved != nil { state.reloadEntry() }
             else { state.reloadEntry() }
         } else {
             state.selection = 4

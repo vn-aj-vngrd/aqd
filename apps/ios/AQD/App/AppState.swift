@@ -104,7 +104,6 @@ final class AppState {
     var profileHistory = false
     var profileInsights = false
     var entry = PrivateEntryState(alreadyEntered: true)
-    var reloadEntryAfterStyle = false
 
     init(deferOpening: Bool = false) {
         if deferOpening { isOpening = true } else { openStore() }

@@ -88,7 +88,8 @@ private struct AppRootView: View {
                     SecondaryAction(title: "Choose an archive") { state.openRestore() }
                 }
             } else if state.entry.page != .main {
-                rootContent(PrivateEntryView())
+                // The first-run tour sits in the root, not a cover, so leaving the preferences sheet lands directly on it.
+                if state.entry.tour != nil { rootContent(PrivateTourView()) } else { rootContent(PrivateEntryView()) }
             } else {
                 NativeTabs(selection: $state.selection,
                            today: { rootContent(TodayView()) },
@@ -266,15 +267,10 @@ private struct AppRootView: View {
         .sheet(item: $state.capture, onDismiss: { state.retryPhotoCleanup(); state.finishOutfitCaptureReturn() }) { model in
             PieceCaptureView(model: model).environment(state)
         }
-        .fullScreenCover(item: $state.styleEditor, onDismiss: {
-            if state.reloadEntryAfterStyle {
-                state.reloadEntryAfterStyle = false
-                state.reloadEntry()
-            }
-        }) { model in
+        .fullScreenCover(item: $state.styleEditor) { model in
             rootContent(StyleEditorView(model: model))
         }
-        .fullScreenCover(isPresented: Binding(get: { state.entry.tour != nil }, set: { presented in
+        .fullScreenCover(isPresented: Binding(get: { state.entry.tour != nil && state.entry.page == .main }, set: { presented in
             if !presented && state.entry.tour != nil { state.updateEntry { $0.tour = nil } }
         })) { rootContent(PrivateTourView()) }
     }
