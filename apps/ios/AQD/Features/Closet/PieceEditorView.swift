@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// One editor for a piece photo: Crop and rotate beside Cut out, so they combine in any order. Each tab applies its own edit and
-/// stays open; Close leaves. Switching tabs with an unapplied edit asks first, because the other tab starts from the applied photo.
+/// One editor for a piece photo: Crop and rotate beside Cut out, so one sheet covers both. Apply saves the current tab's edit and closes;
+/// reopen the other tab to add to it. Switching tabs with an unapplied edit asks first, because the other tab starts from the applied photo.
 struct PieceEditorView: View {
     enum Mode: String, CaseIterable, Identifiable {
         case frame = "Crop and rotate", cutout = "Cut out"
@@ -11,7 +11,6 @@ struct PieceEditorView: View {
     @Bindable var capture: CaptureModel
     @State var mode: Mode
     @State private var dirty = false
-    @State private var applied = 0
     @State private var pendingMode: Mode?
     @State private var discardToSwitch = false
     @State private var discardToClose = false
@@ -30,7 +29,7 @@ struct PieceEditorView: View {
                 case .cutout: PieceCutoutView(capture: capture, embedding: embedding)
                 }
             }
-            .id("\(mode.rawValue)-\(applied)")
+            .id(mode.rawValue)
             .safeAreaInset(edge: .top, spacing: 0) {
                 AppSegmentedControl(selection: Binding(get: { mode.rawValue }, set: { choose(Mode(rawValue: $0) ?? mode) }),
                                     options: Mode.allCases.map(\.rawValue), accessibilityTitle: "Photo editing", identifierPrefix: "photo.editor.mode")
@@ -55,7 +54,7 @@ struct PieceEditorView: View {
     }
 
     private var embedding: EmbeddedEditing {
-        EmbeddedEditing(dirty: { dirty = $0 }, applied: { dirty = false; applied += 1 })
+        EmbeddedEditing(dirty: { dirty = $0 }, applied: { dirty = false; dismiss() })
     }
 
     private func choose(_ next: Mode) {
