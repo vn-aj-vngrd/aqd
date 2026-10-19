@@ -5,24 +5,21 @@ struct LocalRestoreView: View {
     @Bindable var model: LocalRestoreModel
     let onCancel: () -> Void
     let onInstall: (PieceStore, LocalDataCoordinator, Int) -> Void
+    var embedded = false
     @State private var files = false
     @State private var confirmation = false
     var body: some View {
-        NavigationStack {
+        container {
             ScrollView { VStack(alignment: .leading, spacing: 20) {
                 switch model.phase {
                 case .choose:
                     Text("Choose a closet archive").font(AppTypography.section)
                     Text("Restore replaces this iPhone’s local closet after validation and review. Export your current data first if you want to keep a copy.")
                     Text("Archives up to \(LocalArchivePackage.maximumSizeDescription) are supported.").foregroundStyle(AppTheme.secondary)
-                case .validating:
-                    ProgressView("Validating archive…")
-                    Text("Checking records, media, sizes and schema in a separate copy. Your current closet stays in place.")
+                case .validating, .committing:
+                    EmptyView()
                 case .review:
                     review
-                case .committing:
-                    ProgressView("Restoring your closet…")
-                    Text("Keep AQD open. Your previous closet is retained while the validated copy becomes active.")
                 case .complete:
                     Text("Your closet is restored.").font(AppTypography.section)
                     if let value = model.review { LocalDataSummaryView(summary: value.incomingSummary) }
@@ -37,13 +34,15 @@ struct LocalRestoreView: View {
                     Text("Check the restore outcome").font(AppTypography.section)
                     Text(model.error ?? "Your operation needs reconciliation before another replacement.")
                 }
-            }.padding(20) }.background(AppTheme.canvas).navigationTitle("Restore closet").navigationBarTitleDisplayMode(.inline)
+            }.padding(20) }.background(AppTheme.canvas)
+                .overlay { loadingState }
+                .navigationTitle("Restore closet").navigationBarTitleDisplayMode(.inline)
                 .safeAreaInset(edge: .bottom, spacing: 0) {
                     if model.phase != .validating && model.phase != .committing {
                         ActionFooter { ActionStack { actions } }
                     }
                 }
-                .toolbar { ToolbarItem(placement: .cancellationAction) { if model.phase != .complete {
+                .toolbar { ToolbarItem(placement: .cancellationAction) { if !embedded && model.phase != .complete {
                     Button { if model.cancel() { onCancel() } } label: { Image(systemName: "xmark") }.buttonBorderShape(.circle).accessibilityLabel("Cancel").disabled(model.phase == .committing)
                 } } }
                 .appConfirmation("Replace this iPhone’s closet?", isPresented: $confirmation) {
@@ -55,6 +54,27 @@ struct LocalRestoreView: View {
                     case .failure(let error): if (error as? CocoaError)?.code != .userCancelled { model.error = "The file couldn’t be opened. Your closet has not changed."; model.phase = .failed } }
                 }
         }.tint(AppTheme.ink).onAppear { if model.phase == .review { model.refresh() } }.interactiveDismissDisabled(model.phase != .choose && model.phase != .newer && model.review != nil || model.phase == .validating || model.phase == .committing)
+    }
+
+    /// Pushed from Settings it is a page with the system back button; elsewhere it brings its own stack.
+    @ViewBuilder private func container(@ViewBuilder _ content: () -> some View) -> some View {
+        if embedded {
+            content().navigationBarBackButtonHidden(model.phase == .validating || model.phase == .committing)
+        } else { NavigationStack { content() } }
+    }
+    /// Centered like every other waiting page, instead of a spinner stranded at the top of a scroll view.
+    @ViewBuilder private var loadingState: some View {
+        switch model.phase {
+        case .validating:
+            LoadingStatePage(title: "Validating archive",
+                             description: Text("Checking records, media, sizes and schema in a separate copy. Your current closet stays in place."))
+                .background(AppTheme.canvas)
+        case .committing:
+            LoadingStatePage(title: "Restoring your closet",
+                             description: Text("Keep AQD open. Your previous closet is retained while the validated copy becomes active."))
+                .background(AppTheme.canvas)
+        default: EmptyView()
+        }
     }
     @ViewBuilder private var actions: some View {
         switch model.phase {

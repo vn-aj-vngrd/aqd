@@ -193,7 +193,8 @@ private struct AppRootView: View {
         } message: {
             Text(state.collectionError ?? "Keep your existing app data for recovery.")
         }
-        .fullScreenCover(item: $state.restoreModel, onDismiss: {
+        .onChange(of: ObjectIdentifier(state), initial: true) { state.installReplacement = onInstall }
+        .fullScreenCover(item: Binding(get: { state.restoreInSettings ? nil : state.restoreModel }, set: { state.restoreModel = $0 }), onDismiss: {
             if let pending = pendingInstallation { pendingInstallation = nil; onInstall(pending.0, pending.1, pending.2) }
         }) { model in
             if model.kind == .erase {

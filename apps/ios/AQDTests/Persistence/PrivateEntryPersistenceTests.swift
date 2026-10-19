@@ -95,6 +95,6 @@ struct PrivateEntryPersistenceTests {
         #expect(WelcomeGarments.images["shirt"] === first)
         #expect(first.size.width == 390)
         #expect(first.size.height == 380)
-        #expect(Bundle.main.url(forResource: "LaunchScreen", withExtension: "storyboardc") != nil)
+        #expect(Bundle.main.url(forResource: "Launch", withExtension: "storyboardc") != nil)
     }
 }

@@ -161,14 +161,9 @@ struct WelcomeView: View {
         .onChange(of: reduceMotion) { _, reduced in if reduced { settle() } }
         .onDisappear { settle() }
     }
-    /// A small lockup: the glass Q beside the name, like a maker's label rather than a hero.
+    /// The glass Q alone, small, like a maker's label rather than a hero.
     private var brand: some View {
-        HStack(spacing: 2) {
-            AQDMark(size: 40).accessibilityHidden(true)
-            Text("AQD").font(.system(size: 19, weight: .semibold)).tracking(3).foregroundStyle(AppTheme.ink)
-        }
-        .frame(maxWidth: .infinity)
-        .accessibilityElement(children: .ignore).accessibilityLabel("AQD").accessibilityAddTraits(.isHeader)
+        AQDMark(size: 64).frame(maxWidth: .infinity).accessibilityAddTraits(.isHeader)
     }
     private var welcomeHeadline: AttributedString {
         var text = AttributedString("More from what you already own.")
