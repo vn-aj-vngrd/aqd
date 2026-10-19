@@ -112,7 +112,6 @@ struct WelcomeView: View {
     @State private var stage = 3
     @State private var glint: CGFloat = -1
     @State private var played = false
-    @State private var tilt = DeviceTilt()
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
@@ -120,7 +119,7 @@ struct WelcomeView: View {
                 VStack(spacing: AppSpacing.section) {
                     brand
                     Spacer(minLength: 0)
-                    WelcomeWardrobe(pose: pose, tilt: reduceMotion ? .zero : CGSize(width: tilt.x, height: tilt.y)).padding(.horizontal, AppSpacing.small)
+                    WelcomeWardrobe(pose: pose).padding(.horizontal, AppSpacing.small)
                     Spacer(minLength: 0)
                     VStack(spacing: AppSpacing.small) {
                         Text(welcomeHeadline).font(.largeTitle.weight(.medium)).tracking(-0.8).multilineTextAlignment(.center)
@@ -145,15 +144,14 @@ struct WelcomeView: View {
                 .opacity(stage >= 3 ? 1 : 0).offset(y: stage >= 3 ? 0 : 18)
         }
         .task(id: scenePhase) {
-            guard scenePhase == .active else { settle(); tilt.stop(); return }
+            guard scenePhase == .active else { settle(); return }
             if previewDismiss == nil { state.markWelcomeArrival() }
-            if !reduceMotion { tilt.start() }
             guard !played, !reduceMotion else { settle(); return }
             played = true
             await play()
         }
-        .onChange(of: reduceMotion) { _, reduced in if reduced { settle(); tilt.stop() } else { tilt.start() } }
-        .onDisappear { settle(); tilt.stop() }
+        .onChange(of: reduceMotion) { _, reduced in if reduced { settle() } }
+        .onDisappear { settle() }
     }
     /// One orchestrated entrance: the mark surfaces, the closet assembles piece by piece, then the promise and the action rise,
     /// and a single highlight crosses the glass. Every arrival plays it; Reduce Motion shows the finished screen at once.
@@ -192,8 +190,6 @@ struct WelcomeView: View {
                 .mask { Image("BrandMark").resizable().scaledToFit() }
                 .allowsHitTesting(false).accessibilityHidden(true)
             }
-            .rotation3DEffect(.degrees(reduceMotion ? 0 : tilt.x * 12), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
-            .rotation3DEffect(.degrees(reduceMotion ? 0 : -tilt.y * 10), axis: (x: 1, y: 0, z: 0), perspective: 0.5)
             .opacity(stage >= 1 ? 1 : 0)
             .scaleEffect(stage >= 1 ? 1 : 0.9)
             .blur(radius: stage >= 1 ? 0 : 8)

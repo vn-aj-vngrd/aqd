@@ -33,8 +33,6 @@ import UIKit
 struct WelcomeWardrobe: View {
     enum Pose { case gathered, forming, settled }
     var pose: Pose = .settled
-    /// Phone tilt in -1...1. Each piece sits at its own depth, so nearer pieces travel further and the closet reads as layered.
-    var tilt: CGSize = .zero
     @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     var body: some View {
@@ -58,7 +56,6 @@ struct WelcomeWardrobe: View {
                                 .scaleEffect(pose == .gathered ? 0.9 : 1)
                                 .opacity(pose == .gathered ? 0 : 1)
                                 .position(x: (position.0 + piece.w / 2) * scale, y: (position.1 + piece.h / 2) * scale)
-                                .offset(x: tilt.width * depth(index) * 14 * scale, y: tilt.height * depth(index) * 10 * scale)
                                 // Each piece arrives a beat after the last, so the closet assembles rather than snaps.
                                 .animation(reduceMotion ? nil : .spring(duration: 0.75, bounce: 0.1).delay(Double(index) * 0.035), value: pose)
                         }
@@ -67,15 +64,11 @@ struct WelcomeWardrobe: View {
                     Image(systemName: "tshirt").font(.system(size: 80)).foregroundStyle(AppTheme.secondary)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-            }
-            .rotation3DEffect(.degrees(tilt.width * 7), axis: (x: 0, y: 1, z: 0), perspective: 0.6)
-            .rotation3DEffect(.degrees(-tilt.height * 5), axis: (x: 1, y: 0, z: 0), perspective: 0.6)
+            }.clipped()
         }.aspectRatio(350.0 / 324, contentMode: .fit)
             .frame(maxWidth: typeSize.isAccessibilitySize ? 230 : 350)
             .frame(maxWidth: .infinity).accessibilityHidden(true)
     }
-    /// A fixed, uneven depth per piece between 0.25 and 1, so neighbours never move together.
-    private func depth(_ index: Int) -> Double { [0.55, 1, 0.35, 0.8, 0.45, 0.95, 0.25, 0.7, 0.6, 0.9, 0.4, 0.75][index % 12] }
     private func position(_ piece: WelcomeGarments.Piece, forming: [Double]) -> (Double, Double, Double) {
         switch pose {
         case .settled: (piece.x, piece.y, piece.r)
