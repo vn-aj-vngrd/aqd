@@ -4,6 +4,7 @@ import SwiftUI
 /// for a clean transparent result. Done saves a transparent PNG as the draft photo; the original is kept.
 struct PieceCutoutView: View {
     @Bindable var capture: CaptureModel
+    var embedding: EmbeddedEditing?
     @Environment(\.dismiss) private var dismiss
     @State private var model: PieceCutoutModel?
     @State private var applying = false
@@ -11,37 +12,44 @@ struct PieceCutoutView: View {
     @State private var discard = false
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if let model {
-                    editor(model)
-                } else {
-                    VStack(spacing: AppSpacing.medium) {
-                        SemanticFeedback(role: .warning, message: error ?? "Cutout isn’t available for this photo. Your photo and fields are unchanged.")
-                        SecondaryAction(title: "Close") { dismiss() }
-                    }.padding(AppSpacing.screen).frame(maxHeight: .infinity, alignment: .top)
-                }
+        if embedding == nil { NavigationStack { content } } else { content }
+    }
+
+    private var content: some View {
+        Group {
+            if let model {
+                editor(model)
+            } else {
+                VStack(spacing: AppSpacing.medium) {
+                    SemanticFeedback(role: .warning, message: error ?? "Cutout isn’t available for this photo. Your photo and fields are unchanged.")
+                    if embedding == nil { SecondaryAction(title: "Close") { dismiss() } }
+                }.padding(AppSpacing.screen).frame(maxHeight: .infinity, alignment: .top)
             }
-            .background(AppTheme.canvas)
-            .navigationTitle("Cut out piece").navigationBarTitleDisplayMode(.inline)
-            .toolbar {
+        }
+        .background(AppTheme.canvas)
+        .navigationTitle(embedding == nil ? "Cut out piece" : "Edit photo").navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if embedding == nil {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         if model?.edited == true { discard = true } else { dismiss() }
                     } label: { Image(systemName: "xmark") }
                         .accessibilityLabel("Cancel cutout").disabled(applying)
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    ToolbarSaveAction(title: "Done", isPending: applying) { apply() }
-                        .disabled(model == nil || model?.phase == .detecting || model?.hasKeptPixels != true || applying)
-                }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                ToolbarSaveAction(title: embedding == nil ? "Done" : "Apply", isPending: applying) { apply() }
+                    .disabled(model == nil || model.map { [.choosing, .detecting, .unsupported].contains($0.phase) } != false || model?.hasKeptPixels != true || applying)
             }
         }
-        .tint(AppTheme.ink).interactiveDismissDisabled()
+        .tint(AppTheme.ink)
         .draftDiscardConfirmation(isPresented: $discard, title: "Discard this cutout?", message: "Your photo stays as it was. Original Photos are unchanged.") { dismiss() }
         .onAppear(perform: open)
         .onDisappear { model?.cancel() }
+        .onChange(of: model.map { $0.edited || ($0.phase == .ready && !$0.hasSavedCutout) } ?? false) { _, value in embedding?.dirty(value) }
     }
+
+    private func finish() { if let embedding { embedding.applied() } else { dismiss() } }
 
     private func open() {
         guard model == nil else { return }
@@ -60,9 +68,7 @@ struct PieceCutoutView: View {
                 let outcome = try await model.finish()
                 if capture.acceptBackground(outcome.prepared, input: model.source, crop: outcome.crop) {
                     capture.photoHints = outcome.hints
-                    capture.cutoutState = .applied
-                    capture.offersCutout = false
-                    dismiss()
+                    finish()
                 }
                 else { error = capture.errorText ?? "The photo changed. Cancel and open the cutout again." }
             } catch {
@@ -77,62 +83,113 @@ struct PieceCutoutView: View {
             CutoutCanvas(model: model)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .clipShape(RoundedRectangle(cornerRadius: AppRadius.field))
+                .overlay(alignment: .top) { if [.ready, .noSubject, .failed].contains(model.phase) { canvasControls(model) } }
             controls(model)
         }.padding(.horizontal, AppSpacing.screen).padding(.bottom, AppSpacing.small)
     }
 
     @ViewBuilder private func controls(_ model: PieceCutoutModel) -> some View {
-        let bound = Bindable(model)
+        if model.phase == .choosing || model.phase == .unsupported || model.phase == .detecting {
+            choice(model)
+        } else {
+            tools(model)
+        }
+    }
+
+    /// Nothing runs on its own: the person picks Auto cut out, or starts by hand. Where the iPhone has no subject model, only by hand is offered.
+    private func choice(_ model: PieceCutoutModel) -> some View {
         VStack(alignment: .leading, spacing: AppSpacing.small) {
-            if let message = hint(for: model) { SemanticFeedback(role: .warning, message: message) }
-            if let error { SemanticFeedback(role: .danger, message: error) }
-            ScrollView(.horizontal) {
+            if model.phase == .detecting {
                 HStack(spacing: AppSpacing.small) {
-                    ForEach(PieceCutoutModel.Tool.allCases, id: \.self) { tool in
-                        AppChip(title: tool.rawValue, isSelected: model.tool == tool) { model.tool = tool }
-                    }
-                    AppChip(title: "Original", isSelected: model.showOriginal) { model.showOriginal.toggle() }
+                    ProgressView().accessibilityHidden(true)
+                    Text("Finding the piece…").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    Spacer()
+                    Button("Cancel") { model.cancel(); model.startByHand() }.frame(minHeight: AppControlMetrics.minimumTarget)
+                }.accessibilityElement(children: .combine)
+            } else {
+                Text(model.phase == .unsupported ? "Automatic cut out isn’t available on this iPhone. Erase the background by hand instead."
+                                                 : "Let AQD find the piece, then fine tune it. Or erase the background yourself.")
+                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                if model.phase != .unsupported {
+                    Button { model.detectAutomatically() } label: {
+                        GlassActionLabel(title: "Auto cut out", systemImage: "wand.and.stars", prominent: true, height: AppControlMetrics.actionHeight)
+                    }.buttonStyle(.plain).accessibilityIdentifier("cutout.auto")
                 }
-            }.scrollIndicators(.hidden)
-            if model.tool == .erase || model.tool == .restore {
-                sliderRow("Brush", value: bound.brushRadius, range: 8...48)
-            }
-            sliderRow("Zoom", value: bound.zoom, range: 1...4)
-            sliderRow("Softness", value: bound.feather, range: 0...4, onChange: { model.refresh() })
-            ScrollView(.horizontal) {
-                HStack(spacing: AppSpacing.small) {
-                    Text("Background").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    ForEach(CutoutBackground.allCases, id: \.self) { option in
-                        AppChip(title: option.rawValue, isSelected: model.background == option) { model.background = option; model.refresh() }
-                    }
-                }
-            }.scrollIndicators(.hidden)
-            HStack(spacing: AppSpacing.medium) {
-                iconButton("arrow.uturn.backward", label: "Undo", enabled: model.canUndo) { model.undo() }
-                iconButton("arrow.uturn.forward", label: "Redo", enabled: model.canRedo) { model.redo() }
-                Button("Reset") { model.reset() }.frame(minHeight: AppControlMetrics.minimumTarget)
-                    .disabled(!model.edited && !model.isTrimmed)
-                if model.hasSavedCutout {
-                    Button("Use original") { capture.useOriginalPhoto(); dismiss() }.frame(minHeight: AppControlMetrics.minimumTarget)
-                }
-                Spacer()
-                Toggle("Fit to piece", isOn: bound.fitToPiece).labelsHidden()
-                Text("Fit to piece").font(AppTypography.supporting)
+                Button { model.startByHand() } label: {
+                    GlassActionLabel(title: "Cut out by hand", systemImage: "hand.draw", height: AppControlMetrics.actionHeight)
+                }.buttonStyle(.plain).accessibilityIdentifier("cutout.manual")
             }
         }
     }
 
+    /// Tool first, then only what that tool needs, then the finishing options grouped in one card. Undo, redo and Original sit on the photo.
+    @ViewBuilder private func tools(_ model: PieceCutoutModel) -> some View {
+        let bound = Bindable(model)
+        VStack(alignment: .leading, spacing: AppSpacing.medium) {
+            if let message = hint(for: model) { SemanticFeedback(role: .warning, message: message) }
+            if let error { SemanticFeedback(role: .danger, message: error) }
+            if (model.phase == .noSubject || model.phase == .failed) && PhotoBackgroundRemover.isSupported {
+                Button("Try auto cut out again") { model.detectAutomatically() }.frame(minHeight: AppControlMetrics.minimumTarget)
+            }
+            AppSegmentedControl(selection: Binding(get: { model.tool.rawValue }, set: { model.tool = PieceCutoutModel.Tool(rawValue: $0) ?? model.tool }),
+                                options: PieceCutoutModel.Tool.allCases.map(\.rawValue), accessibilityTitle: "Cutout tool", identifierPrefix: "cutout.tool")
+            if model.tool == .erase || model.tool == .restore {
+                sliderRow("Brush", value: bound.brushRadius, range: 8...48)
+            }
+            VStack(alignment: .leading, spacing: AppSpacing.medium) {
+                sliderRow("Zoom", value: bound.zoom, range: 1...4)
+                sliderRow("Softness", value: bound.feather, range: 0...4, onChange: { model.refresh() })
+                Divider().overlay(AppTheme.divider)
+                HStack(spacing: AppSpacing.medium) {
+                    Text("Background").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).frame(width: 84, alignment: .leading)
+                    AppSegmentedControl(selection: Binding(get: { model.background.rawValue },
+                                                           set: { model.background = CutoutBackground(rawValue: $0) ?? model.background; model.refresh() }),
+                                        options: CutoutBackground.allCases.map(\.rawValue), accessibilityTitle: "Background", identifierPrefix: "cutout.background")
+                }
+                Divider().overlay(AppTheme.divider)
+                Toggle(isOn: bound.fitToPiece) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Fit to piece").font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                        Text("Frame the photo around the piece").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                    }
+                }.toggleStyle(AppToggleStyle())
+            }.padding(AppSpacing.medium).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
+            HStack(spacing: AppSpacing.large) {
+                Button("Reset") { model.reset() }.frame(minHeight: AppControlMetrics.minimumTarget).disabled(!model.edited && !model.isTrimmed)
+                if model.hasSavedCutout {
+                    Button("Use original photo") { capture.useOriginalPhoto(); finish() }.frame(minHeight: AppControlMetrics.minimumTarget)
+                }
+                Spacer()
+            }
+        }
+    }
+
+    /// Glass controls floating on the photo, so the panel below holds only settings.
+    private func canvasControls(_ model: PieceCutoutModel) -> some View {
+        HStack(alignment: .top) {
+            HStack(spacing: AppSpacing.small) {
+                iconButton("arrow.uturn.backward", label: "Undo", enabled: model.canUndo) { model.undo() }
+                iconButton("arrow.uturn.forward", label: "Redo", enabled: model.canRedo) { model.redo() }
+            }
+            Spacer()
+            Button { model.showOriginal.toggle() } label: {
+                Image(systemName: model.showOriginal ? "eye.fill" : "eye").foregroundStyle(AppTheme.ink)
+                    .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget).glassControlSurface(Circle())
+            }.buttonStyle(.plain).accessibilityLabel("Compare with original").accessibilityValue(model.showOriginal ? "On" : "Off")
+        }.padding(AppSpacing.small)
+    }
+
     private func hint(for model: PieceCutoutModel) -> String? {
         switch model.phase {
-        case .noSubject: "No piece was detected. Erase the background by hand, or Trim the sides."
-        case .failed: "Automatic cutout isn’t available for this photo. Erase the background by hand."
+        case .noSubject: "No piece was found. Try again, or erase the background by hand."
+        case .failed: "Auto cut out didn’t work on this photo. Try again, or erase the background by hand."
         default: model.phase == .ready && !model.hasKeptPixels ? "Nothing is kept. Use Restore, or Reset." : nil
         }
     }
 
     private func sliderRow(_ title: String, value: Binding<CGFloat>, range: ClosedRange<CGFloat>, onChange: (() -> Void)? = nil) -> some View {
         HStack(spacing: AppSpacing.medium) {
-            Text(title).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).frame(width: 64, alignment: .leading)
+            Text(title).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).frame(width: 84, alignment: .leading)
             Slider(value: value, in: range, onEditingChanged: { editing in if !editing { onChange?() } }).accessibilityLabel(title)
         }
     }
@@ -186,7 +243,7 @@ private struct CutoutCanvas: View {
         ZStack {
             Checkerboard()
             if let work = model.workImage {
-                if model.showOriginal || model.phase == .detecting {
+                if model.showOriginal || model.phase == .detecting || model.phase == .choosing || model.phase == .unsupported {
                     image(work)
                 } else {
                     if model.tool == .erase || model.tool == .restore { image(work).opacity(0.22) }

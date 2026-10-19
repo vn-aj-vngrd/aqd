@@ -27,7 +27,7 @@ struct PieceCaptureView: View {
     @State private var showDetails = false
     @State private var manageCategories = false
     @State private var showPhotoEditor = false
-    @State private var showBackgroundRemoval = false
+    @State private var editorMode = PieceEditorView.Mode.frame
     @State private var discardDecision = false
     @State private var cameraDenied = false
     @State private var cameraRestricted = false
@@ -105,14 +105,13 @@ struct PieceCaptureView: View {
                 .ignoresSafeArea()
         }
         .sheet(isPresented: $showDetails) { PieceDetailsView(model: model) }
-        .sheet(isPresented: $showBackgroundRemoval) { PieceCutoutView(capture: model) }
         .editImportedPhoto(model, importing: model.isImporting, locked: model.isSaving, presented: $showPhotoEditor)
-        .sheet(isPresented: $showPhotoEditor) { PhotoEditorView(model: model, isPresentedModally: true) }
+        .sheet(isPresented: $showPhotoEditor, onDismiss: { editorMode = .frame }) { PieceEditorView(capture: model, mode: editorMode) }
         .onAppear {
-            if model.opensCutout { model.opensCutout = false; showBackgroundRemoval = true }
+            if model.opensCutout { model.opensCutout = false; editorMode = .cutout; showPhotoEditor = true }
         }
         .onChange(of: model.opensCutout) { _, requested in
-            if requested { model.opensCutout = false; showBackgroundRemoval = true }
+            if requested { model.opensCutout = false; editorMode = .cutout; showPhotoEditor = true }
         }
         .onDisappear { model.cancelImport() }
     }
@@ -121,7 +120,6 @@ struct PieceCaptureView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.large) {
                 mediaContent
-                cutoutChoice
                 if !model.photoHints.isEmpty {
                     VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
                         ForEach(model.photoHints, id: \.self) { hint in
@@ -157,74 +155,6 @@ struct PieceCaptureView: View {
             .disabled(model.isSaving)
         }
         .scrollDismissesKeyboard(.interactively)
-    }
-
-    /// After a photo is added nothing runs on its own: the person chooses to cut out automatically, edit by hand, or both.
-    /// Working, failed and unsupported are each shown here with a way forward, so no state is a dead end.
-    @ViewBuilder private var cutoutChoice: some View {
-        if model.draft.photoID != nil, !model.isImporting {
-            switch model.cutoutState {
-            case .working:
-                HStack(spacing: AppSpacing.small) {
-                    ProgressView().accessibilityHidden(true)
-                    Text("Cutting out the piece…").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                    Spacer()
-                    Button("Cancel") { model.cancelCutout() }.frame(minHeight: AppControlMetrics.minimumTarget)
-                }.accessibilityElement(children: .combine).accessibilityIdentifier("capture.cutout.working")
-            case .applied:
-                cutoutCard(symbol: "checkmark.circle", title: "Cut out", message: "Fine tune it by hand, or go back to your original photo.") {
-                    cutoutButton("Fine tune", symbol: "scissors", id: "capture.cutout.refine") { showBackgroundRemoval = true }
-                    Button("Use original photo") { model.useOriginalPhoto() }.frame(minHeight: AppControlMetrics.minimumTarget)
-                }
-            case .noSubject:
-                cutoutCard(symbol: "exclamationmark.circle", title: "No piece found",
-                           message: "Try a flatter piece on a plain surface, or erase the background by hand.") {
-                    cutoutButton("Edit by hand", symbol: "scissors", id: "capture.cutout.manual") { showBackgroundRemoval = true }
-                    Button("Keep original") { model.dismissCutoutOffer() }.frame(minHeight: AppControlMetrics.minimumTarget)
-                }
-            case .failed:
-                cutoutCard(symbol: "exclamationmark.triangle", title: "Cut out failed",
-                           message: "Your photo is unchanged. Try again, or edit it by hand.") {
-                    if PhotoBackgroundRemover.isSupported {
-                        cutoutButton("Try again", symbol: "arrow.clockwise", id: "capture.cutout.retry") { model.autoCutout() }
-                    }
-                    cutoutButton("Edit by hand", symbol: "scissors", id: "capture.cutout.manual") { showBackgroundRemoval = true }
-                    Button("Keep original") { model.dismissCutoutOffer() }.frame(minHeight: AppControlMetrics.minimumTarget)
-                }
-            case .unsupported:
-                cutoutCard(symbol: "info.circle", title: "Automatic cut out isn’t available",
-                           message: "This iPhone can’t cut out pieces automatically. Edit it by hand instead.") {
-                    cutoutButton("Edit by hand", symbol: "scissors", id: "capture.cutout.manual") { showBackgroundRemoval = true }
-                }
-            case .idle:
-                if model.offersCutout, !model.hasProcessedPhoto {
-                    let supported = PhotoBackgroundRemover.isSupported
-                    cutoutCard(symbol: "scissors", title: "Cut out the background?",
-                               message: supported ? "Let AQD do it, then fine tune by hand if you like. Or skip it and edit by hand."
-                                                  : "Automatic cut out isn’t available on this iPhone. Edit it by hand instead.") {
-                        if supported { cutoutButton("Auto cut out", symbol: "wand.and.stars", id: "capture.cutout.auto") { model.autoCutout() } }
-                        cutoutButton("Edit by hand", symbol: "hand.draw", id: "capture.cutout.manual") { showBackgroundRemoval = true }
-                        Button("Keep original") { model.dismissCutoutOffer() }.frame(minHeight: AppControlMetrics.minimumTarget)
-                    }
-                }
-            }
-        }
-    }
-
-    private func cutoutCard<Actions: View>(symbol: String, title: String, message: String, @ViewBuilder actions: () -> Actions) -> some View {
-        VStack(alignment: .leading, spacing: AppSpacing.small) {
-            Label(title, systemImage: symbol).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
-            Text(message).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-            VStack(spacing: AppSpacing.small, content: actions).frame(maxWidth: .infinity)
-        }.frame(maxWidth: .infinity, alignment: .leading).padding(AppSpacing.medium)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
-            .accessibilityElement(children: .contain).accessibilityIdentifier("capture.cutout.choice")
-    }
-
-    private func cutoutButton(_ title: String, symbol: String, id: String, action: @escaping () -> Void) -> some View {
-        Button { nameEditing = false; action() } label: {
-            GlassActionLabel(title: title, systemImage: symbol, height: AppControlMetrics.actionHeight)
-        }.buttonStyle(.plain).accessibilityIdentifier(id)
     }
 
     /// What still blocks Save, in plain words. Empty once the piece can be saved.
@@ -277,7 +207,7 @@ struct PieceCaptureView: View {
     private func photoAction(_ title: String, systemImage: String, id: String, label: String, action: @escaping () -> Void) -> some View {
         Button { nameEditing = false; action() } label: {
             Label(title, systemImage: systemImage).compactControl()
-        }.buttonStyle(.plain).disabled(model.isImporting || model.isSaving || model.cutoutState == .working)
+        }.buttonStyle(.plain).disabled(model.isImporting || model.isSaving)
             .accessibilityLabel(label).accessibilityIdentifier(id)
     }
 
@@ -298,9 +228,9 @@ struct PieceCaptureView: View {
             .overlay(alignment: .bottomLeading) {
                 if image != nil {
                     HStack(spacing: AppSpacing.small) {
-                        photoAction("Crop", systemImage: "crop", id: "capture.crop", label: "Crop photo") { showPhotoEditor = true }
+                        photoAction("Crop", systemImage: "crop", id: "capture.crop", label: "Crop photo") { editorMode = .frame; showPhotoEditor = true }
                         photoAction(model.hasProcessedPhoto ? "Refine" : "Cut out", systemImage: "scissors", id: "capture.cutout",
-                                    label: model.hasProcessedPhoto ? "Refine cutout" : "Cut out piece") { showBackgroundRemoval = true }
+                                    label: model.hasProcessedPhoto ? "Refine cutout" : "Cut out piece") { editorMode = .cutout; showPhotoEditor = true }
                     }.padding(AppSpacing.medium)
                 }
             }
@@ -316,16 +246,15 @@ struct PieceCaptureView: View {
                             .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
                             .glassControlSurface(Circle())
                     }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
-                        .disabled(model.isImporting || model.isSaving || model.cutoutState == .working)
+                        .disabled(model.isImporting || model.isSaving)
                         .padding(AppSpacing.medium)
                         .accessibilityLabel("Change piece photo").accessibilityIdentifier("capture.addPhoto").accessibilityFocused($photoFocused)
                 }
             }
             .overlay {
-                if model.isImporting || model.cutoutState == .working {
+                if model.isImporting {
                     VStack(spacing: AppSpacing.small) {
                         ProgressView().controlSize(.large)
-                        if model.cutoutState == .working { Text("Cutting out the piece…").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
                     }.padding(AppSpacing.large).background(.regularMaterial, in: RoundedRectangle(cornerRadius: AppRadius.group))
                 }
             }

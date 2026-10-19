@@ -73,3 +73,10 @@ extension LocalIdentityEditorModel: PhotoEditingOwner {
         }
     }
 }
+
+/// Lets one editor live inside a container with other editors (crop and rotate beside cut out). The container owns the sheet,
+/// its close button and the switch between tabs; the editor reports unapplied edits and says when it applied them, and does not dismiss.
+struct EmbeddedEditing {
+    let dirty: (Bool) -> Void
+    let applied: () -> Void
+}

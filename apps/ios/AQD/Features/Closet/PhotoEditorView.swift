@@ -4,13 +4,14 @@ import SwiftUI
 
 struct PhotoEditorView<Model: PhotoEditingOwner>: View {
     private var confirmation: some View {
-        ToolbarSaveAction(title: "Done", isPending: applying) { apply() }
+        ToolbarSaveAction(title: embedding == nil ? "Done" : "Apply", isPending: applying) { apply() }
                         .disabled(!previewState.canUsePhoto(quarterTurns: quarterTurns, applying: applying)
                                   || recipe == nil || previewImage == nil || originalWidth <= 0 || originalHeight <= 0)
     }
 
     @Bindable var model: Model
     let isPresentedModally: Bool
+    var embedding: EmbeddedEditing?
     @Environment(\.dismiss) private var dismiss
     private let sourceID: UUID?
     private let previousRecipe: PhotoEditRecipe
@@ -36,9 +37,10 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
     @State private var previewPreparer = PhotoPreparer()
     @GestureState private var dragging = false
 
-    init(model: Model, isPresentedModally: Bool = false) {
+    init(model: Model, isPresentedModally: Bool = false, embedding: EmbeddedEditing? = nil) {
         self.model = model
         self.isPresentedModally = isPresentedModally
+        self.embedding = embedding
         sourceID = model.editingPhotoID
         let recipe = model.editingPhotoRecipe
         previousRecipe = recipe
@@ -87,6 +89,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
             .interactiveDismissDisabled(dirty || applying)
             .task(id: [quarterTurns, previewState.retryGeneration]) { await prepareRotatedPreview() }
             .onDisappear { cancel() }
+            .onChange(of: dirty) { _, value in embedding?.dirty(value) }
     }
 
     private var editor: some View {
@@ -146,6 +149,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
             } }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
+                    if embedding == nil {
                     Button { dirty ? (discardDecision = true) : leave() } label: {
                         Image(systemName: "chevron.backward")
                     }.disabled(applying).accessibilityLabel("Back").accessibilityIdentifier("photo.editor.back")
@@ -154,6 +158,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
                         Button("Cancel", role: .cancel) {}
                     } message: {
                         Text("Only this uncommitted framing will be discarded. Your accepted photo, parent draft and original remain unchanged.")
+                    }
                     }
                 }
             }
@@ -230,7 +235,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
             else { accepted = await model.applyPhotoEdit(recipe, sourceID: sourceID, previousRecipe: previousRecipe) }
             guard !Task.isCancelled else { return }
             applying = false
-            if accepted { dismiss() }
+            if accepted { if let embedding { embedding.applied() } else { dismiss() } }
         }
     }
 

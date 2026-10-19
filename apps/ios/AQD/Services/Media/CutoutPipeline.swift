@@ -14,12 +14,6 @@ struct CutoutOutcome: Sendable {
 enum CutoutPipeline {
     private struct Box: @unchecked Sendable { let mask: CGImage }
 
-    /// Detect the piece with on-device Vision and render it. Throws `BackgroundPhotoError.noForeground` when nothing is found.
-    static func automatic(original: Data) async throws -> CutoutOutcome {
-        let detected = try await PhotoBackgroundRemover.shared.detectMask(data: original)
-        return try await render(original: original, mask: detected.image, background: .transparent, feather: 0, fitToPiece: true)
-    }
-
     /// Apply `mask` to the original at full resolution. The result keeps the original's pixel size.
     static func render(original: Data, mask: CGImage, background: CutoutBackground, feather: CGFloat, fitToPiece: Bool) async throws -> CutoutOutcome {
         let box = Box(mask: mask)
