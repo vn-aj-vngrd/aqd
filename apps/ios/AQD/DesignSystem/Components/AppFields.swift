@@ -262,7 +262,8 @@ struct AppSegmentedControl: View {
 }
 
 /// The one switch for the whole app: a green track with a white knob when on, a visible gray track when off, in both
-/// appearances. Applied once through `appAppearance`, so every Toggle in rows, forms and cards matches.
+/// appearances. Applied once through `appAppearance`, so every Toggle in rows, forms and cards matches. Toggles that live
+/// inside a Menu are checkmark items, not switches: they must set `.toggleStyle(.automatic)` or the menu draws them as disabled text.
 struct AppToggleStyle: ToggleStyle {
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.accessibilityReduceMotion) private var reduceMotion

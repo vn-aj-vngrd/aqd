@@ -135,7 +135,7 @@ struct ClosetView: View {
     private func filterOption<Value: Equatable>(_ title: String, value: Value, selection: Binding<Value>) -> some View {
         Toggle(title, isOn: Binding(get: { selection.wrappedValue == value }, set: { checked in
             if checked { selection.wrappedValue = value }
-        }))
+        })).toggleStyle(.automatic)
     }
     private var collectionSummary: ClosetCollectionSummary {
         let summary = collectionSummaryData
@@ -162,7 +162,7 @@ struct ClosetView: View {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
                 Section {
-                    Toggle("Favorites only", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly)
+                    Toggle("Favorites only", isOn: state.closetSearchActive ? $searchFavoritesOnly : $favoritesOnly).toggleStyle(.automatic)
                 }
                 Section("Filter by Theme") {
                     filterOption("All themes", value: Optional<UUID>.none, selection: state.closetSearchActive ? $searchThemeID : $themeID)
@@ -204,7 +204,7 @@ struct ClosetView: View {
     }
 
     private func statusOption(_ title: String, selected: Bool, action: @escaping () -> Void) -> some View {
-        Toggle(title, isOn: Binding(get: { selected }, set: { checked in if checked { action() } }))
+        Toggle(title, isOn: Binding(get: { selected }, set: { checked in if checked { action() } })).toggleStyle(.automatic)
     }
 
     /// Category chips, the same control as the outfit picker's.
