@@ -424,9 +424,7 @@ struct PieceDetailView: View {
                         }
                         statusChip(piece)
                     }
-                    PrimaryAction(title: "Style this", systemImage: "tshirt", fitsContent: true) { state.buildOutfit(pieceID: piece.id) }
-                        .disabled(piece.isArchived || piece.availability != .available || deleteInFlight)
-                        .accessibilityHint(piece.availability == .available && !piece.isArchived ? "Starts an outfit with this piece" : "Only available pieces can be styled")
+                    styleAction(piece)
                     if !detailRows(piece).isEmpty {
                         VStack(alignment: .leading, spacing: AppSpacing.large) {
                             ForEach(detailRows(piece), id: \.title) { detail($0.title, $0.value) }
@@ -492,6 +490,15 @@ struct PieceDetailView: View {
     }
 
     /// Current availability as a tappable status; tapping opens the availability task.
+    /// The piece's one primary action: a full-width glass button with a centered icon and label.
+    private func styleAction(_ piece: WardrobePiece) -> some View {
+        let enabled = !piece.isArchived && piece.availability == .available && !deleteInFlight
+        return Button { state.buildOutfit(pieceID: piece.id) } label: {
+            GlassActionLabel(title: "Style this", systemImage: "tshirt", height: AppControlMetrics.actionHeight)
+        }.buttonStyle(.plain).disabled(!enabled).opacity(enabled ? 1 : 0.5)
+            .accessibilityHint(enabled ? "Starts an outfit with this piece" : "Only available pieces can be styled")
+    }
+
     private func statusChip(_ piece: WardrobePiece) -> some View {
         let status = PieceStatus(piece), text = status.title, symbol = status.symbol
         return Button { availabilityPresented = true } label: {
