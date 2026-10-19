@@ -577,6 +577,9 @@ final class CaptureModel: Identifiable {
     }
 
     var isImporting: Bool { importGate.pending != nil }
+    /// True while a photo chosen or taken just now is being loaded and prepared (not while an edit is applied), so the editor can open straight away.
+    private(set) var isLoadingNewPhoto = false
+    @ObservationIgnored private var importGeneration = 0
     var canSave: Bool { saved == nil && (draft.baseRevision == nil || hasUnsavedChanges) && (try? draft.validated()) != nil && !isSaving && !isImporting && !draftSaveFailed }
     var receiptIsHistorical: Bool {
         guard let saved, let current = try? state.store?.piece(id: saved.id) else { return false }
@@ -624,8 +627,11 @@ final class CaptureModel: Identifiable {
         cancelImport()
         let request = importGate.begin(for: draft)
         if errorText == Self.photoImportError { errorText = nil }
+        let generation = importGeneration
+        isLoadingNewPhoto = true
         importTask = Task { [weak self] in
             guard let self else { return }
+            defer { if generation == importGeneration { isLoadingNewPhoto = false } }
             do {
                 guard let data = try await load() else {
                     if importGate.canAccept(request, for: draft) { importGate.cancel() }
@@ -650,6 +656,8 @@ final class CaptureModel: Identifiable {
     }
 
     func cancelImport() {
+        importGeneration += 1
+        isLoadingNewPhoto = false
         importGate.cancel()
         importTask?.cancel()
         importTask = nil
@@ -802,7 +810,8 @@ extension CaptureModel {
     func backgroundSourceIsCurrent(_ input: BackgroundPhotoInput) -> Bool {
         !isSaving && !isImporting && saved == nil && draft.id == input.draftID && operationID == input.operationID && draft.photoID == input.sourceID && draft.photoRecipe == input.recipe
     }
-    func acceptBackground(_ prepared: PreparedPhoto?, input: BackgroundPhotoInput, crop: PhotoEditRecipe.NormalizedRect? = nil) -> Bool {
+    func acceptBackground(_ prepared: PreparedPhoto?, input: BackgroundPhotoInput, crop: PhotoEditRecipe.NormalizedRect? = nil,
+                          framed: PreparedPhotoEdit? = nil) -> Bool {
         guard backgroundSourceIsCurrent(input), let store = state.store else { return false }
         do {
             let id: UUID
@@ -810,6 +819,10 @@ extension CaptureModel {
             else { _ = try store.originalPhoto(id: input.originalID); id = input.originalID }
             var recipe = crop.map { PhotoEditRecipe(crop: $0) } ?? .fitOriginal
             if (try? recipe.validated()) == nil { recipe = .fitOriginal }
+            // A cropped photo is shown from its stored crop rendition, so write it before the draft points at it.
+            if recipe != .fitOriginal {
+                if let framed, framed.sourcePhotoID == id, framed.recipe == recipe { try store.acceptPhotoEdit(framed) } else { recipe = .fitOriginal }
+            }
             draft.photoID = id; draft.photoRecipe = recipe; operationID = UUID(); persistDraft()
             return !draftSaveFailed
         } catch { errorText = "The background result could not be applied. Your previous accepted photo is retained."; return false }

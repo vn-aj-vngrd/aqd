@@ -66,7 +66,7 @@ struct PieceCutoutView: View {
         Task {
             do {
                 let outcome = try await model.finish()
-                if capture.acceptBackground(outcome.prepared, input: model.source, crop: outcome.crop) {
+                if capture.acceptBackground(outcome.prepared, input: model.source, crop: outcome.crop, framed: outcome.framed) {
                     capture.photoHints = outcome.hints
                     finish()
                 }

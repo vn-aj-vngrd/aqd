@@ -24,12 +24,16 @@ struct PieceEditorView: View {
     var body: some View {
         NavigationStack {
             Group {
-                switch mode {
-                case .frame: PhotoEditorView(model: capture, embedding: embedding)
-                case .cutout: PieceCutoutView(capture: capture, embedding: embedding)
+                if capture.isLoadingNewPhoto || capture.draft.photoID == nil {
+                    loading
+                } else {
+                    switch mode {
+                    case .frame: PhotoEditorView(model: capture, embedding: embedding)
+                    case .cutout: PieceCutoutView(capture: capture, embedding: embedding)
+                    }
                 }
             }
-            .id(mode.rawValue)
+            .id("\(mode.rawValue)-\(capture.draft.photoID?.uuidString ?? "none")")
             .safeAreaInset(edge: .top, spacing: 0) {
                 AppSegmentedControl(selection: Binding(get: { mode.rawValue }, set: { choose(Mode(rawValue: $0) ?? mode) }),
                                     options: Mode.allCases.map(\.rawValue), accessibilityTitle: "Photo editing", identifierPrefix: "photo.editor.mode")
@@ -51,6 +55,20 @@ struct PieceEditorView: View {
             } message: { Text("Tap Apply first to keep it. Your accepted photo and original stay unchanged.") }
         }
         .tint(AppTheme.ink).toggleStyle(AppToggleStyle()).interactiveDismissDisabled(dirty)
+    }
+
+    /// The editor opens the moment a photo is chosen or taken and shows this until the photo is ready, so Add piece never flashes between.
+    private var loading: some View {
+        VStack(spacing: AppSpacing.large) {
+            if capture.isLoadingNewPhoto {
+                ProgressView().controlSize(.large).accessibilityHidden(true)
+                Text("Preparing photo…").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                Button("Cancel") { capture.cancelImport(); dismiss() }.frame(minHeight: AppControlMetrics.minimumTarget)
+            } else {
+                // The photo could not be prepared: the reason is on Add piece, so go back to it.
+                Color.clear.onAppear { dismiss() }
+            }
+        }.frame(maxWidth: .infinity, maxHeight: .infinity).background(AppTheme.canvas)
     }
 
     private var embedding: EmbeddedEditing {

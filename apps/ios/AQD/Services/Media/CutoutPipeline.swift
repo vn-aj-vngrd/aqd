@@ -9,6 +9,8 @@ struct CutoutOutcome: Sendable {
     let prepared: PreparedPhoto
     let crop: PhotoEditRecipe.NormalizedRect?
     let hints: [PhotoQualityHint]
+    /// The "fit to piece" framing, rendered so the saved photo has its crop rendition ready to display.
+    var framed: PreparedPhotoEdit?
 }
 
 enum CutoutPipeline {
@@ -24,6 +26,11 @@ enum CutoutPipeline {
         let bounds = CutoutRenderer.normalizedBounds(of: mask)
         let hints = PhotoQuality.assess(pixelWidth: prepared.pixelWidth, pixelHeight: prepared.pixelHeight, subjectFound: true,
                                         keptBounds: bounds, coverage: CutoutRenderer.coverage(of: mask))
-        return CutoutOutcome(prepared: prepared, crop: fitToPiece ? bounds.map { PhotoQuality.paddedCrop($0, padding: 0.04) } : nil, hints: hints)
+        let crop = fitToPiece ? bounds.map { PhotoQuality.paddedCrop($0, padding: 0.04) } : nil
+        var framed: PreparedPhotoEdit?
+        if let crop, case let recipe = PhotoEditRecipe(crop: crop), (try? recipe.validated()) != nil {
+            framed = try await PhotoPreparer().render(data: png, sourcePhotoID: prepared.id, recipe: recipe)
+        }
+        return CutoutOutcome(prepared: prepared, crop: crop, hints: hints, framed: framed)
     }
 }

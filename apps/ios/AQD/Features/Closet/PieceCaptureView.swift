@@ -104,6 +104,14 @@ struct PieceCaptureView: View {
                 .ignoresSafeArea()
         }
         .sheet(isPresented: $showDetails) { PieceDetailsView(model: model) }
+        .onChange(of: model.isLoadingNewPhoto) { _, loading in
+            // Open the editor as soon as a photo starts loading; wait a beat so a closing Photos picker or camera does not swallow it.
+            guard loading else { return }
+            Task {
+                try? await Task.sleep(for: .milliseconds(350))
+                if model.isLoadingNewPhoto, editorMode == nil { editorMode = .frame }
+            }
+        }
         .editImportedPhoto(model, importing: model.isImporting, locked: model.isSaving, presented: Binding(
             get: { editorMode != nil }, set: { editorMode = $0 ? (editorMode ?? .frame) : nil }))
         .sheet(item: $editorMode) { PieceEditorView(capture: model, mode: $0) }

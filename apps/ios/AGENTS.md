@@ -34,6 +34,8 @@ AQDTests/         Mirrors the layers: App, DesignSystem, Features, Persistence, 
 - **Sharing.** Features do not call each other's views or models. Shared behavior moves down into DesignSystem, Services or Core. Navigation between features goes through `AppState`.
 - **State.** Each draft and navigation selection has one owner. Check draft and request identity before applying async results. Keep UI and storage on the main actor and media work in the isolated preparer.
 - **Labels.** No middle-dot (" · ") separators in any UI string; follow the no-dot rule in [DESIGN.md](../../DESIGN.md).
+- **Pending actions.** A save, apply, post or confirm action passes its real pending flag to `ToolbarSaveAction(isPending:)` or `PrimaryAction(isPending:)`; the spinner replaces the label. See the Save and apply actions rule in [DESIGN.md](../../DESIGN.md).
+- **Switches.** Never `.tint` a `Toggle`. Every sheet must apply `AppToggleStyle` (through `appAppearance` or `.toggleStyle(AppToggleStyle())`), and a `Toggle` inside a `Menu` sets `.toggleStyle(.automatic)`. See the Switches rule in [DESIGN.md](../../DESIGN.md).
 - **Safety.** No `try!`, forced casts, or force unwraps outside tests. Typed errors at domain seams. A receipt reports an acknowledged write only.
 - **Guards.** Deployment is iOS 18. Guard iOS 26+ APIs with `#available` and a flat fallback. Verify new APIs against the installed SDK.
 - **Tests.** Swift Testing for new tests, following the neighboring suite. Test through the public interface, including failed and unknown-completion writes. Mirror the source layer in `AQDTests`.
