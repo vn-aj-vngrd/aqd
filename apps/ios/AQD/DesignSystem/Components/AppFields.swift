@@ -260,3 +260,30 @@ struct AppSegmentedControl: View {
         }.padding(4).animation(reduceMotion ? nil : .easeInOut(duration: 0.18), value: selection)
     }
 }
+
+/// The one switch for the whole app: a green track with a white knob when on, a visible gray track when off, in both
+/// appearances. Applied once through `appAppearance`, so every Toggle in rows, forms and cards matches.
+struct AppToggleStyle: ToggleStyle {
+    @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: AppSpacing.medium) {
+            configuration.label.frame(maxWidth: .infinity, alignment: .leading)
+            ZStack(alignment: configuration.isOn ? .trailing : .leading) {
+                Capsule().fill(configuration.isOn ? AppTheme.toggleOn : AppTheme.toggleOff)
+                    .overlay { if !configuration.isOn || contrast == .increased { Capsule().strokeBorder(AppTheme.controlBoundary.opacity(0.5), lineWidth: 1) } }
+                Circle().fill(AppTheme.toggleKnob).padding(2).shadow(color: AppTheme.controlShadow, radius: 2, y: 1)
+            }.frame(width: 51, height: 31)
+                .animation(reduceMotion ? nil : .snappy(duration: 0.2), value: configuration.isOn)
+                .accessibilityHidden(true)
+        }.opacity(isEnabled ? 1 : 0.45).contentShape(Rectangle())
+            .onTapGesture { if isEnabled { configuration.isOn.toggle() } }
+            .sensoryFeedback(.selection, trigger: configuration.isOn)
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isToggle)
+            .accessibilityValue(configuration.isOn ? "On" : "Off")
+            .accessibilityAction { if isEnabled { configuration.isOn.toggle() } }
+    }
+}
