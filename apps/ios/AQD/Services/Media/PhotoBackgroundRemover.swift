@@ -14,6 +14,9 @@ struct DetectedMask: @unchecked Sendable { let image: CGImage }
 actor PhotoBackgroundRemover {
     static let shared = PhotoBackgroundRemover()
 
+    /// False where Vision has no subject-lift model for this device, so the app offers the manual path without trying.
+    nonisolated static var isSupported: Bool { !VNGenerateForegroundInstanceMaskRequest.supportedRevisions.isEmpty }
+
     func detectMask(data: Data) throws -> DetectedMask {
         try Task.checkCancellation()
         return try autoreleasepool {

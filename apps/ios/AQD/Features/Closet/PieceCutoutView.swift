@@ -61,6 +61,7 @@ struct PieceCutoutView: View {
                 if capture.acceptBackground(outcome.prepared, input: model.source, crop: outcome.crop) {
                     capture.photoHints = outcome.hints
                     capture.cutoutState = .applied
+                    capture.offersCutout = false
                     dismiss()
                 }
                 else { error = capture.errorText ?? "The photo changed. Cancel and open the cutout again." }

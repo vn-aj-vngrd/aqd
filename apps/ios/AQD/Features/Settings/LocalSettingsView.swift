@@ -16,9 +16,6 @@ struct LocalSettingsView: View {
             Section("Personalize") {
                 NavigationLink { WardrobeCategorySettingsView().secondaryPage() } label: { SettingsRow(title: "Categories", symbol: "square.grid.2x2") }
                 NavigationLink { LocalStyleSettingsView().secondaryPage() } label: { SettingsRow(title: "Style preferences", symbol: "slider.horizontal.3") }
-                NavigationLink { LocalCutoutSettingsView().secondaryPage() } label: {
-                    SettingsRow(title: "Photo cutout", symbol: "scissors", value: CutoutMode.current.title)
-                }
                 NavigationLink { LocalAppearanceSettingsView().secondaryPage() } label: {
                     SettingsRow(title: "Appearance", symbol: "circle.lefthalf.filled", value: appearanceTitle)
                 }
@@ -347,46 +344,6 @@ struct SettingsPhotoRecoveryView: View {
                     SettingsRow(title: "Retry photo cleanup", symbol: "photo")
                 }
             }
-        }
-    }
-}
-
-/// Whether a new piece photo is cut out automatically. A device preference, so it is not part of exported data.
-struct LocalCutoutSettingsView: View {
-    @State private var mode = CutoutMode.current
-    @State private var review = CutoutMode.reviewsAfterCutout
-
-    var body: some View {
-        List {
-            Section {
-                ForEach(CutoutMode.allCases, id: \.self) { value in
-                    Button { mode = value; CutoutMode.current = value } label: {
-                        HStack(spacing: 14) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(value.title).font(AppTypography.body).foregroundStyle(AppTheme.ink)
-                                Text(subtitle(value)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                            }.frame(maxWidth: .infinity, alignment: .leading)
-                            if mode == value { Image(systemName: "checkmark").font(AppTypography.disclosure).foregroundStyle(AppTheme.ink).accessibilityHidden(true) }
-                        }.frame(minHeight: 52).contentShape(Rectangle())
-                    }.accessibilityValue(mode == value ? "Selected" : "Not selected")
-                        .accessibilityAddTraits(mode == value ? [.isSelected] : [])
-                }
-            } footer: { Text("Cutouts are made on this iPhone. Your original photo is always kept, so you can refine a cutout or go back to it.") }
-                .listRowBackground(AppTheme.surface)
-            Section {
-                Toggle("Review after cutting out", isOn: Binding(get: { review }, set: { review = $0; CutoutMode.reviewsAfterCutout = $0 }))
-                    .tint(AppTheme.ink).frame(minHeight: 44)
-            } footer: { Text("Opens the editor right after a cutout so you can refine it before saving. Crop and Cut out are always one tap away on the photo, in every mode.") }
-                .listRowBackground(AppTheme.surface)
-        }.listStyle(.insetGrouped).contentMargins(.top, AppSpacing.headerGap, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas)
-            .navigationTitle("Photo cutout").navigationBarTitleDisplayMode(.inline).tint(AppTheme.ink)
-    }
-
-    private func subtitle(_ value: CutoutMode) -> String {
-        switch value {
-        case .auto: "Cut the piece out as soon as you add a photo."
-        case .ask: "Ask after each photo."
-        case .off: "Only when you tap Cut out."
         }
     }
 }

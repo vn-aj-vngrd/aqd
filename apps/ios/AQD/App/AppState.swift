@@ -535,11 +535,11 @@ final class CaptureModel: Identifiable {
     /// Called after a save is acknowledged, so a caller that prefilled the draft can show its own receipt.
     @ObservationIgnored var onSaved: (@MainActor (WardrobePiece) -> Void)?
     /// Progress of the automatic cutout for the draft photo.
-    enum CutoutState: Equatable { case idle, working, applied, noSubject, failed }
+    enum CutoutState: Equatable { case idle, working, applied, noSubject, failed, unsupported }
     var cutoutState = CutoutState.idle
     /// Plain-language photo quality hints for the current draft photo.
     var photoHints: [PhotoQualityHint] = []
-    /// True when the mode is "Ask each time" and a fresh photo is waiting for a decision.
+    /// True while a fresh photo is waiting for the person to choose: cut out automatically, or edit by hand. Nothing runs on its own.
     var offersCutout = false
     /// Set when the editor is opened straight to the cutout (for example from a piece's menu).
     var opensCutout = false
@@ -664,6 +664,9 @@ final class CaptureModel: Identifiable {
 
     func removePhoto() {
         cancelImport()
+        cancelCutout()
+        cutoutState = .idle
+        offersCutout = false
         update(\.photoID, value: nil)
     }
 
@@ -826,16 +829,20 @@ extension CaptureModel {
     fileprivate func photoImported(width: Int, height: Int) {
         cutoutState = .idle
         photoHints = PhotoQuality.assess(pixelWidth: width, pixelHeight: height)
-        switch CutoutMode.current {
-        case .auto: autoCutout()
-        case .ask: offersCutout = true
-        case .off: break
-        }
+        offersCutout = true
+    }
+
+    /// Put the photo back to waiting for a choice (after Try again is not wanted, or after a failure was dismissed).
+    func dismissCutoutOffer() {
+        offersCutout = false
+        if cutoutState != .working && cutoutState != .applied { cutoutState = .idle }
     }
 
     /// Cut the piece out of the draft photo in the background; the original is always kept.
     func autoCutout() {
-        guard cutoutState != .working, !hasProcessedPhoto, let input = try? backgroundInput() else { return }
+        guard cutoutState != .working, !hasProcessedPhoto else { return }
+        guard PhotoBackgroundRemover.isSupported else { cutoutState = .unsupported; return }
+        guard let input = try? backgroundInput() else { cutoutState = .failed; return }
         cutoutTask?.cancel()
         cutoutState = .working
         offersCutout = false
@@ -846,18 +853,15 @@ extension CaptureModel {
                 if self.acceptBackground(outcome.prepared, input: input, crop: outcome.crop) {
                     self.cutoutState = .applied
                     self.photoHints = outcome.hints
-                    self.opensCutout = CutoutMode.reviewsAfterCutout
                 } else { self.cutoutState = .failed }
             } catch BackgroundPhotoError.noForeground {
                 guard !Task.isCancelled, let self, self.backgroundSourceIsCurrent(input) else { return }
                 let size = Self.pixelSize(of: input.data)
                 self.cutoutState = .noSubject
                 self.photoHints = PhotoQuality.assess(pixelWidth: size.width, pixelHeight: size.height, subjectFound: false)
-                self.opensCutout = CutoutMode.reviewsAfterCutout
             } catch {
                 guard !Task.isCancelled, let self, self.backgroundSourceIsCurrent(input) else { return }
                 self.cutoutState = .failed
-                self.opensCutout = CutoutMode.reviewsAfterCutout
             }
         }
     }

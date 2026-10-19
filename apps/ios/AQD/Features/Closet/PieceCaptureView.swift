@@ -74,12 +74,6 @@ struct PieceCaptureView: View {
             } message: {
                 Text("Allow Camera in iPhone Settings to take a photo, or choose an existing photo. Your entered fields are unchanged.")
             }
-            .appConfirmation("Cut out the background?", isPresented: $model.offersCutout) {
-                Button("Cut out") { model.autoCutout() }
-                Button("Keep original", role: .cancel) {}
-            } message: {
-                Text("A clean cutout makes a better listing photo. You can refine it or go back to the original at any time.")
-            }
             .appConfirmation("Camera access is restricted", isPresented: $cameraRestricted) {
                 Button("Choose from Photos") { pickerPresented = true }
                 Button("Keep draft", role: .cancel) {}
@@ -127,10 +121,7 @@ struct PieceCaptureView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.large) {
                 mediaContent
-                if model.cutoutState == .failed {
-                    Label("Automatic cutout isn’t available for this photo. Tap Cut out to erase the background by hand, or Crop to trim the sides.",
-                          systemImage: "info.circle").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                }
+                cutoutChoice
                 if !model.photoHints.isEmpty {
                     VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
                         ForEach(model.photoHints, id: \.self) { hint in
@@ -166,6 +157,74 @@ struct PieceCaptureView: View {
             .disabled(model.isSaving)
         }
         .scrollDismissesKeyboard(.interactively)
+    }
+
+    /// After a photo is added nothing runs on its own: the person chooses to cut out automatically, edit by hand, or both.
+    /// Working, failed and unsupported are each shown here with a way forward, so no state is a dead end.
+    @ViewBuilder private var cutoutChoice: some View {
+        if model.draft.photoID != nil, !model.isImporting {
+            switch model.cutoutState {
+            case .working:
+                HStack(spacing: AppSpacing.small) {
+                    ProgressView().accessibilityHidden(true)
+                    Text("Cutting out the piece…").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    Spacer()
+                    Button("Cancel") { model.cancelCutout() }.frame(minHeight: AppControlMetrics.minimumTarget)
+                }.accessibilityElement(children: .combine).accessibilityIdentifier("capture.cutout.working")
+            case .applied:
+                cutoutCard(symbol: "checkmark.circle", title: "Cut out", message: "Fine tune it by hand, or go back to your original photo.") {
+                    cutoutButton("Fine tune", symbol: "scissors", id: "capture.cutout.refine") { showBackgroundRemoval = true }
+                    Button("Use original photo") { model.useOriginalPhoto() }.frame(minHeight: AppControlMetrics.minimumTarget)
+                }
+            case .noSubject:
+                cutoutCard(symbol: "exclamationmark.circle", title: "No piece found",
+                           message: "Try a flatter piece on a plain surface, or erase the background by hand.") {
+                    cutoutButton("Edit by hand", symbol: "scissors", id: "capture.cutout.manual") { showBackgroundRemoval = true }
+                    Button("Keep original") { model.dismissCutoutOffer() }.frame(minHeight: AppControlMetrics.minimumTarget)
+                }
+            case .failed:
+                cutoutCard(symbol: "exclamationmark.triangle", title: "Cut out failed",
+                           message: "Your photo is unchanged. Try again, or edit it by hand.") {
+                    if PhotoBackgroundRemover.isSupported {
+                        cutoutButton("Try again", symbol: "arrow.clockwise", id: "capture.cutout.retry") { model.autoCutout() }
+                    }
+                    cutoutButton("Edit by hand", symbol: "scissors", id: "capture.cutout.manual") { showBackgroundRemoval = true }
+                    Button("Keep original") { model.dismissCutoutOffer() }.frame(minHeight: AppControlMetrics.minimumTarget)
+                }
+            case .unsupported:
+                cutoutCard(symbol: "info.circle", title: "Automatic cut out isn’t available",
+                           message: "This iPhone can’t cut out pieces automatically. Edit it by hand instead.") {
+                    cutoutButton("Edit by hand", symbol: "scissors", id: "capture.cutout.manual") { showBackgroundRemoval = true }
+                }
+            case .idle:
+                if model.offersCutout, !model.hasProcessedPhoto {
+                    let supported = PhotoBackgroundRemover.isSupported
+                    cutoutCard(symbol: "scissors", title: "Cut out the background?",
+                               message: supported ? "Let AQD do it, then fine tune by hand if you like. Or skip it and edit by hand."
+                                                  : "Automatic cut out isn’t available on this iPhone. Edit it by hand instead.") {
+                        if supported { cutoutButton("Auto cut out", symbol: "wand.and.stars", id: "capture.cutout.auto") { model.autoCutout() } }
+                        cutoutButton("Edit by hand", symbol: "hand.draw", id: "capture.cutout.manual") { showBackgroundRemoval = true }
+                        Button("Keep original") { model.dismissCutoutOffer() }.frame(minHeight: AppControlMetrics.minimumTarget)
+                    }
+                }
+            }
+        }
+    }
+
+    private func cutoutCard<Actions: View>(symbol: String, title: String, message: String, @ViewBuilder actions: () -> Actions) -> some View {
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
+            Label(title, systemImage: symbol).font(AppTypography.fieldLabel).foregroundStyle(AppTheme.ink)
+            Text(message).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            VStack(spacing: AppSpacing.small, content: actions).frame(maxWidth: .infinity)
+        }.frame(maxWidth: .infinity, alignment: .leading).padding(AppSpacing.medium)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
+            .accessibilityElement(children: .contain).accessibilityIdentifier("capture.cutout.choice")
+    }
+
+    private func cutoutButton(_ title: String, symbol: String, id: String, action: @escaping () -> Void) -> some View {
+        Button { nameEditing = false; action() } label: {
+            GlassActionLabel(title: title, systemImage: symbol, height: AppControlMetrics.actionHeight)
+        }.buttonStyle(.plain).accessibilityIdentifier(id)
     }
 
     /// What still blocks Save, in plain words. Empty once the piece can be saved.
