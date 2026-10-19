@@ -5,7 +5,8 @@ struct StyleEditorView: View {
     @Bindable var model: StyleEditorModel
     @State private var confirmsDiscard = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var savedArrived = false
+    /// Saved-screen entrance: 0 hidden, 1 mark, 2 look, 3 words, 4 actions.
+    @State private var savedStage = 0
     /// Set when Next is tapped on an unanswered step; cleared by answering or changing step.
     @State private var showsNeed = false
     @State private var needTaps = 0
@@ -27,9 +28,8 @@ struct StyleEditorView: View {
                     }
                     if model.saved != nil {
                         savedContent
-                            .opacity(savedArrived ? 1 : 0)
-                            .offset(y: savedArrived || reduceMotion ? 0 : 12)
-                            .task { withAnimation(reduceMotion ? nil : .smooth(duration: 0.35)) { savedArrived = true } }
+                            .transition(.opacity)
+                            .task { await revealSaved() }
                     } else {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Step \(page + 1) of 7").font(.subheadline).foregroundStyle(AppTheme.secondary)
@@ -60,11 +60,12 @@ struct StyleEditorView: View {
                         .transition(stepTransition)
                     }
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
+                    .animation(reduceMotion ? nil : .smooth(duration: 0.4), value: model.saved != nil)
             }
             .background(AppTheme.canvas)
             .navigationTitle(model.saved == nil ? StylePreferences.titles[page] : "")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar(.visible, for: .navigationBar)
+            .toolbar(model.saved == nil ? .visible : .hidden, for: .navigationBar)
             .toolbar {
                 if model.saved == nil {
                     ToolbarItem(placement: .topBarLeading) {
@@ -83,13 +84,7 @@ struct StyleEditorView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     if model.saved != nil {
-                        if model.draft.source == .onboarding {
-                            ToolbarForwardAction(title: savedContinueTitle, usesGlass: true) { model.finish() }
-                                .accessibilityIdentifier("style.saved.continue")
-                        } else {
-                            ToolbarSaveAction(title: "Done") { model.finish() }
-                                .accessibilityLabel(savedContinueTitle).accessibilityIdentifier("style.saved.continue")
-                        }
+                        EmptyView()
                     } else if page == 6 {
                         ToolbarSaveAction(title: model.unknown ? "Check save" : "Save", isPending: model.pending) { Task { await model.save() } }
                             .disabled(model.pending || (!model.unknown && (!model.draft.isComplete || (model.draft.baseRevision > 0 && !model.hasUnsavedChanges)))).accessibilityLabel(model.unknown ? "Check save" : "Save preferences")
@@ -101,13 +96,18 @@ struct StyleEditorView: View {
             }
             .safeAreaInset(edge: .bottom) {
                 if model.saved != nil {
-                    ActionFooter {
-                        SecondaryAction(title: model.draft.source == .onboarding ? "Skip the tour" : "Open my closet") { model.finish(openCloset: true) }
-                            .accessibilityIdentifier("style.saved.closet")
-                        Text("You can edit your preferences from Profile → Style.")
-                            .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                            .frame(maxWidth: .infinity).multilineTextAlignment(.center)
+                    // The same bottom stack as Welcome: one prominent glass action, one quiet one, one line of reassurance.
+                    VStack(spacing: AppSpacing.small) {
+                        Button { model.finish() } label: { GlassActionLabel(title: savedContinueTitle, prominent: true) }
+                            .buttonStyle(.plain).accessibilityIdentifier("style.saved.continue")
+                        Button { model.finish(openCloset: true) } label: {
+                            GlassActionLabel(title: model.draft.source == .onboarding ? "Skip the tour" : "Open my closet")
+                        }.buttonStyle(.plain).accessibilityIdentifier("style.saved.closet")
+                        Text("Change these anytime in Profile → Style.")
+                            .font(.footnote).foregroundStyle(AppTheme.secondary).padding(.top, AppSpacing.xSmall)
                     }
+                    .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small).padding(.bottom, AppSpacing.small)
+                    .opacity(savedStage >= 4 ? 1 : 0).offset(y: savedStage >= 4 ? 0 : 18)
                 }
             }
             .draftDiscardConfirmation(isPresented: $confirmsDiscard, title: "Discard this preference draft?",
@@ -157,20 +157,39 @@ struct StyleEditorView: View {
         }
     }
     private var savedContent: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.section) {
-            AQDMark()
+        VStack(spacing: AppSpacing.section) {
+            AQDMark(size: 56)
+                .scaleEffect(savedStage >= 1 ? 1 : 0.85).opacity(savedStage >= 1 ? 1 : 0).blur(radius: savedStage >= 1 ? 0 : 6)
             EntryIllustration(kind: .ready)
-            VStack(alignment: .leading, spacing: 16) {
+                .frame(maxWidth: 300)
+                .scaleEffect(savedStage >= 2 ? 1 : 0.94).opacity(savedStage >= 2 ? 1 : 0)
+            VStack(spacing: AppSpacing.small) {
                 Label(model.draft.source == .onboarding ? "You’re all set" : "Preferences saved", systemImage: "checkmark.circle")
-                    .font(AppTypography.supporting).foregroundStyle(AppTheme.ink)
+                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+                    .symbolEffect(.bounce, value: savedStage >= 3)
                 Text("A closet that feels\nmore like you.")
-                    .font(.largeTitle).tracking(-0.64).fixedSize(horizontal: false, vertical: true)
+                    .font(.largeTitle.weight(.medium)).tracking(-0.8).multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true).accessibilityAddTraits(.isHeader)
                 Text(model.draft.source == .onboarding
-                     ? "Your choices are saved on this iPhone.\nTake a one-minute look around, or skip it."
-                     : "Your choices are saved on this iPhone.\nKeep exploring your closet, your way.")
-                    .foregroundStyle(AppTheme.secondary).fixedSize(horizontal: false, vertical: true)
+                     ? "Your choices stay on this iPhone.\nTake a one-minute look around, or skip it."
+                     : "Your choices stay on this iPhone.\nSuggestions now lean toward what feels like you.")
+                    .font(AppTypography.body).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-        }.accessibilityIdentifier("style.saved.receipt")
+            .opacity(savedStage >= 3 ? 1 : 0).offset(y: savedStage >= 3 ? 0 : 14)
+        }
+        .frame(maxWidth: .infinity).padding(.top, AppSpacing.large)
+        .accessibilityIdentifier("style.saved.receipt")
+    }
+    /// The questions fade away, then the receipt builds in the same order as Welcome: mark, look, words, actions.
+    private func revealSaved() async {
+        guard !reduceMotion else { savedStage = 4; return }
+        do {
+            for stage in 1...4 {
+                try await Task.sleep(for: .milliseconds(stage == 1 ? 120 : 220))
+                withAnimation(.smooth(duration: 0.55)) { savedStage = stage }
+            }
+        } catch { savedStage = 4 }
     }
 
     @ViewBuilder private var question: some View {
