@@ -4,6 +4,25 @@ import SwiftUI
 struct AQDApp: App {
     @State private var state = AppState(deferOpening: true)
 
+    init() {
+        #if DEBUG
+        Self.clearStaleLaunchSnapshots()
+        #endif
+    }
+
+    #if DEBUG
+    /// iOS keeps launch and resume snapshots per build in the app's Library. After a Debug reinstall they can still show the previous
+    /// build's first frame, so each new build clears them once; the system rebuilds them the next time the app goes to the background.
+    private static func clearStaleLaunchSnapshots() {
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
+        let key = "debug.clearedLaunchSnapshotsFor"
+        guard UserDefaults.standard.string(forKey: key) != build,
+              let library = try? FileManager.default.url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: nil, create: false) else { return }
+        try? FileManager.default.removeItem(at: library.appendingPathComponent("SplashBoard", isDirectory: true))
+        UserDefaults.standard.set(build, forKey: key)
+    }
+    #endif
+
     var body: some Scene {
         WindowGroup {
             AppRootView(state: state) { store, coordinator, destination in
