@@ -246,26 +246,26 @@ private struct AppRootView: View {
                 })
             }
         }
-        .sheet(item: $state.todayEditor) { model in TodayEditorView(model: model).environment(state) }
-        .sheet(item: $state.fitEditor, onDismiss: { state.openPendingFitWear() }) { model in FitEditorView(model: model).environment(state) }
-        .sheet(item: $state.identityEditor) { model in LocalIdentityEditorView(model: model).environment(state) }
+        .sheet(item: $state.todayEditor) { model in TodayEditorView(model: model).environment(state).toggleStyle(AppToggleStyle()) }
+        .sheet(item: $state.fitEditor, onDismiss: { state.openPendingFitWear() }) { model in FitEditorView(model: model).environment(state).toggleStyle(AppToggleStyle()) }
+        .sheet(item: $state.identityEditor) { model in LocalIdentityEditorView(model: model).environment(state).toggleStyle(AppToggleStyle()) }
         .sheet(item: $state.themeEditor, onDismiss: { state.reloadThemes(); state.reloadOutfits() }) { model in
-            ThemeEditorView(model: model).environment(state)
+            ThemeEditorView(model: model).environment(state).toggleStyle(AppToggleStyle())
         }
         .sheet(item: $state.wearEditor) { model in
-            OutfitWearEditorView(model: model).environment(state)
+            OutfitWearEditorView(model: model).environment(state).toggleStyle(AppToggleStyle())
         }
         .sheet(item: $state.planAuthoringEditor) { model in
-            PlanAuthoringView(model: model).environment(state)
+            PlanAuthoringView(model: model).environment(state).toggleStyle(AppToggleStyle())
         }
         .sheet(item: $state.planEditor) { model in
-            OutfitPlanEditorView(model: model).environment(state)
+            OutfitPlanEditorView(model: model).environment(state).toggleStyle(AppToggleStyle())
         }
         .sheet(item: $state.outfitEditor, onDismiss: { state.openPendingOutfitCapture() }) { model in
-            OutfitEditorView(model: model).environment(state)
+            OutfitEditorView(model: model).environment(state).toggleStyle(AppToggleStyle())
         }
         .sheet(item: $state.capture, onDismiss: { state.retryPhotoCleanup(); state.finishOutfitCaptureReturn() }) { model in
-            PieceCaptureView(model: model).environment(state)
+            PieceCaptureView(model: model).environment(state).toggleStyle(AppToggleStyle())
         }
         .fullScreenCover(item: $state.styleEditor) { model in
             rootContent(StyleEditorView(model: model))

@@ -61,7 +61,7 @@ struct TodayEditorView: View {
                     }
                 }
                 .onAppear { model.state.reloadPlanEntries(); model.state.reloadPieces(); model.state.reloadOutfits(); model.state.reloadThemes(); model.state.reloadFits() }
-                .sheet(isPresented: Binding(get: { model.draft.nested != nil }, set: { _ in })) { TodayWidgetConfigurationView(model: model) }
+                .sheet(isPresented: Binding(get: { model.draft.nested != nil }, set: { _ in })) { TodayWidgetConfigurationView(model: model).toggleStyle(AppToggleStyle()) }
         }.tint(AppTheme.ink).interactiveDismissDisabled()
             .draftDiscardConfirmation(isPresented: $discard, title: "Discard Today changes?", message: "Your saved layout, notes and photos stay unchanged.") {
                 model.finish(discarding: true); if model.state.todayEditor == nil { discard = false }
