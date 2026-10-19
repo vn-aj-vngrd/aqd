@@ -8,7 +8,17 @@ import Observation
 /// The mask lives at a bounded working resolution; export applies it to the full-resolution original.
 @MainActor @Observable
 final class PieceCutoutModel {
-    enum Tool: String, CaseIterable { case erase = "Erase", restore = "Restore", trim = "Trim", move = "Move" }
+    enum Tool: String, CaseIterable {
+        case erase = "Erase", restore = "Restore", trim = "Trim", move = "Move"
+        var symbol: String {
+            switch self {
+            case .erase: "eraser"
+            case .restore: "paintbrush.pointed"
+            case .trim: "crop"
+            case .move: "arrow.up.and.down.and.arrow.left.and.right"
+            }
+        }
+    }
     /// `choosing`: nothing has run yet, the person picks Auto cut out or By hand. `unsupported`: this iPhone has no subject model.
     enum Phase: Equatable { case choosing, detecting, ready, noSubject, failed, unsupported }
     private struct Snapshot { let mask: CGImage; let trim: CGRect }

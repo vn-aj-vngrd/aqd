@@ -79,13 +79,13 @@ struct PieceCutoutView: View {
     }
 
     private func editor(_ model: PieceCutoutModel) -> some View {
-        VStack(spacing: AppSpacing.medium) {
+        VStack(spacing: AppSpacing.large) {
             CutoutCanvas(model: model)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .clipShape(RoundedRectangle(cornerRadius: AppRadius.field))
                 .overlay(alignment: .top) { if [.ready, .noSubject, .failed].contains(model.phase) { canvasControls(model) } }
             controls(model)
-        }.padding(.horizontal, AppSpacing.screen).padding(.bottom, AppSpacing.small)
+        }.padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.xSmall).padding(.bottom, AppSpacing.medium)
     }
 
     @ViewBuilder private func controls(_ model: PieceCutoutModel) -> some View {
@@ -98,7 +98,7 @@ struct PieceCutoutView: View {
 
     /// Nothing runs on its own: the person picks Auto cut out, or starts by hand. Where the iPhone has no subject model, only by hand is offered.
     private func choice(_ model: PieceCutoutModel) -> some View {
-        VStack(alignment: .leading, spacing: AppSpacing.small) {
+        VStack(alignment: .leading, spacing: AppSpacing.medium) {
             if model.phase == .detecting {
                 HStack(spacing: AppSpacing.small) {
                     ProgressView().accessibilityHidden(true)
@@ -122,55 +122,58 @@ struct PieceCutoutView: View {
         }
     }
 
-    /// Tool first, then only what that tool needs, then the finishing options grouped in one card. Undo, redo and Original sit on the photo.
+    /// Tool first, then only what that tool needs, then the finishing options as plain rows. Undo, redo, reset and Original float on the photo.
     @ViewBuilder private func tools(_ model: PieceCutoutModel) -> some View {
         let bound = Bindable(model)
-        VStack(alignment: .leading, spacing: AppSpacing.medium) {
+        VStack(alignment: .leading, spacing: AppSpacing.large) {
             if let message = hint(for: model) { SemanticFeedback(role: .warning, message: message) }
             if let error { SemanticFeedback(role: .danger, message: error) }
             if (model.phase == .noSubject || model.phase == .failed) && PhotoBackgroundRemover.isSupported {
                 Button("Try auto cut out again") { model.detectAutomatically() }.frame(minHeight: AppControlMetrics.minimumTarget)
             }
-            AppSegmentedControl(selection: Binding(get: { model.tool.rawValue }, set: { model.tool = PieceCutoutModel.Tool(rawValue: $0) ?? model.tool }),
-                                options: PieceCutoutModel.Tool.allCases.map(\.rawValue), accessibilityTitle: "Cutout tool", identifierPrefix: "cutout.tool")
-            if model.tool == .erase || model.tool == .restore {
-                sliderRow("Brush", value: bound.brushRadius, range: 8...48)
+            HStack(spacing: AppSpacing.small) {
+                ForEach(PieceCutoutModel.Tool.allCases, id: \.self) { tool in toolButton(tool, model: model) }
             }
-            VStack(alignment: .leading, spacing: AppSpacing.medium) {
-                sliderRow("Zoom", value: bound.zoom, range: 1...4)
-                sliderRow("Softness", value: bound.feather, range: 0...4, onChange: { model.refresh() })
-                Divider().overlay(AppTheme.divider)
-                HStack(spacing: AppSpacing.medium) {
-                    Text("Background").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).frame(width: 84, alignment: .leading)
-                    AppSegmentedControl(selection: Binding(get: { model.background.rawValue },
-                                                           set: { model.background = CutoutBackground(rawValue: $0) ?? model.background; model.refresh() }),
-                                        options: CutoutBackground.allCases.map(\.rawValue), accessibilityTitle: "Background", identifierPrefix: "cutout.background")
+            switch model.tool {
+            case .erase, .restore: sliderRow("Brush", value: bound.brushRadius, range: 8...48)
+            case .move: sliderRow("Zoom", value: bound.zoom, range: 1...4)
+            case .trim: Text("Drag the edges of the frame to trim the sides.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }
+            Divider().overlay(AppTheme.divider)
+            HStack(spacing: AppSpacing.small) {
+                Text("Background").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).frame(width: 84, alignment: .leading)
+                ForEach(CutoutBackground.allCases, id: \.self) { option in
+                    AppChip(title: option.rawValue, isSelected: model.background == option) { model.background = option; model.refresh() }
                 }
-                Divider().overlay(AppTheme.divider)
-                Toggle(isOn: bound.fitToPiece) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Fit to piece").font(AppTypography.body).foregroundStyle(AppTheme.ink)
-                        Text("Frame the photo around the piece").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                    }
-                }.toggleStyle(AppToggleStyle())
-            }.padding(AppSpacing.medium).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
-            HStack(spacing: AppSpacing.large) {
-                Button("Reset") { model.reset() }.frame(minHeight: AppControlMetrics.minimumTarget).disabled(!model.edited && !model.isTrimmed)
-                if model.hasSavedCutout {
-                    Button("Use original photo") { capture.useOriginalPhoto(); finish() }.frame(minHeight: AppControlMetrics.minimumTarget)
-                }
-                Spacer()
+                Spacer(minLength: 0)
+            }
+            sliderRow("Softness", value: bound.feather, range: 0...4, onChange: { model.refresh() })
+            Toggle("Fit to piece", isOn: bound.fitToPiece).font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                .toggleStyle(AppToggleStyle()).frame(minHeight: AppControlMetrics.minimumTarget)
+            if model.hasSavedCutout {
+                Button("Use original photo") { capture.useOriginalPhoto(); finish() }.frame(minHeight: AppControlMetrics.minimumTarget)
             }
         }
     }
 
+    private func toolButton(_ tool: PieceCutoutModel.Tool, model: PieceCutoutModel) -> some View {
+        let selected = model.tool == tool
+        return Button { model.tool = tool } label: {
+            VStack(spacing: 4) {
+                Image(systemName: tool.symbol).font(.body.weight(.medium)).accessibilityHidden(true)
+                Text(tool.rawValue).font(AppTypography.metadata).lineLimit(1)
+            }.foregroundStyle(selected ? AppTheme.onPrimary : AppTheme.ink)
+                .frame(maxWidth: .infinity, minHeight: 56)
+                .background(selected ? AppTheme.primaryFill : AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+        }.buttonStyle(.plain).accessibilityAddTraits(selected ? .isSelected : []).accessibilityIdentifier("cutout.tool.\(tool.rawValue)")
+    }
+
     /// Glass controls floating on the photo, so the panel below holds only settings.
     private func canvasControls(_ model: PieceCutoutModel) -> some View {
-        HStack(alignment: .top) {
-            HStack(spacing: AppSpacing.small) {
-                iconButton("arrow.uturn.backward", label: "Undo", enabled: model.canUndo) { model.undo() }
-                iconButton("arrow.uturn.forward", label: "Redo", enabled: model.canRedo) { model.redo() }
-            }
+        HStack(alignment: .top, spacing: AppSpacing.small) {
+            iconButton("arrow.uturn.backward", label: "Undo", enabled: model.canUndo) { model.undo() }
+            iconButton("arrow.uturn.forward", label: "Redo", enabled: model.canRedo) { model.redo() }
+            iconButton("arrow.counterclockwise", label: "Reset", enabled: model.edited || model.isTrimmed) { model.reset() }
             Spacer()
             Button { model.showOriginal.toggle() } label: {
                 Image(systemName: model.showOriginal ? "eye.fill" : "eye").foregroundStyle(AppTheme.ink)
@@ -209,6 +212,7 @@ private struct CutoutCanvas: View {
     @State private var cursor: CGPoint?
     @State private var panStart: CGSize?
     @State private var trimRecording = false
+    @State private var pinchStart: CGFloat?
 
     var body: some View {
         GeometryReader { proxy in
@@ -227,6 +231,11 @@ private struct CutoutCanvas: View {
             }
             .contentShape(Rectangle())
             .gesture(drawGesture(rect: rect), including: model.tool == .trim ? .subviews : .all)
+            .simultaneousGesture(MagnifyGesture().onChanged { value in
+                let base = pinchStart ?? model.zoom
+                pinchStart = base
+                model.zoom = min(4, max(1, base * value.magnification))
+            }.onEnded { _ in pinchStart = nil })
             .coordinateSpace(name: "cutout")
             .clipped()
         }

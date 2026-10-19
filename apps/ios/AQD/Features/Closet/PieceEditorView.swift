@@ -3,7 +3,10 @@ import SwiftUI
 /// One editor for a piece photo: Crop and rotate beside Cut out, so they combine in any order. Each tab applies its own edit and
 /// stays open; Close leaves. Switching tabs with an unapplied edit asks first, because the other tab starts from the applied photo.
 struct PieceEditorView: View {
-    enum Mode: String, CaseIterable { case frame = "Crop and rotate", cutout = "Cut out" }
+    enum Mode: String, CaseIterable, Identifiable {
+        case frame = "Crop and rotate", cutout = "Cut out"
+        var id: String { rawValue }
+    }
 
     @Bindable var capture: CaptureModel
     @State var mode: Mode

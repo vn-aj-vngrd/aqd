@@ -26,8 +26,7 @@ struct PieceCaptureView: View {
     @State private var cameraData: Data?
     @State private var showDetails = false
     @State private var manageCategories = false
-    @State private var showPhotoEditor = false
-    @State private var editorMode = PieceEditorView.Mode.frame
+    @State private var editorMode: PieceEditorView.Mode?
     @State private var discardDecision = false
     @State private var cameraDenied = false
     @State private var cameraRestricted = false
@@ -105,13 +104,14 @@ struct PieceCaptureView: View {
                 .ignoresSafeArea()
         }
         .sheet(isPresented: $showDetails) { PieceDetailsView(model: model) }
-        .editImportedPhoto(model, importing: model.isImporting, locked: model.isSaving, presented: $showPhotoEditor)
-        .sheet(isPresented: $showPhotoEditor, onDismiss: { editorMode = .frame }) { PieceEditorView(capture: model, mode: editorMode) }
+        .editImportedPhoto(model, importing: model.isImporting, locked: model.isSaving, presented: Binding(
+            get: { editorMode != nil }, set: { editorMode = $0 ? (editorMode ?? .frame) : nil }))
+        .sheet(item: $editorMode) { PieceEditorView(capture: model, mode: $0) }
         .onAppear {
-            if model.opensCutout { model.opensCutout = false; editorMode = .cutout; showPhotoEditor = true }
+            if model.opensCutout { model.opensCutout = false; editorMode = .cutout }
         }
         .onChange(of: model.opensCutout) { _, requested in
-            if requested { model.opensCutout = false; editorMode = .cutout; showPhotoEditor = true }
+            if requested { model.opensCutout = false; editorMode = .cutout }
         }
         .onDisappear { model.cancelImport() }
     }
@@ -228,9 +228,9 @@ struct PieceCaptureView: View {
             .overlay(alignment: .bottomLeading) {
                 if image != nil {
                     HStack(spacing: AppSpacing.small) {
-                        photoAction("Crop", systemImage: "crop", id: "capture.crop", label: "Crop photo") { editorMode = .frame; showPhotoEditor = true }
+                        photoAction("Crop", systemImage: "crop", id: "capture.crop", label: "Crop photo") { editorMode = .frame }
                         photoAction(model.hasProcessedPhoto ? "Refine" : "Cut out", systemImage: "scissors", id: "capture.cutout",
-                                    label: model.hasProcessedPhoto ? "Refine cutout" : "Cut out piece") { editorMode = .cutout; showPhotoEditor = true }
+                                    label: model.hasProcessedPhoto ? "Refine cutout" : "Cut out piece") { editorMode = .cutout }
                     }.padding(AppSpacing.medium)
                 }
             }
