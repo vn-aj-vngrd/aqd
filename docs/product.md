@@ -9,7 +9,7 @@ A complete private closet on one iPhone: add pieces, build outfits and themes, p
 | Today | Customizable in-app card stack, thirteen kinds ([today](features/today.md)) | No system widgets or integrations. |
 | Closet | Pieces, outfits, themes with search, filter, sort, archive, lifecycle ([wardrobe](features/wardrobe.md), [outfits-themes](features/outfits-themes.md)) | One cover photo required for a new piece. No publishing. |
 | Planner | Dates, plans, routines, trips, packing, wear history, insights ([planner](features/planner.md)) | Local calendar only. |
-| Agent | Local conversation, grounded queries, reviewed drafts and actions ([agent](features/agent.md)) | On-device model when ready; manual paths always work. |
+| Agent | Local conversation, grounded queries, reviewed drafts and actions ([agent](features/agent.md)) | On-device model on Apple Intelligence iPhones; manual paths always work on any iPhone. |
 | Profile | Private fit journal, optional identity, style preferences, Settings ([profile](features/profile.md)) | No online identity. |
 | Data | Durable local store, versioned archive export, reviewed restore, local erase | No sync or merge. |
 | Weather | Optional Apple WeatherKit context for a selected place and date | Off until chosen; the one network exception. |
@@ -20,7 +20,7 @@ Onboarding, light/dark appearance and complete loading, empty, error, permission
 
 - **Device-only V1** ([ADR 0002](adr/0002-device-only-v1-and-connected-v2.md)): AQD stores and media stay on the device and out of automatic backup. Original Photos and exported archives are outside AQD's control.
 - **Apple-native first:** SwiftUI, SwiftData with CloudKit off, PhotosPicker, Foundation Models when eligible. Optional capabilities never raise the iOS 18 deployment minimum.
-- **Agent is a draft maker.** Nothing it proposes changes records until the user reviews and approves; no cloud model, social or send tools in V1.
+- **Agent is a closet copilot.** It does closet chores from one sentence, but nothing it proposes changes records until the user reviews and approves, and approved changes can be undone; no cloud model, social or send tools in V1. It needs an Apple Intelligence iPhone, listed under Device support.
 - **Weather** sends only the selected coordinates and dates to Apple, shows Apple's required attribution, and never blocks manual work. Numeric weather stays hidden until the attribution placement passes review.
 - **Free local use;** no subscription or entitlement backend.
 - **Personal target device** is the iPhone 17 Pro Max; broader device qualification is later launch work.

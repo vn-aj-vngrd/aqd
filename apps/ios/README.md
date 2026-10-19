@@ -80,6 +80,7 @@ Append these to the launch command. They exist only in Debug builds and are igno
 - `--aqd-agent-eval-suite <name>` picks another prompt set; `--aqd-agent-eval-rescore <earlier-name>` scores an earlier run's replies with today's checks.
 - Copy the report with `xcrun devicectl device copy from --device "$AQD_DEVICE_UDID" --domain-type appDataContainer --domain-identifier com.aqd.private --source Documents/AQD-agent-eval-<name>.json --destination .`
 - Keep the phone unlocked and AQD in the foreground while it runs.
+- `scripts/eval-agent-live.sh` does the whole release gate: install, run the golden, held-out and tidy suites three times each, copy the reports and fail when a bar in `AgentEvalGate` is missed. The `tidy` suite covers archive and delete requests.
 
 ## Data boundary
 

@@ -15,7 +15,7 @@ enum AgentPreflight {
     /// Reads the request the way a person would: a plain command, or a request for a look. Nil leaves everything to the model and its tools.
     func preflight(for intent: AgentIntent, request: String, index: AgentRecordIndex) -> AgentPreflight? {
         switch intent {
-        case .editPiece, .relabel, .recordWear, .profile, .theme: return AgentCommand.parse(request).map(AgentPreflight.command)
+        case .editPiece, .relabel, .recordWear, .profile, .theme, .tidy: return AgentCommand.parse(request).map(AgentPreflight.command)
         case .planDays: return AgentCommand.parse(request).map(AgentPreflight.command)
         case .planTrip:
             let recent = (conversation.messages.filter { $0.role == .user }.suffix(3).map(\.source) + [request]).joined(separator: ". ")
@@ -83,6 +83,12 @@ enum AgentPreflight {
                 let outfits = entries.filter { $0.kind == .outfit }
                 guard outfits.isEmpty || (outfits.count == 1 && entries.count == 1) else { return nil }
                 request = AgentMutationRequest(kind: .recordWear, pieceIDs: outfits.isEmpty ? entries.map(\.id) : [], date: LocalPlanDay(date: day).key, wearOutfitID: outfits.first?.id); tool = .recordWear
+            case .tidy(let op, let subjects):
+                // An archived piece is named only to restore it; archiving or deleting one that is already archived finds nothing.
+                let entries = try subjects.map { target = $0; return try find($0, [.piece]) }
+                let archived = entries.map { $0.name.hasSuffix(AgentKnowledgeSource.archivedSuffix) }
+                guard archived.allSatisfy({ $0 == (op == .unarchive) }) else { throw AgentToolRejection.notFound(target) }
+                request = AgentMutationRequest(kind: .tidyPieces, pieceIDs: entries.reduce(into: [UUID]()) { if !$0.contains($1.id) { $0.append($1.id) } }, tidyOp: op); tool = .tidyCloset
             case .planDays(let count):
                 guard let draft = planDraft(days: count) else { return nil }
                 request = draft; tool = .proposePlan
@@ -99,7 +105,23 @@ enum AgentPreflight {
         } catch let rejection as AgentToolRejection {
             return rejectionPath(rejection, target: target)
         }
-        return try prepareRouted(request, tool: tool, target: target, attempt: attempt, conversationID: conversationID)
+        var path = try prepareRouted(request, tool: tool, target: target, attempt: attempt, conversationID: conversationID)
+        if case .tidy = command, path != nil {
+            path?.exact = true
+            if let proposal = conversation.proposals?.last(where: { $0.attemptID == attempt }), case .tidy(let change) = proposal.action { path?.fallback = Self.tidySentence(change) }
+        }
+        return path
+    }
+
+    /// The one sentence under a tidy review, written by the app so its wording always matches what approving does.
+    nonisolated static func tidySentence(_ change: AgentTidyChange) -> String {
+        let names = change.items.map(\.name)
+        let list = names.count > 1 ? names.dropLast().joined(separator: ", ") + " and " + (names.last ?? "") : names.first ?? ""
+        switch change.op {
+        case .archive: return "Ready to archive \(list). Untick any you want to keep. Nothing changes until you approve, and you can undo it."
+        case .unarchive: return "Ready to restore \(list) to your closet. Nothing changes until you approve."
+        case .delete: return "Ready to permanently delete \(list). You’ll see what it affects before anything is deleted, and it can’t be undone."
+        }
     }
 
     private func rejectionPath(_ rejection: AgentToolRejection, target: String) -> AgentFastPath {

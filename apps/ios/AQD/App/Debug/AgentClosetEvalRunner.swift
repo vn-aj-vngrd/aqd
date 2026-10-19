@@ -75,6 +75,8 @@ import UIKit
                 try write(current, label: label)
             }
             status = "Finished"
+            // The report is rewritten after every prompt, so a script cannot tell a partial one from a whole one; this marker says the run is over.
+            try? Data("done".utf8).write(to: Self.reportURL(label: label + "-done"), options: .atomic)
         } catch {
             status = "Failed: \(error)"
             if let url = try? Self.reportURL(label: label + "-error") { try? Data(String(reflecting: error).utf8).write(to: url) }

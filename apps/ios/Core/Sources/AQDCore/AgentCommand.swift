@@ -18,6 +18,8 @@ public enum AgentCommand: Equatable, Sendable {
     case createTheme(name: String?, about: String?)
     /// Outfits for the next `count` days from today (at most 14).
     case planDays(count: Int)
+    /// Archive, restore or delete the named pieces. Only the word "delete" asks for a delete; softer words such as "get rid of" archive, which can be undone.
+    case tidy(op: AgentTidyOp, subjects: [String])
 
     private static func expression(_ pattern: String) -> NSRegularExpression? { try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) }
     private static let rename = expression(#"^\s*(?:please\s+)?(?:rename|relabel|retitle)\s+(?:my\s+|the\s+)?(.+?)\s+(?:to|as)\s+(.+?)\s*[.!?]?\s*$"#)
@@ -29,6 +31,7 @@ public enum AgentCommand: Equatable, Sendable {
     private static let profile = expression(#"^\s*(?:please\s+)?(?:change|set|update)\s+my\s+(?:profile\s+)?(caption|bio|name)\s+to\s+(.+?)\s*[.!?]?\s*$"#)
     private static let planNext = expression(#"^\s*(?:please\s+)?(?:(?:plan|schedule)\s+)?(?:my\s+|the\s+)?(?:outfits?\s+|looks?\s+)?(?:for\s+)?(?:the\s+)?(?:next|coming|upcoming)\s+(\d+|one|two|three|four|five|six|seven)\s+days?(?:\s+please)?\s*[.!?]?\s*$"#)
     private static let planWeek = expression(#"^\s*(?:please\s+)?(?:plan|schedule)\s+(?:my\s+|the\s+)?(?:outfits?\s+(?:for\s+)?)?(?:the\s+|this\s+|my\s+|next\s+|coming\s+|upcoming\s+)?week(?:\s+(?:for\s+me|please))?\s*[.!?]?\s*$"#)
+    private static let tidy = expression(#"^\s*(?:please\s+)?(archive|unarchive|restore|delete|remove|get rid of|throw out|throw away|toss|clean out|clear out|declutter)\s+(?:my\s+|the\s+|all of my\s+)?(.+?)\s*[.!?]?\s*$"#)
     private static let theme = expression(#"^\s*(?:please\s+)?(?:make|create|build)\s+(?:me\s+)?(?:a\s+|an\s+)?(?:new\s+)?theme\b(.*)$"#)
 
     private static func groups(_ pattern: NSRegularExpression?, _ text: String) -> [String]? {
@@ -57,6 +60,15 @@ public enum AgentCommand: Equatable, Sendable {
             return (1...14).contains(count) ? .planDays(count: count) : nil
         }
         if groups(planWeek, text) != nil { return .planDays(count: 7) }
+        if let g = groups(tidy, text) {
+            let verb = g[0].lowercased()
+            let op: AgentTidyOp = verb == "delete" ? .delete : (verb == "restore" || verb == "unarchive") ? .unarchive : .archive
+            // "Archive my tote, I never wear it" names the tote; a trailing "from my closet" is only a place.
+            var named = g[1].components(separatedBy: CharacterSet(charactersIn: ",;")).first ?? g[1]
+            named = named.replacingOccurrences(of: #"(?i)\s+(?:from|out of|in|to)\s+(?:my\s+)?(?:closet|wardrobe)\s*$"#, with: "", options: .regularExpression)
+            let subjects = named.replacingOccurrences(of: " and ", with: ",", options: .caseInsensitive).split(separator: ",").map { clean(String($0)).replacingOccurrences(of: #"^(?i:the|my)\s+"#, with: "", options: .regularExpression) }.filter { !$0.isEmpty }
+            return subjects.isEmpty || subjects.count > 12 ? nil : .tidy(op: op, subjects: subjects)
+        }
         if let g = groups(theme, text) {
             let rest = g[0]
             var name: String?, about: String?

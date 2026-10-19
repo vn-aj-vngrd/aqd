@@ -99,4 +99,14 @@ struct AgentTidyTests {
         let decoded = try JSONDecoder().decode(AgentPreferences.self, from: JSONEncoder().encode(legacy))
         #expect(!decoded.allows(.notes))
     }
+
+    @Test func plainTidyRequestsBecomeCommandsAndOnlyTheWordDeleteDeletes() {
+        #expect(AgentCommand.parse("Archive my Straw tote bag") == .tidy(op: .archive, subjects: ["Straw tote bag"]))
+        #expect(AgentCommand.parse("Archive my Brown leather belt and my Straw tote bag") == .tidy(op: .archive, subjects: ["Brown leather belt", "Straw tote bag"]))
+        #expect(AgentCommand.parse("Delete my Black ballet flats from my closet") == .tidy(op: .delete, subjects: ["Black ballet flats"]))
+        #expect(AgentCommand.parse("Get rid of the Brown leather belt") == .tidy(op: .archive, subjects: ["Brown leather belt"]))
+        #expect(AgentCommand.parse("Clean out my Black ballet flats, I never wear them") == .tidy(op: .archive, subjects: ["Black ballet flats"]))
+        #expect(AgentCommand.parse("Restore my Linen shirt to my closet") == .tidy(op: .unarchive, subjects: ["Linen shirt"]))
+        #expect(AgentCommand.parse("Could you please archive the old tee") == .tidy(op: .archive, subjects: ["old tee"]))
+    }
 }

@@ -18,6 +18,11 @@ struct AgentTurnRefused: Error {}
         do {
             // The router carries out plain commands and look requests itself; the model then only writes the sentence about the result.
             if turn.plan.fast == nil, let preflight = turn.plan.preflight, let result = try await runPreflight(preflight, attempt: attempt, conversationID: conversationID) {
+                if result.exact, let i = conversation.messages.lastIndex(where: { $0.attemptID == attempt && $0.role == .assistant }) {
+                    conversation.messages[i].source = result.fallback; conversation.messages[i].status = .streaming
+                    if (try? conversation.complete(attemptID: attempt)) != nil { finalizeReply(attempt: attempt) }
+                    return
+                }
                 turn.plan.fast = result; turn.plan.tools = []; turn.parts.context += "\n" + result.note
             }
             let maximumTokens = turn.plan.responseTokens
@@ -83,7 +88,7 @@ struct AgentTurnRefused: Error {}
         let check = AgentGroundingCheck(catalog: nameCatalog())
         let cards = (conversation.messages[i].toolSteps ?? []).flatMap { $0.results ?? [] }.count
         // Requests that prepare a review must never be answered as if the change had been made.
-        let changes: Set<AgentIntent> = [.editPiece, .relabel, .theme, .planDays, .planTrip, .suggestOutfit, .recordWear, .profile, .addPiece, .whatToWear]
+        let changes: Set<AgentIntent> = [.editPiece, .tidy, .relabel, .theme, .planDays, .planTrip, .suggestOutfit, .recordWear, .profile, .addPiece, .whatToWear]
         let forbidClaims = changes.contains(turn.plan.intent)
         var first = check.violations(in: conversation.messages[i].source, hasCards: cards > 0, forbidCompletionClaims: forbidClaims)
         guard !first.isEmpty else { return }
