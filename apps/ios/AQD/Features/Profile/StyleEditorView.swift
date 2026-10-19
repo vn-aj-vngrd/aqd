@@ -9,6 +9,8 @@ struct StyleEditorView: View {
     /// Set when Next is tapped on an unanswered step; cleared by answering or changing step.
     @State private var showsNeed = false
     @State private var needTaps = 0
+    /// Direction of the last step change, so questions slide forward on Next and back on Back.
+    @State private var forward = true
     private var page: Int { model.draft.page }
     private let questions = ["What would you like help with?", "What do you dress for?", "What feels like you?", "How do you like clothes to fit?", "Body details, only if you want", "Colors and patterns you enjoy"]
     private let hints = ["Choose up to two, or No preference. Your answers stay private.", "Choose any, or No preference. We won’t infer your schedule.", "Choose any styles you enjoy, or No preference.", "Choose any, or No preference. Suggestions are not a size or try-on guarantee.", "Add optional details, choose Not sure, or decline.", "Choose colors and patterns, or No preference. Your choices stay private."]
@@ -38,6 +40,7 @@ struct StyleEditorView: View {
                                 }
                             }.accessibilityHidden(true)
                         }
+                        Group {
                         if page == 6 { review }
                         else {
                             VStack(alignment: .leading, spacing: 12) {
@@ -52,6 +55,9 @@ struct StyleEditorView: View {
                             }
                             question
                         }
+                        }
+                        .id(page)
+                        .transition(stepTransition)
                     }
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
             }
@@ -64,7 +70,8 @@ struct StyleEditorView: View {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
                             if page > 0 {
-                                model.update { $0.page = $0.editingFromReview ? 6 : $0.page - 1; $0.editingFromReview = false }
+                                forward = model.draft.editingFromReview
+                                withAnimation(stepAnimation) { model.update { $0.page = $0.editingFromReview ? 6 : $0.page - 1; $0.editingFromReview = false } }
                             } else if model.hasUnsavedChanges { confirmsDiscard = true }
                             else { model.discard() }
                         } label: { Label("Back", systemImage: "chevron.backward") }
@@ -123,8 +130,16 @@ struct StyleEditorView: View {
             AccessibilityNotification.Announcement(needMessage).post()
             return
         }
-        model.next()
+        forward = true
+        withAnimation(stepAnimation) { model.next() }
     }
+    /// Questions slide in from the side they are heading to and fade, like turning a page; Reduce Motion keeps only the fade.
+    private var stepTransition: AnyTransition {
+        guard !reduceMotion else { return .opacity }
+        return .asymmetric(insertion: .move(edge: forward ? .trailing : .leading).combined(with: .opacity),
+                           removal: .move(edge: forward ? .leading : .trailing).combined(with: .opacity))
+    }
+    private var stepAnimation: Animation { reduceMotion ? .easeInOut(duration: 0.2) : .smooth(duration: 0.38) }
     private func hideNeed() { withAnimation(reduceMotion ? nil : .smooth(duration: 0.2)) { showsNeed = false } }
     private var needMessage: String {
         switch page {
@@ -231,7 +246,8 @@ struct StyleEditorView: View {
                 VStack(spacing: 0) {
                     ForEach(group, id: \.self) { step in
                         Button {
-                            model.update { $0.page = step; $0.editingFromReview = true }
+                            forward = false
+                            withAnimation(stepAnimation) { model.update { $0.page = step; $0.editingFromReview = true } }
                         } label: {
                             HStack(alignment: .center, spacing: 12) {
                                 VStack(alignment: .leading, spacing: 4) {
