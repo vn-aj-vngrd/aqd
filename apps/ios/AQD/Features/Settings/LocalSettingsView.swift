@@ -99,9 +99,7 @@ struct LocalSettingsView: View {
             if tourAfterWelcome { tourAfterWelcome = false; state.beginTour(from: .settings) }
         }) { WelcomeView(previewDismiss: { tour in tourAfterWelcome = tour; previewWelcome = false }).background(AppTheme.canvas) }
         .fullScreenCover(isPresented: $previewSplash) { DevelopmentSplashPreview() }
-        .sheet(isPresented: $seedSamples) {
-            DevelopmentSeedView().environment(state).appAppearance(state.appearance)
-        }
+        .navigationDestination(isPresented: $seedSamples) { DevelopmentSeedView().secondaryPage() }
         #endif
     }
     private var appearanceTitle: String { state.appearance == .system ? "Automatic" : state.appearance.rawValue.capitalized }
