@@ -16,7 +16,7 @@ struct LocalExportView: View {
     @Environment(AppState.self) private var state
     @State private var model: LocalExportModel?
     var body: some View {
-        Group { if let model { LocalExportContent(model: model) } else { ProgressView("Opening export") } }
+        Group { if let model { LocalExportContent(model: model) } else { LoadingStatePage(title: "Opening export") } }
             .navigationTitle("Export closet").navigationBarTitleDisplayMode(.inline)
             .onAppear { if model == nil, let store = state.store { model = LocalExportModel(store: store) } }
             .onDisappear { model?.cancel() }

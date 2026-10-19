@@ -35,6 +35,12 @@ final class AppState {
     var localDataRoot: URL?
     var dataCoordinator: LocalDataCoordinator?
     var restoreModel: LocalRestoreModel?
+    /// True when restore or reset was opened from Settings, where it is pushed as a page instead of covering the app.
+    var restoreInSettings = false
+    /// True while the launch splash covers the app, so entrances underneath wait for it to leave.
+    var showingSplash = true
+    /// Swaps in a replaced closet; set by the root view so a pushed page can finish an install.
+    var installReplacement: ((PieceStore, LocalDataCoordinator, Int) -> Void)?
     var localDataCleanupError: String?
     var openingError: String?
     var isOpening = false
@@ -98,7 +104,6 @@ final class AppState {
     var profileHistory = false
     var profileInsights = false
     var entry = PrivateEntryState(alreadyEntered: true)
-    var reloadEntryAfterStyle = false
 
     init(deferOpening: Bool = false) {
         if deferOpening { isOpening = true } else { openStore() }
@@ -926,13 +931,24 @@ extension AppState {
 }
 
 extension AppState {
-    func openRestore() {
+    func openRestore(inSettings: Bool = false) {
         guard restoreModel == nil, let dataCoordinator else { return }
+        restoreInSettings = inSettings
         restoreModel = LocalRestoreModel(coordinator: dataCoordinator, source: store)
     }
-    func openErase() {
+    func openErase(inSettings: Bool = false) {
         guard restoreModel == nil, let dataCoordinator else { return }
+        restoreInSettings = inSettings
         restoreModel = LocalRestoreModel(coordinator: dataCoordinator, source: store, kind: .erase)
+    }
+    /// Leaving the page abandons a review that can still be cancelled; a failed cancel keeps the page so its error stays visible.
+    func closeSettingsDataOperation() {
+        guard let model = restoreModel, restoreInSettings else { return }
+        if model.cancel() { restoreModel = nil; restoreInSettings = false }
+    }
+    func finishSettingsDataOperation(_ store: PieceStore, _ coordinator: LocalDataCoordinator, _ destination: Int) {
+        restoreModel = nil; restoreInSettings = false
+        installReplacement?(store, coordinator, destination)
     }
     func retryLocalDataCleanup() {
         do {

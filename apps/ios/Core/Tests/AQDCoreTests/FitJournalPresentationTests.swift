@@ -15,6 +15,17 @@ struct FitJournalPresentationTests {
         return memory
     }
 
+    @Test func profileStatsCountThisMonthAndTheCurrentStreak() {
+        let today = LocalPlanDay(year: 2026, month: 10, day: 19, timeZoneID: "Asia/Manila")
+        let fits = [fit(2026, 10, 19), fit(2026, 10, 18), fit(2026, 10, 18), fit(2026, 10, 17), fit(2026, 10, 15), fit(2026, 9, 30)]
+        #expect(FitJournalPresentation.monthCount(fits, today: today) == 5)
+        #expect(FitJournalPresentation.streak(fits, today: today) == 3, "19, 18, 17; the gap on the 16th ends it")
+        let notYetToday = fits.filter { $0.day.day != 19 || $0.day.month != 10 }
+        #expect(FitJournalPresentation.streak(notYetToday, today: today) == 2, "a streak still counts until today is over")
+        #expect(FitJournalPresentation.streak([fit(2026, 10, 10)], today: today) == 0)
+        #expect(FitJournalPresentation.streak([], today: today) == 0)
+    }
+
     @Test func contentFilterAndSortOrderFits() {
         let a = fit(2026, 10, 3, photo: true), b = fit(2026, 10, 9, outfit: "Linen set"), c = fit(2026, 9, 28, photo: true, outfit: "Office")
         let all = [a, b, c]

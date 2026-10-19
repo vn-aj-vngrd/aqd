@@ -3,8 +3,10 @@ import AQDCore
 import Foundation
 import UIKit
 
-/// Debug-only owner preview: a closet, outfits, themes, one planned week and a week of wear for a woman in her mid twenties.
-/// It first empties the closet (pieces, outfits, themes, plans, wear and fits) after writing a backup archive; the profile and settings stay.
+/// Debug-only owner preview for internal testing: Angelika Domingo, a woman in her mid twenties, with a full closet, outfits,
+/// themes, a planned week and trip, two weeks of wear, fit memories, a profile and complete style preferences.
+/// It first writes a backup archive, then empties the closet (pieces, outfits, themes, plans, wear and fits) and replaces the
+/// profile and style answers. Settings, chats and onboarding progress stay. The app itself always starts empty.
 @MainActor enum RealisticClosetSeed {
     struct Receipt: Codable {
         var pieces: [UUID] = [], outfits: [UUID] = [], themes: [UUID] = [], plans: [UUID] = [], wear: [UUID] = [], fits: [UUID] = []
@@ -93,12 +95,181 @@ import UIKit
         PieceSpec(key: "bikini", name: "Coral bikini set", category: .tops, group: "bikinis", color: "Coral", brand: "Seafolly", material: "Stretch nylon", season: "Summer", tags: ["beach", "vacation", "island"], look: .gen(.bikini, plain(0xE56B4E)), fit: "Adjustable")
     ]
 
+
+    /// The rest of a real closet: more colorways of the staples, activewear, loungewear and a full set of accessories.
+    private static let extraSpecs: [PieceSpec] = [
+        // Tops
+        PieceSpec(key: "teeBlack", name: "Black crew tee", category: .tops, group: "tops", color: "Black", brand: "Uniqlo", material: "Cotton jersey", season: "All year", tags: ["basic", "casual", "travel"], look: .gen(.tee, plain(0x1E1E20)), fit: "Regular"),
+        PieceSpec(key: "teeGrey", name: "Heather grey tee", category: .tops, group: "tops", color: "Grey", brand: "Everlane", material: "Cotton", season: "All year", tags: ["basic", "weekend", "lounge"], look: .gen(.tee, plain(0x9A9A9E)), fit: "Relaxed"),
+        PieceSpec(key: "teeOlive", name: "Olive boxy tee", category: .tops, group: "tops", color: "Olive", brand: "COS", material: "Heavy cotton", season: "All year", tags: ["casual", "weekend"], look: .gen(.tee, plain(0x6B6B47)), fit: "Boxy"),
+        PieceSpec(key: "teeStripeRed", name: "Red striped tee", category: .tops, group: "tops", color: "Cream and red", brand: "Armor Lux", material: "Cotton", season: "Spring and summer", tags: ["casual", "vacation"], look: .gen(.tee, made(0xF4F1EA, .stripes, 0xB23A48)), fit: "Regular"),
+        PieceSpec(key: "blouseWhite", name: "White button-down shirt", category: .tops, group: "tops", color: "White", brand: "Uniqlo", material: "Oxford cotton", season: "All year", tags: ["work", "classic", "travel"], look: .gen(.blouse, plain(0xF7F5F0)), fit: "Relaxed"),
+        PieceSpec(key: "blouseBlue", name: "Blue striped shirt", category: .tops, group: "tops", color: "Blue stripe", brand: "J.Crew", material: "Cotton poplin", season: "All year", tags: ["work", "weekend"], look: .gen(.blouse, made(0xEEF2F7, .stripes, 0x5C7FB0)), fit: "Oversized"),
+        PieceSpec(key: "blouseSilk", name: "Ivory silk blouse", category: .tops, group: "tops", color: "Ivory", brand: "Equipment", material: "Silk", season: "All year", tags: ["work", "formal", "date night"], look: .gen(.blouse, plain(0xF1E9DA, .satin)), fit: "Relaxed", notes: "Dry clean only."),
+        PieceSpec(key: "blouseFloral", name: "Ditsy floral blouse", category: .tops, group: "tops", color: "Navy floral", brand: "Rouje", material: "Viscose", season: "Spring and summer", tags: ["brunch", "date night"], look: .gen(.blouse, made(0x24365E, .floral, 0xE8B4C0)), fit: "Fitted"),
+        PieceSpec(key: "blouseDot", name: "Polka dot blouse", category: .tops, group: "tops", color: "Black and white", brand: "Zara", material: "Crepe", season: "All year", tags: ["work", "brunch"], look: .gen(.blouse, made(0x1E1E20, .dots, 0xF4F1EA)), fit: "Relaxed"),
+        PieceSpec(key: "cropWhite", name: "White eyelet crop top", category: .tops, group: "tops", color: "White", brand: "H&M", material: "Cotton eyelet", season: "Summer", tags: ["vacation", "beach", "brunch"], look: .gen(.crop, plain(0xF7F5F0)), fit: "Cropped"),
+        PieceSpec(key: "cropDenim", name: "Chambray crop shirt", category: .tops, group: "tops", color: "Chambray", brand: "Madewell", material: "Chambray", season: "Spring and summer", tags: ["casual", "weekend"], look: .gen(.crop, made(0x8FA8C8, .denim, 0x5F7EA4, .denim)), fit: "Cropped"),
+        PieceSpec(key: "tankWhite", name: "White ribbed tank", category: .tops, group: "camis", color: "White", brand: "Skims", material: "Rib cotton", season: "All year", tags: ["basic", "layering"], look: .gen(.tank, A.Style(color: A.rgb(0xF7F5F0), pattern: .ribbed, material: .knit)), fit: "Fitted"),
+        PieceSpec(key: "tankMocha", name: "Mocha ribbed tank", category: .tops, group: "camis", color: "Mocha", brand: "Aritzia", material: "Rib cotton", season: "All year", tags: ["basic", "layering", "weekend"], look: .gen(.tank, A.Style(color: A.rgb(0x7B5E4E), pattern: .ribbed, material: .knit)), fit: "Fitted"),
+        PieceSpec(key: "camiBlack", name: "Black satin cami", category: .tops, group: "camis", color: "Black", brand: "Aritzia", material: "Satin", season: "All year", tags: ["night out", "date night", "layering"], look: .gen(.cami, plain(0x1E1E20, .satin)), fit: "Slim"),
+        PieceSpec(key: "camiChampagne", name: "Champagne lace cami", category: .tops, group: "camis", color: "Champagne", brand: "Reformation", material: "Silk and lace", season: "All year", tags: ["event", "wedding guest"], look: .gen(.cami, plain(0xDCC7A8, .satin)), fit: "Slim", notes: "Hand wash only."),
+        // Knitwear
+        PieceSpec(key: "knitNavy", name: "Navy merino crewneck", category: .tops, group: "knitwear", color: "Navy", brand: "Uniqlo", material: "Merino wool", season: "Autumn and winter", tags: ["work", "travel", "layering"], look: .gen(.cardigan, A.Style(color: A.rgb(0x24365E), pattern: .ribbed, material: .knit)), fit: "Regular"),
+        PieceSpec(key: "knitCream", name: "Cream cable knit sweater", category: .tops, group: "knitwear", color: "Cream", brand: "Massimo Dutti", material: "Wool blend", season: "Winter", tags: ["cozy", "travel", "baguio"], look: .gen(.cardigan, A.Style(color: A.rgb(0xEFE6D6), pattern: .ribbed, material: .knit)), fit: "Oversized"),
+        PieceSpec(key: "knitGrey", name: "Grey cashmere sweater", category: .tops, group: "knitwear", color: "Grey", brand: "Naadam", material: "Cashmere", season: "Autumn and winter", tags: ["cozy", "work"], look: .gen(.cardigan, A.Style(color: A.rgb(0xA3A3A6), pattern: .ribbed, material: .knit)), fit: "Relaxed", notes: "Store folded, never hung."),
+        PieceSpec(key: "cardiBlack", name: "Black cropped cardigan", category: .layers, group: "layers", color: "Black", brand: "& Other Stories", material: "Knit", season: "All year", tags: ["layering", "office", "date night"], look: .gen(.cardigan, A.Style(color: A.rgb(0x1E1E20), pattern: .ribbed, material: .knit)), fit: "Cropped"),
+        PieceSpec(key: "cardiSage", name: "Sage knit cardigan", category: .layers, group: "layers", color: "Sage", brand: "Sezane", material: "Cotton knit", season: "Spring", tags: ["brunch", "weekend", "layering"], look: .gen(.cardigan, A.Style(color: A.rgb(0x9DB59A), pattern: .ribbed, material: .knit)), fit: "Relaxed"),
+        // Bottoms
+        PieceSpec(key: "trousersCream", name: "Cream pleated trousers", category: .bottoms, group: "bottoms", color: "Cream", brand: "Massimo Dutti", material: "Wool blend", season: "All year", tags: ["work", "formal", "tailored"], look: .gen(.pants(.wide), plain(0xEDE3D1, .wool)), fit: "Wide leg"),
+        PieceSpec(key: "trousersNavy", name: "Navy cigarette trousers", category: .bottoms, group: "bottoms", color: "Navy", brand: "Theory", material: "Stretch wool", season: "All year", tags: ["work", "tailored"], look: .gen(.pants(.straight), plain(0x24365E, .wool)), fit: "Slim straight"),
+        PieceSpec(key: "trousersOlive", name: "Olive cargo trousers", category: .bottoms, group: "bottoms", color: "Olive", brand: "Zara", material: "Cotton twill", season: "All year", tags: ["casual", "travel", "weekend"], look: .gen(.pants(.wide), plain(0x6B6B47)), fit: "Relaxed"),
+        PieceSpec(key: "trousersLinenWhite", name: "White linen pants", category: .bottoms, group: "bottoms", color: "White", brand: "H&M", material: "Linen", season: "Summer", tags: ["vacation", "beach", "brunch"], look: .gen(.pants(.wide), plain(0xF7F5F0, .linen)), fit: "Wide leg"),
+        PieceSpec(key: "shortsDenim", name: "Denim cut-off shorts", category: .bottoms, group: "denim", color: "Mid blue", brand: "Levi's", material: "Denim", season: "Summer", tags: ["beach", "casual", "vacation"], look: .gen(.shorts, made(0x6C8DB2, .denim, 0x3F618F, .denim)), fit: "High rise"),
+        PieceSpec(key: "shortsLinen", name: "Black linen shorts", category: .bottoms, group: "bottoms", color: "Black", brand: "Mango", material: "Linen", season: "Summer", tags: ["vacation", "casual"], look: .gen(.shorts, plain(0x1E1E20, .linen)), fit: "Relaxed"),
+        PieceSpec(key: "jeansWide", name: "Ecru wide-leg jeans", category: .bottoms, group: "denim", color: "Ecru", brand: "Agolde", material: "Denim", season: "Spring and summer", tags: ["casual", "brunch", "weekend"], look: .gen(.pants(.wide), made(0xEEE6D5, .denim, 0xC9BFA9, .denim)), fit: "Wide leg"),
+        PieceSpec(key: "jeansLight", name: "Light wash mom jeans", category: .bottoms, group: "denim", color: "Light blue", brand: "Abercrombie", material: "Denim", season: "All year", tags: ["casual", "weekend", "errands"], look: .gen(.pants(.straight), made(0x8FA8C8, .denim, 0x5F7EA4, .denim)), fit: "Tapered"),
+        PieceSpec(key: "skirtBlackMini", name: "Black leather mini skirt", category: .bottoms, group: "skirts", color: "Black", brand: "Zara", material: "Faux leather", season: "Autumn and winter", tags: ["night out", "date night"], look: .gen(.skirt(.mini, pleated: false), plain(0x1C1B1B, .leather)), fit: "A-line"),
+        PieceSpec(key: "skirtSatinMidi", name: "Black satin slip skirt", category: .bottoms, group: "skirts", color: "Black", brand: "Aritzia", material: "Satin", season: "All year", tags: ["work", "event", "date night"], look: .gen(.skirt(.midi, pleated: false), plain(0x1E1E20, .satin)), fit: "Bias cut"),
+        PieceSpec(key: "skirtLinenMaxi", name: "Linen maxi skirt", category: .bottoms, group: "skirts", color: "Oatmeal", brand: "Faithfull the Brand", material: "Linen", season: "Summer", tags: ["vacation", "beach", "sunday"], look: .gen(.skirt(.maxi, pleated: false), plain(0xD9C7A8, .linen)), fit: "Flowy"),
+        PieceSpec(key: "skirtPleatGrey", name: "Grey pleated midi skirt", category: .bottoms, group: "skirts", color: "Grey", brand: "Uniqlo", material: "Polyester", season: "All year", tags: ["work", "classic"], look: .gen(.skirt(.midi, pleated: true), plain(0x8E8E92)), fit: "Pleated"),
+        // Dresses
+        PieceSpec(key: "dressWhiteLinen", name: "White linen mini dress", category: .dresses, group: "dresses", color: "White", brand: "Faithfull the Brand", material: "Linen", season: "Summer", tags: ["vacation", "beach", "brunch"], look: .gen(.dress(.mini, sleeves: false), plain(0xF7F5F0, .linen)), fit: "Relaxed"),
+        PieceSpec(key: "dressEmerald", name: "Emerald satin midi", category: .dresses, group: "dresses", color: "Emerald", brand: "Reformation", material: "Satin", season: "All year", tags: ["wedding guest", "event", "formal"], look: .gen(.dress(.midi, sleeves: false), plain(0x1F6B4F, .satin)), fit: "Bias cut"),
+        PieceSpec(key: "dressStripe", name: "Striped shirt dress", category: .dresses, group: "dresses", color: "Blue stripe", brand: "J.Crew", material: "Cotton", season: "Spring and summer", tags: ["work", "weekend"], look: .gen(.dress(.midi, sleeves: true), made(0xEEF2F7, .stripes, 0x5C7FB0)), fit: "Belted"),
+        PieceSpec(key: "dressKnit", name: "Oat knit midi dress", category: .dresses, group: "dresses", color: "Oat", brand: "Aritzia", material: "Rib knit", season: "Autumn and winter", tags: ["cozy", "travel", "work"], look: .gen(.dress(.midi, sleeves: true), A.Style(color: A.rgb(0xD9C7A8), pattern: .ribbed, material: .knit)), fit: "Fitted"),
+        PieceSpec(key: "dressRedMaxi", name: "Red halter maxi dress", category: .dresses, group: "dresses", color: "Red", brand: "Mango", material: "Viscose", season: "Summer", tags: ["vacation", "event", "date night"], look: .gen(.dress(.maxi, sleeves: false), plain(0xB23A48)), fit: "Halter"),
+        PieceSpec(key: "dressDenim", name: "Denim pinafore dress", category: .dresses, group: "dresses", color: "Mid blue", brand: "Madewell", material: "Denim", season: "Spring", tags: ["casual", "weekend"], look: .gen(.dress(.mini, sleeves: false), made(0x6C8DB2, .denim, 0x3F618F, .denim)), fit: "A-line"),
+        PieceSpec(key: "dressPolka", name: "Polka dot tea dress", category: .dresses, group: "dresses", color: "Navy dots", brand: "Rixo", material: "Silk crepe", season: "Spring and summer", tags: ["brunch", "wedding guest", "date night"], look: .gen(.dress(.midi, sleeves: true), made(0x24365E, .dots, 0xF4F1EA)), fit: "Flowy"),
+        // Layers
+        PieceSpec(key: "coatCamel", name: "Camel wool coat", category: .layers, group: "layers", color: "Camel", brand: "Max Mara", material: "Wool and cashmere", season: "Winter", tags: ["travel", "work", "baguio"], look: .gen(.blazer, plain(0xB98B5E, .wool)), fit: "Relaxed", notes: "Brush after wearing."),
+        PieceSpec(key: "blazerNavy", name: "Navy double-breasted blazer", category: .layers, group: "layers", color: "Navy", brand: "Massimo Dutti", material: "Wool", season: "All year", tags: ["work", "formal"], look: .gen(.blazer, plain(0x24365E, .wool)), fit: "Tailored"),
+        PieceSpec(key: "blazerCheck", name: "Grey check blazer", category: .layers, group: "layers", color: "Grey check", brand: "Zara", material: "Wool blend", season: "Autumn and winter", tags: ["work", "classic"], look: .gen(.blazer, made(0x8E8E92, .gingham, 0x5A5A5E, .wool)), fit: "Oversized"),
+        PieceSpec(key: "bomber", name: "Olive bomber jacket", category: .layers, group: "layers", color: "Olive", brand: "Alpha Industries", material: "Nylon", season: "Autumn", tags: ["casual", "travel", "weekend"], look: .gen(.jacket, plain(0x6B6B47)), fit: "Relaxed"),
+        PieceSpec(key: "puffer", name: "Black packable puffer", category: .layers, group: "layers", color: "Black", brand: "Uniqlo", material: "Down", season: "Winter", tags: ["travel", "baguio", "cold"], look: .gen(.jacket, plain(0x1E1E20)), fit: "Regular"),
+        PieceSpec(key: "shacket", name: "Cream overshirt jacket", category: .layers, group: "layers", color: "Cream", brand: "Arket", material: "Wool blend", season: "Autumn", tags: ["casual", "layering", "weekend"], look: .gen(.jacket, plain(0xEDE3D1, .wool)), fit: "Oversized"),
+        PieceSpec(key: "kimono", name: "Floral kimono", category: .layers, group: "layers", color: "Pink floral", brand: "Free People", material: "Viscose", season: "Summer", tags: ["beach", "vacation"], look: .gen(.cardigan, made(0xF4EFE6, .floral, 0xD0678A)), fit: "Flowy"),
+        // Activewear
+        PieceSpec(key: "sportsBra", name: "Black sports bra", category: .tops, group: "activewear", color: "Black", brand: "Lululemon", material: "Nulu", season: "All year", tags: ["gym", "pilates", "active"], look: .gen(.crop, plain(0x1E1E20)), fit: "Medium support"),
+        PieceSpec(key: "sportsBraSage", name: "Sage sports bra", category: .tops, group: "activewear", color: "Sage", brand: "Alo", material: "Airlift", season: "All year", tags: ["gym", "pilates", "active"], look: .gen(.crop, plain(0x9DB59A)), fit: "Light support"),
+        PieceSpec(key: "runTee", name: "White running tee", category: .tops, group: "activewear", color: "White", brand: "Nike", material: "Dri-FIT", season: "All year", tags: ["gym", "run", "active"], look: .gen(.tee, plain(0xF7F5F0)), fit: "Regular"),
+        PieceSpec(key: "leggings", name: "Black high-rise leggings", category: .bottoms, group: "activeBottoms", color: "Black", brand: "Lululemon", material: "Nulu", season: "All year", tags: ["gym", "pilates", "travel"], look: .gen(.pants(.skinny), plain(0x1E1E20)), fit: "25 inch"),
+        PieceSpec(key: "leggingsMocha", name: "Mocha flare leggings", category: .bottoms, group: "activeBottoms", color: "Mocha", brand: "Alo", material: "Airbrush", season: "All year", tags: ["pilates", "errands"], look: .gen(.pants(.wide), plain(0x7B5E4E)), fit: "Flare"),
+        PieceSpec(key: "bikeShorts", name: "Navy bike shorts", category: .bottoms, group: "activeBottoms", color: "Navy", brand: "Girlfriend Collective", material: "Recycled nylon", season: "Summer", tags: ["gym", "run", "active"], look: .gen(.shorts, plain(0x24365E)), fit: "6 inch"),
+        PieceSpec(key: "trainers", name: "Grey running shoes", category: .shoes, group: "shoes", color: "Grey", brand: "On", material: "Mesh", season: "All year", tags: ["gym", "run", "walking"], look: .gen(.sneakers, plain(0xA3A3A6, .rubber)), fit: "Half size up"),
+        // Loungewear
+        PieceSpec(key: "sweatsGrey", name: "Grey sweatpants", category: .bottoms, group: "loungewear", color: "Grey", brand: "Aritzia", material: "Fleece", season: "All year", tags: ["lounge", "travel", "sunday"], look: .gen(.pants(.straight), plain(0x9A9A9E)), fit: "Relaxed"),
+        PieceSpec(key: "hoodie", name: "Oat zip hoodie", category: .layers, group: "layers", color: "Oat", brand: "Aritzia", material: "Fleece", season: "All year", tags: ["lounge", "travel", "gym"], look: .gen(.jacket, plain(0xD9C7A8)), fit: "Oversized"),
+        PieceSpec(key: "sweatshirt", name: "Navy college sweatshirt", category: .tops, group: "tops", color: "Navy", brand: "Champion", material: "Fleece", season: "All year", tags: ["lounge", "weekend"], look: .gen(.tee, plain(0x24365E)), fit: "Oversized"),
+        // Shoes
+        PieceSpec(key: "loafers", name: "Black leather loafers", category: .shoes, group: "shoes", color: "Black", brand: "G.H. Bass", material: "Leather", season: "All year", tags: ["work", "classic", "travel"], look: .gen(.flats, plain(0x1E1E20, .leather)), fit: "True to size"),
+        PieceSpec(key: "pumps", name: "Nude pointed pumps", category: .shoes, group: "shoes", color: "Nude", brand: "Charles & Keith", material: "Patent leather", season: "All year", tags: ["work", "formal", "event"], look: .gen(.heels, plain(0xD9B8A0, .leather)), fit: "True to size"),
+        PieceSpec(key: "heelsBlack", name: "Black strappy heels", category: .shoes, group: "shoes", color: "Black", brand: "Steve Madden", material: "Leather", season: "All year", tags: ["night out", "formal", "date night"], look: .gen(.heels, plain(0x1E1E20, .leather)), fit: "True to size"),
+        PieceSpec(key: "mules", name: "Tan heeled mules", category: .shoes, group: "shoes", color: "Tan", brand: "Mango", material: "Suede", season: "Spring and summer", tags: ["brunch", "work", "date night"], look: .gen(.heels, plain(0xC08A55, .suede)), fit: "True to size"),
+        PieceSpec(key: "sneakersBlack", name: "Black canvas sneakers", category: .shoes, group: "shoes", color: "Black", brand: "Converse", material: "Canvas", season: "All year", tags: ["casual", "travel", "night out"], look: .gen(.sneakers, plain(0x1E1E20)), fit: "Half size down"),
+        PieceSpec(key: "sneakersRetro", name: "Retro suede sneakers", category: .shoes, group: "shoes", color: "Green and cream", brand: "Adidas", material: "Suede", season: "All year", tags: ["casual", "weekend"], look: .gen(.sneakers, plain(0x2F6B4F, .suede)), fit: "True to size"),
+        PieceSpec(key: "kneeBoots", name: "Black knee-high boots", category: .shoes, group: "shoes", color: "Black", brand: "Stuart Weitzman", material: "Leather", season: "Autumn and winter", tags: ["date night", "travel", "baguio"], look: .gen(.boots, plain(0x1E1E20, .leather)), fit: "True to size"),
+        PieceSpec(key: "flatsNude", name: "Beige slingback flats", category: .shoes, group: "shoes", color: "Beige", brand: "Chanel", material: "Leather", season: "All year", tags: ["work", "brunch", "classic"], look: .gen(.flats, plain(0xD9C7A8, .leather)), fit: "True to size", notes: "Wear with care; keep the dust bag."),
+        PieceSpec(key: "sandalsBlack", name: "Black slide sandals", category: .shoes, group: "sandals", color: "Black", brand: "Birkenstock", material: "Leather", season: "Summer", tags: ["casual", "errands", "vacation"], look: .gen(.sandal, plain(0x1E1E20, .leather)), fit: "Narrow"),
+        PieceSpec(key: "espadrilles", name: "Cream espadrille wedges", category: .shoes, group: "sandals", color: "Cream", brand: "Castañer", material: "Canvas and jute", season: "Summer", tags: ["vacation", "brunch", "wedding guest"], look: .gen(.sandal, plain(0xEDE3D1, .straw)), fit: "True to size"),
+        // Bags
+        PieceSpec(key: "toteLeather", name: "Black leather work tote", category: .accessories, group: "bags", color: "Black", brand: "Cuyana", material: "Leather", season: "All year", tags: ["work", "travel"], look: .gen(.tote, plain(0x1E1E20, .leather)), notes: "Fits a 14 inch laptop."),
+        PieceSpec(key: "shoulderBag", name: "Brown shoulder bag", category: .accessories, group: "bags", color: "Brown", brand: "Polène", material: "Leather", season: "All year", tags: ["everyday", "work", "brunch"], look: .gen(.crossbody, plain(0x6A3F2A, .leather))),
+        PieceSpec(key: "miniBag", name: "Cream mini bag", category: .accessories, group: "bags", color: "Cream", brand: "Charles & Keith", material: "Faux leather", season: "All year", tags: ["date night", "event", "brunch"], look: .gen(.clutch, plain(0xEDE3D1, .leather))),
+        PieceSpec(key: "beltBag", name: "Black belt bag", category: .accessories, group: "bags", color: "Black", brand: "Lululemon", material: "Nylon", season: "All year", tags: ["travel", "gym", "errands"], look: .gen(.crossbody, plain(0x1E1E20))),
+        PieceSpec(key: "clutchGold", name: "Gold chain clutch", category: .accessories, group: "bags", color: "Gold", brand: "Mango", material: "Metallic leather", season: "All year", tags: ["wedding guest", "event", "formal"], look: .gen(.clutch, plain(0xCDA64E, .metal))),
+        // Jewelry
+        PieceSpec(key: "pearls", name: "Pearl drop earrings", category: .accessories, group: "jewelry", color: "Pearl", brand: "Mejuri", material: "Freshwater pearl", season: "All year", tags: ["formal", "wedding guest", "work"], look: .gen(.hoops, plain(0xF1EADF, .metal))),
+        PieceSpec(key: "silverHoops", name: "Silver huggie hoops", category: .accessories, group: "jewelry", color: "Silver", brand: "Pandora", material: "Sterling silver", season: "All year", tags: ["everyday", "gym"], look: .gen(.hoops, plain(0xC6C7CB, .metal))),
+        PieceSpec(key: "chain", name: "Layered gold chain", category: .accessories, group: "jewelry", color: "Gold", brand: "Mejuri", material: "Gold vermeil", season: "All year", tags: ["everyday", "date night"], look: .gen(.necklace, plain(0xCDA64E, .metal))),
+        PieceSpec(key: "smartwatch", name: "Black smartwatch", category: .accessories, group: "jewelry", color: "Black", brand: "Apple", material: "Aluminum", season: "All year", tags: ["gym", "everyday", "travel"], look: .gen(.watch, plain(0x1E1E20, .rubber))),
+        // Hats, sunglasses and small accessories
+        PieceSpec(key: "cap", name: "Navy baseball cap", category: .accessories, group: "sunwear", color: "Navy", brand: "New Era", material: "Cotton", season: "All year", tags: ["gym", "travel", "beach"], look: .gen(.sunHat, plain(0x24365E))),
+        PieceSpec(key: "bucketHat", name: "Cream bucket hat", category: .accessories, group: "sunwear", color: "Cream", brand: "Kangol", material: "Cotton", season: "Summer", tags: ["beach", "vacation", "casual"], look: .gen(.sunHat, plain(0xEDE3D1))),
+        PieceSpec(key: "catEye", name: "Tortoise cat-eye sunglasses", category: .accessories, group: "sunwear", color: "Tortoise", brand: "Le Specs", material: "Acetate", season: "All year", tags: ["vacation", "brunch", "beach"], look: .gen(.sunglasses, plain(0x6A3F2A, .rubber))),
+        PieceSpec(key: "beltBlack", name: "Black skinny belt", category: .accessories, group: "accessories", color: "Black", brand: "Everlane", material: "Leather", season: "All year", tags: ["work", "formal"], look: .gen(.belt, plain(0x1E1E20, .leather))),
+        PieceSpec(key: "scarfWool", name: "Camel wool scarf", category: .accessories, group: "accessories", color: "Camel", brand: "Acne Studios", material: "Wool", season: "Winter", tags: ["travel", "baguio", "cold"], look: .gen(.scarf, plain(0xB98B5E, .wool))),
+        PieceSpec(key: "scarfSilkNavy", name: "Navy silk square scarf", category: .accessories, group: "accessories", color: "Navy", brand: "Massimo Dutti", material: "Silk", season: "All year", tags: ["work", "travel"], look: .gen(.scarf, made(0x24365E, .dots, 0xF4F1EA))),
+        // Swimwear
+        PieceSpec(key: "bikiniBlack", name: "Black triangle bikini", category: .tops, group: "bikinis", color: "Black", brand: "Triangl", material: "Neoprene", season: "Summer", tags: ["beach", "pool", "vacation"], look: .gen(.bikini, plain(0x1E1E20)), fit: "Adjustable"),
+        PieceSpec(key: "bikiniStripe", name: "Striped bandeau bikini", category: .tops, group: "bikinis", color: "Navy stripe", brand: "Solid & Striped", material: "Stretch nylon", season: "Summer", tags: ["beach", "island"], look: .gen(.bikini, made(0xF4F1EA, .stripes, 0x24365E)), fit: "Bandeau"),
+        PieceSpec(key: "onePieceRed", name: "Red scoop swimsuit", category: .dresses, group: "swimwear", color: "Red", brand: "Hunza G", material: "Crinkle stretch", season: "Summer", tags: ["pool", "beach"], look: .gen(.onePiece, plain(0xB23A48)), fit: "Fitted"),
+        PieceSpec(key: "rashGuard", name: "Navy long-sleeve rash guard", category: .tops, group: "tops", color: "Navy", brand: "Roxy", material: "Lycra", season: "Summer", tags: ["snorkel", "island", "sun"], look: .gen(.tee, plain(0x1F4E79)), fit: "Fitted")
+    ]
+
+    private static let extraLooks: [(name: String, keys: [String], occasion: String, mood: String)] = [
+        ("Monday focus", ["blouseWhite", "trousersNavy", "loafers", "toteLeather", "watch"], "Work", "Focused"),
+        ("Board review", ["blouseSilk", "blazerNavy", "trousersCream", "pumps", "pearls"], "Work", "Polished"),
+        ("Hybrid day", ["knitNavy", "jeansLight", "loafers", "shoulderBag"], "Work", "Easy"),
+        ("Midweek layers", ["tankWhite", "blazerCheck", "skirtPleatGrey", "flatsNude", "beltBlack"], "Work", "Classic"),
+        ("Rainy commute", ["blouseBlue", "trousersBlack", "trench", "boots", "toteLeather"], "Work", "Practical"),
+        ("Friday drinks", ["camiBlack", "trousersWide", "blazerBlack", "mules", "chain"], "Work", "Relaxed"),
+        ("Satin and knit", ["knitGrey", "skirtSatinMidi", "kneeBoots", "miniBag"], "Work", "Soft"),
+        ("Shirt dress Tuesday", ["dressStripe", "flatsNude", "shoulderBag", "watch"], "Work", "Fresh"),
+        ("Cozy office", ["dressKnit", "kneeBoots", "coatCamel", "toteLeather"], "Work", "Warm"),
+        ("Morning pilates", ["sportsBraSage", "leggingsMocha", "hoodie", "trainers", "beltBag"], "Active", "Energized"),
+        ("Gym session", ["sportsBra", "leggings", "runTee", "trainers", "smartwatch"], "Active", "Strong"),
+        ("Sunday run", ["runTee", "bikeShorts", "trainers", "cap", "smartwatch"], "Active", "Fresh"),
+        ("Errands in leggings", ["sweatshirt", "leggings", "sneakersRetro", "beltBag", "cap"], "Casual", "Comfortable"),
+        ("Lazy Sunday", ["teeGrey", "sweatsGrey", "sandalsBlack"], "Lounge", "Cozy"),
+        ("Long-haul flight", ["teeBlack", "sweatsGrey", "hoodie", "trainers", "beltBag"], "Travel", "Comfortable"),
+        ("Airport chic", ["knitCream", "trousersOlive", "sneakers", "coatCamel", "toteLeather"], "Travel", "Put together"),
+        ("Weekend denim", ["teeOlive", "jeansWide", "sneakersRetro", "crossbody"], "Weekend", "Easy"),
+        ("Farmers market", ["blouseFloral", "jeansLight", "espadrilles", "tote", "catEye"], "Weekend", "Sunny"),
+        ("Gallery afternoon", ["teeStripeRed", "skirtPleatGrey", "loafers", "shoulderBag"], "Weekend", "Curious"),
+        ("Picnic in the park", ["dressDenim", "teeStripeRed", "sneakers", "bucketHat", "tote"], "Weekend", "Playful"),
+        ("Brunch in linen", ["cropWhite", "trousersLinenWhite", "mules", "miniBag", "catEye"], "Weekend", "Breezy"),
+        ("Bookshop date", ["cardiSage", "tankWhite", "jeansWide", "flatsNude"], "Date night", "Sweet"),
+        ("Dinner downtown", ["camiChampagne", "skirtBlackMini", "heelsBlack", "miniBag", "chain"], "Date night", "Confident"),
+        ("Rooftop drinks", ["dressRedMaxi", "heelsBlack", "clutchGold", "hoops"], "Night out", "Bold"),
+        ("Concert night", ["teeBlack", "skirtBlackMini", "leather", "sneakersBlack", "beltBag"], "Night out", "Edgy"),
+        ("Karaoke night", ["cropDenim", "jeansBlack", "boots", "crossbody"], "Night out", "Fun"),
+        ("Garden wedding", ["dressPolka", "espadrilles", "clutchGold", "pearls"], "Event", "Romantic"),
+        ("Evening wedding", ["dressEmerald", "pumps", "clutchGold", "pearls"], "Event", "Elegant"),
+        ("Engagement party", ["blouseSilk", "skirtSatinMidi", "heels", "miniBag", "chain"], "Event", "Celebratory"),
+        ("Baby shower", ["dressGingham", "cardiSage", "flatsNude", "shoulderBag"], "Event", "Warm"),
+        ("Baguio morning", ["knitCream", "jeans", "puffer", "boots", "scarfWool"], "Travel", "Crisp"),
+        ("Baguio night market", ["sweatshirt", "trousersOlive", "puffer", "sneakersBlack", "beltBag"], "Travel", "Cozy"),
+        ("Pine forest walk", ["knitNavy", "leggings", "bomber", "trainers", "cap"], "Travel", "Outdoorsy"),
+        ("Snorkel day", ["rashGuard", "bikiniBlack", "shortsDenim", "slides", "bucketHat"], "Beach", "Adventurous"),
+        ("Beach club", ["bikiniStripe", "skirtLinenMaxi", "kimono", "goldSandals", "catEye"], "Beach", "Golden"),
+        ("Resort dinner", ["dressWhiteLinen", "espadrilles", "miniBag", "hoops"], "Beach", "Effortless"),
+        ("Poolside lunch", ["onePieceRed", "shortsLinen", "slides", "hat", "sunglasses"], "Beach", "Lazy"),
+        ("Coffee and laptop", ["blouseDot", "jeansBlack", "loafers", "toteLeather"], "Work", "Steady"),
+        ("Autumn layers", ["teeBlack", "shacket", "jeans", "kneeBoots", "scarfSilkNavy"], "Casual", "Layered"),
+        ("Mall run", ["tankMocha", "trousersOlive", "sneakersRetro", "shoulderBag", "silverHoops"], "Casual", "Easy")
+    ]
+
+    private static let extraThemes: [(name: String, text: String, looks: [String])] = [
+        ("Active", "Pilates, gym and Sunday runs.", ["Morning pilates", "Gym session", "Sunday run", "Errands in leggings"]),
+        ("Lounge", "Soft clothes for slow days.", ["Lazy Sunday", "Long-haul flight"]),
+        ("Baguio weekend", "Warm layers for the cool mountain air.", ["Baguio morning", "Baguio night market", "Pine forest walk", "Airport chic"]),
+        ("Wedding season", "Guest looks for every dress code.", ["Garden wedding", "Evening wedding", "Engagement party", "Wedding guest"]),
+        ("Office essentials", "The rotation that gets her through the week.", ["Monday focus", "Board review", "Hybrid day", "Midweek layers", "Rainy commute", "Shirt dress Tuesday", "Coffee and laptop", "Cozy office"]),
+        ("Resort", "Pool, beach club and dinners by the sea.", ["Snorkel day", "Beach club", "Resort dinner", "Poolside lunch"]),
+        ("Friends and parties", "Birthdays, karaoke and showers.", ["Karaoke night", "Baby shower", "Rooftop drinks", "Concert night", "Friday drinks"]),
+        ("Weekend favorites", "Easy looks she reaches for again and again.", ["Weekend denim", "Farmers market", "Gallery afternoon", "Picnic in the park", "Brunch in linen", "Mall run"]),
+        ("Autumn edit", "Knits, boots and layers.", ["Autumn layers", "Satin and knit", "City layers", "Cozy office"])
+    ]
+
+    /// Outfits marked as favorites.
+    private static let favorites = ["Office day", "Brunch with friends", "Date night", "Weekend denim", "Garden wedding", "Morning pilates", "Beach club", "Monday focus", "Coffee run", "Rooftop drinks", "Airport chic"]
+    /// Pieces she has put away, in the wash or lent out.
+    private static let archivedKeys = ["cropRed", "dressDenim", "sweatshirt"]
+    private static let laundryKeys = ["tee", "leggings", "sportsBra", "jeans"]
+    private static let unavailableKeys = ["dressEmerald"]
+
+    private static var allSpecs: [PieceSpec] { specs + extraSpecs }
+    private static var allLooks: [(name: String, keys: [String], occasion: String, mood: String)] { looks + extraLooks }
+
     private static let newCategories: [WardrobeCategory] = [
         WardrobeCategory(id: "camis", name: "Camis and tanks", type: .tops), WardrobeCategory(id: "knitwear", name: "Knitwear", type: .tops),
         WardrobeCategory(id: "denim", name: "Denim", type: .bottoms), WardrobeCategory(id: "skirts", name: "Skirts", type: .bottoms),
         WardrobeCategory(id: "sandals", name: "Sandals and slides", type: .shoes), WardrobeCategory(id: "bags", name: "Bags", type: .accessories),
         WardrobeCategory(id: "jewelry", name: "Jewelry and watches", type: .accessories), WardrobeCategory(id: "sunwear", name: "Hats and sunglasses", type: .accessories),
-        WardrobeCategory(id: "swimwear", name: "Swimsuits", type: .dresses), WardrobeCategory(id: "bikinis", name: "Bikinis", type: .tops)
+        WardrobeCategory(id: "swimwear", name: "Swimsuits", type: .dresses), WardrobeCategory(id: "bikinis", name: "Bikinis", type: .tops),
+        WardrobeCategory(id: "activewear", name: "Activewear", type: .tops), WardrobeCategory(id: "activeBottoms", name: "Leggings and active", type: .bottoms),
+        WardrobeCategory(id: "loungewear", name: "Loungewear", type: .bottoms)
     ]
 
     private static let looks: [(name: String, keys: [String], occasion: String, mood: String)] = [
@@ -190,7 +361,7 @@ import UIKit
             stage = "pieces"
             let preparer = PhotoPreparer()
             var piecesByKey: [String: WardrobePiece] = [:]
-            for (index, spec) in specs.enumerated() {
+            for (index, spec) in allSpecs.enumerated() {
                 let imageData: Data
                 switch spec.look {
                 case .art(let key):
@@ -214,11 +385,11 @@ import UIKit
                 let piece = try store.savePiece(PieceDraft(name: spec.name, category: spec.category, photoID: photoID, details: details), operationID: UUID())
                 piecesByKey[spec.key] = piece; receipt.pieces.append(piece.id)
             }
-            let pieces = specs.compactMap { piecesByKey[$0.key] }
+            let pieces = allSpecs.compactMap { piecesByKey[$0.key] }
 
             stage = "outfits"
             var outfitsByName: [String: Outfit] = [:]
-            for look in looks {
+            for look in allLooks {
                 var draft = OutfitDraft(ownerID: owner)
                 draft.name = look.name; draft.occasion = look.occasion; draft.mood = look.mood
                 for key in look.keys { guard let piece = piecesByKey[key] else { throw Failure.seedFailed("missing piece \(key)") }; draft.select(piece.id) }
@@ -230,7 +401,7 @@ import UIKit
             }
 
             stage = "themes"
-            for theme in themes {
+            for theme in themes + extraThemes {
                 var draft = ThemeDraft(ownerID: owner)
                 draft.name = theme.name; draft.description = theme.text
                 draft.outfitIDs = try theme.looks.map { name in guard let outfit = outfitsByName[name] else { throw Failure.seedFailed("missing outfit \(name)") }; return outfit.id }
@@ -259,9 +430,52 @@ import UIKit
             receipt.plans.append(try store.savePlanAuthoring(tripPlan).plan.id)
             try store.finishPlanAuthoring(tripPlan)
 
+            stage = "routines"
+            // Office on Monday, Wednesday and Friday and the gym on Tuesday and Thursday, for the three weeks after this one.
+            let routines: [(name: String, weekdays: [Int], occasion: String, looks: [String])] = [
+                ("Office days", [2, 4, 6], "Office", ["Monday focus", "Board review", "Midweek layers", "Coffee and laptop", "Shirt dress Tuesday", "Rainy commute"]),
+                ("Pilates and gym", [3, 5], "Pilates or gym", ["Morning pilates", "Gym session"])
+            ]
+            for routine in routines {
+                let preferred = routine.looks.compactMap { outfitsByName[$0]?.id }
+                var draft = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: owner, name: routine.name, start: try day(7), end: try day(27),
+                                                                       routine: RoutineConfiguration(weekdays: routine.weekdays, occasion: routine.occasion, preferredOutfitIDs: preferred)))
+                for index in draft.slots.indices { draft.slots[index].outfit = outfitsByName[routine.looks[index % routine.looks.count]] }
+                draft.reviewing = true
+                try store.savePlanAuthoringDraft(draft)
+                receipt.plans.append(try store.savePlanAuthoring(draft).plan.id)
+                try store.finishPlanAuthoring(draft)
+            }
+
+            stage = "more plans"
+            let baguio: [(occasion: String, look: String)] = [("Drive up and night market", "Baguio night market"), ("Burnham Park and cafés", "Baguio morning"), ("Pine forest walk and drive home", "Pine forest walk")]
+            var baguioPlan = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: owner, name: "Baguio weekend", start: try day(40), end: try day(42),
+                                                                         trip: TripConfiguration(destination: "Baguio", activities: ["Cafés", "Night market", "Forest walk"])))
+            for (index, entry) in baguio.enumerated() where index < baguioPlan.slots.count { baguioPlan.slots[index].occasion = entry.occasion; baguioPlan.slots[index].outfit = outfitsByName[entry.look] }
+            baguioPlan.reviewing = true
+            try store.savePlanAuthoringDraft(baguioPlan)
+            receipt.plans.append(try store.savePlanAuthoring(baguioPlan).plan.id)
+            try store.finishPlanAuthoring(baguioPlan)
+
+            var wedding = try PlanAuthoringDraft(plan: PlanDefinition(ownerID: owner, name: "Ana and Paolo’s wedding", start: try day(49), end: try day(49)))
+            wedding.slots[0].occasion = "Garden ceremony in Tagaytay"; wedding.slots[0].outfit = outfitsByName["Garden wedding"]
+            wedding.reviewing = true
+            try store.savePlanAuthoringDraft(wedding)
+            receipt.plans.append(try store.savePlanAuthoring(wedding).plan.id)
+            try store.finishPlanAuthoring(wedding)
+
             stage = "wear"
-            for entry in worn {
-                guard let outfit = outfitsByName[entry.look], let look = looks.first(where: { $0.name == entry.look }) else { continue }
+            // Two months of real days: the named ones above, then an everyday rotation with a few days off.
+            let rotation = ["Monday focus", "Coffee run", "Hybrid day", "Gym session", "Weekend denim", "Errands day", "Coffee and laptop", "Morning pilates",
+                            "Farmers market", "Midweek layers", "Lazy Sunday", "Shirt dress Tuesday", "Autumn layers", "Mall run", "Sunday run", "Board review"]
+            var history = worn
+            let named = Set(worn.map(\.daysAgo))
+            for daysAgo in 13...60 where !named.contains(daysAgo) && daysAgo % 6 != 0 {
+                history.append((daysAgo, rotation[(daysAgo * 7) % rotation.count]))
+            }
+            history.append((21, "Engagement party")); history.append((35, "Karaoke night")); history.append((44, "Bookshop date"))
+            for entry in history {
+                guard let outfit = outfitsByName[entry.look], let look = allLooks.first(where: { $0.name == entry.look }) else { continue }
                 let wearPieces = look.keys.compactMap { piecesByKey[$0] }
                 let draft = OutfitWearDraft(ownerID: owner, outfitID: outfit.id, pieces: wearPieces, day: try day(-entry.daysAgo))
                 try store.saveWearDraft(draft)
@@ -275,7 +489,14 @@ import UIKit
                 ("Burgundy layers and sunglasses for a shopping afternoon.", "City layers", "tour-fit-street", 5),
                 ("Linen and sandals for a long brunch in the sun.", "Brunch with friends", nil, 4),
                 ("Satin and heels for a birthday dinner.", "Birthday dinner", nil, 9),
-                ("Blazer and wide trousers for the client meeting.", "Client meeting", nil, 8)
+                ("Blazer and wide trousers for the client meeting.", "Client meeting", nil, 8),
+                ("The satin cami finally got its night out. Champagne toasts all round.", "Engagement party", nil, 21),
+                ("Sang three songs in the cropped chambray and black jeans.", "Karaoke night", nil, 35),
+                ("Ecru jeans and the olive tee, my favorite easy weekend.", "Weekend denim", nil, 16),
+                ("Pilates class, then coffee. The mocha flares are so comfortable.", "Morning pilates", nil, 18),
+                ("Navy blazer and cream trousers for the board review. Felt sharp.", "Board review", nil, 25),
+                ("Floral blouse and espadrilles at the Legazpi market.", "Farmers market", nil, 31),
+                ("Cardigan and wide jeans for a slow date at the bookshop.", "Bookshop date", nil, 44)
             ]
             for (note, lookName, photo, daysAgo) in fitNotes {
                 guard let outfit = outfitsByName[lookName] else { continue }
@@ -290,18 +511,29 @@ import UIKit
                 try store.finishFitDraft(fit)
             }
 
-            // Style answers are saved once; a repeat run keeps what is already there.
-            do {
-                var answers = StylePreferences()
-                for (step, choices) in [(0, ["Plan outfits faster", "Try new combinations"]), (1, ["Work", "Evenings", "Travel"]), (2, ["Classic", "Minimal"]), (3, ["Regular", "Relaxed"])] {
-                    for choice in choices { answers.choose(choice, at: step) }
+            stage = "favorites and status"
+            let latest = try store.outfits()
+            for name in favorites {
+                guard let id = outfitsByName[name]?.id, let outfit = latest.first(where: { $0.id == id }), !outfit.isFavorite else { continue }
+                _ = try store.applyOutfitMutation(OutfitMutationRequest(outfit: outfit, action: .favorite(true)))
+            }
+            // Pieces in the wash, lent out or put away, so availability and archive views have something to show.
+            for (keys, value) in [(laundryKeys, PieceAvailability.laundry), (unavailableKeys, .unavailable)] {
+                for key in keys {
+                    guard let id = piecesByKey[key]?.id, let piece = try store.pieces().first(where: { $0.id == id }) else { continue }
+                    _ = try store.setAvailability(id: id, value: value, expectedRevision: piece.revision, operationID: UUID())
                 }
-                answers.body.decline(); answers.colors.declined = true
-                var style = StylePreferenceDraft(source: .settings, answers: answers); style.page = 6
-                try store.saveStyleDraft(style)
-                _ = try store.saveStylePreferences(style)
-                try store.acknowledgeStyleReceipt(operationID: style.operationID)
-            } catch { /* optional content; the closet seed does not depend on it */ }
+            }
+            for key in archivedKeys {
+                guard let id = piecesByKey[key]?.id, let piece = try store.pieces().first(where: { $0.id == id }) else { continue }
+                _ = try store.setArchived(id: id, archived: true, expectedRevision: piece.revision, operationID: UUID())
+            }
+
+            stage = "profile"
+            try await seedIdentity(store: store, owner: owner, preparer: preparer)
+
+            stage = "style"
+            try seedStyle(store: store)
         } catch let failure as Failure { throw failure } catch { throw Failure.seedFailed("\(stage): \(error)") }
 
         // Widgets for every Today card: a saved note, a saved photo, themes, fit journal and the rest.
@@ -309,6 +541,49 @@ import UIKit
 
         try LocalArchiveIO.write(try JSONEncoder().encode(receipt), to: receiptURL(outputDirectory))
         return receipt
+    }
+
+    static let ownerName = "Angelika Domingo"
+
+    /// Name, caption and a fit photo as the avatar. Any unfinished profile edit is discarded first.
+    private static func seedIdentity(store: PieceStore, owner: UUID, preparer: PhotoPreparer) async throws {
+        if let open = try store.identityDraft() { try store.finishIdentityDraft(open, discarding: true) }
+        var draft = LocalIdentityDraft(ownerID: owner, base: try store.localIdentity())
+        draft.name = ownerName
+        draft.caption = "Neutrals, linen and a good blazer."
+        if let url = Foundation.Bundle.main.url(forResource: "tour-fit-street", withExtension: "jpg") {
+            draft.photoID = try store.acceptPhoto(try await preparer.prepare(data: Data(contentsOf: url)))
+            draft.photoRecipe = .fitOriginal
+        }
+        try store.saveIdentityDraft(draft)
+        _ = try store.saveIdentity(draft)
+        try store.finishIdentityDraft(draft)
+    }
+
+    /// Every questionnaire step answered, as she would: goals, occasions, style, fit, body details she chose to share, colors.
+    private static func seedStyle(store: PieceStore) throws {
+        let experience = try store.localExperience()
+        if let receipt = experience.pendingStyleReceipt { try store.acknowledgeStyleReceipt(operationID: receipt.operationID) }
+        if let open = try store.localExperience().styleDraft { try store.discardStyleDraft(id: open.id) }
+        var answers = StylePreferences()
+        for (step, choices) in [(0, ["Plan outfits faster", "Try new combinations"]), (1, ["Everyday", "Work", "Evenings", "Travel"]),
+                                (2, ["Classic", "Minimal"]), (3, ["Regular", "Relaxed"])] {
+            for choice in choices { answers.choose(choice, at: step) }
+        }
+        answers.comfort = "Breathable fabrics; nothing tight at the waist."
+        answers.body.response = .provided
+        answers.body.heightCM = 163
+        answers.body.shape = "Hourglass"
+        answers.body.useForSuggestions = true
+        answers.colors.preferredColors = "Cream, Black, Navy, Beige"
+        answers.colors.avoidedColors = "Orange"
+        answers.colors.preferredPatterns = "Solid, Stripes"
+        answers.colors.avoidedPatterns = "Animal print"
+        var style = StylePreferenceDraft(source: .settings, baseRevision: try store.localExperience().style?.revision ?? 0, answers: answers)
+        style.page = 6
+        try store.saveStyleDraft(style)
+        _ = try store.saveStylePreferences(style)
+        try store.acknowledgeStyleReceipt(operationID: style.operationID)
     }
 
     /// Empties the closet in dependency order: wear, plans, fits, themes, outfits, then pieces. The profile, settings and chats stay.

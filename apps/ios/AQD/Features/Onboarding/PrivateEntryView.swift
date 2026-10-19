@@ -108,63 +108,101 @@ struct WelcomeView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
     @State private var pose: WelcomeWardrobe.Pose = .settled
-    @State private var previewArrived = false
+    /// 0 nothing, 1 the mark, 2 the promise, 3 the action. Rest state is fully shown.
+    @State private var stage = 3
+    @State private var glint: CGFloat = -1
+    @State private var played = false
     var body: some View {
-        ScrollView {
-            VStack(spacing: AppSpacing.section) {
-                AQDWordmark().frame(maxWidth: .infinity, alignment: .center).padding(.top, AppSpacing.small)
-                WelcomeWardrobe(pose: pose).padding(.horizontal, AppSpacing.small)
-                VStack(spacing: AppSpacing.medium) {
-                    Text(welcomeHeadline).font(.largeTitle.weight(.medium)).tracking(-0.8).multilineTextAlignment(.center)
-                        .accessibilityAddTraits(.isHeader)
-                    Text("Keep your pieces together. Make looks you’ll wear.")
-                        .font(AppTypography.body).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
-                }.frame(maxWidth: .infinity)
-            }.padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.large)
-        }.scrollIndicators(.hidden)
+        GeometryReader { geometry in
+            ScrollView {
+                // Brand, then the closet, then the promise sitting just above the button, so nothing floats in empty space.
+                VStack(spacing: AppSpacing.section) {
+                    brand
+                    Spacer(minLength: 0)
+                    WelcomeWardrobe(pose: pose).padding(.horizontal, AppSpacing.small)
+                    Spacer(minLength: 0)
+                    VStack(spacing: AppSpacing.small) {
+                        Text(welcomeHeadline).font(.largeTitle.weight(.medium)).tracking(-0.8).multilineTextAlignment(.center)
+                            .accessibilityAddTraits(.isHeader)
+                        Text("Keep your pieces together. Make looks you’ll wear.")
+                            .font(AppTypography.body).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
+                    }.frame(maxWidth: .infinity)
+                        .opacity(stage >= 2 ? 1 : 0).offset(y: stage >= 2 ? 0 : 14)
+                }
+                .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small).padding(.bottom, AppSpacing.medium)
+                .frame(minHeight: geometry.size.height)
+            }.scrollIndicators(.hidden)
+        }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: AppSpacing.small) {
                 Button {
-                    if let previewDismiss { previewDismiss(false) } else { state.updateEntry { $0.page = .introduction } }
+                    if let previewDismiss { previewDismiss(false) } else { state.openStyle(source: .onboarding) }
                 } label: { GlassActionLabel(title: "Start my closet", prominent: true) }.buttonStyle(.plain)
-                Button {
-                    if let previewDismiss { previewDismiss(true) } else { state.beginTour(from: .welcome) }
-                } label: { GlassActionLabel(title: "Take a quick tour") }.buttonStyle(.plain)
-                Text("No account needed.").font(.footnote).foregroundStyle(AppTheme.secondary).padding(.top, AppSpacing.xSmall)
+                    .accessibilityIdentifier("welcome.start")
+                Text("Private on this iPhone. No account needed.").font(.footnote).foregroundStyle(AppTheme.secondary).padding(.top, AppSpacing.xSmall)
             }.padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.small).padding(.bottom, AppSpacing.small)
+                .opacity(stage >= 3 ? 1 : 0).offset(y: stage >= 3 ? 0 : 18)
         }
         .task(id: scenePhase) {
             guard scenePhase == .active else { settle(); return }
-            let firstArrival: Bool
-            if previewDismiss != nil {
-                firstArrival = !previewArrived
-                previewArrived = true
-            } else { firstArrival = state.markWelcomeArrival() }
-            guard firstArrival, !reduceMotion else { settle(); return }
-            pose = .gathered
-            do {
-                await Task.yield()
-                try Task.checkCancellation()
-                guard !reduceMotion else { settle(); return }
-                withAnimation(.spring(duration: 0.52, bounce: 0.12)) { pose = .forming }
-                try await Task.sleep(for: .milliseconds(520))
-                try Task.checkCancellation()
-                withAnimation(.spring(duration: 0.68, bounce: 0.08)) { pose = .settled }
-                try await Task.sleep(for: .milliseconds(680))
-            } catch { settle() }
+            if previewDismiss == nil { state.markWelcomeArrival() }
+            guard !played, !reduceMotion else { settle(); return }
+            played = true
+            await play()
         }
         .onChange(of: reduceMotion) { _, reduced in if reduced { settle() } }
         .onDisappear { settle() }
     }
+    /// One orchestrated entrance: the mark surfaces, the closet assembles piece by piece, then the promise and the action rise,
+    /// and a single highlight crosses the glass. Every arrival plays it; Reduce Motion shows the finished screen at once.
+    private func play() async {
+        var still = Transaction(); still.disablesAnimations = true
+        withTransaction(still) { stage = 0; pose = .gathered; glint = -1 }
+        do {
+            // Start only once the launch splash has lifted away, so the two entrances never overlap.
+            while state.showingSplash && previewDismiss == nil { try await Task.sleep(for: .milliseconds(40)) }
+            await Task.yield()
+            withAnimation(.smooth(duration: 0.8)) { stage = 1 }
+            try await Task.sleep(for: .milliseconds(260))
+            pose = .forming
+            try await Task.sleep(for: .milliseconds(620))
+            pose = .settled
+            try await Task.sleep(for: .milliseconds(380))
+            withAnimation(.smooth(duration: 0.6)) { stage = 2 }
+            try await Task.sleep(for: .milliseconds(160))
+            withAnimation(.smooth(duration: 0.6)) { stage = 3 }
+            try await Task.sleep(for: .milliseconds(240))
+            withAnimation(.easeInOut(duration: 1.2)) { glint = 1 }
+        } catch { settle() }
+    }
+    /// The glass Q alone, small, like a maker's label rather than a hero. A soft highlight crosses it once on arrival.
+    private var brand: some View {
+        AQDMark(size: 64)
+            .overlay {
+                GeometryReader { proxy in
+                    LinearGradient(colors: [AppTheme.onMedia.opacity(0), AppTheme.onMedia.opacity(0.55), AppTheme.onMedia.opacity(0)],
+                                   startPoint: .leading, endPoint: .trailing)
+                        .frame(width: proxy.size.width * 0.45)
+                        .rotationEffect(.degrees(20))
+                        .offset(x: glint * proxy.size.width)
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                }
+                .mask { Image("BrandMark").resizable().scaledToFit() }
+                .allowsHitTesting(false).accessibilityHidden(true)
+            }
+            .opacity(stage >= 1 ? 1 : 0)
+            .scaleEffect(stage >= 1 ? 1 : 0.9)
+            .blur(radius: stage >= 1 ? 0 : 8)
+            .frame(maxWidth: .infinity).accessibilityAddTraits(.isHeader)
+    }
     private var welcomeHeadline: AttributedString {
         var text = AttributedString("More from what you already own.")
         text.foregroundColor = AppTheme.ink
-        if let range = text.range(of: "already own.") { text[range].foregroundColor = AppTheme.ink }
         return text
     }
     private func settle() {
         var transaction = Transaction()
         transaction.disablesAnimations = true
-        withTransaction(transaction) { pose = .settled }
+        withTransaction(transaction) { pose = .settled; stage = 3; glint = 1 }
     }
 }

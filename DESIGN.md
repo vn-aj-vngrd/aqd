@@ -10,7 +10,7 @@ Roots: **Today, Closet, Planner, Agent, Profile** as five equal icon-only native
 
 ## Color
 
-Charcoal is the only control, selection and tint color. Gold is a brand mark only (logo Q, welcome art), never UI. App-wide tint is `ink`.
+Charcoal is the only control, selection and tint color. Gold is a brand accent for welcome art only, never UI. The logo is the smoked glass Q on charcoal, with no color of its own. App-wide tint is `ink`.
 
 | Role | Light | Dark |
 | --- | --- | --- |
@@ -19,6 +19,7 @@ Charcoal is the only control, selection and tint color. Gold is a brand mark onl
 | Image ground | `#F5F4F1` | `#242422` |
 | Ink (text, tint) | `#242321` | `#F3F1EB` |
 | Secondary text | `#6A6863` | `#BCB9B1` |
+| Selected segment / inactive tab icon | `#ECEBE7` / `#8A877F` | `#5C5B57` / `#8C8983` |
 | Divider | `#E4E2DC` | `#4A4842` |
 | Control boundary | `#807B72` | `#969187` |
 | Primary fill / on primary | `#292826` / `#FFFFFF` | `#F2F0EB` / `#242321` |
@@ -44,11 +45,17 @@ Reuse these; a hand-built equivalent is a defect.
 | Compact tappable white control or round icon button | `glassControlSurface(shape)` |
 | Text input, picker with label and validation | `LabeledField`, `LabeledControl` |
 | Disclosure row, grouped rows | `DisclosureRow`, `SurfaceGroup` |
-| Photo source | Empty: direct Take photo and Photos buttons. With a photo: a compact ellipsis menu (`SharedPhotoSourceButton`) plus visible Crop and Cut out buttons. Never use a large card as a menu label: the system glass menu morphs from its anchor and clips. |
+| Photo source | Empty: `PhotoSourceChoices`, direct Take photo and Photos buttons in equal halves and the same glass. With a photo: a compact ellipsis menu (`SharedPhotoSourceButton`) plus visible Crop and Cut out buttons. Never use a large card as a menu label: the system glass menu morphs from its anchor and clips. |
 | Pick one outfit / several pieces inline | `OutfitSelectionStrip`, `PieceSelectionStrip`, with `selectionIndicator` |
 | Theme cover collage | `ThemeCover` |
 | Empty, error, progress | `AppEmptyState`, `SemanticFeedback`, `OperationProgress` |
 | Confirmations and alerts | `appConfirmation`, `draftDiscardConfirmation`: one shared card, 20 pt padding, text aligned with buttons, no native `.alert` or `.confirmationDialog` |
+
+**Empty states.** An empty page or section shows only its symbol, title and one line that names the control that fills it (for example "Tap + and choose Add a piece"). It never carries its own button.
+
+**Choice pages.** A page pushed from an editor to pick options keeps its changes on the page: a `ToolbarSaveAction` titled Save sits top right and is enabled only once something changed, and Back leaves without applying anything. Options sit in one surface card under a single line of guidance, with no empty list header above them.
+
+**Loading.** A page that is waiting on content shows `LoadingStatePage`: one centered spinner, a truthful title and one line of context, in the same position as an empty state. It appears after a short delay so fast loads never flash it. Results that are already on screen stay put and show a small inline spinner next to their count while they refresh. Inline operations keep `OperationProgress`.
 
 **Glass.** Compact controls use native interactive regular glass on iOS 26+. Reduce Transparency, Increase Contrast and older systems fall back to a flat white surface with a divider hairline. No hand-drawn shadows. Rows, cards and fields stay flat and opaque; never put glass on glass or on ordinary content.
 

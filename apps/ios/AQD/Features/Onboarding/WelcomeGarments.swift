@@ -34,6 +34,7 @@ struct WelcomeWardrobe: View {
     enum Pose { case gathered, forming, settled }
     var pose: Pose = .settled
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     var body: some View {
         GeometryReader { geometry in
             let scale = geometry.size.width / 350
@@ -52,8 +53,11 @@ struct WelcomeWardrobe: View {
                                 }
                                 .frame(width: piece.w * scale, height: piece.h * scale)
                                 .rotationEffect(.degrees(position.2))
-                                .scaleEffect(pose == .gathered ? 0.96 : 1)
+                                .scaleEffect(pose == .gathered ? 0.9 : 1)
+                                .opacity(pose == .gathered ? 0 : 1)
                                 .position(x: (position.0 + piece.w / 2) * scale, y: (position.1 + piece.h / 2) * scale)
+                                // Each piece arrives a beat after the last, so the closet assembles rather than snaps.
+                                .animation(reduceMotion ? nil : .spring(duration: 0.75, bounce: 0.1).delay(Double(index) * 0.035), value: pose)
                         }
                     }
                 } else {

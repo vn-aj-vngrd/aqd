@@ -185,14 +185,11 @@ struct ThemeCollectionView: View {
     var query = ThemeCollectionQuery()
     private var themes: [OutfitTheme] { query.apply(to: state.themes) }
     var summary: ClosetCollectionSummary? = nil
-    var clearFilters: (() -> Void)? = nil
     var body: some View {
         Group {
             if state.themeError == nil && themes.isEmpty {
                 EmptyStatePage(title: state.themes.isEmpty ? "Make a little collection" : "No matching themes", systemImage: "folder",
-                               description: Text(state.themes.isEmpty ? "Keep outfits together by mood or occasion. A theme can start empty." : "Try another content filter to see your other themes."),
-                               actionTitle: state.themes.isEmpty ? "Create a theme" : clearFilters == nil ? nil : "Clear filters",
-                               action: state.themes.isEmpty ? { state.openTheme() } : clearFilters)
+                               description: Text(state.themes.isEmpty ? "Tap + and choose Create a theme to keep outfits together by mood or occasion." : "Try another content filter to see your other themes."))
             } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: AppSpacing.large) {
@@ -262,8 +259,7 @@ struct ThemeDetailView: View {
                         SemanticFeedback(role: .danger, message: error)
                         Button("Retry outfits") { state.reloadOutfits() }
                     } else if theme.outfitIDs.isEmpty {
-                        AppEmptyState("Room for your outfits", systemImage: "square.stack", description: Text("Add saved outfits to this theme. Your other themes stay independent."), fillsAvailableSpace: false)
-                        PrimaryAction(title: "Add outfits") { state.openTheme(editing: theme, chooseOutfits: true) }
+                        AppEmptyState("Room for your outfits", systemImage: "square.stack", description: Text("Edit this theme to add saved outfits. Your other themes stay independent."), fillsAvailableSpace: false)
                     }
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 16) {
                         ForEach(state.outfits.filter { theme.outfitIDs.contains($0.id) }) { OutfitCollectionCard(outfit: $0, theme: theme) }

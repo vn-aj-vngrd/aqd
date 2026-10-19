@@ -2,73 +2,67 @@
 import AQDCore
 import SwiftUI
 
-/// Explicit development-only seeding. Opening this sheet never changes records.
+/// Internal testing only: replaces the closet with Angelika Domingo's realistic sample life. Opening this page never changes records;
+/// the app itself always starts empty.
 struct DevelopmentSeedView: View {
     @Environment(AppState.self) private var state
-    @Environment(\.dismiss) private var dismiss
     @State private var busy = false
-    @State private var receipt: PreviewSampleContent.Receipt?
+    @State private var receipt: RealisticClosetSeed.Receipt?
     @State private var error: String?
     private var blocked: Bool { busy || state.agentModel?.active == true || state.agentModel?.hasPendingOperation == true || state.agentControlsModel?.hasPending == true }
 
     var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    Text(receipt == nil ? "Add a demo wardrobe to explore Closet, Planner and your fit journal." : "Sample data is ready. Close this screen to explore it.")
-                    Text("Personal records and onboarding progress stay unchanged. Sample plans and fits do not count as recorded wear.")
-                        .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+        List {
+            Section {
+                Text(receipt == nil ? "Fill the app with \(RealisticClosetSeed.ownerName)’s closet, plans, wear, fit journal, profile and style preferences."
+                                    : "\(RealisticClosetSeed.ownerName)’s data is ready. Go back to explore it.")
+                Text("A backup archive is saved to Files first. Seeding replaces the current pieces, outfits, themes, plans, wear, fits, profile and style answers. Settings and chats stay.")
+                    .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+            }.listRowBackground(AppTheme.surface)
+            if let receipt {
+                Section("Seeded records") {
+                    LabeledContent("Pieces", value: String(receipt.pieces.count))
+                    LabeledContent("Outfits", value: String(receipt.outfits.count))
+                    LabeledContent("Themes", value: String(receipt.themes.count))
+                    LabeledContent("Plans", value: String(receipt.plans.count))
+                    LabeledContent("Worn days", value: String(receipt.wear.count))
+                    LabeledContent("Fits", value: String(receipt.fits.count))
+                    LabeledContent("Backup", value: receipt.backup).lineLimit(1).truncationMode(.middle)
                 }.listRowBackground(AppTheme.surface)
-                if let receipt {
-                    Section("Sample records") {
-                        LabeledContent("Pieces", value: String(receipt.added["pieces", default: 0]))
-                        LabeledContent("Outfits", value: String(receipt.added["outfits", default: 0]))
-                        LabeledContent("Themes", value: String(receipt.added["themes", default: 0]))
-                        LabeledContent("Plan entries", value: String(receipt.added["plans", default: 0]))
-                        LabeledContent("Fits", value: String(receipt.added["fits", default: 0]))
-                    }.listRowBackground(AppTheme.surface)
-                } else {
-                    Section {
-                        if busy { ProgressView("Preparing sample data…") }
-                        else { Text("A local archive is saved before changes. Seeding again reuses the same sample records.") }
-                        if let error { SemanticFeedback(role: .danger, message: error) }
-                        if blocked && !busy { Text("Finish the Agent’s current response or pending save first.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
-                    }.listRowBackground(AppTheme.surface)
+            }
+            if busy || error != nil || (blocked && !busy) {
+                Section {
+                    if busy { OperationProgress(title: "Seeding \(RealisticClosetSeed.ownerName)’s data") }
+                    if let error { SemanticFeedback(role: .danger, message: error) }
+                    if blocked && !busy { Text("Finish the Agent’s current response or pending save first.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+                }.listRowBackground(AppTheme.surface)
+            }
+        }.listStyle(.insetGrouped).contentMargins(.top, AppSpacing.small, for: .scrollContent)
+            .scrollContentBackground(.hidden).background(AppTheme.canvas)
+            .navigationTitle("Seed sample data").navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(busy)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    ToolbarSaveAction(title: receipt == nil ? (error == nil ? "Seed" : "Try again") : "Seed again", isPending: busy) { Task { await seed() } }
+                        .disabled(blocked)
                 }
-            }.listStyle(.insetGrouped).contentMargins(.top, AppSpacing.small, for: .scrollContent)
-                .scrollContentBackground(.hidden).background(AppTheme.canvas)
-                .navigationTitle("Seed sample data").navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button { dismiss() } label: { Image(systemName: "xmark") }.accessibilityLabel("Close sample data").disabled(busy)
-                    }
-                    ToolbarItem(placement: .confirmationAction) {
-                        if receipt != nil { ToolbarSaveAction(title: "Done") { dismiss() } }
-                        else {
-                            ToolbarSaveAction(title: error == nil ? "Seed data" : "Try again", isPending: busy) { Task { await seed() } }
-                                .disabled(blocked)
-                        }
-                    }
-                }
-        }.tint(AppTheme.ink).interactiveDismissDisabled(busy)
+            }
     }
     private func seed() async {
-        guard !blocked, receipt == nil else { return }
+        guard !blocked else { return }
         busy = true; error = nil
         defer {
             busy = false
-            state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); state.reloadFits(); state.reloadToday()
+            state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); state.reloadFits()
+            state.reloadWear(); state.reloadToday(); state.reloadIdentity(); state.reloadSettings()
         }
         do {
             guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
             let directory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
                 .appendingPathComponent("AQD Development Samples", isDirectory: true)
-                .appendingPathComponent(try store.todayConfiguration().ownerID.uuidString, isDirectory: true)
-            receipt = try await PreviewSampleContent.populate(store: store, outputDirectory: directory)
-        } catch PreviewSampleContent.Failure.partialSamples {
-            error = "Some sample records are missing. Existing data is kept. Export anything you need, then use Reset data before seeding a fresh set."
+            receipt = try await RealisticClosetSeed.run(store: store, outputDirectory: directory)
         } catch {
-            self.error = "Sample setup couldn’t finish. Personal records have not been replaced. A local archive is retained if setup reached that step. Try again after other saves finish."
+            self.error = "Seeding couldn’t finish. A backup archive is in Files under AQD Development Samples if setup reached that step. Try again after other saves finish."
         }
     }
 }

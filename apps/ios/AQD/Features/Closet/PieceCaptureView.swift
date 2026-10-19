@@ -208,16 +208,10 @@ struct PieceCaptureView: View {
             Text(model.draft.photoID == nil ? "Add a photo" : "Photo unavailable").font(AppTypography.detailTitle)
             Text(model.draft.photoID == nil ? "A flat piece on a plain, well-lit surface works best." : "Choose another photo. Your details are kept.")
                 .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
-            HStack(spacing: AppSpacing.small) {
-                Button { nameEditing = false; requestCamera() } label: {
-                    Label("Take photo", systemImage: "camera").font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.onPrimary)
-                        .padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.minimumTarget)
-                        .background(AppTheme.primaryFill, in: Capsule())
-                }.buttonStyle(.plain).accessibilityIdentifier("capture.takePhoto")
-                Button { nameEditing = false; pickerPresented = true } label: {
-                    Label("Photos", systemImage: "photo.on.rectangle").compactControl(fullWidth: true)
-                }.buttonStyle(.plain).accessibilityIdentifier("capture.addPhoto")
-            }.disabled(model.isImporting || model.isSaving).accessibilityFocused($photoFocused)
+            PhotoSourceChoices(onCamera: { nameEditing = false; requestCamera() },
+                               onPhotos: { nameEditing = false; pickerPresented = true },
+                               cameraID: "capture.takePhoto", photosID: "capture.addPhoto")
+                .disabled(model.isImporting || model.isSaving).accessibilityFocused($photoFocused)
         }.padding(AppSpacing.large)
     }
 

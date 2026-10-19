@@ -116,7 +116,7 @@ struct OutfitPlanEditorView: View {
                             .disabled(model.pending || model.unknown)
                     }
                 }
-                .sheet(isPresented: $weather) {
+                .navigationDestination(isPresented: $weather) {
                 if let client = model.state.weatherClient {
                     WeatherContextView(client: client, initial: model.draft.weather, day: model.draft.day) { selection in model.update { $0.weather = selection }; return model.draft.weather == selection && model.error == nil }
                 }

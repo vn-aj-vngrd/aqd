@@ -43,6 +43,29 @@ public struct FitMonthSection: Identifiable, Equatable, Sendable {
 }
 
 public enum FitJournalPresentation {
+    /// Fits posted in the same calendar month as `today`.
+    public static func monthCount(_ memories: [FitMemory], today: LocalPlanDay) -> Int {
+        memories.filter { $0.day.year == today.year && $0.day.month == today.month }.count
+    }
+
+    /// Consecutive calendar days with at least one fit, ending today, or yesterday when nothing is posted yet today.
+    public static func streak(_ memories: [FitMemory], today: LocalPlanDay) -> Int {
+        let posted = Set(memories.map(\.day.key))
+        guard let zone = TimeZone(identifier: today.timeZoneID), var cursor = try? today.date() else { return 0 }
+        var calendar = Calendar(identifier: .gregorian); calendar.timeZone = zone
+        if !posted.contains(today.key) {
+            guard let yesterday = calendar.date(byAdding: .day, value: -1, to: cursor) else { return 0 }
+            cursor = yesterday
+        }
+        var count = 0
+        while posted.contains(LocalPlanDay(date: cursor, timeZone: zone).key) {
+            count += 1
+            guard let previous = calendar.date(byAdding: .day, value: -1, to: cursor) else { break }
+            cursor = previous
+        }
+        return count
+    }
+
     /// Groups an already ordered list into consecutive calendar months, keeping its order.
     public static func sections(_ memories: [FitMemory]) -> [FitMonthSection] {
         var result: [FitMonthSection] = []

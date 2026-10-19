@@ -192,15 +192,12 @@ struct OutfitCollectionView: View {
         })
     }
     var summary: ClosetCollectionSummary? = nil
-    var clearFilters: (() -> Void)? = nil
     var body: some View {
         Group {
             if state.outfitError == nil && outfits.isEmpty {
                 EmptyStatePage(title: state.outfits.isEmpty ? "Your first outfit starts here" : "No matching outfits",
                                systemImage: "square.stack",
-                               description: Text(state.outfits.isEmpty ? "Combine pieces from your closet. Every outfit stays private." : "Clear the theme or Favorites filter to see your other looks."),
-                               actionTitle: state.outfits.isEmpty ? "Build an outfit" : clearFilters == nil ? nil : "Clear filters",
-                               action: state.outfits.isEmpty ? { state.buildOutfit() } : clearFilters)
+                               description: Text(state.outfits.isEmpty ? "Tap + and choose Build an outfit to combine pieces from your closet." : "Clear the theme or Favorites filter to see your other looks."))
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: AppSpacing.large) {

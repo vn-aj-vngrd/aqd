@@ -4,12 +4,32 @@ import SwiftUI
 struct AQDApp: App {
     @State private var state = AppState(deferOpening: true)
 
+    init() {
+        #if DEBUG
+        Self.clearStaleLaunchSnapshots()
+        #endif
+    }
+
+    #if DEBUG
+    /// iOS keeps launch and resume snapshots per build in the app's Library. After a Debug reinstall they can still show the previous
+    /// build's first frame, so each new build clears them once; the system rebuilds them the next time the app goes to the background.
+    private static func clearStaleLaunchSnapshots() {
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
+        let key = "debug.clearedLaunchSnapshotsFor"
+        guard UserDefaults.standard.string(forKey: key) != build,
+              let library = try? FileManager.default.url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: nil, create: false) else { return }
+        try? FileManager.default.removeItem(at: library.appendingPathComponent("SplashBoard", isDirectory: true))
+        UserDefaults.standard.set(build, forKey: key)
+    }
+    #endif
+
     var body: some Scene {
         WindowGroup {
             AppRootView(state: state) { store, coordinator, destination in
                 state.detachForDataReplacement()
                 state = AppState(store: store, dataRoot: coordinator.legacyRoot, coordinator: coordinator)
                 state.selection = destination
+                state.showingSplash = false
             }.appAppearance(testAppearance)
         }
     }
@@ -31,17 +51,35 @@ private struct AppRootView: View {
     @Bindable var state: AppState
     let onInstall: (PieceStore, LocalDataCoordinator, Int) -> Void
     @State private var pendingInstallation: (PieceStore, LocalDataCoordinator, Int)?
+    @State private var splashShown = true
+    @State private var splashExiting = false
     #if DEBUG
     @State private var welcomePreview = false
     @State private var tourAfterWelcome = false
     @State private var agentEval: AgentClosetEvalRunner?
     #endif
 
+    /// Shows the glass mark for about a second, waits for the closet to open, then lifts the mark away and fades the app in.
+    /// UI tests and Reduce Motion skip the showcase and only cross-fade.
+    private func runSplash() async {
+        let quick = reduceMotion || ProcessInfo.processInfo.arguments.contains("--aqd-ui-testing")
+        do {
+            try await Task.sleep(for: .milliseconds(quick ? 0 : 1150))
+            while state.isOpening { try await Task.sleep(for: .milliseconds(40)) }
+        } catch { return }
+        state.showingSplash = false
+        if quick { withAnimation(.easeOut(duration: 0.25)) { splashShown = false }; return }
+        withAnimation(.easeIn(duration: 0.4)) { splashExiting = true }
+        do { try await Task.sleep(for: .milliseconds(160)) } catch { return }
+        withAnimation(.easeOut(duration: 0.45)) { splashShown = false }
+    }
+
     var body: some View {
         Group {
             if state.isOpening {
                 Color("LaunchCanvas").ignoresSafeArea()
-                    .accessibilityLabel("Opening your closet").accessibilityIdentifier("entry.splash")
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Opening your closet").accessibilityIdentifier("entry.splash")
                     .transition(.opacity)
             } else if let error = state.openingError {
                 CenteredPageContent {
@@ -50,7 +88,8 @@ private struct AppRootView: View {
                     SecondaryAction(title: "Choose an archive") { state.openRestore() }
                 }
             } else if state.entry.page != .main {
-                rootContent(PrivateEntryView())
+                // The first-run tour sits in the root, not a cover, so leaving the preferences sheet lands directly on it.
+                if state.entry.tour != nil { rootContent(PrivateTourView()) } else { rootContent(PrivateEntryView()) }
             } else {
                 NativeTabs(selection: $state.selection,
                            today: { rootContent(TodayView()) },
@@ -180,6 +219,10 @@ private struct AppRootView: View {
         }
         #endif
         .tint(AppTheme.ink)
+        .overlay {
+            if splashShown { LaunchSplash(exiting: splashExiting).transition(.opacity).accessibilityHidden(true) }
+        }
+        .task { await runSplash() }
         .onChange(of: scenePhase) { _, phase in if phase != .active { state.weatherClient?.suspend() } }
         .appConfirmation("Saved data unavailable", isPresented: Binding(
             get: { state.collectionError != nil },
@@ -189,7 +232,8 @@ private struct AppRootView: View {
         } message: {
             Text(state.collectionError ?? "Keep your existing app data for recovery.")
         }
-        .fullScreenCover(item: $state.restoreModel, onDismiss: {
+        .onChange(of: ObjectIdentifier(state), initial: true) { state.installReplacement = onInstall }
+        .fullScreenCover(item: Binding(get: { state.restoreInSettings ? nil : state.restoreModel }, set: { state.restoreModel = $0 }), onDismiss: {
             if let pending = pendingInstallation { pendingInstallation = nil; onInstall(pending.0, pending.1, pending.2) }
         }) { model in
             if model.kind == .erase {
@@ -223,15 +267,10 @@ private struct AppRootView: View {
         .sheet(item: $state.capture, onDismiss: { state.retryPhotoCleanup(); state.finishOutfitCaptureReturn() }) { model in
             PieceCaptureView(model: model).environment(state)
         }
-        .fullScreenCover(item: $state.styleEditor, onDismiss: {
-            if state.reloadEntryAfterStyle {
-                state.reloadEntryAfterStyle = false
-                state.reloadEntry()
-            }
-        }) { model in
+        .fullScreenCover(item: $state.styleEditor) { model in
             rootContent(StyleEditorView(model: model))
         }
-        .fullScreenCover(isPresented: Binding(get: { state.entry.tour != nil }, set: { presented in
+        .fullScreenCover(isPresented: Binding(get: { state.entry.tour != nil && state.entry.page == .main }, set: { presented in
             if !presented && state.entry.tour != nil { state.updateEntry { $0.tour = nil } }
         })) { rootContent(PrivateTourView()) }
     }

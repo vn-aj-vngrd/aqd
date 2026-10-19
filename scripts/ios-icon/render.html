@@ -1,0 +1,145 @@
+<!doctype html><meta charset="utf-8">
+<!-- Renders the AQD glass Q. ?look=icon (full-bleed app icon) or ?look=launch (flat canvas ground): screenshot at 1024x1024.
+     ?look=mark-dark or ?look=mark-light: transparent Q for in-app use; the PNG data URL is written into the page, read it with --dump-dom. -->
+<style>html,body{margin:0;background:#1C1C1B}canvas{display:block;width:1024px;height:1024px}</style>
+<canvas id="c" width="1024" height="1024"></canvas>
+<script id="fs" type="x-shader/x-fragment">
+precision highp float;
+uniform vec2 uRes;
+uniform vec3 uBgTop, uBgBot, uAbs, uCaustic, uBand;
+uniform float uLight, uAmb, uShadow, uFlat, uCut;
+
+mat2 rot(float a){ float c = cos(a), s = sin(a); return mat2(c, -s, s, c); }
+float smin(float a, float b, float k){ float h = clamp(.5 + .5 * (b - a) / k, 0., 1.); return mix(b, a, h) - k * h * (1. - h); }
+float seg(vec3 p, vec3 a, vec3 b, float ra, float rb){
+  vec3 pa = p - a, ba = b - a; float h = clamp(dot(pa, ba) / dot(ba, ba), 0., 1.);
+  return length(pa - ba * h) - mix(ra, rb, h);
+}
+float map(vec3 p){
+  p.yz = rot(0.20) * p.yz;
+  p.xz = rot(-0.16) * p.xz;
+  const float S = 0.92;
+  p /= S;
+  vec3 q = p - vec3(-0.04, 0.07, 0.);
+  float th = atan(q.y, q.x) - 0.35;
+  float s = sin(th);
+  float r = 0.136 - 0.044 * s * s;
+  float ring = length(vec2(length(q.xy) - 0.50, q.z)) - r;
+  float tail = seg(p, vec3(0.21, -0.37, 0.), vec3(0.64, -0.76, 0.), 0.075, 0.026);
+  return smin(ring, tail, 0.03) * S * 0.8;
+}
+vec3 nor(vec3 p){
+  const vec2 e = vec2(.0007, -.0007);
+  return normalize(e.xyy * map(p + e.xyy) + e.yyx * map(p + e.yyx) + e.yxy * map(p + e.yxy) + e.xxx * map(p + e.xxx));
+}
+vec3 studio(vec3 d){
+  float front = smoothstep(-0.05, 0.2, d.z);
+  vec3 c = vec3(uAmb) * (0.55 + 0.45 * d.y) + vec3(0.012);
+  vec2 a = rot(0.62) * (d.xy - vec2(-0.50, 0.56));
+  float box = smoothstep(0.36, 0.27, abs(a.x)) * smoothstep(0.11, 0.065, abs(a.y));
+  c += vec3(1.0, 0.985, 0.96) * box * 5.0 * front;
+  float strip = smoothstep(0.055, 0.03, abs(d.x - 0.80)) * smoothstep(0.62, 0.42, abs(d.y - 0.05));
+  c += vec3(1.0) * strip * 1.8 * front;
+  c += vec3(1.0, 0.94, 0.86) * 0.22 * smoothstep(-0.35, -0.85, d.y) * front;
+  c += vec3(0.07) * smoothstep(0.4, 1.0, d.y);
+  return c;
+}
+vec3 backdrop(vec2 xy, float inner){
+  vec3 c = mix(uBgBot, uBgTop, smoothstep(-1.1, 1.1, xy.y));
+  c *= 1. - uFlat * 0. - (1. - uFlat) * 0.20 * dot(xy, xy) * (1. - uLight * 0.75);
+  if (inner > 0.5) {
+    float y = xy.y + 0.08 - 0.17 * sin(xy.x * 2.6 + 0.6);
+    c += uBand * exp(-y * y * 12.);
+  }
+  return c;
+}
+vec3 envAt(vec3 pos, vec3 d, float inner){
+  vec3 st = studio(d);
+  if (d.z < 0.) {
+    float s = (-0.9 - pos.z) / d.z;
+    return mix(st, backdrop(pos.xy + d.xy * s, inner), smoothstep(0.0, -0.25, d.z));
+  }
+  return st;
+}
+float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+vec3 softclip(vec3 c){
+  const float k = 0.80;
+  return mix(c, k + (1. - k) * (1. - exp(-(c - k) / (1. - k))), step(k, c));
+}
+void main(){
+  vec2 uv = (gl_FragCoord.xy / uRes) * 2. - 1.;
+  float px = 2. / uRes.x;
+  float f = pow(pow(abs(uv.x), 5.) + pow(abs(uv.y), 5.), 0.2);
+  float alpha = 1.;
+  if (alpha <= 0.) { gl_FragColor = vec4(0.); return; }
+
+  vec3 ro = vec3(0., 0., 4.), rd = normalize(vec3(uv, -4.));
+  float t = 2.8, hit = 0.;
+  for (int i = 0; i < 140; i++) {
+    float h = map(ro + rd * t);
+    if (h < 0.0003) { hit = 1.; break; }
+    t += h;
+    if (t > 5.2) break;
+  }
+  vec3 col;
+  if (hit < 0.5 && uCut > 0.5) { gl_FragColor = vec4(0.); return; }
+  if (hit < 0.5) {
+    col = backdrop(uv, 0.);
+    float ds = map(vec3(uv - vec2(0.05, -0.085), 0.));
+    col *= 1. - uShadow * (1. - smoothstep(-0.03, 0.26, ds));
+    float dc = map(vec3(uv - vec2(0.03, -0.055), 0.));
+    col += uCaustic * exp(-pow(dc + 0.02, 2.) * 1100.);
+  } else {
+    vec3 p = ro + rd * t, n = nor(p);
+    float ci = clamp(dot(-rd, n), 0., 1.);
+    float F = 0.04 + 0.96 * pow(1. - ci, 5.);
+    vec3 refl = envAt(p, reflect(rd, n), 0.);
+    vec3 tr = vec3(0.);
+    for (int c = 0; c < 3; c++) {
+      float ior = 1.47 + 0.010 * float(c);
+      vec3 m = c == 0 ? vec3(1., 0., 0.) : c == 1 ? vec3(0., 1., 0.) : vec3(0., 0., 1.);
+      vec3 rdi = refract(rd, n, 1. / ior);
+      vec3 pi = p - n * 0.002;
+      float ti = 0.;
+      for (int i = 0; i < 64; i++) {
+        float h = -map(pi + rdi * ti);
+        if (h < 0.0003) break;
+        ti += max(h, 0.002);
+        if (ti > 2.) break;
+      }
+      vec3 pe = pi + rdi * ti, ne = nor(pe);
+      vec3 rdo = refract(rdi, -ne, ior);
+      if (dot(rdo, rdo) < 0.001) rdo = reflect(rdi, -ne);
+      tr += envAt(pe, rdo, 1.) * exp(-uAbs * ti * 2.) * m;
+    }
+    col = mix(tr, refl, F);
+  }
+  col = softclip(col);
+  col = pow(max(col, 0.), vec3(1. / 2.2));
+  col += (hash(gl_FragCoord.xy) - 0.5) / 255.;
+  gl_FragColor = vec4(col * alpha, alpha);
+}
+</script>
+<script>
+const look=new URLSearchParams(location.search).get("look")||"icon";
+const lin=h=>[1,3,5].map(i=>Math.pow(parseInt(h.slice(i,i+2),16)/255,2.2));
+const base={abs:[0.62,0.65,0.72],band:[0.55,0.53,0.50],amb:0,cut:0,shadow:.5};
+const L=Object.assign({},base,{icon:{top:"#2A2A28",bot:"#121211",flat:0},launch:{top:"#1C1C1B",bot:"#1C1C1B",flat:1},
+  "mark-dark":{top:"#1C1C1B",bot:"#1C1C1B",flat:1,cut:1},
+  "mark-light":{top:"#F7F7F5",bot:"#F7F7F5",flat:1,cut:1,abs:[7.5,7.6,7.8],band:[0,0,0],amb:0.12}}[look]);
+const cut=L.cut>0, R=cut?2048:1024;
+const cv=document.getElementById("c"); cv.width=cv.height=R;
+const gl=cv.getContext("webgl",{preserveDrawingBuffer:true,antialias:false,premultipliedAlpha:true});gl.viewport(0,0,R,R);
+function sh(t,s){const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o));return o}
+const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,"attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}"));
+gl.attachShader(p,sh(gl.FRAGMENT_SHADER,document.getElementById("fs").textContent));gl.linkProgram(p);gl.useProgram(p);
+gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+const a=gl.getAttribLocation(p,"a");gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+const U=n=>gl.getUniformLocation(p,n);
+gl.uniform2f(U("uRes"),R,R);gl.uniform3fv(U("uBgTop"),lin(L.top));gl.uniform3fv(U("uBgBot"),lin(L.bot));
+gl.uniform3fv(U("uAbs"),L.abs);gl.uniform3fv(U("uCaustic"),[0.14,0.13,0.12]);gl.uniform3fv(U("uBand"),L.band);
+gl.uniform1f(U("uLight"),cut&&look==="mark-light"?1:0);gl.uniform1f(U("uAmb"),L.amb);gl.uniform1f(U("uShadow"),L.shadow);gl.uniform1f(U("uFlat"),L.flat);gl.uniform1f(U("uCut"),L.cut);
+gl.drawArrays(gl.TRIANGLES,0,3);
+if(cut){const o=document.createElement("canvas");o.width=o.height=1024;const x=o.getContext("2d");x.imageSmoothingQuality="high";x.drawImage(cv,0,0,1024,1024);
+const pre=document.createElement("pre");pre.id="png";pre.textContent=o.toDataURL("image/png");document.body.appendChild(pre);}
+</script>

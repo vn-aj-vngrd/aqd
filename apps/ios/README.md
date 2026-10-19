@@ -67,7 +67,7 @@ Append these to the launch command. They exist only in Debug builds and are igno
 
 | Argument | What it does |
 | --- | --- |
-| `--aqd-seed-week-of-use` | Fills the closet with a realistic women's wardrobe and a week of outfits, plans and recorded wear. |
+| `--aqd-seed-week-of-use` | Replaces the closet with Angelika Domingo's sample life: about 136 pieces, 66 outfits, 21 themes, routines and trips, two months of wear, fits, profile and style preferences. Settings → Development → Seed sample data runs the same seed. |
 | `--aqd-add-preview-samples` | Adds the bundled preview closet. |
 | `--aqd-add-all-widgets` | Shows every Today card, with Wear insights under Your week in wear. |
 | `--aqd-preview-welcome` | Shows the welcome screens again. |

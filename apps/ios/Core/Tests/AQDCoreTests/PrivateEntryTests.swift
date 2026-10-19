@@ -27,14 +27,9 @@ struct PrivateEntryTests {
             #expect(try JSONDecoder().decode(PrivateEntryState.self, from: JSONEncoder().encode(entry)) == entry)
             entry.nextInTour()
         }
-        #expect(entry.page == .ready)
+        #expect(entry.page == .main, "Finishing the tour opens the app")
         #expect(entry.tourOutcome == .finished)
-        entry.reviewTourFromReady()
-        #expect(entry.tour?.step == PrivateEntryState.tourStepCount - 1)
-        #expect(entry.tour?.source == .welcome)
-        entry.nextInTour()
-        #expect(entry.page == .ready)
-        entry.openMain()
+        #expect(entry.tour == nil)
         try entry.startTour(from: .settings)
         entry.nextInTour()
         let resumed = try JSONDecoder().decode(PrivateEntryState.self, from: JSONEncoder().encode(entry))
@@ -63,6 +58,8 @@ struct PrivateEntryTests {
         #expect(throws: PrivateEntryState.ValidationError.invalidState) { try entry.startTour(from: .settings) }
         try entry.startTour(from: .welcome)
         entry.tour?.step = PrivateEntryState.tourStepCount
+        try entry.validated()
+        entry.tour?.step = PrivateEntryState.tourStepCount + 1
         #expect(throws: PrivateEntryState.ValidationError.invalidState) { try entry.validated() }
     }
 }

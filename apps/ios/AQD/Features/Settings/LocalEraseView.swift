@@ -4,21 +4,19 @@ struct LocalEraseView: View {
     @Bindable var model: LocalRestoreModel
     let onCancel: () -> Void
     let onInstall: (PieceStore, LocalDataCoordinator, Int) -> Void
+    var embedded = false
     @State private var phrase = ""
     @State private var confirm = false
     @State private var showsImpact = true
     @FocusState private var confirmationFocused: Bool
     var body: some View {
-        NavigationStack {
+        container {
             ScrollView { VStack(alignment: .leading, spacing: 20) {
                 switch model.phase {
-                case .choose, .validating:
-                    ProgressView("Preparing reset review…")
+                case .choose, .validating, .committing:
+                    EmptyView()
                 case .review:
                     reviewContent
-                case .committing:
-                    ProgressView("Resetting local data…")
-                    Text("Keep AQD open while your local data resets.")
                 case .complete:
                     Text("AQD is ready for a fresh start.").font(.title2)
                     Text("Return to Welcome to begin onboarding. AQD will finish its file cleanup after you continue; recovery is available in Settings.")
@@ -29,7 +27,10 @@ struct LocalEraseView: View {
                     Text("Check the reset outcome").font(.title2)
                     Text(model.error ?? "Check the same operation before resetting again. A completed switch cannot be undone by cancelling.")
                 }
-            }.padding(AppSpacing.screen) }.scrollDismissesKeyboard(.interactively).background(AppTheme.canvas).navigationTitle("Reset data").navigationBarTitleDisplayMode(.inline)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(AppSpacing.screen) }.scrollDismissesKeyboard(.interactively)
+                .background(AppTheme.canvas.ignoresSafeArea())
+                .overlay { loadingState }
+                .navigationTitle("Reset data").navigationBarTitleDisplayMode(.inline)
                 .safeAreaInset(edge: .bottom, spacing: 0) {
                     if model.phase != .choose && model.phase != .validating && model.phase != .committing {
                         ActionFooter {
@@ -48,7 +49,7 @@ struct LocalEraseView: View {
                         }
                     }
                 }
-                .toolbar { ToolbarItem(placement: .cancellationAction) { if model.phase != .complete {
+                .toolbar { ToolbarItem(placement: .cancellationAction) { if !embedded && model.phase != .complete {
                     Button { if model.cancel() { onCancel() } } label: { Image(systemName: "xmark") }.buttonBorderShape(.circle).accessibilityLabel("Cancel").disabled(model.phase == .committing)
                 } } }
                 .appConfirmation("Reset all AQD data?", isPresented: $confirm) {
@@ -58,6 +59,26 @@ struct LocalEraseView: View {
         }.tint(AppTheme.ink).onAppear { if model.phase == .review { model.refresh() } else { model.prepareErase() } }
             .onChange(of: model.review?.version) { _, _ in phrase = "" }
             .interactiveDismissDisabled(model.review != nil || model.phase == .committing || model.phase == .validating)
+    }
+
+    /// Pushed from Settings it is a page with the system back button; elsewhere it brings its own stack.
+    @ViewBuilder private func container(@ViewBuilder _ content: () -> some View) -> some View {
+        if embedded {
+            content().navigationBarBackButtonHidden(model.phase == .validating || model.phase == .committing)
+        } else { NavigationStack { content() } }
+    }
+
+    /// Centered like every other waiting page, instead of a spinner stranded at the top of a scroll view.
+    @ViewBuilder private var loadingState: some View {
+        switch model.phase {
+        case .choose, .validating:
+            LoadingStatePage(title: "Preparing reset review", description: Text("Counting what a reset would remove. Nothing changes yet."))
+                .background(AppTheme.canvas.ignoresSafeArea())
+        case .committing:
+            LoadingStatePage(title: "Resetting local data", description: Text("Keep AQD open while your local data resets."))
+                .background(AppTheme.canvas.ignoresSafeArea())
+        default: EmptyView()
+        }
     }
 
     private var reviewContent: some View {

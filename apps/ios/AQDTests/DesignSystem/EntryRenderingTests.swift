@@ -4,11 +4,11 @@ import XCTest
 
 @MainActor
 final class EntryRenderingTests: XCTestCase {
-    func testNativeLaunchUsesIconArtworkOnWhiteInLightAndDark() throws {
+    func testNativeLaunchUsesGlassMarkOnCharcoalInLightAndDark() throws {
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
         let originalKeyWindow = scene.windows.first(where: \.isKeyWindow)
         for style in [UIUserInterfaceStyle.light, .dark] {
-            let controller = try XCTUnwrap(UIStoryboard(name: "LaunchScreen", bundle: .main).instantiateInitialViewController())
+            let controller = try XCTUnwrap(UIStoryboard(name: "Launch", bundle: .main).instantiateInitialViewController())
             let window = UIWindow(windowScene: scene)
             window.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
             window.overrideUserInterfaceStyle = style
@@ -21,12 +21,12 @@ final class EntryRenderingTests: XCTestCase {
             XCTAssertEqual(wordmark.image?.cgImage?.width, 1024)
             XCTAssertEqual(wordmark.image?.cgImage?.height, 1024)
             XCTAssertEqual(wordmark.contentMode, .scaleAspectFit)
-            XCTAssertEqual(wordmark.bounds.width, 144, accuracy: 1)
-            XCTAssertEqual(wordmark.bounds.height, 144, accuracy: 1)
+            XCTAssertEqual(wordmark.bounds.width, 200, accuracy: 1)
+            XCTAssertEqual(wordmark.bounds.height, 200, accuracy: 1)
             let background = try XCTUnwrap(controller.view.backgroundColor?.resolvedColor(with: UITraitCollection(userInterfaceStyle: style)))
             var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
             XCTAssertTrue(background.getRed(&red, green: &green, blue: &blue, alpha: &alpha))
-            for component in [red, green, blue, alpha] { XCTAssertEqual(component, 1, accuracy: 0.001) }
+            for (component, expected) in zip([red, green, blue, alpha], [0x1C / 255.0, 0x1C / 255.0, 0x1B / 255.0, 1]) { XCTAssertEqual(component, expected, accuracy: 0.002) }
             XCTAssertEqual(wordmark.center.x, controller.view.bounds.midX, accuracy: 1)
             XCTAssertEqual(wordmark.center.y, controller.view.bounds.midY, accuracy: 1)
             let image = UIGraphicsImageRenderer(bounds: window.bounds).image { _ in

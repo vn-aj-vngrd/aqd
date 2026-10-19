@@ -18,6 +18,9 @@ struct ClosetSearchContent: View {
                 } else if model.error == nil && !model.loading && model.results?.isEmpty == true {
                     EmptyStatePage(title: "No matches", systemImage: "magnifyingglass",
                                    description: Text("No \(input.scope.rawValue.lowercased()) match “\(input.query)”. Try another search or clear the filters."))
+                } else if model.error == nil && model.loading && model.results == nil {
+                    LoadingStatePage(title: "Searching your closet",
+                                     description: Text("Looking through your \(input.scope.rawValue.lowercased())."))
                 } else {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 20) {
@@ -25,12 +28,11 @@ struct ClosetSearchContent: View {
                                 SemanticFeedback(role: .danger, message: error)
                                 PrimaryAction(title: "Retry search") { Task { await model.search(input, debounce: false) } }
                             }
-                            if model.loading && model.results == nil {
-                                ProgressView("Searching your closet…").tint(AppTheme.ink)
-                                searchSkeleton
-                            } else if let results = model.results {
-                                if model.loading { ProgressView("Updating results…").tint(AppTheme.ink) }
-                                Text("\(results.count) results").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            if let results = model.results {
+                                HStack(spacing: AppSpacing.small) {
+                                    Text("\(results.count) results").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                                    if model.loading { ProgressView().controlSize(.small).tint(AppTheme.ink).accessibilityLabel("Updating results") }
+                                }
                                 switch results {
                                 case .pieces(let pieces): PieceCollectionGrid(pieces: pieces)
                                 case .outfits(let outfits):
@@ -52,14 +54,5 @@ struct ClosetSearchContent: View {
     }
     private var anchor: Binding<UUID?> {
         switch input.scope { case .pieces: $pieceAnchor; case .outfits: $outfitAnchor; case .themes: $themeAnchor }
-    }
-    private var searchSkeleton: some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 12) {
-                RoundedRectangle(cornerRadius: 4).fill(AppTheme.surface).frame(height: 134)
-                if input.scope == .pieces { RoundedRectangle(cornerRadius: 4).fill(AppTheme.surface).frame(height: 134) }
-            }
-            RoundedRectangle(cornerRadius: 4).fill(AppTheme.surface).frame(height: 20)
-        }.accessibilityHidden(true)
     }
 }

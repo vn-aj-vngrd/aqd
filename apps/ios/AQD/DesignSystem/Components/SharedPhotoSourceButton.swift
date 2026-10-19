@@ -117,3 +117,20 @@ extension View {
         modifier(ImportedPhotoEditor(model: model, importing: importing, locked: locked, presented: presented))
     }
 }
+
+/// The two direct photo sources for an empty photo: equal halves of the width, both in the same glass, so neither reads as a
+/// secondary choice. Used wherever an editor has no photo yet.
+struct PhotoSourceChoices: View {
+    let onCamera: () -> Void
+    let onPhotos: () -> Void
+    var cameraID = "photo.takePhoto"
+    var photosID = "photo.choose"
+    var body: some View {
+        HStack(spacing: AppSpacing.small) {
+            Button(action: onCamera) { Label("Take photo", systemImage: "camera").compactControl(fullWidth: true) }
+                .buttonStyle(.plain).accessibilityIdentifier(cameraID)
+            Button(action: onPhotos) { Label("Photos", systemImage: "photo.on.rectangle").compactControl(fullWidth: true) }
+                .buttonStyle(.plain).accessibilityIdentifier(photosID)
+        }
+    }
+}

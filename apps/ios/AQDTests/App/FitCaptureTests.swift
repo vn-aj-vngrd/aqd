@@ -49,24 +49,26 @@ import Testing
         #expect(editor.guidance == .ready)
     }
 
-    @Test func savingWithRecordWearNextQueuesWearButNeverRecordsIt() async throws {
+    @Test func postingAFitWithAnOutfitCountsItAsWornOnce() async throws {
         let (state, fixture) = try await loaded()
         let existing = state.fitMemories.count
+        let before = try fixture.store.wearRecords().count
         state.openFit(source: .outfit)
         let editor = try #require(state.fitEditor)
+        #expect(editor.recordWearNext, "a new post counts as worn by default")
         #expect(editor.link(fixture.outfit))
-        editor.recordWearNext = true
         await editor.save()
         #expect(editor.error == nil, "\(String(describing: editor.error))")
         #expect(state.fitEditor == nil)
         #expect(state.fitMemories.count == existing + 1)
-        let pending = try #require(state.pendingFitWear)
-        #expect(pending.outfitID == fixture.outfit.id)
-        let before = try fixture.store.wearRecords().count
-        state.openPendingFitWear()
-        #expect(state.pendingFitWear == nil)
-        #expect(state.wearEditor != nil, "Record wear opens for confirmation")
-        #expect(try fixture.store.wearRecords().count == before, "opening it records nothing")
+        #expect(state.pendingFitWear == nil, "recorded in the same step, no second screen")
+        #expect(try fixture.store.wearRecords().count == before + 1)
+
+        state.openFit(source: .outfit)
+        let again = try #require(state.fitEditor)
+        #expect(again.link(fixture.outfit))
+        await again.save()
+        #expect(try fixture.store.wearRecords().count == before + 1, "the same outfit and day is never counted twice")
     }
 
     @Test func savingWithoutTheToggleQueuesNoWear() async throws {
@@ -75,6 +77,7 @@ import Testing
         state.openFit(source: .outfit)
         let editor = try #require(state.fitEditor)
         #expect(editor.link(fixture.outfit))
+        editor.recordWearNext = false
         await editor.save()
         #expect(editor.error == nil, "\(String(describing: editor.error))")
         #expect(state.fitMemories.count == existing + 1)

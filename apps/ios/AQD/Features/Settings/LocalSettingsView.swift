@@ -41,8 +41,8 @@ struct LocalSettingsView: View {
             Section {
                 NavigationLink { ArchivedPiecesView().secondaryPage() } label: { SettingsRow(title: "Archived pieces", symbol: "archivebox") }
                 NavigationLink { LocalExportView().secondaryPage() } label: { SettingsRow(title: "Export closet", symbol: "square.and.arrow.up") }
-                Button { state.openRestore() } label: { SettingsRow(title: "Restore closet", symbol: "arrow.counterclockwise", disclosure: true) }
-                Button(role: .destructive) { state.openErase() } label: { SettingsRow(title: "Reset data", symbol: "trash", disclosure: true, destructive: true) }
+                Button { state.openRestore(inSettings: true) } label: { SettingsRow(title: "Restore closet", symbol: "arrow.counterclockwise", disclosure: true) }
+                Button(role: .destructive) { state.openErase(inSettings: true) } label: { SettingsRow(title: "Reset data", symbol: "trash", disclosure: true, destructive: true) }
                     .accessibilityIdentifier("aqd.settings.reset-data")
             } header: { Text("Your data") } footer: {
                 Text("Stored on this iPhone with no account or automatic cloud backup. Export a copy to protect against device loss or deleting AQD.")
@@ -51,7 +51,7 @@ struct LocalSettingsView: View {
             if state.localDataCleanupError != nil || state.photoCleanupError != nil {
                 Section {
                     if state.localDataCleanupError != nil {
-                        Button { state.openRestore() } label: { SettingsRow(title: "Review data operation", symbol: "arrow.counterclockwise", disclosure: true) }
+                        Button { state.openRestore(inSettings: true) } label: { SettingsRow(title: "Review data operation", symbol: "arrow.counterclockwise", disclosure: true) }
                         Button { state.retryLocalDataCleanup() } label: { SettingsRow(title: "Retry cleanup", symbol: "arrow.clockwise") }
                     }
                     SettingsPhotoRecoveryView()
@@ -80,16 +80,26 @@ struct LocalSettingsView: View {
         .listStyle(.insetGrouped).listSectionSpacing(AppSpacing.large).navigationTitle("Settings").navigationBarTitleDisplayMode(.inline)
         .contentMargins(.top, AppSpacing.small, for: .scrollContent).scrollContentBackground(.hidden).background(AppTheme.canvas).tint(AppTheme.ink)
         .navigationDestination(for: ClosetRoute.self) { ClosetDestination(route: $0) }
+        .navigationDestination(isPresented: Binding(get: { state.restoreModel != nil && state.restoreInSettings },
+                                                    set: { if !$0 { state.closeSettingsDataOperation() } })) {
+            if let model = state.restoreModel {
+                if model.kind == .erase {
+                    LocalEraseView(model: model, onCancel: { state.closeSettingsDataOperation() },
+                                   onInstall: state.finishSettingsDataOperation, embedded: true).secondaryPage()
+                } else {
+                    LocalRestoreView(model: model, onCancel: { state.closeSettingsDataOperation() },
+                                     onInstall: state.finishSettingsDataOperation, embedded: true).secondaryPage()
+                }
+            }
+        }
         .onAppear { state.reloadSettings() }
-        .sheet(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true } } }
+        .navigationDestination(isPresented: $weather) { if let client = state.weatherClient { WeatherContextView(client: client, persistsPreference: true) { _ in true }.secondaryPage() } }
         #if DEBUG
         .fullScreenCover(isPresented: $previewWelcome, onDismiss: {
             if tourAfterWelcome { tourAfterWelcome = false; state.beginTour(from: .settings) }
         }) { WelcomeView(previewDismiss: { tour in tourAfterWelcome = tour; previewWelcome = false }).background(AppTheme.canvas) }
         .fullScreenCover(isPresented: $previewSplash) { DevelopmentSplashPreview() }
-        .sheet(isPresented: $seedSamples) {
-            DevelopmentSeedView().environment(state).appAppearance(state.appearance)
-        }
+        .navigationDestination(isPresented: $seedSamples) { DevelopmentSeedView().secondaryPage() }
         #endif
     }
     private var appearanceTitle: String { state.appearance == .system ? "Automatic" : state.appearance.rawValue.capitalized }
@@ -313,12 +323,14 @@ struct LocalPrivacySettingsView: View {
 #if DEBUG
 private struct DevelopmentSplashPreview: View {
     @Environment(\.dismiss) private var dismiss
+    @State private var exiting = false
     var body: some View {
-        ZStack {
-            Color("LaunchCanvas").ignoresSafeArea()
-            Image("LaunchMark").resizable().scaledToFit().frame(width: 144, height: 144).accessibilityLabel("AQD")
-        }.task {
-            do { try await Task.sleep(for: .seconds(1.2)); dismiss() } catch { }
+        LaunchSplash(exiting: exiting).accessibilityLabel("AQD").task {
+            do {
+                try await Task.sleep(for: .seconds(1.15))
+                withAnimation(.easeIn(duration: 0.4)) { exiting = true }
+                try await Task.sleep(for: .seconds(0.45)); dismiss()
+            } catch { }
         }
     }
 }
