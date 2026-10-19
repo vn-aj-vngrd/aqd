@@ -100,6 +100,12 @@ enum AgentPreflight {
                 request = AgentMutationRequest(kind: .editPlan, targetID: plan.id, assignments: [AgentPlanAssignment(date: key, outfitID: outfit.id)]); tool = .editPlan
             case .tidy(let op, let subjects):
                 // An archived piece is named only to restore it; archiving or deleting one that is already archived finds nothing.
+                // "Delete my Office day outfit" names a saved outfit, theme or plan, which this tidy does not remove.
+                for subject in subjects {
+                    if case .found(let other) = index.resolve(subject, kinds: [.outfit, .theme, .plan]), case .notFound = index.resolve(subject, kinds: [.piece]) {
+                        return AgentFastPath(note: "", fallback: "“\(other.name)” is a saved \(other.kind.rawValue), not a piece. I can archive or delete pieces here; remove outfits, themes and plans from Closet or Planner.", exact: true)
+                    }
+                }
                 let entries = try subjects.map { target = $0; return try find($0, [.piece]) }
                 let archived = entries.map { $0.name.hasSuffix(AgentKnowledgeSource.archivedSuffix) }
                 guard archived.allSatisfy({ $0 == (op == .unarchive) }) else { throw AgentToolRejection.notFound(target) }

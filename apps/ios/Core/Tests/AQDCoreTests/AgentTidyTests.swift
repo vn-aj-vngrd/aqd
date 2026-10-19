@@ -107,6 +107,7 @@ struct AgentTidyTests {
         #expect(AgentCommand.parse("Get rid of the Brown leather belt") == .tidy(op: .archive, subjects: ["Brown leather belt"]))
         #expect(AgentCommand.parse("Clean out my Black ballet flats, I never wear them") == .tidy(op: .archive, subjects: ["Black ballet flats"]))
         #expect(AgentCommand.parse("Restore my Linen shirt to my closet") == .tidy(op: .unarchive, subjects: ["Linen shirt"]))
+        #expect(AgentCommand.parse("Delete my Office day outfit") == .tidy(op: .delete, subjects: ["Office day"]))
         #expect(AgentCommand.parse("Could you please archive the old tee") == .tidy(op: .archive, subjects: ["old tee"]))
     }
 }

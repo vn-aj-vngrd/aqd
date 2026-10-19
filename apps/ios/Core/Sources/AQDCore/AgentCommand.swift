@@ -91,7 +91,7 @@ public enum AgentCommand: Equatable, Sendable {
             // "Archive my tote, I never wear it" names the tote; a trailing "from my closet" is only a place.
             var named = g[1].components(separatedBy: CharacterSet(charactersIn: ",;")).first ?? g[1]
             named = named.replacingOccurrences(of: #"(?i)\s+(?:from|out of|in|to)\s+(?:my\s+)?(?:closet|wardrobe)\s*$"#, with: "", options: .regularExpression)
-            let subjects = named.replacingOccurrences(of: " and ", with: ",", options: .caseInsensitive).split(separator: ",").map { clean(String($0)).replacingOccurrences(of: #"^(?i:the|my)\s+"#, with: "", options: .regularExpression) }.filter { !$0.isEmpty }
+            let subjects = named.replacingOccurrences(of: " and ", with: ",", options: .caseInsensitive).split(separator: ",").map { clean(String($0)).replacingOccurrences(of: #"^(?i:the|my)\s+"#, with: "", options: .regularExpression) }.map { $0.replacingOccurrences(of: #"(?i)\s+(?:outfit|look|theme|collection|plan)$"#, with: "", options: .regularExpression) }.filter { !$0.isEmpty }
             return subjects.isEmpty || subjects.count > 12 ? nil : .tidy(op: op, subjects: subjects)
         }
         if let g = groups(theme, text) {
