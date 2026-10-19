@@ -88,12 +88,14 @@ struct LocalProfileView: View {
     private var profileStats: some View {
         let fits = state.fitError == nil ? state.fitMemories : nil
         let today = LocalPlanDay()
-        // Starts on the name's edge, then the same gap between each number, so the row reads as one line of facts.
-        return HStack(alignment: .top, spacing: 28) {
+        // Spread across the full width: the first stat starts on the name's edge, the last ends on the trailing edge, and the gaps match.
+        return HStack(alignment: .top, spacing: 0) {
             profileStat("Fits", count: fits?.count, id: "fits")
+            Spacer(minLength: AppSpacing.medium)
             profileStat("This month", count: fits.map { FitJournalPresentation.monthCount($0, today: today) }, id: "month")
+            Spacer(minLength: AppSpacing.medium)
             profileStat("Day streak", count: fits.map { FitJournalPresentation.streak($0, today: today) }, id: "streak")
-        }.frame(maxWidth: .infinity, alignment: .leading)
+        }.frame(maxWidth: .infinity)
     }
     private func profileStat(_ title: String, count: Int?, id: String) -> some View {
         VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
