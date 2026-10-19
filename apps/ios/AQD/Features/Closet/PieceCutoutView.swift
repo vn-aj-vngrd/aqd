@@ -156,14 +156,14 @@ private struct CutoutCanvas: View {
         GeometryReader { proxy in
             let rect = displayRect(in: proxy.size)
             ZStack {
-                Color(white: 0.5, opacity: 0.08)
+                AppTheme.mediaWash
                 layers(rect: rect)
                 if model.phase == .detecting {
                     ProgressView("Finding the piece…").padding().background(.regularMaterial, in: RoundedRectangle(cornerRadius: AppRadius.group))
                 }
                 if model.tool == .trim { trimOverlay(rect: rect) }
                 if let cursor, model.tool == .erase || model.tool == .restore {
-                    Circle().stroke(AppTheme.ink, lineWidth: 1.5).background(Circle().fill(.white.opacity(0.25)))
+                    Circle().stroke(AppTheme.ink, lineWidth: 1.5).background(Circle().fill(AppTheme.onMedia.opacity(0.25)))
                         .frame(width: model.brushRadius * 2, height: model.brushRadius * 2).position(cursor).allowsHitTesting(false)
                 }
             }
@@ -233,8 +233,8 @@ private struct CutoutCanvas: View {
                            width: trim.width * rect.width, height: trim.height * rect.height)
         return ZStack {
             Path { path in path.addRect(rect); path.addRect(frame) }
-                .fill(Color.black.opacity(0.4), style: FillStyle(eoFill: true)).allowsHitTesting(false)
-            Rectangle().stroke(Color.white, lineWidth: 2).frame(width: frame.width, height: frame.height)
+                .fill(AppTheme.mediaMask, style: FillStyle(eoFill: true)).allowsHitTesting(false)
+            Rectangle().stroke(AppTheme.onMedia, lineWidth: 2).frame(width: frame.width, height: frame.height)
                 .position(x: frame.midX, y: frame.midY).allowsHitTesting(false)
             handle(at: CGPoint(x: frame.minX, y: frame.midY), edge: .leading, rect: rect)
             handle(at: CGPoint(x: frame.maxX, y: frame.midY), edge: .trailing, rect: rect)
@@ -244,7 +244,7 @@ private struct CutoutCanvas: View {
     }
 
     private func handle(at point: CGPoint, edge: Edge, rect: CGRect) -> some View {
-        Circle().fill(Color.white).overlay(Circle().stroke(AppTheme.ink, lineWidth: 2)).frame(width: 22, height: 22)
+        Circle().fill(AppTheme.onMedia).overlay(Circle().stroke(AppTheme.ink, lineWidth: 2)).frame(width: 22, height: 22)
             .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget).contentShape(Rectangle())
             .position(point)
             .accessibilityLabel("Trim \(edge == .leading ? "left" : edge == .trailing ? "right" : edge == .top ? "top" : "bottom") edge")
@@ -271,10 +271,10 @@ private struct Checkerboard: View {
     var body: some View {
         Canvas { context, size in
             let cell: CGFloat = 12
-            context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(Color(white: 0.97)))
+            context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(AppTheme.transparencyLight))
             for row in 0..<Int(size.height / cell) + 1 {
                 for column in 0..<Int(size.width / cell) + 1 where (row + column).isMultiple(of: 2) {
-                    context.fill(Path(CGRect(x: CGFloat(column) * cell, y: CGFloat(row) * cell, width: cell, height: cell)), with: .color(Color(white: 0.88)))
+                    context.fill(Path(CGRect(x: CGFloat(column) * cell, y: CGFloat(row) * cell, width: cell, height: cell)), with: .color(AppTheme.transparencyDark))
                 }
             }
         }

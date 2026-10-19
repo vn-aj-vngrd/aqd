@@ -18,7 +18,7 @@ struct ArchivedPiecesView: View {
                 } else { PieceCollectionGrid(pieces: pieces) }
             }.padding(20)
         }.background(AppTheme.canvas).navigationTitle("Archived pieces").navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $query, prompt: "Search archived pieces")
+            .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search archived pieces")
             .onAppear(perform: refresh).onChange(of: query) { refresh() }
             .onChange(of: state.collectionRefreshID) { refresh() }
     }

@@ -8,11 +8,15 @@ import ImageIO
 enum GarmentArt {
     enum Pattern { case none, stripes, dots, denim, ribbed, floral, gingham }
 
+    /// What the cloth, leather or straw is made of: drives texture and sheen.
+    enum Material { case cotton, linen, knit, denim, satin, leather, suede, wool, straw, rubber, metal }
+
     struct Style {
         var color: CGColor
         var trim: CGColor? = nil
         var pattern: Pattern = .none
         var patternColor: CGColor? = nil
+        var material: Material = .cotton
     }
 
     enum Shape {
@@ -97,20 +101,154 @@ enum GarmentArt {
         return CGColor(red: clamp(c[0] + amount), green: clamp(c.count > 2 ? c[1] + amount : c[0] + amount), blue: clamp(c.count > 2 ? c[2] + amount : c[0] + amount), alpha: 1)
     }
 
-    /// Fills a path with the style's color, pattern and a soft top-to-bottom shade, then outlines it.
+    // MARK: Realism helpers
+
+    /// Deterministic noise in 0...1 so every render of a piece is identical.
+    private static func noise(_ x: Int, _ y: Int, _ seed: Int = 0) -> CGFloat {
+        var h = UInt64(truncatingIfNeeded: x &* 374_761_393 &+ y &* 668_265_263 &+ seed &* 2_147_483_647)
+        h = (h ^ (h >> 13)) &* 1_274_126_177
+        h ^= h >> 16
+        return CGFloat(h & 0xFFFF) / 65_535
+    }
+
+    /// Draws something softly blurred by letting a far-away shape cast a blurred shadow back onto the canvas.
+    private static func blurred(_ ctx: CGContext, radius: CGFloat, color: CGColor, offset: CGSize = .zero, _ draw: () -> Void) {
+        ctx.saveGState()
+        let far: CGFloat = 6_000
+        ctx.translateBy(x: -far, y: 0)
+        ctx.setShadow(offset: CGSize(width: far + offset.width, height: offset.height), blur: radius, color: color)
+        ctx.setFillColor(CGColor(gray: 0, alpha: 1)); ctx.setStrokeColor(CGColor(gray: 0, alpha: 1))
+        draw()
+        ctx.restoreGState()
+    }
+
+    private static func light(_ amount: CGFloat) -> CGColor { CGColor(gray: 1, alpha: amount) }
+    private static func shadowTone(_ amount: CGFloat) -> CGColor { CGColor(red: 0.08, green: 0.06, blue: 0.05, alpha: amount) }
+
+    /// Fine cloth or skin texture, drawn inside the current clip.
+    private static func texture(_ material: Material, color: CGColor, in ctx: CGContext) {
+        let w = Int(size.width), h = Int(size.height)
+        switch material {
+        case .cotton, .linen, .wool:
+            let weave: CGFloat = material == .wool ? 0.05 : 0.035
+            ctx.setLineWidth(1)
+            ctx.setStrokeColor(shadowTone(weave))
+            var y = 0
+            while y < h { ctx.move(to: CGPoint(x: 0, y: y)); ctx.addLine(to: CGPoint(x: w, y: y)); y += material == .linen ? 4 : 3 }
+            var x = 0
+            while x < w { ctx.move(to: CGPoint(x: x, y: 0)); ctx.addLine(to: CGPoint(x: x, y: h)); x += material == .linen ? 4 : 3 }
+            ctx.strokePath()
+            let speckle: CGFloat = material == .linen ? 0.9 : 0.5
+            for gy in stride(from: 0, to: h, by: 3) {
+                for gx in stride(from: 0, to: w, by: 3) where noise(gx, gy, 1) > (1 - 0.18 * speckle) {
+                    ctx.setFillColor(noise(gx, gy, 2) > 0.5 ? shadowTone(0.09) : light(0.10))
+                    ctx.fill(CGRect(x: CGFloat(gx), y: CGFloat(gy), width: material == .linen ? 5 : 2, height: material == .linen ? 1.5 : 2))
+                }
+            }
+        case .knit:
+            var x: CGFloat = 0
+            while x < size.width {
+                ctx.setStrokeColor(shadowTone(0.16)); ctx.setLineWidth(5); ctx.move(to: CGPoint(x: x, y: 0)); ctx.addLine(to: CGPoint(x: x, y: size.height)); ctx.strokePath()
+                ctx.setStrokeColor(light(0.22)); ctx.setLineWidth(3); ctx.move(to: CGPoint(x: x + 6, y: 0)); ctx.addLine(to: CGPoint(x: x + 6, y: size.height)); ctx.strokePath()
+                x += 13
+            }
+            for gy in stride(from: 0, to: h, by: 4) {
+                for gx in stride(from: 0, to: w, by: 4) where noise(gx, gy, 3) > 0.8 {
+                    ctx.setFillColor(shadowTone(0.08)); ctx.fill(CGRect(x: gx, y: gy, width: 2, height: 3))
+                }
+            }
+        case .denim:
+            ctx.setLineWidth(1.4); ctx.setStrokeColor(light(0.10))
+            var t: CGFloat = -size.height
+            while t < size.width { ctx.move(to: CGPoint(x: t, y: 0)); ctx.addLine(to: CGPoint(x: t + size.height, y: size.height)); t += 5 }
+            ctx.strokePath()
+            for gy in stride(from: 0, to: h, by: 3) {
+                for gx in stride(from: 0, to: w, by: 3) where noise(gx, gy, 4) > 0.84 {
+                    ctx.setFillColor(noise(gx, gy, 5) > 0.5 ? light(0.16) : shadowTone(0.14)); ctx.fill(CGRect(x: gx, y: gy, width: 3, height: 2))
+                }
+            }
+        case .satin:
+            for gy in stride(from: 0, to: h, by: 4) {
+                for gx in stride(from: 0, to: w, by: 4) where noise(gx, gy, 6) > 0.9 {
+                    ctx.setFillColor(light(0.05)); ctx.fill(CGRect(x: gx, y: gy, width: 3, height: 3))
+                }
+            }
+        case .leather, .suede:
+            let grain: CGFloat = material == .suede ? 0.30 : 0.22
+            for gy in stride(from: 0, to: h, by: 2) {
+                for gx in stride(from: 0, to: w, by: 2) where noise(gx, gy, 7) > 0.55 {
+                    ctx.setFillColor(noise(gx, gy, 8) > 0.5 ? light(grain * 0.35) : shadowTone(grain * 0.5)); ctx.fill(CGRect(x: gx, y: gy, width: 2, height: 2))
+                }
+            }
+        case .straw:
+            ctx.setLineWidth(3)
+            var y: CGFloat = 0
+            while y < size.height {
+                ctx.setStrokeColor(shadowTone(0.20)); ctx.move(to: CGPoint(x: 0, y: y)); ctx.addLine(to: CGPoint(x: size.width, y: y)); ctx.strokePath()
+                ctx.setStrokeColor(light(0.20)); ctx.move(to: CGPoint(x: 0, y: y + 3)); ctx.addLine(to: CGPoint(x: size.width, y: y + 3)); ctx.strokePath()
+                y += 9
+            }
+            var x: CGFloat = 0
+            while x < size.width { ctx.setStrokeColor(shadowTone(0.10)); ctx.setLineWidth(2); ctx.move(to: CGPoint(x: x, y: 0)); ctx.addLine(to: CGPoint(x: x, y: size.height)); ctx.strokePath(); x += 11 }
+        case .rubber, .metal:
+            break
+        }
+    }
+
+    /// Soft creases and drape shading that follow the garment's long axis, as if photographed lying on a table.
+    private static func folds(_ bounds: CGRect, material: Material, in ctx: CGContext) {
+        let strength: CGFloat
+        switch material { case .satin: strength = 1.3; case .linen: strength = 1.5; case .leather, .suede: strength = 0.55; case .knit, .wool: strength = 0.45; case .straw, .rubber, .metal: strength = 0.0; default: strength = 1 }
+        guard strength > 0 else { return }
+        let count = Int(max(3, bounds.width / 90))
+        for k in 0..<count {
+            let seed = k * 17
+            let x = bounds.minX + bounds.width * (0.12 + 0.76 * noise(seed, 1, 9))
+            let top = bounds.minY + bounds.height * (0.08 + 0.4 * noise(seed, 2, 9))
+            let length = bounds.height * (0.25 + 0.5 * noise(seed, 3, 9))
+            let bend = (noise(seed, 4, 9) - 0.5) * 70
+            let crease = CGMutablePath()
+            crease.move(to: CGPoint(x: x, y: top))
+            crease.addQuadCurve(to: CGPoint(x: x + bend * 0.6, y: top + length), control: CGPoint(x: x + bend, y: top + length * 0.45))
+            blurred(ctx, radius: 18, color: shadowTone(0.10 * strength)) { ctx.addPath(crease); ctx.setLineWidth(22); ctx.strokePath() }
+            ctx.saveGState(); ctx.translateBy(x: 13, y: 0)
+            blurred(ctx, radius: 16, color: light(0.14 * strength)) { ctx.addPath(crease); ctx.setLineWidth(14); ctx.strokePath() }
+            ctx.restoreGState()
+        }
+        // A couple of broad horizontal sags, like cloth settling across the middle.
+        for k in 0..<2 {
+            let y = bounds.minY + bounds.height * (0.35 + 0.28 * CGFloat(k)) + (noise(k, 5, 9) - 0.5) * 40
+            let sag = CGMutablePath(); sag.move(to: CGPoint(x: bounds.minX + 30, y: y)); sag.addQuadCurve(to: CGPoint(x: bounds.maxX - 30, y: y + 12), control: CGPoint(x: bounds.midX, y: y + 30))
+            blurred(ctx, radius: 18, color: shadowTone(0.09 * strength)) { ctx.addPath(sag); ctx.setLineWidth(20); ctx.strokePath() }
+        }
+    }
+
+    /// Fills a path like a photographed piece: contact shadow, fabric, texture, drape, edge shading, highlight and a fine outline.
     private static func paint(_ path: CGPath, _ style: Style, in ctx: CGContext, outline: Bool = true, shadow: Bool = true) {
+        let bounds = path.boundingBoxOfPath
         if shadow {
-            ctx.saveGState(); ctx.translateBy(x: 0, y: 14); ctx.addPath(path); ctx.setFillColor(CGColor(gray: 0, alpha: 0.10)); ctx.fillPath(); ctx.restoreGState()
+            blurred(ctx, radius: 26, color: shadowTone(0.30), offset: CGSize(width: 0, height: 20)) { ctx.addPath(path); ctx.fillPath() }
+            blurred(ctx, radius: 6, color: shadowTone(0.25), offset: CGSize(width: 0, height: 5)) { ctx.addPath(path); ctx.fillPath() }
         }
         ctx.saveGState(); ctx.addPath(path); ctx.clip()
-        ctx.setFillColor(style.color); ctx.fill(CGRect(origin: .zero, size: size))
+        ctx.setFillColor(style.color); ctx.fill(bounds.insetBy(dx: -4, dy: -4))
         pattern(style, in: ctx)
+        texture(style.material, color: style.color, in: ctx)
+        folds(bounds, material: style.material, in: ctx)
+        // Broad lighting from the upper left.
         let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
-                                  colors: [CGColor(gray: 1, alpha: 0.16), CGColor(gray: 1, alpha: 0), CGColor(gray: 0, alpha: 0.14)] as CFArray, locations: [0, 0.45, 1])!
-        ctx.drawLinearGradient(gradient, start: .zero, end: CGPoint(x: 0, y: size.height), options: [])
+                                  colors: [light(0.22), light(0.04), shadowTone(0.04), shadowTone(0.20)] as CFArray, locations: [0, 0.35, 0.65, 1])!
+        ctx.drawLinearGradient(gradient, start: CGPoint(x: bounds.minX, y: bounds.minY), end: CGPoint(x: bounds.maxX * 0.85, y: bounds.maxY), options: [])
+        if style.material == .satin || style.material == .leather || style.material == .metal {
+            let sheen = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
+                                   colors: [light(0), light(style.material == .satin ? 0.38 : 0.26), light(0)] as CFArray, locations: [0.30, 0.45, 0.60])!
+            ctx.drawLinearGradient(sheen, start: CGPoint(x: bounds.minX, y: bounds.minY), end: CGPoint(x: bounds.maxX, y: bounds.minY + bounds.height * 0.55), options: [])
+        }
+        // Edge darkening where cloth turns away from the light.
+        blurred(ctx, radius: 16, color: shadowTone(0.20)) { ctx.addPath(path); ctx.setLineWidth(30); ctx.strokePath() }
         ctx.restoreGState()
         if outline {
-            ctx.addPath(path); ctx.setStrokeColor(shade(style.color, -0.22)); ctx.setLineWidth(3); ctx.strokePath()
+            ctx.addPath(path); ctx.setStrokeColor(shade(style.color, -0.30).copy(alpha: 0.75) ?? style.color); ctx.setLineWidth(2); ctx.strokePath()
         }
     }
 
@@ -166,6 +304,123 @@ enum GarmentArt {
     private static func button(_ ctx: CGContext, _ x: CGFloat, _ y: CGFloat, _ color: CGColor) {
         let p = pt(x, y)
         ctx.setFillColor(color); ctx.fillEllipse(in: CGRect(x: p.x - 7, y: p.y - 7, width: 14, height: 14))
+    }
+
+    // MARK: Shoes (side views, facing right)
+
+    private static func pathOf(_ build: (CGMutablePath) -> Void) -> CGPath { let p = CGMutablePath(); build(p); p.closeSubpath(); return p }
+    private static func cg(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: x, y: y) }
+
+    private static func drawSneaker(_ style: Style, in ctx: CGContext) {
+        let dark = shade(style.color, -0.26), sole = style.trim ?? rgb(0xF2EEE6)
+        let upper = pathOf { p in
+            p.move(to: cg(150, 610)); p.addCurve(to: cg(150, 470), control1: cg(128, 570), control2: cg(130, 500))
+            p.addCurve(to: cg(235, 395), control1: cg(160, 430), control2: cg(200, 400))          // heel collar
+            p.addCurve(to: cg(330, 350), control1: cg(270, 395), control2: cg(300, 360))          // collar to tongue
+            p.addCurve(to: cg(380, 345), control1: cg(345, 330), control2: cg(365, 328))          // tongue top
+            p.addCurve(to: cg(560, 470), control1: cg(430, 380), control2: cg(500, 440))          // laces to vamp
+            p.addCurve(to: cg(690, 548), control1: cg(620, 480), control2: cg(675, 500))          // toe cap top
+            p.addCurve(to: cg(700, 610), control1: cg(706, 570), control2: cg(708, 592))          // toe
+        }
+        paint(upper, style, in: ctx)
+        // Midsole and outsole.
+        let midsole = pathOf { p in
+            p.move(to: cg(128, 598)); p.addLine(to: cg(704, 598)); p.addCurve(to: cg(690, 662), control1: cg(716, 612), control2: cg(710, 650))
+            p.addLine(to: cg(150, 668)); p.addCurve(to: cg(128, 598), control1: cg(126, 656), control2: cg(122, 626))
+        }
+        paint(midsole, Style(color: sole, material: .rubber), in: ctx)
+        ctx.addPath(pathOf { p in p.move(to: cg(140, 668)); p.addLine(to: cg(692, 662)); p.addLine(to: cg(688, 684)); p.addLine(to: cg(146, 690)) })
+        ctx.setFillColor(rgb(0xBFA37A)); ctx.fillPath()
+        // Toe cap seam, laces, eyelets and heel tab.
+        ctx.setStrokeColor(dark.copy(alpha: 0.7)!); ctx.setLineWidth(2.5)
+        ctx.addPath(pathOf { p in p.move(to: cg(560, 470)); p.addCurve(to: cg(585, 598), control1: cg(600, 500), control2: cg(600, 560)) }); ctx.strokePath()
+        for k in 0..<5 {
+            let t = CGFloat(k) / 4
+            let a = cg(345 + 170 * t, 352 + 92 * t), b = cg(355 + 170 * t, 395 + 92 * t)
+            ctx.setStrokeColor(light(0.85)); ctx.setLineWidth(7); ctx.setLineCap(.round); ctx.move(to: a); ctx.addLine(to: cg(a.x + 42, a.y + 6)); ctx.strokePath()
+            ctx.setFillColor(rgb(0xC8C3B8)); ctx.fillEllipse(in: CGRect(x: b.x - 4, y: b.y - 4 - 6, width: 8, height: 8))
+        }
+        ctx.setStrokeColor(dark.copy(alpha: 0.55)!); ctx.setLineWidth(2)
+        ctx.addPath(pathOf { p in p.move(to: cg(150, 470)); p.addCurve(to: cg(168, 590), control1: cg(160, 520), control2: cg(165, 560)) }); ctx.strokePath()
+        ctx.setFillColor(shade(style.color, -0.10)); ctx.fill(CGRect(x: 138, y: 420, width: 16, height: 50))
+    }
+
+    private static func drawFlat(_ style: Style, in ctx: CGContext) {
+        let upper = pathOf { p in
+            p.move(to: cg(150, 640)); p.addCurve(to: cg(158, 520), control1: cg(136, 600), control2: cg(140, 556))
+            p.addCurve(to: cg(280, 500), control1: cg(185, 500), control2: cg(240, 492))           // heel counter and topline
+            p.addCurve(to: cg(400, 540), control1: cg(330, 506), control2: cg(360, 540))           // opening dips
+            p.addCurve(to: cg(560, 556), control1: cg(450, 540), control2: cg(500, 548))
+            p.addCurve(to: cg(740, 628), control1: cg(640, 566), control2: cg(715, 596))           // pointed toe
+            p.addCurve(to: cg(690, 652), control1: cg(750, 640), control2: cg(720, 650))
+        }
+        paint(upper, style, in: ctx)
+        let sole = pathOf { p in p.move(to: cg(146, 640)); p.addLine(to: cg(740, 636)); p.addLine(to: cg(700, 664)); p.addLine(to: cg(158, 668)) }
+        paint(sole, Style(color: shade(style.color, -0.34), material: .leather), in: ctx, shadow: false)
+        // Opening, bow and edge binding.
+        ctx.setStrokeColor(shade(style.color, -0.40).copy(alpha: 0.8)!); ctx.setLineWidth(5)
+        ctx.addPath(pathOf { p in p.move(to: cg(165, 528)); p.addCurve(to: cg(430, 548), control1: cg(250, 495), control2: cg(360, 560)) }); ctx.strokePath()
+        ctx.setFillColor(shade(style.color, 0.12))
+        ctx.addPath(pathOf { p in p.move(to: cg(610, 578)); p.addCurve(to: cg(650, 560), control1: cg(620, 556), control2: cg(640, 552)); p.addCurve(to: cg(650, 596), control1: cg(662, 570), control2: cg(662, 590)); p.addCurve(to: cg(610, 578), control1: cg(636, 604), control2: cg(618, 596)) }); ctx.fillPath()
+    }
+
+    private static func drawHeel(_ style: Style, in ctx: CGContext) {
+        let upper = pathOf { p in
+            p.move(to: cg(190, 440)); p.addCurve(to: cg(330, 470), control1: cg(235, 430), control2: cg(290, 440))    // heel counter topline
+            p.addCurve(to: cg(450, 560), control1: cg(380, 500), control2: cg(410, 540))                          // throat
+            p.addCurve(to: cg(660, 640), control1: cg(520, 590), control2: cg(600, 610))                          // vamp
+            p.addCurve(to: cg(715, 668), control1: cg(690, 646), control2: cg(712, 652))                          // toe
+            p.addCurve(to: cg(640, 684), control1: cg(716, 684), control2: cg(668, 690))
+            p.addCurve(to: cg(380, 640), control1: cg(560, 676), control2: cg(450, 664))                          // sole to arch
+            p.addCurve(to: cg(250, 590), control1: cg(330, 624), control2: cg(280, 610))                          // arch to heel seat
+            p.addCurve(to: cg(190, 440), control1: cg(205, 560), control2: cg(180, 500))                          // heel back
+        }
+        // Slim heel under the seat.
+        let heel = pathOf { p in p.move(to: cg(178, 560)); p.addLine(to: cg(262, 590)); p.addLine(to: cg(236, 840)); p.addLine(to: cg(204, 840)) }
+        paint(heel, Style(color: shade(style.color, -0.18), material: style.material), in: ctx)
+        paint(upper, style, in: ctx)
+        ctx.setFillColor(rgb(0x1E1A18)); ctx.fill(CGRect(x: 202, y: 834, width: 36, height: 12))
+        // Sole edge highlight and topline binding.
+        ctx.setStrokeColor(light(0.35)); ctx.setLineWidth(3)
+        ctx.addPath(pathOf { p in p.move(to: cg(200, 444)); p.addCurve(to: cg(325, 474), control1: cg(240, 436), control2: cg(288, 446)) }); ctx.strokePath()
+    }
+
+    private static func drawSandal(_ style: Style, in ctx: CGContext) {
+        let foot = style.trim ?? shade(style.color, -0.08)
+        let bed = pathOf { p in
+            p.move(to: cg(150, 640)); p.addCurve(to: cg(190, 610), control1: cg(150, 622), control2: cg(165, 610))
+            p.addLine(to: cg(600, 610)); p.addCurve(to: cg(735, 640), control1: cg(680, 610), control2: cg(735, 622))
+            p.addCurve(to: cg(690, 668), control1: cg(735, 656), control2: cg(715, 668)); p.addLine(to: cg(190, 672)); p.addCurve(to: cg(150, 640), control1: cg(165, 672), control2: cg(150, 660))
+        }
+        paint(bed, Style(color: foot, material: style.material), in: ctx)
+        ctx.setStrokeColor(shade(foot, -0.2)); ctx.setLineWidth(3); ctx.addPath(bed); ctx.strokePath()
+        // Toe strap, instep strap and ankle strap.
+        for (x0, x1, lift) in [(560.0, 640.0, 120.0), (410.0, 470.0, 150.0), (270.0, 330.0, 170.0)] {
+            let strap = pathOf { p in
+                p.move(to: cg(x0, 612)); p.addCurve(to: cg(x1, 612), control1: cg(x0 + 10, 612 - lift), control2: cg(x1 - 10, 612 - lift))
+                p.addLine(to: cg(x1 - 14, 612)); p.addCurve(to: cg(x0 + 14, 612), control1: cg(x1 - 22, 612 - lift + 26), control2: cg(x0 + 22, 612 - lift + 26))
+            }
+            paint(strap, style, in: ctx, shadow: false)
+        }
+        ctx.setFillColor(rgb(0xD8C27A)); for x in [600.0, 440.0, 300.0] { ctx.fillEllipse(in: CGRect(x: x - 6, y: 618, width: 12, height: 12)) }
+    }
+
+    private static func drawBoot(_ style: Style, in ctx: CGContext) {
+        let body = pathOf { p in
+            p.move(to: cg(250, 200)); p.addLine(to: cg(420, 200)); p.addCurve(to: cg(432, 470), control1: cg(424, 300), control2: cg(430, 400))
+            p.addCurve(to: cg(640, 580), control1: cg(480, 500), control2: cg(600, 520))
+            p.addCurve(to: cg(690, 640), control1: cg(665, 590), control2: cg(690, 612)); p.addLine(to: cg(690, 700)); p.addLine(to: cg(200, 700))
+            p.addCurve(to: cg(250, 200), control1: cg(196, 560), control2: cg(236, 360))
+        }
+        paint(body, style, in: ctx)
+        let heel = pathOf { p in p.move(to: cg(200, 700)); p.addLine(to: cg(330, 700)); p.addLine(to: cg(322, 780)); p.addLine(to: cg(206, 780)) }
+        paint(heel, Style(color: shade(style.color, -0.22), material: style.material), in: ctx, shadow: false)
+        let sole = pathOf { p in p.move(to: cg(196, 692)); p.addLine(to: cg(694, 692)); p.addLine(to: cg(700, 716)); p.addLine(to: cg(206, 716)) }
+        ctx.addPath(sole); ctx.setFillColor(rgb(0x1E1A18)); ctx.fillPath()
+        // Elastic gore, pull tab and topline.
+        ctx.setFillColor(shade(style.color, -0.12).copy(alpha: 0.55)!); ctx.fill(CGRect(x: 262, y: 360, width: 60, height: 110))
+        ctx.setStrokeColor(shade(style.color, 0.18)); ctx.setLineWidth(4); ctx.addPath(pathOf { p in p.move(to: cg(262, 206)); p.addLine(to: cg(414, 206)) }); ctx.strokePath()
+        ctx.setFillColor(shade(style.color, -0.12)); ctx.fill(CGRect(x: 330, y: 190, width: 38, height: 46))
     }
 
     // MARK: Drawing
@@ -233,37 +488,11 @@ enum GarmentArt {
             let body = symmetric([node(0.5, 0.20), node(0.31, 0.20), curve(0.31, 0.28, 0.29, 0.32, 0.28, 0.36), curve(0.25, 0.48, 0.22, 0.55, 0.21, 0.62), node(0.45, 0.62), curve(0.45, 0.52, 0.48, 0.46, 0.5, 0.42)])
             paint(body, style, in: ctx)
             line(ctx, pt(0.31, 0.21), pt(0.69, 0.21), shade(style.color, -0.30), 9)
-        case .sneakers:
-            let sole = CGMutablePath(); sole.addRoundedRect(in: CGRect(x: 120, y: 620, width: 560, height: 70), cornerWidth: 34, cornerHeight: 34)
-            let upper = CGMutablePath(); upper.move(to: CGPoint(x: 140, y: 620)); upper.addCurve(to: CGPoint(x: 230, y: 380), control1: CGPoint(x: 120, y: 520), control2: CGPoint(x: 170, y: 400))
-            upper.addCurve(to: CGPoint(x: 360, y: 420), control1: CGPoint(x: 280, y: 360), control2: CGPoint(x: 330, y: 420))
-            upper.addCurve(to: CGPoint(x: 600, y: 520), control1: CGPoint(x: 460, y: 430), control2: CGPoint(x: 560, y: 470)); upper.addCurve(to: CGPoint(x: 680, y: 620), control1: CGPoint(x: 660, y: 540), control2: CGPoint(x: 690, y: 580))
-            upper.closeSubpath()
-            paint(upper, style, in: ctx); paint(sole, Style(color: style.trim ?? rgb(0xF2EFEA)), in: ctx)
-            for k in 0..<4 { line(ctx, CGPoint(x: 330 + CGFloat(k) * 40, y: 425 + CGFloat(k) * 14), CGPoint(x: 350 + CGFloat(k) * 40, y: 470 + CGFloat(k) * 12), dark, 4) }
-        case .flats:
-            let upper = CGMutablePath(); upper.move(to: CGPoint(x: 130, y: 600)); upper.addCurve(to: CGPoint(x: 250, y: 470), control1: CGPoint(x: 130, y: 520), control2: CGPoint(x: 190, y: 480))
-            upper.addCurve(to: CGPoint(x: 520, y: 500), control1: CGPoint(x: 330, y: 450), control2: CGPoint(x: 430, y: 470)); upper.addCurve(to: CGPoint(x: 680, y: 600), control1: CGPoint(x: 620, y: 520), control2: CGPoint(x: 690, y: 560)); upper.closeSubpath()
-            paint(upper, style, in: ctx)
-            let sole = CGMutablePath(); sole.addRoundedRect(in: CGRect(x: 130, y: 600, width: 550, height: 28), cornerWidth: 14, cornerHeight: 14); paint(sole, Style(color: shade(style.color, -0.22)), in: ctx)
-        case .heels:
-            let upper = CGMutablePath(); upper.move(to: CGPoint(x: 140, y: 400)); upper.addCurve(to: CGPoint(x: 330, y: 520), control1: CGPoint(x: 150, y: 470), control2: CGPoint(x: 250, y: 520))
-            upper.addCurve(to: CGPoint(x: 690, y: 640), control1: CGPoint(x: 450, y: 520), control2: CGPoint(x: 640, y: 560)); upper.addLine(to: CGPoint(x: 700, y: 665))
-            upper.addCurve(to: CGPoint(x: 330, y: 575), control1: CGPoint(x: 560, y: 650), control2: CGPoint(x: 430, y: 590)); upper.addLine(to: CGPoint(x: 150, y: 480)); upper.closeSubpath()
-            paint(upper, style, in: ctx)
-            let heel = CGMutablePath(); heel.move(to: CGPoint(x: 140, y: 400)); heel.addLine(to: CGPoint(x: 190, y: 420)); heel.addLine(to: CGPoint(x: 205, y: 740)); heel.addLine(to: CGPoint(x: 168, y: 740)); heel.closeSubpath()
-            paint(heel, Style(color: shade(style.color, -0.12)), in: ctx)
-        case .sandal:
-            let sole = CGMutablePath(); sole.addRoundedRect(in: CGRect(x: 130, y: 600, width: 560, height: 40), cornerWidth: 20, cornerHeight: 20); paint(sole, Style(color: style.trim ?? shade(style.color, -0.1)), in: ctx)
-            for x in [300.0, 420.0, 540.0] {
-                let strap = CGMutablePath(); strap.move(to: CGPoint(x: x, y: 600)); strap.addQuadCurve(to: CGPoint(x: x + 70, y: 600), control: CGPoint(x: x + 35, y: 470)); strap.addLine(to: CGPoint(x: x + 50, y: 600)); strap.addQuadCurve(to: CGPoint(x: x + 20, y: 600), control: CGPoint(x: x + 35, y: 510)); strap.closeSubpath()
-                paint(strap, style, in: ctx, shadow: false)
-            }
-        case .boots:
-            let boot = CGMutablePath(); boot.move(to: CGPoint(x: 250, y: 200)); boot.addLine(to: CGPoint(x: 420, y: 200)); boot.addLine(to: CGPoint(x: 430, y: 470))
-            boot.addCurve(to: CGPoint(x: 660, y: 560), control1: CGPoint(x: 480, y: 500), control2: CGPoint(x: 620, y: 520)); boot.addLine(to: CGPoint(x: 670, y: 640)); boot.addLine(to: CGPoint(x: 230, y: 640)); boot.closeSubpath()
-            paint(boot, style, in: ctx)
-            let sole = CGMutablePath(); sole.addRect(CGRect(x: 225, y: 640, width: 450, height: 40)); paint(sole, Style(color: shade(style.color, -0.3)), in: ctx)
+        case .sneakers: drawSneaker(style, in: ctx)
+        case .flats: drawFlat(style, in: ctx)
+        case .heels: drawHeel(style, in: ctx)
+        case .sandal: drawSandal(style, in: ctx)
+        case .boots: drawBoot(style, in: ctx)
         case .tote:
             let bag = CGMutablePath(); bag.move(to: CGPoint(x: 210, y: 380)); bag.addLine(to: CGPoint(x: 590, y: 380)); bag.addLine(to: CGPoint(x: 640, y: 800)); bag.addLine(to: CGPoint(x: 160, y: 800)); bag.closeSubpath()
             let handles = CGMutablePath(); handles.move(to: CGPoint(x: 290, y: 380)); handles.addCurve(to: CGPoint(x: 510, y: 380), control1: CGPoint(x: 290, y: 190), control2: CGPoint(x: 510, y: 190))

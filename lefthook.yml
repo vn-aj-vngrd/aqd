@@ -5,6 +5,9 @@ pre-commit:
     ios-layers:
       glob: "apps/ios/**/*.swift"
       run: node scripts/check-ios-layers.mjs
+    ios-colors:
+      glob: "apps/ios/**/*.swift"
+      run: node scripts/check-ios-colors.mjs
     swiftlint:
       glob: "apps/ios/**/*.swift"
       run: command -v swiftlint >/dev/null && (cd apps/ios && swiftlint lint --quiet {staged_files}) || echo "swiftlint not installed; run brew install swiftlint"

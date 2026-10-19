@@ -49,8 +49,9 @@ public struct TodayWidgetOptions: Codable, Equatable, Sendable {
     public var upcomingDays: Int?
     public var actions: [TodayAction]?
     public var personal: TodayPersonalCard?
-    public init(pinnedID: UUID? = nil, period: LocalPlanDay? = nil, upcomingDays: Int? = nil, actions: [TodayAction]? = nil, personal: TodayPersonalCard? = nil) {
-        self.pinnedID = pinnedID; self.period = period; self.upcomingDays = upcomingDays; self.actions = actions; self.personal = personal
+    public var insights: WearInsightsOptions?
+    public init(pinnedID: UUID? = nil, period: LocalPlanDay? = nil, upcomingDays: Int? = nil, actions: [TodayAction]? = nil, personal: TodayPersonalCard? = nil, insights: WearInsightsOptions? = nil) {
+        self.pinnedID = pinnedID; self.period = period; self.upcomingDays = upcomingDays; self.actions = actions; self.personal = personal; self.insights = insights
     }
 }
 public extension TodayWidgetInstance {
@@ -63,6 +64,10 @@ public extension TodayWidgetInstance {
             } else if kind == .weekInWear {
                 guard period.key <= today.key else { throw TodayLayoutError.invalidPeriod }
             } else { throw TodayLayoutError.invalidPeriod }
+        }
+        if let insights = options.insights {
+            guard kind == .wearInsights else { throw TodayLayoutError.invalidContent }
+            try insights.validated()
         }
         if let days = options.upcomingDays { guard kind == .upcomingPlans, days == 7 || days == 14 else { throw TodayLayoutError.invalidContent } }
         if requireContent, let actions = options.actions {

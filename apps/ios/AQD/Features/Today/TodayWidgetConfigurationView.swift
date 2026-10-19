@@ -3,7 +3,9 @@ import SwiftUI
 
 struct TodayWidgetConfigurationView: View {
     private var confirmation: some View {
-        ToolbarSaveAction(title: "Done") { model.applyNested() }.disabled(!model.canApply)
+        // Editing one card saves straight away, so it says Save and waits for a real change; inside Customize Today it still says Done.
+        ToolbarSaveAction(title: model.directEdit ? "Save" : "Done", isPending: model.directEdit && model.pending) { model.applyNested() }
+            .disabled(!model.canApply || (model.directEdit && model.draft.nested == model.draft.nestedBase))
     }
 
     @Bindable var model: TodayEditorModel
@@ -20,8 +22,7 @@ struct TodayWidgetConfigurationView: View {
                             .font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
                         VStack(alignment: .leading, spacing: 20) {
                             configuration(instance)
-                        }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).disabled(model.locked)
+                        }.frame(maxWidth: .infinity, alignment: .leading).disabled(model.locked)
                         if let error = model.error { SemanticFeedback(role: .danger, message: error) }
                     }
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
@@ -39,8 +40,37 @@ struct TodayWidgetConfigurationView: View {
         }.tint(AppTheme.ink).interactiveDismissDisabled()
         .sheet(item: $themeTask, onDismiss: { model.state.reloadThemes() }) { task in
             ThemeEditorView(model: task, didSave: { theme in model.nested { $0.options?.pinnedID = theme.id }; model.state.reloadThemes() })
-        }.draftDiscardConfirmation(isPresented: $discard, title: "Discard widget edits?", message: "Your previous Today draft is retained.") { model.cancelNested(); discard = false }
+        }.draftDiscardConfirmation(isPresented: $discard, title: model.directEdit ? "Discard changes?" : "Discard widget edits?", message: model.directEdit ? "Your saved card stays as it was." : "Your previous Today draft is retained.") { model.cancelNested(); discard = false }
     }
+    private func update(_ change: @escaping (inout WearInsightsOptions) -> Void) {
+        model.nested { widget in
+            var value = widget.options?.insights ?? WearInsightsOptions()
+            change(&value)
+            if widget.options == nil { widget.options = TodayWidgetOptions() }
+            widget.options?.insights = value
+        }
+    }
+
+    /// Period and metrics for Wear insights; metrics show in the order they are turned on.
+    @ViewBuilder private func insightsConfiguration(_ instance: TodayWidgetInstance) -> some View {
+        let options = instance.options?.insights ?? WearInsightsOptions()
+        Picker("Period", selection: Binding(get: { options.period }, set: { period in update { $0.period = period } })) {
+            ForEach(WearInsightsOptions.Period.allCases, id: \.self) { Text($0.title).tag($0) }
+        }.pickerStyle(.menu).tint(AppTheme.ink)
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
+            Text("Show").font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
+            ForEach(WearInsightsOptions.Metric.allCases, id: \.self) { metric in
+                Toggle(isOn: Binding(get: { options.metrics.contains(metric) }, set: { on in
+                    update { value in
+                        if on { if !value.metrics.contains(metric) { value.metrics.append(metric) } } else { value.metrics.removeAll { $0 == metric } }
+                    }
+                })) { Label(metric.title, systemImage: metric.symbol) }.tint(AppTheme.ink)
+            }
+        }
+        if options.metrics.isEmpty { Text("Choose at least one thing to show.").font(AppTypography.supporting).foregroundStyle(AppTheme.error) }
+        else { Text("They appear in the order you turn them on. Only recorded wear counts; plans and estimates are left out.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+    }
+
     @ViewBuilder private func configuration(_ instance: TodayWidgetInstance) -> some View {
         switch instance.kind {
         case .personalNote, .personalPhoto: personal(instance)
@@ -51,6 +81,7 @@ struct TodayWidgetConfigurationView: View {
                 ThemedDatePicker(instance.kind == .weekInWear ? "Week containing" : "Completed month", selection: Binding(get: { (try? period.date()) ?? Date() }, set: { date in model.nested { $0.options?.period = LocalPlanDay(date: date) } }), in: ...Date(), displayedComponents: .date)
             }
             Text(instance.kind == .closetInUse ? "Only completed months can be selected. Plans and earlier estimates are excluded." : "Only recorded wear in this week counts. Plans and earlier estimates are excluded.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
+        case .wearInsights: insightsConfiguration(instance)
         case .upcomingPlans:
             Picker("Window", selection: Binding(get: { instance.options?.upcomingDays ?? 7 }, set: { days in model.nested { $0.options?.upcomingDays = days } })) { Text("Next seven days").tag(7); Text("Next fourteen days").tag(14) }
             sourcePicker(instance, title: "Plan", choices: model.state.planDefinitions.map { ($0.id, $0.name) }, defaultTitle: "Follow upcoming plans")
@@ -93,16 +124,21 @@ struct TodayWidgetConfigurationView: View {
         if let card = instance.options?.personal {
             LabeledField(title: "Title, optional", text: Binding(get: { card.title }, set: { title in model.nested { $0.options?.personal?.title = title } }))
             if instance.kind == .personalPhoto {
-                TodayPersonalPhoto(card: card).frame(minHeight: 160, maxHeight: 260)
-                SharedPhotoSourceButton(title: card.photoID == nil ? "Choose photo" : "Replace photo", selectionToken: model.importID, locked: model.locked || model.importing,
-                    onEdit: card.photoID == nil ? nil : { editPhoto = true },
-                    onRemove: card.photoID == nil ? nil : { model.cancelImport(); model.nested { $0.options?.personal?.photoID = nil; $0.options?.personal?.photoRecipe = .fitOriginal } }, onData: model.importPhoto)
+                // The photo is the control: a small glass button on its corner replaces it, instead of a full-width bar below.
+                TodayPersonalPhoto(card: card).frame(minHeight: 160, maxHeight: 260).frame(maxWidth: .infinity)
+                    .overlay(alignment: .bottomTrailing) {
+                        SharedPhotoSourceButton(title: card.photoID == nil ? "Choose photo" : "Replace photo", selectionToken: model.importID, locked: model.locked || model.importing,
+                            iconOnly: true,
+                            onEdit: card.photoID == nil ? nil : { editPhoto = true },
+                            onRemove: card.photoID == nil ? nil : { model.cancelImport(); model.nested { $0.options?.personal?.photoID = nil; $0.options?.personal?.photoRecipe = .fitOriginal } },
+                            onData: model.importPhoto).padding(AppSpacing.small)
+                    }
                 if model.importing { ProgressView("Preparing photo"); Button("Cancel import") { model.cancelImport() }.frame(minHeight: 44) }
             }
             Text(instance.kind == .personalNote ? "Note" : "Caption, optional").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             TextEditor(text: Binding(get: { card.text }, set: { text in model.nested { $0.options?.personal?.text = text } })
                 .limited(to: instance.kind == .personalNote ? TextAreaLimits.note : TextAreaLimits.caption))
-                .frame(minHeight: 180).padding(14).scrollContentBackground(.hidden).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).accessibilityLabel(instance.kind == .personalNote ? "Full private note" : "Photo caption")
+                .frame(minHeight: 180).padding(14).scrollContentBackground(.hidden).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card)).accessibilityLabel(instance.kind == .personalNote ? "Full private note" : "Photo caption")
             TextAreaCounter(text: card.text, limit: instance.kind == .personalNote ? TextAreaLimits.note : TextAreaLimits.caption)
             if instance.kind == .personalNote, card.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { Text("A note needs some text.").foregroundStyle(AppTheme.error) }
             Button(instance.kind == .personalNote ? "Clear note" : "Clear caption") { model.nested { $0.options?.personal?.text = "" } }.frame(minHeight: 44)

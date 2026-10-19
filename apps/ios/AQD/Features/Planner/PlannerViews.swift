@@ -166,33 +166,32 @@ struct LocalPlannerView: View {
                 SecondaryAction(title: "Show all entries", compact: true) { query.status = .all }
             }.frame(maxWidth: .infinity)
         } else if entries.isEmpty && state.planError == nil {
-            VStack(spacing: AppSpacing.medium) {
-                AppEmptyState("Nothing planned", systemImage: "calendar",
-                    description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear."), fillsAvailableSpace: false)
-                PrimaryAction(title: "Plan this day", compact: true) { state.openPlan(day: state.plannerDay) }
-                    .frame(maxWidth: 240).accessibilityIdentifier("planner.emptyPlan")
-            }.frame(maxWidth: .infinity)
+            AppEmptyState("Nothing planned", systemImage: "calendar",
+                description: Text("Choose an outfit, or leave an intentional gap. Planning never records wear."), fillsAvailableSpace: false)
+                .frame(maxWidth: .infinity).padding(.vertical, AppSpacing.section)
         }
         ForEach(entries) { entry in PlanDayCard(entry: entry, outfitRevisions: outfitRevisions) }
     }
 
     @ViewBuilder private var plansSection: some View {
-        let groups = groups
-        if !groups.inRange.isEmpty { planGroup(state.plannerMode == .week ? "This week" : "This month", groups.inRange) }
-        if !groups.upcoming.isEmpty { planGroup("Upcoming", groups.upcoming) }
-        if filteredPlans.isEmpty && !state.planDefinitions.isEmpty && query.isFiltering {
-            VStack(spacing: AppSpacing.small) {
-                AppEmptyState("No plans match", systemImage: "line.3.horizontal.decrease",
-                    description: Text("The plan filter hides every plan."), fillsAvailableSpace: false)
-                SecondaryAction(title: "Clear filters", compact: true) { query = PlannerQuery(text: query.text) }
-            }.frame(maxWidth: .infinity)
-        }
-        if !groups.past.isEmpty {
-            DisclosureGroup(isExpanded: $showPast) {
-                VStack(spacing: 0) { ForEach(groups.past) { planRow($0) } }
-            } label: { PlannerMetaLine(leading: "Past", trailing: "\(groups.past.count)", leadingFont: AppTypography.section) }
-                .tint(AppTheme.ink).foregroundStyle(AppTheme.ink)
-        }
+        VStack(alignment: .leading, spacing: AppSpacing.section) {
+            let groups = groups
+            if !groups.inRange.isEmpty { planGroup(state.plannerMode == .week ? "This week" : "This month", groups.inRange) }
+            if !groups.upcoming.isEmpty { planGroup("Upcoming", groups.upcoming) }
+            if filteredPlans.isEmpty && !state.planDefinitions.isEmpty && query.isFiltering {
+                VStack(spacing: AppSpacing.small) {
+                    AppEmptyState("No plans match", systemImage: "line.3.horizontal.decrease",
+                        description: Text("The plan filter hides every plan."), fillsAvailableSpace: false)
+                    SecondaryAction(title: "Clear filters", compact: true) { query = PlannerQuery(text: query.text) }
+                }.frame(maxWidth: .infinity)
+            }
+            if !groups.past.isEmpty {
+                DisclosureGroup(isExpanded: $showPast) {
+                    VStack(spacing: 0) { ForEach(groups.past) { planRow($0) } }
+                } label: { PlannerMetaLine(leading: "Past", trailing: "\(groups.past.count)", leadingFont: AppTypography.section) }
+                    .tint(AppTheme.ink).foregroundStyle(AppTheme.ink)
+            }
+        }.padding(.top, AppSpacing.large)
     }
 
     private func planGroup(_ title: String, _ plans: [PlanDefinition]) -> some View {
@@ -217,7 +216,7 @@ struct LocalPlannerView: View {
             HStack(spacing: AppSpacing.medium) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(plan.name.isEmpty ? "Untitled plan" : plan.name).font(AppTypography.body)
-                    PlannerMetaLine(leading: range, trailing: kindLabel, leadingFont: AppTypography.metadata)
+                    Text(kindLabel.map { "\($0), \(range)" } ?? range).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                     if !status.isEmpty {
                         Text(status.joined(separator: ", ")).font(AppTypography.metadata).foregroundStyle(AppTheme.warning)
                     }
@@ -294,7 +293,7 @@ struct PlanDayCard: View {
             if isOpen, let next {
                 HStack(spacing: AppSpacing.small) {
                     Button { perform(next) } label: {
-                        Text(next.rawValue).compactControl()
+                        Label(next.rawValue, systemImage: nextSymbol(next)).compactControl()
                     }.buttonStyle(.plain)
                     Spacer(minLength: 0)
                     Menu {
@@ -315,7 +314,7 @@ struct PlanDayCard: View {
                 SemanticFeedback(role: .danger, message: error).padding(.horizontal, 14).padding(.bottom, 14)
             }
         }
-        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
         .accessibilityIdentifier(identifier)
         .contextMenu {
             AccessoryButton("Open plan", systemImage: "calendar") { state.plannerPath.append(.entry(entry.id)) }
@@ -334,6 +333,14 @@ struct PlanDayCard: View {
                         .frame(maxWidth: .infinity).frame(height: 180)
                 }
             }.environment(state)
+        }
+    }
+
+    private func nextSymbol(_ action: PlannerPresentation.NextAction) -> String {
+        switch action {
+        case .chooseOutfit: "tshirt"
+        case .review: "doc.text.magnifyingglass"
+        case .recordWear: "checkmark.circle"
         }
     }
 
@@ -375,7 +382,7 @@ struct PlanAgendaRow: View {
     }
     var body: some View {
         HStack(spacing: 12) {
-            if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 56, limit: 2).frame(width: 64, height: 80).clipped() }
+            if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 56, limit: 2, ground: AppTheme.imageGround, cornerRadius: AppRadius.group).frame(width: 64, height: 80).clipped() }
             VStack(alignment: .leading, spacing: 4) {
                 Text(outfit?.displayName ?? "Outfit unassigned").font(AppTypography.body).foregroundStyle(AppTheme.ink)
                 if showDate { Text(entry.day.displayDate).font(AppTypography.supporting) }
@@ -387,7 +394,7 @@ struct PlanAgendaRow: View {
             }.frame(maxWidth: .infinity, alignment: .leading).foregroundStyle(AppTheme.secondary)
             Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.secondary).frame(width: 22).accessibilityHidden(true)
         }.padding(14).frame(minHeight: outfit == nil ? 80 : 108)
-            .background { if !embedded { AppTheme.surface.clipShape(RoundedRectangle(cornerRadius: 12)) } }
+            .background { if !embedded { AppTheme.surface.clipShape(RoundedRectangle(cornerRadius: AppRadius.card)) } }
     }
 }
 
@@ -431,7 +438,7 @@ struct LocalPlanEntryView: View {
                             AccessoryButton(skipActions.isSkipPending ? "Check skip result" : "Skip this date", systemImage: "forward.end") { skipActions.skip(entry, state: state) }
                                 .disabled(removal != nil)
                             Section {
-                                Button("Remove from Planner", systemImage: "trash", role: .destructive) {
+                                DestructiveMenuButton("Remove from Planner") {
                                     removal = PlanEntryDeletionRequest(entry: entry); confirming = true
                                 }.disabled(removal != nil || skipActions.isSkipPending)
                             }

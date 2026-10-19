@@ -36,7 +36,7 @@ struct TripDetailContent: View {
                 DisclosureRow(title: "Packing list", value: summary.map { "\($0.items.count) unique pieces" } ?? "Open packing", placement: .grouped) {
                     state.plannerPath.append(.packing(plan.id))
                 }
-            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             PlannerMetaLine(leading: "Weather context", trailing: "Off", leadingFont: AppTypography.supporting)
             if let error { SemanticFeedback(role: .danger, message: error); Button("Retry packing summary", action: refresh).frame(minHeight: 44) }
         }.onAppear(perform: refresh).onChange(of: state.planEntries) { refresh() }
@@ -88,7 +88,7 @@ struct PlanDatesView: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) { Text(gap.day.displayDate).font(AppTypography.body); Text(gap.reason).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
             Spacer(); Image(systemName: "chevron.forward").font(AppTypography.disclosure).accessibilityHidden(true)
-        }.foregroundStyle(AppTheme.ink).padding(14).frame(minHeight: 54).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+        }.foregroundStyle(AppTheme.ink).padding(14).frame(minHeight: 54).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
     }
     private func refresh() { state.reloadPlanEntries(); state.reloadOutfits(); refreshSummary() }
     private func refreshSummary() {
@@ -132,7 +132,7 @@ struct TripPackingView: View {
                                 Image(systemName: item.checked ? "checkmark.square.fill" : "square").foregroundStyle(item.checked ? AppTheme.ink : AppTheme.controlBoundary)
                                     .frame(width: 44, height: 44)
                             }.foregroundStyle(AppTheme.ink).padding(.horizontal, 14).padding(.vertical, 12).frame(minHeight: 80)
-                                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                         }.buttonStyle(.plain).disabled(pending != nil).accessibilityValue(item.checked ? "Packed" : "Not packed")
                     }
                     if !summary.gaps.isEmpty {

@@ -6,6 +6,13 @@ struct TodayEditorView: View {
     @State private var discard = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     var body: some View {
+        if model.directEdit {
+            // One card edited from its detail page: the card form is the only sheet, with no Customize Today underneath.
+            TodayWidgetConfigurationView(model: model).tint(AppTheme.ink).interactiveDismissDisabled()
+        } else { customize }
+    }
+
+    private var customize: some View {
         NavigationStack {
             List {
                 Section {
@@ -68,6 +75,7 @@ extension TodayWidgetKind {
         case .todayLook: "tshirt"
         case .weekInWear: "calendar"
         case .closetInUse: "chart.bar"
+        case .wearInsights: "chart.xyaxis.line"
         case .upcomingPlans: "calendar.badge.clock"
         case .wearAgain: "arrow.clockwise"
         case .favoriteOutfits: "star"

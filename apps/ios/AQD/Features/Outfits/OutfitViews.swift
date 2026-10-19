@@ -121,8 +121,10 @@ struct OutfitEditorView: View {
                 Text(saved.displayName).font(AppTypography.body)
                 Text("Only you. Saving an outfit doesn’t plan a day or record wear.")
                     .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                PrimaryAction(title: "Open outfit") { model.finish(openOutfit: true) }
-                SecondaryAction(title: "Plan this look") { model.planSavedOutfit() }
+                HStack(spacing: AppSpacing.small) {
+                    Button { model.finish(openOutfit: true) } label: { Label("Open outfit", systemImage: "square.stack").compactControl(fullWidth: true) }.buttonStyle(.plain)
+                    Button { model.planSavedOutfit() } label: { Label("Plan this look", systemImage: "calendar").compactControl(fullWidth: true) }.buttonStyle(.plain)
+                }
             }.padding(AppSpacing.screen)
         }
     }
@@ -133,6 +135,10 @@ struct OutfitComposition: View {
     let pieceIDs: [UUID]
     var pieceHeight: CGFloat = 130
     var limit: Int? = nil
+    /// Pieces sit on white when the composition is on the page, and on the soft ground when it already sits inside a white card.
+    var ground: Color = AppTheme.surface
+    /// Page-level art rounds like a card; art inside a card passes `AppRadius.group`.
+    var cornerRadius: CGFloat = AppRadius.card
     private var shownIDs: [UUID] { limit.map { Array(pieceIDs.prefix($0)) } ?? pieceIDs }
     @Environment(\.dynamicTypeSize) private var typeSize
 
@@ -146,7 +152,7 @@ struct OutfitComposition: View {
                     ForEach(shownIDs, id: \.self) { id in
                         if let piece = state.ownedPieces.first(where: { $0.id == id }) {
                             VStack(spacing: 4) {
-                                PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                                PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe, ground: ground)
                                     .frame(height: pieceHeight).accessibilityLabel(piece.displayName)
                                 if piece.isArchived { Text("Archived").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
                             }
@@ -156,7 +162,7 @@ struct OutfitComposition: View {
                     }
                 }.padding(12)
             }
-        }.frame(maxWidth: .infinity).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 4))
+        }.frame(maxWidth: .infinity).background(ground, in: RoundedRectangle(cornerRadius: cornerRadius))
     }
 }
 
@@ -256,14 +262,13 @@ struct OutfitDetailView: View {
             if let outfit = state.outfits.first(where: { $0.id == id }) {
                 VStack(alignment: .leading, spacing: 20) {
                     OutfitComposition(pieceIDs: outfit.pieceIDs)
-                    VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                        Text("\(outfit.pieceIDs.count) pieces")
-                        Text("Private on this iPhone")
-                    }.foregroundStyle(AppTheme.secondary)
+                    Text("\(outfit.pieceIDs.count) pieces").foregroundStyle(AppTheme.secondary)
                     if outfit.isFavorite { Label("Favorite", systemImage: "heart.fill").foregroundStyle(AppTheme.ink) }
                     themeChips(for: outfit)
-                    PrimaryAction(title: "Plan outfit") { state.openPlan(outfitID: outfit.id) }.disabled(pendingMutation != nil)
-                    SecondaryAction(title: "Record wear") { state.openWear(outfitID: outfit.id) }.disabled(pendingMutation != nil)
+                    HStack(spacing: AppSpacing.small) {
+                        Button { state.openPlan(outfitID: outfit.id) } label: { Label("Plan outfit", systemImage: "calendar").compactControl(fullWidth: true) }.buttonStyle(.plain)
+                        Button { state.openWear(outfitID: outfit.id) } label: { Label("Record wear", systemImage: "checkmark.circle").compactControl(fullWidth: true) }.buttonStyle(.plain)
+                    }.disabled(pendingMutation != nil)
                     VStack(alignment: .leading, spacing: AppSpacing.medium) {
                         Text("Pieces").font(AppTypography.fieldLabel).foregroundStyle(AppTheme.secondary)
                         VStack(spacing: 0) {
@@ -271,7 +276,7 @@ struct OutfitDetailView: View {
                                 if index > 0 { Divider().padding(.leading, 84) }
                                 OutfitPieceRow(pieceID: pieceID)
                             }
-                        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     }
                     if let error { SemanticFeedback(role: .danger, message: error) }
                     if let pendingMutation {
@@ -295,12 +300,14 @@ struct OutfitDetailView: View {
                             AccessoryButton(outfit.isFavorite ? "Remove from Favorites" : "Add to Favorites", systemImage: outfit.isFavorite ? "heart.slash" : "heart") {
                                 apply(OutfitMutationRequest(outfit: outfit, action: .favorite(!outfit.isFavorite)))
                             }
-                            Button("Delete outfit", systemImage: "trash", role: .destructive) {
-                                do {
-                                    guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
-                                    deleteReview = try store.outfitDeletionReview(id: id)
-                                    deletePresented = true
-                                } catch { self.error = "The current deletion impact couldn’t be reviewed. Your outfit is retained." }
+                            Section {
+                                DestructiveMenuButton("Delete outfit") {
+                                    do {
+                                        guard let store = state.store else { throw PieceStore.StoreError.corruptStore }
+                                        deleteReview = try store.outfitDeletionReview(id: id)
+                                        deletePresented = true
+                                    } catch { self.error = "The current deletion impact couldn’t be reviewed. Your outfit is retained." }
+                                }
                             }
                         } label: { Label("More outfit options", systemImage: "ellipsis") }
                             .tint(AppTheme.ink).disabled(pendingMutation != nil)

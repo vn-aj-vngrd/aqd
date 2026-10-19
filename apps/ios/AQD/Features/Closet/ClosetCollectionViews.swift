@@ -29,7 +29,7 @@ struct PieceCollectionGrid: View {
                 PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
                     .frame(maxWidth: .infinity).frame(height: 134).clipped()
                     .overlay(alignment: selection == nil ? .topTrailing : .topLeading) { PieceAvailabilityBadge(piece: piece) }
-            }.selectionIndicator(chosen, cornerRadius: 16)
+            }.selectionIndicator(chosen, cornerRadius: AppRadius.card)
         }.buttonStyle(.plain).id(piece.id).accessibilityIdentifier("piece.card.\(piece.displayName)")
             .accessibilityValue(selection == nil ? "" : chosen ? "Selected" : "Not selected")
             .accessibilityAddTraits(chosen ? .isSelected : [])
@@ -89,7 +89,8 @@ struct CollectionArtwork: View {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: columns), spacing: 6) {
                 ForEach(shown, id: \.self) { id in
                     if let piece = state.ownedPieces.first(where: { $0.id == id }) {
-                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe)
+                        // Pieces sit straight on the tile or card ground; a box behind each piece made a box inside a box.
+                        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe, ground: .clear)
                             .frame(maxWidth: .infinity).frame(height: height).clipped()
                             .accessibilityLabel(piece.displayName)
                     } else {
@@ -122,7 +123,7 @@ struct ClosetCard<Artwork: View>: View {
     @ViewBuilder var artwork: () -> Artwork
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            artwork().padding(8).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 10)).padding(8)
+            artwork().padding(8).background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group)).padding(8)
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 4) {
                     Text(title).font(AppTypography.fieldLabel).truncated()
@@ -132,8 +133,8 @@ struct ClosetCard<Artwork: View>: View {
                 Text(detail).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
             }.padding(.horizontal, 12).padding(.top, 4).padding(.bottom, 12)
         }.frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-            .contentShape(RoundedRectangle(cornerRadius: 16))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
+            .contentShape(RoundedRectangle(cornerRadius: AppRadius.card))
     }
 }
 
@@ -149,8 +150,8 @@ struct OutfitCollectionCard: View {
                 GeometryReader { geometry in
                     CollectionArtwork(pieceIDs: outfit.pieceIDs, height: max(0, geometry.size.height - 16))
                         .padding(8).frame(width: geometry.size.width, height: geometry.size.height)
-                        .background(AppTheme.imageGround).clipped()
-                }.aspectRatio(3 / 4, contentMode: .fit)
+                        .background(AppTheme.surface).clipped()
+                }.aspectRatio(3 / 4, contentMode: .fit).clipShape(RoundedRectangle(cornerRadius: AppRadius.group))
                     .accessibilityLabel("\(outfit.displayName), \(outfit.pieceIDs.count) pieces")
             } else {
                 let memberships = state.themes.filter { $0.outfitIDs.contains(outfit.id) }.map(\.displayName)
@@ -168,7 +169,7 @@ struct OutfitCollectionCard: View {
                 AccessoryButton("Plan outfit", systemImage: "calendar") { state.openPlan(outfitID: outfit.id) }
                 AccessoryButton("Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: outfit.id) }
                 if let theme {
-                    Button("Remove from \(theme.displayName)", systemImage: "minus.circle", role: .destructive) { state.remove(outfit, from: theme) }
+                    Section { DestructiveMenuButton("Remove from \(theme.displayName)", systemImage: "minus.circle") { state.remove(outfit, from: theme) } }
                 }
             } preview: {
                 CollectionContextPreview(title: outfit.displayName, detail: "\(outfit.pieceIDs.count) pieces") {
@@ -253,7 +254,7 @@ struct ThemeDetailView: View {
                     if let message = state.themeError { SemanticFeedback(role: .danger, message: message) }
                     let members = state.outfits.filter { theme.outfitIDs.contains($0.id) }
                     ThemeCover(outfits: members, height: 180).padding(AppSpacing.small).frame(maxWidth: .infinity)
-                        .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                         .accessibilityLabel("\(theme.displayName) cover, \(members.count) outfits")
                     Text(theme.outfitIDs.count == 1 ? "1 outfit, private theme" : "\(theme.outfitIDs.count) outfits, private theme").foregroundStyle(AppTheme.secondary)
                     if !theme.description.isEmpty { Text(theme.displayDescription) }
@@ -278,8 +279,8 @@ struct ThemeDetailView: View {
                             AccessoryButton("Edit theme", systemImage: AppSymbols.edit) { state.openTheme(editing: theme) }
                             AccessoryButton("Add outfits", systemImage: "plus") { state.openTheme(editing: theme, chooseOutfits: true) }
                             AccessoryButton("Build an outfit", systemImage: "square.stack") { state.buildOutfit(themeID: theme.id) }
-                            Button("Delete theme", systemImage: "trash", role: .destructive) {
-                                deletion = ThemeDeletionRequest(theme: theme); confirming = true
+                            Section {
+                                DestructiveMenuButton("Delete theme") { deletion = ThemeDeletionRequest(theme: theme); confirming = true }
                             }
                         } label: { Label("More theme options", systemImage: "ellipsis") }.tint(AppTheme.ink).disabled(submitted)
                     }

@@ -310,6 +310,7 @@ struct PieceThumbnail: View {
     @Environment(AppState.self) private var state
     let photoID: UUID
     var recipe: PhotoEditRecipe = .fit
+    var ground: Color = AppTheme.imageGround
     @State private var image: UIImage?
 
     private struct Request: Equatable {
@@ -322,8 +323,8 @@ struct PieceThumbnail: View {
             if let image { Image(uiImage: image).resizable().scaledToFit() }
             else { Image(systemName: "photo").foregroundStyle(AppTheme.secondary).accessibilityLabel("Photo unavailable") }
         }
-        .background(AppTheme.imageGround)
-        .clipShape(RoundedRectangle(cornerRadius: 4))
+        .background(ground)
+        .clipShape(RoundedRectangle(cornerRadius: AppRadius.group))
         .task(id: Request(id: photoID, recipe: recipe)) {
             if let data = try? state.store?.photoThumbnail(id: photoID, recipe: recipe) { image = UIImage(data: data) }
             else { image = nil }
@@ -413,7 +414,7 @@ struct PieceDetailView: View {
                             .frame(maxWidth: .infinity).frame(height: 300)
                             .clipShape(RoundedRectangle(cornerRadius: AppRadius.photo))
                             .padding(AppSpacing.medium)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("View photo of \(piece.displayName) full screen")
@@ -437,7 +438,7 @@ struct PieceDetailView: View {
                             }
                         }
                         .padding(AppSpacing.screen).frame(maxWidth: .infinity, alignment: .leading)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     }
                     outfitsSection(for: piece)
                     if let wear {
@@ -453,7 +454,7 @@ struct PieceDetailView: View {
                             }.foregroundStyle(AppTheme.ink)
                         }
                         .padding(AppSpacing.screen).frame(maxWidth: .infinity, alignment: .leading)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     }
                     if let revision = undoArchiveRevision {
                         Button("Undo archive") { setArchive(false, expectedRevision: revision, operation: UUID()) }

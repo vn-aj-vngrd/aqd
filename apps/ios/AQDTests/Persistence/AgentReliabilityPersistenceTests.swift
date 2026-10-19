@@ -40,7 +40,8 @@ import AQDCore
         let store = try PieceStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
         var preferences = AgentPreferences()
         for source in AgentDataSource.allCases { preferences.set(source, enabled: false) }
-        let result = try AgentKnowledgeSource.build(store: store, preferences: preferences, query: "What can I wear?", currentConversationID: UUID(), weather: nil, selection: nil, maximumCharacters: 1500, maximumRecords: 4)
+        let result = try AgentKnowledgeSource.build(store: store, preferences: preferences, query: "What can I wear?", currentConversationID: UUID(), weather: nil, selection: nil,
+                                                  limits: AgentContextLimits(catalogCharacters: 500, recordCharacters: 1200, maximumRecords: 4))
         #expect(result.retrieval.included == 0 && result.sources.isEmpty)
         #expect(!result.retrieval.text.contains("Profile name"))
     }
@@ -161,12 +162,12 @@ import AQDCore
 }
 
 @MainActor extension AgentMutationToolPersistenceTests {
-    @Test func lookupReturnsExactIDsAndRevokedSourceBlocksApproval() throws {
+    @Test func lookupReturnsNamesWithoutIDsAndRevokedSourceBlocksApproval() throws {
         let (store, model, attempt) = try activeModel()
         var identity = LocalIdentityDraft(ownerID: model.conversation.ownerID); identity.name = "Van"
         try store.saveIdentityDraft(identity); _ = try store.saveIdentity(identity); try store.finishIdentityDraft(identity)
         let lookup = try model.lookupToolRecords("Van profile", conversationID: model.conversation.id, attemptID: attempt)
-        #expect(lookup.contains(model.conversation.ownerID.uuidString))
+        #expect(lookup.contains("Profile: name Van") && !lookup.contains(model.conversation.ownerID.uuidString))
         _ = try model.prepareToolChange(.init(kind: .updateProfile, caption: "New bio"), revision: try store.localIdentity()?.revision, conversationID: model.conversation.id, attemptID: attempt)
         var preferences = AgentPreferences(); preferences.set(.profile, enabled: false)
         _ = try store.saveLocalSettings(LocalSettingsRequest(base: store.localSettings(), agentPreferences: preferences))
@@ -181,7 +182,7 @@ import AQDCore
 }
 
 @MainActor extension AgentMutationToolPersistenceTests {
-    @Test func unknownIDAndStaleRevisionAreRefusedWithReasonAndNoProposal() throws {
+    @Test func unknownTargetAndExplicitStaleRevisionAreRefusedAndNoRevisionUsesTheCurrentOne() throws {
         let (store, model, attempt) = try activeModel()
         let unknown = UUID()
         #expect(throws: AgentToolRejection.unknownRecord(unknown)) {
@@ -193,17 +194,20 @@ import AQDCore
         #expect(throws: AgentToolRejection.staleRevision(expected: current - 1, current: current)) {
             try model.prepareToolChange(.init(kind: .updateProfile, caption: "New bio"), revision: current - 1, conversationID: model.conversation.id, attemptID: attempt)
         }
-        #expect(throws: AgentToolRejection.revisionRequired) {
-            try model.prepareToolChange(.init(kind: .updateProfile, caption: "New bio"), conversationID: model.conversation.id, attemptID: attempt)
-        }
         #expect(model.conversation.proposals == nil)
-        #expect(model.conversation.messages.last?.toolSteps?.count == 3 && model.conversation.messages.last?.toolSteps?.allSatisfy { $0.rejection != nil } == true)
+        #expect(model.conversation.messages.last?.toolSteps?.count == 2 && model.conversation.messages.last?.toolSteps?.allSatisfy { $0.rejection != nil } == true)
+        // The model never passes a revision: the app reads the current one, so the same request now prepares a review bound to it.
+        _ = try model.prepareToolChange(.init(kind: .updateProfile, caption: "New bio"), conversationID: model.conversation.id, attemptID: attempt)
+        #expect(model.conversation.proposals?.count == 1)
     }
-    @Test func routingOffersTwoOrThreeToolsAndEditsCarryLookup() {
-        #expect(AgentToolbox.route("rename my blue shirt", weatherAvailable: false).prefix(2) == [.editCloset, .findRecords])
-        #expect(AgentToolbox.route("what did I wear most this month", weatherAvailable: true).contains(.wearStats))
-        #expect(!AgentToolbox.route("will it rain tomorrow", weatherAvailable: false).contains(.weatherFor))
-        #expect(AgentToolbox.route("rename and plan and log the profile outfit theme", weatherAvailable: true).count <= 3)
+    @Test func intentsOfferAtMostThreeKnownToolsAndEditsCanAsk() {
+        for intent in AgentIntent.allCases {
+            let ids = intent.tools(weatherAvailable: true).compactMap { AgentToolID(rawValue: $0.rawValue) }
+            #expect(ids.count == intent.tools(weatherAvailable: true).count && ids.count <= AgentToolbox.maximumTools)
+        }
+        #expect(AgentIntent.classify("rename my blue shirt").tools(weatherAvailable: false) == [.editCloset, .askUser])
+        #expect(AgentIntent.classify("what did I wear most this month").tools(weatherAvailable: true).first == .wearStats)
+        #expect(!AgentIntent.classify("will it rain tomorrow").tools(weatherAvailable: false).contains(.weatherFor))
         #expect(AgentToolStep.lookup([.pieces: 6]).summary == "Looked up 6 pieces")
     }
 }

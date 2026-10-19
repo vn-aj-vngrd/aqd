@@ -19,7 +19,7 @@ struct TodayCard: View {
             }
             content.font(AppTypography.supporting).buttonStyle(.plain)
         }.frame(maxWidth: .infinity, alignment: .leading).padding(AppSpacing.screen)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             .accessibilityIdentifier("today.widget.\(instance.id.uuidString)")
     }
 
@@ -57,6 +57,7 @@ struct TodayCard: View {
             if let month = try? (instance.options?.period ?? TodaySources.completedMonth(before: today)), let date = try? month.date() {
                 context = date.formatted(Date.FormatStyle(timeZone: TimeZone(identifier: month.timeZoneID) ?? .current).month(.wide).year())
             }
+        case .wearInsights: context = (instance.options?.insights ?? WearInsightsOptions()).period.title
         case .upcomingPlans:
             context = instance.options?.pinnedID != nil ? nil : "Next \(instance.options?.upcomingDays ?? 7) days"
         default: break
@@ -69,6 +70,7 @@ struct TodayCard: View {
         case .todayLook: look
         case .weekInWear: week
         case .closetInUse: utilization
+        case .wearInsights: wearInsights
         case .upcomingPlans: upcoming
         case .wearAgain: wearAgain
         case .favoriteOutfits: favorites
@@ -137,7 +139,7 @@ struct TodayCard: View {
         let look = TodayPresentation.look(entry: entry, outfitRevision: outfit?.revision, hasPieces: !state.pieces.isEmpty)
         if let outfit {
             NavigationLink(value: ClosetRoute.outfit(outfit.id)) {
-                OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 110, limit: 4)
+                OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 110, limit: 4, ground: AppTheme.imageGround, cornerRadius: AppRadius.group)
             }.buttonStyle(.plain).accessibilityLabel("Open outfit \(outfit.displayName)")
             VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
                 if !entry.occasion.isEmpty { Text(entry.occasion).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
@@ -151,9 +153,12 @@ struct TodayCard: View {
 
     @ViewBuilder private func lookActions(_ look: TodayPresentation.Look, entry: OutfitPlanEntry?, outfit: Outfit?) -> some View {
         if look.primary == .recordWear, let entry, let outfit {
+            // Two compact glass pills sharing the card width, like the App Store card footer.
             HStack(spacing: AppSpacing.small) {
-                NavigationLink { LocalPlanEntryView(id: entry.id).secondaryPage() } label: { SecondaryActionLabel(title: "Plan details") }.buttonStyle(.plain)
-                PrimaryAction(title: "Record wear", compact: true) { state.openWear(outfitID: outfit.id, day: entry.day, entry: entry) }.accessibilityIdentifier("today.look.primary")
+                NavigationLink { LocalPlanEntryView(id: entry.id).secondaryPage() } label: { Text("Plan details").compactControl(fullWidth: true) }.buttonStyle(.plain)
+                Button { state.openWear(outfitID: outfit.id, day: entry.day, entry: entry) } label: {
+                    Label("Record wear", systemImage: "checkmark.circle").compactControl(fullWidth: true)
+                }.buttonStyle(.plain).accessibilityIdentifier("today.look.primary")
             }
         } else {
             lookActionStack(look, entry: entry, outfit: outfit)
@@ -163,13 +168,13 @@ struct TodayCard: View {
     @ViewBuilder private func lookActionStack(_ look: TodayPresentation.Look, entry: OutfitPlanEntry?, outfit: Outfit?) -> some View {
         switch look.primary {
         case .recordWear:
-            if let entry, let outfit { PrimaryAction(title: "Record wear") { state.openWear(outfitID: outfit.id, day: entry.day, entry: entry) }.accessibilityIdentifier("today.look.primary") }
+            if let entry, let outfit { TodayGlassAction(title: "Record wear", systemImage: "checkmark.circle") { state.openWear(outfitID: outfit.id, day: entry.day, entry: entry) }.accessibilityIdentifier("today.look.primary") }
         case .reviewPlan:
-            if let entry { PrimaryAction(title: "Review plan") { state.openPlan(editing: entry) }.accessibilityIdentifier("today.look.primary") }
+            if let entry { TodayGlassAction(title: "Review plan", systemImage: "doc.text.magnifyingglass") { state.openPlan(editing: entry) }.accessibilityIdentifier("today.look.primary") }
         case .chooseOutfit:
-            if let entry { PrimaryAction(title: "Choose outfit") { state.openPlan(editing: entry) }.accessibilityIdentifier("today.look.primary") }
-        case .buildOutfit: PrimaryAction(title: "Build outfit") { state.buildOutfit() }.accessibilityIdentifier("today.look.primary")
-        case .addPiece: PrimaryAction(title: "Add piece") { state.addPiece() }.accessibilityIdentifier("today.look.primary")
+            if let entry { TodayGlassAction(title: "Choose outfit", systemImage: "tshirt") { state.openPlan(editing: entry) }.accessibilityIdentifier("today.look.primary") }
+        case .buildOutfit: TodayGlassAction(title: "Build outfit", systemImage: "plus.circle") { state.buildOutfit() }.accessibilityIdentifier("today.look.primary")
+        case .addPiece: TodayGlassAction(title: "Add piece", systemImage: "plus.circle") { state.addPiece() }.accessibilityIdentifier("today.look.primary")
         case nil: EmptyView()
         }
         if let entry {
@@ -205,6 +210,106 @@ struct TodayCard: View {
             NavigationLink { LocalWearInsightsView(initialMonth: month).secondaryPage() } label: { TodayCardActionLabel(title: "View this month") }.frame(minHeight: 44)
         }
     }
+    /// Wear insights: the owner's chosen period and metrics, from recorded wear only.
+    @ViewBuilder private var wearInsights: some View {
+        if let error = state.wearError ?? state.pieceReadError { failure(error) { state.reloadWear(); state.reloadPieces() } }
+        else {
+            let options = instance.options?.insights ?? WearInsightsOptions()
+            let report = WearInsightsReport.make(period: options.period, today: today, pieces: state.pieces, outfits: state.outfits, records: state.wearRecords)
+            if report.isEmpty && !options.metrics.contains(.unworn) {
+                Text("No wear recorded in this period yet.").foregroundStyle(AppTheme.secondary)
+            } else {
+                VStack(alignment: .leading, spacing: AppSpacing.large + 4) {
+                    ForEach(options.metrics, id: \.self) { metric in insightBlock(metric, report) }
+                }.frame(maxWidth: .infinity, alignment: .leading)
+            }
+            NavigationLink { LocalWearInsightsView(initialMonth: today).secondaryPage() } label: { TodayCardActionLabel(title: "View insights") }.frame(minHeight: 44)
+        }
+    }
+
+    @ViewBuilder private func insightBlock(_ metric: WearInsightsOptions.Metric, _ report: WearInsightsReport) -> some View {
+        switch metric {
+        case .summary:
+            HStack(spacing: AppSpacing.small) {
+                insightStat(report.days, report.days == 1 ? "day worn" : "days worn")
+                insightStat(report.occasions, report.occasions == 1 ? "look" : "looks")
+                insightStat(report.piecesUsed, report.piecesUsed == 1 ? "piece used" : "pieces used")
+            }
+        case .mostWorn:
+            insightList("Most worn", report.mostWorn.map { ($0.name, $0.count) }, empty: "Nothing recorded yet.")
+        case .unworn:
+            insightList("Not worn yet", report.unworn.map { ($0.name, 0) }, empty: "Every active piece was worn.", footnote: report.unwornCount > 3 ? "and \(report.unwornCount - 3) more" : nil)
+        case .outfits:
+            insightList("Top outfits", report.outfits.map { ($0.name, $0.count) }, empty: "No saved outfit was worn.")
+        case .categories:
+            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                insightHeading("By category")
+                let top = max(1, report.categories.map(\.count).max() ?? 1)
+                ForEach(report.categories, id: \.category) { share in
+                    HStack(spacing: AppSpacing.small) {
+                        Text(share.category.rawValue).font(AppTypography.supporting).truncated().frame(width: 92, alignment: .leading)
+                        insightBar(Double(share.count) / Double(top))
+                        Text("\(share.count)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).monospacedDigit().frame(minWidth: 20, alignment: .trailing)
+                    }
+                }
+                if report.categories.isEmpty { Text("Nothing recorded yet.").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+            }
+        case .streak:
+            HStack(spacing: AppSpacing.small) {
+                Image(systemName: "flame.fill").foregroundStyle(AppTheme.accent).accessibilityHidden(true)
+                Text(report.streak == 0 ? "No wear streak right now" : "\(report.streak)-day wear streak").font(AppTypography.body)
+                Spacer(minLength: 0)
+            }
+            .padding(AppSpacing.small + 2)
+            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group, style: .continuous))
+        }
+    }
+
+    private func insightHeading(_ title: String) -> some View {
+        Text(title).font(AppTypography.metadata.weight(.semibold)).foregroundStyle(AppTheme.secondary).textCase(.uppercase).tracking(0.6)
+    }
+
+    private func insightBar(_ fraction: Double) -> some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .leading) {
+                Capsule().fill(AppTheme.segmentSelection)
+                Capsule().fill(AppTheme.accent).frame(width: max(8, proxy.size.width * fraction))
+            }
+        }.frame(height: 8)
+    }
+
+    private func insightStat(_ value: Int, _ label: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("\(value)").font(.title.weight(.semibold)).monospacedDigit().minimumScaleFactor(0.7).lineLimit(1)
+            Text(label).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
+        }
+        .padding(.horizontal, AppSpacing.small + 2).padding(.vertical, AppSpacing.small)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.group, style: .continuous))
+        .accessibilityElement(children: .combine)
+    }
+
+    /// Ranked rows: a position, the name, and a bar scaled to the leader. A zero count means an unranked list.
+    private func insightList(_ title: String, _ rows: [(String, Int)], empty: String, footnote: String? = nil) -> some View {
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
+            insightHeading(title)
+            if rows.isEmpty { Text(empty).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+            let top = max(1, rows.map(\.1).max() ?? 1)
+            ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: AppSpacing.small) {
+                        if row.1 > 0 { Text("\(index + 1)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).monospacedDigit().frame(width: 14, alignment: .leading) }
+                        Text(row.0).font(AppTypography.body).truncated()
+                        Spacer(minLength: AppSpacing.small)
+                        if row.1 > 0 { Text("\(row.1)×").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).monospacedDigit() }
+                    }
+                    if row.1 > 0 { insightBar(Double(row.1) / Double(top)) }
+                }
+            }
+            if let footnote { Text(footnote).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+        }
+    }
+
     @ViewBuilder private var upcoming: some View {
         if let error = state.planError { failure(error) { state.reloadPlanEntries() } }
         else if let entries = try? TodaySources.upcoming(state.planEntries, days: instance.options?.upcomingDays ?? 7, planID: instance.options?.pinnedID) {
@@ -349,13 +454,18 @@ private struct TodayPersonalDetail: View {
                 if let instance, let card = instance.options?.personal {
                     if card.kind == .personalPhoto { TodayPersonalPhoto(card: card).frame(minHeight: 200) }
                     Text(card.text).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
-                    SecondaryAction(title: "Edit card") { state.openTodayEditor(); state.todayEditor?.begin(instance) }
-                    Text("Private on this iPhone").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                 }
             }.padding(20)
         }
             }
         }.background(AppTheme.canvas).navigationTitle(TodayPresentation.title(kind: instance?.kind.title ?? "Saved card", contentTitle: instance?.options?.personal?.title)).navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                if let instance, instance.options?.personal != nil {
+                    Button { state.openTodayEditor(); state.todayEditor?.directEdit = true; state.todayEditor?.begin(instance) } label: { Image(systemName: AppSymbols.edit) }.accessibilityLabel("Edit card")
+                }
+            }
+        }
     }
 }
 
@@ -387,7 +497,7 @@ struct TodayWeatherNotice: View {
                         Image(systemName: "chevron.forward").font(AppTypography.disclosure)
                             .foregroundStyle(AppTheme.ink).frame(width: 44, height: 44).contentShape(Rectangle())
                     }.buttonStyle(.plain).accessibilityLabel("Open Weather setup")
-                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 if let error = client.setupNoticeError { SemanticFeedback(role: .danger, message: error) }
             }.sheet(isPresented: $setup) {
                 WeatherContextView(client: client, persistsPreference: true) { _ in true }
@@ -517,7 +627,7 @@ private struct TodayAgendaRow: View {
     private var needsReview: Bool { entry.requiresReview || (outfit != nil && outfit?.revision != entry.outfitRevision) }
     var body: some View {
         HStack(spacing: AppSpacing.medium) {
-            if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 48, limit: 2).frame(width: 56, height: 64).clipped() }
+            if let outfit { OutfitComposition(pieceIDs: outfit.pieceIDs, pieceHeight: 48, limit: 2, ground: AppTheme.imageGround, cornerRadius: AppRadius.group).frame(width: 56, height: 64).clipped() }
             VStack(alignment: .leading, spacing: 2) {
                 Text(outfit?.displayName ?? "Outfit not chosen").font(AppTypography.body).foregroundStyle(AppTheme.ink).truncated()
                 Text([dayLabel, entry.occasion].filter { !$0.isEmpty }.joined(separator: ", "))
@@ -530,8 +640,18 @@ private struct TodayAgendaRow: View {
 }
 
 /// The card's one quiet action: trailing text, 44 pt target, no chevron row.
-/// Today's card links share the app-wide full-width secondary action.
+/// Every Today card link is the same compact glass pill, full width of the card.
 private struct TodayCardActionLabel: View {
     let title: String
-    var body: some View { SecondaryActionLabel(title: title) }
+    var body: some View { Text(title).compactControl(fullWidth: true) }
+}
+
+/// A compact glass pill with an icon for a card's main action.
+private struct TodayGlassAction: View {
+    let title: String
+    let systemImage: String
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) { Label(title, systemImage: systemImage).compactControl(fullWidth: true) }.buttonStyle(.plain)
+    }
 }

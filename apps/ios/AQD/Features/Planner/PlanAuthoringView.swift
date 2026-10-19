@@ -87,7 +87,7 @@ struct PlanAuthoringView: View {
                 Text("Choose a valid range").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
             }
         }.frame(maxWidth: .infinity).padding(.vertical, 20).padding(.horizontal, 16)
-            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: 16))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             .accessibilityElement(children: .combine)
     }
     private var fields: some View {
@@ -100,7 +100,7 @@ struct PlanAuthoringView: View {
                 dateField("Ends", start: false)
                 Divider().padding(.leading, 14)
                 DisclosureRow(title: "Timezone", value: model.draft.plan.start.timeZoneID) { choosingZone = true }
-            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).disabled(definitionLocked)
+            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card)).disabled(definitionLocked)
             if model.draft.plan.trip != nil { TripFields(model: model).disabled(definitionLocked) }
             if model.draft.plan.routine != nil {
                 RoutineFields(model: model) { choosingPreferred = true }.disabled(definitionLocked)

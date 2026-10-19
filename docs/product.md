@@ -6,7 +6,7 @@ A complete private closet on one iPhone: add pieces, build outfits and themes, p
 
 | Area | Included | Boundary |
 | --- | --- | --- |
-| Today | Customizable in-app card stack, twelve kinds ([today](features/today.md)) | No system widgets or integrations. |
+| Today | Customizable in-app card stack, thirteen kinds ([today](features/today.md)) | No system widgets or integrations. |
 | Closet | Pieces, outfits, themes with search, filter, sort, archive, lifecycle ([wardrobe](features/wardrobe.md), [outfits-themes](features/outfits-themes.md)) | One cover photo required for a new piece. No publishing. |
 | Planner | Dates, plans, routines, trips, packing, wear history, insights ([planner](features/planner.md)) | Local calendar only. |
 | Agent | Local conversation, grounded queries, reviewed drafts and actions ([agent](features/agent.md)) | On-device model when ready; manual paths always work. |

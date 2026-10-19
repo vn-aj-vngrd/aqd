@@ -92,7 +92,7 @@ struct SurfaceGroup<Data: RandomAccessCollection, ID: Hashable, Row: View>: View
                 }
             }
         }
-        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
     }
 }
 

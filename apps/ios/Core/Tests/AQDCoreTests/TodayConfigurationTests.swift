@@ -6,7 +6,7 @@ struct TodayConfigurationTests {
     @Test func firstUseHasExactlyTheStockOrderAndIndependentIdentities() throws {
         let layout = TodayConfiguration(ownerID: UUID())
         #expect(layout.instances.map(\.kind) == TodayWidgetKind.allCases)
-        #expect(Set(layout.instances.map(\.id)).count == 12)
+        #expect(Set(layout.instances.map(\.id)).count == TodayWidgetKind.allCases.count)
         #expect(layout.instances.allSatisfy { $0.isVisible })
         try layout.validated()
         var draft = TodayLayoutDraft(base: layout)

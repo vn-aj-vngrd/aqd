@@ -4,15 +4,14 @@ import AQDCore
 import FoundationModels
 
 /// Proposal tools only prepare a reviewable card; nothing is applied until the user taps Apply.
-/// Edits need the exact ID and the revision returned by findRecords, so stale or invented targets are refused.
+/// Targets are named by handle (p3) or name and resolved by the app, so an invented target is refused and the current revision is read at prepare time.
 @available(iOS 26, *)
 struct AgentEditClosetTool: Tool {
     let name = "editCloset"
     let description = "Prepare a review to rename a piece, change its color or brand, or set availability. Only when the user asks. Nothing is applied."
     let handlers: AgentToolHandlers
     @Generable struct Arguments {
-        @Guide(description: "Exact piece UUID from findRecords") var pieceID: String
-        @Guide(description: "Revision from findRecords") var revision: Int?
+        @Guide(description: "The piece: its handle such as p3, or its name") var piece: String
         var name: String?
         var color: String?
         var brand: String?
@@ -24,9 +23,9 @@ struct AgentEditClosetTool: Tool {
                 guard let parsed = PieceAvailability(rawValue: value) else { throw AgentToolRejection.invalidArguments }; return parsed
             }
             if availability != nil, arguments.name != nil || arguments.color != nil || arguments.brand != nil { throw AgentToolRejection.invalidArguments }
-            let request = AgentMutationRequest(kind: availability == nil ? .editPiece : .setAvailability, targetID: try AgentToolbox.id(arguments.pieceID),
+            let request = AgentMutationRequest(kind: availability == nil ? .editPiece : .setAvailability, targetID: try handlers.resolve(arguments.piece, [.piece]).id,
                 name: arguments.name, color: arguments.color, brand: arguments.brand, availability: availability)
-            return try handlers.prepare(request, arguments.revision)
+            return try handlers.prepare(request, .editCloset)
         }
     }
 }
@@ -37,16 +36,15 @@ struct AgentEditOutfitTool: Tool {
     let description = "Prepare a review to create an outfit, or edit one when outfitID is set. Only when the user asks. Nothing is applied."
     let handlers: AgentToolHandlers
     @Generable struct Arguments {
-        @Guide(description: "Exact outfit UUID to edit, nil to create") var outfitID: String?
-        @Guide(description: "Revision from findRecords when editing") var revision: Int?
+        @Guide(description: "The outfit to edit: its handle such as o2, or its name. Nil to create") var outfit: String?
         var name: String?
-        @Guide(description: "Exact available piece UUIDs", .maximumCount(24)) var pieceIDs: [String]
+        @Guide(description: "Available pieces by handle or name", .maximumCount(24)) var pieces: [String]
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            let request = AgentMutationRequest(kind: arguments.outfitID == nil ? .createOutfit : .editOutfit, targetID: try arguments.outfitID.map(AgentToolbox.id),
-                name: arguments.name, pieceIDs: try arguments.pieceIDs.map(AgentToolbox.id))
-            return try handlers.prepare(request, arguments.revision)
+            let request = AgentMutationRequest(kind: arguments.outfit == nil ? .createOutfit : .editOutfit, targetID: try arguments.outfit.map { try handlers.resolve($0, [.outfit]).id },
+                name: arguments.name, pieceIDs: try arguments.pieces.map { try handlers.resolve($0, [.piece]).id })
+            return try handlers.prepare(request, .editOutfit)
         }
     }
 }
@@ -57,16 +55,15 @@ struct AgentEditThemeTool: Tool {
     let description = "Prepare a review to create a theme from saved outfits, or edit one when themeID is set. Only when the user asks. Nothing is applied."
     let handlers: AgentToolHandlers
     @Generable struct Arguments {
-        @Guide(description: "Exact theme UUID to edit, nil to create") var themeID: String?
-        @Guide(description: "Revision from findRecords when editing") var revision: Int?
+        @Guide(description: "The theme to edit: its handle such as t1, or its name. Nil to create") var theme: String?
         var name: String?
-        @Guide(description: "Exact saved outfit UUIDs", .maximumCount(24)) var outfitIDs: [String]
+        @Guide(description: "Saved outfits by handle or name", .maximumCount(24)) var outfits: [String]
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            let request = AgentMutationRequest(kind: arguments.themeID == nil ? .createTheme : .editTheme, targetID: try arguments.themeID.map(AgentToolbox.id),
-                name: arguments.name, outfitIDs: try arguments.outfitIDs.map(AgentToolbox.id))
-            return try handlers.prepare(request, arguments.revision)
+            let request = AgentMutationRequest(kind: arguments.theme == nil ? .createTheme : .editTheme, targetID: try arguments.theme.map { try handlers.resolve($0, [.theme]).id },
+                name: arguments.name, outfitIDs: try arguments.outfits.map { try handlers.resolve($0, [.outfit]).id })
+            return try handlers.prepare(request, .editTheme)
         }
     }
 }
@@ -78,19 +75,18 @@ struct AgentEditPlanTool: Tool {
     let handlers: AgentToolHandlers
     @Generable struct Assignment {
         @Guide(description: "Calendar day YYYY-MM-DD in the user's timezone") var date: String
-        @Guide(description: "Exact saved outfit UUID") var outfitID: String
+        @Guide(description: "Saved outfit by handle or name") var outfit: String
     }
     @Generable struct Arguments {
-        @Guide(description: "Exact plan UUID to edit, nil to create") var planID: String?
-        @Guide(description: "Revision from findRecords when editing") var revision: Int?
+        @Guide(description: "The plan to edit: its handle such as pl1, or its name. Nil to create") var plan: String?
         var name: String?
         @Guide(description: "Days and outfits, at most 14. New plans need every day; edits change supplied days only", .maximumCount(14)) var assignments: [Assignment]
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            let request = AgentMutationRequest(kind: arguments.planID == nil ? .createPlan : .editPlan, targetID: try arguments.planID.map(AgentToolbox.id),
-                name: arguments.name, assignments: try arguments.assignments.map { AgentPlanAssignment(date: $0.date, outfitID: try AgentToolbox.id($0.outfitID)) })
-            return try handlers.prepare(request, arguments.revision)
+            let request = AgentMutationRequest(kind: arguments.plan == nil ? .createPlan : .editPlan, targetID: try arguments.plan.map { try handlers.resolve($0, [.plan]).id },
+                name: arguments.name, assignments: try arguments.assignments.map { AgentPlanAssignment(date: $0.date, outfitID: try handlers.resolve($0.outfit, [.outfit]).id) })
+            return try handlers.prepare(request, .editPlan)
         }
     }
 }
@@ -102,11 +98,14 @@ struct AgentRecordWearTool: Tool {
     let handlers: AgentToolHandlers
     @Generable struct Arguments {
         @Guide(description: "Calendar day YYYY-MM-DD, not in the future") var date: String
-        @Guide(description: "Exact piece UUIDs worn", .maximumCount(24)) var pieceIDs: [String]
+        @Guide(description: "A saved outfit that was worn, by handle or name; its pieces are recorded. Nil when listing pieces") var outfit: String?
+        @Guide(description: "Pieces worn, by handle or name, when no outfit is given", .maximumCount(24)) var pieces: [String]
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            try handlers.prepare(AgentMutationRequest(kind: .recordWear, pieceIDs: try arguments.pieceIDs.map(AgentToolbox.id), date: arguments.date), nil)
+            let worn = try arguments.outfit.map { try handlers.resolve($0, [.outfit]).id }
+            return try handlers.prepare(AgentMutationRequest(kind: .recordWear, pieceIDs: worn == nil ? try arguments.pieces.map { try handlers.resolve($0, [.piece]).id } : [],
+                                                             date: arguments.date, wearOutfitID: worn), .recordWear)
         }
     }
 }
@@ -117,13 +116,12 @@ struct AgentEditProfileTool: Tool {
     let description = "Prepare a review to change the profile name or bio. Only when the user asks. Nothing is applied."
     let handlers: AgentToolHandlers
     @Generable struct Arguments {
-        @Guide(description: "Profile revision from findRecords, if a profile exists") var revision: Int?
         var name: String?
         @Guide(description: "At most 160 characters") var caption: String?
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            try handlers.prepare(AgentMutationRequest(kind: .updateProfile, name: arguments.name, caption: arguments.caption), arguments.revision)
+            try handlers.prepare(AgentMutationRequest(kind: .updateProfile, name: arguments.name, caption: arguments.caption), .editProfile)
         }
     }
 }
@@ -142,6 +140,8 @@ extension AgentToolbox {
             case .editTheme: AgentEditThemeTool(handlers: handlers)
             case .editPlan: AgentEditPlanTool(handlers: handlers)
             case .proposePlan: AgentProposePlanTool(handlers: handlers)
+            case .proposeTrip: AgentProposeTripTool(handlers: handlers)
+            case .askUser: AgentAskUserTool(handlers: handlers)
             case .recordWear: AgentRecordWearTool(handlers: handlers)
             case .editProfile: AgentEditProfileTool(handlers: handlers)
             case .suggestOutfit, .proposeOutfit, .proposeTheme, .relabel: makeOutfitTool(id, handlers: handlers) ?? AgentFindRecordsTool(handlers: handlers)

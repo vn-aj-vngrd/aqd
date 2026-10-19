@@ -1,7 +1,7 @@
 import Foundation
 
 public enum TodayWidgetKind: String, CaseIterable, Codable, Sendable {
-    case todayLook, weekInWear, closetInUse, upcomingPlans, wearAgain, favoriteOutfits
+    case todayLook, weekInWear, wearInsights, closetInUse, upcomingPlans, wearAgain, favoriteOutfits
     case theme, fitJournal, weatherContext, quickActions, personalNote, personalPhoto
 
     public var title: String {
@@ -9,6 +9,7 @@ public enum TodayWidgetKind: String, CaseIterable, Codable, Sendable {
         case .todayLook: "Today’s look"
         case .weekInWear: "Your week in wear"
         case .closetInUse: "Closet in use"
+        case .wearInsights: "Wear insights"
         case .upcomingPlans: "Upcoming plans"
         case .wearAgain: "Wear again"
         case .favoriteOutfits: "Favorite outfits"

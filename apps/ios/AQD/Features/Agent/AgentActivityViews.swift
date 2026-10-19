@@ -8,7 +8,7 @@ struct AgentActivityView: View {
     let animates: Bool
     @State private var expanded = false
 
-    private var steps: [AgentToolStep] { message.toolSteps ?? [] }
+    private var steps: [AgentToolStep] { (message.toolSteps ?? []).filter { $0.question == nil && $0.rejection == nil } }
 
     var body: some View {
         if message.isActive { live } else if !steps.isEmpty || (message.elapsedSeconds ?? 0) >= 2 { finished }
@@ -100,13 +100,14 @@ struct AgentResultsView: View {
             } else {
             VStack(alignment: .leading, spacing: AppSpacing.small) {
                 Text(step.summary).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                // A plain stack sizes to the cards; a lazy stack inside a horizontal scroll view grows to fill the height.
                 ScrollView(.horizontal) {
-                    LazyHStack(spacing: AppSpacing.small) {
+                    HStack(alignment: .top, spacing: AppSpacing.small) {
                         ForEach(results) { item in
                             Button { previewing = item } label: { AgentResultCard(item: item) }.buttonStyle(.plain).accessibilityHint("Opens a larger preview")
                         }
                     }
-                }.scrollIndicators(.hidden)
+                }.scrollIndicators(.hidden).fixedSize(horizontal: false, vertical: true)
             }
             }
         }.sheet(item: $previewing) { AgentPhotoPreview(item: $0).appAppearance(state.appearance).tint(AppTheme.ink) }
@@ -148,10 +149,14 @@ struct AgentResultCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-            thumbnail.frame(width: 120, height: 132).clipShape(RoundedRectangle(cornerRadius: AppRadius.field))
-            Text(item.title).font(AppTypography.supporting).foregroundStyle(AppTheme.ink).lineLimit(1)
-            if !item.subtitle.isEmpty { Text(item.subtitle).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).lineLimit(1) }
-        }.frame(width: 120, alignment: .leading).accessibilityElement(children: .combine)
+            thumbnail.frame(width: 120, height: 132).background(AppTheme.imageGround).clipShape(RoundedRectangle(cornerRadius: AppRadius.group, style: .continuous))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(item.title).font(AppTypography.supporting.weight(.medium)).foregroundStyle(AppTheme.ink).lineLimit(1)
+                Text(item.subtitle.isEmpty ? " " : item.subtitle).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).lineLimit(1)
+            }.padding(.horizontal, 2)
+        }.frame(width: 120, alignment: .leading).padding(AppSpacing.small)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous))
+            .accessibilityElement(children: .combine)
             .accessibilityLabel("\(item.title), \(item.subtitle)")
     }
 
@@ -178,19 +183,16 @@ struct AgentLookPreview: View {
     var iterate: ((String) -> Void)?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.medium) {
-            Button { open(pieces[0]) } label: { OutfitComposition(pieceIDs: pieces.map(\.id), pieceHeight: 120, limit: 4) }
+        AgentWidgetCard(title: "Suggested look", subtitle: pieces.map(\.title).joined(separator: ", ")) {
+            Button { open(pieces[0]) } label: { OutfitComposition(pieceIDs: pieces.map(\.id), pieceHeight: 120, limit: 4, ground: .clear) }
                 .buttonStyle(.plain).accessibilityLabel("Suggested look: " + pieces.map(\.title).joined(separator: ", ")).accessibilityHint("Opens a larger preview")
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Suggested look").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                Text(pieces.map(\.title).joined(separator: " + ")).font(AppTypography.body).foregroundStyle(AppTheme.ink).fixedSize(horizontal: false, vertical: true)
-            }
             AgentLookActions(save: save, iterate: iterate)
             if !others.isEmpty {
-                ScrollView(.horizontal) { LazyHStack(spacing: AppSpacing.small) { ForEach(others) { item in Button { open(item) } label: { AgentResultCard(item: item) }.buttonStyle(.plain) } } }.scrollIndicators(.hidden)
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: AppSpacing.small) { ForEach(others) { item in Button { open(item) } label: { AgentResultCard(item: item) }.buttonStyle(.plain) } }
+                }.scrollIndicators(.hidden)
             }
-        }.padding(AppSpacing.medium).frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+        }
     }
 }
 
@@ -199,13 +201,51 @@ struct AgentOutfitCard: View {
     let item: AgentResultItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.small) {
-            OutfitComposition(pieceIDs: item.pieceIDs, pieceHeight: 120, limit: 4)
+        AgentWidgetCard(title: item.title, subtitle: item.subtitle) {
+            OutfitComposition(pieceIDs: item.pieceIDs, pieceHeight: 120, limit: 4, ground: .clear)
+        }.accessibilityElement(children: .combine).accessibilityHint("Opens a larger preview")
+    }
+}
+
+/// A rounded white card in the style of a home-screen widget: the label sits inside, above the content.
+struct AgentWidgetCard<Content: View>: View {
+    let title: String
+    var subtitle = ""
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.medium) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(item.title).font(AppTypography.body).foregroundStyle(AppTheme.ink)
-                if !item.subtitle.isEmpty { Text(item.subtitle).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+                Text(title).font(AppTypography.section).foregroundStyle(AppTheme.ink).fixedSize(horizontal: false, vertical: true)
+                if !subtitle.isEmpty { Text(subtitle).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
             }
-        }.frame(maxWidth: .infinity, alignment: .leading).accessibilityElement(children: .combine).accessibilityHint("Opens a larger preview")
+            content()
+        }.padding(AppSpacing.large).frame(maxWidth: .infinity, alignment: .leading)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
+    }
+}
+
+/// One line of compact actions that never scrolls: full labels when they fit, icons alone when they do not.
+struct AdaptiveActions<Content: View>: View {
+    @ViewBuilder let content: (_ iconsOnly: Bool) -> Content
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: AppSpacing.small) { content(false) }.fixedSize(horizontal: true, vertical: false)
+            HStack(spacing: AppSpacing.small) { content(true) }.fixedSize(horizontal: true, vertical: false)
+        }.frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+/// A compact glass control that keeps only its icon when `iconsOnly` is set.
+struct AdaptiveLabel: View {
+    let title: String
+    let symbol: String
+    let iconsOnly: Bool
+
+    var body: some View {
+        if iconsOnly { Image(systemName: symbol).compactControl().accessibilityLabel(title) }
+        else { Label(title, systemImage: symbol).compactControl() }
     }
 }
 
@@ -216,16 +256,135 @@ struct AgentLookActions: View {
     private let refinements = ["Make it dressier", "Make it more casual", "Swap the shoes", "Add a layer", "Use a different top"]
 
     var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: AppSpacing.small) {
-                if let save { Button(action: save) { Label("Save outfit", systemImage: "plus.circle").compactControl() }.buttonStyle(.plain) }
-                if let iterate {
-                    Button { iterate("Show me a different option") } label: { Label("Try another", systemImage: "arrow.triangle.2.circlepath").compactControl() }.buttonStyle(.plain)
-                    Menu {
-                        ForEach(refinements, id: \.self) { text in AccessoryButton(text, systemImage: "slider.horizontal.3") { iterate(text) } }
-                    } label: { Label("Adjust", systemImage: "slider.horizontal.3").compactControl() }
-                }
+        AdaptiveActions { iconsOnly in
+            if let save { Button(action: save) { AdaptiveLabel(title: "Save outfit", symbol: "plus.circle", iconsOnly: iconsOnly) }.buttonStyle(.plain) }
+            if let iterate {
+                Button { iterate("Show me a different option") } label: { AdaptiveLabel(title: "Try another", symbol: "arrow.triangle.2.circlepath", iconsOnly: iconsOnly) }.buttonStyle(.plain)
+                Menu {
+                    ForEach(refinements, id: \.self) { text in AccessoryButton(text, systemImage: "slider.horizontal.3") { iterate(text) } }
+                } label: { AdaptiveLabel(title: "Adjust", symbol: "slider.horizontal.3", iconsOnly: iconsOnly) }
             }
-        }.scrollIndicators(.hidden)
+        }
+    }
+}
+
+/// A question from the Agent as a choice card, in the style of Claude's and Codex's ask-the-user prompts: a topic chip, the question,
+/// numbered answers with an optional detail, a recommended answer, an inline "Something else" field, then Skip and Send.
+/// Choosing never sends by itself, so a stray tap can't answer for the owner.
+struct AgentQuestionCard: View {
+    let question: AgentQuestion
+    let send: (String) -> Void
+    @State private var chosen: [String] = []
+    @State private var note = ""
+    @State private var writing = false
+    @FocusState private var noteFocused: Bool
+
+    private var multi: Bool { question.multiSelect == true }
+    private var answer: String { question.answer(choices: chosen, note: writing ? note : "") }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.medium) {
+            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                if let header = question.header {
+                    Text(header).font(AppTypography.metadata.weight(.semibold)).foregroundStyle(AppTheme.secondary)
+                        .padding(.horizontal, AppSpacing.small).padding(.vertical, 3)
+                        .background(AppTheme.imageGround, in: Capsule())
+                }
+                Text(question.prompt).font(AppTypography.section).foregroundStyle(AppTheme.ink).fixedSize(horizontal: false, vertical: true)
+                if multi { Text("Choose any that apply").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+            }
+            VStack(spacing: 0) {
+                ForEach(Array(question.options.enumerated()), id: \.element) { index, option in
+                    if index > 0 { Divider().overlay(AppTheme.divider).padding(.leading, 52) }
+                    optionRow(index: index, option: option)
+                }
+                Divider().overlay(AppTheme.divider).padding(.leading, 52)
+                otherRow
+            }
+            .background(AppTheme.canvas, in: RoundedRectangle(cornerRadius: AppRadius.group, style: .continuous))
+            HStack(spacing: AppSpacing.small) {
+                Spacer(minLength: 0)
+                Button { send("You choose for me") } label: { Text("Skip").compactControl(tint: AppTheme.secondary) }
+                    .buttonStyle(.plain).accessibilityHint("Lets the Agent decide")
+                Button { send(answer) } label: {
+                    Label("Send", systemImage: "arrow.up").font(.subheadline.weight(.semibold))
+                        .foregroundStyle(answer.isEmpty ? AppTheme.secondary : AppTheme.onPrimary).padding(.horizontal, AppSpacing.medium)
+                        .frame(minHeight: 32).background(answer.isEmpty ? AppTheme.divider : AppTheme.primaryFill, in: Capsule())
+                        .frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+                }.buttonStyle(.plain).disabled(answer.isEmpty).accessibilityLabel("Send answer")
+            }
+        }
+        .padding(AppSpacing.large).frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous))
+        .accessibilityElement(children: .contain)
+        .sensoryFeedback(.selection, trigger: chosen)
+    }
+
+    private func optionRow(index: Int, option: String) -> some View {
+        let selected = chosen.contains(option)
+        return Button { toggle(option) } label: {
+            HStack(alignment: .top, spacing: AppSpacing.medium) {
+                marker(selected: selected) { Text("\(index + 1)").font(AppTypography.metadata.weight(.semibold)).monospacedDigit() }
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: AppSpacing.small) {
+                        Text(option).font(AppTypography.body.weight(selected ? .semibold : .regular)).foregroundStyle(AppTheme.ink).truncated()
+                        if question.recommended == option {
+                            Text("Recommended").font(AppTypography.metadata).foregroundStyle(AppTheme.accent)
+                        }
+                    }
+                    if let detail = question.detail(at: index) {
+                        Text(detail).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, AppSpacing.medium).padding(.vertical, AppSpacing.small + 2)
+            .frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+        }.buttonStyle(.plain)
+            .accessibilityLabel([option, question.recommended == option ? "recommended" : nil, question.detail(at: index)].compactMap { $0 }.joined(separator: ", "))
+            .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+
+    private var otherRow: some View {
+        HStack(alignment: .center, spacing: AppSpacing.medium) {
+            marker(selected: writing && !note.isEmpty) { Image(systemName: "pencil").font(.caption.weight(.semibold)) }
+            TextField("Something else", text: $note, axis: .vertical).lineLimit(1...3).font(AppTypography.body)
+                .focused($noteFocused).submitLabel(.send)
+                .onChange(of: noteFocused) { _, focused in if focused { writing = true; if !multi { chosen = [] } } }
+                .onSubmit { if !answer.isEmpty { send(answer) } }
+                .accessibilityLabel("Type a different answer")
+        }
+        .padding(.horizontal, AppSpacing.medium).padding(.vertical, AppSpacing.small)
+        .frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+        .onTapGesture { noteFocused = true }
+    }
+
+    private func marker<Label: View>(selected: Bool, @ViewBuilder label: () -> Label) -> some View {
+        ZStack {
+            let shape = RoundedRectangle(cornerRadius: multi ? 6 : 12, style: .continuous)
+            shape.fill(selected ? AppTheme.primaryFill : AppTheme.surface)
+            shape.stroke(selected ? AppTheme.primaryFill : AppTheme.divider, lineWidth: 1)
+            if selected { Image(systemName: "checkmark").font(.caption.weight(.bold)).foregroundStyle(AppTheme.onPrimary) }
+            else { label().foregroundStyle(AppTheme.secondary) }
+        }.frame(width: 24, height: 24).accessibilityHidden(true)
+    }
+
+    private func toggle(_ option: String) {
+        if multi { if let i = chosen.firstIndex(of: option) { chosen.remove(at: i) } else { chosen.append(option) } }
+        else { chosen = chosen == [option] ? [] : [option]; writing = false; noteFocused = false }
+    }
+}
+
+/// A question that was answered: one quiet line with the topic and what the owner chose.
+struct AgentAnsweredQuestion: View {
+    let question: AgentQuestion
+    let answer: String
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: AppSpacing.small) {
+            Image(systemName: "checkmark.circle").font(.caption).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+            Text(question.header ?? question.prompt).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).lineLimit(1)
+            Text(answer).font(AppTypography.supporting.weight(.medium)).foregroundStyle(AppTheme.ink).truncated()
+        }.accessibilityElement(children: .combine)
     }
 }

@@ -10,8 +10,8 @@ struct FitMemoryArtwork: View {
             GeometryReader { geometry in
                 thumbnailContent(size: geometry.size)
                     .frame(width: geometry.size.width, height: geometry.size.height)
-                    .background(AppTheme.imageGround).clipped()
-            }.aspectRatio(3 / 4, contentMode: .fit)
+                    .background(AppTheme.surface).clipped()
+            }.aspectRatio(3 / 4, contentMode: .fit).clipShape(RoundedRectangle(cornerRadius: AppRadius.group))
         } else {
             Group {
                 if let id = memory.photoID {
@@ -19,7 +19,7 @@ struct FitMemoryArtwork: View {
                         Image(uiImage: image).resizable().scaledToFit().accessibilityLabel("Private fit photo")
                     } else { unavailable }
                 } else if let snapshot = memory.outfit {
-                    OutfitComposition(pieceIDs: snapshot.pieces.map(\.id), pieceHeight: 160)
+                    OutfitComposition(pieceIDs: snapshot.pieces.map(\.id), pieceHeight: 110)
                 } else { Text("No fit content") }
             }.frame(maxWidth: .infinity).background(AppTheme.surface)
         }
@@ -40,7 +40,7 @@ struct FitMemoryArtwork: View {
                         ForEach(Array(pieces.dropFirst(row * 2).prefix(2)), id: \.id) { piece in
                             Group {
                                 if let saved = state.ownedPieces.first(where: { $0.id == piece.id }) {
-                                    PieceThumbnail(photoID: saved.photoID, recipe: saved.photoRecipe)
+                                    PieceThumbnail(photoID: saved.photoID, recipe: saved.photoRecipe, ground: .clear)
                                 } else {
                                     Image(systemName: "photo.badge.exclamationmark").foregroundStyle(AppTheme.secondary)
                                 }
@@ -64,9 +64,6 @@ struct FitMemoryArtwork: View {
 
 enum FitJournalTab: String, CaseIterable {
     case all = "All fits", photos = "Photos", outfits = "Outfits"
-    var symbol: String {
-        switch self { case .all: "square.grid.3x3.fill"; case .photos: "photo"; case .outfits: "hanger" }
-    }
 }
 
 struct FitJournalGrid: View {
@@ -75,9 +72,9 @@ struct FitJournalGrid: View {
     @Binding var query: FitJournalQuery
     @Environment(AppState.self) private var state
     @Environment(\.dynamicTypeSize) private var typeSize
-    private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: 2, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3) }
+    private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: AppSpacing.small, alignment: .top), count: typeSize.isAccessibilitySize ? 1 : 3) }
     private var memories: [FitMemory] {
-        FitJournalQuery(content: tab == .photos ? .photos : .all, sort: query.sort).apply(to: state.fitMemories)
+        FitJournalQuery(content: tab == .photos ? .photos : tab == .outfits ? .outfitOnly : .all, sort: query.sort).apply(to: state.fitMemories)
     }
     private var sections: [FitMonthSection] { FitJournalPresentation.sections(memories) }
     private func monthTitle(_ section: FitMonthSection) -> String {
@@ -88,34 +85,20 @@ struct FitJournalGrid: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             tabs
-            if let error = state.fitError, tab != .outfits {
+            if let error = state.fitError {
                 VStack(alignment: .leading, spacing: AppSpacing.medium) {
                     SemanticFeedback(role: .danger, message: error)
                     Button("Retry journal") { state.reloadFits() }.frame(minHeight: 44)
                 }.padding(AppSpacing.screen)
-            } else if tab == .outfits {
-                if let error = state.outfitError {
-                    VStack(alignment: .leading, spacing: AppSpacing.medium) {
-                        SemanticFeedback(role: .danger, message: error)
-                        Button("Retry outfits") { state.reloadOutfits() }.frame(minHeight: 44)
-                    }.padding(AppSpacing.screen)
-                } else if state.outfits.isEmpty {
-                    AppEmptyState("No outfits yet", systemImage: "hanger", description: Text("Use Add outfit (+) above to build a look from your pieces."), fillsAvailableSpace: false)
-                        .frame(maxWidth: .infinity).padding(AppSpacing.screen)
-                } else {
-                    LazyVGrid(columns: columns, spacing: 2) {
-                        ForEach(state.outfits) { outfit in OutfitCollectionCard(outfit: outfit, gallery: true) }
-                    }
-                }
             } else if memories.isEmpty {
                 emptyState.padding(.horizontal, AppSpacing.screen).padding(.vertical, AppSpacing.section)
             } else {
-                orderRow
+                orderRow(count: memories.count, singular: "fit", plural: "fits")
                 ForEach(sections) { section in
                     Text(monthTitle(section)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                         .padding(.horizontal, AppSpacing.screen).padding(.top, AppSpacing.medium).padding(.bottom, AppSpacing.small)
                         .accessibilityAddTraits(.isHeader)
-                    LazyVGrid(columns: columns, spacing: 2) {
+                    LazyVGrid(columns: columns, spacing: AppSpacing.small) {
                     ForEach(section.memories) { memory in
                         NavigationLink { FitMemoryDetailView(id: memory.id).secondaryPage() } label: {
                             FitMemoryArtwork(memory: memory, thumbnail: true)
@@ -132,7 +115,7 @@ struct FitJournalGrid: View {
                             }
                             .accessibilityLabel("\(memory.day.display(.full)), \(memory.photoID == nil ? "outfit composition" : "photo"), \(memory.outfit?.displayName ?? "unlinked"), \(memory.displayNote)")
                     }
-                    }
+                    }.padding(.horizontal, AppSpacing.screen)
                 }
             }
         }.navigationDestination(isPresented: Binding(get: { openedMemoryID != nil }, set: { if !$0 { openedMemoryID = nil } })) {
@@ -140,9 +123,9 @@ struct FitJournalGrid: View {
         }
     }
     /// Count and order on one quiet line, like Closet's collection summary.
-    private var orderRow: some View {
+    private func orderRow(count: Int, singular: String, plural: String) -> some View {
         HStack {
-            Text("\(memories.count) \(memories.count == 1 ? "fit" : "fits")").font(AppTypography.fieldLabel)
+            Text("\(count) \(count == 1 ? singular : plural)").font(AppTypography.fieldLabel)
             Spacer(minLength: 12)
             Menu {
                 Picker("Order", selection: $query.sort) {
@@ -153,30 +136,20 @@ struct FitJournalGrid: View {
                     Text(query.sort.rawValue)
                     Image(systemName: "chevron.up.chevron.down").font(AppTypography.metadata).accessibilityHidden(true)
                 }.font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).frame(minHeight: 44)
-            }.tint(AppTheme.ink).accessibilityLabel("Order fits").accessibilityValue(query.sort.rawValue)
+            }.tint(AppTheme.ink).accessibilityLabel("Order \(plural)").accessibilityValue(query.sort.rawValue)
                 .accessibilityIdentifier("profile.fits.order")
         }.padding(.horizontal, AppSpacing.screen)
     }
+    /// The same glass segmented control Closet uses for its collections.
     private var tabs: some View {
-        HStack(alignment: .bottom, spacing: 0) {
-            ForEach(FitJournalTab.allCases, id: \.self) { item in
-                Button { tab = item } label: {
-                    VStack(spacing: 0) {
-                        Image(systemName: item.symbol).font(.system(size: 22, weight: .regular))
-                            .symbolRenderingMode(.monochrome)
-                            .frame(maxWidth: .infinity, minHeight: 48)
-                        Rectangle().fill(tab == item ? AppTheme.ink : .clear).frame(height: 2)
-                    }.foregroundStyle(tab == item ? AppTheme.ink : AppTheme.controlIcon).contentShape(Rectangle())
-                }.buttonStyle(.plain).accessibilityLabel(item.rawValue)
-                    .accessibilityAddTraits(tab == item ? .isSelected : [])
-                    .accessibilityIdentifier("profile.fits.tab.\(item == .all ? "all" : item == .photos ? "photos" : "outfits")")
-            }
-        }.padding(.bottom, 2)
+        AppSegmentedControl(selection: Binding(get: { tab.rawValue }, set: { value in tab = FitJournalTab(rawValue: value) ?? .all }),
+                            options: FitJournalTab.allCases.map(\.rawValue), accessibilityTitle: "Fit journal view", identifierPrefix: "profile.fits.tab")
+            .padding(.horizontal, AppSpacing.screen).padding(.bottom, AppSpacing.small)
     }
     private var emptyState: some View {
         AppEmptyState(tab == .all ? "A little space for your style" : "No fit photos yet",
                       systemImage: "photo.stack",
-                      description: Text(tab == .all ? "Use Add fit (+) above to keep a photo or outfit here. Memories stay private." : "Add a photo to a fit to see it here. Your other fits are in All fits."),
+                      description: Text(tab == .all ? "Use Add fit (+) above to keep a photo or outfit here. Memories stay private." : (tab == .photos ? "Add a photo to a fit to see it here. Your other fits are in All fits." : "Fits you link to an outfit without a photo show here. Your other fits are in All fits.")),
                       fillsAvailableSpace: false)
             .frame(maxWidth: .infinity).accessibilityIdentifier("profile.fits.empty")
     }
@@ -267,7 +240,7 @@ struct FitEditorView: View {
                 }
             }
             .frame(maxWidth: .infinity).frame(minHeight: hasMedia ? 280 : 240, maxHeight: hasMedia ? 340 : 260)
-            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             .clipShape(RoundedRectangle(cornerRadius: AppRadius.field))
             .overlay(alignment: .bottomTrailing) {
                 // A small, separate menu: the system glass menu morphs cleanly from a compact control.
@@ -299,7 +272,7 @@ struct FitEditorView: View {
                         Spacer(minLength: 8)
                         Text("Use").font(AppTypography.fieldLabel)
                     }.foregroundStyle(AppTheme.ink).padding(.horizontal, 14).frame(minHeight: 48)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 }.buttonStyle(.plain).disabled(model.locked).accessibilityIdentifier("fit.usePlanned")
             }
             OutfitSelectionStrip(outfits: model.state.outfits, selectedID: model.draft.value.outfit?.id, locked: model.locked) { outfit in
@@ -328,7 +301,7 @@ struct FitEditorView: View {
             HStack { Text("Date").font(AppTypography.body); Spacer(); Text(dateSummary).foregroundStyle(AppTheme.secondary) }
                 .frame(minHeight: 44)
         }.tint(AppTheme.ink).foregroundStyle(AppTheme.ink).padding(.horizontal, 14).padding(.vertical, 4)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)).disabled(model.locked)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card)).disabled(model.locked)
             .accessibilityIdentifier("fit.date")
     }
     /// Offered only with an outfit, since wear needs pieces. Saving never records wear; it opens Record wear to confirm.
@@ -341,7 +314,7 @@ struct FitEditorView: View {
                         .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                 }
             }.tint(AppTheme.primaryFill).disabled(model.locked).padding(.horizontal, 14).padding(.vertical, 8)
-                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 .accessibilityIdentifier("fit.recordWearNext")
         }
     }
@@ -366,7 +339,8 @@ struct FitMemoryDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 if let memory {
-                    FitMemoryArtwork(memory: memory).frame(minHeight: 240, maxHeight: 360)
+                    FitMemoryArtwork(memory: memory).frame(minHeight: memory.photoID == nil ? 0 : 240, maxHeight: memory.photoID == nil ? .infinity : 360)
+                        .clipShape(RoundedRectangle(cornerRadius: AppRadius.card))
                     VStack(alignment: .leading, spacing: 12) {
                         Text(memory.day.display(.full)).font(AppTypography.detailTitle)
                         if !memory.note.isEmpty { Text(memory.displayNote).font(AppTypography.body) }
@@ -375,7 +349,7 @@ struct FitMemoryDetailView: View {
                             Text(memory.day.timeZoneID).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
                         }.font(AppTypography.supporting)
                     }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     if let snapshot = memory.outfit {
                         VStack(alignment: .leading, spacing: 16) {
                             VStack(alignment: .leading, spacing: 4) {
@@ -398,7 +372,7 @@ struct FitMemoryDetailView: View {
                                 Text("Linked outfit unavailable. The recorded snapshot is kept here.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
                             }
                         }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
-                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     }
                 } else { AppEmptyState("Memory unavailable", systemImage: "photo") }
                 if let error { SemanticFeedback(role: .danger, message: error) }
@@ -417,7 +391,7 @@ struct FitMemoryDetailView: View {
                             NavigationLink(value: ClosetRoute.outfit(snapshot.id)) { AccessoryLabel("Open linked outfit", systemImage: "square.stack") }
                         }
                         Section {
-                            Button("Delete memory", systemImage: "trash", role: .destructive) { request = FitDeletionRequest(memory: memory); confirming = true }
+                            DestructiveMenuButton("Delete memory") { request = FitDeletionRequest(memory: memory); confirming = true }
                         }
                     }
                 } label: { Label("More", systemImage: "ellipsis") }

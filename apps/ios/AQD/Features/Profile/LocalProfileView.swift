@@ -7,6 +7,7 @@ struct LocalProfileView: View {
     @State private var journalTab: FitJournalTab = .all
     @State private var query = FitJournalQuery()
     @Environment(\.dynamicTypeSize) private var typeSize
+    @State private var previewingProfile = false
     var body: some View {
         @Bindable var state = state
         NavigationStack {
@@ -94,28 +95,31 @@ struct LocalProfileView: View {
         Text(state.localIdentity?.name ?? "Your profile").font(AppTypography.detailTitle).lineLimit(2)
     }
     private var profileAvatar: some View {
-        Button { state.openIdentity() } label: {
+        Button { previewingProfile = true } label: {
             LocalIdentityAvatar(photoID: state.localIdentity?.photoID, recipe: state.localIdentity?.photoRecipe ?? .fitOriginal)
                 .frame(width: 88, height: 88)
-        }.buttonStyle(.plain).accessibilityLabel("Edit profile photo")
+        }.buttonStyle(.plain).accessibilityLabel("Open profile").accessibilityHint("Shows your profile with an edit action")
             .accessibilityIdentifier("profile.avatar.edit")
+            .sheet(isPresented: $previewingProfile) {
+                ProfilePreviewView { state.openIdentity() }.appAppearance(state.appearance)
+            }
     }
     private var profileStats: some View {
         HStack(alignment: .top, spacing: 0) {
             profileStat("Fits", count: state.fitError == nil ? state.fitMemories.count : nil) { journalTab = .all }
-            profileStat("Outfits", count: state.outfitError == nil ? state.outfits.count : nil) { journalTab = .outfits }
+            profileStat("Outfits", count: state.outfitError == nil ? state.outfits.count : nil) { state.closetScope = "Outfits"; state.selection = 1 }
             profileStat("Pieces", count: state.pieceReadError == nil ? state.pieces.count : nil) { state.selection = 1 }
         }.frame(maxWidth: .infinity)
     }
     private func profileStat(_ title: String, count: Int?, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
-                Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit()
-                Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                Text(count.map(String.init) ?? "—").font(.title3.weight(.semibold)).monospacedDigit().truncated()
+                Text(title).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated()
             }.frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget, alignment: .leading).contentShape(Rectangle())
         }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityElement(children: .ignore)
             .accessibilityLabel(count.map { "\($0) \(title.lowercased())" } ?? "\(title) unavailable")
-            .accessibilityHint(title == "Pieces" ? "Opens Closet" : "Shows \(title.lowercased()) below")
+            .accessibilityHint(title == "Fits" ? "Shows fits below" : "Opens Closet")
             .accessibilityIdentifier("profile.stat.\(title.lowercased())")
     }
 }

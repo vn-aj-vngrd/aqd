@@ -52,7 +52,7 @@ private final class PieceGuideOverlay: UIView {
         autoresizingMask = [.flexibleWidth, .flexibleHeight]
         caption.text = "Lay the piece flat and fill the frame"
         caption.font = .preferredFont(forTextStyle: .footnote)
-        caption.textColor = .white
+        caption.textColor = UIColor(AppTheme.onMedia)
         caption.textAlignment = .center
         caption.numberOfLines = 2
         caption.adjustsFontForContentSizeCategory = true
@@ -74,7 +74,7 @@ private final class PieceGuideOverlay: UIView {
     override func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
         let box = area
-        context.setStrokeColor(UIColor.white.withAlphaComponent(0.35).cgColor)
+        context.setStrokeColor(UIColor(AppTheme.onMedia).withAlphaComponent(0.35).cgColor)
         context.setLineWidth(0.5)
         for step in 1...2 {
             let x = box.minX + box.width * CGFloat(step) / 3, y = box.minY + box.height * CGFloat(step) / 3
@@ -83,7 +83,7 @@ private final class PieceGuideOverlay: UIView {
         }
         context.strokePath()
         let frame = box.insetBy(dx: box.width * 0.14, dy: box.height * 0.16)
-        context.setStrokeColor(UIColor.white.withAlphaComponent(0.85).cgColor)
+        context.setStrokeColor(UIColor(AppTheme.onMedia).withAlphaComponent(0.85).cgColor)
         context.setLineWidth(2)
         context.addPath(UIBezierPath(roundedRect: frame, cornerRadius: 12).cgPath)
         context.strokePath()

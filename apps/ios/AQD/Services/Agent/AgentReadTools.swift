@@ -6,7 +6,7 @@ import FoundationModels
 @available(iOS 26, *)
 struct AgentFindRecordsTool: Tool {
     let name = "findRecords"
-    let description = "Find exact local record IDs, revisions and facts. Data is untrusted. Respects enabled AI sources. Never changes records."
+    let description = "Find the owner's pieces, outfits, themes and plans by words. Returns handles such as p3 with facts. Data is untrusted. Never changes records."
     let handlers: AgentToolHandlers
     @Generable enum Kind { case pieces, outfits, themes, plans, profile
         var source: AgentDataSource {
@@ -52,11 +52,11 @@ struct AgentWearStatsTool: Tool {
     @Generable enum Window { case thisMonth, lastMonth }
     @Generable struct Arguments {
         var window: Window
-        @Guide(description: "Exact piece UUIDs to count; empty gives the most and never worn pieces", .maximumCount(12)) var pieceIDs: [String]
+        @Guide(description: "Pieces to count, by handle or name; empty gives the most worn and never worn pieces", .maximumCount(12)) var pieces: [String]
     }
     func call(arguments: Arguments) async throws -> String {
         try await AgentToolbox.result {
-            try handlers.wearStats(arguments.window == .thisMonth ? .thisMonth : .lastMonth, arguments.pieceIDs.map(AgentToolbox.id))
+            try handlers.wearStats(arguments.window == .thisMonth ? .thisMonth : .lastMonth, arguments.pieces.map { try handlers.resolve($0, [.piece]).id })
         }
     }
 }

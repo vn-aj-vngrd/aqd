@@ -362,7 +362,7 @@ final class PieceStore {
         guard records.count == 1, let record = records.first else { throw StoreError.unsupportedStore }
         let today = try record.value()
         guard today.revision == 1,
-              (today.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse] || today.instances.map(\.kind) == TodayWidgetKind.allCases) else {
+              (today.instances.map(\.kind) == [.todayLook, .weekInWear, .closetInUse] || today.instances.map(\.kind) == TodayWidgetKind.allCases || today.instances.map(\.kind) == TodayWidgetKind.allCases.filter { $0 != .wearInsights }) else {
             throw StoreError.unsupportedStore
         }
         return false

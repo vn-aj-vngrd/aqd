@@ -148,8 +148,8 @@ struct AgentAttachmentStrip: View {
             .overlay(alignment: .topTrailing) {
                 if let remove {
                     Button { remove(id) } label: {
-                        Image(systemName: "xmark").font(.system(size: 11, weight: .semibold)).foregroundStyle(.white)
-                            .frame(width: 22, height: 22).background(.black.opacity(0.65), in: Circle())
+                        Image(systemName: "xmark").font(.system(size: 11, weight: .semibold)).foregroundStyle(AppTheme.onMedia)
+                            .frame(width: 22, height: 22).background(AppTheme.mediaChip, in: Circle())
                             .frame(width: 44, height: 44)
                     }.buttonStyle(.plain).accessibilityLabel("Remove \(name)").disabled(removalLocked ?? locked)
                 }

@@ -245,7 +245,7 @@ struct AppSegmentedControl: View {
         HStack(spacing: 0) {
             ForEach(options, id: \.self) { scope in
                 Button { selection = scope } label: {
-                    Text(scope).font(AppTypography.supporting).fontWeight(selection == scope ? .semibold : .regular)
+                    Text(scope).font(AppTypography.supporting).fontWeight(selection == scope ? .semibold : .regular).truncated()
                         .foregroundStyle(AppTheme.ink).frame(maxWidth: .infinity, minHeight: 44)
                         .background {
                             if selection == scope {

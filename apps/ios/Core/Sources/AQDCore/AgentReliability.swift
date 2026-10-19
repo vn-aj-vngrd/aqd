@@ -39,12 +39,21 @@ public struct AgentResponseDiagnostics: Codable, Equatable, Sendable {
     public var sources: [AgentDataSource]
     public var unavailable: [AgentDataSource]
     public var failure: AgentFailureCategory?
+    /// The classified intent (`AgentIntent` raw value) and the tools the turn called, in order. A " (app)" suffix marks work the app did itself.
+    public var intent: String?
+    /// "rules" when a specific rule decided the intent, "model" when the model chose it because no rule was sure.
+    public var intentSource: String?
+    public var toolCalls: [String]?
+    /// Problems the grounding check found in the first reply, and in the reply that was kept.
+    public var firstViolations: [String]?
+    public var groundingViolations: [String]?
     public init(included: Int, omitted: Int, inputCharacters: Int, sources: [AgentDataSource], unavailable: [AgentDataSource] = []) {
         self.included = included; self.omitted = omitted; self.inputCharacters = inputCharacters; self.sources = sources; self.unavailable = unavailable
     }
     public func validated() throws {
         guard included >= 0, omitted >= 0, inputCharacters >= 0, promptVersion.count <= 80, retrievalVersion.count <= 80,
-              Set(sources).count == sources.count, Set(unavailable).count == unavailable.count else { throw PlanValidationError.invalidRecord }
+              Set(sources).count == sources.count, Set(unavailable).count == unavailable.count,
+              (toolCalls?.count ?? 0) <= 64, (firstViolations?.count ?? 0) <= 32, (groundingViolations?.count ?? 0) <= 32 else { throw PlanValidationError.invalidRecord }
     }
 }
 public enum AgentFeedbackRating: String, Codable, Sendable { case helpful, notHelpful }
@@ -115,8 +124,11 @@ public struct AgentKnowledgeRecord: Identifiable, Equatable, Sendable {
     public let eligibleForSuggestions: Bool
     public let priority: Double
     public let containsPrivateNotes: Bool
-    public init(id: UUID = UUID(), source: AgentDataSource, text: String, eligibleForSuggestions: Bool = true, priority: Double = 0, containsPrivateNotes: Bool = false) {
+    /// Extra words used only to rank the record (material, tags, brand); they are never sent to the model.
+    public let searchText: String
+    public init(id: UUID = UUID(), source: AgentDataSource, text: String, eligibleForSuggestions: Bool = true, priority: Double = 0, containsPrivateNotes: Bool = false, searchText: String = "") {
         self.id = id; self.source = source; self.text = text; self.eligibleForSuggestions = eligibleForSuggestions; self.priority = priority; self.containsPrivateNotes = containsPrivateNotes
+        self.searchText = searchText
     }
 }
 public struct AgentRetrievalResult: Equatable, Sendable {
@@ -125,6 +137,9 @@ public struct AgentRetrievalResult: Equatable, Sendable {
     public let sources: [AgentDataSource]
     public let included: Int
     public let omitted: Int
+    public init(text: String, recordIDs: [UUID] = [], sources: [AgentDataSource] = [], included: Int = 0, omitted: Int = 0) {
+        self.text = text; self.recordIDs = recordIDs; self.sources = sources; self.included = included; self.omitted = omitted
+    }
 }
 public enum AgentRetrieval {
     public static let version = "bm25-diverse-1"
@@ -133,12 +148,13 @@ public enum AgentRetrieval {
         return text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "en_US_POSIX"))
             .components(separatedBy: CharacterSet.alphanumerics.inverted).filter { !$0.isEmpty && !stops.contains($0) }
     }
-    public static func select(query: String, records: [AgentKnowledgeRecord], facts: [String], maximumCharacters: Int, maximumRecords: Int) throws -> AgentRetrievalResult {
+    /// `compact` renders plain lines (facts, then one record per line) instead of JSON; ranking and limits are identical.
+    public static func select(query: String, records: [AgentKnowledgeRecord], facts: [String], maximumCharacters: Int, maximumRecords: Int, compact: Bool = false) throws -> AgentRetrievalResult {
         guard maximumCharacters >= 256, maximumRecords > 0, records.allSatisfy({ $0.priority.isFinite }), Set(records.map { $0.source.rawValue + ":" + $0.id.uuidString }).count == records.count else { throw PlanValidationError.invalidRecord }
         let queryTerms = Array(Set(terms(query).prefix(48))).sorted(), lower = query.lowercased()
         let historical = ["archiv", "laundry", "unavailable", "history", "wore", "count", "how many", "show", "list", "own", "have"].contains { lower.contains($0) }
         let candidates = records.filter { historical || $0.eligibleForSuggestions }
-        let documents = candidates.map { terms($0.text) }
+        let documents = candidates.map { terms($0.text + " " + $0.searchText) }
         let average = max(1, Double(documents.reduce(0) { $0 + $1.count }) / Double(max(1, documents.count)))
         let documentFrequencies = Dictionary(uniqueKeysWithValues: queryTerms.map { term in
             (term, Double(documents.filter { $0.contains(term) }.count))
@@ -193,6 +209,13 @@ public enum AgentRetrieval {
             return String(text.prefix(580)) + " [partial record]"
         }
         func render(_ selected: [AgentKnowledgeRecord]) throws -> String {
+            if compact {
+                let omitted = records.count - selected.count
+                var lines = facts
+                lines.append(selected.isEmpty ? "No records matched." : "Records" + (omitted > 0 ? " (\(omitted) more not shown; use findRecords)" : "") + ":")
+                lines += selected.map { excerpt($0.text) }
+                return lines.joined(separator: "\n")
+            }
             let items = selected.map { record in Item(source: record.source.rawValue, data: excerpt(record.text), availableForSuggestions: record.eligibleForSuggestions, containsPrivateNotes: record.containsPrivateNotes) }
             return String(decoding: try encoder.encode(Payload(facts: facts, included: selected.count, omitted: records.count - selected.count, records: items)), as: UTF8.self)
         }

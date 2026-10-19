@@ -23,14 +23,17 @@ struct LocalSettingsView: View {
                     SettingsRow(title: "Appearance", symbol: "circle.lefthalf.filled", value: appearanceTitle)
                 }
                 Button { weather = true } label: {
-                    SettingsRow(title: "Weather", symbol: "cloud.sun", value: state.weatherClient?.local?.enabled == true ? state.weatherClient?.local?.place?.name ?? "Place unavailable" : "Off", valueLineLimit: 1, disclosure: true)
+                    SettingsRow(title: "Weather", symbol: "cloud.sun", value: state.weatherClient?.local?.enabled == true ? state.weatherClient?.local?.place?.name.split(separator: ",").first.map { String($0).trimmingCharacters(in: .whitespaces) } ?? "Place unavailable" : "Off", valueLineLimit: 1, disclosure: true)
                 }
             }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
                 .listRowBackground(AppTheme.surface)
-            Section("Assistance & help") {
+            Section("AI") {
                 NavigationLink { AgentSettingsView().secondaryPage() } label: { SettingsRow(title: "AI settings", symbol: "sparkles") }
-                NavigationLink { AgentFeedbackView().secondaryPage() } label: { SettingsRow(title: "Feedback", symbol: "bubble.left") }
                 NavigationLink { LocalAssistanceSettingsView().secondaryPage() } label: { SettingsRow(title: "About Agent", symbol: "sparkle") }
+                NavigationLink { AgentFeedbackView().secondaryPage() } label: { SettingsRow(title: "Feedback", symbol: "bubble.left") }
+            }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
+                .listRowBackground(AppTheme.surface)
+            Section("Help") {
                 NavigationLink { LocalPrivacySettingsView().secondaryPage() } label: { SettingsRow(title: "Help & privacy", symbol: "hand.raised") }
                 Button { state.beginTour(from: .settings) } label: { SettingsRow(title: "App tour", symbol: "play.rectangle", disclosure: true) }
             }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
@@ -175,7 +178,7 @@ struct LocalStyleSettingsView: View {
                                 }.frame(maxWidth: .infinity, alignment: .leading).padding(AppSpacing.screen)
                                 if index < 5 { Divider().padding(.horizontal, AppSpacing.screen) }
                             }
-                        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                         stylePrivacy
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
                 }
@@ -248,7 +251,7 @@ struct LocalAssistanceSettingsView: View {
                         Image(systemName: "arrow.clockwise").frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
                     }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityLabel("Check Agent availability again")
                 }.padding(AppSpacing.large)
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 VStack(alignment: .leading, spacing: AppSpacing.section) {
                     aboutRow("Your wardrobe, in context", symbol: "tshirt", detail: "Uses relevant saved pieces, preferences and recorded wear. Choose what Agent can use in AI settings.")
                     aboutRow("On this iPhone", symbol: "iphone", detail: "Replies are generated on-device. Your conversations aren't sent to an AQD server.")
@@ -261,7 +264,7 @@ struct LocalAssistanceSettingsView: View {
                         Spacer(minLength: AppSpacing.small)
                         Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
                     }.font(AppTypography.body).padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.rowHeight)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 }.buttonStyle(.plain)
                 Text("AI can make mistakes. Check details that matter to you.")
                     .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
@@ -299,7 +302,9 @@ struct LocalPrivacySettingsView: View {
         }.padding(20) }.background(AppTheme.canvas).navigationTitle("Help and privacy").navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 ActionFooter {
-                    SecondaryAction(title: "Open iPhone Settings") { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } }
+                    Button { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } } label: {
+                        GlassActionLabel(title: "Open iPhone Settings", systemImage: "gearshape")
+                    }.buttonStyle(.plain)
                 }
             }
     }

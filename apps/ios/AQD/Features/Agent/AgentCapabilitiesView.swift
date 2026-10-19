@@ -13,6 +13,7 @@ struct AgentCapability: Identifiable {
         AgentCapability(id: "theme", symbol: "square.stack", title: "Make themes", detail: "Groups your outfits into a named theme.", prompt: "Make a theme from my outfits"),
         AgentCapability(id: "label", symbol: "tag", title: "Name and label", detail: "Gives outfits and themes a name, occasion and mood.", prompt: "Name my unnamed outfits"),
         AgentCapability(id: "plan", symbol: "calendar", title: "Plan your days", detail: "Drafts a week in the Planner for you to review.", prompt: "Plan my week"),
+        AgentCapability(id: "trip", symbol: "airplane", title: "Plan a trip", detail: "Varied outfits for every day, saved as outfits, a theme and a Planner trip.", prompt: "Plan outfits for my 3 day trip to Boracay"),
         AgentCapability(id: "piece", symbol: "camera", title: "Add a piece", detail: "Attach a photo and review the draft before it joins your closet.", prompt: "Add a new piece from a photo"),
         AgentCapability(id: "find", symbol: "magnifyingglass", title: "Find and count", detail: "Looks up pieces and outfits, and checks what you have worn.", prompt: "What haven’t I worn this month?"),
         AgentCapability(id: "wear", symbol: "checkmark.circle", title: "Log what you wore", detail: "Drafts a wear entry for a day.", prompt: "Log what I wore today"),

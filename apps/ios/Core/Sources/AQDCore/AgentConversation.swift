@@ -22,6 +22,9 @@ public struct AgentMessage: Identifiable, Codable, Equatable, Sendable {
     public var feedback: [AgentFeedback]?
     public var attachments: [AgentAttachment]?
     public var toolSteps: [AgentToolStep]?
+    /// Shown under a reply that still mentions things the owner's closet does not have after one repair.
+    public var groundingNote: String?
+    public var failure: AgentFailure?
     public var versions: [AgentResponseVersion] = []
     public init(role: AgentMessageRole, source: String, status: AgentMessageStatus, attemptID: UUID? = nil) {
         id = UUID(); self.role = role; self.source = source; self.status = status; self.attemptID = attemptID; createdAt = Date()
@@ -60,6 +63,8 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
     public var context = AgentContext()
     public var messages: [AgentMessage] = []
     public var proposals: [AgentActionProposal]?
+    /// A short summary of turns older than the last four, kept so a long chat never sends its whole history.
+    public var summary: String?
     public var pinnedAt: Date?
     public var archivedAt: Date?
     public var isPinned: Bool { pinnedAt != nil }
@@ -103,7 +108,10 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
         messages[i].status = .complete
     }
     public mutating func interruptActiveAttempt() {
-        for i in messages.indices where messages[i].isActive { messages[i].status = .interrupted }
+        for i in messages.indices where messages[i].isActive {
+            messages[i].status = .interrupted
+            messages[i].failure = .make(.interrupted, keptPartialReply: !messages[i].source.isEmpty)
+        }
     }
     public mutating func retry(messageID: UUID) throws -> UUID {
         guard !messages.contains(where: \.isActive), let i = messages.firstIndex(where: { $0.id == messageID && $0.role == .assistant && !$0.isActive }), i == messages.count - 1 else { throw PlanValidationError.invalidRecord }
@@ -111,7 +119,7 @@ public struct AgentConversation: Identifiable, Codable, Equatable, Sendable {
         messages[i].versions.append(AgentResponseVersion(source: messages[i].source, status: messages[i].status, attemptID: messages[i].attemptID))
         messages[i].source = ""; messages[i].status = .waiting; messages[i].attemptID = attempt
         messages[i].firstTextSeconds = nil; messages[i].elapsedSeconds = nil
-        messages[i].failureReason = nil; messages[i].diagnostics = nil
+        messages[i].failureReason = nil; messages[i].diagnostics = nil; messages[i].failure = nil; messages[i].groundingNote = nil
         return attempt
     }
     public func validated() throws {

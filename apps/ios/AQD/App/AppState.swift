@@ -453,7 +453,7 @@ final class AppState {
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1
         let image = UIGraphicsImageRenderer(size: CGSize(width: 20, height: 30), format: format).image { context in
-            UIColor.blue.setFill()
+            UIColor(AppTheme.secondary).setFill()
             context.fill(CGRect(x: 0, y: 0, width: 20, height: 30))
         }
         guard let data = image.jpegData(compressionQuality: 1) else { throw PhotoPreparationError.encodingFailed }
@@ -475,7 +475,7 @@ final class AppState {
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1
         let image = UIGraphicsImageRenderer(size: CGSize(width: 20, height: 30), format: format).image { context in
-            UIColor.blue.setFill()
+            UIColor(AppTheme.secondary).setFill()
             context.fill(CGRect(x: 0, y: 0, width: 20, height: 30))
         }
         guard let data = image.jpegData(compressionQuality: 1) else { throw PhotoPreparationError.encodingFailed }

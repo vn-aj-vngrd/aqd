@@ -28,7 +28,7 @@ struct BodyDetailsView: View {
                         .frame(minWidth: 76, minHeight: 44).layoutPriority(1)
                         .disabled(!input.isValid).accessibilityIdentifier("style.height.units")
                 }.padding(.horizontal, 14).padding(.vertical, 5).frame(minHeight: 54)
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 if !input.isValid {
                     SemanticFeedback(role: .danger, message: "Enter a positive, finite height. Feet must be whole; inches must be less than 12. Clear the fields to leave height unknown.")
                         .accessibilityIdentifier("style.height.error")
@@ -45,7 +45,7 @@ struct BodyDetailsView: View {
                         Spacer(minLength: 0)
                         Image(systemName: "chevron.forward").frame(width: 22).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
                     }.padding(14).frame(maxWidth: .infinity, minHeight: 54, alignment: .leading).contentShape(Rectangle())
-                }.buttonStyle(.plain).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                }.buttonStyle(.plain).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     .accessibilityLabel("Body shape").accessibilityValue(model.draft.answers.body.shape ?? "Not added")
                     .accessibilityIdentifier("style.body.shape").accessibilityFocused($shapeFocused)
             }
@@ -53,7 +53,7 @@ struct BodyDetailsView: View {
                 Toggle("Use body details for suggestions", isOn: Binding(get: { model.draft.answers.body.useForSuggestions }, set: { value in
                     model.update { $0.answers.body.useForSuggestions = value }
                 })).tint(AppTheme.ink).padding(14).frame(minHeight: 60)
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 Text("Off by default. On allows private suggestions to use these details. Apple Intelligence also needs Style context enabled. No automatic cloud sharing.")
                     .font(.subheadline).foregroundStyle(AppTheme.secondary)
             }
@@ -66,7 +66,7 @@ struct BodyDetailsView: View {
                     Image(systemName: model.draft.answers.body.response == .declined ? "checkmark.square.fill" : "square")
                         .foregroundStyle(model.draft.answers.body.response == .declined ? AppTheme.ink : AppTheme.secondary)
                 }.padding(.horizontal, 14).frame(maxWidth: .infinity, minHeight: 54).contentShape(Rectangle())
-            }.buttonStyle(.plain).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 12))
+            }.buttonStyle(.plain).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 .accessibilityValue(model.draft.answers.body.response == .declined ? "Selected" : "Not selected")
         }.disabled(model.pending || model.unknown)
             .toolbar {

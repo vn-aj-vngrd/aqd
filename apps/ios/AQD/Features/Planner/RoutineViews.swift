@@ -76,7 +76,7 @@ struct RoutineOutfitChooser: View {
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 confirmation.disabled(model.pending || model.unknown)
             } }
-            .searchable(text: $query, prompt: "Search outfits").tint(AppTheme.ink)
+            .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search outfits").tint(AppTheme.ink)
             .onAppear { model.state.reloadOutfits(); selected = model.draft.plan.routine?.preferredOutfitIDs ?? [] }
     }
 }

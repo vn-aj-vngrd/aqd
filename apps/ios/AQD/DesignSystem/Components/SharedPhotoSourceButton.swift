@@ -32,7 +32,7 @@ struct SharedPhotoSourceButton<Label: View>: View {
                 Button("Choose from Photos", systemImage: "photo.on.rectangle") { guard !locked else { return }; photos = true }
                 Button("Take photo", systemImage: "camera") { openCamera() }
                 if let onEdit { Divider(); Button("Edit photo", systemImage: "crop") { guard !locked else { return }; onEdit() } }
-                if let onRemove { Button("Remove photo", systemImage: "trash", role: .destructive) { guard !locked else { return }; onRemove() } }
+                if let onRemove { Section { DestructiveMenuButton("Remove photo") { guard !locked else { return }; onRemove() } } }
             } label: { label() }
                 .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
                 .accessibilityLabel(title).disabled(locked || loading)

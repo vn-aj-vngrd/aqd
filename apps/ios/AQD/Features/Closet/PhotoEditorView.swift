@@ -174,7 +174,7 @@ struct PhotoEditorView<Model: PhotoEditingOwner>: View {
                         path.move(to: CGPoint(x: 240 * fraction, y: 0)); path.addLine(to: CGPoint(x: 240 * fraction, y: 320))
                         path.move(to: CGPoint(x: 0, y: 320 * fraction)); path.addLine(to: CGPoint(x: 240, y: 320 * fraction))
                     }
-                }.stroke(.white.opacity(0.8), lineWidth: 1).accessibilityHidden(true)
+                }.stroke(AppTheme.onMedia.opacity(0.8), lineWidth: 1).accessibilityHidden(true)
             }
         }
         .frame(width: 240, height: 320, alignment: .topLeading).background(AppTheme.imageGround)

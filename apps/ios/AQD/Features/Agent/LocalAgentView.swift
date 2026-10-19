@@ -183,9 +183,9 @@ struct AgentConversationView: View {
                                     AccessoryButton(model.conversation.isArchived ? "Restore" : "Archive", systemImage: "archivebox") {
                                         model.setOrganization(model.conversation, archived: !model.conversation.isArchived)
                                     }.disabled(model.active || model.hasPendingOperation)
-                                    Button(role: .destructive) {
-                                        if model.persist() { deletingConversation = model.conversation }
-                                    } label: { AccessoryLabel("Delete", systemImage: "trash", destructive: true) }
+                                }
+                                Section {
+                                    DestructiveMenuButton("Delete") { if model.persist() { deletingConversation = model.conversation } }
                                         .disabled(model.active || model.hasPendingOperation)
                                 }
                             }
@@ -302,6 +302,19 @@ struct AgentConversationView: View {
         else { reviewingID = proposal.id }
     }
 
+    private func performFailure(_ action: AgentFailure.Action, message: AgentMessage) {
+        readAloud.stop()
+        switch action {
+        case .openSettings:
+            if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+        case .shorten, .edit:
+            model.reviseLastRequest(); focused = true
+        default:
+            model.performFailureAction(action, messageID: message.id)
+            if action == .newChat { focused = true }
+        }
+    }
+
     private func sendSuggestion(_ title: String) {
         guard model.canGenerate else { return }
         model.updateDraft(title); model.send()
@@ -352,12 +365,33 @@ struct AgentConversationView: View {
                             retry: { readAloud.stop(); model.send(retrying: message.id) }, showDetails: { readAloud.stop(); details = message },
                             rate: { rate(message, rating: $0) }, toggleRead: { readAloud.toggle(message) }, report: { editFeedback(message, report: true) },
                             saveLook: model.canGenerate ? { saveLook($0, message: message) } : nil,
-                            iterate: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion($0) } : nil)
+                            iterate: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion($0) } : nil,
+                            performFailure: message.id == model.conversation.messages.last?.id ? { performFailure($0, message: message) } : nil, actionsLocked: model.active || model.hasPendingOperation)
+            if let question = openQuestion(for: message) {
+                AgentQuestionCard(question: question, send: { sendSuggestion($0) }).id(message.id)
+            } else if let (question, answer) = answeredQuestion(for: message) {
+                AgentAnsweredQuestion(question: question, answer: answer)
+            }
             ForEach(model.conversation.proposals(for: message)) { proposal in
                 AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) },
-                                 tryAnother: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion("Show me a different option") } : nil)
+                                 tryAnother: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion("Show me a different option") } : nil,
+                                 setTripOptions: { theme, plan in model.setTripOptions(proposal.id, includeTheme: theme, includePlan: plan) })
             }
         }
+    }
+
+    /// Only the latest reply can still be answered; once the owner moves on the buttons disappear.
+    private func openQuestion(for message: AgentMessage) -> AgentQuestion? {
+        guard message.role == .assistant, message.id == model.conversation.messages.last?.id, !message.isActive, model.canGenerate, !model.active else { return nil }
+        return (message.toolSteps ?? []).last { $0.question != nil }?.question
+    }
+
+    /// The question a reply asked and the owner's next message, which answered it.
+    private func answeredQuestion(for message: AgentMessage) -> (AgentQuestion, String)? {
+        guard message.role == .assistant, let question = (message.toolSteps ?? []).last(where: { $0.question != nil })?.question,
+              let i = model.conversation.messages.firstIndex(where: { $0.id == message.id }), i + 1 < model.conversation.messages.count,
+              model.conversation.messages[i + 1].role == .user else { return nil }
+        return (question, model.conversation.messages[i + 1].source)
     }
 
     private var latestUserIndex: Int? { model.conversation.messages.lastIndex { $0.role == .user } }
@@ -430,7 +464,7 @@ struct AgentHistoryView: View {
         switch AgentHistoryPresentation.status(value) {
         case .loading: ProgressView().controlSize(.mini).frame(width: 12).accessibilityLabel("Responding")
         case .complete:
-            Circle().fill(model.isUnread(value) ? Color.blue : AppTheme.secondary.opacity(0.35)).frame(width: 7, height: 7).frame(width: 12)
+            Circle().fill(model.isUnread(value) ? AppTheme.unreadIndicator : AppTheme.secondary.opacity(0.35)).frame(width: 7, height: 7).frame(width: 12)
                 .accessibilityLabel(model.isUnread(value) ? "Unread response" : "Read")
         case .empty: Color.clear.frame(width: 12, height: 7).accessibilityHidden(true)
         case .incomplete: Image(systemName: "exclamationmark.circle").font(.footnote).foregroundStyle(AppTheme.error).frame(width: 12).accessibilityLabel("Response incomplete")
@@ -461,14 +495,14 @@ struct AgentHistoryView: View {
                         }
                         Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
                     }.padding(.horizontal, AppSpacing.large).padding(.vertical, AppSpacing.medium)
-                        .frame(minHeight: 60).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                        .frame(minHeight: 60).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 }
                     .disabled(model.hasPendingOperation)
                     .contextMenu {
                         AccessoryButton("Open conversation", systemImage: "bubble.left") { open(value) }.disabled(model.active || model.hasPendingOperation)
                         AccessoryButton(value.isPinned ? "Unpin" : "Pin", systemImage: value.isPinned ? "pin.slash" : "pin") { model.setOrganization(value, pinned: !value.isPinned) }.disabled(model.active || model.hasPendingOperation)
                         AccessoryButton(value.isArchived ? "Restore" : "Archive", systemImage: "archivebox") { model.setOrganization(value, archived: !value.isArchived) }.disabled(model.active || model.hasPendingOperation)
-                        Button(role: .destructive) { selected = value } label: { AccessoryLabel("Delete", systemImage: "trash", destructive: true) }.disabled(model.active || model.hasPendingOperation)
+                        Section { DestructiveMenuButton("Delete") { selected = value }.disabled(model.active || model.hasPendingOperation) }
                     } preview: {
                         VStack(alignment: .leading, spacing: AppSpacing.medium) {
                             Text(value.title).font(AppTypography.section).lineLimit(2)

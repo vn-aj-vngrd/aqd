@@ -23,6 +23,7 @@ struct AgentActionReviewView: View {
                         else if receipt.kind == "theme" { NavigationLink("Open theme", value: ClosetRoute.theme(receipt.recordID)) }
                         else if receipt.kind == "piece" { NavigationLink("Open piece", value: ClosetRoute.piece(receipt.recordID)) }
                         else if receipt.kind == "profile" { Text("Your Profile now shows these saved details.") }
+                        else if receipt.kind == "trip", case .trip(let draft) = proposal.action { tripReceipt(draft, receipt) }
                         else if receipt.kind == "plan", case .plan(let draft) = proposal.action {
                             PrimaryAction(title: "Open in Planner") { state.plannerDay = draft.plan.start; state.plannerMode = .week; state.selection = 2 }
                         } else { Text("Open Planner or wear history to review the acknowledged records.") }
@@ -62,8 +63,54 @@ struct AgentActionReviewView: View {
             Text("\(draft.plan.start.displayDate) – \(draft.plan.end.displayDate), \(draft.slots.filter { $0.outfit != nil }.count) of \(draft.slots.count) days planned. All days save together or not at all.")
                 .font(.footnote).foregroundStyle(AppTheme.secondary)
             ForEach(draft.slots) { slot in VStack(alignment: .leading) { Text(slot.day.displayDate); Text(slot.day.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary); Text(slot.outfit?.displayName ?? "Intentionally unassigned") } }
+        case .trip(let draft): tripPreview(draft)
         case .wear(let draft): Text(draft.day.displayDate); Text(draft.day.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }; Text("Records actual wear. This is separate from a plan or fit memory.")
         case .availability(let change): Text(change.pieceName).font(.headline); Text("Availability → " + change.value.rawValue.capitalized); Text("Affected future plans will require review; actual wear stays.")
         }
+    }
+
+    @ViewBuilder private func tripPreview(_ draft: AgentTripDraft) -> some View {
+        Text(draft.name).font(.headline)
+        if !draft.destination.isEmpty { Text(draft.destination).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
+        ForEach(Array(draft.days.enumerated()), id: \.element.id) { index, day in
+            VStack(alignment: .leading, spacing: AppSpacing.small) {
+                Text(day.label).font(AppTypography.body.weight(.semibold)).truncated()
+                Text(day.day?.displayDate ?? "Day \(index + 1)").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                ScrollView(.horizontal) {
+                    HStack(spacing: AppSpacing.small) {
+                        ForEach(day.outfit.pieceIDs, id: \.self) { id in
+                            if let piece = state.ownedPieces.first(where: { $0.id == id }) {
+                                VStack(spacing: 4) {
+                                    PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe).frame(width: 64, height: 76)
+                                        .clipShape(RoundedRectangle(cornerRadius: AppRadius.photo))
+                                    Text(piece.displayName).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).truncated().frame(width: 64)
+                                }
+                            }
+                        }
+                    }
+                }.scrollIndicators(.hidden)
+            }.padding(AppSpacing.medium).frame(maxWidth: .infinity, alignment: .leading)
+                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous))
+        }
+        VStack(alignment: .leading, spacing: AppSpacing.small) {
+            Text("Saving adds").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+            Label("\(draft.days.count) \(draft.days.count == 1 ? "outfit" : "outfits") to your closet", systemImage: "checkmark")
+            if proposal?.status == .proposed {
+                Toggle("Group them in a theme called \(draft.theme.name)", isOn: Binding(get: { draft.includeTheme }, set: { model.setTripOptions(id, includeTheme: $0) }))
+                if draft.canPlan { Toggle("Add the trip to your Planner", isOn: Binding(get: { draft.includePlan }, set: { model.setTripOptions(id, includePlan: $0) })) }
+                else { Text("Add dates to place these days on your Planner.").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
+            } else {
+                if draft.includeTheme { Label("Theme \(draft.theme.name)", systemImage: "checkmark") }
+                if draft.includePlan { Label("Planner trip", systemImage: "checkmark") }
+            }
+        }.font(AppTypography.supporting)
+    }
+
+    @ViewBuilder private func tripReceipt(_ draft: AgentTripDraft, _ receipt: AgentActionReceipt) -> some View {
+        if draft.includePlan, let start = draft.plan?.plan.start {
+            PrimaryAction(title: "Open in Planner") { state.plannerDay = start; state.plannerMode = .week; state.selection = 2 }
+        }
+        if draft.includeTheme { NavigationLink("Open theme", value: ClosetRoute.theme(draft.theme.themeID)) }
+        else if let first = draft.days.first { NavigationLink("Open first outfit", value: ClosetRoute.outfit(first.outfit.outfitID)) }
     }
 }

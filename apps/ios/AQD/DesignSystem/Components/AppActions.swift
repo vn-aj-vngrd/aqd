@@ -155,6 +155,52 @@ struct ToolbarForwardAction: View {
     }
 }
 
+/// A large glass button for welcome and guided flows. `prominent` is dark tinted glass for the main step; otherwise clear glass.
+/// Reduce Transparency and Increase Contrast fall back to a solid fill or a white surface with a hairline.
+struct GlassActionLabel: View {
+    let title: String
+    var systemImage: String? = nil
+    var prominent = false
+    var height: CGFloat = 54
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    var body: some View {
+        HStack(spacing: AppSpacing.small) {
+            if let systemImage { Image(systemName: systemImage).font(.body.weight(.medium)).accessibilityHidden(true) }
+            Text(title).font(AppTypography.action)
+        }.foregroundStyle(prominent ? AppTheme.onPrimary : AppTheme.ink)
+            .padding(.horizontal, AppSpacing.large).frame(maxWidth: .infinity, minHeight: height).contentShape(Capsule())
+            .modifier(GlassCapsuleSurface(prominent: prominent, reduceTransparency: reduceTransparency, reduceMotion: reduceMotion, contrast: contrast))
+    }
+}
+
+private struct GlassCapsuleSurface: ViewModifier {
+    let prominent: Bool, reduceTransparency: Bool, reduceMotion: Bool
+    let contrast: ColorSchemeContrast
+
+    @ViewBuilder func body(content: Content) -> some View {
+        if #available(iOS 26, *), !reduceTransparency, contrast != .increased {
+            if prominent { content.glassEffect(.regular.tint(AppTheme.primaryFill).interactive(!reduceMotion), in: Capsule()) }
+            else { content.glassEffect(.regular.interactive(!reduceMotion), in: Capsule()) }
+        } else if prominent {
+            content.background(AppTheme.primaryFill, in: Capsule())
+        } else {
+            content.background { Capsule().fill(AppTheme.surface).overlay(Capsule().strokeBorder(contrast == .increased ? AppTheme.controlBoundary : AppTheme.divider, lineWidth: 1)) }
+        }
+    }
+}
+
+/// The one destructive menu item: red icon and title, always placed in its own `Section` so a divider sits above it.
+struct DestructiveMenuButton: View {
+    let title: String
+    let systemImage: String
+    let action: () -> Void
+    init(_ title: String, systemImage: String = "trash", action: @escaping () -> Void) { self.title = title; self.systemImage = systemImage; self.action = action }
+    var body: some View { Button(role: .destructive, action: action) { AccessoryLabel(title, systemImage: systemImage, destructive: true) } }
+}
+
 /// Native menu symbols resolve semantic gray or danger color for the selected appearance.
 struct AccessoryLabel: View {
     let title: String

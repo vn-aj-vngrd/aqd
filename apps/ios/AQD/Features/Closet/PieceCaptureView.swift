@@ -146,7 +146,7 @@ struct PieceCaptureView: View {
                 DisclosureRow(title: "More details", value: "Optional") {
                     nameEditing = false
                     showDetails = true
-                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                 if let error = model.errorText {
                     // This legacy channel mixes failures/conflicts/unknown writes.
                     // Keep its exact recovery copy; do not infer a severity from prose.
@@ -241,7 +241,7 @@ struct PieceCaptureView: View {
                 }
             }
             .frame(maxWidth: .infinity).frame(height: image == nil ? 280 : 320)
-            .background(AppTheme.imageGround, in: RoundedRectangle(cornerRadius: AppRadius.field))
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
             .overlay(alignment: .bottomLeading) {
                 if image != nil {
                     HStack(spacing: AppSpacing.small) {
@@ -257,8 +257,7 @@ struct PieceCaptureView: View {
                     Menu {
                         Button("Choose from Photos", systemImage: "photo.on.rectangle") { nameEditing = false; pickerPresented = true }
                         Button("Take photo", systemImage: "camera") { nameEditing = false; requestCamera() }
-                        Divider()
-                        Button("Remove photo", systemImage: "trash", role: .destructive) { model.removePhoto(); photoFocused = true }
+                        Section { DestructiveMenuButton("Remove photo") { model.removePhoto(); photoFocused = true } }
                     } label: {
                         Image(systemName: "ellipsis").font(.body.weight(.medium)).foregroundStyle(AppTheme.ink)
                             .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)

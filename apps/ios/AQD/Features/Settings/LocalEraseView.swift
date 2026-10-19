@@ -97,7 +97,7 @@ struct LocalEraseView: View {
                         .padding(.horizontal, AppControlMetrics.fieldPadding)
                         .padding(.vertical, AppSpacing.xSmall)
                 }
-            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.group))
+            }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
 
             Text("Your original Photos and exported copies stay.")
                 .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
@@ -109,7 +109,7 @@ struct LocalEraseView: View {
                     .focused($confirmationFocused).submitLabel(.done)
                     .onSubmit { confirmationFocused = false }
                     .font(AppTypography.body).padding(AppControlMetrics.fieldPadding)
-                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.field))
+                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
                     .accessibilityLabel("Type RESET to confirm")
                 Text("This can’t be undone. There is no automatic backup.")
                     .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
