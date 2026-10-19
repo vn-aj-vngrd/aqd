@@ -2,7 +2,7 @@ import Foundation
 
 /// What the owner is asking for. Decided once per turn by rules, so similar prompts always get the same tools and the same instructions.
 public enum AgentIntent: String, Codable, CaseIterable, Sendable {
-    case chat, show, find, stats, whatToWear, suggestOutfit, planTrip, planDays, theme, relabel, editPiece, recordWear, profile, addPiece, outOfScope
+    case chat, show, find, stats, whatToWear, suggestOutfit, planTrip, planDays, theme, relabel, editPiece, editOutfit, editTheme, editPlan, tidy, recordWear, profile, addPiece, outOfScope
 
     /// The tools this intent may call, most relevant first and never more than three so their definitions always fit the window.
     /// `weatherAvailable` adds the weather tool where a forecast changes the answer.
@@ -19,6 +19,10 @@ public enum AgentIntent: String, Codable, CaseIterable, Sendable {
         case .theme: return [.proposeTheme, .findRecords, .askUser]
         case .relabel: return [.relabel, .askUser]
         case .editPiece: return [.editCloset, .askUser]
+        case .tidy: return [.tidyCloset, .findRecords, .askUser]
+        case .editOutfit: return [.editOutfit, .findRecords, .askUser]
+        case .editTheme: return [.editTheme, .findRecords, .askUser]
+        case .editPlan: return [.editPlan, .findRecords, .askUser]
         case .recordWear: return [.recordWear, .askUser]
         case .profile: return [.editProfile]
         case .addPiece: return [.addPieceFromPhoto]
@@ -50,7 +54,7 @@ public enum AgentIntent: String, Codable, CaseIterable, Sendable {
 
 /// The model-facing tool names. Mirrors the app's tool list without depending on it.
 public enum AgentToolName: String, CaseIterable, Sendable {
-    case findRecords, showRecords, wearStats, weatherFor, editCloset, editOutfit, editTheme, editPlan, proposePlan, recordWear, editProfile, addPieceFromPhoto
+    case findRecords, showRecords, wearStats, weatherFor, editCloset, tidyCloset, editOutfit, editTheme, editPlan, proposePlan, recordWear, editProfile, addPieceFromPhoto
     case suggestOutfit, proposeOutfit, proposeTheme, relabel, proposeTrip, askUser
 }
 
@@ -151,6 +155,18 @@ struct Rules {
         if matches(#"\b(change|update|set) my name\b"#) { return (.profile, true) }
         // 4. Recording what was worn (a statement or a log request, not a question about history).
         if matches(#"\b(log|record|mark|note|save|add)\b.*\b(wore|worn|wearing|wear)\b"#) || matches(#"^(i|we) (just )?(wore|wear|am wearing|put on|have on|threw on)\b"#) || matches(#"^im (just )?wearing\b"#) || (has(["i wore"]) && !asksQuestion) || has(["log my outfit", "log what i wore", "record what i wore", "record my outfit"]) { return (.recordWear, true) }
+        // 4a. Changing what is inside a saved outfit, theme or plan: add, remove or swap a piece or outfit, or set one day of a plan.
+        let weekday = #"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|today|tomorrow|\d{4}-\d{2}-\d{2})"#
+        if matches(#"^(change|set|put|swap|move|switch|use)\b.*\b"# + weekday + #"\b.*\b(in|of|on)\b.*\b(plan|week|schedule)\b"#) || matches(#"^(put|set|use)\b.*\b(on|for)\b.*\b"# + weekday + #"\b.*\b(in|of|on)\b.*\bplan\b"#) { return (.editPlan, true) }
+        let notCloset = !matches(#"\b(from|out of|in|to|into) (my )?(closet|wardrobe)\b"#)
+        let adding = matches(#"^(add|include|put)\b.+\b(to|into)\b"#) && !matches(#"^put (together|on|away)\b"#) && !matches(#"^add (this|that|these|those|a new|an new)\b"#)
+            && !matches(#"\b(to|into) (my )?(planner|calendar|favorites|favourites|laundry|cart|list)\b"#)
+        let removing = matches(#"^(remove|take out|take|drop|leave out)\b.+\b(from|out of)\b"#)
+        if (adding || removing) && notCloset && has(["theme", "collection"]) { return (.editTheme, true) }
+        if notCloset, removing || (adding && (has(["outfit", "look"]) || has(Self.closetWords))) { return (.editOutfit, true) }
+        if matches(#"^(swap|replace|switch)\b.+\b(for|with)\b.+\b(in|from|on)\b"#) || matches(#"^(swap|replace|switch)\b.+\b(in|from|on)\b.+\b(for|with)\b"#) { return (.editOutfit, true) }
+        // 4b. Tidying: archive, restore or delete named pieces. A request to remove an outfit, theme or plan is not a tidy.
+        if matches(#"\b(archive|unarchive|restore|delete|remove|get rid of|throw out|toss|declutter|clean out|clear out|tidy)\b"#), has(Self.closetWords), !has(["outfit", "look", "theme", "plan", "trip", "entry", "chat", "conversation", "photo", "profile", "account"]) { return (.tidy, true) }
         // 5. Changes to existing records.
         let editVerb = has(["rename", "relabel", "retitle", "call it", "call this", "change", "edit", "update", "set", "mark", "swap", "replace", "switch", "turn", "put", "move", "flag"])
         if editVerb {

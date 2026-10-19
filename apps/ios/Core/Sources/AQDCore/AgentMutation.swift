@@ -1,7 +1,7 @@
 import Foundation
 
 public enum AgentMutationKind: String, Codable, CaseIterable, Sendable {
-    case addPiece, editPiece, createOutfit, editOutfit, createTheme, editTheme, createPlan, editPlan, recordWear, setAvailability, updateProfile, relabel, createTrip
+    case addPiece, editPiece, createOutfit, editOutfit, createTheme, editTheme, createPlan, editPlan, recordWear, setAvailability, updateProfile, relabel, createTrip, tidyPieces
     public var requiredSources: [AgentDataSource] {
         switch self {
         case .createOutfit, .editOutfit: [.pieces, .outfits]
@@ -10,7 +10,7 @@ public enum AgentMutationKind: String, Codable, CaseIterable, Sendable {
         case .createPlan, .editPlan: [.planner, .outfits, .pieces]
         case .createTrip: [.pieces, .outfits, .themes, .planner]
         case .recordWear: [.wear, .pieces]
-        case .setAvailability, .editPiece, .addPiece: [.pieces]
+        case .setAvailability, .editPiece, .addPiece, .tidyPieces: [.pieces]
         case .updateProfile: [.profile]
         }
     }
@@ -47,15 +47,17 @@ public struct AgentMutationRequest: Codable, Equatable, Sendable {
     public var trip: AgentTripSpec?
     /// For recordWear: a saved outfit whose pieces were worn, instead of a list of pieces.
     public var wearOutfitID: UUID?
+    /// For tidyPieces: whether the named pieces are archived, restored or deleted.
+    public var tidyOp: AgentTidyOp?
     public init(kind: AgentMutationKind, targetID: UUID? = nil, name: String? = nil, caption: String? = nil, color: String? = nil, brand: String? = nil,
                 pieceIDs: [UUID] = [], outfitIDs: [UUID] = [], date: String? = nil,
                 assignments: [AgentPlanAssignment] = [], availability: PieceAvailability? = nil,
                 occasion: String? = nil, mood: String? = nil, themeDescription: String? = nil, pinnedIDs: [UUID]? = nil,
-                category: String? = nil, attachmentID: UUID? = nil, rangeStart: String? = nil, rangeEnd: String? = nil, trip: AgentTripSpec? = nil, wearOutfitID: UUID? = nil) {
+                category: String? = nil, attachmentID: UUID? = nil, rangeStart: String? = nil, rangeEnd: String? = nil, trip: AgentTripSpec? = nil, wearOutfitID: UUID? = nil, tidyOp: AgentTidyOp? = nil) {
         self.kind = kind; self.targetID = targetID; self.name = name; self.caption = caption; self.color = color; self.brand = brand
         self.pieceIDs = pieceIDs; self.outfitIDs = outfitIDs; self.date = date; self.assignments = assignments; self.availability = availability
         self.occasion = occasion; self.mood = mood; self.themeDescription = themeDescription; self.pinnedIDs = pinnedIDs
-        self.category = category; self.attachmentID = attachmentID; self.rangeStart = rangeStart; self.rangeEnd = rangeEnd; self.trip = trip; self.wearOutfitID = wearOutfitID
+        self.category = category; self.attachmentID = attachmentID; self.rangeStart = rangeStart; self.rangeEnd = rangeEnd; self.trip = trip; self.wearOutfitID = wearOutfitID; self.tidyOp = tidyOp
     }
     private static func day(_ text: String, timeZone: TimeZone) throws -> LocalPlanDay {
         let parts = text.split(separator: "-", omittingEmptySubsequences: false).compactMap { Int($0) }
@@ -162,6 +164,13 @@ public struct AgentMutationRequest: Codable, Equatable, Sendable {
             guard let availability, let piece = pieces.first(where: { $0.id == targetID && !$0.isArchived }) else { throw PlanValidationError.invalidRecord }
             return .availability(AgentAvailabilityChange(piece: piece, value: availability))
         case .relabel: throw PlanValidationError.invalidRecord
+        case .tidyPieces:
+            // Archived pieces are passed in too, so a restore can name them. Nothing is named twice and nothing unknown is accepted.
+            guard let tidyOp, !pieceIDs.isEmpty, pieceIDs.count <= 12 else { throw PlanValidationError.invalidRecord }
+            let targets = pieceIDs.compactMap { id in pieces.first { $0.id == id } }
+            guard targets.count == pieceIDs.count else { throw PlanValidationError.invalidRecord }
+            guard targets.allSatisfy({ tidyOp == .unarchive ? $0.isArchived : !$0.isArchived }) else { throw PlanValidationError.invalidRecord }
+            return .tidy(AgentTidyChange(op: tidyOp, pieces: targets))
         case .updateProfile:
             guard name != nil || caption != nil, identity == nil || identity?.ownerID == ownerID else { throw PlanValidationError.invalidRecord }
             var draft = LocalIdentityDraft(ownerID: ownerID, base: identity)

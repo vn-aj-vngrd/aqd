@@ -36,6 +36,7 @@ import Foundation
             case .plan(let draft): [draft.plan.name]
             case .trip(let draft): [draft.name, draft.theme.name] + draft.days.map { $0.outfit.name }
             case .piece(let change): [change.draft.name]
+            case .tidy(let change): change.items.map(\.name)
             case .wear, .availability, .profile: []
             }
         }

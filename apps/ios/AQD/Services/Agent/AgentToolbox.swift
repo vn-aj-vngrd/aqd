@@ -33,7 +33,7 @@ extension AgentToolHandlers {
 }
 
 enum AgentToolID: String, CaseIterable, Sendable {
-    case findRecords, wearStats, weatherFor, editCloset, editOutfit, editTheme, editPlan, proposePlan, recordWear, editProfile, addPieceFromPhoto
+    case findRecords, wearStats, weatherFor, editCloset, tidyCloset, editOutfit, editTheme, editPlan, proposePlan, recordWear, editProfile, addPieceFromPhoto
     case suggestOutfit, proposeOutfit, proposeTheme, relabel, showRecords, proposeTrip, askUser
 
     var isProposal: Bool { ![.findRecords, .showRecords, .wearStats, .weatherFor, .askUser].contains(self) }

@@ -8,6 +8,8 @@ struct AgentFastPath {
     var calls: [String] = []
     var note: String
     var fallback: String
+    /// True when the sentence is exactly what the owner should read, so the model is not asked to write it. A tidy always is: a delete must never be framed as an archive.
+    var exact = false
 }
 
 /// What the app decided for one turn before the model runs: the intent, the instructions, the tools and the reply budget.

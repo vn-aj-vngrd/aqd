@@ -60,7 +60,13 @@ struct AgentStepRow: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: AppSpacing.small) {
             Image(systemName: step.rejection == nil ? symbol : "exclamationmark.circle").font(.caption).foregroundStyle(AppTheme.controlIcon).frame(width: 18)
-            Text(step.summary).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(step.summary).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).fixedSize(horizontal: false, vertical: true)
+                // What the answer was based on, by name.
+                if let read = step.read, !read.isEmpty {
+                    Text(read.joined(separator: ", ")).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary).fixedSize(horizontal: false, vertical: true)
+                }
+            }
         }.accessibilityElement(children: .combine)
     }
 }

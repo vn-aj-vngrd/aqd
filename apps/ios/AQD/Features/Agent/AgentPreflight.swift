@@ -15,7 +15,7 @@ enum AgentPreflight {
     /// Reads the request the way a person would: a plain command, or a request for a look. Nil leaves everything to the model and its tools.
     func preflight(for intent: AgentIntent, request: String, index: AgentRecordIndex) -> AgentPreflight? {
         switch intent {
-        case .editPiece, .relabel, .recordWear, .profile, .theme: return AgentCommand.parse(request).map(AgentPreflight.command)
+        case .editPiece, .relabel, .recordWear, .profile, .theme, .tidy, .editOutfit, .editTheme, .editPlan: return AgentCommand.parse(request).map(AgentPreflight.command)
         case .planDays: return AgentCommand.parse(request).map(AgentPreflight.command)
         case .planTrip:
             let recent = (conversation.messages.filter { $0.role == .user }.suffix(3).map(\.source) + [request]).joined(separator: ". ")
@@ -83,6 +83,33 @@ enum AgentPreflight {
                 let outfits = entries.filter { $0.kind == .outfit }
                 guard outfits.isEmpty || (outfits.count == 1 && entries.count == 1) else { return nil }
                 request = AgentMutationRequest(kind: .recordWear, pieceIDs: outfits.isEmpty ? entries.map(\.id) : [], date: LocalPlanDay(date: day).key, wearOutfitID: outfits.first?.id); tool = .recordWear
+            case .addTo(let subjects, let container):
+                target = container
+                (request, tool) = try membership(try find(container, [.outfit, .theme]), subjects: subjects, mode: .add, find: find)
+            case .removeFrom(let subjects, let container):
+                target = container
+                (request, tool) = try membership(try find(container, [.outfit, .theme]), subjects: subjects, mode: .remove, find: find)
+            case .swapIn(let old, let new, let container):
+                target = container
+                (request, tool) = try membership(try find(container, [.outfit, .theme]), subjects: [old], mode: .swap(new), find: find)
+            case .setPlanDay(let planName, let word, let outfitName):
+                target = planName
+                let planEntry = try find(planName, [.plan]), outfit = try find(outfitName, [.outfit])
+                guard let plan = try store.planDefinitions().first(where: { $0.id == planEntry.id }),
+                      let key = AgentPlanDayWord.key(word, in: (try? plan.days()) ?? []) else { throw AgentToolRejection.notFound(word + " in " + planName) }
+                request = AgentMutationRequest(kind: .editPlan, targetID: plan.id, assignments: [AgentPlanAssignment(date: key, outfitID: outfit.id)]); tool = .editPlan
+            case .tidy(let op, let subjects):
+                // An archived piece is named only to restore it; archiving or deleting one that is already archived finds nothing.
+                // "Delete my Office day outfit" names a saved outfit, theme or plan, which this tidy does not remove.
+                for subject in subjects {
+                    if case .found(let other) = index.resolve(subject, kinds: [.outfit, .theme, .plan]), case .notFound = index.resolve(subject, kinds: [.piece]) {
+                        return AgentFastPath(note: "", fallback: "“\(other.name)” is a saved \(other.kind.rawValue), not a piece. I can archive or delete pieces here; remove outfits, themes and plans from Closet or Planner.", exact: true)
+                    }
+                }
+                let entries = try subjects.map { target = $0; return try find($0, [.piece]) }
+                let archived = entries.map { $0.name.hasSuffix(AgentKnowledgeSource.archivedSuffix) }
+                guard archived.allSatisfy({ $0 == (op == .unarchive) }) else { throw AgentToolRejection.notFound(target) }
+                request = AgentMutationRequest(kind: .tidyPieces, pieceIDs: entries.reduce(into: [UUID]()) { if !$0.contains($1.id) { $0.append($1.id) } }, tidyOp: op); tool = .tidyCloset
             case .planDays(let count):
                 guard let draft = planDraft(days: count) else { return nil }
                 request = draft; tool = .proposePlan
@@ -97,9 +124,67 @@ enum AgentPreflight {
                 request = AgentMutationRequest(kind: .createTheme, name: name ?? about.prefix(1).uppercased() + about.dropFirst() + " looks", outfitIDs: outfits.map(\.id)); tool = .proposeTheme
             }
         } catch let rejection as AgentToolRejection {
-            return rejectionPath(rejection, target: target)
+            var path = rejectionPath(rejection, target: target)
+            // A name that fits nothing or two things is answered by the app, never left for the model to describe.
+            switch command { case .addTo, .removeFrom, .swapIn, .setPlanDay, .tidy: path.exact = true; default: break }
+            return path
         }
-        return try prepareRouted(request, tool: tool, target: target, attempt: attempt, conversationID: conversationID)
+        var path = try prepareRouted(request, tool: tool, target: target, attempt: attempt, conversationID: conversationID)
+        switch command {
+        case .addTo, .removeFrom, .swapIn, .setPlanDay:
+            // The sentence is the app's own, so what it says always matches what approving does.
+            if path != nil {
+                path?.exact = true
+                if let proposal = conversation.proposals?.last(where: { $0.attemptID == attempt }) {
+                    path?.fallback = "I prepared a review. " + proposal.effectiveAction.savesSummary + " Review it below; nothing is saved yet."
+                }
+            }
+        default: break
+        }
+        if case .tidy = command, path != nil {
+            path?.exact = true
+            if let proposal = conversation.proposals?.last(where: { $0.attemptID == attempt }), case .tidy(let change) = proposal.action { path?.fallback = Self.tidySentence(change) }
+        }
+        return path
+    }
+
+    private enum Membership { case add, remove, swap(String) }
+
+    /// Adds, removes or swaps members of a saved outfit (pieces) or theme (outfits), always sending the complete new list the review replaces.
+    private func membership(_ container: AgentRecordIndex.Entry, subjects: [String], mode: Membership,
+                            find: (String, [AgentRecordKind]) throws -> AgentRecordIndex.Entry) throws -> (AgentMutationRequest, AgentToolID) {
+        let memberKind: AgentRecordKind = container.kind == .outfit ? .piece : .outfit
+        let named = try subjects.map { try find($0, [memberKind]).id }
+        var members: [UUID]
+        switch container.kind {
+        case .outfit: members = try store.outfit(id: container.id)?.pieceIDs ?? { throw AgentToolRejection.unknownRecord(container.id) }()
+        case .theme: members = try store.themes().first { $0.id == container.id }?.outfitIDs ?? { throw AgentToolRejection.unknownRecord(container.id) }()
+        default: throw AgentToolRejection.invalidArguments
+        }
+        let before = members
+        switch mode {
+        case .add: for id in named where !members.contains(id) { members.append(id) }
+        case .remove: members.removeAll { named.contains($0) }
+        case .swap(let replacement):
+            let new = try find(replacement, [memberKind]).id
+            guard let old = named.first, members.contains(old) else { throw AgentToolRejection.invalidArguments }
+            members = members.map { $0 == old ? new : $0 }.reduce(into: [UUID]()) { if !$0.contains($1) { $0.append($1) } }
+        }
+        guard members != before, !members.isEmpty else { throw AgentToolRejection.invalidArguments }
+        return container.kind == .outfit
+            ? (AgentMutationRequest(kind: .editOutfit, targetID: container.id, pieceIDs: members), .editOutfit)
+            : (AgentMutationRequest(kind: .editTheme, targetID: container.id, outfitIDs: members), .editTheme)
+    }
+
+    /// The one sentence under a tidy review, written by the app so its wording always matches what approving does.
+    nonisolated static func tidySentence(_ change: AgentTidyChange) -> String {
+        let names = change.items.map(\.name)
+        let list = names.count > 1 ? names.dropLast().joined(separator: ", ") + " and " + (names.last ?? "") : names.first ?? ""
+        switch change.op {
+        case .archive: return "Ready to archive \(list). Untick any you want to keep. Nothing changes until you approve, and you can undo it."
+        case .unarchive: return "Ready to restore \(list) to your closet. Nothing changes until you approve."
+        case .delete: return "Ready to permanently delete \(list). You’ll see what it affects before anything is deleted, and it can’t be undone."
+        }
     }
 
     private func rejectionPath(_ rejection: AgentToolRejection, target: String) -> AgentFastPath {

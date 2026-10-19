@@ -15,6 +15,8 @@ Use these terms in code, docs and UI. V1 is one private device; V2 terms are mar
 | Today | First destination: a personal stack of in-app cards (not system widgets). |
 | Planner | Calendar workspace for plans, routines, trips and packing. |
 | Agent | Conversational assistant over authorized local context; every change is a reviewed draft. |
+| Change set | One review of related changes the Agent prepared, such as archiving several pieces. Rows can be unticked; only ticked rows apply. |
+| Receipt | The acknowledged record of an applied change. It can offer Undo while the record is unchanged since. |
 | Fit memory | Private dated journal entry in Profile: a photo and/or linked outfit snapshot plus a note. Not wear. |
 | Local profile | Optional name, photo, caption and style preferences on this device. Not an account. |
 | Insight | An observation with a stated basis, window and denominator. |
