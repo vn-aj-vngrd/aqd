@@ -45,7 +45,7 @@ Reuse these; a hand-built equivalent is a defect.
 | Compact tappable white control or round icon button | `glassControlSurface(shape)` |
 | Text input, picker with label and validation | `LabeledField`, `LabeledControl` |
 | Disclosure row, grouped rows | `DisclosureRow`, `SurfaceGroup` |
-| Photo source | Empty: direct Take photo and Photos buttons. With a photo: a compact ellipsis menu (`SharedPhotoSourceButton`) plus visible Crop and Cut out buttons. Never use a large card as a menu label: the system glass menu morphs from its anchor and clips. |
+| Photo source | Empty: `PhotoSourceChoices`, direct Take photo and Photos buttons in equal halves and the same glass. With a photo: a compact ellipsis menu (`SharedPhotoSourceButton`) plus visible Crop and Cut out buttons. Never use a large card as a menu label: the system glass menu morphs from its anchor and clips. |
 | Pick one outfit / several pieces inline | `OutfitSelectionStrip`, `PieceSelectionStrip`, with `selectionIndicator` |
 | Theme cover collage | `ThemeCover` |
 | Empty, error, progress | `AppEmptyState`, `SemanticFeedback`, `OperationProgress` |

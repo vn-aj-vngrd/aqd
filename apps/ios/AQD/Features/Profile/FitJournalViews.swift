@@ -218,10 +218,6 @@ struct FitEditorView: View {
             onRemove: model.draft.value.photoID == nil ? nil : { removePhoto = true }, launch: $model.launch, onData: model.importPhoto, label: label)
     }
 
-    private func sourceLabel(_ title: String, systemImage: String) -> some View {
-        Label(title, systemImage: systemImage).compactControl()
-    }
-
     private var mediaContent: some View {
         let hasMedia = model.draft.value.photoID != nil || model.draft.value.outfit != nil
         return VStack(alignment: .leading, spacing: AppSpacing.medium) {
@@ -235,7 +231,11 @@ struct FitEditorView: View {
                         Text("Add a photo").font(AppTypography.detailTitle)
                         Text("Or link an outfit below to keep a look you want to remember.")
                             .font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).multilineTextAlignment(.center)
-                        photoSource { sourceLabel("Add photo", systemImage: "photo.on.rectangle") }
+                        // The source button stays mounted so the two direct choices can open it.
+                        photoSource { EmptyView() }.frame(height: 0).accessibilityHidden(true)
+                        PhotoSourceChoices(onCamera: { model.launch = .camera }, onPhotos: { model.launch = .photos },
+                                           cameraID: "fit.takePhoto", photosID: "fit.addPhoto")
+                            .disabled(model.locked)
                     }.padding(AppSpacing.large)
                 }
             }
