@@ -34,7 +34,7 @@ struct LocalRestoreView: View {
                     Text("Check the restore outcome").font(AppTypography.section)
                     Text(model.error ?? "Your operation needs reconciliation before another replacement.")
                 }
-            }.padding(20) }.background(AppTheme.canvas)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(20) }.background(AppTheme.canvas.ignoresSafeArea())
                 .overlay { loadingState }
                 .navigationTitle("Restore closet").navigationBarTitleDisplayMode(.inline)
                 .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -68,11 +68,11 @@ struct LocalRestoreView: View {
         case .validating:
             LoadingStatePage(title: "Validating archive",
                              description: Text("Checking records, media, sizes and schema in a separate copy. Your current closet stays in place."))
-                .background(AppTheme.canvas)
+                .background(AppTheme.canvas.ignoresSafeArea())
         case .committing:
             LoadingStatePage(title: "Restoring your closet",
                              description: Text("Keep AQD open. Your previous closet is retained while the validated copy becomes active."))
-                .background(AppTheme.canvas)
+                .background(AppTheme.canvas.ignoresSafeArea())
         default: EmptyView()
         }
     }

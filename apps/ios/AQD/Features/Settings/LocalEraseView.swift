@@ -27,7 +27,8 @@ struct LocalEraseView: View {
                     Text("Check the reset outcome").font(.title2)
                     Text(model.error ?? "Check the same operation before resetting again. A completed switch cannot be undone by cancelling.")
                 }
-            }.padding(AppSpacing.screen) }.scrollDismissesKeyboard(.interactively).background(AppTheme.canvas)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(AppSpacing.screen) }.scrollDismissesKeyboard(.interactively)
+                .background(AppTheme.canvas.ignoresSafeArea())
                 .overlay { loadingState }
                 .navigationTitle("Reset data").navigationBarTitleDisplayMode(.inline)
                 .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -72,10 +73,10 @@ struct LocalEraseView: View {
         switch model.phase {
         case .choose, .validating:
             LoadingStatePage(title: "Preparing reset review", description: Text("Counting what a reset would remove. Nothing changes yet."))
-                .background(AppTheme.canvas)
+                .background(AppTheme.canvas.ignoresSafeArea())
         case .committing:
             LoadingStatePage(title: "Resetting local data", description: Text("Keep AQD open while your local data resets."))
-                .background(AppTheme.canvas)
+                .background(AppTheme.canvas.ignoresSafeArea())
         default: EmptyView()
         }
     }
