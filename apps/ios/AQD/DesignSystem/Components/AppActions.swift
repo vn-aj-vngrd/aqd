@@ -17,10 +17,8 @@ struct PrimaryAction: View {
             guard isEnabled && !isPending else { return }
             action()
         } label: {
+            // Pending: a spinner replaces the label and icon. They stay in the layout, hidden, so the button never changes size.
             HStack(spacing: AppSpacing.small) {
-                if isPending {
-                    ProgressView().tint(usesAccent ? activeForeground : AppTheme.secondary).accessibilityHidden(true)
-                }
                 if let systemImage {
                     Image(systemName: systemImage).accessibilityHidden(true)
                 }
@@ -28,6 +26,8 @@ struct PrimaryAction: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            .opacity(isPending ? 0 : 1)
+            .overlay { if isPending { ProgressView().tint(usesAccent ? activeForeground : AppTheme.secondary).accessibilityHidden(true) } }
             .padding(.horizontal, AppSpacing.screen)
             .padding(.vertical, compact ? AppSpacing.small : AppSpacing.medium)
             .frame(maxWidth: .infinity, minHeight: compact ? AppControlMetrics.minimumTarget : AppControlMetrics.actionHeight)
@@ -122,7 +122,10 @@ struct ToolbarSaveAction: View {
             guard isEnabled && !isPending else { return }
             action()
         } label: {
+            // Pending: a spinner replaces the title. The title stays in the layout, hidden, so the button keeps its width.
             Text(title).font(AppTypography.action).foregroundStyle(AppTheme.onPrimary)
+                .opacity(isPending ? 0 : 1)
+                .overlay { if isPending { ProgressView().tint(AppTheme.onPrimary).accessibilityHidden(true) } }
         }
         .buttonStyle(.borderedProminent).buttonBorderShape(.capsule).tint(AppTheme.primaryFill)
         .disabled(isPending || !isEnabled)

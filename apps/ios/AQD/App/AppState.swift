@@ -534,17 +534,11 @@ final class CaptureModel: Identifiable {
     var saved: WardrobePiece?
     /// Called after a save is acknowledged, so a caller that prefilled the draft can show its own receipt.
     @ObservationIgnored var onSaved: (@MainActor (WardrobePiece) -> Void)?
-    /// Progress of the automatic cutout for the draft photo.
-    enum CutoutState: Equatable { case idle, working, applied, noSubject, failed }
-    var cutoutState = CutoutState.idle
     /// Plain-language photo quality hints for the current draft photo.
     var photoHints: [PhotoQualityHint] = []
-    /// True when the mode is "Ask each time" and a fresh photo is waiting for a decision.
-    var offersCutout = false
     /// Set when the editor is opened straight to the cutout (for example from a piece's menu).
     var opensCutout = false
     @ObservationIgnored private unowned let state: AppState
-    @ObservationIgnored private var cutoutTask: Task<Void, Never>?
     @ObservationIgnored private let preparer = PhotoPreparer()
     @ObservationIgnored private var importTask: Task<Void, Never>?
     @ObservationIgnored private var previewCache: (id: UUID, recipe: PhotoEditRecipe, data: Data)?
@@ -583,6 +577,9 @@ final class CaptureModel: Identifiable {
     }
 
     var isImporting: Bool { importGate.pending != nil }
+    /// True while a photo chosen or taken just now is being loaded and prepared (not while an edit is applied), so the editor can open straight away.
+    private(set) var isLoadingNewPhoto = false
+    @ObservationIgnored private var importGeneration = 0
     var canSave: Bool { saved == nil && (draft.baseRevision == nil || hasUnsavedChanges) && (try? draft.validated()) != nil && !isSaving && !isImporting && !draftSaveFailed }
     var receiptIsHistorical: Bool {
         guard let saved, let current = try? state.store?.piece(id: saved.id) else { return false }
@@ -630,8 +627,11 @@ final class CaptureModel: Identifiable {
         cancelImport()
         let request = importGate.begin(for: draft)
         if errorText == Self.photoImportError { errorText = nil }
+        let generation = importGeneration
+        isLoadingNewPhoto = true
         importTask = Task { [weak self] in
             guard let self else { return }
+            defer { if generation == importGeneration { isLoadingNewPhoto = false } }
             do {
                 guard let data = try await load() else {
                     if importGate.canAccept(request, for: draft) { importGate.cancel() }
@@ -645,7 +645,7 @@ final class CaptureModel: Identifiable {
                 persistDraft()
                 if !draftSaveFailed {
                     completedPhotoImportID = photoID
-                    photoImported(width: prepared.pixelWidth, height: prepared.pixelHeight)
+                    photoHints = PhotoQuality.assess(pixelWidth: prepared.pixelWidth, pixelHeight: prepared.pixelHeight)
                 }
             } catch {
                 guard importGate.canAccept(request, for: draft) else { return }
@@ -656,7 +656,8 @@ final class CaptureModel: Identifiable {
     }
 
     func cancelImport() {
-        cancelCutout()
+        importGeneration += 1
+        isLoadingNewPhoto = false
         importGate.cancel()
         importTask?.cancel()
         importTask = nil
@@ -809,7 +810,8 @@ extension CaptureModel {
     func backgroundSourceIsCurrent(_ input: BackgroundPhotoInput) -> Bool {
         !isSaving && !isImporting && saved == nil && draft.id == input.draftID && operationID == input.operationID && draft.photoID == input.sourceID && draft.photoRecipe == input.recipe
     }
-    func acceptBackground(_ prepared: PreparedPhoto?, input: BackgroundPhotoInput, crop: PhotoEditRecipe.NormalizedRect? = nil) -> Bool {
+    func acceptBackground(_ prepared: PreparedPhoto?, input: BackgroundPhotoInput, crop: PhotoEditRecipe.NormalizedRect? = nil,
+                          framed: PreparedPhotoEdit? = nil) -> Bool {
         guard backgroundSourceIsCurrent(input), let store = state.store else { return false }
         do {
             let id: UUID
@@ -817,61 +819,17 @@ extension CaptureModel {
             else { _ = try store.originalPhoto(id: input.originalID); id = input.originalID }
             var recipe = crop.map { PhotoEditRecipe(crop: $0) } ?? .fitOriginal
             if (try? recipe.validated()) == nil { recipe = .fitOriginal }
+            // A cropped photo is shown from its stored crop rendition, so write it before the draft points at it.
+            if recipe != .fitOriginal {
+                if let framed, framed.sourcePhotoID == id, framed.recipe == recipe { try store.acceptPhotoEdit(framed) } else { recipe = .fitOriginal }
+            }
             draft.photoID = id; draft.photoRecipe = recipe; operationID = UUID(); persistDraft()
             return !draftSaveFailed
         } catch { errorText = "The background result could not be applied. Your previous accepted photo is retained."; return false }
     }
-    // MARK: Automatic cutout
-
-    fileprivate func photoImported(width: Int, height: Int) {
-        cutoutState = .idle
-        photoHints = PhotoQuality.assess(pixelWidth: width, pixelHeight: height)
-        switch CutoutMode.current {
-        case .auto: autoCutout()
-        case .ask: offersCutout = true
-        case .off: break
-        }
-    }
-
-    /// Cut the piece out of the draft photo in the background; the original is always kept.
-    func autoCutout() {
-        guard cutoutState != .working, !hasProcessedPhoto, let input = try? backgroundInput() else { return }
-        cutoutTask?.cancel()
-        cutoutState = .working
-        offersCutout = false
-        cutoutTask = Task { [weak self] in
-            do {
-                let outcome = try await CutoutPipeline.automatic(original: input.data)
-                guard !Task.isCancelled, let self, self.backgroundSourceIsCurrent(input) else { return }
-                if self.acceptBackground(outcome.prepared, input: input, crop: outcome.crop) {
-                    self.cutoutState = .applied
-                    self.photoHints = outcome.hints
-                    self.opensCutout = CutoutMode.reviewsAfterCutout
-                } else { self.cutoutState = .failed }
-            } catch BackgroundPhotoError.noForeground {
-                guard !Task.isCancelled, let self, self.backgroundSourceIsCurrent(input) else { return }
-                let size = Self.pixelSize(of: input.data)
-                self.cutoutState = .noSubject
-                self.photoHints = PhotoQuality.assess(pixelWidth: size.width, pixelHeight: size.height, subjectFound: false)
-                self.opensCutout = CutoutMode.reviewsAfterCutout
-            } catch {
-                guard !Task.isCancelled, let self, self.backgroundSourceIsCurrent(input) else { return }
-                self.cutoutState = .failed
-                self.opensCutout = CutoutMode.reviewsAfterCutout
-            }
-        }
-    }
-
-    func cancelCutout() {
-        cutoutTask?.cancel()
-        cutoutTask = nil
-        if cutoutState == .working { cutoutState = .idle }
-    }
-
     /// Replace a cutout with the untouched original photo.
     func useOriginalPhoto() {
         guard let input = try? backgroundInput(), acceptBackground(nil, input: input) else { return }
-        cutoutState = .idle
         let size = Self.pixelSize(of: input.data)
         photoHints = PhotoQuality.assess(pixelWidth: size.width, pixelHeight: size.height)
     }

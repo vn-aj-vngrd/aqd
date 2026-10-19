@@ -36,7 +36,7 @@ struct AgentActionReviewView: View {
         }.background(AppTheme.canvas).navigationTitle("Review changes").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) {
                 if let proposal, proposal.status == .proposed || proposal.status == .executing, !isNewPiece(proposal) {
-                    ToolbarSaveAction(title: proposal.status == .executing ? "Check result" : "Apply") {
+                    ToolbarSaveAction(title: proposal.status == .executing ? "Check result" : "Apply", isPending: model.hasPendingOperation) {
                         model.approveProposal(id, version: proposal.version)
                         state.reloadPieces(); state.reloadOutfits(); state.reloadThemes(); state.reloadPlanEntries(); state.reloadWear(); state.reloadIdentity()
                     }.disabled(model.hasPendingOperation)

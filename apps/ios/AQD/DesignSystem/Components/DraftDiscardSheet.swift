@@ -197,6 +197,7 @@ private struct ConfirmationActionStyle: PrimitiveButtonStyle {
     let perform: (@escaping () -> Void) -> Void
     let registerCancel: (@escaping () -> Void) -> Void
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.dynamicTypeSize) private var typeSize
     func makeBody(configuration: Configuration) -> some View {
         Button(role: configuration.role) {
             perform { configuration.trigger() }
@@ -204,7 +205,10 @@ private struct ConfirmationActionStyle: PrimitiveButtonStyle {
             configuration.label
                 .font(configuration.role == .cancel ? .body.weight(.semibold) : AppTypography.body)
                 .foregroundStyle(configuration.role == .destructive ? AppTheme.error : AppTheme.ink)
-                .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
+                // One line at normal sizes so side-by-side buttons stay level; the words shrink a little before they wrap.
+                // Accessibility sizes may wrap instead, because a clipped word cannot be read.
+                .lineLimit(typeSize.isAccessibilitySize ? nil : 1).minimumScaleFactor(typeSize.isAccessibilitySize ? 1 : 0.75)
+                .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: typeSize.isAccessibilitySize)
                 .padding(.horizontal, AppSpacing.medium).padding(.vertical, AppSpacing.medium)
                 .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget)
                 .background(AppTheme.imageGround, in: Capsule()).contentShape(Capsule())

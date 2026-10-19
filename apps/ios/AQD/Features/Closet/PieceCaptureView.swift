@@ -26,8 +26,7 @@ struct PieceCaptureView: View {
     @State private var cameraData: Data?
     @State private var showDetails = false
     @State private var manageCategories = false
-    @State private var showPhotoEditor = false
-    @State private var showBackgroundRemoval = false
+    @State private var editorMode: PieceEditorView.Mode?
     @State private var discardDecision = false
     @State private var cameraDenied = false
     @State private var cameraRestricted = false
@@ -74,12 +73,6 @@ struct PieceCaptureView: View {
             } message: {
                 Text("Allow Camera in iPhone Settings to take a photo, or choose an existing photo. Your entered fields are unchanged.")
             }
-            .appConfirmation("Cut out the background?", isPresented: $model.offersCutout) {
-                Button("Cut out") { model.autoCutout() }
-                Button("Keep original", role: .cancel) {}
-            } message: {
-                Text("A clean cutout makes a better listing photo. You can refine it or go back to the original at any time.")
-            }
             .appConfirmation("Camera access is restricted", isPresented: $cameraRestricted) {
                 Button("Choose from Photos") { pickerPresented = true }
                 Button("Keep draft", role: .cancel) {}
@@ -111,14 +104,22 @@ struct PieceCaptureView: View {
                 .ignoresSafeArea()
         }
         .sheet(isPresented: $showDetails) { PieceDetailsView(model: model) }
-        .sheet(isPresented: $showBackgroundRemoval) { PieceCutoutView(capture: model) }
-        .editImportedPhoto(model, importing: model.isImporting, locked: model.isSaving, presented: $showPhotoEditor)
-        .sheet(isPresented: $showPhotoEditor) { PhotoEditorView(model: model, isPresentedModally: true) }
+        .onChange(of: model.isLoadingNewPhoto) { _, loading in
+            // Open the editor as soon as a photo starts loading; wait a beat so a closing Photos picker or camera does not swallow it.
+            guard loading else { return }
+            Task {
+                try? await Task.sleep(for: .milliseconds(350))
+                if model.isLoadingNewPhoto, editorMode == nil { editorMode = .frame }
+            }
+        }
+        .editImportedPhoto(model, importing: model.isImporting, locked: model.isSaving, presented: Binding(
+            get: { editorMode != nil }, set: { editorMode = $0 ? (editorMode ?? .frame) : nil }))
+        .sheet(item: $editorMode) { PieceEditorView(capture: model, mode: $0) }
         .onAppear {
-            if model.opensCutout { model.opensCutout = false; showBackgroundRemoval = true }
+            if model.opensCutout { model.opensCutout = false; editorMode = .cutout }
         }
         .onChange(of: model.opensCutout) { _, requested in
-            if requested { model.opensCutout = false; showBackgroundRemoval = true }
+            if requested { model.opensCutout = false; editorMode = .cutout }
         }
         .onDisappear { model.cancelImport() }
     }
@@ -127,10 +128,6 @@ struct PieceCaptureView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.large) {
                 mediaContent
-                if model.cutoutState == .failed {
-                    Label("Automatic cutout isn’t available for this photo. Tap Cut out to erase the background by hand, or Crop to trim the sides.",
-                          systemImage: "info.circle").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary)
-                }
                 if !model.photoHints.isEmpty {
                     VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
                         ForEach(model.photoHints, id: \.self) { hint in
@@ -218,7 +215,7 @@ struct PieceCaptureView: View {
     private func photoAction(_ title: String, systemImage: String, id: String, label: String, action: @escaping () -> Void) -> some View {
         Button { nameEditing = false; action() } label: {
             Label(title, systemImage: systemImage).compactControl()
-        }.buttonStyle(.plain).disabled(model.isImporting || model.isSaving || model.cutoutState == .working)
+        }.buttonStyle(.plain).disabled(model.isImporting || model.isSaving)
             .accessibilityLabel(label).accessibilityIdentifier(id)
     }
 
@@ -239,9 +236,9 @@ struct PieceCaptureView: View {
             .overlay(alignment: .bottomLeading) {
                 if image != nil {
                     HStack(spacing: AppSpacing.small) {
-                        photoAction("Crop", systemImage: "crop", id: "capture.crop", label: "Crop photo") { showPhotoEditor = true }
+                        photoAction("Crop", systemImage: "crop", id: "capture.crop", label: "Crop photo") { editorMode = .frame }
                         photoAction(model.hasProcessedPhoto ? "Refine" : "Cut out", systemImage: "scissors", id: "capture.cutout",
-                                    label: model.hasProcessedPhoto ? "Refine cutout" : "Cut out piece") { showBackgroundRemoval = true }
+                                    label: model.hasProcessedPhoto ? "Refine cutout" : "Cut out piece") { editorMode = .cutout }
                     }.padding(AppSpacing.medium)
                 }
             }
@@ -257,16 +254,15 @@ struct PieceCaptureView: View {
                             .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget)
                             .glassControlSurface(Circle())
                     }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
-                        .disabled(model.isImporting || model.isSaving || model.cutoutState == .working)
+                        .disabled(model.isImporting || model.isSaving)
                         .padding(AppSpacing.medium)
                         .accessibilityLabel("Change piece photo").accessibilityIdentifier("capture.addPhoto").accessibilityFocused($photoFocused)
                 }
             }
             .overlay {
-                if model.isImporting || model.cutoutState == .working {
+                if model.isImporting {
                     VStack(spacing: AppSpacing.small) {
                         ProgressView().controlSize(.large)
-                        if model.cutoutState == .working { Text("Cutting out the piece…").font(AppTypography.supporting).foregroundStyle(AppTheme.secondary) }
                     }.padding(AppSpacing.large).background(.regularMaterial, in: RoundedRectangle(cornerRadius: AppRadius.group))
                 }
             }

@@ -8,8 +8,19 @@ import Observation
 /// The mask lives at a bounded working resolution; export applies it to the full-resolution original.
 @MainActor @Observable
 final class PieceCutoutModel {
-    enum Tool: String, CaseIterable { case erase = "Erase", restore = "Restore", trim = "Trim", move = "Move" }
-    enum Phase: Equatable { case detecting, ready, noSubject, failed }
+    enum Tool: String, CaseIterable {
+        case erase = "Erase", restore = "Restore", trim = "Trim", move = "Move"
+        var symbol: String {
+            switch self {
+            case .erase: "eraser"
+            case .restore: "paintbrush.pointed"
+            case .trim: "crop"
+            case .move: "arrow.up.and.down.and.arrow.left.and.right"
+            }
+        }
+    }
+    /// `choosing`: nothing has run yet, the person picks Auto cut out or By hand. `unsupported`: this iPhone has no subject model.
+    enum Phase: Equatable { case choosing, detecting, ready, noSubject, failed, unsupported }
     private struct Snapshot { let mask: CGImage; let trim: CGRect }
 
     static let fullTrim = CGRect(x: 0, y: 0, width: 1, height: 1)
@@ -17,7 +28,7 @@ final class PieceCutoutModel {
     private static let historyLimit = 24
 
     let source: BackgroundPhotoInput
-    private(set) var phase = Phase.detecting
+    private(set) var phase = Phase.choosing
     private(set) var workImage: CGImage?
     private(set) var cutout: CGImage?
     private(set) var coverage = 1.0
@@ -47,16 +58,16 @@ final class PieceCutoutModel {
     var hasKeptPixels: Bool { coverage > 0.002 }
     var isTrimmed: Bool { trim != Self.fullTrim }
 
+    /// Open the editor. A saved cutout reopens from its alpha channel; otherwise nothing runs until the person chooses.
     func start() {
         task?.cancel()
-        phase = .detecting
+        phase = .choosing
         guard let image = Self.workingImage(from: source.data), let mask = CutoutMask(width: image.width, height: image.height) else {
             phase = .failed
             return
         }
         workImage = image
         self.mask = mask
-        let data = source.data
         // A saved cutout already holds the mask in its alpha channel: reopen it instead of detecting again.
         if let existing = source.existingCutout, let cgImage = Self.decode(existing), let alpha = CutoutRenderer.alphaMask(of: cgImage) {
             autoMask = alpha
@@ -64,6 +75,24 @@ final class PieceCutoutModel {
             finishDetection(.ready)
             return
         }
+        if !PhotoBackgroundRemover.isSupported { finishDetection(.unsupported); return }
+        mask.fill(keeping: true)
+        render()
+    }
+
+    /// Keep the whole photo and let the person erase the background themselves.
+    func startByHand() {
+        guard phase == .choosing || phase == .noSubject || phase == .failed || phase == .unsupported else { return }
+        phase = .ready
+    }
+
+    /// Find the piece with on-device Vision, then refine by hand.
+    func detectAutomatically() {
+        guard let mask, phase != .detecting else { return }
+        guard PhotoBackgroundRemover.isSupported else { finishDetection(.unsupported); return }
+        task?.cancel()
+        phase = .detecting
+        let data = source.data
         task = Task { [weak self] in
             do {
                 let detected = try await PhotoBackgroundRemover.shared.detectMask(data: data)
@@ -86,6 +115,7 @@ final class PieceCutoutModel {
     private func finishDetection(_ result: Phase) {
         phase = result
         if result != .ready { mask?.fill(keeping: true) }
+        undoStack.removeAll(); redoStack.removeAll()
         render()
     }
 
