@@ -41,7 +41,7 @@ private struct AgentSettingsForm: View {
             Section {
                 ForEach([AgentDataSource.style, .profile, .notes], id: \.self) { source in sourceToggle(source) }
                 NavigationLink { LocalStyleSettingsView().secondaryPage() } label: { AccessoryLabel("Style preferences", systemImage: "slider.horizontal.3") }
-            } header: { Text("Personalization") } footer: { Text("Only saved text is used. Photo contents aren’t analyzed. Body details keep their separate use permission in Style preferences. Private notes means piece, theme, fit and Today notes.") }
+            } header: { Text("Personalization") } footer: { Text("Only saved text is used. Photo contents aren’t analyzed. Body details keep their separate use permission in Style preferences. Private notes are off until you turn them on. They mean piece, theme, fit and Today notes, and are only read as information: a note can never approve a change.") }
                 .listRowBackground(AppTheme.surface)
             Section {
                 ForEach([AgentDataSource.wear, .journal, .today, .planner, .pastChats, .feedback], id: \.self) { source in sourceToggle(source) }

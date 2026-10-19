@@ -437,7 +437,18 @@ struct AgentAvailabilityContent: View {
         case .awaitingQualification, .available: "On-device Agent isn’t enabled yet"
         }
     }
+    private var offersSupport: Bool { [.unsupported, .intelligenceOff, .localeUnavailable, .preparing].contains(availability) }
     var body: some View {
+        content.safeAreaInset(edge: .bottom, spacing: 0) {
+            if offersSupport && showsActions {
+                NavigationLink { DeviceSupportView().secondaryPage() } label: {
+                    Label("See supported iPhones", systemImage: "iphone").font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                        .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+                }.buttonStyle(.plain).padding(.horizontal, AppSpacing.screen).padding(.bottom, AppSpacing.medium)
+            }
+        }
+    }
+    @ViewBuilder private var content: some View {
         if fillsPage {
             if availability == .preparing {
                 CenteredPageContent {
