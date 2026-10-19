@@ -68,33 +68,17 @@ import Foundation
         send()
     }
 
-    /// Whether the receipt of this proposal can still be undone: it has an undo, it was not used, and no piece changed since.
-    func canUndo(_ proposal: AgentActionProposal) -> Bool {
-        guard proposal.status == .succeeded, let receipt = proposal.receipt, receipt.canOfferUndo, let undo = receipt.undo,
-              let pieces = try? store.pieces() + store.pieces(archived: true) else { return false }
-        return undo.isEligible(currentRevisions: Dictionary(uniqueKeysWithValues: pieces.map { ($0.id, $0.revision) }))
-    }
-
-    func undoProposal(_ id: UUID) {
-        guard !active, !hasPendingOperation, let i = conversation.proposals?.firstIndex(where: { $0.id == id }),
-              let proposal = conversation.proposals?[i], canUndo(proposal), let undo = proposal.receipt?.undo else {
-            error = "This change can’t be undone any more because the piece changed since. Edit it by hand."
-            return
+    /// Leaves one day of a plan review out, or puts it back. At least one assigned day always stays in.
+    func setPlanDay(_ proposalID: UUID, day: String, included: Bool) {
+        guard !hasPendingOperation, let i = conversation.proposals?.firstIndex(where: { $0.id == proposalID }),
+              conversation.proposals?[i].status == .proposed, case .plan(let draft) = conversation.proposals?[i].action,
+              draft.assignedDayKeys.contains(day) else { return }
+        var left = Set(conversation.proposals?[i].leftOutDays ?? [])
+        if included { left.remove(day) } else {
+            guard left.count + 1 < draft.assignedDayKeys.count else { return }
+            left.insert(day)
         }
-        do {
-            switch undo {
-            case .availability(let pieceID, let previous, let revision):
-                try store.setAvailability(id: pieceID, value: previous, expectedRevision: revision, operationID: UUID())
-            case .archive(let items):
-                for item in items { try store.setArchived(id: item.pieceID, archived: item.wasArchived, expectedRevision: item.appliedRevision, operationID: UUID()) }
-            case .piece(var previous, let revision):
-                previous.baseRevision = revision
-                try store.savePiece(previous, operationID: UUID())
-            }
-            conversation.proposals?[i].receipt?.undoneAt = Date()
-            _ = persist()
-        } catch {
-            self.error = "The undo wasn’t confirmed. Check your closet before trying again."
-        }
+        conversation.proposals?[i].leftOutDays = left.isEmpty ? nil : left.sorted()
+        _ = persist()
     }
 }

@@ -12,6 +12,8 @@ struct AgentProposalCard: View {
     var setTripOptions: ((_ includeTheme: Bool?, _ includePlan: Bool?) -> Void)?
     /// Ticks or unticks one piece of a tidy review.
     var setTidySelection: ((_ item: UUID, _ selected: Bool) -> Void)?
+    /// Leaves a day of a plan review out, or puts it back.
+    var setPlanDay: ((_ day: String, _ included: Bool) -> Void)?
     /// Present when the applied change can still be put back.
     var undo: (() -> Void)?
     @State private var previewing: LookPreview?
@@ -59,7 +61,7 @@ struct AgentProposalCard: View {
             if case .plan(let draft) = proposal.action { planGrid(draft) }
             if case .trip(let draft) = proposal.action { tripDays(draft) }
             if case .tidy(let change) = proposal.action { tidyRows(change) }
-            Text(proposal.status == .executing ? "Check save result" : proposal.action.savesSummary + " Not saved yet.")
+            Text(proposal.status == .executing ? "Check save result" : proposal.effectiveAction.savesSummary + " Not saved yet.")
                 .font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             AdaptiveActions { iconsOnly in
                 Button(action: review) {
@@ -95,21 +97,30 @@ struct AgentProposalCard: View {
         }
     }
 
-    /// First seven days of a plan: weekday initial over a mark for an assigned outfit or a gap. The full list lives in Review.
+    /// First seven days of a plan: weekday initial over a mark for an assigned outfit or a gap. Tapping an assigned day leaves it out of the plan.
     private func planGrid(_ draft: PlanAuthoringDraft) -> some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+        let leftOut = Set(proposal.leftOutDays ?? [])
+        return VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
             HStack(spacing: AppSpacing.small) {
                 ForEach(draft.slots.prefix(7)) { slot in
-                    VStack(spacing: AppSpacing.xSmall) {
-                        Text(Self.weekdayInitial(slot.day)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
-                        Image(systemName: slot.outfit == nil ? "minus" : "tshirt").foregroundStyle(slot.outfit == nil ? AppTheme.secondary : AppTheme.ink)
-                    }.frame(maxWidth: .infinity).accessibilityElement(children: .ignore)
+                    let assigned = slot.outfit != nil, skipped = leftOut.contains(slot.day.key)
+                    let editable = assigned && proposal.status == .proposed && setPlanDay != nil && !locked
+                    Button { setPlanDay?(slot.day.key, skipped) } label: {
+                        VStack(spacing: AppSpacing.xSmall) {
+                            Text(Self.weekdayInitial(slot.day)).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                            Image(systemName: !assigned ? "minus" : skipped ? "xmark.circle" : "tshirt").foregroundStyle(assigned && !skipped ? AppTheme.ink : AppTheme.secondary)
+                        }.frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle()).opacity(skipped ? 0.55 : 1)
+                    }.buttonStyle(.plain).disabled(!editable)
+                        .accessibilityElement(children: .ignore)
                         .accessibilityLabel("\(slot.day.displayDate): \(slot.outfit?.displayName ?? "no outfit")")
+                        .accessibilityValue(!assigned ? "" : skipped ? "Left out" : "Included")
+                        .accessibilityHint(editable ? (skipped ? "Puts this day back" : "Leaves this day out") : "")
                 }
             }
             if draft.slots.count > 7 {
                 Text("+\(draft.slots.count - 7) more days").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
             }
+            if !leftOut.isEmpty { Text("\(leftOut.count) \(leftOut.count == 1 ? "day" : "days") left out").font(AppTypography.metadata).foregroundStyle(AppTheme.secondary) }
         }
     }
 

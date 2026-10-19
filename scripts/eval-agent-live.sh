@@ -4,11 +4,11 @@
 #
 #   AQD_DEVICE_UDID=<udid> IOS_DEVELOPMENT_TEAM=<team> scripts/eval-agent-live.sh
 #
-# AQD_EVAL_SUITES (default "golden heldout tidy") and AQD_EVAL_RUNS (default 3) choose what runs. AQD_EVAL_SKIP_INSTALL=1 reuses the installed build.
+# AQD_EVAL_SUITES (default "golden heldout tidy edits") and AQD_EVAL_RUNS (default 3) choose what runs. AQD_EVAL_SKIP_INSTALL=1 reuses the installed build.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 UDID="${AQD_DEVICE_UDID:?Set AQD_DEVICE_UDID to the connected iPhone (xcrun devicectl list devices)}"
-SUITES="${AQD_EVAL_SUITES:-golden heldout tidy}"
+SUITES="${AQD_EVAL_SUITES:-golden heldout tidy edits}"
 RUNS="${AQD_EVAL_RUNS:-3}"
 TIMEOUT="${AQD_EVAL_TIMEOUT_SECONDS:-2400}"
 BUNDLE="com.aqd.private"

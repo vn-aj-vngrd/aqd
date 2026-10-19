@@ -88,7 +88,7 @@ struct AgentTurnRefused: Error {}
         let check = AgentGroundingCheck(catalog: nameCatalog())
         let cards = (conversation.messages[i].toolSteps ?? []).flatMap { $0.results ?? [] }.count
         // Requests that prepare a review must never be answered as if the change had been made.
-        let changes: Set<AgentIntent> = [.editPiece, .tidy, .relabel, .theme, .planDays, .planTrip, .suggestOutfit, .recordWear, .profile, .addPiece, .whatToWear]
+        let changes: Set<AgentIntent> = [.editPiece, .tidy, .editOutfit, .editTheme, .editPlan, .relabel, .theme, .planDays, .planTrip, .suggestOutfit, .recordWear, .profile, .addPiece, .whatToWear]
         let forbidClaims = changes.contains(turn.plan.intent)
         var first = check.violations(in: conversation.messages[i].source, hasCards: cards > 0, forbidCompletionClaims: forbidClaims)
         guard !first.isEmpty else { return }

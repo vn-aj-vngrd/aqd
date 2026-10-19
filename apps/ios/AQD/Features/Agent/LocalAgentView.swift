@@ -377,6 +377,7 @@ struct AgentConversationView: View {
                                  tryAnother: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion("Show me a different option") } : nil,
                                  setTripOptions: { theme, plan in model.setTripOptions(proposal.id, includeTheme: theme, includePlan: plan) },
                                  setTidySelection: { item, selected in model.setTidySelection(proposal.id, item: item, selected: selected) },
+                                 setPlanDay: { day, included in model.setPlanDay(proposal.id, day: day, included: included) },
                                  undo: model.canUndo(proposal) ? { model.undoProposal(proposal.id); state.reloadPieces() } : nil)
             }
         }

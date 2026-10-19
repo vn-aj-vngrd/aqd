@@ -99,15 +99,37 @@ struct AgentActionReviewView: View {
             Text("Your profile photo stays unchanged.").font(.footnote).foregroundStyle(AppTheme.secondary)
         case .theme(let draft): Text(draft.displayName).font(.headline); ForEach(draft.outfitIDs, id: \.self) { id in Text(state.outfits.first { $0.id == id }?.displayName ?? "Unavailable outfit") }
         case .outfit(let draft): Text(draft.displayName).font(.headline); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }
-        case .plan(let draft):
-            Text(draft.plan.name).font(.headline)
-            Text("\(draft.plan.start.displayDate) – \(draft.plan.end.displayDate), \(draft.slots.filter { $0.outfit != nil }.count) of \(draft.slots.count) days planned. All days save together or not at all.")
-                .font(.footnote).foregroundStyle(AppTheme.secondary)
-            ForEach(draft.slots) { slot in VStack(alignment: .leading) { Text(slot.day.displayDate); Text(slot.day.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary); Text(slot.outfit?.displayName ?? "Intentionally unassigned") } }
+        case .plan(let draft): planPreview(draft)
         case .trip(let draft): tripPreview(draft)
         case .wear(let draft): Text(draft.day.displayDate); Text(draft.day.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary); ForEach(draft.pieceIDs, id: \.self) { id in Text(state.ownedPieces.first { $0.id == id }?.displayName ?? "Unavailable piece") }; Text("Records actual wear. This is separate from a plan or fit memory.")
         case .tidy(let change): tidyPreview(change)
         case .availability(let change): Text(change.pieceName).font(.headline); Text("Availability → " + change.value.rawValue.capitalized); Text("Affected future plans will require review; actual wear stays.")
+        }
+    }
+
+    @ViewBuilder private func planPreview(_ draft: PlanAuthoringDraft) -> some View {
+        let leftOut = Set(proposal?.leftOutDays ?? [])
+        let included = draft.slots.filter { $0.outfit != nil && !leftOut.contains($0.day.key) }.count
+        Text(draft.plan.name).font(.headline)
+        Text("\(draft.plan.start.displayDate) – \(draft.plan.end.displayDate), \(included) of \(draft.slots.count) days planned. All days save together or not at all.")
+            .font(.footnote).foregroundStyle(AppTheme.secondary)
+        ForEach(draft.slots) { slot in
+            let assigned = slot.outfit != nil, skipped = leftOut.contains(slot.day.key)
+            let editable = assigned && proposal?.status == .proposed && !model.hasPendingOperation
+            Button { model.setPlanDay(id, day: slot.day.key, included: skipped) } label: {
+                HStack(spacing: AppSpacing.small) {
+                    if assigned && proposal?.status == .proposed {
+                        Image(systemName: skipped ? "circle" : "checkmark.circle.fill").foregroundStyle(skipped ? AppTheme.secondary : AppTheme.ink).accessibilityHidden(true)
+                    }
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(slot.day.displayDate).foregroundStyle(AppTheme.ink)
+                        Text(slot.day.timeZoneID).font(AppTypography.metadata).foregroundStyle(AppTheme.secondary)
+                        Text(skipped ? "Left out, stays as it is" : slot.outfit?.displayName ?? "Intentionally unassigned").foregroundStyle(AppTheme.secondary)
+                    }
+                    Spacer(minLength: 0)
+                }.frame(minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle()).opacity(skipped ? 0.6 : 1)
+            }.buttonStyle(.plain).disabled(!editable)
+                .accessibilityValue(!assigned ? "" : skipped ? "Left out" : "Included")
         }
     }
 

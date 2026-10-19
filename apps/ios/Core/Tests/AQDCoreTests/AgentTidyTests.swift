@@ -110,3 +110,29 @@ struct AgentTidyTests {
         #expect(AgentCommand.parse("Could you please archive the old tee") == .tidy(op: .archive, subjects: ["old tee"]))
     }
 }
+
+extension AgentTidyTests {
+    @Test func everyKindOfUndoNamesTheRecordsItNeedsUnchanged() {
+        let outfit = UUID(), theme = UUID(), plan = UUID(), entry = UUID(), wear = UUID(), owner = UUID()
+        let parts: [AgentUndo] = [
+            .outfitCreate(id: outfit, appliedRevision: 1), .themeCreate(id: theme, appliedRevision: 2),
+            .planCreate(id: plan, appliedRevision: 3, entries: [.init(id: entry, revision: 4)])
+        ]
+        let trip = AgentUndo.trip(parts)
+        #expect(trip.requiredRevisions == [outfit: 1, theme: 2, plan: 3, entry: 4] && trip.records == [.outfit, .theme, .plan, .planEntry])
+        #expect(trip.isEligible(currentRevisions: [outfit: 1, theme: 2, plan: 3, entry: 4]))
+        #expect(!trip.isEligible(currentRevisions: [outfit: 1, theme: 2, plan: 3, entry: 5]))
+        #expect(!trip.isEligible(currentRevisions: [outfit: 1, theme: 2, plan: 3]))
+        #expect(AgentUndo.wear(id: wear, appliedRevision: 1).requiredRevisions == [wear: 1])
+        let profile = AgentUndo.profile(previous: LocalProfileIdentity(ownerID: owner, name: "A", photoID: nil, revision: 1), appliedRevision: 2)
+        #expect(profile.requiredRevisions == [owner: 2] && profile.noun == "profile")
+    }
+
+    @Test func undoDataSurvivesEncodingSoItWorksAfterARestart() throws {
+        let undo = AgentUndo.planEdit(planID: UUID(), previous: .init(name: "Week", days: [.init(dayKey: "2026-10-19", outfitID: UUID()), .init(dayKey: "2026-10-20", outfitID: nil)]),
+                                      appliedRevision: 3, entries: [.init(id: UUID(), revision: 2)])
+        let receipt = AgentActionReceipt(recordID: UUID(), kind: "plan", undo: .trip([undo]))
+        let decoded = try JSONDecoder().decode(AgentActionReceipt.self, from: JSONEncoder().encode(receipt))
+        #expect(decoded.undo == receipt.undo)
+    }
+}

@@ -190,10 +190,10 @@ public enum AgentEvalSuite {
     public static let heldOutFiveVersion = "closet-heldout-5"
 
     /// Every case across both suites, for looking up a result's expectations by id.
-    public static var all: [AgentEvalCase] { cases + heldOut + heldOutTwo + heldOutThree + heldOutFour + heldOutFive + tidy }
+    public static var all: [AgentEvalCase] { cases + heldOut + heldOutTwo + heldOutThree + heldOutFour + heldOutFive + tidy + edits }
 
     /// Suites by name: "golden" (used while building the Agent) and "heldout" (written separately, different phrasing and pieces).
-    public static func suite(named name: String) -> [AgentEvalCase] { name == "tidy" ? tidy : name == "heldout5" ? heldOutFive : name == "heldout4" ? heldOutFour : name == "heldout3" ? heldOutThree : name == "heldout2" ? heldOutTwo : name == "heldout" ? heldOut : cases }
+    public static func suite(named name: String) -> [AgentEvalCase] { name == "tidy" ? tidy : name == "edits" ? edits : name == "heldout5" ? heldOutFive : name == "heldout4" ? heldOutFour : name == "heldout3" ? heldOutThree : name == "heldout2" ? heldOutTwo : name == "heldout" ? heldOut : cases }
 
     static func make(_ id: String, _ category: String, _ turns: [String], intent: String? = nil, tools: [String] = [], noTools: Bool = false, proposal: Bool? = nil,
                              question: Bool? = nil, cards: Bool? = nil, forbidden: [String] = [], maximum: Int = 700) -> AgentEvalCase {
@@ -496,5 +496,19 @@ extension AgentEvalSuite {
         make("tidy-ambiguous-blazer", "tidy", ["Archive my blazer"], intent: "tidy", tools: ["askUser", "findRecords"], proposal: false, question: true),
         make("tidy-unknown-piece", "tidy", ["Delete my Purple sequin jumpsuit"], intent: "tidy", proposal: false, forbidden: ["i deleted", "i have deleted", "has been deleted"]),
         make("tidy-not-an-outfit", "tidy", ["Delete my Office day outfit"], noTools: true, proposal: false, forbidden: ["i deleted", "i have deleted", "has been deleted"])
+    ]
+}
+
+extension AgentEvalSuite {
+    /// Changing what is inside a saved outfit, theme or plan. Each is prepared as a review; a day that is not in the plan or a name that fits two pieces never is.
+    public static let edits: [AgentEvalCase] = [
+        make("edit-outfit-add", "editOutfit", ["Add my Gold dress watch to the Office day outfit"], intent: "editOutfit", tools: ["editOutfit"], proposal: true),
+        make("edit-outfit-remove", "editOutfit", ["Remove the Brown leather belt from Office day"], intent: "editOutfit", tools: ["editOutfit"], proposal: true),
+        make("edit-outfit-swap", "editOutfit", ["Swap the Black ballet flats for my Ivory sneakers in Office day"], intent: "editOutfit", tools: ["editOutfit"], proposal: true),
+        make("edit-theme-add", "editTheme", ["Add Beach walk to my Resort theme"], intent: "editTheme", tools: ["editTheme"], proposal: true),
+        make("edit-theme-remove", "editTheme", ["Take Poolside lunch out of the Resort theme"], intent: "editTheme", tools: ["editTheme"], proposal: true),
+        make("edit-plan-day", "editPlan", ["Change Wednesday in This week to the Rainy day outfit"], intent: "editPlan", tools: ["editPlan"], proposal: true),
+        make("edit-plan-missing", "editPlan", ["Change Wednesday in Nowhere plan to the Rainy day outfit"], intent: "editPlan", proposal: false),
+        make("edit-outfit-ambiguous", "editOutfit", ["Add my blazer to the Office day outfit"], intent: "editOutfit", tools: ["askUser", "findRecords"], proposal: false, question: true)
     ]
 }
