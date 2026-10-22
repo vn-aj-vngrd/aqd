@@ -1,6 +1,6 @@
 # Native iOS
 
-Read [DESIGN.md](../../DESIGN.md) before UI work and the affected [feature contract](../../docs/features). Inspect the seam and its callers before editing, and reuse before adding. Verify with [`aqd-verify`](../../.agents/skills/aqd-verify/SKILL.md) on the physical iPhone 17 Pro Max; never start a simulator.
+Read [DESIGN.md](../../DESIGN.md) before UI work and the affected [feature contract](../../docs/features). Inspect the seam and its callers before editing, and reuse before adding. Verify on the physical iPhone 17 Pro Max with the steps in [README.md](README.md); never start a simulator.
 
 ## Layers
 

@@ -15,7 +15,7 @@ Private, on-device iPhone closet app (SwiftUI, deploys iOS 18, builds with Xcode
 | Branch, commit, PR, release, issues | [docs/delivery.md](docs/delivery.md) |
 | Lasting decisions | [docs/adr](docs/adr) |
 
-Skills in `.agents/skills`: `aqd-implement` (slice work), `aqd-verify` (checks), `aqd-review` (diff review), `aqd-ship <issue>` (issue to merged release).
+Feature work runs through Van's factory, which lives outside this repo (`~/Documents/van/factory`): from `~/Documents/van`, `/factory aqd <ticket | #issue>` grills the ticket, plans vertical slices, builds them test-first, proves UI changes with screenshots and opens a draft PR. Its project memory and job state stay outside the repo.
 
 ## Rules
 
