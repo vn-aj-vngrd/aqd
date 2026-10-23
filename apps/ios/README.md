@@ -16,7 +16,7 @@ Layer rules, naming and safety conventions are in [AGENTS.md](AGENTS.md); UI tok
 
 - macOS with Xcode 27, Node 24 and pnpm 10.12.1 (for the hooks and repo checks).
 - `brew install swiftlint swiftformat`, then `pnpm install --frozen-lockfile` at the repository root to install the Git hooks.
-- The physical iPhone 17 Pro Max, connected and unlocked. Native checks run on that phone only; simulators stay shut down.
+- The physical iPhone 17 Pro Max, connected and unlocked. Your native checks run on that phone; only the factory's automated unit runs and UI proof use the iPhone 17 Pro Max simulator.
 - Local signing: put your team in `Configuration/Local.xcconfig` (ignored, never committed). Find the phone's UDID with `xcrun devicectl list devices`.
 
 ## Test

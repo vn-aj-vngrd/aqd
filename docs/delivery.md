@@ -27,8 +27,8 @@ Node 24, pnpm 10.12.1. `pnpm install --frozen-lockfile` installs Lefthook (`pnpm
 
 - Feature work uses Core and native unit tests plus a Debug build on the physical iPhone 17 Pro Max. UI behavior is also checked by hand on that phone.
 - End-to-end UI tests and broad device qualification are deferred to issue #30.
-- Run native tests with `scripts/test-ios.sh` (`IOS_TEST_SCOPE=unit`, device UDID from `xcrun devicectl list devices`, local signing team, `IOS_DEVICE_READY=1` only after the owner confirms the phone is connected and unlocked). Hosted native CI and simulators are not used.
-- Tooling: `pnpm check` and `pnpm check:agents` (Markdown links and skill metadata).
+- Run native tests with `scripts/test-ios.sh` (`IOS_TEST_SCOPE=unit`, device UDID from `xcrun devicectl list devices`, local signing team, `IOS_DEVICE_READY=1` only after the owner confirms the phone is connected and unlocked). Hosted native CI is not used. The factory alone runs app unit tests and UI proof screenshots on the iPhone 17 Pro Max simulator; they support a PR but do not replace the phone checks.
+- Tooling: `pnpm check` and `pnpm check:agents` (Markdown links).
 
 ## Shipping an issue
 
