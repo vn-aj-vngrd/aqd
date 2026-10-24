@@ -34,9 +34,10 @@ Node 24, pnpm 10.12.1. `pnpm install --frozen-lockfile` installs Lefthook (`pnpm
 
 1. Implement in vertical slices, each tested and committed.
 2. Push the issue branch and open one PR against `main`.
-3. Wait for CI and the Codex review on the **current head**. Fix valid findings in focused commits; every push needs fresh CI and review. A pending or unavailable review is a blocker, not a pass.
-4. Squash-merge bound to the verified head SHA.
-5. Verify main CI and the repository release for the merged SHA. A retry resumes at the first unsatisfied step.
+3. Review the full issue diff locally with an agent and post findings and dispositions to the issue. Fix valid findings in focused commits. No automated PR reviewer (Codex, Copilot) is requested; the PR is for CI and the owner's review if they want one.
+4. Wait for CI on the **current head**; every push needs fresh CI. A review of an older head does not cover new commits.
+5. Squash-merge bound to the verified head SHA.
+6. Verify main CI and the repository release for the merged SHA. A retry resumes at the first unsatisfied step.
 
 ## Releases
 
