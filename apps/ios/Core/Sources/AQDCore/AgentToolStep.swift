@@ -105,8 +105,18 @@ public struct AgentToolStep: Identifiable, Codable, Equatable, Sendable {
     public var results: [AgentResultItem]?
     /// Set by the askUser tool or read from a reply that ends in a question with answers.
     public var question: AgentQuestion?
-    public init(tool: String, summary: String, count: Int = 0, rejection: String? = nil, results: [AgentResultItem]? = nil, question: AgentQuestion? = nil) {
+    /// The names of the records this step read, so the owner can see exactly what the answer was based on.
+    public var read: [String]?
+    public init(tool: String, summary: String, count: Int = 0, rejection: String? = nil, results: [AgentResultItem]? = nil, question: AgentQuestion? = nil, read: [String]? = nil) {
         id = UUID(); self.tool = tool; self.summary = summary; self.count = count; self.rejection = rejection; self.results = results; self.question = question
+        self.read = read.flatMap { Self.readList($0) }
+    }
+
+    /// At most twelve names, each kept short, with the rest counted. Empty when nothing was read.
+    public static func readList(_ names: [String]) -> [String]? {
+        let clean = names.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }.map { String($0.prefix(48)) }
+        guard !clean.isEmpty else { return nil }
+        return clean.count <= 12 ? clean : Array(clean.prefix(12)) + ["and \(clean.count - 12) more"]
     }
 
     public static func lookup(_ counts: [AgentDataSource: Int]) -> AgentToolStep {

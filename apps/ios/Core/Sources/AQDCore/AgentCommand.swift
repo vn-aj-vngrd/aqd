@@ -18,6 +18,15 @@ public enum AgentCommand: Equatable, Sendable {
     case createTheme(name: String?, about: String?)
     /// Outfits for the next `count` days from today (at most 14).
     case planDays(count: Int)
+    /// Archive, restore or delete the named pieces. Only the word "delete" asks for a delete; softer words such as "get rid of" archive, which can be undone.
+    case tidy(op: AgentTidyOp, subjects: [String])
+    /// Add pieces to an outfit, or outfits to a theme. The container's kind decides which.
+    case addTo(subjects: [String], container: String)
+    case removeFrom(subjects: [String], container: String)
+    /// Replace one piece of an outfit with another.
+    case swapIn(old: String, new: String, container: String)
+    /// Set the outfit of one day of a plan. `day` is a weekday, "today", "tomorrow" or a date such as 2026-10-21.
+    case setPlanDay(plan: String, day: String, outfit: String)
 
     private static func expression(_ pattern: String) -> NSRegularExpression? { try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) }
     private static let rename = expression(#"^\s*(?:please\s+)?(?:rename|relabel|retitle)\s+(?:my\s+|the\s+)?(.+?)\s+(?:to|as)\s+(.+?)\s*[.!?]?\s*$"#)
@@ -29,6 +38,14 @@ public enum AgentCommand: Equatable, Sendable {
     private static let profile = expression(#"^\s*(?:please\s+)?(?:change|set|update)\s+my\s+(?:profile\s+)?(caption|bio|name)\s+to\s+(.+?)\s*[.!?]?\s*$"#)
     private static let planNext = expression(#"^\s*(?:please\s+)?(?:(?:plan|schedule)\s+)?(?:my\s+|the\s+)?(?:outfits?\s+|looks?\s+)?(?:for\s+)?(?:the\s+)?(?:next|coming|upcoming)\s+(\d+|one|two|three|four|five|six|seven)\s+days?(?:\s+please)?\s*[.!?]?\s*$"#)
     private static let planWeek = expression(#"^\s*(?:please\s+)?(?:plan|schedule)\s+(?:my\s+|the\s+)?(?:outfits?\s+(?:for\s+)?)?(?:the\s+|this\s+|my\s+|next\s+|coming\s+|upcoming\s+)?week(?:\s+(?:for\s+me|please))?\s*[.!?]?\s*$"#)
+    private static let tidy = expression(#"^\s*(?:please\s+)?(archive|unarchive|restore|delete|remove|get rid of|throw out|throw away|toss|clean out|clear out|declutter)\s+(?:my\s+|the\s+|all of my\s+)?(.+?)\s*[.!?]?\s*$"#)
+    private static let day = #"(monday|tuesday|wednesday|thursday|friday|saturday|sunday|today|tomorrow|\d{4}-\d{2}-\d{2})"#
+    private static let planDay = expression(#"^\s*(?:please\s+)?(?:change|set|put|swap|move|switch)\s+(?:the\s+)?(?:outfit\s+(?:for|on)\s+)?"# + day + #"\s+(?:in|of|on)\s+(?:my\s+|the\s+)?(.+?)(?:\s+plan)?\s+(?:to|as|with)\s+(?:my\s+|the\s+)?(.+?)(?:\s+outfit)?\s*[.!?]?\s*$"#)
+    private static let planDayPut = expression(#"^\s*(?:please\s+)?(?:put|set|use)\s+(?:my\s+|the\s+)?(.+?)\s+(?:on|for)\s+"# + day + #"\s+(?:in|of|on)\s+(?:my\s+|the\s+)?(.+?)(?:\s+plan)?\s*[.!?]?\s*$"#)
+    private static let swapFor = expression(#"^\s*(?:please\s+)?(?:swap|replace|switch|change)\s+(?:my\s+|the\s+)?(.+?)\s+(?:for|with|to)\s+(?:my\s+|the\s+|a\s+)?(.+?)\s+(?:in|from|on)\s+(?:my\s+|the\s+)?(.+?)(?:\s+(?:outfit|look))?\s*[.!?]?\s*$"#)
+    private static let swapIn = expression(#"^\s*(?:please\s+)?(?:swap|replace|switch)\s+(?:my\s+|the\s+)?(.+?)\s+(?:in|from|on)\s+(?:my\s+|the\s+)?(.+?)(?:\s+(?:outfit|look))?\s+(?:for|with)\s+(?:my\s+|the\s+|a\s+)?(.+?)\s*[.!?]?\s*$"#)
+    private static let addTo = expression(#"^\s*(?:please\s+)?(?:add|include|put)\s+(?:my\s+|the\s+)?(.+?)\s+(?:to|into|in)\s+(?:my\s+|the\s+)?(.+?)(?:\s+(?:outfit|look|theme|collection))?\s*[.!?]?\s*$"#)
+    private static let removeFrom = expression(#"^\s*(?:please\s+)?(?:remove|take out|take|drop|leave out)\s+(?:my\s+|the\s+)?(.+?)\s+(?:from|out of)\s+(?:my\s+|the\s+)?(.+?)(?:\s+(?:outfit|look|theme|collection))?\s*[.!?]?\s*$"#)
     private static let theme = expression(#"^\s*(?:please\s+)?(?:make|create|build)\s+(?:me\s+)?(?:a\s+|an\s+)?(?:new\s+)?theme\b(.*)$"#)
 
     private static func groups(_ pattern: NSRegularExpression?, _ text: String) -> [String]? {
@@ -57,6 +74,26 @@ public enum AgentCommand: Equatable, Sendable {
             return (1...14).contains(count) ? .planDays(count: count) : nil
         }
         if groups(planWeek, text) != nil { return .planDays(count: 7) }
+        // Changes inside a saved outfit, theme or plan come before the tidy words, because "remove X from Office day" is not a closet tidy.
+        func names(_ value: String) -> [String] {
+            value.replacingOccurrences(of: " and ", with: ",", options: .caseInsensitive).split(separator: ",").map { clean(String($0)).replacingOccurrences(of: #"^(?i:the|my)\s+"#, with: "", options: .regularExpression) }.filter { !$0.isEmpty }
+        }
+        func isCloset(_ value: String) -> Bool { ["closet", "wardrobe"].contains(clean(value).lowercased()) }
+        if let g = groups(planDay, text) { return .setPlanDay(plan: clean(g[1]), day: g[0].lowercased(), outfit: clean(g[2])) }
+        if let g = groups(planDayPut, text) { return .setPlanDay(plan: clean(g[2]), day: g[1].lowercased(), outfit: clean(g[0]).replacingOccurrences(of: #"(?i)\s+(?:outfit|look)$"#, with: "", options: .regularExpression)) }
+        if let g = groups(swapIn, text), !isCloset(g[1]) { return .swapIn(old: clean(g[0]), new: clean(g[2]), container: clean(g[1])) }
+        if let g = groups(swapFor, text), !isCloset(g[2]) { return .swapIn(old: clean(g[0]), new: clean(g[1]), container: clean(g[2])) }
+        if let g = groups(removeFrom, text), !isCloset(g[1]) { let list = names(g[0]); return list.isEmpty || list.count > 6 ? nil : .removeFrom(subjects: list, container: clean(g[1])) }
+        if let g = groups(addTo, text), !isCloset(g[1]), !text.lowercased().hasPrefix("put together") { let list = names(g[0]); return list.isEmpty || list.count > 6 ? nil : .addTo(subjects: list, container: clean(g[1])) }
+        if let g = groups(tidy, text) {
+            let verb = g[0].lowercased()
+            let op: AgentTidyOp = verb == "delete" ? .delete : (verb == "restore" || verb == "unarchive") ? .unarchive : .archive
+            // "Archive my tote, I never wear it" names the tote; a trailing "from my closet" is only a place.
+            var named = g[1].components(separatedBy: CharacterSet(charactersIn: ",;")).first ?? g[1]
+            named = named.replacingOccurrences(of: #"(?i)\s+(?:from|out of|in|to)\s+(?:my\s+)?(?:closet|wardrobe)\s*$"#, with: "", options: .regularExpression)
+            let subjects = named.replacingOccurrences(of: " and ", with: ",", options: .caseInsensitive).split(separator: ",").map { clean(String($0)).replacingOccurrences(of: #"^(?i:the|my)\s+"#, with: "", options: .regularExpression) }.map { $0.replacingOccurrences(of: #"(?i)\s+(?:outfit|look|theme|collection|plan)$"#, with: "", options: .regularExpression) }.filter { !$0.isEmpty }
+            return subjects.isEmpty || subjects.count > 12 ? nil : .tidy(op: op, subjects: subjects)
+        }
         if let g = groups(theme, text) {
             let rest = g[0]
             var name: String?, about: String?
@@ -65,5 +102,26 @@ public enum AgentCommand: Equatable, Sendable {
             return .createTheme(name: name?.isEmpty == true ? nil : name, about: about?.isEmpty == true ? nil : about)
         }
         return nil
+    }
+}
+
+/// Reads a day named in words ("Wednesday", "tomorrow", "2026-10-21") against the days of one plan.
+public enum AgentPlanDayWord {
+    private static let weekdays = ["sunday": 1, "monday": 2, "tuesday": 3, "wednesday": 4, "thursday": 5, "friday": 6, "saturday": 7]
+
+    /// The key of the plan day the word names, or nil when the plan has no such day. A weekday names the first one in the plan.
+    public static func key(_ word: String, in days: [LocalPlanDay], now: Date = Date()) -> String? {
+        let word = word.lowercased()
+        if word.range(of: #"^\d{4}-\d{2}-\d{2}$"#, options: .regularExpression) != nil { return days.first { $0.key == word }?.key }
+        if let weekday = weekdays[word] {
+            return days.first { day in
+                guard let date = try? day.date() else { return false }
+                var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(identifier: day.timeZoneID) ?? .current
+                return calendar.component(.weekday, from: date) == weekday
+            }?.key
+        }
+        guard word == "today" || word == "tomorrow" else { return nil }
+        let target = word == "today" ? now : now.addingTimeInterval(86_400)
+        return days.first { LocalPlanDay(date: target, timeZone: TimeZone(identifier: $0.timeZoneID) ?? .current).key == $0.key }?.key
     }
 }

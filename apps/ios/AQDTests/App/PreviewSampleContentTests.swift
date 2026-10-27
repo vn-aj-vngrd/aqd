@@ -27,7 +27,7 @@ struct PreviewSampleContentTests {
         #expect(try reopened.wearRecords().isEmpty)
         #expect(try reopened.todayDraft() == nil)
         let backup = output.appendingPathComponent(try #require(result.backup))
-        #expect(try FileManager.default.attributesOfItem(atPath: backup.path)[.protectionKey] as? FileProtectionType == .complete)
+        try expectCompleteProtection(backup)
         let stamp = try reopened.mutationStamp()
         let repeated = try await PreviewSampleContent.addAllWidgets(store: reopened, outputDirectory: output)
         #expect(repeated.addedKinds.isEmpty && repeated.backup == nil)
@@ -80,7 +80,7 @@ struct PreviewSampleContentTests {
             } else { #expect(value == prior) }
         }
         let backup = output.appendingPathComponent(try #require(result.backup))
-        #expect(try FileManager.default.attributesOfItem(atPath: backup.path)[.protectionKey] as? FileProtectionType == .complete)
+        try expectCompleteProtection(backup)
         let stamp = try store.mutationStamp()
         let repeatResult = try await PreviewSampleContent.refreshContexts(store: store, outputDirectory: output)
         #expect(repeatResult.updatedPlans.isEmpty && repeatResult.updatedFits.isEmpty && repeatResult.backup == nil)
@@ -128,7 +128,7 @@ struct PreviewSampleContentTests {
         #expect(try store.themes().filter(\.outfitIDs.isEmpty).count == 1)
         let backupURL = output.appendingPathComponent(try #require(receipt.backup))
         #expect(FileManager.default.fileExists(atPath: backupURL.path))
-        #expect(try FileManager.default.attributesOfItem(atPath: backupURL.path)[.protectionKey] as? FileProtectionType == .complete)
+        try expectCompleteProtection(backupURL)
         let reopened = try PieceStore(directory: root.appendingPathComponent("store"))
         let repeated = try await PreviewSampleContent.populate(store: reopened, outputDirectory: output)
         #expect(repeated == receipt)
@@ -164,7 +164,7 @@ struct PreviewSampleContentTests {
             #expect(try store.originalPhoto(id: piece.photoID).starts(with: [137, 80, 78, 71, 13, 10, 26, 10]))
         }
         let backup = output.appendingPathComponent(try #require(receipt.backup))
-        #expect(try FileManager.default.attributesOfItem(atPath: backup.path)[.protectionKey] as? FileProtectionType == .complete)
+        try expectCompleteProtection(backup)
         let repeated = try await PreviewSampleContent.refreshTransparentPhotos(store: store, outputDirectory: output)
         #expect(repeated.updated.isEmpty && repeated.backup == nil)
         #expect(try store.pieces() == current)
@@ -208,6 +208,16 @@ struct PreviewSampleContentTests {
         let reopened = try PieceStore(directory: root.appendingPathComponent("store"))
         _ = try await PreviewSampleContent.populate(store: reopened, outputDirectory: root.appendingPathComponent("receipts"))
         #expect(try reopened.pieces().count == 12 && reopened.themes().count == 4)
+    }
+
+    /// Simulator host filesystems can omit NSFileProtectionKey; locked-device protection stays a device gate.
+    private func expectCompleteProtection(_ url: URL) throws {
+        let protection = try FileManager.default.attributesOfItem(atPath: url.path)[.protectionKey] as? FileProtectionType
+        #if targetEnvironment(simulator)
+        #expect(protection == nil || protection == .complete)
+        #else
+        #expect(protection == .complete)
+        #endif
     }
 }
 

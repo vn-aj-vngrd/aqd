@@ -99,6 +99,20 @@ public struct PlanAuthoringDraft: Identifiable, Codable, Equatable, Sendable {
     public var initialPlan: PlanDefinition?
     public var initialSlots: [PlanSlotDraft]?
 
+    /// The days that carry an outfit and can therefore be left out of a review.
+    public var assignedDayKeys: [String] { slots.filter { $0.outfit != nil }.map(\.day.key) }
+
+    /// A copy with the named days left as they were before this review: an existing plan keeps its earlier outfit, a new plan leaves them unassigned.
+    public func leavingOut(_ dayKeys: Set<String>) -> PlanAuthoringDraft {
+        var copy = self
+        for index in copy.slots.indices where dayKeys.contains(copy.slots[index].day.key) {
+            if let earlier = initialSlots?.first(where: { $0.day == copy.slots[index].day && $0.occasion == copy.slots[index].occasion }) {
+                copy.slots[index].outfit = earlier.outfit; copy.slots[index].unassignedByChoice = earlier.outfit == nil ? true : earlier.unassignedByChoice
+            } else { copy.slots[index].outfit = nil; copy.slots[index].unassignedByChoice = true }
+        }
+        return copy
+    }
+
     public var hasChanges: Bool {
         guard let initialPlan, let initialSlots else { return true }
         let sameSlots = slots.count == initialSlots.count && zip(slots, initialSlots).allSatisfy {

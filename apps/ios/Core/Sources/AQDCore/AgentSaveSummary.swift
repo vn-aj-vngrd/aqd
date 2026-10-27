@@ -29,6 +29,13 @@ public extension AgentReviewedAction {
             if draft.includeTheme { parts.append("a theme \(quoted(draft.theme.name))") }
             if draft.canPlan && draft.includePlan { parts.append("a Planner trip") }
             return "Saves " + (parts.count > 1 ? parts.dropLast().joined(separator: ", ") + " and " + (parts.last ?? "") : parts.first ?? "") + "."
+        case .tidy(let change):
+            let n = change.selectedItems.count
+            switch change.op {
+            case .archive: return "Archives \(count(n, "piece")). They leave your closet but can be restored, and you can undo this."
+            case .unarchive: return "Restores \(count(n, "piece")) to your closet."
+            case .delete: return "Permanently deletes \(count(n, "piece")). This can’t be undone."
+            }
         }
     }
 }
