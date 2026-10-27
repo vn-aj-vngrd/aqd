@@ -30,6 +30,9 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
+      # semantic-release refuses to publish from a branch that is behind its remote, so a commit A whose CI
+      # finishes after a newer commit B lands would never be released. Publish from a separate `release`
+      # branch that only fast-forwards to CI-validated SHAs instead of from main.
       - name: Prepare the CI-validated publication branch
         id: current
         env:
