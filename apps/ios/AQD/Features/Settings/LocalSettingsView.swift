@@ -27,6 +27,7 @@ struct LocalSettingsView: View {
             Section("AI") {
                 NavigationLink { AgentSettingsView().secondaryPage() } label: { SettingsRow(title: "AI settings", symbol: "sparkles") }
                 NavigationLink { LocalAssistanceSettingsView().secondaryPage() } label: { SettingsRow(title: "About Agent", symbol: "sparkle") }
+                NavigationLink { DeviceSupportView().secondaryPage() } label: { SettingsRow(title: "Device support", symbol: "iphone") }
                 NavigationLink { AgentFeedbackView().secondaryPage() } label: { SettingsRow(title: "Feedback", symbol: "bubble.left") }
             }.listRowInsets(EdgeInsets(top: AppSpacing.xSmall, leading: AppSpacing.large, bottom: AppSpacing.xSmall, trailing: AppSpacing.large))
                 .listRowBackground(AppTheme.surface)
@@ -264,6 +265,15 @@ struct LocalAssistanceSettingsView: View {
                     aboutRow("On this iPhone", symbol: "iphone", detail: "Replies are generated on-device. Your conversations aren't sent to an AQD server.")
                     aboutRow("You're in control", symbol: "checkmark.shield", detail: "A reply doesn't change your records. Review suggestions and decide what to keep.")
                 }
+                NavigationLink { DeviceSupportView().secondaryPage() } label: {
+                    HStack(spacing: AppSpacing.medium) {
+                        Image(systemName: "iphone").foregroundStyle(AppTheme.controlIcon)
+                        Text("Device support").foregroundStyle(AppTheme.ink)
+                        Spacer(minLength: AppSpacing.small)
+                        Image(systemName: "chevron.forward").font(AppTypography.disclosure).foregroundStyle(AppTheme.controlIcon).accessibilityHidden(true)
+                    }.font(AppTypography.body).padding(.horizontal, AppSpacing.large).frame(minHeight: AppControlMetrics.rowHeight)
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppRadius.card))
+                }.buttonStyle(.plain)
                 NavigationLink { AgentSettingsView().secondaryPage() } label: {
                     HStack(spacing: AppSpacing.medium) {
                         Image(systemName: "slider.horizontal.3").foregroundStyle(AppTheme.controlIcon)

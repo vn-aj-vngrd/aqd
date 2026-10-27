@@ -38,6 +38,8 @@ Node 24, pnpm 10.12.1. `pnpm install --frozen-lockfile` installs Lefthook (`pnpm
 4. Squash-merge bound to the verified head SHA.
 5. Verify main CI and the repository release for the merged SHA. A retry resumes at the first unsatisfied step.
 
+A change to Agent behavior (tools, intents, prompts, approval or grounding) also needs `scripts/eval-agent-live.sh` to pass on the owner's phone before the release it ships in. It runs the live on-device eval three times per suite and checks the pooled rates against `AgentEvalGate`; post the result on the issue.
+
 ## Releases
 
 After CI succeeds on `main`, the release workflow fast-forwards the `release` branch to that SHA and semantic-release publishes a `vX.Y.Z` tag and GitHub release (`feat` minor, breaking major, anything else patch). Reruns are safe and never rewind or force-push. This is repository versioning only; signing, TestFlight and App Store distribution are separate scope.

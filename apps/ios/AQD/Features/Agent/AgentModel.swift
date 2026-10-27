@@ -27,6 +27,9 @@ import Observation
     var recordIndex = AgentRecordIndex()
     var attachmentHandles: [String: UUID] = [:]
     var toolProposals: [(AgentMutationRequest, UUID)] = []
+    /// Messages typed while a reply is still being written. They are sent one at a time, in order, once it finishes.
+    var queuedMessages: [String] = []
+    static let queueLimit = 3
     var stagedPlanDays: [String: [AgentPlanAssignment]] = [:]
     private var generation: Task<Void, Never>?
     private var timeout: Task<Void, Never>?
@@ -228,47 +231,62 @@ import Observation
                 guard conversation.context.automatic == true, conversation.context.scope == .closet,
                       request.kind.requiredSources.allSatisfy(preferences.allows) else { throw PieceStore.StoreError.staleRevision }
             }
+            // Undo needs the record as it was, which only the first attempt can still read; a retry after an unconfirmed save finds it already changed.
+            let firstAttempt = proposal.status == .proposed
             try conversation.proposals?[i].approve(version: version)
             guard persist(), let proposal = conversation.proposals?[i] else { return }
             let receipt: AgentActionReceipt
-            switch proposal.action {
+            switch proposal.effectiveAction {
             case .piece(let change):
+                let before = firstAttempt ? try priorPieceDraft(change.draft.itemID) : nil
                 let value = try store.savePiece(change.draft, operationID: change.operationID)
-                receipt = AgentActionReceipt(recordID: value.id, kind: "piece")
+                receipt = AgentActionReceipt(recordID: value.id, kind: "piece", undo: before.map { .piece(previous: $0, appliedRevision: value.revision) })
             case .profile(let draft):
                 if try store.savedIdentity(for: draft) == nil {
                     guard try store.localIdentity() == draft.base else { throw PieceStore.StoreError.staleRevision }
                     guard try store.identityDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }
                     try store.saveIdentityDraft(draft)
                 }
+                let before = firstAttempt ? try store.localIdentity() : nil
                 let value = try store.saveIdentity(draft)
                 if try store.identityDraft() == draft { try store.finishIdentityDraft(draft) }
-                receipt = AgentActionReceipt(recordID: value.ownerID, kind: "profile")
+                receipt = AgentActionReceipt(recordID: value.ownerID, kind: "profile", undo: before.map { .profile(previous: $0, appliedRevision: value.revision) })
             case .availability(let change):
+                let before = firstAttempt ? try priorPieceDraft(change.pieceID)?.availability : nil
                 let piece = try store.setAvailability(id: change.pieceID, value: change.value, expectedRevision: change.expectedRevision, operationID: change.operationID)
-                receipt = AgentActionReceipt(recordID: piece.id, kind: "piece")
+                receipt = AgentActionReceipt(recordID: piece.id, kind: "piece", undo: before.map { .availability(pieceID: piece.id, previous: $0, appliedRevision: piece.revision) })
+            case .tidy(let change):
+                receipt = try applyTidy(change)
             case .theme(let draft):
                 if try store.savedTheme(for: draft) == nil { guard try store.themeDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }; try validateSources(proposal); try store.saveThemeDraft(draft) }
+                let before = draft.baseRevision > 0 && firstAttempt ? try store.themes().first { $0.id == draft.themeID } : nil
                 let value = try store.saveTheme(draft)
                 if try store.themeDraft() == draft { try store.finishThemeDraft(draft) }
-                receipt = AgentActionReceipt(recordID: value.id, kind: "theme")
+                receipt = AgentActionReceipt(recordID: value.id, kind: "theme", undo: draft.baseRevision == 0 ? .themeCreate(id: value.id, appliedRevision: value.revision) : before.map { .themeEdit(previous: $0, appliedRevision: value.revision) })
             case .outfit(let draft):
                 if try store.savedOutfit(for: draft) == nil { guard try store.outfitDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }; try validateSources(proposal); try store.saveOutfitDraft(draft) }
+                let before = draft.baseRevision > 0 && firstAttempt ? try store.outfit(id: draft.outfitID) : nil
                 let value = try store.saveOutfit(draft)
                 if try store.outfitDraft() == draft { try store.acknowledgeOutfitReceipt(draft) }
-                receipt = AgentActionReceipt(recordID: value.id, kind: "outfit")
+                receipt = AgentActionReceipt(recordID: value.id, kind: "outfit", undo: draft.baseRevision == 0 ? .outfitCreate(id: value.id, appliedRevision: value.revision) : before.map { .outfitEdit(previous: $0, appliedRevision: value.revision) })
             case .plan(let draft):
                 if try store.savedPlanAuthoring(draft) == nil { guard try store.planAuthoringDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }; try validateSources(proposal); try store.savePlanAuthoringDraft(draft) }
                 let value = try store.savePlanAuthoring(draft)
                 if try store.planAuthoringDraft() == draft { try store.finishPlanAuthoring(draft) }
-                receipt = AgentActionReceipt(recordID: value.plan.id, kind: "plan")
+                let entries = value.entries.map { AgentUndo.Entry(id: $0.id, revision: $0.revision) }
+                var undo: AgentUndo?
+                if let base = draft.basePlan {
+                    // The days as they were reviewed; an edit can only be put back if that picture is known.
+                    if firstAttempt, let was = draft.baseEntries { undo = .planEdit(planID: base.id, previous: .init(name: base.name, days: was.map { .init(dayKey: $0.day.key, outfitID: $0.outfitID) }), appliedRevision: value.plan.revision, entries: entries) }
+                } else { undo = .planCreate(id: value.plan.id, appliedRevision: value.plan.revision, entries: entries) }
+                receipt = AgentActionReceipt(recordID: value.plan.id, kind: "plan", undo: undo)
             case .trip(let draft):
                 receipt = try applyTrip(draft)
             case .wear(let draft):
                 if try store.savedWear(for: draft) == nil { guard try store.wearDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }; try store.saveWearDraft(draft) }
                 let value = try store.saveWear(draft)
                 if try store.wearDraft() == draft { try store.finishWearDraft(draft) }
-                receipt = AgentActionReceipt(recordID: value.id, kind: "wear")
+                receipt = AgentActionReceipt(recordID: value.id, kind: "wear", undo: .wear(id: value.id, appliedRevision: value.revision))
             }
             conversation.proposals?[i].receipt = receipt; conversation.proposals?[i].status = .succeeded; _ = persist()
         } catch {
@@ -348,6 +366,7 @@ import Observation
                 recordToolCalls(attemptID: attempt)
                 if let i = conversation.messages.firstIndex(where: { $0.attemptID == attempt }) { conversation.messages[i].elapsedSeconds = seconds(since: start) }
                 _ = persist()
+                drainQueue()
             }
         } catch is AgentTurnRefused {
             return
@@ -421,10 +440,12 @@ import Observation
         return Double(value.seconds) + Double(value.attoseconds) / 1e18
     }
     func stop() {
+        restoreQueueToDraft()
         guard let i = conversation.messages.firstIndex(where: \.isActive), conversation.messages[i].status != .stopping else { return }
         conversation.messages[i].status = .stopping; _ = persist(); generation?.cancel()
     }
     func suspend() {
+        restoreQueueToDraft()
         conversation.interruptActiveAttempt()
         generation?.cancel(); _ = persist()
     }

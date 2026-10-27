@@ -16,13 +16,15 @@ import Foundation
             if try store.outfitDraft() == draft { try store.acknowledgeOutfitReceipt(draft) }
         }
         var recordID = saved[0].id
+        var parts: [AgentUndo] = saved.map { .outfitCreate(id: $0.id, appliedRevision: $0.revision) }
         if trip.includeTheme {
             let draft = trip.theme
             if try store.savedTheme(for: draft) == nil {
                 guard try store.themeDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }
                 try store.saveThemeDraft(draft)
             }
-            recordID = try store.saveTheme(draft).id
+            let theme = try store.saveTheme(draft)
+            recordID = theme.id; parts.append(.themeCreate(id: theme.id, appliedRevision: theme.revision))
             if try store.themeDraft() == draft { try store.finishThemeDraft(draft) }
         }
         if let draft = try trip.resolvedPlan(saved: saved) {
@@ -30,10 +32,12 @@ import Foundation
                 guard try store.planAuthoringDraft().map({ $0 == draft }) ?? true else { throw PieceStore.StoreError.staleDraft }
                 try store.savePlanAuthoringDraft(draft)
             }
-            recordID = try store.savePlanAuthoring(draft).plan.id
+            let plan = try store.savePlanAuthoring(draft)
+            recordID = plan.plan.id
+            parts.append(.planCreate(id: plan.plan.id, appliedRevision: plan.plan.revision, entries: plan.entries.map { .init(id: $0.id, revision: $0.revision) }))
             if try store.planAuthoringDraft() == draft { try store.finishPlanAuthoring(draft) }
         }
-        return AgentActionReceipt(recordID: recordID, kind: "trip")
+        return AgentActionReceipt(recordID: recordID, kind: "trip", undo: .trip(parts))
     }
 
     /// Choosing what a trip review saves. Only an unapplied review can change.

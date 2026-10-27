@@ -12,10 +12,14 @@ public enum AgentDataSource: String, Codable, CaseIterable, Sendable {
     }
 }
 public struct AgentPreferences: Codable, Equatable, Sendable {
-    public var sources: [AgentDataSource] = AgentDataSource.allCases
+    /// Private notes reach the model only after the owner has switched them on. A stored list that still names notes from before
+    /// this rule does not count until `notesConfirmed` is set.
+    public var sources: [AgentDataSource] = AgentDataSource.allCases.filter { $0 != .notes }
+    public var notesConfirmed: Bool?
     public init() {}
-    public func allows(_ source: AgentDataSource) -> Bool { sources.contains(source) }
+    public func allows(_ source: AgentDataSource) -> Bool { sources.contains(source) && (source != .notes || notesConfirmed == true) }
     public mutating func set(_ source: AgentDataSource, enabled: Bool) {
+        if source == .notes { notesConfirmed = enabled }
         sources = AgentDataSource.allCases.filter { $0 == source ? enabled : sources.contains($0) }
     }
     public func validated() throws { guard Set(sources).count == sources.count else { throw PlanValidationError.invalidRecord } }

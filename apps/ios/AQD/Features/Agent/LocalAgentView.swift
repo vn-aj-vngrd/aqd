@@ -375,7 +375,10 @@ struct AgentConversationView: View {
             ForEach(model.conversation.proposals(for: message)) { proposal in
                 AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) },
                                  tryAnother: model.canGenerate && message.id == model.conversation.messages.last?.id ? { sendSuggestion("Show me a different option") } : nil,
-                                 setTripOptions: { theme, plan in model.setTripOptions(proposal.id, includeTheme: theme, includePlan: plan) })
+                                 setTripOptions: { theme, plan in model.setTripOptions(proposal.id, includeTheme: theme, includePlan: plan) },
+                                 setTidySelection: { item, selected in model.setTidySelection(proposal.id, item: item, selected: selected) },
+                                 setPlanDay: { day, included in model.setPlanDay(proposal.id, day: day, included: included) },
+                                 undo: model.canUndo(proposal) ? { model.undoProposal(proposal.id); state.reloadPieces() } : nil)
             }
         }
     }
@@ -414,7 +417,9 @@ struct AgentConversationView: View {
     }
     private var unlinkedProposalRows: some View {
         ForEach(model.conversation.unlinkedProposals) { proposal in
-            AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) })
+            AgentProposalCard(proposal: proposal, locked: model.hasPendingOperation, pieces: state.ownedPieces, review: { openReview(proposal) }, dismiss: { model.cancelProposal(proposal.id) },
+                              setTidySelection: { item, selected in model.setTidySelection(proposal.id, item: item, selected: selected) },
+                              undo: model.canUndo(proposal) ? { model.undoProposal(proposal.id); state.reloadPieces() } : nil)
         }
     }
 }
@@ -433,7 +438,18 @@ struct AgentAvailabilityContent: View {
         case .awaitingQualification, .available: "On-device Agent isn’t enabled yet"
         }
     }
+    private var offersSupport: Bool { [.unsupported, .intelligenceOff, .localeUnavailable, .preparing].contains(availability) }
     var body: some View {
+        content.safeAreaInset(edge: .bottom, spacing: 0) {
+            if offersSupport && showsActions {
+                NavigationLink { DeviceSupportView().secondaryPage() } label: {
+                    Label("See supported iPhones", systemImage: "iphone").font(AppTypography.body).foregroundStyle(AppTheme.ink)
+                        .frame(maxWidth: .infinity, minHeight: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+                }.buttonStyle(.plain).padding(.horizontal, AppSpacing.screen).padding(.bottom, AppSpacing.medium)
+            }
+        }
+    }
+    @ViewBuilder private var content: some View {
         if fillsPage {
             if availability == .preparing {
                 CenteredPageContent {

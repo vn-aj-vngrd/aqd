@@ -30,6 +30,32 @@ struct AgentEditClosetTool: Tool {
     }
 }
 
+/// Archive, restore or delete pieces. Prepares one review with a row per piece; the owner unticks rows and approves. Delete is a separate, stricter confirmation.
+@available(iOS 26, *)
+struct AgentTidyClosetTool: Tool {
+    let name = "tidyCloset"
+    let description = "Prepare a review to archive, restore or delete pieces. Prefer archive. Only when the user asks. Nothing is applied."
+    let handlers: AgentToolHandlers
+    @Generable struct Arguments {
+        @Guide(description: "archive, restore or delete") var action: String
+        @Guide(description: "The pieces: handles such as p3, or names", .maximumCount(12)) var pieces: [String]
+    }
+    func call(arguments: Arguments) async throws -> String {
+        try await AgentToolbox.result {
+            let op: AgentTidyOp
+            switch arguments.action.lowercased() {
+            case "archive": op = .archive
+            case "restore", "unarchive": op = .unarchive
+            case "delete": op = .delete
+            default: throw AgentToolRejection.invalidArguments
+            }
+            guard !arguments.pieces.isEmpty else { throw AgentToolRejection.invalidArguments }
+            let ids = try arguments.pieces.map { try handlers.resolve($0, [.piece]).id }
+            return try handlers.prepare(AgentMutationRequest(kind: .tidyPieces, pieceIDs: ids.reduce(into: [UUID]()) { if !$0.contains($1) { $0.append($1) } }, tidyOp: op), .tidyCloset)
+        }
+    }
+}
+
 @available(iOS 26, *)
 struct AgentEditOutfitTool: Tool {
     let name = "editOutfit"
@@ -136,6 +162,7 @@ extension AgentToolbox {
             case .wearStats: AgentWearStatsTool(handlers: handlers)
             case .weatherFor: AgentWeatherTool(handlers: handlers)
             case .editCloset: AgentEditClosetTool(handlers: handlers)
+            case .tidyCloset: AgentTidyClosetTool(handlers: handlers)
             case .editOutfit: AgentEditOutfitTool(handlers: handlers)
             case .editTheme: AgentEditThemeTool(handlers: handlers)
             case .editPlan: AgentEditPlanTool(handlers: handlers)

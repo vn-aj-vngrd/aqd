@@ -21,7 +21,7 @@ flowchart LR
 | Records | SwiftData, CloudKit `.none` | Versioned migrations, stable IDs, revisions and operation receipts. Frozen delivered schemas. A corrupt or newer store is kept, never replaced with an empty one. |
 | Media | App-private files, relative IDs, local thumbnails | Prepare media before committing references. Keep a metadata-minimized original and an edit recipe. Complete file protection and backup exclusion. Cleanup is reference-checked and retried. |
 | Capture | PhotosPicker, native camera | Only user-selected images; permission requested at use. |
-| Agent | Foundation Models when eligible | Bounded, confirmed context; typed fallback and reason-specific unavailability. |
+| Agent | Foundation Models when eligible | Bounded, confirmed context; reviewed change sets with undo snapshots; typed fallback and reason-specific unavailability. |
 | Weather | WeatherKit direct from the device | Needs the signed entitlement. Independent of model eligibility. |
 | Recovery | Versioned archive via Files | Staged validation, reviewed full replacement. |
 

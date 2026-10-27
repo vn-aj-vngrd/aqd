@@ -60,6 +60,22 @@ struct AgentComposerView: View {
                                      remove: model.removeAttachment, cancelImport: importer.remove, locked: model.active || model.hasPendingOperation)
                     .padding(.bottom, AppSpacing.small)
             }
+            if !model.queuedMessages.isEmpty {
+                VStack(alignment: .leading, spacing: AppSpacing.xSmall) {
+                    ForEach(Array(model.queuedMessages.enumerated()), id: \.offset) { index, message in
+                        HStack(spacing: AppSpacing.small) {
+                            Image(systemName: "clock").font(.caption).foregroundStyle(AppTheme.secondary).accessibilityHidden(true)
+                            Text(message).font(AppTypography.supporting).foregroundStyle(AppTheme.secondary).lineLimit(1)
+                            Spacer(minLength: 0)
+                            Button { model.removeQueued(at: index) } label: {
+                                Image(systemName: "xmark").font(.caption.weight(.semibold))
+                                    .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+                            }.buttonStyle(.plain).foregroundStyle(AppTheme.secondary).accessibilityLabel("Remove queued message")
+                        }.frame(minHeight: AppControlMetrics.minimumTarget).accessibilityElement(children: .combine)
+                            .accessibilityLabel("Queued, sent after this reply: \(message)")
+                    }
+                }.padding(.horizontal, AppSpacing.xSmall).padding(.bottom, AppSpacing.xSmall)
+            }
             // The field never changes place, so focus survives opening; the buttons slide around it.
             TextField("Ask Agent, or type / for tools", text: Binding(get: { model.conversation.draft }, set: model.updateDraft), axis: .vertical)
                 .lineLimit(1...6).focused(focused)
@@ -73,6 +89,7 @@ struct AgentComposerView: View {
             HStack(spacing: AppSpacing.small) {
                 addMenu
                 Spacer(minLength: AppSpacing.small)
+                if canQueueDraft { queueButton }
                 sendButton
             }
         }
@@ -90,6 +107,18 @@ struct AgentComposerView: View {
                 .contentShape(Rectangle())
         }.buttonStyle(.plain).foregroundStyle(AppTheme.ink).accessibilityLabel("Add photos, files or tools").accessibilityValue(addOpen ? "Open" : "Closed")
             .disabled(!model.supportsGeneration || model.active || model.hasPendingOperation || importer.count >= AgentAttachment.maximumCount || state.agentControlsModel?.hasPending == true)
+    }
+
+    private var canQueueDraft: Bool {
+        model.canQueue && !model.conversation.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && (model.conversation.draftAttachments ?? []).isEmpty
+    }
+
+    /// While a reply is running, a typed message can wait its turn instead of being lost.
+    private var queueButton: some View {
+        Button { model.queueDraft() } label: {
+            Image(systemName: "text.badge.plus").font(.body.weight(.semibold)).foregroundStyle(AppTheme.ink)
+                .frame(width: AppControlMetrics.minimumTarget, height: AppControlMetrics.minimumTarget).contentShape(Rectangle())
+        }.buttonStyle(.plain).accessibilityLabel("Send after this reply").accessibilityHint("Queues your message and sends it when Agent finishes")
     }
 
     private var sendButton: some View {
