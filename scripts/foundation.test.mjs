@@ -153,12 +153,7 @@ test("PR branches validate task naming and allow only managed bot exceptions", (
   } finally { rmSync(directory, { recursive: true, force: true }); }
 });
 
-test("issue forms and PR template load with useful completion/evidence fields", () => {
-  for (const name of ["feature", "bug", "maintenance"]) {
-    const form = parse(readFileSync(`.github/ISSUE_TEMPLATE/${name}.yml`, "utf8"));
-    assert.ok(form.labels.includes("needs-triage"));
-    assert.ok(form.body.some((field) => field.validations?.required));
-  }
+test("PR template loads with useful completion/evidence fields", () => {
   const template = readFileSync(".github/pull_request_template.md", "utf8");
   assert.ok(template.includes("Action and reason"));
   assert.ok(template.includes("Verification and result"));

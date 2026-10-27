@@ -12,10 +12,9 @@ Private, on-device iPhone closet app (SwiftUI, deploys iOS 18, builds with Xcode
 | Any UI | [DESIGN.md](DESIGN.md), the source of truth: tokens, components, modal pattern |
 | Domain words | [CONTEXT.md](CONTEXT.md) |
 | Swift, Xcode, native tests | [apps/ios/AGENTS.md](apps/ios/AGENTS.md) |
-| Branch, commit, PR, release, issues | [docs/delivery.md](docs/delivery.md) |
 | Lasting decisions | [docs/adr](docs/adr) |
 
-Feature work runs through Van's factory, which lives outside this repo (`~/Documents/van/factory`): from `~/Documents/van`, `/factory aqd <ticket | #issue>` grills the ticket, plans vertical slices, builds them test-first, proves UI changes with screenshots and opens a draft PR. Its project memory and job state stay outside the repo.
+Delivery runs through Van's factory, which lives outside this repo (`~/Documents/van/factory`) and owns tickets, branches, reviews and PRs. From `~/Documents/van`, `/product aqd <idea>` files build-ready GitHub issues, and `/factory aqd <#issue | ticket>` grills the ticket, plans vertical slices, builds them test-first, reviews the diff, proves UI changes with screenshots and opens a draft PR. The owner squash-merges after CI; the release workflow then tags the merged commit. The factory's project memory and job state stay outside the repo.
 
 ## Rules
 
