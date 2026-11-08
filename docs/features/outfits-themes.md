@@ -29,6 +29,10 @@ Outfits browse with search, theme and favorites filters. Themes filter All, With
 
 Outfit detail shows the composition, the themes it belongs to (as links), Plan and Record wear, then its pieces as photo rows that open the piece (unavailable references are labelled), and a More menu with Edit, Favorite and a reviewed Delete. Delete names its theme and plan impact and keeps pieces, photos and recorded wear. Theme detail shows the collage cover, a count and its outfits in the same grid as the Outfits tab, with Add outfits in More. Empty lists offer Build an outfit or Create a theme. Owned favorites are separate from community bookmarks.
 
+## Mannequin
+
+Outfit detail has a segmented control, Collage or Mannequin. Collage is the default; the device remembers the choice in `@AppStorage` (`outfit.viewMode`) and shows it on every outfit. Mannequin shows a neutral figure drawn in SwiftUI (no photo, face or likeness) with each piece snapped to its category slot. The back-to-front order is bottoms, dresses, tops, layers; pieces in one slot stack in outfit order with the later one in front. Shoes sit at the feet and accessories sit in a tray beside the figure (below it at accessibility text sizes). A piece whose photo is loading, missing or undecodable shows its category symbol. Placed pieces are VoiceOver elements labelled "<name>, <category>". The view is display only: it never writes and no outfit record changes.
+
 ## Acceptance
 
 - Build, save, reopen and edit an outfit without changing its ID.

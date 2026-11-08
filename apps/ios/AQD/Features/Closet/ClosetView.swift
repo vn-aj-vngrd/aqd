@@ -308,6 +308,8 @@ struct PieceThumbnail: View {
     let photoID: UUID
     var recipe: PhotoEditRecipe = .fit
     var ground: Color = AppTheme.imageGround
+    /// SF Symbol shown while the photo loads, is missing or fails to decode.
+    var placeholder = "photo"
     @State private var image: UIImage?
 
     private struct Request: Equatable {
@@ -318,7 +320,7 @@ struct PieceThumbnail: View {
     var body: some View {
         Group {
             if let image { Image(uiImage: image).resizable().scaledToFit() }
-            else { Image(systemName: "photo").foregroundStyle(AppTheme.secondary).accessibilityLabel("Photo unavailable") }
+            else { Image(systemName: placeholder).foregroundStyle(AppTheme.secondary).accessibilityLabel("Photo unavailable") }
         }
         .background(ground)
         .clipShape(RoundedRectangle(cornerRadius: AppRadius.group))

@@ -237,6 +237,7 @@ struct OutfitDetailView: View {
     @State private var deleteReview: OutfitMutationRequest?
     @State private var pendingMutation: OutfitMutationRequest?
     @State private var error: String?
+    @AppStorage(OutfitViewMode.storageKey) private var viewMode = OutfitViewMode.collage
 
     /// The themes this outfit belongs to, each a link to the theme.
     @ViewBuilder private func themeChips(for outfit: Outfit) -> some View {
@@ -258,7 +259,11 @@ struct OutfitDetailView: View {
         ScrollView {
             if let outfit = state.outfits.first(where: { $0.id == id }) {
                 VStack(alignment: .leading, spacing: 20) {
-                    OutfitComposition(pieceIDs: outfit.pieceIDs)
+                    OutfitViewModePicker(mode: $viewMode)
+                    switch viewMode {
+                    case .collage: OutfitComposition(pieceIDs: outfit.pieceIDs)
+                    case .mannequin: MannequinView(pieceIDs: outfit.pieceIDs)
+                    }
                     Text("\(outfit.pieceIDs.count) pieces").foregroundStyle(AppTheme.secondary)
                     if outfit.isFavorite { Label("Favorite", systemImage: "heart.fill").foregroundStyle(AppTheme.ink) }
                     themeChips(for: outfit)
