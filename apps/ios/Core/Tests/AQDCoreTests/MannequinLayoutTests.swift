@@ -58,7 +58,7 @@ struct MannequinLayoutTests {
         }
     }
 
-    @Test func ac9EveryCategoryHasANonEmptyPlaceholderSymbol() {
+    @Test("AC-9: every category has a placeholder symbol so a slot is never blank") func ac9EveryCategoryHasANonEmptyPlaceholderSymbol() {
         for category in PieceCategory.allCases {
             #expect(!MannequinLayout.placeholderSymbol(for: category).isEmpty)
         }
