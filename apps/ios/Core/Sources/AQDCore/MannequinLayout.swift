@@ -86,3 +86,92 @@ public struct MannequinLayout: Equatable, Sendable {
         return MannequinLayout(placements: placements)
     }
 }
+
+public enum MannequinStep: CaseIterable, Sendable {
+    case up, down, left, right, larger, smaller
+}
+
+public struct MannequinOffset: Equatable, Sendable {
+    public var dx: Double, dy: Double
+    public init(dx: Double = 0, dy: Double = 0) { self.dx = dx; self.dy = dy }
+}
+
+/// Transient, per-piece nudges while the mannequin is open: drag offset, pinch scale and accessories dropped
+/// from the tray. Nothing here is persisted; a fresh value is the default placement.
+public struct MannequinAdjustments: Equatable, Sendable {
+    public static let moveStep = 0.03
+    public static let scaleStep = 0.1
+    public static let scaleRange = 0.5...2.0
+
+    private var offsets: [UUID: MannequinOffset] = [:]
+    private var scales: [UUID: Double] = [:]
+    private var drops: [UUID: MannequinOffset] = [:]
+
+    public init() {}
+
+    public var isAdjusted: Bool { !(offsets.isEmpty && scales.isEmpty && drops.isEmpty) }
+
+    public func offset(for id: UUID) -> MannequinOffset { offsets[id] ?? MannequinOffset() }
+    public func scale(for id: UUID) -> Double { scales[id] ?? 1 }
+    /// Centre of an accessory dropped on the figure, in unit coordinates; nil while it is in the tray.
+    public func dropCentre(for id: UUID) -> MannequinOffset? { drops[id] }
+
+    public mutating func drag(_ id: UUID, dx: Double, dy: Double) {
+        let current = offset(for: id)
+        offsets[id] = MannequinOffset(dx: min(1, max(-1, current.dx + dx)), dy: min(1, max(-1, current.dy + dy)))
+    }
+
+    public mutating func setScale(_ id: UUID, _ value: Double) {
+        scales[id] = min(Self.scaleRange.upperBound, max(Self.scaleRange.lowerBound, value))
+    }
+
+    public mutating func drop(_ id: UUID, atX x: Double, y: Double) {
+        drops[id] = MannequinOffset(dx: x, dy: y)
+        offsets[id] = nil
+    }
+
+    public mutating func step(_ id: UUID, _ step: MannequinStep) {
+        switch step {
+        case .up: drag(id, dx: 0, dy: -Self.moveStep)
+        case .down: drag(id, dx: 0, dy: Self.moveStep)
+        case .left: drag(id, dx: -Self.moveStep, dy: 0)
+        case .right: drag(id, dx: Self.moveStep, dy: 0)
+        case .larger: setScale(id, scale(for: id) + Self.scaleStep)
+        case .smaller: setScale(id, scale(for: id) - Self.scaleStep)
+        }
+    }
+
+    public mutating func reset() { self = MannequinAdjustments() }
+}
+
+extension MannequinLayout {
+    /// Size of an accessory once it sits on the figure, in unit coordinates.
+    public static let droppedAccessorySize = MannequinFrame(x: 0, y: 0, width: 0.2, height: 0.12)
+
+    /// Tray pieces still waiting in the tray, in outfit order.
+    public func trayIDs(adjustments: MannequinAdjustments) -> [UUID] {
+        tray.filter { adjustments.dropCentre(for: $0) == nil }
+    }
+
+    /// A piece's frame on the figure with the adjustments applied; nil while it is in the tray.
+    public func frame(of id: UUID, adjustments: MannequinAdjustments) -> MannequinFrame? {
+        guard let placement = placements.first(where: { $0.id == id }) else { return nil }
+        let base: MannequinFrame
+        if let frame = placement.frame {
+            base = frame
+        } else if let centre = adjustments.dropCentre(for: id) {
+            let size = Self.droppedAccessorySize
+            base = MannequinFrame(x: min(max(centre.dx - size.width / 2, 0), 1 - size.width),
+                                  y: min(max(centre.dy - size.height / 2, 0), 1 - size.height),
+                                  width: size.width, height: size.height)
+        } else {
+            return nil
+        }
+        let scale = adjustments.scale(for: id)
+        let offset = adjustments.offset(for: id)
+        let width = base.width * scale, height = base.height * scale
+        return MannequinFrame(x: base.x + base.width / 2 - width / 2 + offset.dx,
+                              y: base.y + base.height / 2 - height / 2 + offset.dy,
+                              width: width, height: height)
+    }
+}

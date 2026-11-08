@@ -75,4 +75,70 @@ final class MannequinFlowTests: XCTestCase {
         openOutfit("Office day")
         XCTAssertTrue(app.segmentedControls["outfit.viewMode"].buttons["Mannequin"].isSelected, "AC-8: survives relaunch")
     }
+
+    private func dragPiece(_ element: XCUIElement, byX dx: CGFloat, y dy: CGFloat) {
+        let start = element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        start.press(forDuration: 0.05, thenDragTo: start.withOffset(CGVector(dx: dx, dy: dy)))
+    }
+
+    private func openMannequin(_ outfit: String) {
+        openOutfit(outfit)
+        let mannequin = app.segmentedControls["outfit.viewMode"].buttons["Mannequin"]
+        if !mannequin.isSelected { mannequin.tap() }
+        XCTAssertTrue(app.otherElements["mannequin.canvas"].waitForExistence(timeout: 5))
+        XCTAssertTrue(piece("Blue cotton shirt").waitForExistence(timeout: 5))
+    }
+
+    func testAC2AC11AC7DragResetAndReopenRestoreTheDefaults() {
+        openMannequin("Office day")
+        let shirt = piece("Blue cotton shirt"), belt = piece("Black belt"), trousers = piece("Tailored trousers")
+        let shirtStart = shirt.frame, beltStart = belt.frame, trousersStart = trousers.frame
+        XCTAssertFalse(app.buttons["mannequin.reset"].exists, "Reset appears only after an adjustment")
+        capture("S1-mannequin-before-adjust")
+
+        dragPiece(shirt, byX: 30, y: 40)
+        XCTAssertTrue(app.buttons["mannequin.reset"].waitForExistence(timeout: 5))
+        XCTAssertGreaterThan(piece("Blue cotton shirt").frame.minY, shirtStart.minY + 20, "AC-2: the shirt moved down")
+        XCTAssertGreaterThan(piece("Blue cotton shirt").frame.minX, shirtStart.minX + 15, "AC-2: the shirt moved right")
+
+        let waist = trousers.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1))
+        belt.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).press(forDuration: 0.05, thenDragTo: waist)
+        XCTAssertNotEqual(piece("Black belt").frame.origin.x, beltStart.origin.x, "AC-11: the belt left the tray")
+        let beltOnFigure = piece("Black belt").frame
+        XCTAssertTrue(trousersStart.insetBy(dx: -40, dy: -40).contains(CGPoint(x: beltOnFigure.midX, y: beltOnFigure.midY)), "AC-11: the belt sits on the figure")
+        capture("S2-adjusted")
+
+        let reset = app.buttons["mannequin.reset"]
+        XCTAssertGreaterThanOrEqual(reset.frame.height, 44, "AC-7: Reset has a 44 pt target")
+        reset.tap()
+        XCTAssertFalse(app.buttons["mannequin.reset"].waitForExistence(timeout: 1))
+        XCTAssertEqual(piece("Blue cotton shirt").frame.origin.y, shirtStart.origin.y, accuracy: 2, "AC-2: shirt back in its slot")
+        XCTAssertEqual(piece("Blue cotton shirt").frame.origin.x, shirtStart.origin.x, accuracy: 2)
+        XCTAssertEqual(piece("Black belt").frame.origin.x, beltStart.origin.x, accuracy: 2, "AC-11: belt back in the tray")
+        XCTAssertEqual(piece("Black belt").frame.origin.y, beltStart.origin.y, accuracy: 2)
+        capture("S2-reset")
+
+        dragPiece(piece("Tailored trousers"), byX: -30, y: 30)
+        XCTAssertTrue(app.buttons["mannequin.reset"].waitForExistence(timeout: 5))
+        XCTAssertNotEqual(piece("Tailored trousers").frame.origin.y, trousersStart.origin.y)
+        goBack()
+        openMannequin("Office day")
+        XCTAssertFalse(app.buttons["mannequin.reset"].exists, "AC-2: nothing from the earlier drag remains")
+        XCTAssertEqual(piece("Tailored trousers").frame.origin.y, trousersStart.origin.y, accuracy: 2)
+        XCTAssertEqual(piece("Tailored trousers").frame.origin.x, trousersStart.origin.x, accuracy: 2)
+        capture("S2-reopened")
+    }
+
+    func testAC2SwitchingToCollageAndBackRestoresTheDefaults() {
+        openMannequin("Office day")
+        let start = piece("Blue cotton shirt").frame
+        dragPiece(piece("Blue cotton shirt"), byX: 0, y: 50)
+        XCTAssertTrue(app.buttons["mannequin.reset"].waitForExistence(timeout: 5))
+        let control = app.segmentedControls["outfit.viewMode"]
+        control.buttons["Collage"].tap()
+        control.buttons["Mannequin"].tap()
+        XCTAssertTrue(piece("Blue cotton shirt").waitForExistence(timeout: 5))
+        XCTAssertEqual(piece("Blue cotton shirt").frame.origin.y, start.origin.y, accuracy: 2)
+        XCTAssertFalse(app.buttons["mannequin.reset"].exists)
+    }
 }

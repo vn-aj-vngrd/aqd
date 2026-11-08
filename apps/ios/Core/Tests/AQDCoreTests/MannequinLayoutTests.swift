@@ -65,3 +65,92 @@ struct MannequinLayoutTests {
         #expect(MannequinLayout.placeholderSymbol(for: .shoes) != MannequinLayout.placeholderSymbol(for: .tops))
     }
 }
+
+struct MannequinAdjustmentsTests {
+    private let shirt = UUID(), belt = UUID()
+    private func layout() -> MannequinLayout { MannequinLayout.place([(shirt, .tops), (belt, .accessories)]) }
+
+    @Test func ac2DragAndPinchMoveAndScaleThePieceAndResetRestoresEveryDefault() throws {
+        let base = layout()
+        let defaultFrame = try #require(base.frame(of: shirt, adjustments: MannequinAdjustments()))
+        var adjustments = MannequinAdjustments()
+        adjustments.drag(shirt, dx: 0.1, dy: 0.2)
+        adjustments.setScale(shirt, 1.5)
+        let moved = try #require(base.frame(of: shirt, adjustments: adjustments))
+        #expect(moved != defaultFrame)
+        #expect(moved.width > defaultFrame.width)
+        #expect(adjustments.isAdjusted)
+        adjustments.reset()
+        #expect(adjustments == MannequinAdjustments())
+        #expect(!adjustments.isAdjusted)
+        #expect(base.frame(of: shirt, adjustments: adjustments) == defaultFrame)
+    }
+
+    @Test func ac2ScaleIsClampedToHalfThroughDouble() {
+        var adjustments = MannequinAdjustments()
+        adjustments.setScale(shirt, 9)
+        #expect(adjustments.scale(for: shirt) == 2.0)
+        adjustments.setScale(shirt, 0.01)
+        #expect(adjustments.scale(for: shirt) == 0.5)
+    }
+
+    @Test func ac2ScaleKeepsTheFrameCentre() throws {
+        let base = layout()
+        let before = try #require(base.frame(of: shirt, adjustments: MannequinAdjustments()))
+        var adjustments = MannequinAdjustments()
+        adjustments.setScale(shirt, 2)
+        let after = try #require(base.frame(of: shirt, adjustments: adjustments))
+        #expect(abs((before.x + before.width / 2) - (after.x + after.width / 2)) < 0.0001)
+        #expect(abs((before.y + before.height / 2) - (after.y + after.height / 2)) < 0.0001)
+    }
+
+    @Test func ac7EachStepChangesPositionOrSizeByOneStep() {
+        var adjustments = MannequinAdjustments()
+        adjustments.step(shirt, .right)
+        #expect(abs(adjustments.offset(for: shirt).dx - MannequinAdjustments.moveStep) < 0.0001)
+        #expect(adjustments.offset(for: shirt).dy == 0)
+        adjustments.step(shirt, .left); adjustments.step(shirt, .left)
+        #expect(adjustments.offset(for: shirt).dx < 0)
+        adjustments.reset()
+        adjustments.step(shirt, .down)
+        #expect(adjustments.offset(for: shirt).dy > 0)
+        adjustments.step(shirt, .up); adjustments.step(shirt, .up)
+        #expect(adjustments.offset(for: shirt).dy < 0)
+        adjustments.reset()
+        adjustments.step(shirt, .larger)
+        #expect(abs(adjustments.scale(for: shirt) - (1 + MannequinAdjustments.scaleStep)) < 0.0001)
+        adjustments.step(shirt, .smaller); adjustments.step(shirt, .smaller)
+        #expect(abs(adjustments.scale(for: shirt) - (1 - MannequinAdjustments.scaleStep)) < 0.0001)
+    }
+
+    @Test func ac7RepeatedSmallerStopsAtTheMinimum() {
+        var adjustments = MannequinAdjustments()
+        for _ in 0..<40 { adjustments.step(shirt, .smaller) }
+        #expect(adjustments.scale(for: shirt) == 0.5)
+    }
+
+    @Test func ac11DroppingTheAccessoryOnTheFigureTakesItOutOfTheTrayUntilReset() throws {
+        let base = layout()
+        var adjustments = MannequinAdjustments()
+        #expect(base.trayIDs(adjustments: adjustments) == [belt])
+        #expect(base.frame(of: belt, adjustments: adjustments) == nil)
+        adjustments.drop(belt, atX: 0.5, y: 0.45)
+        #expect(base.trayIDs(adjustments: adjustments).isEmpty)
+        let frame = try #require(base.frame(of: belt, adjustments: adjustments))
+        #expect(abs((frame.x + frame.width / 2) - 0.5) < 0.0001)
+        #expect(abs((frame.y + frame.height / 2) - 0.45) < 0.0001)
+        adjustments.drag(belt, dx: 0.05, dy: 0)
+        #expect(try #require(base.frame(of: belt, adjustments: adjustments)).x > frame.x)
+        adjustments.reset()
+        #expect(base.trayIDs(adjustments: adjustments) == [belt])
+        #expect(base.frame(of: belt, adjustments: adjustments) == nil)
+    }
+
+    @Test func ac11DropNearAnEdgeKeepsTheAccessoryInsideTheFigure() throws {
+        let base = layout()
+        var adjustments = MannequinAdjustments()
+        adjustments.drop(belt, atX: 5, y: -3)
+        let frame = try #require(base.frame(of: belt, adjustments: adjustments))
+        #expect(frame.x >= 0 && frame.y >= 0 && frame.x + frame.width <= 1.0001 && frame.y + frame.height <= 1.0001)
+    }
+}
