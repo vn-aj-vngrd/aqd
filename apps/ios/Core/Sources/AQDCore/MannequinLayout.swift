@@ -42,6 +42,16 @@ public struct MannequinLayout: Equatable, Sendable {
     /// Piece IDs of every placement from back to front.
     public var drawOrder: [UUID] { placements.sorted { $0.zIndex < $1.zIndex }.map(\.id) }
 
+    /// SF Symbol a slot shows while its photo loads, is missing or fails to decode, so a slot is never blank.
+    public static func placeholderSymbol(for category: PieceCategory) -> String {
+        switch category {
+        case .tops, .layers, .dresses: "tshirt"
+        case .bottoms: "figure.walk"
+        case .shoes: "shoeprints.fill"
+        case .accessories: "eyeglasses"
+        }
+    }
+
     /// Back-to-front order: bottoms, dresses, tops, layers, then shoes at the feet.
     private static func rank(_ category: PieceCategory) -> Int {
         switch category {

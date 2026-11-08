@@ -32,17 +32,8 @@ struct MannequinView: View {
 
     private func piece(_ id: UUID) -> WardrobePiece? { pieces.first { $0.id == id } }
 
-    private func symbol(_ category: PieceCategory) -> String {
-        switch category {
-        case .tops, .layers, .dresses: "tshirt"
-        case .bottoms: "figure.walk"
-        case .shoes: "shoeprints.fill"
-        case .accessories: "eyeglasses"
-        }
-    }
-
     private func thumbnail(_ piece: WardrobePiece) -> some View {
-        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe, ground: .clear, placeholder: symbol(piece.category))
+        PieceThumbnail(photoID: piece.photoID, recipe: piece.photoRecipe, ground: .clear, placeholder: MannequinLayout.placeholderSymbol(for: piece.category))
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("\(piece.displayName), \(state.categoryName(for: piece))")
             .accessibilityIdentifier("mannequin.piece")

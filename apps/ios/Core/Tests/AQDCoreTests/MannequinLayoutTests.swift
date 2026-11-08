@@ -57,4 +57,11 @@ struct MannequinLayoutTests {
             #expect(frame.x >= 0 && frame.y >= 0 && frame.x + frame.width <= 1.0001 && frame.y + frame.height <= 1.0001)
         }
     }
+
+    @Test func ac9EveryCategoryHasANonEmptyPlaceholderSymbol() {
+        for category in PieceCategory.allCases {
+            #expect(!MannequinLayout.placeholderSymbol(for: category).isEmpty)
+        }
+        #expect(MannequinLayout.placeholderSymbol(for: .shoes) != MannequinLayout.placeholderSymbol(for: .tops))
+    }
 }
