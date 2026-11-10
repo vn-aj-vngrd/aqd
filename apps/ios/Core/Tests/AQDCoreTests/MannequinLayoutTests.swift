@@ -5,7 +5,7 @@ import Testing
 struct MannequinLayoutTests {
     private let shirt = UUID(), trousers = UUID(), loafers = UUID(), belt = UUID(), coat = UUID(), dress = UUID()
 
-    @Test func ac8EachCategoryLandsInItsOwnSlotAndAccessoriesGoToTheTray() {
+    @Test("AC-8: ac8EachCategoryLandsInItsOwnSlotAndAccessoriesGoToTheTray") func ac8EachCategoryLandsInItsOwnSlotAndAccessoriesGoToTheTray() {
         let layout = MannequinLayout.place([(shirt, .tops), (trousers, .bottoms), (loafers, .shoes), (belt, .accessories)])
         let byID = Dictionary(uniqueKeysWithValues: layout.placements.map { ($0.id, $0) })
         #expect(byID[shirt]?.slot == .torso)
@@ -17,7 +17,7 @@ struct MannequinLayoutTests {
         #expect(layout.placements.count == 4)
     }
 
-    @Test func ac8FramesAreDerivedFromTheAnchorsByCategory() throws {
+    @Test("AC-8: ac8FramesAreDerivedFromTheAnchorsByCategory") func ac8FramesAreDerivedFromTheAnchorsByCategory() throws {
         let a = MannequinAnchors.standard
         let layout = MannequinLayout.place([(shirt, .tops), (coat, .layers), (dress, .dresses),
                                             (trousers, .bottoms), (loafers, .shoes)], on: a)
@@ -43,7 +43,7 @@ struct MannequinLayoutTests {
         #expect(try placement(loafers).alignment == .bottom)
     }
 
-    @Test func ac8ShoesSitBelowTheTrousersAtTheFeet() throws {
+    @Test("AC-8: ac8ShoesSitBelowTheTrousersAtTheFeet") func ac8ShoesSitBelowTheTrousersAtTheFeet() throws {
         let layout = MannequinLayout.place([(trousers, .bottoms), (loafers, .shoes)])
         let legs = try #require(layout.placements.first { $0.id == trousers }?.frame)
         let feet = try #require(layout.placements.first { $0.id == loafers }?.frame)
@@ -51,13 +51,13 @@ struct MannequinLayoutTests {
         #expect(feet.y + feet.height <= 1.0001)
     }
 
-    @Test func ac8AccessoriesHaveNoFrameAndWaitInTheTray() {
+    @Test("AC-8: ac8AccessoriesHaveNoFrameAndWaitInTheTray") func ac8AccessoriesHaveNoFrameAndWaitInTheTray() {
         let layout = MannequinLayout.place([(belt, .accessories)])
         #expect(layout.placements[0].frame == nil)
         #expect(layout.tray == [belt])
     }
 
-    @Test func ac8DrawOrderIsBottomsDressesTopsLayersWhateverTheOutfitOrder() {
+    @Test("AC-8: ac8DrawOrderIsBottomsDressesTopsLayersWhateverTheOutfitOrder") func ac8DrawOrderIsBottomsDressesTopsLayersWhateverTheOutfitOrder() {
         let layout = MannequinLayout.place([(coat, .layers), (shirt, .tops), (dress, .dresses), (trousers, .bottoms)])
         #expect(layout.drawOrder == [trousers, dress, shirt, coat])
         let z = Dictionary(uniqueKeysWithValues: layout.placements.map { ($0.id, $0.zIndex) })
@@ -66,7 +66,7 @@ struct MannequinLayoutTests {
         #expect((z[shirt] ?? 0) < (z[coat] ?? 0))
     }
 
-    @Test func ac8TwoPiecesInOneSlotStackInOutfitOrderLaterInFront() {
+    @Test("AC-8: ac8TwoPiecesInOneSlotStackInOutfitOrderLaterInFront") func ac8TwoPiecesInOneSlotStackInOutfitOrderLaterInFront() {
         let second = UUID()
         let layout = MannequinLayout.place([(shirt, .tops), (second, .tops)])
         #expect(layout.drawOrder == [shirt, second])
@@ -74,7 +74,7 @@ struct MannequinLayoutTests {
         #expect((z[shirt] ?? 0) < (z[second] ?? 0))
     }
 
-    @Test func ac8TrayKeepsOutfitOrderAndEmptyOutfitPlacesNothing() {
+    @Test("AC-8: ac8TrayKeepsOutfitOrderAndEmptyOutfitPlacesNothing") func ac8TrayKeepsOutfitOrderAndEmptyOutfitPlacesNothing() {
         let other = UUID()
         #expect(MannequinLayout.place([(belt, .accessories), (shirt, .tops), (other, .accessories)]).tray == [belt, other])
         let empty = MannequinLayout.place([])
