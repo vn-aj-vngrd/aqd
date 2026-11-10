@@ -1,0 +1,20 @@
+{
+  "variants": [
+    {
+      "id": "standard",
+      "imageName": "mannequin-standard",
+      "aspectRatio": 0.5,
+      "anchors": {
+        "shoulderY": 0.16,
+        "shoulderLeftX": 0.312,
+        "shoulderRightX": 0.688,
+        "chest": { "y": 0.25, "halfWidth": 0.146 },
+        "waist": { "y": 0.35, "halfWidth": 0.108 },
+        "hips": { "y": 0.47, "halfWidth": 0.166 },
+        "knees": { "y": 0.69, "halfWidth": 0.13 },
+        "ankles": { "y": 0.905, "halfWidth": 0.1 },
+        "feet": { "y": 0.975, "halfWidth": 0.145 }
+      }
+    }
+  ]
+}

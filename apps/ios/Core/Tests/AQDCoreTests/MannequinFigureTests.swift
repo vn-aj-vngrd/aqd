@@ -8,10 +8,10 @@ struct MannequinFigureTests {
     private func variantJSON(id: String = "standard", aspect: Double = 0.5, shoulderY: Double = 0.16) -> String {
         """
         {"id":"\(id)","imageName":"mannequin-\(id)","aspectRatio":\(aspect),"anchors":{
-        "shoulderY":\(shoulderY),"shoulderLeftX":0.3,"shoulderRightX":0.7,
-        "chest":{"y":0.24,"halfWidth":0.17},"waist":{"y":0.4,"halfWidth":0.13},
-        "hips":{"y":0.48,"halfWidth":0.17},"knees":{"y":0.7,"halfWidth":0.1},
-        "ankles":{"y":0.9,"halfWidth":0.07},"feet":{"y":0.97,"halfWidth":0.16}}}
+        "shoulderY":\(shoulderY),"shoulderLeftX":0.312,"shoulderRightX":0.688,
+        "chest":{"y":0.25,"halfWidth":0.146},"waist":{"y":0.35,"halfWidth":0.108},
+        "hips":{"y":0.47,"halfWidth":0.166},"knees":{"y":0.69,"halfWidth":0.13},
+        "ankles":{"y":0.905,"halfWidth":0.1},"feet":{"y":0.975,"halfWidth":0.145}}}
         """
     }
 

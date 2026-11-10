@@ -29,6 +29,10 @@ Outfits browse with search, theme and favorites filters. Themes filter All, With
 
 Outfit detail shows the composition, the themes it belongs to (as links), Plan and Record wear, then its pieces as photo rows that open the piece (unavailable references are labelled), and a More menu with Edit, Favorite and a reviewed Delete. Delete names its theme and plan impact and keeps pieces, photos and recorded wear. Theme detail shows the collage cover, a count and its outfits in the same grid as the Outfits tab, with Add outfits in More. Empty lists offer Build an outfit or Create a theme. Owned favorites are separate from community bookmarks.
 
+## Mannequin
+
+Outfit detail has a segmented control, Collage or Mannequin. Collage is the default; the device remembers the choice in `@AppStorage` (`outfit.viewMode`) and shows it on every outfit. Mannequin shows a realistic, shaded and faceless 2D fashion figure (about 8.5 heads tall, relaxed pose, no photo, face or likeness). It is vector artwork in `Resources/Mannequin.xcassets` with a light and a dark variant, and the bundled manifest `Resources/Mannequin/mannequin-figures.json` lists each figure's image and body anchors (shoulder line, chest, waist, hips, knees, ankles, feet). Each cutout is aspect-fitted to the anchors of its category: tops and layers from the shoulders, dresses from the shoulders to the ankles, bottoms from the waist to the ankles, shoes on the feet. The back-to-front order is bottoms, dresses, tops, layers, then shoes; pieces of one category stack in outfit order with the later one in front. Placed pieces carry a soft contact shadow. Accessories sit in a tray beside the figure (below it at accessibility text sizes). A piece whose photo is loading, missing or undecodable shows its category symbol. Placed pieces are VoiceOver elements labelled "<name>, <category>". If the manifest cannot be read the built-in standard anchors are used. The view is display only: it never writes and no outfit record changes.
+
 ## Acceptance
 
 - Build, save, reopen and edit an outfit without changing its ID.

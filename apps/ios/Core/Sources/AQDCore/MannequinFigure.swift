@@ -33,13 +33,13 @@ public struct MannequinAnchors: Codable, Equatable, Sendable {
 
     /// Built-in fallback matching the shipped standard art; used when the manifest cannot be read.
     public static let standard = MannequinAnchors(
-        shoulderY: 0.16, shoulderLeftX: 0.30, shoulderRightX: 0.70,
-        chest: MannequinBand(y: 0.24, halfWidth: 0.17),
-        waist: MannequinBand(y: 0.40, halfWidth: 0.13),
-        hips: MannequinBand(y: 0.48, halfWidth: 0.17),
-        knees: MannequinBand(y: 0.70, halfWidth: 0.10),
-        ankles: MannequinBand(y: 0.90, halfWidth: 0.07),
-        feet: MannequinBand(y: 0.97, halfWidth: 0.16))
+        shoulderY: 0.16, shoulderLeftX: 0.312, shoulderRightX: 0.688,
+        chest: MannequinBand(y: 0.25, halfWidth: 0.146),
+        waist: MannequinBand(y: 0.35, halfWidth: 0.108),
+        hips: MannequinBand(y: 0.47, halfWidth: 0.166),
+        knees: MannequinBand(y: 0.69, halfWidth: 0.13),
+        ankles: MannequinBand(y: 0.905, halfWidth: 0.1),
+        feet: MannequinBand(y: 0.975, halfWidth: 0.145))
 
     /// Landmarks run down the canvas in order and stay inside it.
     var isValid: Bool {

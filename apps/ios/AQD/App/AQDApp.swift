@@ -7,10 +7,18 @@ struct AQDApp: App {
     init() {
         #if DEBUG
         Self.clearStaleLaunchSnapshots()
+        Self.resetUITestViewMode()
         #endif
     }
 
     #if DEBUG
+    /// UI tests only: a test that checks the default outfit view starts from a cleared remembered choice.
+    private static func resetUITestViewMode() {
+        let process = ProcessInfo.processInfo
+        guard process.arguments.contains("--aqd-ui-testing"), process.environment["AQD_TEST_RESET_VIEW_MODE"] == "1" else { return }
+        UserDefaults.standard.removeObject(forKey: OutfitViewMode.storageKey)
+    }
+
     /// iOS keeps launch and resume snapshots per build in the app's Library. After a Debug reinstall they can still show the previous
     /// build's first frame, so each new build clears them once; the system rebuilds them the next time the app goes to the background.
     private static func clearStaleLaunchSnapshots() {

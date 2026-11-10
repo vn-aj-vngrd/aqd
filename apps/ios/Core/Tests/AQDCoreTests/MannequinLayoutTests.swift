@@ -94,6 +94,15 @@ struct MannequinLayoutTests {
         #expect(abs(other.width - 0.6) < 0.0001)
     }
 
+    @Test("AC-11: a loading, missing or undecodable photo shows its category symbol in the fitted slot")
+    func ac11PlaceholderFollowsTheCategoryOfTheSlot() throws {
+        let shoe = UUID()
+        let placement = try #require(MannequinLayout.place([(shoe, .shoes)]).placements.first)
+        #expect(placement.frame != nil)
+        #expect(MannequinLayout.placeholderSymbol(for: placement.category) == "shoeprints.fill")
+        #expect(MannequinLayout.placeholderSymbol(for: .tops) == "tshirt")
+    }
+
     @Test("AC-9: every category has a placeholder symbol so a slot is never blank") func ac9EveryCategoryHasANonEmptyPlaceholderSymbol() {
         for category in PieceCategory.allCases {
             #expect(!MannequinLayout.placeholderSymbol(for: category).isEmpty)
