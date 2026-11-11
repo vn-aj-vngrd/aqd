@@ -25,7 +25,7 @@ SwiftUI and SwiftData (CloudKit off) for iOS 18 and later, built with Xcode 27. 
 
 ```text
 apps/ios/   The SwiftUI app, the Core package and the test targets
-docs/       Product scope, architecture, delivery, feature contracts and decisions (ADRs)
+docs/       Product scope, architecture, feature contracts and decisions (ADRs)
 scripts/    Native test runner, commit and layer checks, release tooling
 ```
 
@@ -39,7 +39,6 @@ scripts/    Native test runner, commit and layer checks, release tooling
 | Change how a feature behaves | [docs/features](docs/features) |
 | Design any UI | [DESIGN.md](DESIGN.md) |
 | Learn the domain words | [CONTEXT.md](CONTEXT.md) |
-| Branch, commit, open a PR or release | [docs/delivery.md](docs/delivery.md) |
 | Work on it as an AI agent | [AGENTS.md](AGENTS.md) |
 
 Plans, status and evidence live in [GitHub issues](https://github.com/vn-aj-vngrd/aqd/issues), not in the repo. The connected V2 (sign-in, sync, sharing and more) is kept as a backlog in [docs/product.md](docs/product.md).

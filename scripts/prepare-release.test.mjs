@@ -5,6 +5,9 @@ import { join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 
+// Git hooks export GIT_DIR and friends; fixture repos must not inherit them, or `git init` rewrites this repository.
+for (const key of ["GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_COMMON_DIR", "GIT_OBJECT_DIRECTORY", "GIT_PREFIX"]) delete process.env[key];
+
 const script = resolve("scripts/prepare-release.sh");
 
 function fixture(run) {
