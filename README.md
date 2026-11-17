@@ -42,3 +42,7 @@ scripts/    Native test runner, commit and layer checks, release tooling
 | Work on it as an AI agent | [AGENTS.md](AGENTS.md) |
 
 Plans, status and evidence live in [GitHub issues](https://github.com/vn-aj-vngrd/aqd/issues), not in the repo. The connected V2 (sign-in, sync, sharing and more) is kept as a backlog in [docs/product.md](docs/product.md).
+
+## License
+
+AQD is source-available, not open source: you may read it and build it for your own devices to evaluate it. Other uses need permission. See [LICENSE](LICENSE).
