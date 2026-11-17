@@ -1,0 +1,31 @@
+AQD Source-Available License
+
+Copyright (c) 2026 Van AJ Vanguardia. All rights reserved.
+
+The source code in this repository is published so that it can be read,
+reviewed, and evaluated. It is source-available, not open source.
+
+You may:
+
+- read the source code;
+- clone the repository and build and run it on your own devices for personal
+  evaluation, learning, and review.
+
+You may not, without prior written permission from the copyright holder:
+
+- use the software, or any part of it, in production or for any commercial
+  purpose;
+- distribute, sublicense, sell, or publish the software or works derived from
+  it, including to an app store;
+- remove or alter this notice.
+
+Third-party dependencies remain under their own licenses.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For any other use, ask: https://github.com/vn-aj-vngrd
